@@ -856,6 +856,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		} );
 
+
 		describe( method( OBLIGATORY, "toJSON" ), ():void => {
 
 			it( hasSignature(
@@ -1253,7 +1254,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( TransientDocument.decorate ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should add the `TransientResource` properties", ():void => {
+			it( "should add the `Resource` properties", ():void => {
 				const target:Resource = TransientDocument.decorate( {} );
 				expect( Resource.isDecorated( target ) ).toBe( true );
 			} );

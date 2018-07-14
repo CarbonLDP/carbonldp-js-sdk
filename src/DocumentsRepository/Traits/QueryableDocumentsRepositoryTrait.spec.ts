@@ -2992,7 +2992,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 				document._normalize();
 				document._syncSnapshot();
-				document._syncSavedFragments();
 
 				$context
 					.extendObjectSchema( {

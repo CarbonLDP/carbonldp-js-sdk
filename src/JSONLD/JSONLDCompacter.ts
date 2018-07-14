@@ -86,11 +86,6 @@ export class JSONLDCompacter {
 			;
 		} );
 
-		const compactedDocuments:Document[] = rdfDocuments
-			.map( rdfDocument => rdfDocument[ "@id" ] )
-			.map( this.compactionMap.get, this.compactionMap )
-			.map( compactionNode => compactionNode.resource as any );
-
 		const compactionQueue:string[] = mainDocuments
 			.map( rdfDocument => rdfDocument[ "@id" ] );
 
@@ -113,10 +108,15 @@ export class JSONLDCompacter {
 				.push( this.compactionMap.keys().next().value );
 		}
 
-		compactedDocuments.forEach( persistedDocument => {
-			persistedDocument._syncSavedFragments();
-			this.registry.decorate( persistedDocument );
-		} );
+
+		rdfDocuments
+			.map( rdfDocument => rdfDocument[ "@id" ] )
+			.map( this.compactionMap.get, this.compactionMap )
+			.map( compactionNode => compactionNode.resource as Document )
+			.forEach( persistedDocument => {
+				persistedDocument._syncSnapshot();
+				this.registry.decorate( persistedDocument );
+			} );
 
 		return mainCompactedDocuments;
 	}
@@ -178,7 +178,6 @@ export class JSONLDCompacter {
 			const targetPath:string = compactionNode.paths.shift();
 
 			const addedProperties:string[] = this._compactNode( compactionNode.node, compactionNode.resource, compactionNode.registry, targetPath );
-			compactionNode.resource._syncSnapshot();
 
 			for( const propertyName of addedProperties ) {
 				if( ! compactionNode.resource.hasOwnProperty( propertyName ) ) continue;

@@ -2760,7 +2760,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				document._normalize();
 				document._syncSnapshot();
-				document._syncSavedFragments();
 
 				$context
 					.extendObjectSchema( {
@@ -3154,7 +3153,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				document._normalize();
 				document._syncSnapshot();
-				document._syncSavedFragments();
 
 				$context
 					.extendObjectSchema( {

@@ -14,6 +14,7 @@ import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
 import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
+import { ResolvablePointer } from "../Repository/ResolvablePointer";
 
 import { isObject } from "../Utils";
 
@@ -30,12 +31,12 @@ import { SPARQLDocumentTrait } from "./Traits/SPARQLDocumentTrait";
 import { TransientDocument } from "./TransientDocument";
 
 
-export interface BaseResolvableDocument {
+export interface BaseResolvableDocument extends BaseDocument {
 	$registry:DocumentsRegistry;
 	$repository:DocumentsRepository;
 }
 
-export interface Document extends SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait {
+export interface Document extends QueryableDocumentTrait, SPARQLDocumentTrait, EventEmitterDocumentTrait {
 	$registry:DocumentsRegistry;
 	$repository:DocumentsRepository;
 
@@ -81,22 +82,14 @@ export interface Document extends SPARQLDocumentTrait, EventEmitterDocumentTrait
 	resolve<T extends object>( document:Document, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 
-	exists( requestOptions?:RequestOptions ):Promise<boolean>;
-	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
-
-
-	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
 	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
-	save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
 	save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
-	saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
 	saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
-
-
-	delete( requestOptions?:RequestOptions ):Promise<void>;
-	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 }
 
 
@@ -121,9 +114,15 @@ type ForcedMembers = {
 	removeFragment( slugOrFragment:string | Fragment ):boolean;
 };
 
+export type OverriddenMembers =
+	| "_syncSnapshot"
+	| "isDirty"
+	| "revert"
+	;
+
 export type DocumentFactory =
 	& ModelSchema<C[ "Document" ]>
-	& ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait>
+	& ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, OverriddenMembers>
 	& ModelDecorator<Document, BaseResolvableDocument>
 	& ModelTypeGuard<Document>
 	& ModelFactory<TransientDocument, BaseDocument>
@@ -182,13 +181,46 @@ export const Document:DocumentFactory = {
 
 		_syncSavedFragments( this:Document ):void {
 			this.__savedFragments = Array
-				.from( this.__resourcesMap.values() )
-				.map( Fragment.decorate )
-			;
+				.from( this.__resourcesMap.values() );
 
 			this.__savedFragments
-				.forEach( fragment => fragment._syncSnapshot() )
-			;
+				.forEach( fragment => fragment._syncSnapshot() );
+		},
+
+
+		_syncSnapshot( this:Document ):void {
+			ResolvablePointer.PROTOTYPE._syncSnapshot.call( this );
+			this._syncSavedFragments();
+		},
+
+		isDirty( this:Document ):boolean {
+			const isSelfDirty:boolean = ResolvablePointer.PROTOTYPE.isDirty.call( this );
+			if( isSelfDirty ) return true;
+
+			const hasRemovedFragments:boolean = this
+				.__savedFragments
+				.some( fragment => ! this.hasFragment( fragment.$id ) );
+			if( hasRemovedFragments ) return true;
+
+			const hasNewFragments:boolean = this
+				.__savedFragments.length !== this.__resourcesMap.size;
+			if( hasNewFragments ) return true;
+
+			return this
+				.__savedFragments
+				.some( fragment => fragment.isDirty() );
+		},
+
+		revert( this:Document ):void {
+			ResolvablePointer.PROTOTYPE.revert.call( this );
+
+			this.__resourcesMap.clear();
+			this
+				.__savedFragments
+				.forEach( fragment => {
+					fragment.revert();
+					this.__resourcesMap.set( fragment.$slug, fragment );
+				} );
 		},
 	},
 

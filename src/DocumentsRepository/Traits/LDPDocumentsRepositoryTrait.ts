@@ -194,7 +194,6 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 
 			const document:T & Document = repository.$context.registry._addPointer( transient );
 			document._syncSnapshot();
-			document._syncSavedFragments();
 
 			return __applyResponseRepresentation<T>( repository, document, response );
 		} )

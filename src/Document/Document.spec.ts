@@ -1,17 +1,17 @@
-import {
-	createMockContext,
-	createMockQueryableMetadata,
-	defineNonEnumerableProps
-} from "../../test/helpers/mocks";
-import { AbstractContext } from "../Context/AbstractContext";
-import { MembersDocument } from "../Members";
-import { EventEmitterDocumentTrait } from "../Messaging";
-import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
-import { SPARQLDocumentTrait } from "../SPARQL";
-import { QueryDocumentDocument } from "../QueryDocuments";
+import { createNonEnumerable } from "../../test/helpers/miscellaneous";
+
+import { DocumentsContext } from "../Context/DocumentsContext";
+
+import { Fragment } from "../Fragment/Fragment";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelSchema } from "../Model/ModelSchema";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
 import {
 	extendsClass,
-	hasMethod,
 	hasProperty,
 	hasSignature,
 	interfaze,
@@ -23,33 +23,79 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { LDPDocumentTrait } from "./Traits/LDPDocumentTrait";
-import { Document } from "./Document";
 
+import { C } from "../Vocabularies/C";
 
-function createMock<T extends object>( data?:T & Partial<Document> ):T & Document {
-	const mock:T & Document = Document.decorate( Object.assign( {
-		id: "https://example.com/",
-	}, data ) );
+import { BaseDocument } from "./BaseDocument";
+import { BaseResolvableDocument, Document, DocumentFactory } from "./Document";
 
-	defineNonEnumerableProps( mock );
-	mock._normalize();
+import { EventEmitterDocumentTrait } from "./Traits/EventEmitterDocumentTrait";
+import { QueryableDocumentTrait } from "./Traits/QueryableDocumentTrait";
+import { SPARQLDocumentTrait } from "./Traits/SPARQLDocumentTrait";
+import { TransientDocument } from "./TransientDocument";
 
-	return mock;
-}
 
 describe( module( "carbonldp/Document" ), ():void => {
+
+	let $context:DocumentsContext;
+	beforeEach( ():void => {
+		$context = new DocumentsContext( "https://example.com/" );
+	} );
+
 
 	describe( interfaze(
 		"CarbonLDP.Document",
 		"Interface that represents a c:Document of a Carbon LDP instance."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.CRUDDocument" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.Members.MembersDocument" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.SPARQL.SPARQLDocument" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.Messaging.MessagingDocument" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.QueryDocuments.QueryDocumentDocument" ), ():void => {} );
+		function createMock<T extends object>( data?:T & Partial<Document> ):T & Document {
+			const mock:T & Document = Document.decorate( Object.assign<BaseResolvableDocument, typeof data>( {
+				$registry: $context.registry,
+				$repository: $context.repository,
+				$id: "https://example.com/",
+			}, data ) );
+
+			mock._normalize();
+
+			return mock;
+		}
+
+
+		it( extendsClass( "CarbonLDP.Document.Traits.QueryableDocumentTrait" ), ():void => {
+			const target:QueryableDocumentTrait = {} as Document;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Document.Traits.SPARQLDocumentTrait" ), ():void => {
+			const target:SPARQLDocumentTrait = {} as Document;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Document.Traits.EventEmitterDocumentTrait" ), ():void => {
+			const target:EventEmitterDocumentTrait = {} as Document;
+			expect( target ).toBeDefined();
+		} );
+
+
+		it( hasProperty(
+			OBLIGATORY,
+			"__modelDecorator",
+			"CarbonLDP.Model.ModelDecorator<CarbonLDP.Fragment>"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"__resourcesMap",
+			"Map<string, CarbonLDP.Fragment>"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"__savedFragments",
+			"CarbonLDP.Fragment[]",
+			"Array with a copy of every fragment that that is currently persisted in the server."
+		), ():void => {} );
+
 
 		it( hasProperty(
 			OPTIONAL,
@@ -86,19 +132,156 @@ describe( module( "carbonldp/Document" ), ():void => {
 			"A Pointer with the inverted relation the document."
 		), ():void => {} );
 
+
 		it( hasProperty(
 			OPTIONAL,
 			"accessPoints",
-			"CarbonLDP.Pointer[]",
+			"CarbonLDP.Document[]",
 			"Array with the access points of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"contains",
-			"CarbonLDP.Pointer",
+			"CarbonLDP.Document",
 			"Array with the children of the document."
 		), ():void => {} );
+
+
+		describe( method( OBLIGATORY, "getPointer" ), () => {
+
+			it( hasSignature(
+				[
+					{ name: "id", type: "string", description: "ID to return its pointer representation." },
+				],
+				{ type: "CarbonLDP.RegisteredPointer" }
+			), () => {} );
+
+			it( hasSignature(
+				[
+					{ name: "id", type: "string", description: "ID to check its existence." },
+					{ name: "local", type: "true", description: "Flag to ignore hierarchy and only return pointers from the current registry." },
+				],
+				{ type: "CarbonLDP.Fragment" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				const registry:Document = createMock();
+
+				expect( registry.getPointer ).toBeDefined();
+				expect( registry.getPointer ).toEqual( jasmine.any( Function ) );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "getPointers" ), () => {
+
+			it( hasSignature(
+				"Returns all the pointers stored the registry hierarchy.",
+				{ type: "CarbonLDP.RegisteredPointer[]" }
+			), () => {} );
+
+			it( hasSignature(
+				"Returns all the pointers stored in the current registry.",
+				[
+					{ name: "local", type: "true", description: "Flag to ignore hierarchy and only return pointers from the current registry." },
+				],
+				{ type: "CarbonLDP.Fragment[]" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				const registry:Document = createMock();
+
+				expect( registry.getPointers ).toBeDefined();
+				expect( registry.getPointers ).toEqual( jasmine.any( Function ) );
+			} );
+
+		} );
+
+
+		describe( method( OBLIGATORY, "getFragment" ), () => {
+
+			it( hasSignature(
+				[ "T" ],
+				{ type: "T & CarbonLDP.Fragment" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				const document:Document = createMock();
+
+				expect( document.getFragment ).toBeDefined();
+				expect( document.getFragment ).toEqual( jasmine.any( Function ) );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "getFragments" ), () => {
+
+			it( hasSignature(
+				"Returns an array with all the fragments in the Document.",
+				{ type: "CarbonLDP.Fragment[]" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				const document:Document = createMock();
+
+				expect( document.getFragments ).toBeDefined();
+				expect( document.getFragments ).toEqual( jasmine.any( Function ) );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "createFragment" ), () => {
+
+			it( hasSignature(
+				[ "T" ],
+				"Creates a `CarbonLDP.Fragment` from the object provided and the id if specified.", [
+					{ name: "object", type: "T" },
+					{ name: "id", type: "string", optional: true },
+				],
+				{ type: "T & CarbonLDP.Fragment" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Creates an empty `CarbonLDP.Fragment` with the id specified.", [
+					{ name: "id", type: "string" },
+				],
+				{ type: "CarbonLDP.Fragment" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const document:Document = createMock();
+
+				expect( document.createFragment ).toBeDefined();
+				expect( document.createFragment ).toEqual( jasmine.any( Function ) );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "removeFragment" ), ():void => {
+
+			it( hasSignature(
+				"Remove the fragment referenced by the `CarbonLDP.Fragment` provided from the Document.", [
+					{ name: "fragment", type: "CarbonLDP.Fragment" },
+				],
+				{ type: "boolean" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Remove the fragment referenced by the Slug provided from the Document.", [
+					{ name: "slug", type: "string" },
+				],
+				{ type: "boolean" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const document:Document = createMock();
+
+				expect( document.removeFragment ).toBeDefined();
+				expect( document.removeFragment ).toEqual( jasmine.any( Function ) );
+			} );
+
+		} );
 
 
 		describe( method( OBLIGATORY, "get" ), () => {
@@ -143,224 +326,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
 
-			it( "should call QueryDocumentDocument when builder function", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.get( _ => _ )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( "https://example.com/", {}, jasmine.any( Function ) );
-					} )
-				;
-			} );
-
-			it( "should call QueryDocumentDocument when options and builder function", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.get( { timeout: 5050 }, _ => _ )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( "https://example.com/", { timeout: 5050 }, jasmine.any( Function ) );
-					} )
-				;
-			} );
-
-			it( "should call QueryDocumentDocument when URI and builder function", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.get( "resource/", _ => _ )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( "resource/", {}, jasmine.any( Function ) );
-					} )
-				;
-			} );
-
-			it( "should call QueryDocumentDocument when URI, options and builder function", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.get( "resource/", { timeout: 5050 }, _ => _ )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( "resource/", { timeout: 5050 }, jasmine.any( Function ) );
-					} )
-				;
-			} );
-
-
-			it( "should call CRUDDocument nothing", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.get()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( "https://example.com/", {} );
-					} )
-				;
-			} );
-
-			it( "should call CRUDDocument when options", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.get( { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( "https://example.com/", { timeout: 5050 } );
-					} )
-				;
-			} );
-
-			it( "should call CRUDDocument when URI", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.get( "resource/" )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( "resource/", {} );
-					} )
-				;
-			} );
-
-			it( "should call CRUDDocument when URI and options", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.get( "resource/", { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( "resource/", { timeout: 5050 } );
-					} )
-				;
-			} );
-
-
-			it( "should ensure latest when current is partial and no builder function", async () => {
-				const _registry:DocumentsRegistry = new DocumentsRegistry();
-
-				const resource:Document = createMock( {
-					_queryableMetadata: createMockQueryableMetadata( {} ),
-					$registry: _registry,
-				} );
-
-				_registry.__resourcesMap.set( _registry._getLocalID( resource.$id ), resource );
-
-
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				await resource.get()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-
-						expect( spy ).toHaveBeenCalledWith( "https://example.com/", { ensureLatest: true } );
-					} );
-			} );
-
-			it( "should ensure latest when current is partial and no builder function, with options", async () => {
-				const _registry:DocumentsRegistry = new DocumentsRegistry();
-
-				const resource:Document = createMock( {
-					_queryableMetadata: createMockQueryableMetadata( {} ),
-					$registry: _registry,
-				} );
-
-				_registry.__resourcesMap.set( _registry._getLocalID( resource.$id ), resource );
-
-
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				await resource.get( { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-
-						expect( spy ).toHaveBeenCalledWith( "https://example.com/", { timeout: 5050, ensureLatest: true } );
-					} );
-			} );
-
-			it( "should ensure latest when URI is partial and no builder function", async () => {
-				const _registry:DocumentsRegistry = new DocumentsRegistry();
-
-				const resource:Document = createMock( { $registry: _registry } );
-
-				_registry.__resourcesMap.set( "resource/", createMock( {
-					$registry: _registry,
-					_queryableMetadata: createMockQueryableMetadata( {} ),
-				} ) );
-
-
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				await resource.get( "resource/" )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-
-						expect( spy ).toHaveBeenCalledWith( "resource/", { ensureLatest: true } );
-					} );
-			} );
-
-			it( "should ensure latest when URI is partial and no builder function, with options", async () => {
-				const _registry:DocumentsRegistry = new DocumentsRegistry();
-
-				const resource:Document = createMock( { $registry: _registry } );
-
-				_registry.__resourcesMap.set( "resource/", createMock( {
-					$registry: _registry,
-					_queryableMetadata: createMockQueryableMetadata( {} ),
-				} ) );
-
-
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
-					.and.returnValue( Promise.reject( null ) );
-
-				await resource.get( "resource/", { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-
-						expect( spy ).toHaveBeenCalledWith( "resource/", { timeout: 5050, ensureLatest: true } );
-					} );
-			} );
-
 		} );
 
 		describe( method( OBLIGATORY, "resolve" ), () => {
@@ -384,117 +349,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
 
-
-			it( "should call QueryDocumentDocument when builder function", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "resolve" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.resolve( _ => _ )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( {}, jasmine.any( Function ) );
-					} )
-				;
-			} );
-
-			it( "should call QueryDocumentDocument when options and builder function", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "resolve" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.resolve( { timeout: 5050 }, _ => _ )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( { timeout: 5050 }, jasmine.any( Function ) );
-					} )
-				;
-			} );
-
-
-			it( "should call CRUDDocument nothing", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "resolve" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.resolve()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( {} );
-					} )
-				;
-			} );
-
-			it( "should call CRUDDocument when options", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "resolve" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.resolve( { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( { timeout: 5050 } );
-					} )
-				;
-			} );
-
-
-			it( "should ensure latest when current is partial and no builder function", async () => {
-				const _registry:DocumentsRegistry = new DocumentsRegistry();
-
-				const resource:Document = createMock( {
-					_queryableMetadata: createMockQueryableMetadata( {} ),
-					$registry: _registry,
-				} );
-
-				_registry.__resourcesMap.set( _registry._getLocalID( resource.$id ), resource );
-
-
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "resolve" )
-					.and.returnValue( Promise.reject( null ) );
-
-				await resource.resolve()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-
-						expect( spy ).toHaveBeenCalledWith( { ensureLatest: true } );
-					} );
-			} );
-
-			it( "should ensure latest when current is partial and no builder function, with options", async () => {
-				const _registry:DocumentsRegistry = new DocumentsRegistry();
-
-				const resource:Document = createMock( {
-					_queryableMetadata: createMockQueryableMetadata( {} ),
-					$registry: _registry,
-				} );
-
-				_registry.__resourcesMap.set( _registry._getLocalID( resource.$id ), resource );
-
-
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "resolve" )
-					.and.returnValue( Promise.reject( null ) );
-
-				await resource.resolve( { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-
-						expect( spy ).toHaveBeenCalledWith( { timeout: 5050, ensureLatest: true } );
-					} );
-			} );
-
 		} );
 
 
@@ -509,68 +363,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 				{ type: "Promise<T & this>" }
 			), ():void => {} );
 
-
-			it( "should call QueryDocumentDocument when partial", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "refresh" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
-				await resource.refresh()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( void 0 );
-					} )
-				;
-			} );
-
-			it( "should call QueryDocumentDocument when partial and options", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "refresh" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
-				await resource.refresh( { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( { timeout: 5050 } );
-					} )
-				;
-			} );
-
-
-			it( "should call CRUDDocument when full", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "refresh" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.refresh()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( void 0 );
-					} )
-				;
-			} );
-
-			it( "should call CRUDDocument when full and options", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "refresh" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.refresh( { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( { timeout: 5050 } );
-					} )
-				;
-			} );
-
 		} );
 
 		describe( method( OBLIGATORY, "save" ), () => {
@@ -583,68 +375,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 				],
 				{ type: "Promise<T & this>" }
 			), ():void => {} );
-
-
-			it( "should call QueryDocumentDocument when partial", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "save" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
-				await resource.save()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( void 0 );
-					} )
-				;
-			} );
-
-			it( "should call QueryDocumentDocument when partial and options", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "save" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
-				await resource.save( { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( { timeout: 5050 } );
-					} )
-				;
-			} );
-
-
-			it( "should call CRUDDocument when full", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "save" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.save()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( void 0 );
-					} )
-				;
-			} );
-
-			it( "should call CRUDDocument when full and options", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "save" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock();
-				await resource.save( { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( { timeout: 5050 } );
-					} )
-				;
-			} );
 
 		} );
 
@@ -659,70 +389,29 @@ describe( module( "carbonldp/Document" ), ():void => {
 				{ type: "Promise<T & this>" }
 			), ():void => {} );
 
-
-			it( "should call QueryDocumentDocument when partial", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "saveAndRefresh" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
-				await resource.saveAndRefresh()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( void 0 );
-					} )
-				;
-			} );
-
-			it( "should call QueryDocumentDocument when partial and options", async () => {
-				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "saveAndRefresh" )
-					.and.returnValue( Promise.reject( null ) );
-
-				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
-				await resource.saveAndRefresh( { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( { timeout: 5050 } );
-					} )
-				;
-			} );
+		} );
 
 
-			it( "should call CRUDDocument when full", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "saveAndRefresh" )
-					.and.returnValue( Promise.reject( null ) );
+		describe( method( OBLIGATORY, "_syncSavedFragments" ), () => {
 
+			it( hasSignature(
+				"Set all the current fragments in the document as fragments that has been saved in the server."
+			), ():void => {} );
+
+			it( "should exists", ():void => {
 				const resource:Document = createMock();
-				await resource.saveAndRefresh()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
 
-						expect( spy ).toHaveBeenCalledWith( void 0 );
-					} )
-				;
+				expect( resource._syncSavedFragments ).toBeDefined();
+				expect( resource._syncSavedFragments ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call CRUDDocument when full and options", async () => {
-				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "saveAndRefresh" )
-					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock();
-				await resource.saveAndRefresh( { timeout: 5050 } )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( { timeout: 5050 } );
-					} )
-				;
-			} );
+			// TODO: Test
 
 		} );
 
+
+		// TODO: Test ._syncSnapshot
 
 		describe( "Document.isDirty", () => {
 
@@ -864,53 +553,31 @@ describe( module( "carbonldp/Document" ), ():void => {
 		"Interface with factory, decorate and utils methods for `CarbonLDP.Document` objects."
 	), ():void => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"isDecorated",
-			"Returns true if the Document provided has the properties and methods of a `CarbonLDP.Document` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "object is CarbonLDP.Document" }
-		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Returns true if the element provided is considered a `CarbonLDP.Document` object.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "value is CarbonLDP.Document" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelSchema<CarbonLDP.Vocabularies.C.Document>" ), () => {
+			const target:ModelSchema<C[ "Document" ]> = {} as DocumentFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"create",
-			[ "T extends object" ],
-			"Creates a `CarbonLDP.TransientDocument` object with the data provided.", [
-				{ name: "data", type: "T & CarbonLDP.BaseDocument", description: "Data to be used in the creation of the document." },
-			],
-			{ type: "T & CarbonLDP.TransientDocument" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Document, CarbonLDP.Document.Traits.SPARQLDocumentTrait & CarbonLDP.Document.Traits.EventEmitterDocumentTrait & CarbonLDP.Document.Traits.QueryableDocumentTrait, \"_syncSnapshot\" | \"isDirty\" | \"revert\">" ), () => {
+			const target:ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, "_syncSnapshot" | "isDirty" | "revert"> = {} as DocumentFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"createFrom",
-			[ "T extends object" ],
-			"Creates a Document object from the object provided.", [
-				{ name: "object", type: "T & CarbonLDP.BaseDocument", description: "The object to be transformed in a document." },
-			],
-			{ type: "T & CarbonLDP.TransientDocument" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Document, CarbonLDP.BaseResolvableDocument>" ), () => {
+			const target:ModelDecorator<Document, BaseResolvableDocument> = {} as DocumentFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"decorate",
-			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.Document` object.", [
-				{ name: "object", type: "T" },
-			],
-			{ type: "T & CarbonLDP.Document" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelTypeGuard<CarbonLDP.Document>" ), () => {
+			const target:ModelTypeGuard<Document> = {} as DocumentFactory;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.TransientDocument, CarbonLDP.BaseDocument>" ), () => {
+			const target:ModelFactory<TransientDocument, BaseDocument> = {} as DocumentFactory;
+			expect( target ).toBeDefined();
+		} );
 
 	} );
 
@@ -920,11 +587,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 		"CarbonLDP.DocumentFactory",
 		"Constant that implements the `CarbonLDP.DocumentFactory` interface."
 	), ():void => {
-
-		let context:AbstractContext<any, any>;
-		beforeEach( ():void => {
-			context = createMockContext( { uri: "http://example.com/" } );
-		} );
 
 		it( isDefined(), ():void => {
 			expect( Document ).toBeDefined();
@@ -941,21 +603,19 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			let object:typeof Document.PROTOTYPE;
 			beforeEach( ():void => {
-				object = {
+				object = createNonEnumerable<typeof Document.PROTOTYPE>( {
 					created: null,
 					modified: null,
 					accessPoints: null,
+					contains: null,
 
+					__savedFragments: [],
+					_syncSavedFragments: ():any => {},
+
+					_syncSnapshot: ():any => {},
 					isDirty: ():any => {},
 					revert: ():any => {},
-
-					get: ():any => {},
-					resolve: ():any => {},
-
-					refresh: ():any => {},
-					save: ():any => {},
-					saveAndRefresh: ():any => {},
-				};
+				} );
 			} );
 
 
@@ -977,6 +637,11 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( Document.isDecorated( object ) ).toBe( true );
 			} );
 
+			it( "should return true when no contains", ():void => {
+				delete object.contains;
+				expect( Document.isDecorated( object ) ).toBe( true );
+			} );
+
 			it( "should return true when no created", ():void => {
 				delete object.created;
 				expect( Document.isDecorated( object ) ).toBe( true );
@@ -988,6 +653,22 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
+			it( "should return false when no __savedFragments", ():void => {
+				delete object.__savedFragments;
+				expect( Document.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false when no _syncSavedFragments", ():void => {
+				delete object._syncSavedFragments;
+				expect( Document.isDecorated( object ) ).toBe( false );
+			} );
+
+
+			it( "should return false when no _syncSnapshot", ():void => {
+				delete object._syncSnapshot;
+				expect( Document.isDecorated( object ) ).toBe( false );
+			} );
+
 			it( "should return false when no isDirty", ():void => {
 				delete object.isDirty;
 				expect( Document.isDecorated( object ) ).toBe( false );
@@ -995,22 +676,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return false when no revert", ():void => {
 				delete object.revert;
-				expect( Document.isDecorated( object ) ).toBe( false );
-			} );
-
-
-			it( "should return false when no refresh", ():void => {
-				delete object.refresh;
-				expect( Document.isDecorated( object ) ).toBe( false );
-			} );
-
-			it( "should return false when no save", ():void => {
-				delete object.save;
-				expect( Document.isDecorated( object ) ).toBe( false );
-			} );
-
-			it( "should return false when no saveAndRefresh", ():void => {
-				delete object.saveAndRefresh;
 				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
@@ -1024,62 +689,89 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			let isCRUDDocument:jasmine.Spy;
-			let isMembersDocument:jasmine.Spy;
-			let isSPARQLDocument:jasmine.Spy;
-			let isMessagingDocument:jasmine.Spy;
-			let isQueryDocumentDocument:jasmine.Spy;
+			let isTransientDocument:jasmine.Spy;
+			let isQueryableDocumentTrait:jasmine.Spy;
+			let isSPARQLDocumentTrait:jasmine.Spy;
+			let isEventEmitterDocumentTrait:jasmine.Spy;
+			let isSelfDecorated:jasmine.Spy;
 			beforeEach( ():void => {
-				isCRUDDocument = spyOn( CRUDDocument, "is" )
+				isTransientDocument = spyOn( TransientDocument, "is" )
 					.and.returnValue( true );
-				isMembersDocument = spyOn( MembersDocument, "isDecorated" )
+				isQueryableDocumentTrait = spyOn( QueryableDocumentTrait, "isDecorated" )
 					.and.returnValue( true );
-				isSPARQLDocument = spyOn( SPARQLDocumentTrait, "isDecorated" )
+				isSPARQLDocumentTrait = spyOn( SPARQLDocumentTrait, "isDecorated" )
 					.and.returnValue( true );
-				isMessagingDocument = spyOn( EventEmitterDocumentTrait, "isDecorated" )
-					.and.returnValue( true );
-				isQueryDocumentDocument = spyOn( QueryDocumentDocument, "isDecorated" )
-					.and.returnValue( true );
-			} );
-
-			it( "should assert that is a CURDDocument", ():void => {
-				Document.is( { the: "document" } );
-				expect( isCRUDDocument ).toHaveBeenCalledWith( { the: "document" } );
-			} );
-
-			it( "should assert that is a MembersDocument", ():void => {
-				Document.is( { the: "document" } );
-				expect( isMembersDocument ).toHaveBeenCalledWith( { the: "document" } );
-			} );
-
-			it( "should assert that is SPARQLDocument", ():void => {
-				Document.is( { the: "document" } );
-				expect( isSPARQLDocument ).toHaveBeenCalledWith( { the: "document" } );
-			} );
-
-			it( "should assert that is MessagingDocument", ():void => {
-				Document.is( { the: "document" } );
-				expect( isMessagingDocument ).toHaveBeenCalledWith( { the: "document" } );
-			} );
-
-			it( "should assert that is QueryDocumentDocument", ():void => {
-				Document.is( { the: "document" } );
-				expect( isQueryDocumentDocument ).toHaveBeenCalledWith( { the: "document" } );
-			} );
-
-			it( "should assert is been decorated", ():void => {
-				const spy:jasmine.Spy = spyOn( Document, "isDecorated" );
-
-				Document.is( { the: "document" } );
-				expect( spy ).toHaveBeenCalledWith( { the: "document" } );
-			} );
-
-			it( "should return true when all assertions passed", ():void => {
-				spyOn( Document, "isDecorated" )
+				isEventEmitterDocumentTrait = spyOn( EventEmitterDocumentTrait, "isDecorated" )
 					.and.returnValue( true );
 
+				isSelfDecorated = spyOn( Document, "isDecorated" )
+					.and.returnValue( true );
+			} );
+
+			it( "should assert that is a TransientDocument", ():void => {
+				Document.is( { the: "document" } );
+				expect( isTransientDocument ).toHaveBeenCalledWith( { the: "document" } );
+			} );
+
+			it( "should assert that is a QueryableDocumentTrait", ():void => {
+				Document.is( { the: "document" } );
+				expect( isQueryableDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
+			} );
+
+			it( "should assert that is a SPARQLDocumentTrait", ():void => {
+				Document.is( { the: "document" } );
+				expect( isSPARQLDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
+			} );
+
+			it( "should assert that is a EventEmitterDocumentTrait", ():void => {
+				Document.is( { the: "document" } );
+				expect( isEventEmitterDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
+			} );
+
+			it( "should assert is decorated", ():void => {
+				Document.is( { the: "document" } );
+				expect( isSelfDecorated ).toHaveBeenCalledWith( { the: "document" } );
+			} );
+
+
+			it( "should return true when all assertions", ():void => {
 				const returned:boolean = Document.is( { the: "document" } );
 				expect( returned ).toBe( true );
+			} );
+
+			it( "should return false if not a TransientDocument", ():void => {
+				isTransientDocument.and.returnValue( false );
+
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( false );
+			} );
+
+			it( "should return false if not a QueryableDocumentTrait", ():void => {
+				isQueryableDocumentTrait.and.returnValue( false );
+
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( false );
+			} );
+
+			it( "should return false if not a SPARQLDocumentTrait", ():void => {
+				isSPARQLDocumentTrait.and.returnValue( false );
+
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( false );
+			} );
+
+			it( "should return false if not a EventEmitterDocumentTrait", ():void => {
+				isEventEmitterDocumentTrait.and.returnValue( false );
+
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( false );
+			} );
+
+			it( "should return false if not decorated", ():void => {
+				isSelfDecorated.and.returnValue( false );
+
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( false );
 			} );
 
 		} );
@@ -1092,20 +784,82 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should decorate self properties", ():void => {
-				const resource:Document = Document.decorate( {} );
-				expect( Document.isDecorated( resource ) ).toBe( true );
+			it( "should call ModelDecorator.definePropertiesFrom with PROTOTYPE", () => {
+				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" )
+					.and.callThrough();
+
+				Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
+					the: "object",
+				} );
+
+				expect( spy ).toHaveBeenCalledWith( Document.PROTOTYPE, { the: "object" } );
 			} );
 
-			it( "should decorate fully properties", ():void => {
-				const resource:Document = Document.decorate( {} );
-				expect( Document.is( resource ) ).toBe( true );
+			it( "should no call ModelDecorator.definePropertiesFrom when already decorated", () => {
+				spyOn( Document, "isDecorated" )
+					.and.returnValue( true );
+
+				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
+
+				Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
+				} );
+
+				expect( spy ).not.toHaveBeenCalled();
 			} );
 
-			it( "should return same object reference", ():void => {
-				const object:object = { the: "object" };
-				const resource:Document = Document.decorate( object );
-				expect( object ).toBe( resource );
+
+			it( "should decorate with QueryableDocumentTrait", () => {
+				const spy:jasmine.Spy = spyOn( QueryableDocumentTrait, "decorate" )
+					.and.callThrough();
+
+				Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
+					the: "object",
+				} );
+
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should decorate with SPARQLDocumentTrait", () => {
+				const spy:jasmine.Spy = spyOn( SPARQLDocumentTrait, "decorate" )
+					.and.callThrough();
+
+				Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
+					the: "object",
+				} );
+
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should decorate with EventEmitterDocumentTrait", () => {
+				const spy:jasmine.Spy = spyOn( EventEmitterDocumentTrait, "decorate" )
+					.and.callThrough();
+
+				Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
+					the: "object",
+				} );
+
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+
+			it( "should add __modelDecorator as FragmentFactory", () => {
+				const document:Document = Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
+					the: "object",
+				} );
+
+				expect( document.__modelDecorator ).toBe( Fragment );
 			} );
 
 		} );
