@@ -21,7 +21,7 @@ export class QueryContextBuilder extends QueryContext {
 	private _propertiesMap:Map<string, QueryProperty>;
 	private _schemas:DigestedObjectSchema[];
 
-	constructor( context?:AbstractContext<any, any> ) {
+	constructor( context?:AbstractContext<any, any, any> ) {
 		super( context );
 		this._propertiesMap = new Map();
 	}

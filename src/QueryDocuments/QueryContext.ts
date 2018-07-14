@@ -1,29 +1,25 @@
 import { isPrefixed } from "sparqler/iri";
-import {
-	IRIToken,
-	PrefixedNameToken,
-	PrefixToken
-} from "sparqler/tokens";
+import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
-import { AbstractContext } from "../Context";
-import { IllegalArgumentError } from "../Errors";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaResolver,
-} from "../ObjectSchema";
-import { Pointer } from "../Pointer";
+import { Context } from "../Context/Context";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
+
 import { QueryVariable } from "./QueryVariable";
 
 
 export class QueryContext implements ObjectSchemaResolver {
-	readonly context?:AbstractContext<Pointer, any>;
+	readonly context?:Context;
 
 	private _variablesCounter:number;
 	private _variablesMap:Map<string, QueryVariable>;
 
 	private _prefixesMap:Map<string, PrefixToken>;
 
-	constructor( context?:AbstractContext<Pointer, any> ) {
+	constructor( context?:Context ) {
 		this.context = context;
 
 		this._variablesCounter = 0;
@@ -41,8 +37,8 @@ export class QueryContext implements ObjectSchemaResolver {
 	}
 
 	serializeLiteral( type:string, value:any ):string {
-		if( ! this.context || ! this.context.registry.jsonldConverter.literalSerializers.has( type ) ) return "" + value;
-		return this.context.registry.jsonldConverter.literalSerializers.get( type ).serialize( value );
+		if( ! this.context || ! this.context.jsonldConverter.literalSerializers.has( type ) ) return "" + value;
+		return this.context.jsonldConverter.literalSerializers.get( type ).serialize( value );
 	}
 
 	compactIRI( iri:string ):IRIToken | PrefixedNameToken {

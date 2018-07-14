@@ -1,14 +1,13 @@
-import { JSONLDConverter } from "../JSONLD";
-import {
-	DigestedObjectSchema,
-	ObjectSchema,
-} from "../ObjectSchema";
-import {
-	GeneralRegistry,
-	RegisteredPointer
-} from "../Registry";
-import { ResolvablePointer } from "../Repository";
+import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import { GeneralRepository } from "../GeneralRepository/GeneralRepository";
+
+import { JSONLDConverter } from "../JSONLD/Converter";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { RegisteredPointer } from "../Registry";
+import { ResolvablePointer } from "../Repository";
 
 
 export interface Context<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer> {

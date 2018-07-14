@@ -1,5 +1,6 @@
 import { Document } from "../Document";
 import { IllegalArgumentError } from "../Errors";
+import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver,
@@ -20,7 +21,6 @@ import {
 	RDFNode,
 } from "../RDF";
 import {
-	GeneralRegistry,
 	RegisteredPointer,
 	Registry
 } from "../Registry";
@@ -57,7 +57,9 @@ export class JSONLDCompacter {
 		return this.compactDocuments<T>( rdfDocuments )[ 0 ];
 	}
 
-	compactDocuments<T extends object>( rdfDocuments:RDFDocument[], mainDocuments:RDFDocument[] = rdfDocuments ):(T & Document)[] {
+	compactDocuments<T extends object>( rdfDocuments:RDFDocument[], mainDocuments?:RDFDocument[] ):(T & Document)[] {
+		if( ! mainDocuments || ! mainDocuments.length ) mainDocuments = rdfDocuments;
+
 		rdfDocuments.forEach( rdfDocument => {
 			const [ documentNodes, fragmentNodes ] = RDFDocument.getNodes( rdfDocument );
 
@@ -205,7 +207,7 @@ export class JSONLDCompacter {
 	private _setOrRemovePartial( resource:QueryablePointer, schema:DigestedObjectSchema, path:string ):boolean {
 		if( this._willBePartial( resource, schema, path ) ) return true;
 
-		if( resource._queryableMetadata ) delete resource._queryableMetadata;
+		if( resource._queryableMetadata ) resource._queryableMetadata = void 0;
 		return false;
 	}
 

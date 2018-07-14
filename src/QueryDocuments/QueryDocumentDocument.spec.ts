@@ -1620,14 +1620,6 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentDocument" ), ():void =>
 					} );
 				} );
 
-				it( "should add authentication header", async () => {
-					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
-
-					resource.resolve( _ => _ );
-
-					expect( spy ).toHaveBeenCalled();
-				} );
-
 				it( "should add custom headers", async () => {
 					stubRequest( "https://example.com/" );
 
