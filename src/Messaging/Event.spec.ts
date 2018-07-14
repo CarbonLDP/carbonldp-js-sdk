@@ -25,11 +25,6 @@ describe( module( "carbonldp/Messaging/Event" ), ():void => {
 			expect( MessagingEvent.Event.CHILD_CREATED ).toBe( "child.created" );
 		} );
 
-		it( hasEnumeral( "DOCUMENT_CREATED" ), ():void => {
-			expect( MessagingEvent.Event.DOCUMENT_CREATED ).toBeDefined();
-			expect( MessagingEvent.Event.DOCUMENT_CREATED ).toBe( "*.created" );
-		} );
-
 		it( hasEnumeral( "DOCUMENT_MODIFIED" ), ():void => {
 			expect( MessagingEvent.Event.DOCUMENT_MODIFIED ).toBeDefined();
 			expect( MessagingEvent.Event.DOCUMENT_MODIFIED ).toBe( "document.modified" );

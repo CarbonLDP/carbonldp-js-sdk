@@ -1,5 +1,4 @@
 import { ChildCreated } from "../../Messaging/ChildCreated";
-import { DocumentCreated } from "../../Messaging/DocumentCreated";
 import { DocumentDeleted } from "../../Messaging/DocumentDeleted";
 import { DocumentModified } from "../../Messaging/DocumentModified";
 import { Event } from "../../Messaging/Event";
@@ -31,8 +30,6 @@ export interface EventEmitterDocumentTrait extends TransientDocument, Resolvable
 
 	on( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
 	on( event:Event.CHILD_CREATED, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
-	on( event:Event.DOCUMENT_CREATED, uriPattern:string, onEvent:( message:DocumentCreated ) => void, onError?:( error:Error ) => void ):void;
-	on( event:Event.DOCUMENT_CREATED, onEvent:( message:DocumentCreated ) => void, onError?:( error:Error ) => void ):void;
 	on( event:Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
 	on( event:Event.DOCUMENT_MODIFIED, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
 	on( event:Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:DocumentDeleted ) => void, onError?:( error:Error ) => void ):void;
@@ -46,8 +43,6 @@ export interface EventEmitterDocumentTrait extends TransientDocument, Resolvable
 
 	off( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
 	off( event:Event.CHILD_CREATED, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
-	off( event:Event.DOCUMENT_CREATED, uriPattern:string, onEvent:( message:DocumentCreated ) => void, onError?:( error:Error ) => void ):void;
-	off( event:Event.DOCUMENT_CREATED, onEvent:( message:DocumentCreated ) => void, onError?:( error:Error ) => void ):void;
 	off( event:Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
 	off( event:Event.DOCUMENT_MODIFIED, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
 	off( event:Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:DocumentDeleted ) => void, onError?:( error:Error ) => void ):void;
@@ -61,8 +56,6 @@ export interface EventEmitterDocumentTrait extends TransientDocument, Resolvable
 
 	one( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
 	one( event:Event.CHILD_CREATED, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
-	one( event:Event.DOCUMENT_CREATED, uriPattern:string, onEvent:( message:DocumentCreated ) => void, onError?:( error:Error ) => void ):void;
-	one( event:Event.DOCUMENT_CREATED, onEvent:( message:DocumentCreated ) => void, onError?:( error:Error ) => void ):void;
 	one( event:Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
 	one( event:Event.DOCUMENT_MODIFIED, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
 	one( event:Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:DocumentDeleted ) => void, onError?:( error:Error ) => void ):void;
@@ -77,9 +70,6 @@ export interface EventEmitterDocumentTrait extends TransientDocument, Resolvable
 
 	onChildCreated( uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
 	onChildCreated( onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
-
-	onDocumentCreated( uriPattern:string, onEvent:( message:DocumentCreated ) => void, onError?:( error:Error ) => void ):void;
-	onDocumentCreated( onEvent:( message:DocumentCreated ) => void, onError?:( error:Error ) => void ):void;
 
 	onDocumentModified( uriPattern:string, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
 	onDocumentModified( onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
@@ -136,10 +126,6 @@ export const EventEmitterDocumentTrait:EventEmitterDocumentTraitFactory = {
 
 		onChildCreated( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<ChildCreated>, onEventOrOnError:OnEvent<ChildCreated> | OnError, onError?:OnError ):void {
 			return this.on( Event.CHILD_CREATED, uriPatternOROnEvent as string, onEventOrOnError as OnEvent<ChildCreated>, onError );
-		},
-
-		onDocumentCreated( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<DocumentCreated>, onEventOrOnError:OnEvent<DocumentCreated> | OnError, onError?:OnError ):void {
-			return this.on( Event.DOCUMENT_CREATED, uriPatternOROnEvent as string, onEventOrOnError as OnEvent<DocumentCreated>, onError );
 		},
 
 		onDocumentModified( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<DocumentModified>, onEventOrOnError:OnEvent<DocumentModified> | OnError, onError?:OnError ):void {

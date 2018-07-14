@@ -28,7 +28,6 @@ import {
 	DocumentModifiedFactory,
 } from "./DocumentModified";
 import { Event } from "./Event";
-import { EventEmitterDocumentTrait } from "../Document/Traits/EventEmitterDocumentTrait";
 import {
 	EventMessage,
 	EventMessageFactory,
@@ -85,15 +84,6 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 	), ():void => {
 		const target:Messaging.ChildCreatedFactory = {} as ChildCreatedFactory;
 		expect( target ).toBeDefined();
-	} );
-
-	it( reexports(
-		STATIC,
-		"MessagingDocument",
-		"CarbonLDP.Messaging.MessagingDocument"
-	), ():void => {
-		expect( Messaging.EventEmitterDocumentTrait ).toBeDefined();
-		expect( Messaging.EventEmitterDocumentTrait ).toBe( EventEmitterDocumentTrait );
 	} );
 
 	it( reexports(

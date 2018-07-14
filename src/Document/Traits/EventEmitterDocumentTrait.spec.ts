@@ -119,25 +119,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			it( hasSignature(
 				"Subscribe to the specified document event notifications.",
 				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for its notifications." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to the specified uri pattern event notifications.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for its notifications." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to the specified document event notifications.",
-				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for its notifications." },
 					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
@@ -304,25 +285,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 					{ name: "event", type: "CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
 					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Remove a subscription that contains the document event and onEvent callback provided.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Remove the subscription specified by the uri pattern, event and onEvent callback provided.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event of the subscription to remove." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -497,25 +459,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 					{ name: "event", type: "CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED", description: "The event to subscribe for one notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
 					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to only one notification to the document event provided",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for one notification." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to only one notification to the uri pattern and event provided",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for one notification." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -708,63 +651,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 
 				resource.onChildCreated( "relative/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/resource/relative/", onEvent, onError );
-			} );
-
-		} );
-
-		describe( method( OBLIGATORY, "onDocumentCreated" ), ():void => {
-
-			it( hasSignature(
-				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_CREATED` event notifications for the document.",
-				[
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_CREATED` event notifications for the uri pattern specified.",
-				[
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( "should exists", ():void => {
-				expect( resource.onDocumentCreated ).toBeDefined();
-				expect( resource.onDocumentCreated ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			let spy:jasmine.Spy;
-			beforeEach( ():void => {
-				spy = spyOnDecorated( $repository, "on" );
-			} );
-
-
-			it( "should call repository with resource $id when no pattern", () => {
-				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
-				const onError:( error:Error ) => void = fail;
-
-				resource.onDocumentCreated( onEvent, onError );
-				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_CREATED, "https://example.com/resource/", onEvent, onError );
-			} );
-
-			it( "should call repository with absolute pattern", () => {
-				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
-				const onError:( error:Error ) => void = fail;
-
-				resource.onDocumentCreated( "https://example.com/another-resource/", onEvent, onError );
-				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_CREATED, "https://example.com/another-resource/", onEvent, onError );
-			} );
-
-			it( "should call repository with resolved relative pattern", () => {
-				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
-				const onError:( error:Error ) => void = fail;
-
-				resource.onDocumentCreated( "relative/", onEvent, onError );
-				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_CREATED, "https://example.com/resource/relative/", onEvent, onError );
 			} );
 
 		} );

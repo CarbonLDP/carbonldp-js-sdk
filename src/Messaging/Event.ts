@@ -1,6 +1,5 @@
 export enum Event {
 	CHILD_CREATED = "child.created",
-	DOCUMENT_CREATED = "*.created",
 	DOCUMENT_MODIFIED = "document.modified",
 	DOCUMENT_DELETED = "document.deleted",
 	MEMBER_ADDED = "member.added",
