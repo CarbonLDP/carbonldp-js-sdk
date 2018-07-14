@@ -74,7 +74,7 @@ export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositor
 
 	resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
 	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	resolve<T extends object>( document:Document, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 
 	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;

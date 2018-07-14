@@ -1355,8 +1355,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ) );
 
 				expect( returned.property2._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				// Map( [ 'property3', DigestedObjectSchemaProperty({ uri: 'https://schema.org/property-3', literal: true, literalType: 'http://www.w3.org/2001/XMLSchema#string', pointerType: null, containerType: null }) ], [ 'property5', DigestedObjectSchemaProperty({ uri: 'https://schema.org/property-5', literal: true, literalType: 'http://www.w3.org/2001/XMLSchema#dateTime', pointerType: null, containerType: null }) ] )
-				// Map( [ 'property3', DigestedObjectSchemaProperty({ uri: 'https://schema.org/property-3', literal: true, literalType: 'http://www.w3.org/2001/XMLSchema#string', pointerType: null, containerType: null }) ], [ 'property5', DigestedObjectSchemaProperty({ uri: 'https://schema.org/property-5', literal: true, literalType: 'http://www.w3.org/2001/XMLSchema#dateTime', pointerType: null, containerType: null }) ], [ 'property2', DigestedObjectSchemaProperty({ uri: 'https://example.com/ns#property-2', literal: true, literalType: 'http://www.w3.org/2001/XMLSchema#integer', pointerType: null, containerType: null }) ] )
 				expect( returned.property2._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property3": {
 						"@id": "https://schema.org/property-3",

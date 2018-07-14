@@ -3,10 +3,12 @@ import { DocumentsContext } from "../Context/DocumentsContext";
 import { Document } from "../Document/Document";
 
 import { GETOptions, RequestOptions } from "../HTTP/Request";
+
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 
 import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
+
 import { BaseDocumentsRepository } from "./BaseDocumentsRepository";
 
 import { EventEmitterDocumentsRepositoryTrait } from "./Traits/EventEmitterDocumentsRepositoryTrait";
@@ -21,8 +23,9 @@ export interface DocumentsRepository extends QueryableDocumentsRepositoryTrait, 
 	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
+	resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
 	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	resolve<T extends object>( document:Document, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
