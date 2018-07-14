@@ -15,8 +15,6 @@ import { ModelPrototype } from "../../Model/ModelPrototype";
 import { RegisteredPointer } from "../../Registry/RegisteredPointer";
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 
-import { _getNotInContextMessage } from "../Utils";
-
 
 export interface HTTPRepositoryTrait<MODEL extends ResolvablePointer = ResolvablePointer> extends GeneralRepository<MODEL> {
 	readonly $context:Context<MODEL & RegisteredPointer, MODEL>;
@@ -54,7 +52,7 @@ export type GeneralRepositoryFactory =
 export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 	PROTOTYPE: {
 		get<T extends object>( this:HTTPRepositoryTrait, uri:string, requestOptions?:GETOptions ):Promise<T & ResolvablePointer> {
-			if( this.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+			if( ! this.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.$context.resolve( uri );
 
 			if( this.$context.registry.hasPointer( url, true ) ) {
@@ -68,7 +66,7 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 			return RequestService
 				.get( url, requestOptions )
 				.then( ( response:Response ) => {
-					return this._parseResponseData<T>( response, uri );
+					return this._parseResponseData<T>( response, url );
 				} );
 		},
 
@@ -77,14 +75,14 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 		},
 
 		exists( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<boolean> {
-			if( this.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+			if( ! this.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.$context.resolve( uri );
 
 			return RequestService
 				.head( url, requestOptions )
 				.then( () => true )
-				.catch<boolean>( ( error:HTTPError ) => {
-					if( error.response.status === 404 ) return false;
+				.catch<boolean>( ( error:HTTPError | Error ) => {
+					if( "response" in error && error.response.status === 404 ) return false;
 					return Promise.reject( error );
 				} );
 		},
@@ -93,7 +91,7 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 		refresh<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
 			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
 
-			if( this.$context.registry.inScope( resource.$id ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( resource.$id ) ) );
+			if( ! this.$context.registry.inScope( resource.$id, true ) ) return Promise.reject( new IllegalArgumentError( `"${ resource.$id }" is out of scope.` ) );
 			const url:string = this.$context.resolve( resource.$id );
 
 			return RequestService
@@ -101,8 +99,8 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 				.then<T & ResolvablePointer>( ( response:Response ) => {
 					return this._parseResponseData<T>( response, url );
 				} )
-				.catch<T & ResolvablePointer>( ( error:HTTPError ) => {
-					if( error.response.status === 304 ) return resource as T & ResolvablePointer;
+				.catch<T & ResolvablePointer>( ( error:HTTPError | Error ) => {
+					if( "response" in error && error.response.status === 304 ) return resource as T & ResolvablePointer;
 					return Promise.reject( error );
 				} )
 				;
@@ -111,7 +109,7 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 		save<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
 			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
 
-			if( this.$context.registry.inScope( resource.$id ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( resource.$id ) ) );
+			if( ! this.$context.registry.inScope( resource.$id, true ) ) return Promise.reject( new IllegalArgumentError( `"${ resource.$id }" is out of scope.` ) );
 			const url:string = this.$context.resolve( resource.$id );
 
 			if( ! resource.isDirty() ) return Promise.resolve( resource as T & ResolvablePointer );
@@ -131,14 +129,14 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 
 
 		delete( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<void> {
-			if( this.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+			if( ! this.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.$context.resolve( uri );
 
 			return RequestService
 				.delete( url, requestOptions )
 				.then( () => {
 					this.$context.registry.removePointer( url );
-				} );
+				} )
 		},
 
 

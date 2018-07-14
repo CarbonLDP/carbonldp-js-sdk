@@ -216,9 +216,9 @@ export const TransientDocument:TransientDocumentFactory = {
 		if( TransientDocument.isDecorated( object ) ) return object;
 
 		type Base = T & BaseRegistry;
-		const base:Base = Object.assign<T, BaseRegistry>( object, {
+		const base:Base = ModelDecorator.definePropertiesFrom( {
 			__modelDecorator: TransientFragment,
-		} );
+		}, object );
 
 		const resource:Base & Resource & Registry<TransientFragment> = ModelDecorator
 			.decorateMultiple( base, Resource, Registry );

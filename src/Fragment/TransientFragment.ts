@@ -50,7 +50,7 @@ export const TransientFragment:TransientFragmentFactory = {
 		},
 		set $id( this:TransientFragment, value:string ) {
 			if( URI.isBNodeID( value ) ) this.$slug = value;
-			this.$slug = URI.getFragment( value );
+			else this.$slug = URI.getFragment( value );
 		},
 
 		get $document( this:TransientFragment ):TransientDocument {

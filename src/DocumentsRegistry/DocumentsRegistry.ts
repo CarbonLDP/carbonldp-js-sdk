@@ -1,13 +1,17 @@
 import { DocumentsContext } from "../Context/DocumentsContext";
 
 import { Document } from "../Document/Document";
-import { BaseGeneralRegistry } from "../GeneralRegistry/BaseGeneralRegistry";
 
+import { BaseGeneralRegistry } from "../GeneralRegistry/BaseGeneralRegistry";
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
+
+import { URI } from "../RDF/URI";
+
+import { Registry } from "../Registry/Registry";
 
 import { BaseDocumentsRegistry } from "./BaseDocumentsRegistry";
 
@@ -20,7 +24,7 @@ export interface DocumentsRegistry extends GeneralRegistry<Document> {
 
 
 export type DocumentsRegistryFactory =
-	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>>
+	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>, "_getLocalID">
 	& ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry>
 	& ModelFactory<DocumentsRegistry, BaseDocumentsRegistry>
 	;
@@ -29,6 +33,11 @@ export const DocumentsRegistry:DocumentsRegistryFactory = {
 	PROTOTYPE: {
 		register( this:DocumentsRegistry, id:string ):Document {
 			return this.getPointer( id, true );
+		},
+
+		_getLocalID( this:DocumentsRegistry, id:string ):string {
+			if( URI.hasFragment( id ) ) Registry.PROTOTYPE._getLocalID.call( this, id );
+			return GeneralRegistry.PROTOTYPE._getLocalID.call( this, id );
 		},
 	},
 

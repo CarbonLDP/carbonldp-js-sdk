@@ -7,7 +7,6 @@ import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 
 import { FreeResources } from "../../FreeResources/FreeResources";
 
-import { HTTPError } from "../../HTTP/Errors/HTTPError";
 import { BadResponseError } from "../../HTTP/Errors/ServerErrors/BadResponseError";
 
 import { Header } from "../../HTTP/Header";
@@ -18,7 +17,6 @@ import { JSONLDCompacter } from "../../JSONLD/JSONLDCompacter";
 import { JSONLDParser } from "../../JSONLD/Parser";
 
 import { AddMemberAction } from "../../LDP/AddMemberAction";
-import { ErrorResponse } from "../../LDP/ErrorResponse";
 import { Map } from "../../LDP/Map";
 import { RemoveMemberAction } from "../../LDP/RemoveMemberAction";
 import { ResponseMetadata } from "../../LDP/ResponseMetadata";
@@ -42,7 +40,7 @@ import { C } from "../../Vocabularies/C";
 import { LDP } from "../../Vocabularies/LDP";
 
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
-import { _getNotInContextMessage } from "../Utils";
+import { _getErrorResponseParserFn } from "../Utils";
 
 import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
 
@@ -52,7 +50,7 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
 
-	resolve<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
 
 
 	create<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
@@ -78,12 +76,13 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 
 	addMember( uri:string, member:(string | Pointer), requestOptions?:RequestOptions ):Promise<void>;
 
-	addMembers( uri:string, member:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	addMembers( uri:string, members:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
 
 
 	removeMember( uri:string, member:(string | Pointer), requestOptions?:RequestOptions ):Promise<void>;
 
-	removeMembers( uri:string, member?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	removeMembers( uri:string, members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	removeMembers( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 
 
 	_parseResponseData<T extends object>( response:Response, id:string ):Promise<T & Document>;
@@ -108,6 +107,10 @@ function __getTargetID( id:string, response:Response ):string {
 	return locationString;
 }
 
+function __getErrorResponseParserFnFrom( repository:LDPDocumentsRepositoryTrait ):ReturnType<typeof _getErrorResponseParserFn> {
+	return _getErrorResponseParserFn( repository.$context.registry );
+}
+
 
 function __changeNodesID( resource:Registry, map:Map<Pointer, Pointer> ):void {
 	map
@@ -126,7 +129,7 @@ function __changeNodesID( resource:Registry, map:Map<Pointer, Pointer> ):void {
 
 function __applyResponseMetadata( repository:LDPDocumentsRepositoryTrait, freeNodes:RDFNode[] ):void {
 	if( ! freeNodes.length ) return;
-	const freeResources:FreeResources = repository._parseFreeNodes( freeNodes );
+	const freeResources:FreeResources = FreeResources.parseFreeNodes( repository.$context.registry, freeNodes );
 
 	const responseMetadata:ResponseMetadata = freeResources
 		.getPointers( true )
@@ -197,12 +200,12 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 		} )
 		.catch( ( error ) => {
 			delete transient[ "__CarbonLDP_persisting__" ];
-			return repository._parseFailedResponse( error );
+			return __getErrorResponseParserFnFrom( repository )( error );
 		} );
 }
 
 function __createChildren<T extends object>( this:void, retrievalType:"minimal" | "representation", repository:LDPDocumentsRepositoryTrait, uri:string, children:T | T[], slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
-	if( repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.$context.resolve( uri );
 
 	requestOptions = RequestUtils.isOptions( slugsOrOptions ) ?
@@ -220,25 +223,25 @@ function __createChildren<T extends object>( this:void, retrievalType:"minimal" 
 
 
 	if( ! Array.isArray( children ) ) {
-		if( __isInvalidChild( children ) ) return Promise.reject( new IllegalArgumentError( `The object is an already resolvable pointer.` ) );
+		if( __isInvalidChild( children ) ) return Promise.reject( new IllegalArgumentError( `The object is already a resolvable pointer.` ) );
 		if( __isPersistingChild( children ) ) return Promise.reject( new IllegalArgumentError( `The object is already being persisted.` ) );
 
-		return __createChild<T>( repository, url, requestOptions, children, slugs.toString() );
+		return __createChild<T>( repository, url, requestOptions, children, slugs ? slugs.toString() : null );
 	}
 
 
-	const invalidChild:number | undefined = children
+	const invalidChild:number = children
 		.findIndex( child => __isInvalidChild( child ) );
-	if( invalidChild !== void 0 ) return Promise.reject( new IllegalArgumentError( `The object "${ invalidChild }" is an already resolvable pointer.` ) );
+	if( invalidChild !== -1 ) return Promise.reject( new IllegalArgumentError( `The object in "${ invalidChild }" is already a resolvable pointer.` ) );
 
-	const persistingChild:number | undefined = children
+	const persistingChild:number = children
 		.findIndex( child => __isPersistingChild( child ) );
-	if( persistingChild !== void 0 ) return Promise.reject( new IllegalArgumentError( `The object "${ persistingChild }" is already being persisted.` ) );
+	if( persistingChild !== -1 ) return Promise.reject( new IllegalArgumentError( `The object in "${ persistingChild }" is already being persisted.` ) );
 
 	const promises:Promise<T & Document>[] = children.map( ( child, index ) => {
 		const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
 
-		const slug:string | undefined = index < slugs.length ? slugs[ index ] : void 0;
+		const slug:string | undefined = slugs && index < slugs.length ? slugs[ index ] : void 0;
 		return __createChild<T>( repository, url, cloneOptions, child, slug );
 	} );
 	return Promise.all( promises );
@@ -248,7 +251,7 @@ function __createChildren<T extends object>( this:void, retrievalType:"minimal" 
 function __sendPatch<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions ):Promise<T & Document> {
 	if( ! ResolvablePointer.is( document ) ) return Promise.reject( new IllegalArgumentError( "The document isn't a resolvable pointer." ) );
 
-	if( repository.$context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( document.$id ) ) );
+	if( ! repository.$context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( `"${ document.$id }" is out of scope.` ) );
 	const url:string = repository.$context.resolve( document.$id );
 
 	if( ! document.isDirty() ) return Promise.resolve( document as T & Document );
@@ -289,7 +292,7 @@ function __sendPatch<T extends object>( this:void, repository:LDPDocumentsReposi
 		.then( ( response:Response ) => {
 			return __applyResponseRepresentation<T>( repository, document, response );
 		} )
-		.catch( repository._parseFailedResponse.bind( document ) )
+		.catch( __getErrorResponseParserFnFrom( repository ) )
 		;
 }
 
@@ -305,10 +308,10 @@ function __parseMembers( registry:Registry, pointers:(string | Pointer)[] ):Poin
 }
 
 function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
-	if( repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.$context.resolve( uri );
 
-	__setDefaultRequestOptions( requestOptions );
+	__setDefaultRequestOptions( requestOptions, LDP.Container );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
 	const freeResources:FreeResources = FreeResources.createFrom( { $registry: repository.$context.registry } );
@@ -321,15 +324,15 @@ function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri
 	return RequestService
 		.put( url, body, requestOptions )
 		.then( () => {} )
-		.catch( repository._parseFailedResponse.bind( repository ) )
+		.catch( __getErrorResponseParserFnFrom( repository ) )
 		;
 }
 
 function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
-	if( repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+	if( ! repository.$context.registry.inScope( uri, true  ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.$context.resolve( uri );
 
-	__setDefaultRequestOptions( requestOptions );
+	__setDefaultRequestOptions( requestOptions, LDP.Container );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 	RequestUtils.setRetrievalPreferences( {
 		include: [ C.PreferSelectedMembershipTriples ],
@@ -346,15 +349,15 @@ function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, 
 	return RequestService
 		.delete( url, body, requestOptions )
 		.then( () => {} )
-		.catch( repository._parseFailedResponse.bind( repository ) )
+		.catch( __getErrorResponseParserFnFrom( repository ) )
 		;
 }
 
 function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<void> {
-	if( repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.$context.resolve( uri );
 
-	__setDefaultRequestOptions( requestOptions );
+	__setDefaultRequestOptions( requestOptions, LDP.Container );
 	RequestUtils.setRetrievalPreferences( {
 		include: [
 			C.PreferMembershipTriples,
@@ -370,7 +373,7 @@ function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri
 	return RequestService
 		.delete( url, requestOptions )
 		.then( () => {} )
-		.catch( repository._parseFailedResponse.bind( repository ) )
+		.catch( __getErrorResponseParserFnFrom( repository ) )
 		;
 }
 
@@ -381,7 +384,6 @@ export type OverriddenMembers =
 	| "save"
 	| "saveAndRefresh"
 	| "delete"
-	| "_parseFailedResponse"
 	| "_parseResponseData"
 	;
 
@@ -396,14 +398,16 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.get.call( this, uri, requestOptions );
+				.get.call( this, uri, requestOptions )
+				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
 		exists( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<boolean> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.exists.call( this, uri, requestOptions );
+				.exists.call( this, uri, requestOptions )
+				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
 
@@ -418,9 +422,11 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 
 		refresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
+			RequestUtils.setIfNoneMatchHeader( document.$eTag, requestOptions );
 
 			return HTTPRepositoryTrait.PROTOTYPE
 				.refresh.call( this, document, requestOptions )
+				.catch( __getErrorResponseParserFnFrom( this ) )
 				;
 		},
 
@@ -437,8 +443,11 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 
 		delete( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<void> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
+
 			return HTTPRepositoryTrait.PROTOTYPE
-				.delete.call( this, uri, requestOptions );
+				.delete.call( this, uri, requestOptions )
+				.catch( __getErrorResponseParserFnFrom( this ) )
+				;
 		},
 
 
@@ -455,21 +464,11 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 			return __sendRemoveAction( this, uri, [ member ], requestOptions );
 		},
 
-		removeMembers( this:LDPDocumentsRepositoryTrait, uri:string, members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void> {
-			if( members ) return __sendRemoveAction( this, uri, members, requestOptions );
-			return __sendRemoveAll( this, uri, requestOptions );
+		removeMembers( this:LDPDocumentsRepositoryTrait, uri:string, membersOrOptions?:(string | Pointer)[] | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
+			if( Array.isArray( membersOrOptions ) ) return __sendRemoveAction( this, uri, membersOrOptions, requestOptions );
+			return __sendRemoveAll( this, uri, membersOrOptions || requestOptions );
 		},
 
-
-		_parseFailedResponse( this:LDPDocumentsRepositoryTrait, response:Response | Error | null ):Promise<never> {
-			if( ! response || response instanceof Error ) return Promise.reject( response );
-
-			HTTPRepositoryTrait.PROTOTYPE
-				._parseFailedResponse( response )
-				.catch( ( error:HTTPError ) => {
-				} )
-			;
-		},
 
 		_parseResponseData<T extends object>( this:HTTPRepositoryTrait<Document>, response:Response, id:string ):Promise<T & Document> {
 			return __JSONLD_PARSER
@@ -485,6 +484,10 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 					const target:T & Document | undefined = documents.find( doc => doc.$id === id );
 
 					if( ! target ) throw new BadResponseError( `No document "${ id }" was returned.`, response );
+
+					target.$eTag = response.getETag();
+					target._resolved = true;
+
 					return target;
 				} )
 				;

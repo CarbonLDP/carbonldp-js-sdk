@@ -121,13 +121,9 @@ type ForcedMembers = {
 	removeFragment( slugOrFragment:string | Fragment ):boolean;
 };
 
-export type OverriddenMembers =
-	| "__modelDecorator"
-	;
-
 export type DocumentFactory =
 	& ModelSchema<C[ "Document" ]>
-	& ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, OverriddenMembers>
+	& ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait>
 	& ModelDecorator<Document, BaseResolvableDocument>
 	& ModelTypeGuard<Document>
 	& ModelFactory<TransientDocument, BaseDocument>
@@ -182,8 +178,6 @@ export const Document:DocumentFactory = {
 	},
 
 	PROTOTYPE: {
-		__modelDecorator: Fragment,
-
 		get __savedFragments():Fragment[] { return []; },
 
 		_syncSavedFragments( this:Document ):void {
@@ -219,11 +213,13 @@ export const Document:DocumentFactory = {
 	decorate<T extends BaseResolvableDocument>( object:T ):T & Document {
 		if( Document.isDecorated( object ) ) return object;
 
-		type ForcedT = T & ForcedMembers;
-		const forced:ForcedT = object as ForcedT;
+		type ForcedT = T & ForcedMembers & { __modelDecorator:ModelDecorator<Fragment> };
+		const base:ForcedT = Object.assign( object as T & ForcedMembers, {
+			__modelDecorator: Fragment,
+		} );
 
 		const target:ForcedT & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait = ModelDecorator
-			.decorateMultiple( forced, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait );
+			.decorateMultiple( base, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait );
 
 		return ModelDecorator
 			.definePropertiesFrom( Document.PROTOTYPE, target );

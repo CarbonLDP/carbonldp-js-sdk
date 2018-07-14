@@ -102,7 +102,7 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 		_getLocalID( this:GeneralRegistry, id:string ):string {
 			const uri:string = this.$context.resolve( id );
 
-			if( ! URI.isBaseOf( this.$context.baseURI, uri ) )
+			if( ! URI.isAbsolute( uri ) || ! URI.isBaseOf( this.$context.baseURI, uri ) )
 				throw new IllegalArgumentError( `"${ uri }" is out of scope.` );
 
 			return URI.getRelativeURI( uri, this.$context.baseURI );

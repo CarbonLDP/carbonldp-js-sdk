@@ -63,7 +63,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 		} );
 
 
-		xdescribe( method( OBLIGATORY, "get" ), ():void => {
+		describe( method( OBLIGATORY, "get" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
