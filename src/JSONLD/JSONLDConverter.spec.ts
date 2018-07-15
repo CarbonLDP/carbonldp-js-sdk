@@ -21,9 +21,9 @@ import * as Utils from "../Utils";
 import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
 
-import { JSONLDConverter } from "./Converter";
+import { JSONLDConverter } from "./JSONLDConverter";
 
-describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
+describe( module( "carbonldp/JSONLD/JSONLDConverter" ), ():void => {
 
 	describe( clazz( "CarbonLDP.JSONLD.JSONLDConverter", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
 

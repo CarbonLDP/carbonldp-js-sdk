@@ -21,9 +21,9 @@ import * as Utils from "./../Utils";
 import { SPARQLRawResults } from "./RawResults";
 import { SPARQLSelectResults } from "./SelectResults";
 
-import * as Service from "./Service";
+import * as Service from "./SPARQLService";
 
-describe( module( "carbonldp/SPARQL/Service" ), ():void => {
+describe( module( "carbonldp/SPARQL/SPARQLService" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Service ).toBeDefined();
 		expect( Utils.isObject( Service ) ).toEqual( true );

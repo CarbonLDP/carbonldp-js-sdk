@@ -24,7 +24,7 @@ import {
 	RegisteredPointer,
 	Registry
 } from "../Registry";
-import { JSONLDConverter } from "./Converter";
+import { JSONLDConverter } from "./JSONLDConverter";
 
 
 interface CompactionNode {

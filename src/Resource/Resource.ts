@@ -1,6 +1,6 @@
 import { Context } from "../Context/Context";
 
-import { JSONLDConverter } from "../JSONLD/Converter";
+import { JSONLDConverter } from "../JSONLD/JSONLDConverter";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";

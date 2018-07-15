@@ -6,9 +6,10 @@ import {
 	OPTIONAL
 } from "../test/JasmineExtender";
 
-import { MessagingOptions } from "./Options";
+import { MessagingOptions } from "./MessagingOptions";
 
-describe( module( "carbonldp/Messaging/Options" ), ():void => {
+
+describe( module( "carbonldp/Messaging/MessagingOptions" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.MessagingOptions",

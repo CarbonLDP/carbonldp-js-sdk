@@ -15,7 +15,7 @@ import { RDFNode } from "../RDF/Node";
 
 import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
-import { JSONLDConverter } from "./Converter";
+import { JSONLDConverter } from "./JSONLDConverter";
 import { JSONLDCompacter } from "./JSONLDCompacter";
 
 

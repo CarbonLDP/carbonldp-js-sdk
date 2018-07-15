@@ -1,17 +1,21 @@
 import SockJS from "sockjs-client";
 import * as webstomp from "webstomp-client";
-import {
-	Client,
-	Frame
-} from "webstomp-client";
-import { DocumentsContext } from "../Context";
-import { IllegalStateError } from "../Errors";
+
+import { DocumentsContext } from "../Context/DocumentsContext";
+
+import { IllegalStateError } from "../Errors/IllegalStateError";
+
 import { FreeResources } from "../FreeResources/FreeResources";
-import { JSONLDParser } from "../JSONLD";
-import { RDFNode } from "../RDF";
+
+import { JSONLDParser } from "../JSONLD/JSONLDParser";
+
+import { RDFNode } from "../RDF/Node";
+
 import { UUIDUtils } from "../Utils";
+
 import { EventMessage } from "./EventMessage";
-import { MessagingOptions } from "./Options";
+import { MessagingOptions } from "./MessagingOptions";
+
 
 const DEFAULT_OPTIONS:Readonly<MessagingOptions> = {
 	maxReconnectAttempts: 10,
@@ -28,7 +32,7 @@ export class MessagingService {
 
 	private _options:MessagingOptions;
 	private _attempts:number;
-	private _client?:Client;
+	private _client?:webstomp.Client;
 	private _subscriptionsMap:Map<string, Map<( data:EventMessage ) => void, Subscription>>;
 	private _subscriptionsQueue:Function[];
 
@@ -73,7 +77,7 @@ export class MessagingService {
 			this._attempts = 0;
 			if( onConnect ) onConnect();
 
-		}, ( errorFrameOrEvent:Frame | CloseEvent ) => {
+		}, ( errorFrameOrEvent:webstomp.Frame | CloseEvent ) => {
 			const canReconnect:boolean = this._options.maxReconnectAttempts === null || this._options.maxReconnectAttempts >= this._attempts;
 			let errorMessage:string;
 			if( "reason" in errorFrameOrEvent ) {

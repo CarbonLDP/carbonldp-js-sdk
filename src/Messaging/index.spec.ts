@@ -52,8 +52,8 @@ import {
 	MemberRemovedDetails,
 	MemberRemovedDetailsFactory,
 } from "./MemberRemovedDetails";
-import { MessagingOptions } from "./Options";
-import { MessagingService } from "./Service";
+import { MessagingOptions } from "./MessagingOptions";
+import { MessagingService } from "./MessagingService";
 import {
 	createDestination,
 	parseURIPattern,

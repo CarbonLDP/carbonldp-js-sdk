@@ -9,9 +9,9 @@ import * as Utils from "../Utils";
 import * as JSONLD from "./";
 
 import { JSONLDCompacter } from "./JSONLDCompacter";
-import { JSONLDConverter } from "./Converter";
-import { JSONLDParser } from "./Parser";
-import { JSONLDProcessor } from "./Processor";
+import { JSONLDConverter } from "./JSONLDConverter";
+import { JSONLDParser } from "./JSONLDParser";
+import { JSONLDProcessor } from "./JSONLDProcessor";
 
 describe( module( "carbonldp/JSONLD" ), ():void => {
 

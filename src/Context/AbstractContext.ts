@@ -3,7 +3,7 @@ import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import { GeneralRepository } from "../GeneralRepository/GeneralRepository";
 
-import { JSONLDConverter } from "../JSONLD/Converter";
+import { JSONLDConverter } from "../JSONLD/JSONLDConverter";
 
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";

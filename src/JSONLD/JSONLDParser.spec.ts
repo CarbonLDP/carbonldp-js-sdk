@@ -7,10 +7,10 @@ import {
 } from "../test/JasmineExtender";
 import * as Utils from "../Utils";
 
-import { JSONLDParser } from "./Parser";
+import { JSONLDParser } from "./JSONLDParser";
 
 describe( module(
-	"carbonldp/JSONLD/Parser"
+	"carbonldp/JSONLD/JSONLDParser"
 ), ():void => {
 
 	describe( clazz(

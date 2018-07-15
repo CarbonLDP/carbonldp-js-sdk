@@ -16,9 +16,10 @@ import {
 } from "../test/JasmineExtender";
 import { EventMessage } from "./EventMessage";
 
-import * as MessagingService from "./Service";
+import * as MessagingService from "./MessagingService";
 
-describe( module( "carbonldp/Messaging/Service" ), ():void => {
+
+describe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( MessagingService ).toBeDefined();

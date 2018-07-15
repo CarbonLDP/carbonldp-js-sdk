@@ -8,9 +8,9 @@ import {
 } from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import { JSONLDProcessor } from "./Processor";
+import { JSONLDProcessor } from "./JSONLDProcessor";
 
-describe( module( "carbonldp/JSONLD/Processor" ), ():void => {
+describe( module( "carbonldp/JSONLD/JSONLDProcessor" ), ():void => {
 
 	describe( clazz( "CarbonLDP.JSONLD.JSONLDProcessor", "Class that contains methods that can process JSON-LD objects." ), ():void => {
 

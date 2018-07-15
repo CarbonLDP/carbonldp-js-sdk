@@ -22,7 +22,7 @@ import {
 	SPARQLBindingObject,
 	SPARQLSelectResults,
 } from "./SelectResults";
-import { SPARQLService } from "./Service";
+import { SPARQLService } from "./SPARQLService";
 
 
 describe( module( "carbonldp/SPARQL" ), ():void => {

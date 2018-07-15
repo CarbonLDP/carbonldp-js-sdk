@@ -22,7 +22,7 @@ import { FreeResources } from "../../FreeResources/FreeResources";
 import { GETOptions, RequestOptions, RequestUtils } from "../../HTTP/Request";
 
 import { JSONLDCompacter } from "../../JSONLD/JSONLDCompacter";
-import { JSONLDParser } from "../../JSONLD/Parser";
+import { JSONLDParser } from "../../JSONLD/JSONLDParser";
 
 import { DocumentMetadata } from "../../LDP/DocumentMetadata";
 import { ResponseMetadata } from "../../LDP/ResponseMetadata";

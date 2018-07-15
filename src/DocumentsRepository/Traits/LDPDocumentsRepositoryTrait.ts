@@ -14,7 +14,7 @@ import { GETOptions, RequestOptions, RequestService, RequestUtils } from "../../
 import { Response } from "../../HTTP/Response";
 
 import { JSONLDCompacter } from "../../JSONLD/JSONLDCompacter";
-import { JSONLDParser } from "../../JSONLD/Parser";
+import { JSONLDParser } from "../../JSONLD/JSONLDParser";
 
 import { AddMemberAction } from "../../LDP/AddMemberAction";
 import { Map } from "../../LDP/Map";

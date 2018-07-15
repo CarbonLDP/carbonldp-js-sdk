@@ -5,8 +5,7 @@ import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository"
 
 import { IllegalStateError } from "../Errors/IllegalStateError";
 
-import * as Messaging from "../Messaging";
-import { MessagingService } from "../Messaging/Service";
+import { MessagingService } from "../Messaging/MessagingService";
 
 import { constructor, hasProperty, hasSignature, INSTANCE, interfaze, method, module } from "../test/JasmineExtender";
 
@@ -73,7 +72,7 @@ describe( module( "carbonldp/DocumentsContext" ), () => {
 
 			it( "should initialize CarbonLDP.messaging", ():void => {
 				const context:DocumentsContext = new DocumentsContext( "https://example.com/" );
-				expect( context.messaging ).toEqual( jasmine.any( Messaging.MessagingService ) );
+				expect( context.messaging ).toEqual( jasmine.any( MessagingService ) );
 			} );
 
 		} );

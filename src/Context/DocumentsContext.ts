@@ -5,7 +5,7 @@ import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository"
 
 import { IllegalStateError } from "../Errors/IllegalStateError";
 
-import { MessagingService } from "../Messaging/Service";
+import { MessagingService } from "../Messaging/MessagingService";
 
 import { URI } from "../RDF/URI";
 
