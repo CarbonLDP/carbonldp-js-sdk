@@ -1,6 +1,9 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Document } from "../Document";
+import { Document } from "../Document/Document";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
 import { C } from "../Vocabularies/C";
+
 import { PlatformInstance } from "./PlatformInstance";
 
 

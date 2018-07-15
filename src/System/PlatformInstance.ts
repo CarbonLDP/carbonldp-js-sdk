@@ -1,14 +1,15 @@
-import { VolatileResource } from "../LDP";
-import { ObjectSchema } from "../ObjectSchema";
-import {
-	C,
-	XSD
-} from "../Vocabularies";
+import { VolatileResource } from "../LDP/VolatileResource";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
+
 import { PlatformMetadata } from "./PlatformMetadata";
 
 
 export interface PlatformInstance extends VolatileResource {
-	_registry:PlatformMetadata;
+	$registry:PlatformMetadata;
 
 	buildDate:Date;
 	version:string;
