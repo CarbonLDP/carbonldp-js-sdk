@@ -181,7 +181,8 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 			} );
 
 			it( "should call TransientDirectContainer.createFrom", ():void => {
-				const spy:jasmine.Spy = spyOn( TransientDirectContainer, "createFrom" );
+				const spy:jasmine.Spy = spyOn( TransientDirectContainer, "createFrom" )
+					.and.callThrough();
 
 				const base:BaseAccessPoint = {
 					membershipResource: Pointer.create(),
@@ -200,6 +201,16 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 				const returned:TransientAccessPoint = TransientAccessPoint.createFrom( base );
 
 				expect( base ).toBe( returned );
+			} );
+
+
+			it( "should add c:AccessPoint type", () => {
+				const returned:TransientAccessPoint = TransientAccessPoint.createFrom( {
+					membershipResource: Pointer.create(),
+					hasMemberRelation: "http://example.com/myNamespace#some-relation",
+				} );
+
+				expect( returned.types ).toContain( C.AccessPoint );
 			} );
 
 		} );

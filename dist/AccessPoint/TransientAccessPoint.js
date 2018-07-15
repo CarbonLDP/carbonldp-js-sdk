@@ -12,7 +12,11 @@ exports.TransientAccessPoint = {
         return exports.TransientAccessPoint.createFrom(copy);
     },
     createFrom: function (object) {
-        return LDP_1.TransientDirectContainer.createFrom(object);
+        var accessPoint = LDP_1.TransientDirectContainer
+            .createFrom(object);
+        accessPoint
+            .addType(exports.TransientAccessPoint.TYPE);
+        return accessPoint;
     },
 };
 

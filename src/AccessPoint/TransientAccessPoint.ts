@@ -36,6 +36,12 @@ export const TransientAccessPoint:TransientAccessPointFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseAccessPoint ):T & TransientAccessPoint {
-		return TransientDirectContainer.createFrom<T>( object );
+		const accessPoint:T & TransientAccessPoint = TransientDirectContainer
+			.createFrom<T>( object );
+
+		accessPoint
+			.addType( TransientAccessPoint.TYPE );
+
+		return accessPoint;
 	},
 };
