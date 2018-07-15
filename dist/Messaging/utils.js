@@ -1,19 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("../Errors");
-var RDF_1 = require("../RDF");
-var Utils_1 = require("../DocumentsRepository/Utils");
+var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
+var URI_1 = require("../RDF/URI");
 function validateEventType(event) {
     if (!/(access-point|child|\*)\.(created|\*)|(document|\*)\.(modified|deleted|\*)|(member|\*)\.(added|removed|\*)/.test(event))
-        throw new Errors_1.IllegalArgumentError("Provided event type \"" + event + "\" is invalid.");
+        throw new IllegalArgumentError_1.IllegalArgumentError("Provided event type \"" + event + "\" is invalid.");
 }
 exports.validateEventType = validateEventType;
 function parseURIPattern(uriPattern, baseURI) {
-    if (!RDF_1.URI.isBaseOf(baseURI, uriPattern))
-        throw new Errors_1.IllegalArgumentError(Utils_1._getNotInContextMessage(uriPattern));
+    if (!URI_1.URI.isBaseOf(baseURI, uriPattern))
+        throw new IllegalArgumentError_1.IllegalArgumentError("\"" + uriPattern + "\" is out of scope.");
     if (uriPattern === "/")
         return "";
-    uriPattern = RDF_1.URI.getRelativeURI(uriPattern, baseURI);
+    uriPattern = URI_1.URI.getRelativeURI(uriPattern, baseURI);
     uriPattern = uriPattern.substring(+uriPattern.startsWith("/"), uriPattern.length - +uriPattern.endsWith("/"));
     return uriPattern
         .split("/")

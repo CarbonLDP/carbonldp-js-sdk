@@ -8,20 +8,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
+var ContainerType_1 = require("../ObjectSchema/ContainerType");
 var Pointer_1 = require("../Pointer/Pointer");
 var List_1 = require("../RDF/List");
 var XSDSerializers = __importStar(require("../RDF/Literal/Serializers/XSD"));
 var Node_1 = require("../RDF/Node");
 var URI_1 = require("../RDF/URI");
 var Value_1 = require("../RDF/Value");
+var Utils_1 = require("../Utils");
 var XSD_1 = require("../Vocabularies/XSD");
-var ObjectSchema = __importStar(require("./../ObjectSchema"));
-var Utils = __importStar(require("./../Utils"));
-var Utils_1 = require("./Utils");
+var Utils_2 = require("./Utils");
 var JSONLDConverter = (function () {
     function JSONLDConverter(literalSerializers) {
         this._literalSerializers = literalSerializers ?
-            Utils.MapUtils.extend(new Map(), literalSerializers) :
+            Utils_1.MapUtils.extend(new Map(), literalSerializers) :
             JSONLDConverter.getDefaultSerializers();
     }
     Object.defineProperty(JSONLDConverter.prototype, "literalSerializers", {
@@ -50,7 +50,7 @@ var JSONLDConverter = (function () {
         var targetObjectOrObjects = !pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
         var digestedSchema = !pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
         pointerLibrary = !pointerLibrary ? digestedSchemaOrPointerLibrary : pointerLibrary;
-        if (!Utils.isArray(expandedObjectOrObjects))
+        if (!Array.isArray(expandedObjectOrObjects))
             return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary, strict);
         var expandedObjects = expandedObjectOrObjects;
         var targetObjects = !!targetObjectOrObjects ? targetObjectOrObjects : [];
@@ -62,7 +62,7 @@ var JSONLDConverter = (function () {
         return targetObjects;
     };
     JSONLDConverter.prototype.expand = function (compactedObjectOrObjects, generalSchema, digestedSchema) {
-        if (!Utils.isArray(compactedObjectOrObjects))
+        if (!Array.isArray(compactedObjectOrObjects))
             return this.expandSingle(compactedObjectOrObjects, generalSchema, digestedSchema);
     };
     JSONLDConverter.prototype.expandSingle = function (compactedObject, generalSchema, digestedSchema) {
@@ -76,7 +76,7 @@ var JSONLDConverter = (function () {
                 expandedObject["@type"] = types
                     .map(function (type) { return generalSchema.resolveURI(type, { vocab: true, base: true }); });
         }
-        Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
+        Utils_1.forEachOwnProperty(compactedObject, function (propertyName, value) {
             if (propertyName === "$id")
                 return;
             if (propertyName === "types")
@@ -94,7 +94,7 @@ var JSONLDConverter = (function () {
     JSONLDConverter.prototype.expandProperty = function (propertyName, propertyValue, digestedSchema, generalSchema) {
         var definition = digestedSchema.properties.get(propertyName);
         var propertyContainer = definition ? definition.containerType : void 0;
-        if (propertyContainer === ObjectSchema.ContainerType.LANGUAGE)
+        if (propertyContainer === ContainerType_1.ContainerType.LANGUAGE)
             return this.expandPropertyLanguageMap(propertyValue);
         propertyValue = Array.isArray(propertyValue) ? propertyValue : [propertyValue];
         if (propertyContainer === null)
@@ -108,7 +108,7 @@ var JSONLDConverter = (function () {
         var filteredValues = expandedValues.filter(function (value) { return value !== null; });
         if (!filteredValues.length)
             return null;
-        if (propertyContainer === ObjectSchema.ContainerType.LIST)
+        if (propertyContainer === ContainerType_1.ContainerType.LIST)
             return [
                 { "@list": filteredValues },
             ];
@@ -132,34 +132,34 @@ var JSONLDConverter = (function () {
     };
     JSONLDConverter.prototype.expandPropertyLanguageMap = function (propertyValue) {
         var _this = this;
-        if (!Utils.isObject(propertyValue)) {
+        if (!Utils_1.isObject(propertyValue)) {
             return null;
         }
         var mapValues = [];
-        Utils.forEachOwnProperty(propertyValue, function (languageTag, value) {
+        Utils_1.forEachOwnProperty(propertyValue, function (languageTag, value) {
             var serializedValue = _this.literalSerializers.get(XSD_1.XSD.string).serialize(value);
             mapValues.push({ "@value": serializedValue, "@type": XSD_1.XSD.string, "@language": languageTag });
         });
         return mapValues;
     };
     JSONLDConverter.prototype.expandPointerValue = function (propertyValue, digestedSchema, generalSchema) {
-        var isString = Utils.isString(propertyValue);
+        var isStringID = Utils_1.isString(propertyValue);
         var id = Pointer_1.Pointer.is(propertyValue) ?
             propertyValue.$id :
-            isString ?
+            isStringID ?
                 propertyValue :
                 null;
         if (!id)
             return null;
-        var resolved = generalSchema.resolveURI(id, { vocab: isString });
+        var resolved = generalSchema.resolveURI(id, { vocab: isStringID });
         return { "@id": resolved };
     };
     JSONLDConverter.prototype.expandValue = function (propertyValue, digestedSchema, generalSchema) {
-        if (Utils.isArray(propertyValue))
+        if (Array.isArray(propertyValue))
             return null;
         return Pointer_1.Pointer.is(propertyValue) ?
             this.expandPointerValue(propertyValue, generalSchema, digestedSchema) :
-            this.expandLiteralValue(propertyValue, Utils_1.guessXSDType(propertyValue));
+            this.expandLiteralValue(propertyValue, Utils_2.guessXSDType(propertyValue));
     };
     JSONLDConverter.prototype.expandLiteralValue = function (literalValue, literalType) {
         if (literalType === null)
@@ -178,7 +178,7 @@ var JSONLDConverter = (function () {
         targetObject["$id"] = expandedObject["@id"];
         targetObject["types"] = !!expandedObject["@type"] ? expandedObject["@type"] : [];
         var propertyURINameMap = this.getPropertyURINameMap(digestedSchema);
-        Utils.forEachOwnProperty(expandedObject, function (propertyURI, propertyValues) {
+        Utils_1.forEachOwnProperty(expandedObject, function (propertyURI, propertyValues) {
             if (propertyURI === "@id")
                 return;
             if (propertyURI === "@type")
@@ -200,10 +200,10 @@ var JSONLDConverter = (function () {
     JSONLDConverter.prototype.getPropertyContainerType = function (propertyValues) {
         if (propertyValues.length === 1) {
             if (List_1.RDFList.is(propertyValues[0]))
-                return ObjectSchema.ContainerType.LIST;
+                return ContainerType_1.ContainerType.LIST;
         }
         else {
-            return ObjectSchema.ContainerType.SET;
+            return ContainerType_1.ContainerType.SET;
         }
         return null;
     };
@@ -212,9 +212,9 @@ var JSONLDConverter = (function () {
         var propertyContainer = definition ?
             definition.containerType :
             this.getPropertyContainerType(propertyValues);
-        if (propertyContainer === ObjectSchema.ContainerType.LANGUAGE)
+        if (propertyContainer === ContainerType_1.ContainerType.LANGUAGE)
             return Node_1.RDFNode.getPropertyLanguageMap(propertyValues);
-        if (propertyContainer === ObjectSchema.ContainerType.LIST) {
+        if (propertyContainer === ContainerType_1.ContainerType.LIST) {
             var list = Node_1.RDFNode.getList(propertyValues);
             if (!list)
                 return null;
@@ -258,7 +258,7 @@ var JSONLDConverter = (function () {
             return;
         return propertyValues
             .map(Value_1.RDFValue.parse.bind(null, pointerLibrary))
-            .filter(function (value) { return !Utils.isNull(value); });
+            .filter(function (value) { return !Utils_1.isNull(value); });
     };
     JSONLDConverter.prototype.getPropertyPointers = function (propertyValues, pointerLibrary) {
         if (!Array.isArray(propertyValues))
@@ -267,7 +267,7 @@ var JSONLDConverter = (function () {
             .filter(Node_1.RDFNode.is)
             .map(Node_1.RDFNode.getID)
             .map(pointerLibrary.getPointer, pointerLibrary)
-            .filter(function (pointer) { return !Utils.isNull(pointer); });
+            .filter(function (pointer) { return !Utils_1.isNull(pointer); });
     };
     return JSONLDConverter;
 }());

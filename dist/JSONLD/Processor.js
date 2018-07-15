@@ -11,9 +11,13 @@ var InvalidJSONLDSyntaxError_1 = require("../Errors/InvalidJSONLDSyntaxError");
 var NotImplementedError_1 = require("../Errors/NotImplementedError");
 var JSONParser_1 = require("../HTTP/JSONParser");
 var Request_1 = require("../HTTP/Request");
+var ContainerType_1 = require("../ObjectSchema/ContainerType");
+var DigestedObjectSchema_1 = require("../ObjectSchema/DigestedObjectSchema");
+var DigestedObjectSchemaProperty_1 = require("../ObjectSchema/DigestedObjectSchemaProperty");
+var ObjectSchemaDigester_1 = require("../ObjectSchema/ObjectSchemaDigester");
+var PointerType_1 = require("../ObjectSchema/PointerType");
 var List_1 = require("../RDF/List");
 var URI_1 = require("../RDF/URI");
-var ObjectSchema = __importStar(require("./../ObjectSchema"));
 var Utils = __importStar(require("./../Utils"));
 var MAX_CONTEXT_URLS = 10;
 var LINK_HEADER_REL = "http://www.w3.org/ns/json-ld#context";
@@ -22,7 +26,7 @@ var JSONLDProcessor = (function () {
     }
     JSONLDProcessor.expand = function (input) {
         return JSONLDProcessor.retrieveContexts(input, Object.create(null), "").then(function () {
-            var expanded = JSONLDProcessor.process(new ObjectSchema.DigestedObjectSchema(), input);
+            var expanded = JSONLDProcessor.process(new DigestedObjectSchema_1.DigestedObjectSchema(), input);
             if (Utils.isObject(expanded) && "@graph" in expanded && Object.keys(expanded).length === 1) {
                 expanded = expanded["@graph"];
             }
@@ -240,12 +244,12 @@ var JSONLDProcessor = (function () {
         else if (propertyName === "@type") {
             return JSONLDProcessor.expandURI(context, value, { vocab: true, base: true });
         }
-        var definition = new ObjectSchema.DigestedObjectSchemaProperty();
+        var definition = new DigestedObjectSchemaProperty_1.DigestedObjectSchemaProperty();
         if (context.properties.has(propertyName))
             definition = context.properties.get(propertyName);
         if (definition.literal === false || (propertyName === "@graph" && Utils.isString(value))) {
             var options = { base: true };
-            if (definition.pointerType === ObjectSchema.PointerType.VOCAB)
+            if (definition.pointerType === PointerType_1.PointerType.VOCAB)
                 options.vocab = true;
             return { "@id": JSONLDProcessor.expandURI(context, value, options) };
         }
@@ -275,7 +279,7 @@ var JSONLDProcessor = (function () {
         }
         if (Utils.isArray(element)) {
             var container = JSONLDProcessor.getContainer(context, activeProperty);
-            insideList = insideList || container === ObjectSchema.ContainerType.LIST;
+            insideList = insideList || container === ContainerType_1.ContainerType.LIST;
             var expanded = [];
             for (var _i = 0, _a = element; _i < _a.length; _i++) {
                 var item = _a[_i];
@@ -291,10 +295,10 @@ var JSONLDProcessor = (function () {
             return expanded;
         }
         if ("@context" in element) {
-            context = ObjectSchema.ObjectSchemaDigester
+            context = ObjectSchemaDigester_1.ObjectSchemaDigester
                 .combineDigestedObjectSchemas([
                 context,
-                ObjectSchema.ObjectSchemaDigester.digestSchema(element["@context"]),
+                ObjectSchemaDigester_1.ObjectSchemaDigester.digestSchema(element["@context"]),
             ]);
         }
         var expandedElement = {};
@@ -332,7 +336,7 @@ var JSONLDProcessor = (function () {
             }
             var expandedValue = void 0;
             var container = JSONLDProcessor.getContainer(context, key);
-            if (container === ObjectSchema.ContainerType.LANGUAGE && Utils.isObject(value)) {
+            if (container === ContainerType_1.ContainerType.LANGUAGE && Utils.isObject(value)) {
                 expandedValue = JSONLDProcessor.expandLanguageMap(value);
             }
             else {
@@ -347,7 +351,7 @@ var JSONLDProcessor = (function () {
             }
             if (expandedValue === null && uri !== "@value")
                 continue;
-            if (uri !== "@list" && !List_1.RDFList.is(expandedValue) && container === ObjectSchema.ContainerType.LIST) {
+            if (uri !== "@list" && !List_1.RDFList.is(expandedValue) && container === ContainerType_1.ContainerType.LIST) {
                 if (!Utils.isArray(expandedValue))
                     expandedValue = [expandedValue];
                 expandedValue = { "@list": expandedValue };

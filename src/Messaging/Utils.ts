@@ -1,6 +1,6 @@
-import { IllegalArgumentError } from "../Errors";
-import { URI } from "../RDF";
-import { _getNotInContextMessage } from "../DocumentsRepository/Utils";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { URI } from "../RDF/URI";
 
 
 export function validateEventType( event:string ):void {
@@ -8,7 +8,7 @@ export function validateEventType( event:string ):void {
 }
 
 export function parseURIPattern( uriPattern:string, baseURI:string ):string {
-	if( ! URI.isBaseOf( baseURI, uriPattern ) ) throw new IllegalArgumentError( _getNotInContextMessage( uriPattern ) );
+	if( ! URI.isBaseOf( baseURI, uriPattern ) ) throw new IllegalArgumentError( `"${ uriPattern }" is out of scope.` );
 
 	if( uriPattern === "/" ) return "";
 	uriPattern = URI.getRelativeURI( uriPattern, baseURI );

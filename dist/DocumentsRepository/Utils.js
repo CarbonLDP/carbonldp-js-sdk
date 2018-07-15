@@ -7,10 +7,6 @@ var ErrorResponse_1 = require("../LDP/ErrorResponse");
 var Pointer_1 = require("../Pointer/Pointer");
 var URI_1 = require("../RDF/URI");
 var Utils_1 = require("../Utils");
-function _getNotInContextMessage(uri) {
-    return "\"" + uri + "\" is out of scope.";
-}
-exports._getNotInContextMessage = _getNotInContextMessage;
 function _parseURIParams(resource, uri, args) {
     var _uri = Utils_1.isString(uri) ?
         URI_1.URI.resolve(resource.$id, uri) : resource.$id;

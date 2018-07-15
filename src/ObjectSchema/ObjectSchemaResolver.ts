@@ -2,14 +2,11 @@ import { Context } from "../Context/Context";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelPrototype } from "../Model/ModelPrototype";
-import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
 
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
-
-import { isObject } from "../Utils";
 
 import { C } from "../Vocabularies/C";
 

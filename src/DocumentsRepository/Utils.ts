@@ -14,11 +14,6 @@ import { ResolvablePointer } from "../Repository/ResolvablePointer";
 import { isString } from "../Utils";
 
 
-export function _getNotInContextMessage( uri:string ):string {
-	return `"${ uri }" is out of scope.`;
-}
-
-
 export function _parseURIParams<T>( this:void, resource:ResolvablePointer, uri?:string | T, args?:IArguments ):{ _uri:string, _args:any[] } {
 	const _uri:string = isString( uri ) ?
 		URI.resolve( resource.$id, uri ) : resource.$id;
