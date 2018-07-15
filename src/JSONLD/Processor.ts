@@ -1,19 +1,17 @@
-import {
-	InvalidJSONLDSyntaxError,
-	NotImplementedError,
-} from "../Errors";
+import { InvalidJSONLDSyntaxError } from "../Errors/InvalidJSONLDSyntaxError";
+import { NotImplementedError, } from "../Errors/NotImplementedError";
+
 import { Header } from "../HTTP/Header";
 import { JSONParser } from "../HTTP/JSONParser";
-import {
-	RequestOptions,
-	RequestService,
-	RequestUtils,
-} from "../HTTP/Request";
+import { RequestOptions, RequestService, RequestUtils, } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
+
 import { RDFList } from "../RDF/List";
 import { URI } from "../RDF/URI";
+
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
+
 
 const MAX_CONTEXT_URLS:number = 10;
 const LINK_HEADER_REL:string = "http://www.w3.org/ns/json-ld#context";
@@ -55,7 +53,7 @@ export class JSONLDProcessor {
 				match = rParams.exec( params );
 				if( ! match ) break;
 
-				result[ match[ 1 ] ] = ( match[ 2 ] === undefined ) ? match[ 3 ] : match[ 2 ];
+				result[ match[ 1 ] ] = (match[ 2 ] === undefined) ? match[ 3 ] : match[ 2 ];
 			}
 			if( result[ "rel" ] === LINK_HEADER_REL ) return target;
 		}
@@ -93,7 +91,7 @@ export class JSONLDProcessor {
 							} else {
 								contextArray[ index ] = contexts[ url ];
 							}
-						} else if( ! ( url in contexts ) ) {
+						} else if( ! (url in contexts) ) {
 							contexts[ url ] = true;
 						}
 					}
@@ -102,7 +100,7 @@ export class JSONLDProcessor {
 					url = URI.resolve( base, url );
 					if( replace ) {
 						input[ key ] = contexts[ url ];
-					} else if( ! ( url in contexts ) ) {
+					} else if( ! (url in contexts) ) {
 						contexts[ url ] = null;
 					}
 				}
@@ -132,7 +130,7 @@ export class JSONLDProcessor {
 					if( ! ! header ) link = JSONLDProcessor.getTargetFromLinkHeader( header );
 					if( ! ! link ) contextWrapper[ "@context" ] = link;
 				} else {
-					contextWrapper[ "@context" ] = ( "@context" in object ) ? object[ "@context" ] : {};
+					contextWrapper[ "@context" ] = ("@context" in object) ? object[ "@context" ] : {};
 				}
 				contextToResolved[ url ] = contextWrapper[ "@context" ];
 
@@ -195,7 +193,7 @@ export class JSONLDProcessor {
 
 		if( ! Utils.isArray( value ) ) return false;
 
-		for( let element of (<Array<any>> value ) ) {
+		for( let element of (<Array<any>> value) ) {
 			if( ! Utils.isString( element ) ) return false;
 		}
 
@@ -204,7 +202,7 @@ export class JSONLDProcessor {
 
 	private static expandURI( schema:ObjectSchema.DigestedObjectSchema, uri:string, relativeTo?:{ vocab?:boolean, base?:boolean } ):string {
 		if( JSONLDProcessor.isKeyword( uri ) ) return uri;
-		return ObjectSchema.ObjectSchemaUtils.resolveURI( uri, schema, relativeTo );
+		return schema.resolveURI( uri, relativeTo );
 	}
 
 	private static expandLanguageMap( languageMap:any ):any {
@@ -245,7 +243,7 @@ export class JSONLDProcessor {
 		let definition:ObjectSchema.DigestedObjectSchemaProperty = new ObjectSchema.DigestedObjectSchemaProperty();
 		if( context.properties.has( propertyName ) ) definition = context.properties.get( propertyName );
 
-		if( definition.literal === false || ( propertyName === "@graph" && Utils.isString( value ) ) ) {
+		if( definition.literal === false || (propertyName === "@graph" && Utils.isString( value )) ) {
 			let options:{ base:boolean, vocab?:boolean } = { base: true };
 			if( definition.pointerType === ObjectSchema.PointerType.VOCAB ) options.vocab = true;
 
@@ -256,7 +254,7 @@ export class JSONLDProcessor {
 
 		let expandedValue:Object = {};
 		if( definition.literalType ) {
-			expandedValue[ "@type" ] = ObjectSchema.ObjectSchemaUtils.resolveURI( definition.literalType, context, { vocab: true, base: true } );
+			expandedValue[ "@type" ] = context.resolveURI( definition.literalType, { vocab: true, base: true } );
 		} else if( Utils.isString( value ) ) {
 			let language:string = Utils.isDefined( definition.language ) ? definition.language : context.language;
 			if( language !== null ) expandedValue[ "@language" ] = language;
@@ -274,7 +272,7 @@ export class JSONLDProcessor {
 
 		// Expand an element according to the context
 		if( ! Utils.isArray( element ) && ! Utils.isObject( element ) ) {
-			if( ! insideList && ( activeProperty === null || activeProperty === "@graph" ) ) return null;
+			if( ! insideList && (activeProperty === null || activeProperty === "@graph") ) return null;
 			return JSONLDProcessor.expandValue( context, element, activeProperty );
 		}
 
@@ -288,7 +286,7 @@ export class JSONLDProcessor {
 				let expandedItem:any = JSONLDProcessor.process( context, item, activeProperty );
 				if( expandedItem === null ) continue;
 
-				if( insideList && ( Utils.isArray( expandedItem ) || RDFList.is( expandedItem ) ) ) throw new InvalidJSONLDSyntaxError( "Lists of lists are not permitted." );
+				if( insideList && (Utils.isArray( expandedItem ) || RDFList.is( expandedItem )) ) throw new InvalidJSONLDSyntaxError( "Lists of lists are not permitted." );
 
 				if( ! Utils.isArray( expandedItem ) ) expandedItem = [ expandedItem ];
 				expanded.push( ...expandedItem );
@@ -312,7 +310,7 @@ export class JSONLDProcessor {
 			if( key === "@context" ) continue;
 
 			let uri:string = JSONLDProcessor.expandURI( context, key, { vocab: true } );
-			if( ! uri || ! ( URI.isAbsolute( uri ) || URI.isBNodeID( uri ) || JSONLDProcessor.isKeyword( uri ) ) ) continue;
+			if( ! uri || ! (URI.isAbsolute( uri ) || URI.isBNodeID( uri ) || JSONLDProcessor.isKeyword( uri )) ) continue;
 
 			let value:any = element[ key ];
 
@@ -320,8 +318,8 @@ export class JSONLDProcessor {
 			if( JSONLDProcessor.isKeyword( uri ) ) {
 				if( uri === "@id" && ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@id" value must a string.` );
 				if( uri === "@type" && ! JSONLDProcessor.isValidType( value ) ) throw new InvalidJSONLDSyntaxError( `"@type" value must a string, an array of strings.` );
-				if( uri === "@graph" && ! ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new InvalidJSONLDSyntaxError( `"@graph" value must not be an object or an array.` );
-				if( uri === "@value" && ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new InvalidJSONLDSyntaxError( `"@value" value must not be an object or an array.` );
+				if( uri === "@graph" && ! (Utils.isObject( value ) || Utils.isArray( value )) ) throw new InvalidJSONLDSyntaxError( `"@graph" value must not be an object or an array.` );
+				if( uri === "@value" && (Utils.isObject( value ) || Utils.isArray( value )) ) throw new InvalidJSONLDSyntaxError( `"@value" value must not be an object or an array.` );
 				if( uri === "@language" ) {
 					if( value === null ) continue;
 					if( ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@language" value must be a string.` );

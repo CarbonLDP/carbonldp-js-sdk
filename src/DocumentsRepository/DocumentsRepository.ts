@@ -6,8 +6,11 @@ import { GETOptions, RequestOptions } from "../HTTP/Request";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
+
+import { isObject } from "../Utils";
 
 import { BaseDocumentsRepository } from "./BaseDocumentsRepository";
 
@@ -42,7 +45,8 @@ export interface DocumentsRepository extends QueryableDocumentsRepositoryTrait, 
 
 
 export type DocumentsRepositoryFactory =
-	| ModelFactory<DocumentsRepository, BaseDocumentsRepository>
+	& ModelFactory<DocumentsRepository, BaseDocumentsRepository>
+	& ModelTypeGuard<DocumentsRepository>
 	;
 
 export const DocumentsRepository:DocumentsRepositoryFactory = {
@@ -57,5 +61,14 @@ export const DocumentsRepository:DocumentsRepositoryFactory = {
 				SPARQLDocumentsRepositoryTrait,
 				EventEmitterDocumentsRepositoryTrait
 			);
+	},
+
+
+	is( value:any ):value is DocumentsRepository {
+		return isObject( value )
+			&& QueryableDocumentsRepositoryTrait.isDecorated( value )
+			&& SPARQLDocumentsRepositoryTrait.isDecorated( value )
+			&& EventEmitterDocumentsRepositoryTrait.isDecorated( value )
+			;
 	},
 };

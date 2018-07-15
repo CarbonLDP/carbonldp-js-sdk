@@ -44,7 +44,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		let $registry:Document;
 		let fragment:Fragment;
 		beforeEach( ():void => {
-			$registry = Document.decorate( {} );
+			$registry = Document.decorate( { $registry: null, $repository: null } );
 			fragment = Fragment
 				.decorate( { $registry } );
 		} );
@@ -75,7 +75,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			} );
 
 			it( "should assign the $registry ", () => {
-				const document:Document = Document.decorate( {} );
+				const document:Document = Document.decorate( { $registry: null, $repository: null } );
 				fragment.$repository = document;
 
 				expect( fragment.$registry ).toBe( document );
@@ -149,7 +149,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 			let $registry:Document;
 			beforeEach( ():void => {
-				$registry = Document.decorate( {} );
+				$registry = Document.decorate( { $registry: null, $repository: null } );
 			} );
 
 

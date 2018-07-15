@@ -138,8 +138,8 @@ export class MessagingService {
 			new JSONLDParser()
 				.parse( message.body )
 				.then( ( data:RDFNode[] ) => {
-					const freeResources:FreeResources = this.context
-						.repository._parseFreeNodes( data );
+					const freeResources:FreeResources = FreeResources
+						.parseFreeNodes( this.context.registry, data );
 
 					const eventMessage:EventMessage | undefined = freeResources
 						.getPointers( true )

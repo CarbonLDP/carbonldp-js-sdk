@@ -356,7 +356,7 @@ describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
 				} ];
 
 				let compactedObject:any = {
-					"id": "http://example.com/compactedObject/",
+					"$id": "http://example.com/compactedObject/",
 					"types": [
 						"http://example.com/ns#MyType",
 						"ex:Another-Type",

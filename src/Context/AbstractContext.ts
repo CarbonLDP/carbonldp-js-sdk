@@ -1,30 +1,26 @@
-import {
-	IllegalArgumentError,
-	IllegalStateError
-} from "../Errors";
-import { JSONLDConverter } from "../JSONLD";
-import {
-	DigestedObjectSchema,
-	ObjectSchema,
-	ObjectSchemaDigester,
-	ObjectSchemaUtils,
-} from "../ObjectSchema";
-import { URI } from "../RDF";
-import {
-	GeneralRegistry,
-	RegisteredPointer
-} from "../Registry";
-import { ResolvablePointer } from "../Repository";
-import {
-	ContextSettings,
-	DocumentPaths,
-} from "../Settings";
-import {
-	isObject,
-	isString,
-} from "../Utils";
-import { Context } from "./Context";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+import { IllegalStateError } from "../Errors/IllegalStateError";
+
+import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import { GeneralRepository } from "../GeneralRepository/GeneralRepository";
+
+import { JSONLDConverter } from "../JSONLD/Converter";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
+import { ObjectSchemaUtils } from "../ObjectSchema/ObjectSchemaUtils";
+
+import { URI } from "../RDF";
+
+import { RegisteredPointer } from "../Registry";
+import { ResolvablePointer } from "../Repository";
+
+import { ContextSettings, DocumentPaths } from "../Settings";
+
+import { isObject, isString } from "../Utils";
+
+import { Context } from "./Context";
 
 
 export abstract class AbstractContext<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer, PARENT extends AbstractContext = undefined> implements Context {
@@ -53,11 +49,8 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 	}
 
 
-	resolve( relativeURI:string, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
-		const schema:DigestedObjectSchema = this.getObjectSchema();
-
-		if( relativeTo.base === void 0 ) relativeTo.base = true;
-		return ObjectSchemaUtils.resolveURI( relativeURI, schema, relativeTo );
+	resolve( relativeURI:string ):string {
+		return URI.resolve( this.baseURI, relativeURI );
 	}
 
 	/**
@@ -221,6 +214,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 	}
 
 	private _resolveTypeURI( uri:string ):string {
-		return ObjectSchemaUtils.resolveURI( uri, this.getObjectSchema(), { vocab: true } );
+		return this.getObjectSchema()
+			.resolveURI( uri, { vocab: true } );
 	}
 }

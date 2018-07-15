@@ -25,7 +25,7 @@ import { TypedModelDecorator } from "./TypedModelDecorator";
 
 export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer> extends Registry<M>, ObjectSchemaResolver {
 	readonly $context:Context<M>;
-	readonly $registry:GeneralRegistry<any> | undefined;
+	readonly $registry:GeneralRegistry | undefined;
 
 
 	__modelDecorators:Map<string, TypedModelDecorator>;
@@ -94,13 +94,13 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 
 			const resource:T & RegisteredPointer = Registry.PROTOTYPE._addPointer.call( this, pointer );
 
-			resource.$id = this.$context.resolve( resource.$id );
+			resource.$id = this.$context.getObjectSchema().resolveURI( resource.$id, { base: true } );
 
 			return resource;
 		},
 
 		_getLocalID( this:GeneralRegistry, id:string ):string {
-			const uri:string = this.$context.resolve( id );
+			const uri:string = this.$context.getObjectSchema().resolveURI( id, { base: true } );
 
 			if( ! URI.isAbsolute( uri ) || ! URI.isBaseOf( this.$context.baseURI, uri ) )
 				throw new IllegalArgumentError( `"${ uri }" is out of scope.` );

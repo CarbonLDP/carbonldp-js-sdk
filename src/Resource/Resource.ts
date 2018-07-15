@@ -54,7 +54,9 @@ function __resolveURI( resource:Resource, uri:string ):string {
 	const context:Context | undefined = __getContext( resource.$registry );
 	if( ! context ) return uri;
 
-	return context.resolve( uri, { vocab: true } );
+	return context
+		.getObjectSchema()
+		.resolveURI( uri, { vocab: true } );
 }
 
 export type ResourceFactory =

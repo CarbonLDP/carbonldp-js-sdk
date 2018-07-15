@@ -1,30 +1,20 @@
+import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
 import { createMockContext } from "../../test/helpers/mocks";
-import { AbstractContext } from "../Context";
-import { IllegalArgumentError } from "../Errors";
-import {
-	ContainerType,
-	DigestedObjectSchema,
-	DigestedObjectSchemaProperty,
-	ObjectSchemaDigester
-} from "../ObjectSchema";
-import {
-	clazz,
-	constructor,
-	extendsClass,
-	hasSignature,
-	INSTANCE,
-	method,
-	module
-} from "../test/JasmineExtender";
+
+import { AbstractContext } from "../Context/AbstractContext";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { ContainerType, DigestedObjectSchema, DigestedObjectSchemaProperty, ObjectSchemaDigester } from "../ObjectSchema";
+
+import { clazz, constructor, extendsClass, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
+
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryContextBuilder";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 
-import {
-	QueryProperty,
-	QueryPropertyType,
-} from "./QueryProperty";
+import { QueryProperty, QueryPropertyType } from "./QueryProperty";
 
 describe( module( "carbonldp/QueryDocuments/QueryContextBuilder" ), ():void => {
 
@@ -40,7 +30,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContextBuilder" ), ():void => {
 			expect( QueryContextBuilder ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let context:AbstractContext<any, any>;
+		let context:AbstractContext<any, any, any>;
 		beforeEach( ():void => {
 			context = createMockContext();
 		} );
@@ -419,7 +409,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContextBuilder" ), ():void => {
 			it( "should return the schema from context when full", ():void => {
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 
-				const spy:jasmine.Spy = spyOn( queryContext.context.registry, "getSchemaFor" ).and.returnValue( null );
+				const spy:jasmine.Spy = spyOnDecorated( queryContext.context.registry, "getSchemaFor" ).and.returnValue( null );
 				const helper:( name:string ) => void = name => {
 					queryContext
 						.addProperty( name )
@@ -463,7 +453,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContextBuilder" ), ():void => {
 			it( "should return the schema from the context when not exits and parent is full", ():void => {
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 
-				const spy:jasmine.Spy = spyOn( queryContext.context.registry, "getSchemaFor" ).and.returnValue( null );
+				const spy:jasmine.Spy = spyOnDecorated( queryContext.context.registry, "getSchemaFor" ).and.returnValue( null );
 				const helper:( parent:string, name:string ) => void = ( parent, child ) => {
 					queryContext
 						.addProperty( parent )

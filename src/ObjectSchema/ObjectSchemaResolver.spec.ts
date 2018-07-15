@@ -182,7 +182,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 					.and.callThrough();
 
 
-				resolver.getSchemaFor( { "id": "https://example.com/" } );
+				resolver.getSchemaFor( { $id: "https://example.com/" } );
 				expect( spy ).toHaveBeenCalledWith( C.Document );
 			} );
 

@@ -108,8 +108,8 @@ describe( module( "carbonldp/Messaging/Utils" ), ():void => {
 		} );
 
 		it( "should throw error when uriPattern does not resolves to the baseURI provided", ():void => {
-			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "Provided uriPattern \"http://not-example.com/resource/\" is an invalid for your Carbon LDP instance." );
-			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "Provided uriPattern \"http://not-example.com/resource/\" is an invalid for your Carbon LDP instance." );
+			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "\"http://not-example.com/resource/\" is out of scope." );
+			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "\"http://not-example.com/resource/\" is out of scope." );
 		} );
 
 		it( "should not throw error when parameters are relative", ():void => {

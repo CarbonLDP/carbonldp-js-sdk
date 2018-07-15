@@ -111,8 +111,7 @@ export class JSONLDCompacter {
 
 		rdfDocuments
 			.map( rdfDocument => rdfDocument[ "@id" ] )
-			.map( this.compactionMap.get, this.compactionMap )
-			.map( compactionNode => compactionNode.resource as Document )
+			.map( id => this.registry.getPointer( id, true ) )
 			.forEach( persistedDocument => {
 				persistedDocument._syncSnapshot();
 				this.registry.decorate( persistedDocument );

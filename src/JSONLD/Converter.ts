@@ -1,16 +1,19 @@
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
-import {
-	Pointer,
-	PointerLibrary,
-} from "../Pointer";
+
+import { Pointer } from "../Pointer/Pointer";
+import { PointerLibrary } from "../Pointer/PointerLibrary";
+
 import { RDFList } from "../RDF/List";
 import { Serializer } from "../RDF/Literal/Serializer";
 import * as XSDSerializers from "../RDF/Literal/Serializers/XSD";
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 import { RDFValue } from "../RDF/Value";
+
 import { XSD } from "../Vocabularies/XSD";
+
 import * as ObjectSchema from "./../ObjectSchema";
+
 import * as Utils from "./../Utils";
 import { guessXSDType } from "./Utils";
 
@@ -86,14 +89,14 @@ export class JSONLDConverter {
 
 			if( types.length )
 				expandedObject[ "@type" ] = types
-					.map( type => ObjectSchema.ObjectSchemaUtils.resolveURI( type, generalSchema, { vocab: true, base: true } ) );
+					.map( type => generalSchema.resolveURI( type , { vocab: true, base: true } ) );
 		}
 
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "$id" ) return;
 			if( propertyName === "types" ) return;
 
-			const expandedPropertyName:string = ObjectSchema.ObjectSchemaUtils.resolveURI( propertyName, digestedSchema, { vocab: true } );
+			const expandedPropertyName:string = digestedSchema.resolveURI( propertyName, { vocab: true } );
 			if( URI.isRelative( expandedPropertyName ) ) return;
 
 			const expandedValue:any[] = this.expandProperty( propertyName, value, digestedSchema, generalSchema );
@@ -141,7 +144,7 @@ export class JSONLDConverter {
 	}
 
 	private expandPropertyLiteral( propertyValue:any[], definition:ObjectSchema.DigestedObjectSchemaProperty, digestedSchema:ObjectSchema.DigestedObjectSchema ):any[] {
-		const literalType:string = ObjectSchema.ObjectSchemaUtils.resolveURI( definition.literalType, digestedSchema, { vocab: true, base: true } );
+		const literalType:string = digestedSchema.resolveURI( definition.literalType, { vocab: true, base: true } );
 		const expandedValues:any[] = propertyValue.map( value => this.expandLiteralValue( value, literalType ) );
 
 		if( definition.language ) expandedValues.forEach( value => value[ "@language" ] = definition.language );
@@ -177,7 +180,7 @@ export class JSONLDConverter {
 		// TODO: Warn of data loss
 		if( ! id ) return null;
 
-		const resolved:string = ObjectSchema.ObjectSchemaUtils.resolveURI( id, generalSchema, { vocab: isString } );
+		const resolved:string = generalSchema.resolveURI( id, { vocab: isString } );
 		return { "@id": resolved };
 	}
 
@@ -282,7 +285,7 @@ export class JSONLDConverter {
 	private getPropertyURINameMap( digestedSchema:ObjectSchema.DigestedObjectSchema ):Map<string, string> {
 		const map:Map<string, string> = new Map<string, string>();
 		digestedSchema.properties.forEach( ( definition:ObjectSchema.DigestedObjectSchemaProperty, propertyName:string ):void => {
-			const uri:string = ObjectSchema.ObjectSchemaUtils.resolveURI( definition.uri, digestedSchema, { vocab: true } );
+			const uri:string = digestedSchema.resolveURI( definition.uri, { vocab: true } );
 			map.set( uri, propertyName );
 		} );
 		return map;
@@ -290,7 +293,7 @@ export class JSONLDConverter {
 
 	private compactPropertyLiteral( propertyValues:any[], definition:ObjectSchema.DigestedObjectSchemaProperty, digestedSchema:ObjectSchema.DigestedObjectSchema ):any[] {
 		const literalType:string = definition.literalType === null ?
-			XSD.string : ObjectSchema.ObjectSchemaUtils.resolveURI( definition.literalType, digestedSchema, { vocab: true, base: true } );
+			XSD.string : digestedSchema.resolveURI( definition.literalType, { vocab: true, base: true } );
 
 		return RDFNode.getPropertyLiterals( propertyValues, literalType );
 	}

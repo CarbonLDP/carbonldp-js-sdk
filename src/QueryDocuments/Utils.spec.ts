@@ -7,16 +7,15 @@ import {
 	SubjectToken,
 	VariableToken
 } from "sparqler/tokens";
+
 import { createMockDigestedSchemaProperty } from "../../test/helpers/mocks";
-import { AnyJasmineValue } from "../../test/helpers/types";
-import { PointerType } from "../ObjectSchema";
-import {
-	hasSignature,
-	INSTANCE,
-	method,
-	module
-} from "../test/JasmineExtender";
-import { XSD } from "../Vocabularies";
+
+import { PointerType } from "../ObjectSchema/PointerType";
+
+import { hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
+
+import { XSD } from "../Vocabularies/XSD";
+
 import { QueryContext } from "./QueryContext";
 
 import * as Utils from "./Utils";
@@ -101,7 +100,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 				createMockDigestedSchemaProperty( { uri: "https://example.com/ns#property" } )
 			);
 
-			expect<AnyJasmineValue<PatternToken[]>>( patterns ).toEqual( [
+			expect<any>( patterns ).toEqual( [
 				jasmine.objectContaining( {
 					token: "subject",
 					subject: jasmine.objectContaining( {
@@ -138,7 +137,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 				} )
 			);
 
-			expect<AnyJasmineValue<PatternToken[]>>( patterns ).toEqual( [
+			expect<any>( patterns ).toEqual( [
 				jasmine.objectContaining( {
 					token: "subject",
 				} ),
@@ -160,7 +159,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 				} )
 			);
 
-			expect<AnyJasmineValue<PatternToken[]>>( patterns ).toEqual( [
+			expect<any>( patterns ).toEqual( [
 				jasmine.objectContaining( {
 					token: "subject",
 				} ),
@@ -198,7 +197,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should return a pattern token for types", () => {
 			const pattern:PatternToken = Utils.createTypesPattern( context, "resource" );
-			expect<AnyJasmineValue<PatternToken>>( pattern ).toEqual( jasmine.objectContaining( {
+			expect<any>( pattern ).toEqual( jasmine.objectContaining( {
 				token: "optional" as "optional",
 				patterns: [
 					jasmine.objectContaining( {
@@ -251,7 +250,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should return a pattern token for the resource", () => {
 			const pattern:PatternToken = Utils.createGraphPattern( context, "resource" );
-			expect<AnyJasmineValue<PatternToken>>( pattern ).toEqual( jasmine.objectContaining( {
+			expect<any>( pattern ).toEqual( jasmine.objectContaining( {
 				token: "graph" as "graph",
 				graph: jasmine.objectContaining( {
 					token: "variable" as "variable",
@@ -310,7 +309,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should return a pattern token for the resource", () => {
 			const pattern:PatternToken = Utils.createAllPattern( context, "resource" );
-			expect<AnyJasmineValue<PatternToken>>( pattern ).toEqual( jasmine.objectContaining( {
+			expect<any>( pattern ).toEqual( jasmine.objectContaining( {
 				token: "subject" as "subject",
 				subject: jasmine.objectContaining( {
 					token: "variable" as "variable",

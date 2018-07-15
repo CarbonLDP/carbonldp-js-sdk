@@ -1,7 +1,4 @@
-import {
-	isBNodeLabel,
-	isRelative,
-} from "sparqler/iri";
+import { isBNodeLabel, isRelative, } from "sparqler/iri";
 import {
 	BlankNodeToken,
 	CollectionToken,
@@ -13,28 +10,24 @@ import {
 	SubjectToken,
 	VariableOrIRI,
 } from "sparqler/tokens";
-import { Context } from "../Context";
 
-import { JSONLDConverter } from "../JSONLD";
+import { Context } from "../Context/Context";
+
 import { guessXSDType } from "../JSONLD/Utils";
-import {
-	ContainerType,
-	DigestedObjectSchema,
-	DigestedObjectSchemaProperty,
-	PointerType,
-} from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { isString } from "../Utils";
-import { XSD } from "../Vocabularies";
 
-import {
-	AddToken,
-	DeleteToken,
-	LDPatchToken,
-	PrefixToken,
-	SliceToken,
-	UpdateListToken,
-} from "./Tokens";
+import { ContainerType } from "../ObjectSchema/ContainerType";
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
+import { PointerType } from "../ObjectSchema/PointerType";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { isString } from "../Utils";
+
+import { XSD } from "../Vocabularies/XSD";
+
+import { AddToken, DeleteToken, LDPatchToken, PrefixToken, SliceToken, UpdateListToken, } from "./Tokens";
+
 
 interface ArrayDelta {
 	toAdd:ObjectToken[];
@@ -50,6 +43,7 @@ const typesDefinition:DigestedObjectSchemaProperty = new DigestedObjectSchemaPro
 typesDefinition.literal = false;
 typesDefinition.pointerType = PointerType.ID;
 typesDefinition.containerType = ContainerType.SET;
+
 
 export class DeltaCreator {
 
@@ -96,7 +90,7 @@ export class DeltaCreator {
 			...Object.keys( previousResource ),
 			...Object.keys( currentResource ),
 		] ).forEach( propertyName => {
-			if( propertyName === "id" ) return;
+			if( propertyName === "$id" ) return;
 
 			const predicateURI:IRIToken | PrefixedNameToken | "a" = propertyName === "types" ?
 				"a" : this._getPropertyIRI( schema, propertyName );
@@ -191,7 +185,7 @@ export class DeltaCreator {
 			.types.forEach( types.add, types );
 
 		return this.context
-			.registry.getSchemaFor( { $id:id, types: Array.from( types ) } );
+			.registry.getSchemaFor( { $id: id, types: Array.from( types ) } );
 	}
 
 	private _getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {

@@ -4,6 +4,7 @@ import {
 	PrefixToken
 } from "sparqler/tokens";
 
+import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
 import { createMockContext } from "../../test/helpers/mocks";
 import { AbstractContext } from "../Context";
 import { IllegalArgumentError } from "../Errors";
@@ -125,7 +126,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContext" ), ():void => {
 
 			it( "should use the literal serializers of carbon", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
-				const spy:jasmine.Spy = spyOnProperty( context.registry.jsonldConverter, "literalSerializers", "get" ).and.callThrough();
+				const spy:jasmine.Spy = spyOnProperty( context.jsonldConverter, "literalSerializers", "get" ).and.callThrough();
 
 				queryContext.serializeLiteral( "http://www.w3.org/2001/XMLSchema#string", "value" );
 				expect( spy ).toHaveBeenCalled();
@@ -133,7 +134,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContext" ), ():void => {
 
 			it( "should get the correct literal serializer", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
-				const spy:jasmine.Spy = spyOn( context.registry.jsonldConverter.literalSerializers, "get" ).and.callThrough();
+				const spy:jasmine.Spy = spyOn( context.jsonldConverter.literalSerializers, "get" ).and.callThrough();
 
 				queryContext.serializeLiteral( "http://www.w3.org/2001/XMLSchema#string", "value" );
 				expect( spy ).toHaveBeenCalledWith( "http://www.w3.org/2001/XMLSchema#string" );
@@ -287,7 +288,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContext" ), ():void => {
 
 			it( "should call to the registry `getGeneralSchema` method", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
-				const spy:jasmine.Spy = spyOn( context.registry, "getGeneralSchema" ).and.returnValue( null );
+				const spy:jasmine.Spy = spyOnDecorated( context.registry, "getGeneralSchema" ).and.returnValue( null );
 
 				const returnedValue:any = queryContext.getGeneralSchema();
 				expect( spy ).toHaveBeenCalled();
@@ -317,7 +318,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContext" ), ():void => {
 
 			it( "should call to the registry `getSchemaFor` method", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
-				const spy:jasmine.Spy = spyOn( context.registry, "getSchemaFor" ).and.returnValue( null );
+				const spy:jasmine.Spy = spyOnDecorated( context.registry, "getSchemaFor" ).and.returnValue( null );
 
 				const object:object = { id: "http://example.com/", types: [ "http://example.com/Type" ] };
 

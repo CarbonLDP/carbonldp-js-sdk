@@ -9,7 +9,6 @@ import { QueryContext } from "./QueryContext";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryContextPartial } from "./QueryContextPartial";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import { QueryDocumentDocument } from "./QueryDocumentDocument";
 import {
 	QueryDocumentsBuilder,
 	QueryDocumentsBuilderOrderData,
@@ -87,15 +86,6 @@ describe( module( "carbonldp/QueryDocuments" ), ():void => {
 	), ():void => {
 		const target:QueryDocument.QueryDocumentsBuilderOrderData = {} as QueryDocumentsBuilderOrderData;
 		expect( target ).toBeDefined();
-	} );
-
-	it( reexports(
-		INSTANCE,
-		"QueryDocumentDocument",
-		"CarbonLDP.QueryDocuments.QueryDocumentDocument"
-	), ():void => {
-		expect( QueryDocument.QueryDocumentDocument ).toBeDefined();
-		expect( QueryDocument.QueryDocumentDocument ).toBe( QueryDocumentDocument );
 	} );
 
 	it( reexports(

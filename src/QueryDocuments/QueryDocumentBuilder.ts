@@ -101,7 +101,7 @@ export class QueryDocumentBuilder {
 	withType( type:string ):this {
 		if( this._context.hasProperties( this._document.name ) ) throw new IllegalStateError( "Types must be specified before the properties." );
 
-		type = ObjectSchemaUtils.resolveURI( type, this._schema, { vocab: true } );
+		type = this._schema.resolveURI( type, { vocab: true } );
 		if( ! this._typesTriple.predicates[ 0 ].objects.length )
 			this._document.addPattern( this._typesTriple );
 

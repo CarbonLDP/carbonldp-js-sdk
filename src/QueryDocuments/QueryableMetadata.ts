@@ -20,7 +20,7 @@ export class QueryableMetadata {
 		if( newSchema === QueryableMetadata.ALL || oldSchema === QueryableMetadata.ALL ) return QueryableMetadata.ALL;
 
 		newSchema.prefixes.forEach( ( newURI, namespace ) => {
-			newURI = ObjectSchemaUtils.resolveURI( newURI, newSchema );
+			newURI = newSchema.resolveURI( newURI );
 			if( ! oldSchema.prefixes.has( namespace ) ) return oldSchema.prefixes.set( namespace, newURI );
 
 			const oldURI:string = oldSchema.prefixes.get( namespace );

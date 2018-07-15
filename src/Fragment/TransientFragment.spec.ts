@@ -7,9 +7,20 @@ import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
 
+import { URI } from "../RDF/URI";
+
 import { Resource } from "../Resource/Resource";
 
-import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, OPTIONAL, property, STATIC } from "../test/JasmineExtender";
+import {
+	extendsClass,
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	property,
+	STATIC
+} from "../test/JasmineExtender";
 
 import { BaseTransientFragment } from "./BaseTransientFragment";
 import { TransientFragment, TransientFragmentFactory } from "./TransientFragment";
@@ -125,10 +136,10 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 				expect( TransientFragment.create ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should fill empty id when no provided", ():void => {
+			it( "should fill bNode label id when no provided", ():void => {
 				const fragment:TransientFragment = TransientFragment.create( { $registry } );
 
-				expect( fragment.$id ).toBe( "" );
+				expect( URI.isBNodeID( fragment.$id ) ).toBe( true );
 			} );
 
 			it( "should maintain id when provided", ():void => {
@@ -163,10 +174,10 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 				expect( TransientFragment.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should fill empty id when no provided", ():void => {
+			it( "should fill bNode label id when no provided", ():void => {
 				const fragment:TransientFragment = TransientFragment.createFrom( { $registry } );
 
-				expect( fragment.$id ).toBe( "" );
+				expect( URI.isBNodeID( fragment.$id ) ).toBe( true );
 			} );
 
 			it( "should maintain id when provided", ():void => {

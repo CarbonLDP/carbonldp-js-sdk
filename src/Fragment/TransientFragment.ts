@@ -7,6 +7,7 @@ import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
 import { URI } from "../RDF/URI";
 
 import { Resource } from "../Resource/Resource";
@@ -41,7 +42,7 @@ export const TransientFragment:TransientFragmentFactory = {
 
 
 		get $slug():string {
-			throw new IllegalActionError( "Should never been called" );
+			return URI.generateBNodeID();
 		},
 
 		get $id( this:TransientFragment ):string {
@@ -75,6 +76,7 @@ export const TransientFragment:TransientFragmentFactory = {
 			.decorateMultiple( object, Resource );
 
 		if( ! target.$registry ) delete target.$registry;
+		if( ! target.$slug ) delete target.$slug;
 
 		return ModelDecorator
 			.definePropertiesFrom( TransientFragment.PROTOTYPE, target );

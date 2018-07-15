@@ -1,10 +1,13 @@
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
-import { DigestedObjectSchema } from "../ObjectSchema";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+
 import {
 	isString,
 	StringUtils,
 	UUIDUtils,
 } from "../Utils";
+
 
 export interface URIFactory {
 	hasFragment( uri:string ):boolean;
@@ -149,7 +152,7 @@ export const URI:URIFactory = {
 		uri = uriParts[ 0 ];
 
 		if( uri === "" ) return uri;
-		if( uri === "/" ) return uri;
+		if( uri === "/" ) return "";
 
 		let parts:string[] = uri.split( "/" );
 		if( parts[ parts.length - 1 ] === "" ) {

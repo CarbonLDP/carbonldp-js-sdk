@@ -1,4 +1,7 @@
+import { AnyThatMatches, anyThatMatches } from "../../test/helpers/jasmine/equalities";
 import * as CarbonLDP from "../CarbonLDP";
+import { DocumentsRegistry } from "../DocumentsRegistry/index";
+import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository";
 import { DocumentsContext } from "./DocumentsContext";
 import * as Messaging from "../Messaging";
 import { MessagingService } from "../Messaging";
@@ -10,6 +13,7 @@ import {
 	interfaze,
 	module
 } from "../test/JasmineExtender";
+
 
 describe( module( "carbonldp/DocumentsContext" ), () => {
 
@@ -43,6 +47,16 @@ describe( module( "carbonldp/DocumentsContext" ), () => {
 				expect( context ).toEqual( jasmine.any( DocumentsContext ) );
 			} );
 
+
+			it( "should initialize CarbonLDP.registry", ():void => {
+				const context:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
+				expect( context.registry ).toEqual( anyThatMatches( DocumentsRegistry.isDecorated, "isDocumentRegistry" ) );
+			} );
+
+			it( "should initialize CarbonLDP.repository", ():void => {
+				const context:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
+				expect( context.repository ).toEqual( anyThatMatches( DocumentsRepository.is, "isDocumentRepository" ) );
+			} );
 
 			it( "should initialize CarbonLDP.messaging", ():void => {
 				const context:DocumentsContext = new DocumentsContext( "https://example.com/" );

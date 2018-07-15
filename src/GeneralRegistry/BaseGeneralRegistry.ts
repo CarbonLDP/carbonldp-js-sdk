@@ -7,5 +7,5 @@ import { GeneralRegistry } from "./GeneralRegistry";
 
 export interface BaseGeneralRegistry extends BaseRegistry {
 	$context:Context;
-	$registry?:GeneralRegistry<any>;
+	$registry?:GeneralRegistry | undefined;
 }

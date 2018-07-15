@@ -189,7 +189,7 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 			value = documentResource[ "http://example.com/ns#pointer" ][ 0 ];
 			result = RDFValue.parse( pointerLibrary, value  );
 			expect( Pointer.is( result ) ).toBe( true );
-			expect( result.id ).toBe( "http://example.com/pointer/1" );
+			expect( result.$id ).toBe( "http://example.com/pointer/1" );
 
 			value = documentResource[ "http://example.com/ns#list" ][ 0 ];
 			result = RDFValue.parse( pointerLibrary, value  );
@@ -198,7 +198,7 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 			expect( result[ 0 ] ).toBe( 100 );
 			expect( result[ 1 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
 			expect( Pointer.is( result[ 2 ] ) ).toBe( true );
-			expect( result[ 2 ].id ).toBe( "http://example.com/pointer/1" );
+			expect( result[ 2 ].$id ).toBe( "http://example.com/pointer/1" );
 
 			value = documentResource[ "http://example.com/ns#empty-property" ][ 0 ];
 			result = RDFValue.parse( pointerLibrary, value  );

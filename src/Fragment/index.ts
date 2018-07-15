@@ -1,4 +1,4 @@
-export * from "./BaseTransientFragment";
-export * from "./Fragment";
-export * from "./TransientFragment";
+export { BaseTransientFragment } from "./BaseTransientFragment";
+export { Fragment } from "./Fragment";
+export { TransientFragment } from "./TransientFragment";
 export { BaseResolvableFragment } from "./BaseResolvableFragment";

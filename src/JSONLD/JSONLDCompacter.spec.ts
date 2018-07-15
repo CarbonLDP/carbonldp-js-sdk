@@ -1,23 +1,20 @@
-import { CarbonLDP } from "../CarbonLDP";
-import { Document } from "../Document";
-import { ObjectSchemaDigester } from "../ObjectSchema";
-import {
-	QueryContextBuilder,
-	QueryPropertyType
-} from "../QueryDocuments";
-import { RDFNode } from "../RDF";
-import {
-	DocumentsRegistry,
-	RegistryService
-} from "../Registry";
-import {
-	clazz,
-	constructor,
-	hasSignature,
-	INSTANCE,
-	method,
-	module
-} from "../test/JasmineExtender";
+import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
+import { createMockContext } from "../../test/helpers/mocks/core";
+
+import { Context } from "../Context/Context";
+
+import { Document } from "../Document/Document";
+
+import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
+import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
+
+import { QueryContextBuilder } from "../QueryDocuments/QueryContextBuilder";
+import { QueryPropertyType } from "../QueryDocuments/QueryProperty";
+
+import { RDFNode } from "../RDF/Node";
+
+import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
+
 import { JSONLDConverter } from "./Converter";
 import { JSONLDCompacter } from "./JSONLDCompacter";
 
@@ -25,6 +22,13 @@ import { JSONLDCompacter } from "./JSONLDCompacter";
 describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 
 	describe( clazz( "CarbonLDP.JSONLD.JSONLDCompacter", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
+
+		let registry:GeneralRegistry<Document>;
+		beforeEach( ():void => {
+			const $context:Context = createMockContext();
+			registry = GeneralRegistry.create( { __modelDecorator: Document, $context } );
+		} );
+
 
 		it( "should exists", ():void => {
 			expect( JSONLDCompacter ).toBeDefined();
@@ -43,20 +47,18 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			), ():void => {} );
 
 			it( "should be instantiable", () => {
-				const instance:JSONLDCompacter = new JSONLDCompacter( new RegistryService( Document ) );
+				const instance:JSONLDCompacter = new JSONLDCompacter( registry );
 				expect( instance ).toEqual( jasmine.any( JSONLDCompacter ) );
 			} );
 
 
 			it( "should accept optional root", () => {
-				const registry:RegistryService<Document> = new RegistryService( Document );
 				const instance:JSONLDCompacter = new JSONLDCompacter( registry, "root" );
 
 				expect( instance ).toEqual( jasmine.any( JSONLDCompacter ) );
 			} );
 
 			it( "should accept optional SchemaResolver", () => {
-				const registry:RegistryService<Document> = new RegistryService( Document );
 				const instance:JSONLDCompacter = new JSONLDCompacter( registry, null, {
 					getGeneralSchema: ():any => {},
 					hasSchemaFor: ():any => {},
@@ -67,7 +69,6 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should accept optional JSONLDConverter", () => {
-				const registry:RegistryService<Document> = new RegistryService( Document );
 				const instance:JSONLDCompacter = new JSONLDCompacter( registry, null, null, new JSONLDConverter() );
 
 				expect( instance ).toEqual( jasmine.any( JSONLDCompacter ) );
@@ -92,28 +93,28 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 
 
 			it( "should call .compactDocuments", () => {
-				const compacter:JSONLDCompacter = new JSONLDCompacter( new RegistryService( Document ) );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry );
 
 				const spy:jasmine.Spy = spyOn( compacter, "compactDocuments" )
 					.and.returnValue( [] );
 
 
-				compacter.compactDocument( { "@graph": [ { "@id": "the-data/" } ] } );
-				expect( spy ).toHaveBeenCalledWith( [ { "@graph": [ { "@id": "the-data/" } ] } ] );
+				compacter.compactDocument( { "@id": "", "@graph": [ { "@id": "the-data/" } ] } );
+				expect( spy ).toHaveBeenCalledWith( [ { "@id": "", "@graph": [ { "@id": "the-data/" } ] } ] );
 			} );
 
 			it( "should return first element from .compactDocuments", () => {
-				const compacter:JSONLDCompacter = new JSONLDCompacter( new RegistryService( Document ) );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry );
 
-				spyOn( compacter, "compactDocuments" )
-					.and.returnValue( [
-					Document.decorate( { the: "document" } ),
-					Document.decorate( { another: "document" } ),
-				] );
+				spyOn( compacter, "compactDocuments" ).and
+					.returnValue( [
+						registry._addPointer( { $id: "the-data/", the: "document" } ),
+						registry._addPointer( { $id: "another/", another: "document" } ),
+					] );
 
 
-				const returned:Document = compacter.compactDocument( { "@graph": [ { "@id": "the-data/" } ] } );
-				expect( returned ).toEqual( Document.decorate( { the: "document" } ) );
+				const returned:Document = compacter.compactDocument( { "@id": "the-data/", "@graph": [ { "@id": "the-data/" } ] } );
+				expect( returned as {} ).toEqual( { the: "document" } );
 			} );
 
 		} );
@@ -136,8 +137,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 
 
 			it( "should send root path when one level resources", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
-				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
+				const spy:jasmine.Spy = spyOnDecorated( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
 				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target" );
@@ -168,8 +168,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should send root path for only main registry", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
-				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
+				const spy:jasmine.Spy = spyOnDecorated( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
 				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target" );
@@ -209,10 +208,9 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should send path of second level resources when schema is available", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
-				spyOn( registry, "hasSchemaFor" ).and
+				spyOnDecorated( registry, "hasSchemaFor" ).and
 					.returnValue( true );
-				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
+				const spy:jasmine.Spy = spyOnDecorated( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
@@ -273,8 +271,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should not send path of second level resources when schema is unavailable", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
-				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
+				const spy:jasmine.Spy = spyOnDecorated( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
@@ -334,10 +331,9 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should send path of second level of main registry when schema is available", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
-				spyOn( registry, "hasSchemaFor" ).and
+				spyOnDecorated( registry, "hasSchemaFor" ).and
 					.returnValue( true );
-				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
+				const spy:jasmine.Spy = spyOnDecorated( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
@@ -405,8 +401,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should not send path of second level of main registry when schema is unavailable", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
-				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
+				const spy:jasmine.Spy = spyOnDecorated( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
@@ -474,8 +469,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should compact a resource with a fragment with path", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
-				spyOn( registry, "getSchemaFor" ).and
+				spyOnDecorated( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"pointer": {
 							"@id": "https://example.com/ns#pointer",
@@ -523,8 +517,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should compact a resource with a fragment with no path", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
-				spyOn( registry, "getSchemaFor" ).and
+				spyOnDecorated( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"pointer": {
 							"@id": "https://example.com/ns#pointer",
@@ -572,8 +565,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should send path of only fist level when related to each other when registry resolver", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
-				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
+				const spy:jasmine.Spy = spyOnDecorated( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
@@ -628,7 +620,6 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should send path of only fist level when related to each other when query resolver", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -690,7 +681,6 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should send path of only second level when related to each other by partial property when query resolver", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -764,7 +754,6 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should compact every level from related to each other by partial property when query resolver", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -839,7 +828,6 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should compact every level from related to each other by partial property when query resolver", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -914,7 +902,6 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should merge every level schema from related to each other by partial property when query resolver", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -996,7 +983,6 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 			} );
 
 			it( "should compact same related document by partial property when query resolver", ():void => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -1080,7 +1066,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 
 				expect( compacted[ 0 ].pointer ).toBe( compacted[ 1 ].pointer );
 				expect( compacted[ 0 ].pointer as any as Document ).toEqual( jasmine.objectContaining( {
-					id: "https://example.com/shared-resource/",
+					$id: "https://example.com/shared-resource/",
 				} ) );
 			} );
 

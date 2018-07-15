@@ -116,7 +116,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 				expect( () => {
 					registry._addPointer( {} as any );
-				} ).toThrowError( IllegalArgumentError, "The resource ID is required." );
+				} ).toThrowError( IllegalArgumentError, "The pointer $id cannot be empty." );
 			} );
 
 			it( "should throw error when ID out of scope", () => {
@@ -1329,9 +1329,10 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should call ModelDecorator.definePropertiesFrom with PROTOTYPE", () => {
-				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
+				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" )
+					.and.callThrough();
 
-				Registry.decorate( { __modelDecorator: null, the: "object" } );
+				Registry.decorate( { __modelDecorator: RegisteredPointer, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( Registry.PROTOTYPE, { the: "object" } );
 			} );

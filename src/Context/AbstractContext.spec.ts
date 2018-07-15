@@ -35,7 +35,7 @@ function createMock<PARENT extends AbstractContext<any, any, any> = undefined>( 
 		constructor( parentContext?:PARENT ) {
 			super( parentContext );
 
-			this._baseURI = data && data.uri !== void 0 ? data.uri : "https://example.com/";
+			this._baseURI = data && "uri" in data ? data.uri : "https://example.com/";
 			if( data && data.settings ) this._settings = data.settings;
 
 			if( data && data.generalSchema ) this._generalObjectSchema = data.generalSchema;

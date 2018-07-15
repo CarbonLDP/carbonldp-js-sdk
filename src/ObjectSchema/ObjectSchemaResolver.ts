@@ -34,9 +34,9 @@ function __getSchemaForNode( this:void, $context:Context | undefined, node:{ "@i
 	return __getSchema( $context, types, node[ "@id" ] );
 }
 
-function __getSchemaForResource( this:void, $context:Context | undefined, resource:{ id?:string, types?:string[] } ):DigestedObjectSchema {
+function __getSchemaForResource( this:void, $context:Context | undefined, resource:{ $id?:string, types?:string[] } ):DigestedObjectSchema {
 	const types:string[] = resource.types || [];
-	return __getSchema( $context, types, resource.id );
+	return __getSchema( $context, types, resource.$id );
 }
 
 function __getSchema( this:void, $context:Context | undefined, objectTypes:string[], objectID?:string ):DigestedObjectSchema {
@@ -78,7 +78,7 @@ export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
 		},
 
 		getSchemaFor( this:ObjectSchemaResolver, object:object ):DigestedObjectSchema {
-			const schema:DigestedObjectSchema = "types" in object || "id" in object ?
+			const schema:DigestedObjectSchema = "types" in object || "$id" in object ?
 				__getSchemaForResource( this.$context, object ) :
 				__getSchemaForNode( this.$context, object );
 

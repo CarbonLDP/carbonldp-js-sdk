@@ -20,7 +20,7 @@ export interface Context<REGISTRY extends RegisteredPointer = RegisteredPointer,
 	readonly jsonldConverter:JSONLDConverter;
 
 
-	resolve( relativeURI:string, relativeTo?:{ vocab?:boolean, base?:boolean } ):string;
+	resolve( relativeURI:string ):string;
 
 
 	hasObjectSchema( type:string ):boolean;

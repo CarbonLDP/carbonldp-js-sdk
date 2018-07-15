@@ -193,6 +193,10 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 			transient.$id = locationHeader.values[ 0 ].toString();
 
 			const document:T & Document = repository.$context.registry._addPointer( transient );
+			document
+				.getFragments()
+				.forEach( document.__modelDecorator.decorate );
+
 			document._syncSnapshot();
 
 			return __applyResponseRepresentation<T>( repository, document, response );
@@ -205,7 +209,7 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 
 function __createChildren<T extends object>( this:void, retrievalType:"minimal" | "representation", repository:LDPDocumentsRepositoryTrait, uri:string, children:T | T[], slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
 	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
-	const url:string = repository.$context.resolve( uri );
+	const url:string = repository.$context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	requestOptions = RequestUtils.isOptions( slugsOrOptions ) ?
 		slugsOrOptions :
@@ -251,7 +255,7 @@ function __sendPatch<T extends object>( this:void, repository:LDPDocumentsReposi
 	if( ! ResolvablePointer.is( document ) ) return Promise.reject( new IllegalArgumentError( "The document isn't a resolvable pointer." ) );
 
 	if( ! repository.$context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( `"${ document.$id }" is out of scope.` ) );
-	const url:string = repository.$context.resolve( document.$id );
+	const url:string = repository.$context.getObjectSchema().resolveURI( document.$id, { base: true } );
 
 	if( ! document.isDirty() ) return Promise.resolve( document as T & Document );
 
@@ -308,7 +312,7 @@ function __parseMembers( registry:Registry, pointers:(string | Pointer)[] ):Poin
 
 function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
 	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
-	const url:string = repository.$context.resolve( uri );
+	const url:string = repository.$context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
@@ -329,7 +333,7 @@ function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri
 
 function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
 	if( ! repository.$context.registry.inScope( uri, true  ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
-	const url:string = repository.$context.resolve( uri );
+	const url:string = repository.$context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
@@ -354,7 +358,7 @@ function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, 
 
 function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<void> {
 	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
-	const url:string = repository.$context.resolve( uri );
+	const url:string = repository.$context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
 	RequestUtils.setRetrievalPreferences( {

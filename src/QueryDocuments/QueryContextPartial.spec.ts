@@ -1,20 +1,12 @@
-import {
-	createMockDocument,
-	createMockQueryableMetadata
-} from "../../test/helpers/mocks";
-import { AbstractContext } from "../Context";
-import { Document } from "../Document";
-import { Pointer } from "../Pointer";
-import { PersistedResource } from "../Resource";
-import {
-	clazz,
-	constructor,
-	extendsClass,
-	hasSignature,
-	INSTANCE,
-	method,
-	module
-} from "../test/JasmineExtender";
+import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
+import { createMockContext, createMockQueryableMetadata } from "../../test/helpers/mocks";
+
+import { AbstractContext } from "../Context/AbstractContext";
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+
+import { clazz, constructor, extendsClass, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
+import { QueryablePointer } from "./QueryablePointer";
+
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryContextPartial";
@@ -34,19 +26,20 @@ describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 			expect( QueryContextPartial ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let context:AbstractContext<Pointer, any>;
-		let persistedDocument:Document;
+		let context:AbstractContext<RegisteredPointer, any>;
+		let resource:QueryablePointer;
 		beforeEach( ():void => {
 			context = createMockContext();
 
-			persistedDocument = createMockDocument( {
-				_registry: context.registry,
-				_partialMetadata: createMockQueryableMetadata( {
+			resource = QueryablePointer.decorate<Partial<QueryablePointer>>( {
+				$repository: context.repository,
+
+				$id: "https://example.com/resource/",
+				_queryableMetadata: createMockQueryableMetadata( {
 					"documentProperty": {
 						"@id": "https://example.com/ns#document-property",
 					},
 				} ),
-				id: "https://example.com/resource/",
 			} );
 		} );
 
@@ -61,7 +54,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 			} );
 
 			it( "should be instantiable", ():void => {
-				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
+				const queryContext:QueryContextPartial = new QueryContextPartial( resource, context );
 				expect( queryContext ).toBeDefined();
 				expect( queryContext ).toEqual( jasmine.any( QueryContextPartial ) );
 			} );
@@ -69,7 +62,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 		} );
 
 		it( extendsClass( "CarbonLDP.QueryDocuments.QueryContext" ), ():void => {
-			const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
+			const queryContext:QueryContextPartial = new QueryContextPartial( resource, context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );
 
@@ -92,11 +85,11 @@ describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 			} );
 
 			it( "should return the schema of the document", ():void => {
-				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
+				const queryContext:QueryContextPartial = new QueryContextPartial( resource, context );
 
 				const helper:( name:string ) => void = name => {
 					const returnedValue:any = queryContext.getSchemaFor( {}, name );
-					expect( returnedValue ).toBe( persistedDocument._queryableMetadata.schema );
+					expect( returnedValue ).toBe( resource._queryableMetadata.schema );
 				};
 
 				helper( "document" );
@@ -105,23 +98,24 @@ describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 			} );
 
 			it( "should return the schema of a document property", ():void => {
-				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
-				const fragment:PersistedResource = persistedDocument._addPointer( PersistedResource.decorate( {
-					_partialMetadata: createMockQueryableMetadata( {
+				const queryContext:QueryContextPartial = new QueryContextPartial( resource, context );
+				const fragment:QueryablePointer = QueryablePointer.decorate<Partial<QueryablePointer>>( {
+					$repository: context.repository,
+					_queryableMetadata: createMockQueryableMetadata( {
 						"fragmentProperty": {
 							"@id": "https://example.com/ns#fragment-property",
 						},
 					} ),
-				} ) );
+				} );
 
 
-				persistedDocument[ "property" ] = fragment;
-				persistedDocument[ "propertyArray" ] = [ fragment ];
-				persistedDocument[ "propertyArray2" ] = [ null, null, fragment ];
+				resource[ "property" ] = fragment;
+				resource[ "propertyArray" ] = [ fragment ];
+				resource[ "propertyArray2" ] = [ null, null, fragment ];
 
 				const helper:( name:string ) => void = name => {
 					const returnedValue:any = queryContext.getSchemaFor( {}, name );
-					expect( returnedValue ).toBe( fragment.__partialMetadata.schema );
+					expect( returnedValue ).toBe( fragment._queryableMetadata.schema );
 				};
 
 				helper( "document.property" );
@@ -133,16 +127,16 @@ describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 			} );
 
 			it( "should call document `getSchemaFor` when invalid property", ():void => {
-				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
-				persistedDocument[ "property1" ] = void 0;
-				persistedDocument[ "property2" ] = null;
-				persistedDocument[ "property3" ] = "string";
-				persistedDocument[ "property4" ] = 1;
-				persistedDocument[ "property6" ] = {};
-				persistedDocument[ "property5" ] = [];
-				persistedDocument[ "property6" ] = [ {} ];
+				const queryContext:QueryContextPartial = new QueryContextPartial( resource, context );
+				resource[ "property1" ] = void 0;
+				resource[ "property2" ] = null;
+				resource[ "property3" ] = "string";
+				resource[ "property4" ] = 1;
+				resource[ "property6" ] = {};
+				resource[ "property5" ] = [];
+				resource[ "property6" ] = [ {} ];
 
-				const spy:jasmine.Spy = spyOn( context.registry, "getSchemaFor" )
+				const spy:jasmine.Spy = spyOnDecorated( context.registry, "getSchemaFor" )
 					.and.returnValue( null );
 
 				const helper:( name:string ) => void = name => {

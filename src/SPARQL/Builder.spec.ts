@@ -1,6 +1,12 @@
 import SPARQLER from "sparqler";
 import { FinishClause } from "sparqler/clauses";
+
 import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
+
+import { DocumentsContext } from "../Context/DocumentsContext";
+
+import { SPARQLDocumentsRepositoryTrait } from "../DocumentsRepository/Traits/SPARQLDocumentsRepositoryTrait";
+
 import {
 	clazz,
 	constructor,
@@ -12,14 +18,11 @@ import {
 	module,
 	OBLIGATORY,
 } from "../test/JasmineExtender";
+
 import * as Builder from "./Builder";
-import {
-	FinishSPARQLSelect,
-	SPARQLBuilder
-} from "./Builder";
-import { SPARQLRawResults } from "./RawResults";
+import { FinishSPARQLSelect, SPARQLBuilder } from "./Builder";
 import { SPARQLSelectResults } from "./SelectResults";
-import { SPARQLDocumentTrait } from "../Document/Traits/SPARQLDocumentTrait";
+
 
 describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customized SPARQLER class." ), ():void => {
 
@@ -53,19 +56,6 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 
 		} );
 
-		describe( method( OBLIGATORY, "executeRaw" ), () => {
-
-			it( hasSignature(
-				{ type: "Promise<CarbonLDP.SPARQL.SPARQLRawResults>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
-				const target:FinishSPARQLSelect[ "executeRaw" ] = ():any => {};
-				expect( target ).toBeDefined();
-			} );
-
-		} );
-
 	} );
 
 	describe( clazz(
@@ -77,25 +67,25 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 
 			it( hasSignature(
 				[
-					{ name: "resource", type: "CarbonLDP.SPARQL.SPARQLDocument", description: "The resource where the builder is been constructed from." },
+					{ name: "repository", type: "CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentsRepositoryTrait", description: "The repository where the builder is been constructed from." },
 					{ name: "entryPoint", type: "string", description: "The entry point URI where the query can be executed from." },
 				]
 			), ():void => {} );
 
 			it( "should be instantiable", () => {
-				const resource:SPARQLDocumentTrait = SPARQLDocumentTrait.decorate( { id: "https://example.com/" } );
+				const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { $context: new DocumentsContext( "https://example.com/" ) } );
 				const entryPoint:string = "https://example.com/";
 
-				const builder:SPARQLBuilder = new SPARQLBuilder( resource, entryPoint );
+				const builder:SPARQLBuilder = new SPARQLBuilder( repository, entryPoint );
 				expect( builder ).toEqual( jasmine.any( SPARQLBuilder ) );
 			} );
 
 
 			it( "should extend FinishClause with the FinishSPARQLSelect", () => {
-				const resource:SPARQLDocumentTrait = SPARQLDocumentTrait.decorate( { id: "https://example.com/" } );
+				const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { $context: new DocumentsContext( "https://example.com/" ) } );
 				const entryPoint:string = "https://example.com/";
 
-				const builder:SPARQLBuilder = new SPARQLBuilder( resource, entryPoint );
+				const builder:SPARQLBuilder = new SPARQLBuilder( repository, entryPoint );
 
 				const finishClause:FinishSPARQLSelect = builder
 					.selectAll()
@@ -103,21 +93,20 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 
 				expect( finishClause ).toEqual( jasmine.objectContaining( {
 					execute: jasmine.any( Function ),
-					executeRaw: jasmine.any( Function ),
 				} ) );
 			} );
 
 			it( "should call executeSELECTQuery when execute", async () => {
-				const resource:SPARQLDocumentTrait = SPARQLDocumentTrait.decorate( { id: "https://example.com/" } );
+				const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { $context: new DocumentsContext( "https://example.com/" ) } );
 				const entryPoint:string = "https://example.com/entry-point/";
 
-				const builder:SPARQLBuilder = new SPARQLBuilder( resource, entryPoint );
+				const builder:SPARQLBuilder = new SPARQLBuilder( repository, entryPoint );
 
 				const finishClause:FinishSPARQLSelect = builder
 					.selectAll()
 					.where( () => [] );
 
-				const spy:jasmine.Spy = spyOnDecorated( resource, "executeSELECTQuery" )
+				const spy:jasmine.Spy = spyOnDecorated( repository, "executeSELECTQuery" )
 					.and.returnValue( Promise.resolve( null ) );
 
 				const returned:SPARQLSelectResults | null = await finishClause.execute<{}>();
@@ -126,29 +115,10 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 				expect( returned ).toBeNull();
 			} );
 
-			it( "should call executeRawSELECTQuery when execute", async () => {
-				const resource:SPARQLDocumentTrait = SPARQLDocumentTrait.decorate( { id: "https://example.com/" } );
-				const entryPoint:string = "https://example.com/entry-point/";
-
-				const builder:SPARQLBuilder = new SPARQLBuilder( resource, entryPoint );
-
-				const finishClause:FinishSPARQLSelect = builder
-					.selectAll()
-					.where( () => [] );
-
-				const spy:jasmine.Spy = spyOnDecorated( resource, "executeRawSELECTQuery" )
-					.and.returnValue( Promise.resolve( null ) );
-
-				const returned:SPARQLRawResults | null = await finishClause.executeRaw();
-
-				expect( spy ).toHaveBeenCalledWith( entryPoint, finishClause.toCompactString() );
-				expect( returned ).toBeNull();
-			} );
-
 		} );
 
 		it( extendsClass( "SPARQLER/SPARQLER" ), () => {
-			const target:SPARQLBuilder = new SPARQLBuilder( SPARQLDocumentTrait.decorate( {} ), "" );
+			const target:SPARQLBuilder = new SPARQLBuilder( null, "" );
 			expect( target ).toEqual( jasmine.any( SPARQLER ) );
 		} );
 

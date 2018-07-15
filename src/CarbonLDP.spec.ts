@@ -26,7 +26,7 @@ import {
 } from "./ObjectSchema";
 import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
-import { DocumentsRegistry } from "./Registry";
+import { DocumentsRegistry } from "./DocumentsRegistry";
 import { Resource } from "./Resource";
 import { CarbonLDPSettings } from "./Settings";
 import * as SHACL from "./SHACL";
@@ -338,10 +338,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				expect( target ).toEqual( jasmine.any( CarbonLDP.CarbonLDP ) );
 			} );
 
-			it( "should initialize CarbonLDP.registry", ():void => {
-				const context:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
-				expect( context.registry ).toEqual( jasmine.any( DocumentsRegistry ) );
-			} );
 
 			it( "should initialize documents root document", () => {
 				const context:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );

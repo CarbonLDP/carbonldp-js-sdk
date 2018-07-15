@@ -4,6 +4,7 @@ import { AccessPoint } from "./AccessPoint";
 import { AbstractContext } from "./Context/AbstractContext";
 import { DocumentsContext } from "./Context/DocumentsContext";
 import { GlobalContext } from "./Context/GlobalContext";
+
 import { Document } from "./Document";
 import * as Errors from "./Errors";
 import { IllegalArgumentError } from "./Errors";
@@ -136,14 +137,16 @@ function getURLFromString( this:void, url:string ):string {
 function getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
 	if( ! Utils.isString( settings.host ) )
 		throw new IllegalArgumentError( `The settings object must contains a valid host string.` );
+
 	if( hasProtocol( settings.host ) )
 		throw new IllegalArgumentError( `The host must not contain a protocol.` );
+
 	if( settings.host.includes( ":" ) )
 		throw new IllegalArgumentError( `The host must not contain a port.` );
 
-
 	const protocol:string = settings.ssl === false ? "http://" : "https://";
-	const url:string = `${ protocol }${ settings.host }/`;
+	const host:string = settings.host.endsWith( "/" ) ? settings.host.slice( 0, -1 ) : settings.host;
+	const url:string = `${ protocol }${ host }/`;
 
 	if( ! Utils.isNumber( settings.port ) ) return url;
 	return url.slice( 0, - 1 ) + `:${ settings.port }/`;

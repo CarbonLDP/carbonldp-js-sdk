@@ -1,19 +1,21 @@
-import { Context } from "../Context";
-import { ModelFactory } from "../Model";
-import { BaseRegistry } from "./BaseRegistry";
+import { GlobalContext } from "../Context/GlobalContext";
+
+import { BaseGeneralRegistry } from "../GeneralRegistry/BaseGeneralRegistry";
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
+
+import { ModelFactory } from "../Model/ModelFactory";
+
 import { RegisteredPointer } from "./RegisteredPointer";
 
 
-// FIXME: GlobalContext
 export interface BaseGlobalRegistry {
-	// $context:GlobalContext;
-	$context:Context;
+	$context:GlobalContext;
 }
 
 
 export interface GlobalRegistry extends GeneralRegistry<RegisteredPointer> {
-	// $context:GlobalContext;
+	$context:GlobalContext;
+	$registry:undefined;
 }
 
 
@@ -28,10 +30,11 @@ export const GlobalRegistry:GlobalRegistryFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseGlobalRegistry ):T & GlobalRegistry {
-		const baseObject:T & BaseRegistry = Object.assign( object, {
+		const baseObject:T & BaseGlobalRegistry & BaseGeneralRegistry = Object.assign( object, {
 			__modelDecorator: RegisteredPointer,
 		} );
 
-		return GeneralRegistry.createFrom( baseObject );
+		// FIXME
+		return GeneralRegistry.createFrom( baseObject as any );
 	},
 };

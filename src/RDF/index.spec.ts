@@ -11,7 +11,6 @@ import * as RDF from "./";
 import {
 	RDFDocument,
 	RDFDocumentFactory,
-	RDFDocumentParser,
 } from "./Document";
 import {
 	RDFList,
@@ -96,15 +95,6 @@ describe( module( "carbonldp/RDF" ), ():void => {
 	), ():void => {
 		const target:RDF.RDFDocumentFactory = {} as RDFDocumentFactory;
 		expect( target ).toBeDefined();
-	} );
-
-	it( reexports(
-		STATIC,
-		"RDFDocumentParser",
-		"CarbonLDP.RDF.RDFDocumentParser"
-	), ():void => {
-		expect( RDF.RDFDocumentParser ).toBeDefined();
-		expect( RDF.RDFDocumentParser ).toBe( RDFDocumentParser );
 	} );
 
 	it( reexports(

@@ -1,5 +1,5 @@
-export function anyThatMatches<T>( matcher:( value:any ) => value is T, name?:string ):AnyThatMatches<T> {
-	return new AnyThatMatches( matcher, name );
+export function anyThatMatches<T>( matcher:( value:any ) => value is T, name?:string ):jasmine.Any {
+	return new AnyThatMatches( matcher, name ) as any;
 }
 
 export class AnyThatMatches<T> {

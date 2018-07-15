@@ -483,38 +483,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 		} );
 
-		describe( method( OBLIGATORY, "onDocumentCreated" ), ():void => {
-
-			it( hasSignature(
-				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_CREATED` event notifications for the uri pattern specified.",
-				[
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( "should exists", ():void => {
-				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
-
-				expect( resource.onDocumentCreated ).toBeDefined();
-				expect( resource.onDocumentCreated ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should should call .on", () => {
-				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
-
-				Object.defineProperty( resource, "on", { writable: true } );
-				const spy:jasmine.Spy = spyOn( resource, "on" );
-
-				resource.onDocumentCreated( "child/!*", () => fail( "Should not resolve." ), fail );
-
-				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_CREATED, "child/!*", jasmine.any( Function ), jasmine.any( Function ) );
-			} );
-
-		} );
-
 		describe( method( OBLIGATORY, "onDocumentModified" ), ():void => {
 
 			it( hasSignature(
