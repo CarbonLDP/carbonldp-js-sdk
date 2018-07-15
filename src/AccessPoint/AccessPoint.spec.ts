@@ -32,7 +32,7 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"membershipResource",
-			"CarbonLDP.Pointer",
+			"CarbonLDP.Document",
 			"The membership resource the access point belongs to."
 		), ():void => {} );
 

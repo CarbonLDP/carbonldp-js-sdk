@@ -1,4 +1,6 @@
-export * from "./QueryableMetadata";
+export { QueryableMetadata } from "./QueryableMetadata";
+export { QueryablePointer } from "./QueryablePointer";
+
 export * from "./QueryContext";
 export * from "./QueryContextBuilder";
 export * from "./QueryContextPartial";

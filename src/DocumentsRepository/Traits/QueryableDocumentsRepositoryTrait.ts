@@ -54,7 +54,7 @@ import { RDFDocument } from "../../RDF/Document";
 import { RDFNode } from "../../RDF/Node";
 import { URI } from "../../RDF/URI";
 
-import { SPARQLService } from "../../SPARQL/Service";
+import { SPARQLService } from "../../SPARQL/SPARQLService";
 
 import { isBoolean, isDate, isFunction, isNumber, isObject, isString } from "../../Utils";
 

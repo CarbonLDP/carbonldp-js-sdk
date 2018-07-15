@@ -7,7 +7,7 @@ import {
 
 
 export interface AccessPoint extends Document {
-	membershipResource:Pointer;
+	membershipResource:Document;
 	hasMemberRelation:Pointer;
 	isMemberOfRelation?:Pointer;
 	insertedContentRelation?:Pointer;

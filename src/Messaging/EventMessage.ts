@@ -1,11 +1,14 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-import { C } from "../Vocabularies";
+import { Document } from "../Document/Document";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Resource } from "../Resource/Resource";
+
+import { C } from "../Vocabularies/C";
 
 
 export interface EventMessage extends Resource {
-	target:Pointer;
+	target:Document;
 }
 
 

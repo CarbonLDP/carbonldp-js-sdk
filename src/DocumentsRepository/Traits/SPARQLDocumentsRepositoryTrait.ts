@@ -17,7 +17,7 @@ import { DigestedObjectSchema } from "../../ObjectSchema/DigestedObjectSchema";
 
 import { FinishSPARQLSelect, SPARQLBuilder } from "../../SPARQL/Builder";
 import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
-import { SPARQLService } from "../../SPARQL/Service";
+import { SPARQLService } from "../../SPARQL/SPARQLService";
 
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 import { _getErrorResponseParserFn } from "../Utils";

@@ -1,5 +1,7 @@
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { Document } from "../Document/Document";
+
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
 	hasProperty,
@@ -10,9 +12,11 @@ import {
 	property,
 	STATIC
 } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
 
 import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
+
 
 describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 
@@ -34,9 +38,9 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"createdDocuments",
-			"CarbonLDP.Pointer[]"
+			"CarbonLDP.Document[]"
 		), ():void => {
-			const target:DocumentCreatedDetails[ "createdDocuments" ] = [] as Pointer[];
+			const target:DocumentCreatedDetails[ "createdDocuments" ] = [] as Document[];
 			expect( target ).toBeDefined();
 		} );
 

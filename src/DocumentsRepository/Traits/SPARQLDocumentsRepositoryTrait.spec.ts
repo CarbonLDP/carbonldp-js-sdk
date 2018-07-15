@@ -22,7 +22,7 @@ import { ModelPrototype } from "../../Model/ModelPrototype";
 import { Pointer } from "../../Pointer/Pointer";
 
 import { FinishSPARQLSelect } from "../../SPARQL/Builder";
-import { SPARQLService } from "../../SPARQL/Service";
+import { SPARQLService } from "../../SPARQL/SPARQLService";
 
 import {
 	extendsClass,

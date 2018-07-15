@@ -1,11 +1,14 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { Document } from "../Document/Document";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Resource } from "../Resource/Resource";
+
 import { C } from "../Vocabularies/C";
 
 
 export interface DocumentCreatedDetails extends Resource {
-	createdDocuments:Pointer[];
+	createdDocuments:Document[];
 }
 
 

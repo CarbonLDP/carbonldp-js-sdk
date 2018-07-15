@@ -1,10 +1,17 @@
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
+
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
 import { FreeResources } from "../FreeResources/FreeResources";
+
 import { HTTPError } from "../HTTP/Errors/HTTPError";
+
 import { JSONLDParser } from "../JSONLD/Parser";
+
 import { ErrorResponse } from "../LDP/ErrorResponse";
+
 import { Pointer } from "../Pointer/Pointer";
+
 import { RDFNode } from "../RDF/Node";
 
 import { URI } from "../RDF/URI";

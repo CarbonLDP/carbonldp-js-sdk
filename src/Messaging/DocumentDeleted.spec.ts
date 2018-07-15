@@ -1,4 +1,5 @@
-import { Pointer } from "../Pointer";
+import { Document } from "../Document/Document";
+
 import {
 	extendsClass,
 	hasProperty,
@@ -9,11 +10,12 @@ import {
 	property,
 	STATIC
 } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
 
 import { DocumentDeleted } from "./DocumentDeleted";
-
 import { EventMessage } from "./EventMessage";
+
 
 describe( module( "carbonldp/Messaging/DocumentDeleted" ), ():void => {
 
@@ -35,9 +37,9 @@ describe( module( "carbonldp/Messaging/DocumentDeleted" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer"
+			"CarbonLDP.Document"
 		), ():void => {
-			const target:DocumentDeleted[ "target" ] = {} as Pointer;
+			const target:DocumentDeleted[ "target" ] = {} as Document;
 			expect( target ).toBeDefined();
 		} );
 

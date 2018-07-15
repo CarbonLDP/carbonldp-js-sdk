@@ -1,12 +1,15 @@
-import { ModelSchema } from "../Model";
-import { VolatileResource } from "../LDP";
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { C } from "../Vocabularies";
+import { VolatileResource } from "../LDP/VolatileResource";
+import { ModelSchema } from "../Model/ModelSchema";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { C } from "../Vocabularies/C";
+
+import { QueryablePointer } from "./QueryablePointer";
 
 
 export interface QueryMetadata extends VolatileResource {
-	target:Pointer;
+	target:QueryablePointer;
 }
 
 

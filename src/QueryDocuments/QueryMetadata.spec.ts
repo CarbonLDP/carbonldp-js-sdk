@@ -12,6 +12,7 @@ import {
 	STATIC
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies";
+import { QueryablePointer } from "./QueryablePointer";
 
 import { QueryMetadata } from "./QueryMetadata";
 
@@ -32,10 +33,10 @@ describe( module( "carbonldp/QueryDocuments/QueryMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer",
+			"CarbonLDP.QueryDocuments.QueryablePointer",
 			"The pointer to one of the targeted resources requested in the partial query."
 		), ():void => {
-			const target:QueryMetadata[ "target" ] = {} as Pointer;
+			const target:QueryMetadata[ "target" ] = {} as QueryablePointer;
 			expect( target ).toBeDefined();
 		} );
 
