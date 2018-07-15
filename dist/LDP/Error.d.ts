@@ -1,7 +1,7 @@
 import { ObjectSchema } from "../ObjectSchema";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import { Map } from "./Map";
-export interface Error extends TransientResource {
+export interface Error extends Resource {
     errorCode: string;
     errorMessage: string;
     errorParameters: Map<string, any>;

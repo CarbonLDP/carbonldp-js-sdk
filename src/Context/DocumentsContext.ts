@@ -1,13 +1,18 @@
-import { Document } from "../Document";
-import { MessagingService } from "../Messaging";
+import { Document } from "../Document/Document";
+
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository";
-import {
-	ContextSettings,
-	DocumentPaths
-} from "../Settings";
-import * as Utils from "../Utils";
+
+import { IllegalStateError } from "../Errors/IllegalStateError";
+
+import { MessagingService } from "../Messaging/Service";
+
+import { URI } from "../RDF/URI";
+
+import { isObject, isString, ObjectUtils } from "../Utils";
+
 import { AbstractContext } from "./AbstractContext";
+import { DocumentPaths, DocumentsContextSettings, Paths } from "./DocumentsContextSettings";
 import { GlobalContext } from "./GlobalContext";
 
 
@@ -19,10 +24,12 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	readonly repository:DocumentsRepository;
 	readonly messaging:MessagingService;
 
+	protected _settings?:DocumentsContextSettings;
 
-	private static _mergePaths( this:void, target:ContextSettings[ "paths" ], source:ContextSettings[ "paths" ] ):ContextSettings[ "paths" ] {
+
+	private static _mergePaths( this:void, target:Paths, source:Paths ):Paths {
 		if( ! source ) return target;
-		if( ! target ) return Utils.ObjectUtils.clone( source, { objects: true } );
+		if( ! target ) return ObjectUtils.clone( source, { objects: true } );
 
 		for( const key of Object.keys( source ) ) {
 			const sourcePath:string | DocumentPaths = source[ key ];
@@ -34,14 +41,14 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 
 			const targetPath:string | DocumentPaths = target[ key ];
 			if( ! targetPath ) {
-				target[ key ] = Utils.isObject( sourcePath ) ?
-					Utils.ObjectUtils.clone( sourcePath, { objects: true } ) :
+				target[ key ] = isObject( sourcePath ) ?
+					ObjectUtils.clone( sourcePath, { objects: true } ) :
 					sourcePath;
 				continue;
 			}
 
-			if( Utils.isString( sourcePath ) ) {
-				if( Utils.isObject( targetPath ) ) {
+			if( isString( sourcePath ) ) {
+				if( isObject( targetPath ) ) {
 					targetPath.slug = sourcePath;
 				} else {
 					target[ key ] = sourcePath;
@@ -51,7 +58,7 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 
 			if( sourcePath.slug === void 0 && sourcePath.paths === void 0 ) continue;
 
-			const targetDocPaths:DocumentPaths = Utils.isString( targetPath ) ?
+			const targetDocPaths:DocumentPaths = isString( targetPath ) ?
 				target[ key ] = { slug: targetPath } : targetPath;
 
 			if( sourcePath.slug !== void 0 ) targetDocPaths.slug = sourcePath.slug;
@@ -74,15 +81,59 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	}
 
 
-	protected _extendPaths( paths:ContextSettings[ "paths" ] ):void {
+	/**
+	 * Resolves the path provided into an URL using the `path` settings of the context.
+	 * If such path does hasn't been declared an IllegalStateError will be thrown.
+	 *
+	 * Example: The path `system.platform` with the default setting:
+	 * ```javascript
+	 * {
+	 *  paths: {
+	 *      system: {
+	 *          slug: ".system/",
+	 *          paths: { platform: "platform/" }
+	 *      }
+	 *  }
+	 * }```,
+	 * This should resolve to something like `https://example.com/.system/platform/`.
+	 *
+	 * @param path The dot notation string that refers the path declared in the settings
+	 * of the context.
+	 *
+	 * @returns The absolute URI of the path provided.
+	 */
+	_resolvePath( path:string ):string {
+		const leftSearchedPaths:string[] = path.split( "." );
+		const currentSearchedPaths:string[] = [];
+
+		let url:string = "";
+		let documentPaths:DocumentPaths[ "paths" ] = this._settings && this._settings.paths;
+		while( leftSearchedPaths.length ) {
+			const containerKey:string = leftSearchedPaths.shift();
+			currentSearchedPaths.push( containerKey );
+
+			const containerPath:string | DocumentPaths = documentPaths ? documentPaths[ containerKey ] : null;
+			if( ! containerPath ) throw new IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" hasn't been declared.` );
+
+			const slug:string = isString( containerPath ) ? containerPath : containerPath.slug;
+			if( ! slug ) throw new IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" doesn't have a slug set.` );
+
+			url = URI.resolve( url, slug );
+			documentPaths = isObject( containerPath ) ? containerPath.paths : null;
+		}
+
+		return this.resolve( url );
+	}
+
+	protected _extendPaths( paths:Paths ):void {
 		this._settings.paths = DocumentsContext._mergePaths( this._settings.paths, paths );
 	}
 
-	protected _extendsSettings( settings:ContextSettings ):void {
+	protected _extendsSettings( settings:DocumentsContextSettings ):void {
 		this._extendPaths( settings.paths );
 
 		delete settings.paths;
-		Utils.ObjectUtils.extend( this._settings, settings );
+		ObjectUtils.extend( this._settings, settings );
 	}
 
 }

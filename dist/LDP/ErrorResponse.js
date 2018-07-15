@@ -22,7 +22,7 @@ exports.ErrorResponse = {
     TYPE: C_1.C.ErrorResponse,
     SCHEMA: SCHEMA,
     is: function (value) {
-        return Resource_1.TransientResource.is(value)
+        return Resource_1.Resource.is(value)
             && value.hasType(exports.ErrorResponse.TYPE);
     },
     getMessage: function (errorResponse) {

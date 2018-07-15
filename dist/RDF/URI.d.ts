@@ -1,4 +1,4 @@
-import { DigestedObjectSchema } from "../ObjectSchema";
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 export interface URIFactory {
     hasFragment(uri: string): boolean;
     hasQuery(uri: string): boolean;

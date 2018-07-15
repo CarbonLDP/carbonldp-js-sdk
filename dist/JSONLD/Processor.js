@@ -7,7 +7,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("../Errors");
+var InvalidJSONLDSyntaxError_1 = require("../Errors/InvalidJSONLDSyntaxError");
+var NotImplementedError_1 = require("../Errors/NotImplementedError");
 var JSONParser_1 = require("../HTTP/JSONParser");
 var Request_1 = require("../HTTP/Request");
 var List_1 = require("../RDF/List");
@@ -110,7 +111,7 @@ var JSONLDProcessor = (function () {
     };
     JSONLDProcessor.retrieveContexts = function (input, contextsRequested, base) {
         if (Object.keys(contextsRequested).length > MAX_CONTEXT_URLS)
-            return Promise.reject(new Errors_1.InvalidJSONLDSyntaxError("Maximum number of @context URLs exceeded."));
+            return Promise.reject(new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("Maximum number of @context URLs exceeded."));
         var contextToResolved = Object.create(null);
         if (!JSONLDProcessor.findContextURLs(input, contextToResolved, base))
             return Promise.resolve();
@@ -139,13 +140,13 @@ var JSONLDProcessor = (function () {
         var promises = [];
         var _loop_1 = function (url) {
             if (url in contextsRequested)
-                return { value: Promise.reject(new Errors_1.InvalidJSONLDSyntaxError("Cyclical @context URLs detected.")) };
+                return { value: Promise.reject(new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("Cyclical @context URLs detected.")) };
             var requestOptions = { sendCredentialsOnCORS: false };
             Request_1.RequestUtils.setAcceptHeader("application/ld+json, application/json", requestOptions);
             var promise = Request_1.RequestService
                 .get(url, requestOptions, new JSONParser_1.JSONParser())
                 .catch(function (response) {
-                return Promise.reject(new Errors_1.InvalidJSONLDSyntaxError("Unable to resolve context from \"" + url + "\". Status code: " + response.status));
+                return Promise.reject(new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("Unable to resolve context from \"" + url + "\". Status code: " + response.status));
             });
             promises.push(resolved(url, promise));
         };
@@ -201,7 +202,7 @@ var JSONLDProcessor = (function () {
     JSONLDProcessor.expandURI = function (schema, uri, relativeTo) {
         if (JSONLDProcessor.isKeyword(uri))
             return uri;
-        return ObjectSchema.ObjectSchemaUtils.resolveURI(uri, schema, relativeTo);
+        return schema.resolveURI(uri, relativeTo);
     };
     JSONLDProcessor.expandLanguageMap = function (languageMap) {
         var expandedLanguage = [];
@@ -216,7 +217,7 @@ var JSONLDProcessor = (function () {
                 if (item === null)
                     continue;
                 if (!Utils.isString(item))
-                    throw new Errors_1.InvalidJSONLDSyntaxError("Language map values must be strings.");
+                    throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("Language map values must be strings.");
                 expandedLanguage.push({
                     "@value": item,
                     "@language": key.toLowerCase(),
@@ -252,7 +253,7 @@ var JSONLDProcessor = (function () {
             return value;
         var expandedValue = {};
         if (definition.literalType) {
-            expandedValue["@type"] = ObjectSchema.ObjectSchemaUtils.resolveURI(definition.literalType, context, { vocab: true, base: true });
+            expandedValue["@type"] = context.resolveURI(definition.literalType, { vocab: true, base: true });
         }
         else if (Utils.isString(value)) {
             var language = Utils.isDefined(definition.language) ? definition.language : context.language;
@@ -282,7 +283,7 @@ var JSONLDProcessor = (function () {
                 if (expandedItem === null)
                     continue;
                 if (insideList && (Utils.isArray(expandedItem) || List_1.RDFList.is(expandedItem)))
-                    throw new Errors_1.InvalidJSONLDSyntaxError("Lists of lists are not permitted.");
+                    throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("Lists of lists are not permitted.");
                 if (!Utils.isArray(expandedItem))
                     expandedItem = [expandedItem];
                 expanded.push.apply(expanded, expandedItem);
@@ -308,26 +309,26 @@ var JSONLDProcessor = (function () {
             var value = element[key];
             if (JSONLDProcessor.isKeyword(uri)) {
                 if (uri === "@id" && !Utils.isString(value))
-                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@id\" value must a string.");
+                    throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@id\" value must a string.");
                 if (uri === "@type" && !JSONLDProcessor.isValidType(value))
-                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@type\" value must a string, an array of strings.");
+                    throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@type\" value must a string, an array of strings.");
                 if (uri === "@graph" && !(Utils.isObject(value) || Utils.isArray(value)))
-                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@graph\" value must not be an object or an array.");
+                    throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@graph\" value must not be an object or an array.");
                 if (uri === "@value" && (Utils.isObject(value) || Utils.isArray(value)))
-                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@value\" value must not be an object or an array.");
+                    throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@value\" value must not be an object or an array.");
                 if (uri === "@language") {
                     if (value === null)
                         continue;
                     if (!Utils.isString(value))
-                        throw new Errors_1.InvalidJSONLDSyntaxError("\"@language\" value must be a string.");
+                        throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@language\" value must be a string.");
                     value = value.toLowerCase();
                 }
                 if (uri === "@index" && !Utils.isString(value))
-                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@index\" value must be a string.");
+                    throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@index\" value must be a string.");
                 if (uri === "@reverse" && !Utils.isObject(value))
-                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@reverse\" value must be an object.");
+                    throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@reverse\" value must be an object.");
                 if (uri === "@index" || uri === "@reverse")
-                    throw new Errors_1.NotImplementedError("The SDK does not support \"@index\" and \"@reverse\" tags.");
+                    throw new NotImplementedError_1.NotImplementedError("The SDK does not support \"@index\" and \"@reverse\" tags.");
             }
             var expandedValue = void 0;
             var container = JSONLDProcessor.getContainer(context, key);

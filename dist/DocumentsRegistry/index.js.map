@@ -1,0 +1,1 @@
+{"version":3,"sources":["DocumentsRegistry/index.ts"],"names":[],"mappings":";;AAAA,yDAAwD;AAA/C,gDAAA,iBAAiB,CAAA","file":"index.js","sourcesContent":["export { DocumentsRegistry } from \"./DocumentsRegistry\";\n"]}

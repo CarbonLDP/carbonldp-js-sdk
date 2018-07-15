@@ -10,41 +10,25 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var http_1 = __importDefault(require("http"));
 var https_1 = __importDefault(require("https"));
 var url_1 = __importDefault(require("url"));
-var Errors_1 = require("../Errors");
-var ObjectSchema_1 = require("../ObjectSchema");
-var RDF_1 = require("../RDF");
-var Utils = __importStar(require("./../Utils"));
-var Errors_2 = require("./Errors");
+var Utils_1 = require("../Utils");
+var index_1 = require("./Errors/index");
+var BadResponseError_1 = require("./Errors/ServerErrors/BadResponseError");
+var UnknownError_1 = require("./Errors/UnknownError");
 var Header_1 = require("./Header");
 var HTTPMethod_1 = require("./HTTPMethod");
 var Response_1 = require("./Response");
-function forEachHeaders(headers, setHeader) {
-    var namesIterator = headers.keys();
-    var next = namesIterator.next();
-    while (!next.done) {
-        var name_1 = next.value;
-        var value = headers.get(name_1);
-        setHeader(name_1, value.toString());
-        next = namesIterator.next();
-    }
-}
 function onResolve(resolve, reject, response) {
     if (response.status >= 200 && response.status <= 299) {
         resolve(response);
     }
     else {
-        reject(response);
+        if (!index_1.statusCodeMap.has(response.status))
+            return reject(new UnknownError_1.UnknownError(response.data, response));
+        reject(new (index_1.statusCodeMap.get(response.status))(response.data, response));
     }
 }
 function sendWithBrowser(method, url, body, options) {
@@ -52,7 +36,8 @@ function sendWithBrowser(method, url, body, options) {
         var request = options.request ? options.request : new XMLHttpRequest();
         request.open(method, url, true);
         if (options.headers)
-            forEachHeaders(options.headers, function (name, value) { return request.setRequestHeader(name, value); });
+            options.headers
+                .forEach(function (header, name) { return request.setRequestHeader(name, header.toString()); });
         request.withCredentials = options.sendCredentialsOnCORS;
         if (options.timeout)
             request.timeout = options.timeout;
@@ -95,7 +80,8 @@ function sendWithNode(method, url, body, options) {
                 headers: {},
             };
             if (options.headers)
-                forEachHeaders(options.headers, function (name, value) { return requestOptions.headers[name] = value; });
+                options.headers
+                    .forEach(function (header, name) { return requestOptions.headers[name] = header.toString(); });
             var request = Adapter.request(requestOptions);
             if (options.timeout)
                 request.setTimeout(options.timeout);
@@ -121,7 +107,7 @@ function sendRequest(method, url, body, options) {
         sendWithNode(method, url, body, options);
 }
 function isBody(data) {
-    return Utils.isString(data)
+    return Utils_1.isString(data)
         || typeof Blob !== "undefined" && data instanceof Blob
         || typeof Buffer !== "undefined" && data instanceof Buffer;
 }
@@ -134,8 +120,8 @@ var RequestService = (function () {
         if (optionsOrParser === void 0) { optionsOrParser = RequestService.defaultOptions; }
         if (parser === void 0) { parser = null; }
         var body = null;
-        var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
-        parser = Utils.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
+        var options = Utils_1.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
+        parser = Utils_1.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
         if (isBody(bodyOrOptions)) {
             body = bodyOrOptions;
         }
@@ -143,7 +129,7 @@ var RequestService = (function () {
             options = bodyOrOptions ? bodyOrOptions : options;
         }
         options = Object.assign({}, RequestService.defaultOptions, options);
-        if (Utils.isNumber(method))
+        if (Utils_1.isNumber(method))
             method = HTTPMethod_1.HTTPMethod[method];
         var requestPromise = sendRequest(method, url, body, options)
             .then(function (response) {
@@ -209,7 +195,7 @@ var RequestService = (function () {
             return sendRequest("GET", url, null, requestOptions)
                 .then(function (noCachedResponse) {
                 if (!_this._contentTypeIsAccepted(requestOptions, response)) {
-                    throw new Errors_2.BadResponseError("The server responded with an unacceptable Content-Type", response);
+                    throw new BadResponseError_1.BadResponseError("The server responded with an unacceptable Content-Type", response);
                 }
                 return noCachedResponse;
             });
@@ -307,10 +293,10 @@ var RequestUtils = (function () {
         return requestOptions;
     };
     RequestUtils.isOptions = function (object) {
-        return Utils.hasPropertyDefined(object, "headers")
-            || Utils.hasPropertyDefined(object, "sendCredentialsOnCORS")
-            || Utils.hasPropertyDefined(object, "timeout")
-            || Utils.hasPropertyDefined(object, "request");
+        return Utils_1.hasPropertyDefined(object, "headers")
+            || Utils_1.hasPropertyDefined(object, "sendCredentialsOnCORS")
+            || Utils_1.hasPropertyDefined(object, "timeout")
+            || Utils_1.hasPropertyDefined(object, "request");
     };
     RequestUtils.cloneOptions = function (options) {
         var clone = __assign({}, options, { headers: new Map() });
@@ -318,19 +304,6 @@ var RequestUtils = (function () {
             options.headers
                 .forEach(function (value, key) { return clone.headers.set(key, new Header_1.Header(value.values.slice())); });
         return clone;
-    };
-    RequestUtils.getRequestURLFor = function (registry, resource, uri) {
-        if (uri && registry.context) {
-            var schema = registry.getGeneralSchema();
-            uri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema);
-        }
-        var url = uri ? RDF_1.URI.resolve(resource.id, uri) : resource.id;
-        var localIRI = registry._getLocalID(url);
-        if (registry.context)
-            return RDF_1.URI.resolve(registry.context.baseURI, localIRI);
-        if (RDF_1.URI.isRelative(url))
-            throw new Errors_1.IllegalArgumentError("\"" + url + "\" cannot be used as URL for the request.");
-        return url;
     };
     return RequestUtils;
 }());

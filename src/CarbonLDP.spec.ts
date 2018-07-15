@@ -2,12 +2,10 @@ import { anyThatMatches } from "../test/helpers/jasmine/equalities";
 import { AccessPoint } from "./AccessPoint";
 
 import * as CarbonLDP from "./CarbonLDP";
-import {
-	AbstractContext,
-	GlobalContext
-} from "./Context";
+import { AbstractContext, DocumentsContext, GlobalContext } from "./Context";
 
 import { Document } from "./Document";
+import { DocumentsRegistry } from "./DocumentsRegistry";
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
 import { FreeResources } from "./FreeResources/FreeResources";
@@ -26,9 +24,8 @@ import {
 } from "./ObjectSchema";
 import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
-import { DocumentsRegistry } from "./DocumentsRegistry";
 import { Resource } from "./Resource";
-import { CarbonLDPSettings } from "./Settings";
+import { CarbonLDPSettings } from "./CarbonLDPSettings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
@@ -64,9 +61,9 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			expect( CarbonLDP.CarbonLDP ).toEqual( jasmine.any( Function ) );
 		} );
 
-		it( extendsClass( "CarbonLDP.AbstractContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.DocumentsContext" ), ():void => {
 			const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com" );
-			expect( carbon ).toEqual( jasmine.any( AbstractContext ) );
+			expect( carbon ).toEqual( jasmine.any( DocumentsContext ) );
 		} );
 
 		it( hasProperty(
@@ -533,7 +530,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"documents",
-			"CarbonLDP.ProtectedDocument",
+			"CarbonLDP.Document",
 			"Representation of the root document of the platform instance."
 		), () => {} );
 

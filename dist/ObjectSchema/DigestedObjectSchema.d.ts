@@ -6,4 +6,8 @@ export declare class DigestedObjectSchema {
     prefixes: Map<string, string>;
     properties: Map<string, DigestedObjectSchemaProperty>;
     constructor();
+    resolveURI(uri: string, relativeTo?: {
+        vocab?: boolean;
+        base?: boolean;
+    }): string;
 }

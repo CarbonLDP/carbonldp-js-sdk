@@ -1,47 +1,32 @@
-import { TransientBlankNode } from "../BlankNode";
-import { ModelDecorator, ModelFactory } from "../core";
-import { TransientFragment } from "../Fragment";
-import { TransientNamedFragment } from "../NamedFragment";
-import { Pointer } from "../Pointer";
-import { RDFDocument } from "../RDF";
-import { DocumentsRegistry, Registry } from "../Registry";
-import { TransientResource } from "../Resource";
-import { PickSelfProps } from "../Utils";
-import { C } from "../Vocabularies";
+import { Context } from "../Context/Context";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
+import { TransientFragment } from "../Fragment/TransientFragment";
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+import { Pointer } from "../Pointer/Pointer";
+import { RDFDocument } from "../RDF/Document";
+import { Registry } from "../Registry/Registry";
+import { Resource } from "../Resource/Resource";
 import { BaseDocument } from "./BaseDocument";
-export interface TransientDocument extends TransientResource, Registry<TransientBlankNode | TransientNamedFragment> {
-    _registry: DocumentsRegistry | undefined;
-    defaultInteractionModel?: Pointer;
-    isMemberOfRelation?: Pointer;
+export interface TransientDocument extends Resource, Registry<TransientFragment> {
+    $registry: DocumentsRegistry | undefined;
     hasMemberRelation?: Pointer;
+    isMemberOfRelation?: Pointer;
+    insertedContentRelation?: Pointer;
+    defaultInteractionModel?: Pointer;
     hasFragment(id: string): boolean;
     getFragment<T extends object>(id: string): (T & TransientFragment) | null;
-    getNamedFragment<T extends object>(slug: string): (T & TransientNamedFragment) | null;
     getFragments(): TransientFragment[];
     createFragment<T extends object>(object: T, id?: string): T & TransientFragment;
-    createFragment(slug?: string): TransientFragment;
-    createNamedFragment<T extends object>(object: T, slug: string): T & TransientNamedFragment;
-    createNamedFragment(slug: string): TransientNamedFragment;
-    removeNamedFragment(slugOrFragment: string | TransientNamedFragment): boolean;
-    _removeFragment(slugOrFragment: string | TransientFragment): boolean;
+    createFragment(id?: string): TransientFragment;
+    removeFragment(slugOrFragment: string | TransientFragment): boolean;
     _normalize(): void;
     _getLocalID(id: string): string;
-    _register<T extends object>(base: T & {
-        slug: string;
-    }): T & TransientNamedFragment;
-    _register<T extends object>(base: T & {
-        id?: string;
-    }): T & TransientFragment;
-    toJSON(registry?: DocumentsRegistry): RDFDocument;
+    toJSON(contextOrKey?: Context | string): RDFDocument;
 }
-export interface TransientDocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
-    PROTOTYPE: PickSelfProps<TransientDocument, TransientResource & Registry<TransientBlankNode | TransientNamedFragment>, "_registry" | "_getLocalID" | "_register" | "getPointer">;
-    TYPE: C["Document"];
-    is(value: any): value is TransientDocument;
-    isDecorated(object: object): object is TransientDocument;
-    create<T extends object>(data?: T & BaseDocument): T & TransientDocument;
-    createFrom<T extends object>(object: T & BaseDocument): T & TransientDocument;
-    decorate<T extends object>(object: T): T & TransientDocument;
-    _convertNestedObjects<T extends object>(resource: TransientDocument, target: T): T;
-}
+declare type OverriddenMembers = "$registry" | "_getLocalID" | "getPointer" | "toJSON";
+export declare type TransientDocumentFactory = ModelPrototype<TransientDocument, Resource & Registry<TransientFragment>, OverriddenMembers> & ModelDecorator<TransientDocument, BaseDocument> & ModelFactoryOptional<TransientDocument, BaseDocument> & ModelTypeGuard<TransientDocument>;
 export declare const TransientDocument: TransientDocumentFactory;
+export {};

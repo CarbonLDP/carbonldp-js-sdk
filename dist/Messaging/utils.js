@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../Errors");
 var RDF_1 = require("../RDF");
+var Utils_1 = require("../DocumentsRepository/Utils");
 function validateEventType(event) {
     if (!/(access-point|child|\*)\.(created|\*)|(document|\*)\.(modified|deleted|\*)|(member|\*)\.(added|removed|\*)/.test(event))
         throw new Errors_1.IllegalArgumentError("Provided event type \"" + event + "\" is invalid.");
@@ -9,7 +10,7 @@ function validateEventType(event) {
 exports.validateEventType = validateEventType;
 function parseURIPattern(uriPattern, baseURI) {
     if (!RDF_1.URI.isBaseOf(baseURI, uriPattern))
-        throw new Errors_1.IllegalArgumentError("Provided uriPattern \"" + uriPattern + "\" is an invalid for your Carbon LDP instance.");
+        throw new Errors_1.IllegalArgumentError(Utils_1._getNotInContextMessage(uriPattern));
     if (uriPattern === "/")
         return "";
     uriPattern = RDF_1.URI.getRelativeURI(uriPattern, baseURI);

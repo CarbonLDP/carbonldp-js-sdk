@@ -1,4 +1,3 @@
-import { PointerLibrary } from "../Pointer";
 import { RDFList } from "./List";
 import { RDFLiteral } from "./Literal";
 import { RDFValue } from "./Value";
@@ -17,10 +16,7 @@ export interface RDFNodeFactory {
     isFragment(node: RDFNode): boolean;
     hasType(node: RDFNode, type: string): boolean;
     getTypes(node: RDFNode): string[];
-    getFreeNodes(objects: object | object[]): RDFNode[];
     getList(propertyValues: RDFNodePropertyValue[]): RDFList | undefined;
-    getProperties(propertyValues: RDFNodePropertyValue[], pointerLibrary: PointerLibrary): any[] | undefined;
-    getPropertyPointers(propertyValues: RDFNodePropertyValue[], pointerLibrary: PointerLibrary): any[] | undefined;
     getPropertyLiterals(propertyValues: RDFNodePropertyValue[], literalType: string): any[] | undefined;
     getPropertyLanguageMap(propertyValues: RDFNodePropertyValue[]): object | undefined;
 }

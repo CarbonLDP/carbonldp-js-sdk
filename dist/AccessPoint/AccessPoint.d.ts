@@ -1,7 +1,7 @@
+import { Document } from "../Document";
 import { Pointer } from "../Pointer";
-import { ProtectedDocument } from "../ProtectedDocument";
 import { TransientAccessPointFactory } from "./TransientAccessPoint";
-export interface AccessPoint extends ProtectedDocument {
+export interface AccessPoint extends Document {
     membershipResource: Pointer;
     hasMemberRelation: Pointer;
     isMemberOfRelation?: Pointer;

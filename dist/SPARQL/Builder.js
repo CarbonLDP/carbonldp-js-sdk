@@ -21,9 +21,6 @@ var SPARQLBuilder = (function (_super) {
                 execute: function () {
                     return resource.executeSELECTQuery(entryPoint, finishObject.toCompactString());
                 },
-                executeRaw: function () {
-                    return resource.executeRawSELECTQuery(entryPoint, finishObject.toCompactString());
-                },
             });
         }) || this;
     }

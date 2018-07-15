@@ -1,1 +1,0 @@
-{"version":3,"sources":["Auth/AuthMethod.ts"],"names":[],"mappings":";;AAAA,IAAY,UAGX;AAHD,WAAY,UAAU;IACrB,6BAAe,CAAA;IACf,6BAAe,CAAA;AAChB,CAAC,EAHW,UAAU,GAAV,kBAAU,KAAV,kBAAU,QAGrB","file":"AuthMethod.js","sourcesContent":["export enum AuthMethod {\n\tBASIC = \"BASIC\",\n\tTOKEN = \"TOKEN\",\n}\n"]}

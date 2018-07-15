@@ -10,17 +10,12 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("../../Errors");
-var Resource_1 = require("../../Resource");
+var AbstractError_1 = require("../../Errors/AbstractError");
 var HTTPError = (function (_super) {
     __extends(HTTPError, _super);
     function HTTPError(message, response) {
         var _this = _super.call(this, message) || this;
-        Resource_1.TransientResource.createFrom(_this);
-        _this.errors = [];
-        _this.requestID = null;
         _this.response = response;
-        _this.statusCode = response.status;
         return _this;
     }
     Object.defineProperty(HTTPError, "statusCode", {
@@ -34,7 +29,7 @@ var HTTPError = (function (_super) {
         configurable: true
     });
     return HTTPError;
-}(Errors_1.AbstractError));
+}(AbstractError_1.AbstractError));
 exports.HTTPError = HTTPError;
 
 //# sourceMappingURL=HTTPError.js.map

@@ -1,0 +1,12 @@
+import { PatternToken, SubjectToken } from "sparqler/tokens";
+import { DigestedObjectSchemaProperty } from "../ObjectSchema";
+import { QueryContext } from "./QueryContext";
+export declare function getLevelRegExp(property: string): RegExp;
+export declare function createPropertyPatterns(context: QueryContext, resourcePath: string, propertyPath: string, propertyDefinition: DigestedObjectSchemaProperty): PatternToken[];
+export declare function createTypesPattern(context: QueryContext, resourcePath: string): PatternToken;
+export declare function createGraphPattern(context: QueryContext, resourcePath: string): PatternToken;
+export declare function createAllPattern(context: QueryContext, resourcePath: string): PatternToken;
+export declare function getParentPath(path: string): string;
+export declare function getAllTriples(patterns: PatternToken[]): SubjectToken[];
+export declare function getPathProperty(element: any, path: string): any;
+export declare function areDifferentType(a: any, b: any): boolean;

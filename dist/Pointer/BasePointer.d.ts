@@ -1,3 +1,3 @@
 export interface BasePointer {
-    id?: string;
+    $id?: string;
 }

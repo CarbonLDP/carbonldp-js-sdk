@@ -102,7 +102,7 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 				expect( isTransientAccessPoint ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
-			it( "should be a ProtectedDocument", () => {
+			it( "should be a Document", () => {
 				AccessPoint.is( { the: "object" } );
 				expect( isDocument ).toHaveBeenCalledWith( { the: "object" } );
 			} );

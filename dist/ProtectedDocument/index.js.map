@@ -1,1 +1,0 @@
-{"version":3,"sources":["ProtectedDocument/index.ts"],"names":[],"mappings":";;;;;AAAA,yCAAoC;AACpC,kDAA6C","file":"index.js","sourcesContent":["export * from \"./ProtectedDocument\";\nexport * from \"./TransientProtectedDocument\";\n"]}

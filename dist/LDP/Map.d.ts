@@ -1,9 +1,9 @@
-import { ModelSchema } from "../core/ModelSchema";
+import { ModelSchema } from "../Model/ModelSchema";
 import { ObjectSchema } from "../ObjectSchema";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
 import { MapEntry } from "./MapEntry";
-export interface Map<K, V> extends TransientResource {
+export interface Map<K, V> extends Resource {
     entries: MapEntry<K, V>[];
 }
 export interface MapFactory extends ModelSchema {

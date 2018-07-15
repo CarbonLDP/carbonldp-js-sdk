@@ -17,7 +17,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __importStar(require("../../../Errors"));
+var IllegalArgumentError_1 = require("../../../Errors/IllegalArgumentError");
 var Utils = __importStar(require("./../../../Utils"));
 function pad(value) {
     var paddedValue = String(value);
@@ -31,7 +31,7 @@ var DateSerializer = (function () {
     }
     DateSerializer.prototype.serialize = function (value) {
         if (!Utils.isDate(value))
-            throw new Errors.IllegalArgumentError("The value is not a Date object.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The value is not a Date object.");
         return value.getUTCFullYear() + "-" + pad((value.getUTCMonth() + 1)) + "-" + pad(value.getUTCDate());
     };
     return DateSerializer;
@@ -43,7 +43,7 @@ var DateTimeSerializer = (function () {
     }
     DateTimeSerializer.prototype.serialize = function (value) {
         if (!Utils.isDate(value))
-            throw new Errors.IllegalArgumentError("The value is not a Date object.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The value is not a Date object.");
         return value.toISOString();
     };
     return DateTimeSerializer;
@@ -55,7 +55,7 @@ var TimeSerializer = (function () {
     }
     TimeSerializer.prototype.serialize = function (value) {
         if (!Utils.isDate(value))
-            throw new Errors.IllegalArgumentError("The value is not a Date object.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The value is not a Date object.");
         return pad(value.getUTCHours())
             + ":" + pad(value.getUTCMinutes())
             + ":" + pad(value.getUTCSeconds())
@@ -71,7 +71,7 @@ var IntegerSerializer = (function () {
     }
     IntegerSerializer.prototype.serialize = function (value) {
         if (!Utils.isNumber(value))
-            throw new Errors.IllegalArgumentError(notNumberError);
+            throw new IllegalArgumentError_1.IllegalArgumentError(notNumberError);
         return (~~value).toString();
     };
     return IntegerSerializer;
@@ -83,7 +83,7 @@ var LongSerializer = (function () {
     }
     LongSerializer.prototype.serialize = function (value) {
         if (!Utils.isNumber(value))
-            throw new Errors.IllegalArgumentError(notNumberError);
+            throw new IllegalArgumentError_1.IllegalArgumentError(notNumberError);
         return Math.trunc(value).toString();
     };
     return LongSerializer;
@@ -109,7 +109,7 @@ var UnsignedLongSerializer = (function () {
     }
     UnsignedLongSerializer.prototype.serialize = function (value) {
         if (!Utils.isNumber(value))
-            throw new Errors.IllegalArgumentError(notNumberError);
+            throw new IllegalArgumentError_1.IllegalArgumentError(notNumberError);
         return Math.trunc(Math.abs(value)).toString();
     };
     return UnsignedLongSerializer;
@@ -125,7 +125,7 @@ var FloatSerializer = (function () {
         if (value === Number.NEGATIVE_INFINITY)
             return "-INF";
         if (!Utils.isNumber(value))
-            throw new Errors.IllegalArgumentError(notNumberError);
+            throw new IllegalArgumentError_1.IllegalArgumentError(notNumberError);
         return value.toString();
     };
     return FloatSerializer;

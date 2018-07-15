@@ -1,13 +1,36 @@
-import { Pointer } from "../Pointer";
-import { Registry } from "../Registry";
-import { PersistedResource } from "../Resource";
-import { TransientFragment, TransientFragmentFactory } from "./TransientFragment";
-export interface Fragment extends TransientFragment, PersistedResource {
-    _registry: Registry<TransientFragment> & Pointer | undefined;
+import { Document } from "../Document/Document";
+import { GETOptions, RequestOptions } from "../HTTP/Request";
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
+import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
+import { BaseResolvableFragment } from "./BaseResolvableFragment";
+import { BaseTransientFragment } from "./BaseTransientFragment";
+import { TransientFragment } from "./TransientFragment";
+export interface Fragment extends TransientFragment, QueryablePointer {
+    $document: Document;
+    $registry: Document;
+    $repository: Document;
+    get<T extends object>(queryBuilderFn: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
+    get<T extends object>(requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
+    get<T extends object>(uri: string, queryBuilderFn: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
+    get<T extends object>(uri: string, requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
+    resolve<T extends object>(requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & Document>;
+    resolve<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & Document>;
+    resolve<T extends object>(document: Document, queryBuilderFn: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
+    resolve<T extends object>(document: Document, requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
+    exists(requestOptions?: RequestOptions): Promise<boolean>;
+    exists(uri: string, requestOptions?: RequestOptions): Promise<boolean>;
+    refresh<T extends object>(requestOptions?: RequestOptions): Promise<T & this & Document>;
+    refresh<T extends object>(document: Document, requestOptions?: RequestOptions): Promise<T & Document>;
+    save<T extends object>(requestOptions?: RequestOptions): Promise<T & this & Document>;
+    save<T extends object>(document: Document, requestOptions?: RequestOptions): Promise<T & Document>;
+    saveAndRefresh<T extends object>(requestOptions?: RequestOptions): Promise<T & this & Document>;
+    saveAndRefresh<T extends object>(document: Document, requestOptions?: RequestOptions): Promise<T & Document>;
+    delete(requestOptions?: RequestOptions): Promise<void>;
+    delete(uri: string, requestOptions?: RequestOptions): Promise<void>;
 }
-export interface FragmentFactory extends TransientFragmentFactory {
-    isDecorated(object: object): object is Fragment;
-    is(value: any): value is Fragment;
-    decorate<T extends object>(object: T): T & Fragment;
-}
+export declare type OverriddenMembers = "$repository" | "_resolved";
+export declare type FragmentFactory = ModelPrototype<Fragment, TransientFragment & QueryablePointer, OverriddenMembers> & ModelDecorator<Fragment, BaseResolvableFragment> & ModelFactory<TransientFragment, BaseTransientFragment>;
 export declare const Fragment: FragmentFactory;

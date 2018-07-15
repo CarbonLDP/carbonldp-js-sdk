@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("./Errors");
+var BadResponseError_1 = require("./Errors/ServerErrors/BadResponseError");
 var Header_1 = require("./Header");
 var Response = (function () {
     function Response(request, data, response) {
@@ -29,7 +29,7 @@ var Response = (function () {
     Response.prototype.getETag = function () {
         var eTagHeader = this.getHeader("ETag");
         if (!eTagHeader || !eTagHeader.values.length)
-            throw new Errors_1.BadResponseError("The response doesn't contain an ETag", this);
+            throw new BadResponseError_1.BadResponseError("The response doesn't contain an ETag", this);
         return eTagHeader.values[0];
     };
     return Response;

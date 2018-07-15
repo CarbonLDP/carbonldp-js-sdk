@@ -21,6 +21,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var sockjs_client_1 = __importDefault(require("sockjs-client"));
 var webstomp = __importStar(require("webstomp-client"));
 var Errors_1 = require("../Errors");
+var FreeResources_1 = require("../FreeResources/FreeResources");
 var JSONLD_1 = require("../JSONLD");
 var Utils_1 = require("../Utils");
 var EventMessage_1 = require("./EventMessage");
@@ -136,8 +137,8 @@ var MessagingService = (function () {
             new JSONLD_1.JSONLDParser()
                 .parse(message.body)
                 .then(function (data) {
-                var freeResources = _this.context
-                    .registry._parseFreeNodes(data);
+                var freeResources = FreeResources_1.FreeResources
+                    .parseFreeNodes(_this.context.registry, data);
                 var eventMessage = freeResources
                     .getPointers(true)
                     .find(EventMessage_1.EventMessage.is);

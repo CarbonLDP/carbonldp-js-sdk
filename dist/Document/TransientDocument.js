@@ -1,200 +1,152 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
-var BlankNode_1 = require("../BlankNode");
-var core_1 = require("../core");
-var Errors_1 = require("../Errors");
-var JSONLD_1 = require("../JSONLD");
-var NamedFragment_1 = require("../NamedFragment");
-var ObjectSchema_1 = require("../ObjectSchema");
-var Pointer_1 = require("../Pointer");
-var RDF_1 = require("../RDF");
-var Registry_1 = require("../Registry");
-var Resource_1 = require("../Resource");
+var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
+var TransientFragment_1 = require("../Fragment/TransientFragment");
+var ModelDecorator_1 = require("../Model/ModelDecorator");
+var Pointer_1 = require("../Pointer/Pointer");
+var URI_1 = require("../RDF/URI");
+var Registry_1 = require("../Registry/Registry");
+var Resource_1 = require("../Resource/Resource");
 var Utils_1 = require("../Utils");
-var Vocabularies_1 = require("../Vocabularies");
-function getLabelFrom(slug) {
+function __getLabelFrom(slug) {
     if (!iri_1.isRelative(slug) || slug.startsWith("#"))
         return slug;
     return "#" + slug;
 }
-function getNestedObjectId(object) {
-    if ("id" in object)
-        return object.id;
-    if ("slug" in object)
-        return RDF_1.URI.hasFragment(object.slug) ?
-            object.slug : getLabelFrom(object.slug);
-    return "";
+function __getObjectId(object) {
+    if ("$id" in object)
+        return object.$id;
+    if ("$slug" in object)
+        return URI_1.URI.hasFragment(object.$slug) ?
+            object.$slug : __getLabelFrom(object.$slug);
+    return URI_1.URI.generateBNodeID();
 }
-function internalConverter(resource, target, tracker) {
+function __convertNested(resource, target, tracker) {
     if (tracker === void 0) { tracker = new Set(); }
     Object
         .keys(target)
         .map(function (key) { return target[key]; })
         .forEach(function (next) {
         if (Array.isArray(next))
-            return internalConverter(resource, next, tracker);
+            return __convertNested(resource, next, tracker);
         if (!Utils_1.isPlainObject(next))
             return;
         if (exports.TransientDocument.is(next))
             return;
         if (next._registry && next._registry !== resource)
             return;
-        var idOrSlug = getNestedObjectId(next);
+        var idOrSlug = __getObjectId(next);
         if (tracker.has(idOrSlug))
             return;
-        if (idOrSlug && !resource.inScope(idOrSlug, true))
+        if (!resource.inScope(idOrSlug, true))
             return;
-        var fragment = idOrSlug && resource.hasPointer(idOrSlug, true) ?
+        var fragment = resource.hasPointer(idOrSlug, true) ?
             resource.getPointer(idOrSlug, true) :
-            resource._register(next);
-        tracker.add(fragment.id);
-        internalConverter(resource, fragment, tracker);
+            resource.createFragment(next, idOrSlug);
+        tracker.add(fragment.$id);
+        __convertNested(resource, fragment, tracker);
     });
 }
-var PROTOTYPE = {
-    _registry: void 0,
-    _normalize: function () {
-        var usedFragments = new Set();
-        internalConverter(this, this, usedFragments);
-        this.getPointers(true)
-            .map(Pointer_1.Pointer.getID)
-            .filter(RDF_1.URI.isBNodeID)
-            .filter(function (id) { return !usedFragments.has(id); })
-            .forEach(this.removePointer, this);
-    },
-    _getLocalID: function (id) {
-        if (RDF_1.URI.isBNodeID(id))
-            return id;
-        if (RDF_1.URI.isFragmentOf(id, this.id))
-            return RDF_1.URI.getFragment(id);
-        return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
-    },
-    _register: function (base) {
-        var id = "slug" in base ? getLabelFrom(base.slug) :
-            base.id ? base.id : RDF_1.URI.generateBNodeID();
-        var targetBase = Object.assign(base, { id: id });
-        var pointer = Registry_1.Registry.PROTOTYPE._register.call(this, targetBase);
-        if (RDF_1.URI.isBNodeID(pointer.id))
-            return BlankNode_1.TransientBlankNode.decorate(pointer);
-        return NamedFragment_1.TransientNamedFragment.decorate(pointer);
-    },
-    getPointer: function (id, local) {
-        id = RDF_1.URI.resolve(this.id, id);
-        return Registry_1.Registry.PROTOTYPE.getPointer.call(this, id, local);
-    },
-    hasFragment: function (id) {
-        id = getLabelFrom(id);
-        if (!this.inScope(id, true))
-            return false;
-        var localID = this._getLocalID(id);
-        return this._resourcesMap.has(localID);
-    },
-    getFragment: function (id) {
-        id = getLabelFrom(id);
-        if (!this.inScope(id, true))
-            throw new Errors_1.IllegalArgumentError("\"" + id + "\" is out of scope.");
-        var localID = this._getLocalID(id);
-        var resource = this._resourcesMap.get(localID);
-        if (!resource)
-            return null;
-        return resource;
-    },
-    getNamedFragment: function (slug) {
-        if (RDF_1.URI.isBNodeID(slug))
-            throw new Errors_1.IllegalArgumentError("A named fragment slug can't start with \"_:\".");
-        return this.getFragment(slug);
-    },
-    getFragments: function () {
-        return this.getPointers(true);
-    },
-    createFragment: function (isOrObject, id) {
-        var object = Utils_1.isObject(isOrObject) ? isOrObject : {};
-        id = Utils_1.isString(isOrObject) ? isOrObject : id;
-        if (id)
-            object.id = getLabelFrom(id);
-        var fragment = this._register(object);
-        exports.TransientDocument._convertNestedObjects(this, fragment);
-        return fragment;
-    },
-    createNamedFragment: function (slugOrObject, slug) {
-        slug = Utils_1.isString(slugOrObject) ? slugOrObject : slug;
-        if (!slug)
-            throw new Errors_1.IllegalArgumentError("The slug can't be empty.");
-        if (RDF_1.URI.isBNodeID(slug))
-            throw new Errors_1.IllegalArgumentError("A named fragment slug can't start with \"_:\".");
-        var object = Utils_1.isObject(slugOrObject) ? slugOrObject : {};
-        var base = Object.assign(object, { slug: slug });
-        var fragment = this._register(base);
-        exports.TransientDocument._convertNestedObjects(this, fragment);
-        return fragment;
-    },
-    removeNamedFragment: function (fragmentOrSlug) {
-        var slug = Pointer_1.Pointer.getID(fragmentOrSlug);
-        if (RDF_1.URI.isBNodeID(slug))
-            throw new Errors_1.IllegalArgumentError("A named fragment slug can't start with \"_:\".");
-        return this._removeFragment(slug);
-    },
-    _removeFragment: function (fragmentOrSlug) {
-        var id = getLabelFrom(Pointer_1.Pointer.getID(fragmentOrSlug));
-        if (!this.inScope(id, true))
-            return false;
-        return this.removePointer(id);
-    },
-    toJSON: function (registryOrKey) {
-        var registry = Utils_1.isObject(registryOrKey) ?
-            registryOrKey : this._registry;
-        var generalSchema = registry ?
-            registry.getGeneralSchema() : new ObjectSchema_1.DigestedObjectSchema();
-        var jsonldConverter = registry ?
-            registry.jsonldConverter : new JSONLD_1.JSONLDConverter();
-        var expandedResources = [this].concat(this.getFragments()).map(function (resource) {
-            var resourceSchema = registry ?
-                registry.getSchemaFor(resource) :
-                new ObjectSchema_1.DigestedObjectSchema();
-            return jsonldConverter.expand(resource, generalSchema, resourceSchema);
-        });
-        return {
-            "@id": this.id,
-            "@graph": expandedResources,
-        };
-    },
-};
 exports.TransientDocument = {
-    PROTOTYPE: PROTOTYPE,
-    TYPE: Vocabularies_1.C.Document,
-    isDecorated: function (object) {
-        return Utils_1.isObject(object)
-            && core_1.ModelDecorator
-                .hasPropertiesFrom(PROTOTYPE, object);
+    PROTOTYPE: {
+        $registry: void 0,
+        _normalize: function () {
+            var usedFragments = new Set();
+            __convertNested(this, this, usedFragments);
+            this.getPointers(true)
+                .map(Pointer_1.Pointer.getID)
+                .filter(URI_1.URI.isBNodeID)
+                .filter(function (id) { return !usedFragments.has(id); })
+                .forEach(this.removePointer, this);
+        },
+        _getLocalID: function (id) {
+            if (URI_1.URI.isBNodeID(id))
+                return id;
+            if (URI_1.URI.isFragmentOf(id, this.$id))
+                return URI_1.URI.getFragment(id);
+            throw new IllegalArgumentError_1.IllegalArgumentError("\"" + id + "\" is out of scope.");
+        },
+        getPointer: function (id, local) {
+            id = URI_1.URI.resolve(this.$id, id);
+            return Registry_1.Registry.PROTOTYPE.getPointer.call(this, id, local);
+        },
+        hasFragment: function (id) {
+            id = __getLabelFrom(id);
+            if (!this.inScope(id, true))
+                return false;
+            var localID = this._getLocalID(id);
+            return this.__resourcesMap.has(localID);
+        },
+        getFragment: function (id) {
+            id = __getLabelFrom(id);
+            var localID = this._getLocalID(id);
+            var resource = this.__resourcesMap.get(localID);
+            if (!resource)
+                return null;
+            return resource;
+        },
+        getFragments: function () {
+            return this.getPointers(true);
+        },
+        createFragment: function (isOrObject, id) {
+            var object = Utils_1.isObject(isOrObject) ? isOrObject : {};
+            if (Utils_1.isString(isOrObject))
+                id = isOrObject;
+            var $id = id ? __getLabelFrom(id) : __getObjectId(object);
+            var fragment = this._addPointer(Object
+                .assign(object, { $id: $id }));
+            __convertNested(this, fragment);
+            return fragment;
+        },
+        removeFragment: function (fragmentOrSlug) {
+            var id = __getLabelFrom(Pointer_1.Pointer.getID(fragmentOrSlug));
+            if (!this.inScope(id, true))
+                return false;
+            return this.removePointer(id);
+        },
+        toJSON: function (contextOrKey) {
+            var nodes = [
+                Resource_1.Resource.PROTOTYPE.toJSON.call(this, contextOrKey)
+            ].concat(this
+                .getFragments()
+                .map(function (resource) { return resource.toJSON(contextOrKey); }));
+            return {
+                "@id": this.$id,
+                "@graph": nodes,
+            };
+        },
     },
-    is: function (value) {
-        return Resource_1.TransientResource.is(value) &&
-            Registry_1.Registry.isDecorated(value) &&
-            exports.TransientDocument.isDecorated(value);
+    isDecorated: function (object) {
+        return ModelDecorator_1.ModelDecorator
+            .hasPropertiesFrom(exports.TransientDocument.PROTOTYPE, object);
     },
     decorate: function (object) {
         if (exports.TransientDocument.isDecorated(object))
             return object;
-        var resource = core_1.ModelDecorator
-            .decorateMultiple(object, Resource_1.TransientResource, Registry_1.Registry);
-        return core_1.ModelDecorator
-            .definePropertiesFrom(PROTOTYPE, resource);
+        var base = ModelDecorator_1.ModelDecorator.definePropertiesFrom({
+            __modelDecorator: TransientFragment_1.TransientFragment,
+        }, object);
+        var resource = ModelDecorator_1.ModelDecorator
+            .decorateMultiple(base, Resource_1.Resource, Registry_1.Registry);
+        return ModelDecorator_1.ModelDecorator
+            .definePropertiesFrom(exports.TransientDocument.PROTOTYPE, resource);
+    },
+    is: function (value) {
+        return Resource_1.Resource.is(value) &&
+            Registry_1.Registry.isDecorated(value) &&
+            exports.TransientDocument.isDecorated(value);
     },
     createFrom: function (object) {
         if (exports.TransientDocument.is(object))
-            throw new Errors_1.IllegalArgumentError("The object provided is already a Document.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The object provided is already a Document.");
         var document = exports.TransientDocument.decorate(object);
-        exports.TransientDocument._convertNestedObjects(document, document);
+        __convertNested(document, document);
         return document;
     },
     create: function (data) {
         var copy = Object.assign({}, data);
         return exports.TransientDocument.createFrom(copy);
-    },
-    _convertNestedObjects: function (resource, target) {
-        internalConverter(resource, target);
-        return target;
     },
 };
 

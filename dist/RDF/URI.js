@@ -80,10 +80,10 @@ exports.URI = {
         if (uri === "")
             return uri;
         if (uri === "/")
-            return uri;
+            return "";
         var parts = uri.split("/");
         if (parts[parts.length - 1] === "") {
-            return parts[parts.length - 2] + "/";
+            return parts[parts.length - 2];
         }
         else {
             return parts[parts.length - 1];

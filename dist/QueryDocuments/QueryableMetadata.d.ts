@@ -1,0 +1,7 @@
+import { DigestedObjectSchema } from "../ObjectSchema";
+export declare class QueryableMetadata {
+    static readonly ALL: Readonly<DigestedObjectSchema>;
+    readonly schema: DigestedObjectSchema;
+    constructor(schema: DigestedObjectSchema, previousPartial?: QueryableMetadata);
+    private mergeSchemas;
+}

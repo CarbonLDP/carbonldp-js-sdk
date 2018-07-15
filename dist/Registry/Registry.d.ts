@@ -1,26 +1,26 @@
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
 import { Pointer, PointerLibrary, PointerValidator } from "../Pointer";
-import { PickSelfProps } from "../Utils";
-export interface Registry<M extends Pointer> extends PointerLibrary, PointerValidator {
-    _registry: Registry<any> | undefined;
-    readonly _resourcesMap: Map<string, M>;
+import { BaseRegisteredPointer } from "./BaseRegisteredPointer";
+import { BaseRegistry } from "./BaseRegistry";
+import { RegisteredPointer } from "./RegisteredPointer";
+export interface Registry<M extends RegisteredPointer = RegisteredPointer> extends PointerLibrary, PointerValidator {
+    readonly $registry: Registry<any> | undefined;
+    readonly __modelDecorator: ModelDecorator<M, BaseRegisteredPointer>;
+    readonly __resourcesMap: Map<string, M>;
     inScope(idOrPointer: string | Pointer): boolean;
     inScope(idOrPointer: string | Pointer, local: true): boolean;
     hasPointer(id: string): boolean;
     hasPointer(id: string, local: true): boolean;
-    getPointer(id: string): Pointer;
+    getPointer(id: string): RegisteredPointer;
     getPointer(id: string, local: true): M;
-    getPointers(): Pointer[];
+    getPointers(): RegisteredPointer[];
     getPointers(local: true): M[];
-    removePointer(idOrPointer: string | Pointer): boolean;
-    removePointer(idOrPointer: string | Pointer, local: true): boolean;
+    removePointer(idOrPointer: string | RegisteredPointer): boolean;
+    removePointer(idOrPointer: string | RegisteredPointer, local: true): boolean;
     _getLocalID(id: string): string;
-    _register<T extends object>(base: T & {
-        id: string;
-    }): T & M;
+    _addPointer<T extends object>(pointer: T & Pointer): T & M;
 }
-export interface RegistryFactory {
-    PROTOTYPE: PickSelfProps<Registry<Pointer>, {}>;
-    isDecorated(object: object): object is Registry<any>;
-    decorate<T extends object>(object: T): T & Registry<any>;
-}
+export declare type RegistryFactory = ModelPrototype<Registry> & ModelDecorator<Registry<any>, BaseRegistry> & ModelFactory<Registry, BaseRegistry>;
 export declare const Registry: RegistryFactory;

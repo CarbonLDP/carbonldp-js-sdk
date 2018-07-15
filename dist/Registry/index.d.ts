@@ -1,3 +1,3 @@
-export * from "./Registry";
-export * from "./RegistryService";
-export * from "./DocumentsRegistry";
+export { GlobalRegistry } from "./GlobalRegistry";
+export { RegisteredPointer } from "./RegisteredPointer";
+export { Registry } from "./Registry";

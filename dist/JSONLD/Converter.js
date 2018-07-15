@@ -8,11 +8,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
-var Pointer_1 = require("../Pointer");
+var Pointer_1 = require("../Pointer/Pointer");
 var List_1 = require("../RDF/List");
 var XSDSerializers = __importStar(require("../RDF/Literal/Serializers/XSD"));
 var Node_1 = require("../RDF/Node");
 var URI_1 = require("../RDF/URI");
+var Value_1 = require("../RDF/Value");
 var XSD_1 = require("../Vocabularies/XSD");
 var ObjectSchema = __importStar(require("./../ObjectSchema"));
 var Utils = __importStar(require("./../Utils"));
@@ -67,20 +68,20 @@ var JSONLDConverter = (function () {
     JSONLDConverter.prototype.expandSingle = function (compactedObject, generalSchema, digestedSchema) {
         var _this = this;
         var expandedObject = {};
-        expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
+        expandedObject["@id"] = !!compactedObject["$id"] ? compactedObject["$id"] : "";
         if (compactedObject["types"]) {
             var types = Array.isArray(compactedObject["types"]) ?
                 compactedObject["types"] : [compactedObject["types"]];
             if (types.length)
                 expandedObject["@type"] = types
-                    .map(function (type) { return ObjectSchema.ObjectSchemaUtils.resolveURI(type, generalSchema, { vocab: true, base: true }); });
+                    .map(function (type) { return generalSchema.resolveURI(type, { vocab: true, base: true }); });
         }
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
-            if (propertyName === "id")
+            if (propertyName === "$id")
                 return;
             if (propertyName === "types")
                 return;
-            var expandedPropertyName = ObjectSchema.ObjectSchemaUtils.resolveURI(propertyName, digestedSchema, { vocab: true });
+            var expandedPropertyName = digestedSchema.resolveURI(propertyName, { vocab: true });
             if (URI_1.URI.isRelative(expandedPropertyName))
                 return;
             var expandedValue = _this.expandProperty(propertyName, value, digestedSchema, generalSchema);
@@ -123,7 +124,7 @@ var JSONLDConverter = (function () {
     };
     JSONLDConverter.prototype.expandPropertyLiteral = function (propertyValue, definition, digestedSchema) {
         var _this = this;
-        var literalType = ObjectSchema.ObjectSchemaUtils.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
+        var literalType = digestedSchema.resolveURI(definition.literalType, { vocab: true, base: true });
         var expandedValues = propertyValue.map(function (value) { return _this.expandLiteralValue(value, literalType); });
         if (definition.language)
             expandedValues.forEach(function (value) { return value["@language"] = definition.language; });
@@ -144,13 +145,13 @@ var JSONLDConverter = (function () {
     JSONLDConverter.prototype.expandPointerValue = function (propertyValue, digestedSchema, generalSchema) {
         var isString = Utils.isString(propertyValue);
         var id = Pointer_1.Pointer.is(propertyValue) ?
-            propertyValue.id :
+            propertyValue.$id :
             isString ?
                 propertyValue :
                 null;
         if (!id)
             return null;
-        var resolved = ObjectSchema.ObjectSchemaUtils.resolveURI(id, generalSchema, { vocab: isString });
+        var resolved = generalSchema.resolveURI(id, { vocab: isString });
         return { "@id": resolved };
     };
     JSONLDConverter.prototype.expandValue = function (propertyValue, digestedSchema, generalSchema) {
@@ -174,7 +175,7 @@ var JSONLDConverter = (function () {
         var _this = this;
         if (!expandedObject["@id"])
             throw new IllegalArgumentError_1.IllegalArgumentError("The expandedObject doesn't have an @id defined.");
-        targetObject["id"] = expandedObject["@id"];
+        targetObject["$id"] = expandedObject["@id"];
         targetObject["types"] = !!expandedObject["@type"] ? expandedObject["@type"] : [];
         var propertyURINameMap = this.getPropertyURINameMap(digestedSchema);
         Utils.forEachOwnProperty(expandedObject, function (propertyURI, propertyValues) {
@@ -228,8 +229,8 @@ var JSONLDConverter = (function () {
         var compactedValues = propertyType === true ?
             this.compactPropertyLiteral(propertyValues, definition, digestedSchema) :
             propertyType === false ?
-                Node_1.RDFNode.getPropertyPointers(propertyValues, pointerLibrary) :
-                Node_1.RDFNode.getProperties(propertyValues, pointerLibrary);
+                this.getPropertyPointers(propertyValues, pointerLibrary) :
+                this.getProperties(propertyValues, pointerLibrary);
         if (!compactedValues)
             return null;
         var filteredValues = compactedValues.filter(function (value) { return value !== null; });
@@ -242,15 +243,31 @@ var JSONLDConverter = (function () {
     JSONLDConverter.prototype.getPropertyURINameMap = function (digestedSchema) {
         var map = new Map();
         digestedSchema.properties.forEach(function (definition, propertyName) {
-            var uri = ObjectSchema.ObjectSchemaUtils.resolveURI(definition.uri, digestedSchema, { vocab: true });
+            var uri = digestedSchema.resolveURI(definition.uri, { vocab: true });
             map.set(uri, propertyName);
         });
         return map;
     };
     JSONLDConverter.prototype.compactPropertyLiteral = function (propertyValues, definition, digestedSchema) {
         var literalType = definition.literalType === null ?
-            XSD_1.XSD.string : ObjectSchema.ObjectSchemaUtils.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
+            XSD_1.XSD.string : digestedSchema.resolveURI(definition.literalType, { vocab: true, base: true });
         return Node_1.RDFNode.getPropertyLiterals(propertyValues, literalType);
+    };
+    JSONLDConverter.prototype.getProperties = function (propertyValues, pointerLibrary) {
+        if (!Array.isArray(propertyValues))
+            return;
+        return propertyValues
+            .map(Value_1.RDFValue.parse.bind(null, pointerLibrary))
+            .filter(function (value) { return !Utils.isNull(value); });
+    };
+    JSONLDConverter.prototype.getPropertyPointers = function (propertyValues, pointerLibrary) {
+        if (!Array.isArray(propertyValues))
+            return;
+        return propertyValues
+            .filter(Node_1.RDFNode.is)
+            .map(Node_1.RDFNode.getID)
+            .map(pointerLibrary.getPointer, pointerLibrary)
+            .filter(function (pointer) { return !Utils.isNull(pointer); });
     };
     return JSONLDConverter;
 }());

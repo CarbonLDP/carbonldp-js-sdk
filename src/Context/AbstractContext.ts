@@ -1,5 +1,4 @@
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
-import { IllegalStateError } from "../Errors/IllegalStateError";
 
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import { GeneralRepository } from "../GeneralRepository/GeneralRepository";
@@ -9,18 +8,14 @@ import { JSONLDConverter } from "../JSONLD/Converter";
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
-import { ObjectSchemaUtils } from "../ObjectSchema/ObjectSchemaUtils";
 
 import { URI } from "../RDF";
 
 import { RegisteredPointer } from "../Registry";
 import { ResolvablePointer } from "../Repository";
 
-import { ContextSettings, DocumentPaths } from "../Settings";
-
-import { isObject, isString } from "../Utils";
-
 import { Context } from "./Context";
+import { ContextSettings } from "./ContextSettings";
 
 
 export abstract class AbstractContext<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer, PARENT extends AbstractContext = undefined> implements Context {
@@ -51,50 +46,6 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 
 	resolve( relativeURI:string ):string {
 		return URI.resolve( this.baseURI, relativeURI );
-	}
-
-	/**
-	 * Resolves the path provided into an URL using the `path` settings of the context.
-	 * If such path does hasn't been declared an IllegalStateError will be thrown.
-	 *
-	 * Example: The path `system.platform` with the default setting:
-	 * ```javascript
-	 * {
-	 *  paths: {
-	 *      system: {
-	 *          slug: ".system/",
-	 *          paths: { platform: "platform/" }
-	 *      }
-	 *  }
-	 * }```,
-	 * This should resolve to something like `https://example.com/.system/platform/`.
-	 *
-	 * @param path The dot notation string that refers the path declared in the settings
-	 * of the context.
-	 *
-	 * @returns The absolute URI of the path provided.
-	 */
-	_resolvePath( path:string ):string {
-		const leftSearchedPaths:string[] = path.split( "." );
-		const currentSearchedPaths:string[] = [];
-
-		let url:string = "";
-		let documentPaths:DocumentPaths[ "paths" ] = this._settings && this._settings.paths;
-		while( leftSearchedPaths.length ) {
-			const containerKey:string = leftSearchedPaths.shift();
-			currentSearchedPaths.push( containerKey );
-
-			const containerPath:string | DocumentPaths = documentPaths ? documentPaths[ containerKey ] : null;
-			if( ! containerPath ) throw new IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" hasn't been declared.` );
-
-			const slug:string = isString( containerPath ) ? containerPath : containerPath.slug;
-			if( ! slug ) throw new IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" doesn't have a slug set.` );
-
-			url = URI.resolve( url, slug );
-			documentPaths = isObject( containerPath ) ? containerPath.paths : null;
-		}
-
-		return this.resolve( url );
 	}
 
 

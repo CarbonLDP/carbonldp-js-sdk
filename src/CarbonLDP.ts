@@ -1,15 +1,23 @@
 import { hasProtocol } from "sparqler/iri";
+
 import { AccessPoint } from "./AccessPoint";
 
+import { CarbonLDPSettings, } from "./CarbonLDPSettings";
+
 import { AbstractContext } from "./Context/AbstractContext";
+import { ContextSettings } from "./Context/ContextSettings";
 import { DocumentsContext } from "./Context/DocumentsContext";
 import { GlobalContext } from "./Context/GlobalContext";
 
-import { Document } from "./Document";
+import { Document } from "./Document/Document";
+
 import * as Errors from "./Errors";
 import { IllegalArgumentError } from "./Errors";
-import { Fragment } from "./Fragment";
+
+import { Fragment } from "./Fragment/Fragment";
+
 import { FreeResources } from "./FreeResources/FreeResources";
+
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
@@ -23,13 +31,13 @@ import {
 	ObjectSchemaUtils,
 	PointerType,
 } from "./ObjectSchema";
-import { Pointer } from "./Pointer";
+
+import { Pointer } from "./Pointer/Pointer";
+
 import * as RDF from "./RDF";
-import { Resource } from "./Resource";
-import {
-	CarbonLDPSettings,
-	ContextSettings,
-} from "./Settings";
+
+import { Resource } from "./Resource/Resource";
+
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
@@ -72,25 +80,6 @@ export class CarbonLDP extends DocumentsContext {
 	get version():string { return CarbonLDP.version; }
 
 	protected _baseURI:string;
-	protected _settings:ContextSettings = {
-		vocabulary: "vocabularies/main/#",
-		paths: {
-			system: {
-				slug: ".system/",
-				paths: {
-					platform: "platform/",
-					credentials: "credentials/",
-					roles: "roles/",
-				},
-			},
-			users: {
-				slug: "users/",
-				paths: {
-					me: "me/",
-				},
-			},
-		},
-	};
 
 	readonly documents:Document;
 
@@ -99,6 +88,25 @@ export class CarbonLDP extends DocumentsContext {
 	constructor( urlOrSettings:string | CarbonLDPSettings ) {
 		super( getURLFrom( urlOrSettings ) );
 
+		this._settings = {
+			vocabulary: "vocabularies/main/#",
+			paths: {
+				system: {
+					slug: ".system/",
+					paths: {
+						platform: "platform/",
+						credentials: "credentials/",
+						roles: "roles/",
+					},
+				},
+				users: {
+					slug: "users/",
+					paths: {
+						me: "me/",
+					},
+				},
+			},
+		};
 		const settings:ContextSettings = getSettingsFrom( urlOrSettings );
 		this._extendsSettings( settings );
 
@@ -145,7 +153,7 @@ function getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
 		throw new IllegalArgumentError( `The host must not contain a port.` );
 
 	const protocol:string = settings.ssl === false ? "http://" : "https://";
-	const host:string = settings.host.endsWith( "/" ) ? settings.host.slice( 0, -1 ) : settings.host;
+	const host:string = settings.host.endsWith( "/" ) ? settings.host.slice( 0, - 1 ) : settings.host;
 	const url:string = `${ protocol }${ host }/`;
 
 	if( ! Utils.isNumber( settings.port ) ) return url;

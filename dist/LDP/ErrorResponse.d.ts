@@ -1,9 +1,9 @@
-import { ModelSchema } from "../core/ModelSchema";
+import { ModelSchema } from "../Model/ModelSchema";
 import { ObjectSchema } from "../ObjectSchema";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
 import { Error } from "./Error";
-export interface ErrorResponse extends TransientResource {
+export interface ErrorResponse extends Resource {
     errors: Error[];
     requestID: string;
     statusCode: number;

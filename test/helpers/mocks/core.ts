@@ -20,7 +20,7 @@ import { RegisteredPointer } from "../../../src/Registry/RegisteredPointer";
 import { BaseResolvablePointer } from "../../../src/Repository/BaseResolvablePointer";
 import { ResolvablePointer } from "../../../src/Repository/ResolvablePointer";
 
-import { ContextSettings } from "../../../src/Settings";
+import { ContextSettings } from "../../../src/Context/ContextSettings";
 
 
 export function createMockDigestedSchema( values?:Partial<DigestedObjectSchema> ):DigestedObjectSchema {

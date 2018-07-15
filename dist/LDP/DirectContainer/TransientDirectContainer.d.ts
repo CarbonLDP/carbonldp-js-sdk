@@ -1,4 +1,4 @@
-import { ModelFactory } from "../../core/ModelFactory";
+import { ModelFactory } from "../../Model";
 import { TransientDocument } from "../../Document";
 import { Pointer } from "../../Pointer";
 import { LDP } from "../../Vocabularies";

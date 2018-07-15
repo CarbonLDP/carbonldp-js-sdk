@@ -1,0 +1,33 @@
+import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
+import { GeneralRepository } from "../GeneralRepository/GeneralRepository";
+import { JSONLDConverter } from "../JSONLD/Converter";
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { RegisteredPointer } from "../Registry";
+import { ResolvablePointer } from "../Repository";
+import { Context } from "./Context";
+import { ContextSettings } from "./ContextSettings";
+export declare abstract class AbstractContext<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer, PARENT extends AbstractContext = undefined> implements Context {
+    abstract readonly registry: GeneralRegistry<REGISTRY> | undefined;
+    abstract readonly repository: GeneralRepository<REPOSITORY> | undefined;
+    readonly jsonldConverter: JSONLDConverter;
+    protected abstract _baseURI: string;
+    readonly baseURI: string;
+    protected readonly _parentContext: PARENT | undefined;
+    readonly parentContext: PARENT | undefined;
+    protected _settings?: ContextSettings;
+    protected _generalObjectSchema?: DigestedObjectSchema;
+    protected _typeObjectSchemaMap: Map<string, DigestedObjectSchema>;
+    constructor(parentContext?: PARENT);
+    resolve(relativeURI: string): string;
+    hasObjectSchema(type: string): boolean;
+    getObjectSchema(type?: string): DigestedObjectSchema;
+    extendObjectSchema(type: string, objectSchema: ObjectSchema): this;
+    extendObjectSchema(objectSchema: ObjectSchema): this;
+    clearObjectSchema(type?: string): void;
+    _getTypeObjectSchemas(): DigestedObjectSchema[];
+    protected _getObjectSchemasTypes(): string[];
+    protected _extendGeneralSchema(digestedSchema: DigestedObjectSchema): void;
+    protected _extendTypeSchema(digestedSchema: DigestedObjectSchema, type: string): void;
+    private _resolveTypeURI;
+}

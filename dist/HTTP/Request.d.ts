@@ -1,7 +1,4 @@
 /// <reference types="node" />
-import { AbstractContext } from "../AbstractContext";
-import { Pointer } from "../Pointer";
-import { RegistryService } from "../Registry";
 import { Header } from "./Header";
 import { HTTPMethod } from "./HTTPMethod";
 import { Parser } from "./Parser";
@@ -44,11 +41,11 @@ export declare class RequestService {
     static delete(url: string, body: string, options?: RequestOptions): Promise<Response>;
     static delete<T>(url: string, options?: RequestOptions, parser?: Parser<T>): Promise<[T, Response]>;
     static delete<T>(url: string, body: string, options?: RequestOptions, parser?: Parser<T>): Promise<[T, Response]>;
-    private static _handleGETResponse(url, requestOptions, response);
-    private static _contentTypeIsAccepted(requestOptions, response);
-    private static _setNoCacheHeaders(requestOptions);
-    private static _isChromiumAgent();
-    private static _setFalseETag(requestOptions);
+    private static _handleGETResponse;
+    private static _contentTypeIsAccepted;
+    private static _setNoCacheHeaders;
+    private static _isChromiumAgent;
+    private static _setFalseETag;
 }
 export declare class RequestUtils {
     static getHeader(headerName: string, requestOptions: RequestOptions, initialize?: boolean): Header;
@@ -62,5 +59,4 @@ export declare class RequestUtils {
     static setSlug(slug: string, requestOptions: RequestOptions): RequestOptions;
     static isOptions(object: Object): object is RequestOptions;
     static cloneOptions(options: RequestOptions): RequestOptions;
-    static getRequestURLFor(this: void, registry: RegistryService<Pointer, AbstractContext<Pointer, any> | undefined>, resource: Pointer, uri?: string): string;
 }

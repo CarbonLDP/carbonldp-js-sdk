@@ -11,24 +11,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
 var Utils_1 = require("../JSONLD/Utils");
-var ObjectSchema_1 = require("../ObjectSchema");
-var Pointer_1 = require("../Pointer");
+var ContainerType_1 = require("../ObjectSchema/ContainerType");
+var DigestedObjectSchemaProperty_1 = require("../ObjectSchema/DigestedObjectSchemaProperty");
+var PointerType_1 = require("../ObjectSchema/PointerType");
+var Pointer_1 = require("../Pointer/Pointer");
 var Utils_2 = require("../Utils");
-var Vocabularies_1 = require("../Vocabularies");
+var XSD_1 = require("../Vocabularies/XSD");
 var Tokens_1 = require("./Tokens");
-var typesDefinition = new ObjectSchema_1.DigestedObjectSchemaProperty();
+var typesDefinition = new DigestedObjectSchemaProperty_1.DigestedObjectSchemaProperty();
 typesDefinition.literal = false;
-typesDefinition.pointerType = ObjectSchema_1.PointerType.ID;
-typesDefinition.containerType = ObjectSchema_1.ContainerType.SET;
+typesDefinition.pointerType = PointerType_1.PointerType.ID;
+typesDefinition.containerType = ContainerType_1.ContainerType.SET;
 var DeltaCreator = (function () {
-    function DeltaCreator(jsonldConverter) {
+    function DeltaCreator(context) {
         this.prefixesMap = new Map();
-        this.jsonldConverter = jsonldConverter;
+        this.context = context;
         this.addToken = new Tokens_1.AddToken();
         this.deleteToken = new Tokens_1.DeleteToken();
         this.updateLists = [];
     }
     DeltaCreator.prototype.getPatch = function () {
+        var _a;
         var patch = new Tokens_1.LDPatchToken();
         this.prefixesMap.forEach(function (prefix) { return patch.prologues.push(prefix); });
         (_a = patch.statements).push.apply(_a, this.updateLists);
@@ -37,10 +40,11 @@ var DeltaCreator = (function () {
         if (this.deleteToken.triples.length)
             patch.statements.push(this.deleteToken);
         return "" + patch;
-        var _a;
     };
-    DeltaCreator.prototype.addResource = function (schema, id, previousResource, currentResource) {
+    DeltaCreator.prototype.addResource = function (id, previousResource, currentResource) {
         var _this = this;
+        var _a;
+        var schema = this.__getSchema(id, previousResource, currentResource);
         var resource = iri_1.isBNodeLabel(id) ?
             new tokens_1.BlankNodeToken(id) : this._compactIRI(schema, id);
         var updateLists = [];
@@ -49,7 +53,7 @@ var DeltaCreator = (function () {
         new Set([
             "types"
         ].concat(Object.keys(previousResource), Object.keys(currentResource))).forEach(function (propertyName) {
-            if (propertyName === "id")
+            if (propertyName === "$id")
                 return;
             var predicateURI = propertyName === "types" ?
                 "a" : _this._getPropertyIRI(schema, propertyName);
@@ -57,14 +61,14 @@ var DeltaCreator = (function () {
                 typesDefinition : schema.properties.get(propertyName);
             var oldValue = previousResource[propertyName];
             var newValue = currentResource[propertyName];
-            if (definition && definition.containerType === ObjectSchema_1.ContainerType.LIST && isValidValue(oldValue)) {
+            if (definition && definition.containerType === ContainerType_1.ContainerType.LIST && isValidValue(oldValue)) {
                 var listUpdates = [];
                 if (!isValidValue(newValue)) {
                     deleteTriples.addPredicate(new tokens_1.PredicateToken(predicateURI).addObject(new tokens_1.CollectionToken()));
                     listUpdates.push({ slice: [0, void 0], objects: [] });
                 }
                 else {
-                    var tempDefinition = __assign({}, definition, { containerType: ObjectSchema_1.ContainerType.SET });
+                    var tempDefinition = __assign({}, definition, { containerType: ContainerType_1.ContainerType.SET });
                     listUpdates.push.apply(listUpdates, getListDelta(_this._getObjects(oldValue, schema, tempDefinition), _this._getObjects(newValue, schema, tempDefinition)));
                 }
                 if (!listUpdates.length)
@@ -108,7 +112,17 @@ var DeltaCreator = (function () {
             return;
         this._addPrefixFrom(resource, schema);
         predicates.forEach(function (x) { return _this._addPrefixFrom(x.predicate, schema); });
-        var _a;
+    };
+    DeltaCreator.prototype.__getSchema = function (id, previousResource, currentResource) {
+        var types = new Set();
+        if ("types" in previousResource)
+            previousResource
+                .types.forEach(types.add, types);
+        if ("types" in currentResource)
+            currentResource
+                .types.forEach(types.add, types);
+        return this.context
+            .registry.getSchemaFor({ $id: id, types: Array.from(types) });
     };
     DeltaCreator.prototype._getPropertyIRI = function (schema, propertyName) {
         var propertyDefinition = schema.properties.get(propertyName);
@@ -118,21 +132,21 @@ var DeltaCreator = (function () {
         return this._compactIRI(schema, uri);
     };
     DeltaCreator.prototype._getObjects = function (value, schema, definition) {
+        var _a;
         var values = (Array.isArray(value) ?
             !definition || definition.containerType !== null ? value : value.slice(0, 1) :
             [value]).filter(isValidValue);
-        if (definition && definition.containerType === ObjectSchema_1.ContainerType.LIST) {
+        if (definition && definition.containerType === ContainerType_1.ContainerType.LIST) {
             if (!isValidValue(value))
                 return [];
             var collection = new tokens_1.CollectionToken();
             (_a = collection.objects).push.apply(_a, this._expandValues(values, schema, definition));
             return [collection];
         }
-        if (definition && definition.containerType === ObjectSchema_1.ContainerType.LANGUAGE) {
+        if (definition && definition.containerType === ContainerType_1.ContainerType.LANGUAGE) {
             return this._expandLanguageMap(values, schema);
         }
         return this._expandValues(values, schema, definition);
-        var _a;
     };
     DeltaCreator.prototype._expandValues = function (values, schema, definition) {
         var _this = this;
@@ -151,14 +165,14 @@ var DeltaCreator = (function () {
         var languageMap = values[0];
         return Object.keys(languageMap).map(function (key) {
             var value = languageMap[key];
-            var tempDefinition = new ObjectSchema_1.DigestedObjectSchemaProperty();
+            var tempDefinition = new DigestedObjectSchemaProperty_1.DigestedObjectSchemaProperty();
             tempDefinition.language = key;
-            tempDefinition.literalType = Vocabularies_1.XSD.string;
+            tempDefinition.literalType = XSD_1.XSD.string;
             return _this._expandLiteral(value, schema, tempDefinition);
         }).filter(isValidValue);
     };
     DeltaCreator.prototype._expandPointer = function (value, schema) {
-        var id = Pointer_1.Pointer.is(value) ? value.id : value;
+        var id = Pointer_1.Pointer.is(value) ? value.$id : value;
         if (!Utils_2.isString(id))
             return null;
         return iri_1.isBNodeLabel(id) ?
@@ -169,11 +183,11 @@ var DeltaCreator = (function () {
         var type = definition && definition.literalType ?
             definition.literalType :
             Utils_1.guessXSDType(value);
-        if (!this.jsonldConverter.literalSerializers.has(type))
+        if (!this.context.jsonldConverter.literalSerializers.has(type))
             return null;
-        value = this.jsonldConverter.literalSerializers.get(type).serialize(value);
+        value = this.context.jsonldConverter.literalSerializers.get(type).serialize(value);
         var literal = new tokens_1.LiteralToken(value);
-        if (type !== Vocabularies_1.XSD.string)
+        if (type !== XSD_1.XSD.string)
             literal.setType(this._compactIRI(schema, type));
         if (definition && definition.language !== void 0)
             literal.setLanguage(definition.language);

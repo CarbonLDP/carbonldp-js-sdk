@@ -18,27 +18,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
-var AbstractContext_1 = require("./AbstractContext");
 var AccessPoint_1 = require("./AccessPoint");
-var Auth = __importStar(require("./Auth"));
-var BlankNode_1 = require("./BlankNode");
-var Document_1 = require("./Document");
+var AbstractContext_1 = require("./Context/AbstractContext");
+var DocumentsContext_1 = require("./Context/DocumentsContext");
+var GlobalContext_1 = require("./Context/GlobalContext");
+var Document_1 = require("./Document/Document");
 var Errors = __importStar(require("./Errors"));
-var Fragment_1 = require("./Fragment");
-var FreeResources_1 = require("./FreeResources");
+var Errors_1 = require("./Errors");
+var Fragment_1 = require("./Fragment/Fragment");
+var FreeResources_1 = require("./FreeResources/FreeResources");
 var HTTP = __importStar(require("./HTTP"));
 var JSONLD = __importStar(require("./JSONLD"));
 var LDP = __importStar(require("./LDP"));
 var LDPatch = __importStar(require("./LDPatch"));
 var Messaging = __importStar(require("./Messaging"));
-var NamedFragment_1 = require("./NamedFragment");
 var ObjectSchema_1 = require("./ObjectSchema");
-var Pointer_1 = require("./Pointer");
-var ProtectedDocument_1 = require("./ProtectedDocument");
+var Pointer_1 = require("./Pointer/Pointer");
 var RDF = __importStar(require("./RDF"));
-var Registry_1 = require("./Registry");
-var Resource_1 = require("./Resource");
-var GlobalContext_1 = require("./GlobalContext");
+var Resource_1 = require("./Resource/Resource");
 var SHACL = __importStar(require("./SHACL"));
 var SPARQL = __importStar(require("./SPARQL"));
 var System = __importStar(require("./System"));
@@ -47,7 +44,7 @@ var Vocabularies = __importStar(require("./Vocabularies"));
 var CarbonLDP = (function (_super) {
     __extends(CarbonLDP, _super);
     function CarbonLDP(urlOrSettings) {
-        var _this = _super.call(this, GlobalContext_1.GlobalContext.instance) || this;
+        var _this = _super.call(this, getURLFrom(urlOrSettings)) || this;
         _this._settings = {
             vocabulary: "vocabularies/main/#",
             paths: {
@@ -67,36 +64,9 @@ var CarbonLDP = (function (_super) {
                 },
             },
         };
-        if (Utils.isString(urlOrSettings)) {
-            if (!RDF.URI.hasProtocol(urlOrSettings))
-                throw new Errors.IllegalArgumentError("The URL must contain a valid protocol: \"http://\", \"https://\".");
-            _this._baseURI = urlOrSettings;
-        }
-        else {
-            if (!Utils.isString(urlOrSettings.host))
-                throw new Errors.IllegalArgumentError("The settings object must contains a valid host string.");
-            if (iri_1.hasProtocol(urlOrSettings.host))
-                throw new Errors.IllegalArgumentError("The host must not contain a protocol.");
-            if (urlOrSettings.host.includes(":"))
-                throw new Errors.IllegalArgumentError("The host must not contain a port.");
-            _this._baseURI = "" + (urlOrSettings.ssl === false ? "http://" : "https://") + urlOrSettings.host;
-            if (Utils.isNumber(urlOrSettings.port)) {
-                if (_this._baseURI.endsWith("/"))
-                    _this._baseURI = _this._baseURI.slice(0, -1);
-                _this._baseURI += ":" + urlOrSettings.port;
-            }
-            urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
-            var paths = mergePaths(_this._settings.paths, urlOrSettings.paths);
-            _this._settings = Utils.ObjectUtils.extend(_this._settings, urlOrSettings);
-            _this._settings.paths = paths;
-        }
-        if (!_this._baseURI.endsWith("/"))
-            _this._baseURI = _this._baseURI + "/";
-        _this.registry = new Registry_1.DocumentsRegistry(_this);
-        _this.messaging = new Messaging.MessagingService(_this);
-        _this.auth = new Auth.AuthService(_this);
-        _this.documents = ProtectedDocument_1.ProtectedDocument
-            .decorate(_this.registry.getPointer(_this._baseURI, true));
+        var settings = getSettingsFrom(urlOrSettings);
+        _this._extendsSettings(settings);
+        _this.documents = _this.registry.getPointer(_this._baseURI, true);
         return _this;
     }
     Object.defineProperty(CarbonLDP, "version", {
@@ -118,8 +88,6 @@ var CarbonLDP = (function (_super) {
     };
     CarbonLDP.AbstractContext = AbstractContext_1.AbstractContext;
     CarbonLDP.AccessPoint = AccessPoint_1.AccessPoint;
-    CarbonLDP.Auth = Auth;
-    CarbonLDP.BlankNode = BlankNode_1.BlankNode;
     CarbonLDP.Errors = Errors;
     CarbonLDP.FreeResources = FreeResources_1.FreeResources;
     CarbonLDP.HTTP = HTTP;
@@ -136,58 +104,47 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.DigestedObjectSchema = ObjectSchema_1.DigestedObjectSchema;
     CarbonLDP.Document = Document_1.Document;
     CarbonLDP.Fragment = Fragment_1.Fragment;
-    CarbonLDP.NamedFragment = NamedFragment_1.NamedFragment;
-    CarbonLDP.ProtectedDocument = ProtectedDocument_1.ProtectedDocument;
-    CarbonLDP.PersistedResource = Resource_1.PersistedResource;
     CarbonLDP.Pointer = Pointer_1.Pointer;
     CarbonLDP.RDF = RDF;
-    CarbonLDP.TransientResource = Resource_1.TransientResource;
+    CarbonLDP.TransientResource = Resource_1.Resource;
     CarbonLDP.GlobalContext = GlobalContext_1.GlobalContext;
     CarbonLDP.SHACL = SHACL;
     CarbonLDP.SPARQL = SPARQL;
     CarbonLDP.System = System;
     CarbonLDP.Utils = Utils;
     return CarbonLDP;
-}(AbstractContext_1.AbstractContext));
+}(DocumentsContext_1.DocumentsContext));
 exports.CarbonLDP = CarbonLDP;
-function mergePaths(target, source) {
-    if (!source)
-        return target;
-    if (!target)
-        return Utils.ObjectUtils.clone(source, { objects: true });
-    for (var _i = 0, _a = Object.keys(source); _i < _a.length; _i++) {
-        var key = _a[_i];
-        var sourcePath = source[key];
-        if (sourcePath === null) {
-            delete target[key];
-            continue;
-        }
-        var targetPath = target[key];
-        if (!targetPath) {
-            target[key] = Utils.isObject(sourcePath) ?
-                Utils.ObjectUtils.clone(sourcePath, { objects: true }) :
-                sourcePath;
-            continue;
-        }
-        if (Utils.isString(sourcePath)) {
-            if (Utils.isObject(targetPath)) {
-                targetPath.slug = sourcePath;
-            }
-            else {
-                target[key] = sourcePath;
-            }
-            continue;
-        }
-        if (sourcePath.slug === void 0 && sourcePath.paths === void 0)
-            continue;
-        var targetDocPaths = Utils.isString(targetPath) ?
-            target[key] = { slug: targetPath } : targetPath;
-        if (sourcePath.slug !== void 0)
-            targetDocPaths.slug = sourcePath.slug;
-        if (sourcePath.paths !== void 0)
-            targetDocPaths.paths = mergePaths(targetDocPaths.paths, sourcePath.paths);
-    }
-    return target;
+function getURLFrom(urlOrSettings) {
+    return Utils.isString(urlOrSettings) ?
+        getURLFromString(urlOrSettings) :
+        getURLFromSettings(urlOrSettings);
+}
+function getURLFromString(url) {
+    if (!RDF.URI.hasProtocol(url))
+        throw new Errors_1.IllegalArgumentError("The URL must contain a valid protocol: \"http://\", \"https://\".");
+    if (url.endsWith("/"))
+        return url;
+    return url + "/";
+}
+function getURLFromSettings(settings) {
+    if (!Utils.isString(settings.host))
+        throw new Errors_1.IllegalArgumentError("The settings object must contains a valid host string.");
+    if (iri_1.hasProtocol(settings.host))
+        throw new Errors_1.IllegalArgumentError("The host must not contain a protocol.");
+    if (settings.host.includes(":"))
+        throw new Errors_1.IllegalArgumentError("The host must not contain a port.");
+    var protocol = settings.ssl === false ? "http://" : "https://";
+    var host = settings.host.endsWith("/") ? settings.host.slice(0, -1) : settings.host;
+    var url = "" + protocol + host + "/";
+    if (!Utils.isNumber(settings.port))
+        return url;
+    return url.slice(0, -1) + (":" + settings.port + "/");
+}
+function getSettingsFrom(urlOrSettings) {
+    if (Utils.isString(urlOrSettings))
+        return {};
+    return Object.assign({}, urlOrSettings, { ssl: null, host: null, port: null });
 }
 
 //# sourceMappingURL=CarbonLDP.js.map
