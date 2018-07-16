@@ -3,11 +3,13 @@
 const fs = require( "fs" );
 const path = require( "path" );
 
+const promisify = require( "util" ).promisify;
+
 const del = require( "del" );
-const filter = require( 'gulp-filter' );
+
+const filter = require( "gulp-filter" );
 
 const gulp = require( "gulp" );
-const util = require( "gulp-util" );
 const replace = require( "gulp-replace" );
 const runSequence = require( "run-sequence" );
 
@@ -90,6 +92,156 @@ gulp.task( "bundle:sfx", ( done ) => {
 
 gulp.task( "clean:dist", ( done ) => {
 	return del( [ config.dist.all, config.dist.doc ], done );
+} );
+
+/**
+ * Removes unused files (.js, .map) that were created by a compiler from files that no longer exists
+ */
+gulp.task( "clean:src", ( done ) => {
+	Promise.all( [
+		processDirectory( "src" ),
+		processDirectory( "test/helpers" )
+	] ).then( () => {
+		done();
+	} ).catch( ( error ) => {
+		done( error );
+	} );
+
+	function cleanDirectory( directory ) {
+		return promisify( fs.readdir )( directory ).then( ( files ) => {
+			return processDirectoryFiles( directory, files );
+		} );
+	}
+
+	function processDirectoryFiles( directory, files ) {
+		let promises = [];
+		for( let file of files ) {
+			let path = getPath( directory, file );
+			promises.push( promisify( fs.lstat )( path ).then( ( fileStats ) => {
+				if( fileStats.isDirectory() ) return processDirectory( path );
+				else if( fileStats.isFile() ) return processFile( path );
+				else return Promise.resolve( false );
+			} ) );
+		}
+
+		return Promise.all( promises ).then( ( erasedStatuses ) => {
+			return erasedStatuses.reduce( ( previous, current ) => previous && current, true );
+		} );
+	}
+
+	function processDirectory( directory ) {
+		let allContentsWereErased;
+
+		return cleanDirectory( directory ).then( ( _allContentsWereErased ) => {
+			allContentsWereErased = _allContentsWereErased;
+			if( allContentsWereErased ) {
+				console.log( `All files of directory '${directory}' were removed. Deleting it...` );
+				return promisify( fs.rmdir )( directory );
+			}
+		} ).then( () => {
+			return allContentsWereErased;
+		} );
+	}
+
+	function processFile( file ) {
+		let extension = getFileExtension( file );
+		if( extension === null ) return Promise.resolve( false );
+
+		let hasSrcFilePromise;
+		let hasSrcFile;
+
+		switch( extension ) {
+			case "js":
+				hasSrcFilePromise = jsHasSrc( file );
+				break;
+			case "map":
+				hasSrcFilePromise = mapHasSrc( file );
+				break;
+			default:
+				return Promise.resolve( false );
+		}
+
+		return hasSrcFilePromise.then( ( _hasSrcFile ) => {
+			hasSrcFile = _hasSrcFile;
+			if( ! hasSrcFile ) {
+				console.log( `File '${file}' doesn't have a src file. Deleting it...` );
+				return promisify( fs.unlink )( file );
+			}
+		} ).then( () => {
+			return ! hasSrcFile;
+		} );
+	}
+
+	function jsHasSrc( file ) {
+		let directory = getDirectory( file );
+		let fileName = getFileName( file );
+		let tsFile = directory + "/" + fileName + ".ts";
+
+		return fileExists( tsFile );
+	}
+
+	function mapHasSrc( file ) {
+		let directory = getDirectory( file );
+		let srcFileName = getFileName( file );
+		let srcFileExtension = getFileExtension( srcFileName );
+
+		let srcFile = directory + "/" + srcFileName;
+
+		switch( srcFileExtension ) {
+			case "js":
+				return jsHasSrc( srcFile );
+			default:
+				return Promise.resolve( true );
+		}
+	}
+
+	function fileExists( file ) {
+		return promisify( fs.lstat )( file ).then( ( fileStat ) => {
+			return true;
+		} ).catch( ( error ) => {
+			if( error.code === "ENOENT" ) return false;
+			else return Promise.reject( error );
+		} );
+	}
+
+	function getDirectory( file ) {
+		let pathParts = file.split( "/" );
+
+		pathParts.pop();
+
+		if( pathParts.length === 0 ) return "/";
+
+		return pathParts.join( "/" );
+	}
+
+	function getPath( directory, fileName ) {
+		return directory + "/" + fileName;
+	}
+
+	function getFile( filePath ) {
+		let pathParts = filePath.split( "/" );
+		return pathParts[ pathParts.length - 1 ];
+	}
+
+	function getFileName( file ) {
+		let fileName = getFile( file );
+		let fileParts = fileName.split( "." );
+
+		fileParts.pop();
+
+		if( fileParts.length === 0 ) return file;
+
+		return fileParts.join( "." );
+	}
+
+	function getFileExtension( file ) {
+		let fileName = getFile( file );
+		let fileParts = fileName.split( "." );
+
+		if( fileParts.length === 1 ) return null;
+
+		return fileParts[ fileParts.length - 1 ];
+	}
 } );
 
 gulp.task( "compile:documentation", [ "compile:documentation:html" ] );
