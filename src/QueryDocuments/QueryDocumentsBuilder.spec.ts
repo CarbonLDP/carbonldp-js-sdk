@@ -11,11 +11,12 @@ import {
 } from "sparqler/tokens";
 
 import { createMockContext } from "../../test/helpers/mocks";
-import { AbstractContext } from "../Context";
-import {
-	IllegalArgumentError,
-	IllegalStateError
-} from "../Errors";
+
+import { AbstractContext } from "../Context/AbstractContext";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+import { IllegalStateError } from "../Errors/IllegalStateError";
+
 import {
 	clazz,
 	extendsClass,
@@ -28,16 +29,13 @@ import {
 	OBLIGATORY,
 	OPTIONAL
 } from "../test/JasmineExtender";
+
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-
 import * as Module from "./QueryDocumentsBuilder";
-import {
-	QueryDocumentsBuilder,
-	QueryDocumentsBuilderOrderData
-} from "./QueryDocumentsBuilder";
-
+import { QueryDocumentsBuilder, QueryDocumentsBuilderOrderData } from "./QueryDocumentsBuilder";
 import { QueryProperty } from "./QueryProperty";
+
 
 describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void => {
 

@@ -1,5 +1,7 @@
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { Pointer } from "../Pointer/Pointer";
+
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
 	hasProperty,
@@ -10,10 +12,12 @@ import {
 	property,
 	STATIC
 } from "../test/JasmineExtender";
+
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 
 import { ValidationResult } from "./ValidationResult";
+
 
 describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 

@@ -1,8 +1,8 @@
-import { Document } from "../Document";
-import { ModelSchema } from "../Model";
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { C } from "../Vocabularies";
+import { Document } from "../Document/Document";
+import { ModelSchema } from "../Model/ModelSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { Pointer } from "../Pointer/Pointer";
+import { C } from "../Vocabularies/C";
 import { Map } from "./Map";
 import { VolatileResource } from "./VolatileResource";
 export interface DocumentMetadata extends VolatileResource {

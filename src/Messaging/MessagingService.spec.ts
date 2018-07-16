@@ -2,20 +2,16 @@ import { Server } from "mock-socket";
 import Frame from "webstomp-client/src/frame.js";
 
 import { DocumentsContext } from "../Context/DocumentsContext";
-import { IllegalStateError } from "../Errors";
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-import {
-	clazz,
-	constructor,
-	hasSignature,
-	INSTANCE,
-	isDefined,
-	method,
-	module
-} from "../test/JasmineExtender";
-import { EventMessage } from "./EventMessage";
 
+import { IllegalStateError } from "../Errors/IllegalStateError";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { Resource } from "../Resource/Resource";
+
+import { clazz, constructor, hasSignature, INSTANCE, isDefined, method, module } from "../test/JasmineExtender";
+
+import { EventMessage } from "./EventMessage";
 import * as MessagingService from "./MessagingService";
 
 

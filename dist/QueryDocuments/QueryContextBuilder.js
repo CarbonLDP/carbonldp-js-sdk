@@ -10,8 +10,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("../Errors");
-var ObjectSchema_1 = require("../ObjectSchema");
+var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
+var DigestedObjectSchema_1 = require("../ObjectSchema/DigestedObjectSchema");
+var ObjectSchemaDigester_1 = require("../ObjectSchema/ObjectSchemaDigester");
+var ObjectSchemaUtils_1 = require("../ObjectSchema/ObjectSchemaUtils");
 var QueryContext_1 = require("./QueryContext");
 var QueryProperty_1 = require("./QueryProperty");
 var Utils_1 = require("./Utils");
@@ -56,8 +58,8 @@ var QueryContextBuilder = (function (_super) {
             var schema = schemas_1[_i];
             if (!schema.properties.has(propertyName))
                 continue;
-            var mergeSchema = ObjectSchema_1.ObjectSchemaDigester.combineDigestedObjectSchemas([existingSchema, schema]);
-            var digestedProperty = ObjectSchema_1.ObjectSchemaUtils.resolveProperty(mergeSchema, schema.properties.get(propertyName));
+            var mergeSchema = ObjectSchemaDigester_1.ObjectSchemaDigester.combineDigestedObjectSchemas([existingSchema, schema]);
+            var digestedProperty = ObjectSchemaUtils_1.ObjectSchemaUtils.resolveProperty(mergeSchema, schema.properties.get(propertyName));
             if (!propertyURI || propertyURI === digestedProperty.uri)
                 return digestedProperty;
         }
@@ -84,14 +86,14 @@ var QueryContextBuilder = (function (_super) {
                 case QueryProperty_1.QueryPropertyType.ALL:
                     return _super.prototype.getSchemaFor.call(this, object);
                 case QueryProperty_1.QueryPropertyType.EMPTY:
-                    return new ObjectSchema_1.DigestedObjectSchema();
+                    return new DigestedObjectSchema_1.DigestedObjectSchema();
                 default:
-                    throw new Errors_1.IllegalArgumentError("Property \"" + path + "\" is not a resource.");
+                    throw new IllegalArgumentError_1.IllegalArgumentError("Property \"" + path + "\" is not a resource.");
             }
         }
         var parent = this.getProperty(Utils_1.getParentPath(path));
         if (!parent || parent.getType() !== QueryProperty_1.QueryPropertyType.FULL)
-            throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
         return _super.prototype.getSchemaFor.call(this, object);
     };
     QueryContextBuilder.prototype._getTypeSchemas = function () {

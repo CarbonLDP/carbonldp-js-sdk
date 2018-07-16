@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var IDAlreadyInUseError_1 = require("../Errors/IDAlreadyInUseError");
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var ModelDecorator_1 = require("../Model/ModelDecorator");
-var Pointer_1 = require("../Pointer");
+var Pointer_1 = require("../Pointer/Pointer");
 var Utils_1 = require("../Utils");
 exports.Registry = {
     PROTOTYPE: {

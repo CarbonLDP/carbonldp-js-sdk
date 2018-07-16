@@ -1,4 +1,4 @@
-import { ObjectSchema } from "../ObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { DocumentCreated } from "./DocumentCreated";
 export interface ChildCreated extends DocumentCreated {
 }

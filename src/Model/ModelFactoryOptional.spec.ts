@@ -1,10 +1,5 @@
-import {
-	extendsClass,
-	hasMethod,
-	interfaze,
-	module,
-	OBLIGATORY
-} from "../test/JasmineExtender";
+import { extendsClass, hasMethod, interfaze, module, OBLIGATORY } from "../test/JasmineExtender";
+
 import { ModelFactoryOptional } from "./ModelFactoryOptional";
 
 

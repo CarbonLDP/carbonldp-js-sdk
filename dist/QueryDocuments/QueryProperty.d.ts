@@ -1,5 +1,5 @@
 import { PatternToken, SubjectToken } from "sparqler/tokens";
-import { DigestedObjectSchema } from "../ObjectSchema";
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { QueryContext } from "./QueryContext";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import { QueryVariable } from "./QueryVariable";

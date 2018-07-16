@@ -1,12 +1,9 @@
-import {
-	enumeration,
-	hasEnumeral,
-	isDefined,
-	module,
-} from "./../test/JasmineExtender";
+import { enumeration, hasEnumeral, isDefined, module } from "../test/JasmineExtender";
+
 import * as Utils from "./../Utils";
 
 import * as StatusCodeModule from "./StatusCode";
+
 
 describe( module(
 	"carbonldp/HTTP/StatusCode"

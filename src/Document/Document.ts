@@ -9,7 +9,7 @@ import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelSchema } from "../Model/ModelSchema";
-import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
 

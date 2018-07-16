@@ -1,8 +1,6 @@
-import {
-	Pointer,
-	PointerLibrary,
-} from "../Pointer";
-import { Registry } from "../Registry";
+import { Pointer } from "../Pointer/Pointer";
+import { PointerLibrary } from "../Pointer/PointerLibrary";
+
 import {
 	hasMethod,
 	hasProperty,
@@ -14,10 +12,12 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { RDFDocument } from "./Document";
+
 import * as Utils from "./../Utils";
 
+import { RDFDocument } from "./Document";
 import { RDFValue } from "./Value";
+
 
 describe( module( "carbonldp/RDF/Value" ), ():void => {
 

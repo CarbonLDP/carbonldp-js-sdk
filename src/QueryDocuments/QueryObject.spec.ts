@@ -1,24 +1,17 @@
-import {
-	BlankNodeToken,
-	IRIToken,
-	PrefixedNameToken
-} from "sparqler/tokens";
+import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
 
 import { createMockContext } from "../../test/helpers/mocks";
-import { AbstractContext } from "../Context";
-import { Pointer } from "../Pointer";
-import {
-	clazz,
-	constructor,
-	hasSignature,
-	INSTANCE,
-	method,
-	module
-} from "../test/JasmineExtender";
-import { QueryContext } from "./QueryContext";
 
+import { AbstractContext } from "../Context/AbstractContext";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
+
+import { QueryContext } from "./QueryContext";
 import * as Module from "./QueryObject";
 import { QueryObject } from "./QueryObject";
+
 
 describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
 

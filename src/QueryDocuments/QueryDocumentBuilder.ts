@@ -9,32 +9,26 @@ import {
 	ValuesToken,
 } from "sparqler/tokens";
 
-import {
-	IllegalArgumentError,
-	IllegalStateError
-} from "../Errors";
-import {
-	DigestedObjectSchema,
-	DigestedObjectSchemaProperty,
-	ObjectSchemaDigester,
-	ObjectSchemaProperty,
-	ObjectSchemaUtils,
-} from "../ObjectSchema";
-import { Pointer } from "../Pointer";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+import { IllegalStateError } from "../Errors/IllegalStateError";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
+import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
+import { ObjectSchemaProperty } from "../ObjectSchema/ObjectSchemaProperty";
+
+import { Pointer } from "../Pointer/Pointer";
+
 import { isObject } from "../Utils";
+
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryObject } from "./QueryObject";
-import {
-	QueryProperty,
-	QueryPropertyType,
-} from "./QueryProperty";
+import { QueryProperty, QueryPropertyType } from "./QueryProperty";
 import { QuerySchema } from "./QuerySchema";
 import { QuerySchemaProperty } from "./QuerySchemaProperty";
 import { QueryValue } from "./QueryValue";
-import {
-	createPropertyPatterns,
-	getParentPath,
-} from "./Utils";
+import { createPropertyPatterns, getParentPath } from "./Utils";
+
 
 const INHERIT:Readonly<{}> = Object.freeze( {} );
 

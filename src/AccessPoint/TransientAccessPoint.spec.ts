@@ -1,5 +1,7 @@
-import { TransientDirectContainer } from "../LDP";
-import { Pointer } from "../Pointer";
+import { TransientDirectContainer } from "../LDP/DirectContainer/TransientDirectContainer";
+
+import { Pointer } from "../Pointer/Pointer";
+
 import {
 	extendsClass,
 	hasMethod,
@@ -14,7 +16,9 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { C } from "../Vocabularies";
+
+import { C } from "../Vocabularies/C";
+
 import { BaseAccessPoint } from "./BaseAccessPoint";
 import { TransientAccessPoint } from "./TransientAccessPoint";
 

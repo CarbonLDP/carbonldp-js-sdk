@@ -13,4 +13,3 @@ export * from "./MemberRemovedDetails";
 export * from "./MessagingOptions";
 export * from "./MessagingService";
 export * from "./Utils";
-export { EventEmitterDocumentsRepositoryTrait } from "../DocumentsRepository/Traits/EventEmitterDocumentsRepositoryTrait";

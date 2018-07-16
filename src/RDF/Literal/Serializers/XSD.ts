@@ -1,6 +1,9 @@
 import { IllegalArgumentError } from "../../../Errors/IllegalArgumentError";
+
 import { Serializer } from "../Serializer";
+
 import * as Utils from "./../../../Utils";
+
 
 function pad( value:number ):string {
 	let paddedValue:string = String( value );

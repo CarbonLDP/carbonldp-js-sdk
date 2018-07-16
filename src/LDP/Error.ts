@@ -1,7 +1,10 @@
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Resource } from "../Resource/Resource";
+
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
-import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
+
 import { Map } from "./Map";
 
 

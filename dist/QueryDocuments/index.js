@@ -3,7 +3,10 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./QueryableMetadata"));
+var QueryableMetadata_1 = require("./QueryableMetadata");
+exports.QueryableMetadata = QueryableMetadata_1.QueryableMetadata;
+var QueryablePointer_1 = require("./QueryablePointer");
+exports.QueryablePointer = QueryablePointer_1.QueryablePointer;
 __export(require("./QueryContext"));
 __export(require("./QueryContextBuilder"));
 __export(require("./QueryContextPartial"));

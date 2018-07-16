@@ -1,10 +1,4 @@
-import {
-	clazz,
-	hasSignature,
-	method,
-	module,
-	STATIC
-} from "../test/JasmineExtender";
+import { clazz, hasSignature, method, module, STATIC } from "../test/JasmineExtender";
 import { ContainerType } from "./ContainerType";
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";

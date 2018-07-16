@@ -12,6 +12,7 @@ import { QueryContext } from "./QueryContext";
 import * as Module from "./QueryContextPartial";
 import { QueryContextPartial } from "./QueryContextPartial";
 
+
 describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 
 	it( "should exists", ():void => {

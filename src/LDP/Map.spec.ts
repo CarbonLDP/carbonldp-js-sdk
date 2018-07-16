@@ -1,4 +1,5 @@
-import { Resource } from "../Resource";
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
 	hasMethod,
@@ -10,10 +11,13 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
+
 import * as Utils from "./../Utils";
 
 import { Map } from "./Map";
+
 
 describe( module( "carbonldp/LDP/Map" ), ():void => {
 

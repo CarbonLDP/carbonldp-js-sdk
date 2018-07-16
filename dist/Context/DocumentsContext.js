@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var DocumentsRegistry_1 = require("../DocumentsRegistry/DocumentsRegistry");
 var DocumentsRepository_1 = require("../DocumentsRepository/DocumentsRepository");
 var IllegalStateError_1 = require("../Errors/IllegalStateError");
-var Service_1 = require("../Messaging/Service");
+var MessagingService_1 = require("../Messaging/MessagingService");
 var URI_1 = require("../RDF/URI");
 var Utils_1 = require("../Utils");
 var AbstractContext_1 = require("./AbstractContext");
@@ -25,7 +25,7 @@ var DocumentsContext = (function (_super) {
         _this._baseURI = url;
         _this.registry = DocumentsRegistry_1.DocumentsRegistry.createFrom({ $context: _this });
         _this.repository = DocumentsRepository_1.DocumentsRepository.createFrom({ $context: _this });
-        _this.messaging = new Service_1.MessagingService(_this);
+        _this.messaging = new MessagingService_1.MessagingService(_this);
         return _this;
     }
     DocumentsContext._mergePaths = function (target, source) {

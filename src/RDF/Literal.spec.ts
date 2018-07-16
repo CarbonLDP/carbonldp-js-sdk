@@ -1,4 +1,5 @@
-import * as Errors from "../Errors";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
 import {
 	hasMethod,
 	hasProperty,
@@ -13,8 +14,10 @@ import {
 	reexports,
 	STATIC,
 } from "../test/JasmineExtender";
-import { XSD } from "../Vocabularies";
-import * as Utils from "./../Utils";
+
+import { XSD } from "../Vocabularies/XSD";
+
+import * as Utils from "../Utils";
 
 import * as Module from "./Literal";
 import { RDFLiteral } from "./Literal";
@@ -237,8 +240,8 @@ describe( module( "carbonldp/RDF/Literal" ), ():void => {
 			expect( literal[ "@type" ] ).toBe( XSD.object );
 			expect( literal[ "@value" ] ).toBe( '["a","object",1]' );
 
-			expect( RDFLiteral.from.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( RDFLiteral.from.bind( null, undefined ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( RDFLiteral.from.bind( null, null ) ).toThrowError( IllegalArgumentError );
+			expect( RDFLiteral.from.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 		// TODO: Separate in different tests

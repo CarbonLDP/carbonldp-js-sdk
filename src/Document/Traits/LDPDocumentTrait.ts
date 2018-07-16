@@ -1,6 +1,7 @@
 import { LDPDocumentsRepositoryTrait } from "../../DocumentsRepository/Traits/LDPDocumentsRepositoryTrait";
+import { _parseURIParams } from "../../DocumentsRepository/Utils";
 
-import { RequestOptions, } from "../../HTTP/Request";
+import { RequestOptions } from "../../HTTP/Request";
 import { ModelDecorator } from "../../Model/ModelDecorator";
 
 import { ModelPrototype } from "../../Model/ModelPrototype";
@@ -9,7 +10,6 @@ import { Pointer } from "../../Pointer/Pointer";
 import { URI } from "../../RDF/URI";
 
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
-import { _parseURIParams } from "../../DocumentsRepository/Utils";
 
 import { isObject, isString } from "../../Utils";
 

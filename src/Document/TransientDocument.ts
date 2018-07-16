@@ -11,7 +11,7 @@ import { TransientFragment } from "../Fragment/TransientFragment";
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
 import { ModelPrototype } from "../Model/ModelPrototype";
-import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { Pointer } from "../Pointer/Pointer";
 

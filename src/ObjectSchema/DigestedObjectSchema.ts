@@ -1,4 +1,5 @@
 import { URI } from "../RDF/URI";
+
 import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";
 
 

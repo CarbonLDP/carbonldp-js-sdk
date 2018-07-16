@@ -1,31 +1,45 @@
 import { anyThatMatches } from "../test/helpers/jasmine/equalities";
-import { AccessPoint } from "./AccessPoint";
+
+import { AccessPoint } from "./AccessPoint/AccessPoint";
+import { TransientAccessPoint } from "./AccessPoint/TransientAccessPoint";
 
 import * as CarbonLDP from "./CarbonLDP";
-import { AbstractContext, DocumentsContext, GlobalContext } from "./Context";
+import { CarbonLDPSettings } from "./CarbonLDPSettings";
 
-import { Document } from "./Document";
+import { AbstractContext } from "./Context/AbstractContext";
+import { DocumentsContext } from "./Context/DocumentsContext";
+import { GlobalContext } from "./Context/GlobalContext";
+
+import { Document } from "./Document/Document";
+
 import { DocumentsRegistry } from "./DocumentsRegistry";
+
 import * as Errors from "./Errors";
-import { Fragment } from "./Fragment";
+
+import { Fragment } from "./Fragment/Fragment";
+import { TransientFragment } from "./Fragment/TransientFragment";
+
 import { FreeResources } from "./FreeResources/FreeResources";
+
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import {
-	ContainerType,
-	DigestedObjectSchema,
-	DigestedObjectSchemaProperty,
-	ObjectSchemaDigester,
-	ObjectSchemaUtils,
-	PointerType,
-} from "./ObjectSchema";
-import { Pointer } from "./Pointer";
+
+import { ContainerType } from "./ObjectSchema/ContainerType";
+import { DigestedObjectSchema } from "./ObjectSchema/DigestedObjectSchema";
+import { DigestedObjectSchemaProperty } from "./ObjectSchema/DigestedObjectSchemaProperty";
+import { ObjectSchemaDigester } from "./ObjectSchema/ObjectSchemaDigester";
+import { ObjectSchemaUtils } from "./ObjectSchema/ObjectSchemaUtils";
+import { PointerType } from "./ObjectSchema/PointerType";
+
+import { Pointer } from "./Pointer/Pointer";
+
 import * as RDF from "./RDF";
-import { Resource } from "./Resource";
-import { CarbonLDPSettings } from "./CarbonLDPSettings";
+
+import { Resource } from "./Resource/Resource";
+
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
@@ -46,6 +60,7 @@ import {
 
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
+
 
 describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
@@ -94,6 +109,15 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBe( AccessPoint );
+		} );
+
+		it( reexports(
+			STATIC,
+			"TransientAccessPoint",
+			"carbonldp/TransientAccessPoint#TransientAccessPoint"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.TransientAccessPoint ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientAccessPoint ).toBe( TransientAccessPoint );
 		} );
 
 		it( reexports(
@@ -238,6 +262,15 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Fragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Fragment ).toBe( Fragment );
+		} );
+
+		it( reexports(
+			STATIC,
+			"TransientFragment",
+			"carbonldp/TransientFragment#TransientFragment"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.TransientFragment ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientFragment ).toBe( TransientFragment );
 		} );
 
 		it( reexports(

@@ -8,8 +8,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
+var Utils = __importStar(require("../Utils"));
 var XSD_1 = require("../Vocabularies/XSD");
-var Utils = __importStar(require("./../Utils"));
 var Serializers = __importStar(require("./Literal/Serializers"));
 exports.Serializers = Serializers;
 exports.RDFLiteral = {

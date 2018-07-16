@@ -1,3 +1,4 @@
+import { EventEmitterDocumentsRepositoryTrait } from "../../DocumentsRepository/Traits/EventEmitterDocumentsRepositoryTrait";
 import { ChildCreated } from "../../Messaging/ChildCreated";
 import { DocumentDeleted } from "../../Messaging/DocumentDeleted";
 import { DocumentModified } from "../../Messaging/DocumentModified";
@@ -12,8 +13,6 @@ import { ModelPrototype } from "../../Model/ModelPrototype";
 import { Pointer } from "../../Pointer/Pointer";
 
 import { URI } from "../../RDF/URI";
-
-import { EventEmitterDocumentsRepositoryTrait } from "../../DocumentsRepository/Traits/EventEmitterDocumentsRepositoryTrait";
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 
 import { isFunction, isObject, isString } from "../../Utils";

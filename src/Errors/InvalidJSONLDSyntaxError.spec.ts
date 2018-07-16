@@ -1,15 +1,11 @@
-import {
-	clazz,
-	extendsClass,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-} from "../test/JasmineExtender";
+import { clazz, extendsClass, hasProperty, INSTANCE, isDefined, module } from "../test/JasmineExtender";
+
 import * as Utils from "../Utils";
+
 import { AbstractError } from "./AbstractError";
 
 import * as InvalidJSONLDSyntaxError from "./InvalidJSONLDSyntaxError";
+
 
 // TODO: Refactor tests
 describe( module( "carbonldp/Errors/InvalidJSONLDSyntaxError" ), ():void => {

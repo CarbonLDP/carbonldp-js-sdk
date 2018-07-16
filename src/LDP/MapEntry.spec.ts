@@ -1,16 +1,11 @@
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
+
 import * as Utils from "./../Utils";
 
 import { MapEntry } from "./MapEntry";
+
 
 describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 

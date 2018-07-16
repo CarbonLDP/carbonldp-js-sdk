@@ -1,10 +1,4 @@
-import {
-	hasProperty,
-	interfaze,
-	isDefined,
-	module,
-	OPTIONAL
-} from "../test/JasmineExtender";
+import { hasProperty, interfaze, isDefined, module, OPTIONAL } from "../test/JasmineExtender";
 
 import { MessagingOptions } from "./MessagingOptions";
 

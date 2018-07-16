@@ -1,5 +1,4 @@
 import { TransientDocument } from "../Document/TransientDocument";
-import { IllegalActionError } from "../Errors/IllegalActionError";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 

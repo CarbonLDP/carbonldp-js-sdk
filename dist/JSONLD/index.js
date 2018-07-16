@@ -4,8 +4,8 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./JSONLDCompacter"));
-__export(require("./Converter"));
-__export(require("./Parser"));
-__export(require("./Processor"));
+__export(require("./JSONLDConverter"));
+__export(require("./JSONLDParser"));
+__export(require("./JSONLDProcessor"));
 
 //# sourceMappingURL=index.js.map

@@ -1,11 +1,15 @@
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import * as Utils from "../Utils";
+
 import { XSD } from "../Vocabularies/XSD";
-import * as Utils from "./../Utils";
 
 import * as Serializers from "./Literal/Serializers";
 
+
 export * from "./Literal/Serializer";
 export { Serializers };
+
 
 export interface RDFLiteral {
 	"@type"?:string;

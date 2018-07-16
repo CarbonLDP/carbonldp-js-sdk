@@ -1,8 +1,11 @@
-import { PointerLibrary } from "../Pointer";
+import { PointerLibrary } from "../Pointer/PointerLibrary";
+
+import { isString } from "../Utils";
+
 import { RDFList } from "./List";
 import { RDFLiteral } from "./Literal";
 import { RDFNode } from "./Node";
-import { isString } from "../Utils";
+
 
 export interface RDFValue {
 	"@id"?:string;

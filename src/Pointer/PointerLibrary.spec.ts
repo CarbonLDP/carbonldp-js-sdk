@@ -1,11 +1,6 @@
-import {
-	hasMethod,
-	interfaze,
-	module,
-	OBLIGATORY
-} from "../test/JasmineExtender";
-import { Pointer } from "./Pointer";
+import { hasMethod, interfaze, module, OBLIGATORY } from "../test/JasmineExtender";
 
+import { Pointer } from "./Pointer";
 import { PointerLibrary } from "./PointerLibrary";
 
 

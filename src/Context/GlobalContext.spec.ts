@@ -1,5 +1,3 @@
-import { AbstractContext } from "./AbstractContext";
-import { GlobalContext } from "./GlobalContext";
 import {
 	clazz,
 	constructor,
@@ -11,7 +9,9 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { CS } from "../Vocabularies";
+
+import { AbstractContext } from "./AbstractContext";
+import { GlobalContext } from "./GlobalContext";
 
 
 describe( module( "carbonldp/GlobalContext" ), ():void => {

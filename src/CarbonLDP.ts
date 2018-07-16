@@ -1,8 +1,9 @@
 import { hasProtocol } from "sparqler/iri";
 
-import { AccessPoint } from "./AccessPoint";
+import { AccessPoint } from "./AccessPoint/AccessPoint";
+import { TransientAccessPoint } from "./AccessPoint/TransientAccessPoint";
 
-import { CarbonLDPSettings, } from "./CarbonLDPSettings";
+import { CarbonLDPSettings } from "./CarbonLDPSettings";
 
 import { AbstractContext } from "./Context/AbstractContext";
 import { ContextSettings } from "./Context/ContextSettings";
@@ -12,9 +13,10 @@ import { GlobalContext } from "./Context/GlobalContext";
 import { Document } from "./Document/Document";
 
 import * as Errors from "./Errors";
-import { IllegalArgumentError } from "./Errors";
+import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
 
 import { Fragment } from "./Fragment/Fragment";
+import { TransientFragment } from "./Fragment/TransientFragment";
 
 import { FreeResources } from "./FreeResources/FreeResources";
 
@@ -23,14 +25,13 @@ import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import {
-	ContainerType,
-	DigestedObjectSchema,
-	DigestedObjectSchemaProperty,
-	ObjectSchemaDigester,
-	ObjectSchemaUtils,
-	PointerType,
-} from "./ObjectSchema";
+
+import { ContainerType } from "./ObjectSchema/ContainerType";
+import { DigestedObjectSchema } from "./ObjectSchema/DigestedObjectSchema";
+import { DigestedObjectSchemaProperty } from "./ObjectSchema/DigestedObjectSchemaProperty";
+import { ObjectSchemaDigester } from "./ObjectSchema/ObjectSchemaDigester";
+import { ObjectSchemaUtils } from "./ObjectSchema/ObjectSchemaUtils";
+import { PointerType } from "./ObjectSchema/PointerType";
 
 import { Pointer } from "./Pointer/Pointer";
 
@@ -48,6 +49,7 @@ export class CarbonLDP extends DocumentsContext {
 
 	static AbstractContext:typeof AbstractContext = AbstractContext;
 	static AccessPoint:typeof AccessPoint = AccessPoint;
+	static TransientAccessPoint:typeof TransientAccessPoint = TransientAccessPoint;
 	static Errors:typeof Errors = Errors;
 	static FreeResources:typeof FreeResources = FreeResources;
 	static HTTP:typeof HTTP = HTTP;
@@ -64,6 +66,7 @@ export class CarbonLDP extends DocumentsContext {
 	static DigestedObjectSchema:typeof DigestedObjectSchema = DigestedObjectSchema;
 	static Document:typeof Document = Document;
 	static Fragment:typeof Fragment = Fragment;
+	static TransientFragment:typeof TransientFragment = TransientFragment;
 	static Pointer:typeof Pointer = Pointer;
 	static RDF:typeof RDF = RDF;
 	static TransientResource:typeof Resource = Resource;

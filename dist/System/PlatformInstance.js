@@ -1,18 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vocabularies_1 = require("../Vocabularies");
+var C_1 = require("../Vocabularies/C");
+var XSD_1 = require("../Vocabularies/XSD");
 var SCHEMA = {
     "buildDate": {
-        "@id": Vocabularies_1.C.buildDate,
-        "@type": Vocabularies_1.XSD.dateTime,
+        "@id": C_1.C.buildDate,
+        "@type": XSD_1.XSD.dateTime,
     },
     "version": {
-        "@id": Vocabularies_1.C.version,
-        "@type": Vocabularies_1.XSD.string,
+        "@id": C_1.C.version,
+        "@type": XSD_1.XSD.string,
     },
 };
 exports.PlatformInstance = {
-    TYPE: Vocabularies_1.C.PlatformInstance,
+    TYPE: C_1.C.PlatformInstance,
     SCHEMA: SCHEMA,
 };
 

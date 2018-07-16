@@ -1,8 +1,13 @@
-import { ModelFactory } from "../../Model";
-import { TransientDocument } from "../../Document";
-import { IllegalArgumentError } from "../../Errors";
-import { Pointer } from "../../Pointer";
-import { LDP } from "../../Vocabularies";
+import { TransientDocument } from "../../Document/TransientDocument";
+
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+
+import { ModelFactory } from "../../Model/ModelFactory";
+
+import { Pointer } from "../../Pointer/Pointer";
+
+import { LDP } from "../../Vocabularies/LDP";
+
 import { BaseDirectContainer } from "./BaseDirectContainer";
 
 

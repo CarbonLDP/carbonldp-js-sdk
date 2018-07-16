@@ -1,13 +1,8 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC,
-} from "../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
+
 import * as Utils from "../Utils";
 
 import * as JSONLD from "./";
-
 import { JSONLDCompacter } from "./JSONLDCompacter";
 import { JSONLDConverter } from "./JSONLDConverter";
 import { JSONLDParser } from "./JSONLDParser";

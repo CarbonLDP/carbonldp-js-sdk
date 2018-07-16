@@ -1,20 +1,14 @@
-import { VolatileResource } from "../LDP";
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-import {
-	hasProperty,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
-import { C } from "../Vocabularies";
-import { QueryablePointer } from "./QueryablePointer";
+import { VolatileResource } from "../LDP/VolatileResource";
 
+import { Resource } from "../Resource/Resource";
+
+import { hasProperty, hasSignature, interfaze, method, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
+
+import { C } from "../Vocabularies/C";
+
+import { QueryablePointer } from "./QueryablePointer";
 import { QueryMetadata } from "./QueryMetadata";
+
 
 describe( module( "carbonldp/QueryDocuments/QueryMetadata" ), ():void => {
 

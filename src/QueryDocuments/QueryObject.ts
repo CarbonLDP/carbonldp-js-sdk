@@ -1,7 +1,8 @@
 import { isBNodeLabel } from "sparqler/iri";
 import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
 
-import { Pointer } from "../Pointer";
+import { Pointer } from "../Pointer/Pointer";
+
 import { isString } from "../Utils";
 import { QueryContext } from "./QueryContext";
 

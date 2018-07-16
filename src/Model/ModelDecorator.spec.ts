@@ -1,11 +1,7 @@
-import {
-	hasMethod,
-	interfaze,
-	module,
-	OBLIGATORY
-} from "../test/JasmineExtender";
+import { hasMethod, interfaze, module, OBLIGATORY } from "../test/JasmineExtender";
 
 import { ModelDecorator } from "./ModelDecorator";
+
 
 describe( module( "carbonldp/Model" ), ():void => {
 

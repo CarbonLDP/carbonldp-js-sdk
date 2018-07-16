@@ -273,4 +273,4 @@ var JSONLDConverter = (function () {
 }());
 exports.JSONLDConverter = JSONLDConverter;
 
-//# sourceMappingURL=Converter.js.map
+//# sourceMappingURL=JSONLDConverter.js.map

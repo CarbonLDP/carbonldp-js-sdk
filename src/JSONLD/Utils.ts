@@ -1,11 +1,6 @@
-import {
-	isBoolean,
-	isDate,
-	isFunction,
-	isNumber,
-	isString,
-} from "../Utils";
+import { isBoolean, isDate, isFunction, isNumber, isString } from "../Utils";
 import { XSD } from "../Vocabularies/XSD";
+
 
 export function guessXSDType( value:any ):string {
 	if( isFunction( value ) )

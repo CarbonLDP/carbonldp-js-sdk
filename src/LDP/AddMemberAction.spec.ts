@@ -1,6 +1,8 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+
+import { Pointer } from "../Pointer/Pointer";
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
 	hasProperty,
@@ -13,13 +15,13 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import * as Utils from "../Utils";
-import { C } from "../Vocabularies";
 
-import {
-	AddMemberAction,
-	BaseAddMemberAction
-} from "./AddMemberAction";
+import * as Utils from "../Utils";
+
+import { C } from "../Vocabularies/C";
+
+import { AddMemberAction, BaseAddMemberAction } from "./AddMemberAction";
+
 
 describe( module( "carbonldp/Members/AddMemberAction" ), ():void => {
 

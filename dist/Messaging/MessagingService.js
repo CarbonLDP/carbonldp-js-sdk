@@ -20,9 +20,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var sockjs_client_1 = __importDefault(require("sockjs-client"));
 var webstomp = __importStar(require("webstomp-client"));
-var Errors_1 = require("../Errors");
+var IllegalStateError_1 = require("../Errors/IllegalStateError");
 var FreeResources_1 = require("../FreeResources/FreeResources");
-var JSONLD_1 = require("../JSONLD");
+var JSONLDParser_1 = require("../JSONLD/JSONLDParser");
 var Utils_1 = require("../Utils");
 var EventMessage_1 = require("./EventMessage");
 var DEFAULT_OPTIONS = {
@@ -40,7 +40,7 @@ var MessagingService = (function () {
     };
     MessagingService.prototype.connect = function (onConnect, onError) {
         if (this._client) {
-            var error = new Errors_1.IllegalStateError("The messaging service is already connect" + (this._client.connected ? "ed" : "ing") + ".");
+            var error = new IllegalStateError_1.IllegalStateError("The messaging service is already connect" + (this._client.connected ? "ed" : "ing") + ".");
             if (onError)
                 onError(error);
             throw error;
@@ -134,7 +134,7 @@ var MessagingService = (function () {
     MessagingService.prototype._makeSubscription = function (id, destination, eventCallback, errorCallback) {
         var _this = this;
         return function () { return _this._client.subscribe(destination, function (message) {
-            new JSONLD_1.JSONLDParser()
+            new JSONLDParser_1.JSONLDParser()
                 .parse(message.body)
                 .then(function (data) {
                 var freeResources = FreeResources_1.FreeResources
@@ -163,4 +163,4 @@ var MessagingService = (function () {
 }());
 exports.MessagingService = MessagingService;
 
-//# sourceMappingURL=Service.js.map
+//# sourceMappingURL=MessagingService.js.map

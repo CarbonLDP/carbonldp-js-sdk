@@ -2,10 +2,10 @@ import { CarbonLDPSettings } from "./CarbonLDPSettings";
 
 import { DocumentsContextSettings } from "./Context/DocumentsContextSettings";
 
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, OPTIONAL } from "./test/JasmineExtender";
 
-import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, OPTIONAL, } from "./test/JasmineExtender";
 
-describe( module( "carbonldp/Settings" ), ():void => {
+describe( module( "carbonldp/CarbonLDPSettings" ), ():void => {
 
 	describe( interfaze( "CarbonLDP.CarbonLDPSettings", "Interface of the possible settings used by the Carbon class." ), ():void => {
 

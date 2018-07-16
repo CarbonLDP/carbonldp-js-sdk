@@ -1,16 +1,10 @@
-import { VolatileResource } from "../LDP";
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
-import { C } from "../Vocabularies";
-import { XSD } from "../Vocabularies";
+import { VolatileResource } from "../LDP/VolatileResource";
+
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
+
+import { C, XSD } from "../Vocabularies";
 import { PlatformInstance } from "./PlatformInstance";
+
 
 describe( module( "carbonldp/System/PlatformInstance" ), ():void => {
 

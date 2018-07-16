@@ -6,7 +6,7 @@ var IllegalStateError_1 = require("../../Errors/IllegalStateError");
 var FreeResources_1 = require("../../FreeResources/FreeResources");
 var Request_1 = require("../../HTTP/Request");
 var JSONLDCompacter_1 = require("../../JSONLD/JSONLDCompacter");
-var Parser_1 = require("../../JSONLD/Parser");
+var JSONLDParser_1 = require("../../JSONLD/JSONLDParser");
 var ResponseMetadata_1 = require("../../LDP/ResponseMetadata");
 var ModelDecorator_1 = require("../../Model/ModelDecorator");
 var Pointer_1 = require("../../Pointer/Pointer");
@@ -21,7 +21,7 @@ var QueryProperty_1 = require("../../QueryDocuments/QueryProperty");
 var Utils_1 = require("../../QueryDocuments/Utils");
 var Document_1 = require("../../RDF/Document");
 var URI_1 = require("../../RDF/URI");
-var Service_1 = require("../../SPARQL/Service");
+var SPARQLService_1 = require("../../SPARQL/SPARQLService");
 var Utils_2 = require("../../Utils");
 var C_1 = require("../../Vocabularies/C");
 var LDP_1 = require("../../Vocabularies/LDP");
@@ -43,14 +43,14 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
     var triples = Utils_1.getAllTriples(constructPatterns);
     construct.addTriple.apply(construct, triples);
     Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferResultsContext] }, requestOptions);
-    return Service_1.SPARQLService
+    return SPARQLService_1.SPARQLService
         .executeRawCONSTRUCTQuery(url, query.toString(), requestOptions)
         .then(function (_a) {
         var strConstruct = _a[0];
         return strConstruct;
     })
         .then(function (jsonldString) {
-        return new Parser_1.JSONLDParser().parse(jsonldString);
+        return new JSONLDParser_1.JSONLDParser().parse(jsonldString);
     })
         .then(function (rdfNodes) {
         var freeNodes = Document_1.RDFDocument.getFreeNodes(rdfNodes);

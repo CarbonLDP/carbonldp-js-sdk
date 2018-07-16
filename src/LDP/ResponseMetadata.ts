@@ -1,9 +1,9 @@
-import { ModelSchema } from "../Model";
-import { ObjectSchema } from "../ObjectSchema";
-import {
-	C,
-	CS,
-} from "../Vocabularies";
+import { ModelSchema } from "../Model/ModelSchema";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { C } from "../Vocabularies/C";
+
 import { DocumentMetadata } from "./DocumentMetadata";
 import { VolatileResource } from "./VolatileResource";
 
@@ -25,10 +25,6 @@ const SCHEMA:ObjectSchema = {
 		"@id": C.documentMetadata,
 		"@type": "@id",
 		"@container": "@set",
-	},
-	"authToken": {
-		"@id": CS.authToken,
-		"@type": "@id",
 	},
 };
 

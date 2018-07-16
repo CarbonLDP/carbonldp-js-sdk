@@ -1,9 +1,5 @@
-import {
-	hasMethod,
-	interfaze,
-	module,
-	OBLIGATORY
-} from "../test/JasmineExtender";
+import { hasMethod, interfaze, module, OBLIGATORY } from "../test/JasmineExtender";
+
 import { ModelFactory } from "./ModelFactory";
 
 

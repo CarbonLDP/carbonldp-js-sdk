@@ -1,10 +1,10 @@
 import { createNonEnumerable } from "../../test/helpers/miscellaneous";
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype,
-	ModelTypeGuard
-} from "../Model";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
 import {
 	extendsClass,
 	hasMethod,
@@ -15,11 +15,9 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
+
 import { BasePointer } from "./BasePointer";
-import {
-	Pointer,
-	PointerFactory
-} from "./Pointer";
+import { Pointer, PointerFactory } from "./Pointer";
 
 
 describe( module( "carbonldp/Pointer" ), ():void => {

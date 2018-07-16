@@ -1,4 +1,7 @@
-import { ModelDecorator, ModelFactory, ModelPrototype, ModelTypeGuard } from "../Model";
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 import { BasePointer } from "./BasePointer";
 export interface Pointer {
     $id: string;

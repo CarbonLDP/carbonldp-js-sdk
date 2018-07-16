@@ -9,10 +9,10 @@ import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 
-import { URI } from "../RDF";
+import { URI } from "../RDF/URI";
 
-import { RegisteredPointer } from "../Registry";
-import { ResolvablePointer } from "../Repository";
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+import { ResolvablePointer } from "../Repository/ResolvablePointer";
 
 import { Context } from "./Context";
 import { ContextSettings } from "./ContextSettings";

@@ -11,7 +11,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
-var Errors_1 = require("../Errors");
+var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
+var IllegalStateError_1 = require("../Errors/IllegalStateError");
 var QueryDocumentBuilder_1 = require("./QueryDocumentBuilder");
 var Utils_1 = require("./Utils");
 var QueryDocumentsBuilder = (function (_super) {
@@ -23,7 +24,7 @@ var QueryDocumentsBuilder = (function (_super) {
         var propertyObj = this.property(property);
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
+            throw new IllegalStateError_1.IllegalStateError("A sub-select token has not been defined.");
         this._orderData = void 0;
         var orderIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "order"; });
         if (orderIndex !== -1) {
@@ -44,7 +45,7 @@ var QueryDocumentsBuilder = (function (_super) {
         while (propertyObj !== this._document) {
             var propertyTriple = propertyObj && propertyObj.getTriple();
             if (!propertyTriple)
-                throw new Errors_1.IllegalArgumentError("The property \"" + propertyObj.name + "\" is not a valid property defined by the builder.");
+                throw new IllegalArgumentError_1.IllegalArgumentError("The property \"" + propertyObj.name + "\" is not a valid property defined by the builder.");
             var propertyPattern = new tokens_1.OptionalToken()
                 .addPattern(propertyTriple);
             if (propertyPatternsPath)
@@ -59,7 +60,7 @@ var QueryDocumentsBuilder = (function (_super) {
     QueryDocumentsBuilder.prototype.limit = function (limit) {
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
+            throw new IllegalStateError_1.IllegalStateError("A sub-select token has not been defined.");
         var limitIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "limit"; });
         if (limitIndex !== -1)
             select.modifiers.splice(limitIndex, 1);
@@ -69,7 +70,7 @@ var QueryDocumentsBuilder = (function (_super) {
     QueryDocumentsBuilder.prototype.offset = function (offset) {
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
+            throw new IllegalStateError_1.IllegalStateError("A sub-select token has not been defined.");
         var offsetIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "offset"; });
         if (offsetIndex !== -1)
             select.modifiers.splice(offsetIndex, 1);
@@ -93,7 +94,7 @@ function parseFlowString(flow) {
             return upperCase
                 .slice(0, -6);
         default:
-            throw new Errors_1.IllegalArgumentError("Invalid flow order.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("Invalid flow order.");
     }
 }
 

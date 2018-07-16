@@ -1,5 +1,7 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
-import { Resource } from "../Resource";
+
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
 	hasMethod,
@@ -12,10 +14,13 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { C } from "../Vocabularies";
+
+import { C } from "../Vocabularies/C";
+
 import * as Utils from "./../Utils";
 
 import { VolatileResource } from "./VolatileResource";
+
 
 describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 

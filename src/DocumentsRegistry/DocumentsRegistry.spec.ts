@@ -15,6 +15,7 @@ import { ModelPrototype } from "../Model/ModelPrototype";
 
 import {
 	extendsClass,
+	hasProperty,
 	hasSignature,
 	interfaze,
 	method,
@@ -47,6 +48,16 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 
 		it( extendsClass( "CarbonLDP.GeneralRegistry" ), () => {
 			const target:GeneralRegistry = {} as DocumentsRegistry;
+			expect( target ).toBeDefined();
+		} );
+
+
+		it( hasProperty(
+			OBLIGATORY,
+			"$context",
+			"CarbonLDP.DocumentsContext"
+		), ():void => {
+			const target:DocumentsRegistry[ "$context" ] = {} as DocumentsContext;
 			expect( target ).toBeDefined();
 		} );
 

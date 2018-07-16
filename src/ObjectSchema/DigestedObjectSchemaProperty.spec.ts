@@ -1,10 +1,5 @@
-import {
-	clazz,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module
-} from "../test/JasmineExtender";
+import { clazz, hasProperty, INSTANCE, isDefined, module } from "../test/JasmineExtender";
+
 import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";
 
 

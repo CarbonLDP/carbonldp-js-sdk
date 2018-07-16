@@ -1,14 +1,11 @@
 import * as jsonld from "jsonld";
-import {
-	clazz,
-	hasMethod,
-	isDefined,
-	module,
-	STATIC,
-} from "../test/JasmineExtender";
+
+import { clazz, hasMethod, isDefined, module, STATIC } from "../test/JasmineExtender";
+
 import * as Utils from "./../Utils";
 
 import { JSONLDProcessor } from "./JSONLDProcessor";
+
 
 describe( module( "carbonldp/JSONLD/JSONLDProcessor" ), ():void => {
 

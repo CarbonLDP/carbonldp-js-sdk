@@ -1,16 +1,9 @@
-import {
-	INSTANCE,
-	module,
-	reexports
-} from "../test/JasmineExtender";
+import { INSTANCE, module, reexports } from "../test/JasmineExtender";
 
 import * as System from "./";
 
 import { PlatformInstance } from "./PlatformInstance";
-import {
-	PlatformMetadata,
-	PlatformMetadataFactory,
-} from "./PlatformMetadata";
+import { PlatformMetadata, PlatformMetadataFactory } from "./PlatformMetadata";
 
 describe( module( "carbonldp/System" ), () => {
 

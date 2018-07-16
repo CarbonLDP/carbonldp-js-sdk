@@ -1,57 +1,16 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC,
-} from "../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
 import * as Utils from "../Utils";
 
 import * as LDP from "./";
-
-import {
-	AddMemberAction,
-	AddMemberActionFactory,
-} from "./AddMemberAction";
-import {
-	Error,
-	ErrorFactory,
-} from "./Error";
-import {
-	Map,
-	MapFactory,
-} from "./Map";
-import {
-	MapEntry,
-	MapEntryFactory,
-} from "./MapEntry";
-import {
-	TransientDirectContainer,
-	TransientDirectContainerFactory,
-} from "./DirectContainer";
-import {
-	DocumentMetadata,
-	DocumentMetadataFactory,
-} from "./DocumentMetadata";
-import {
-	ErrorResponse,
-	ErrorResponseFactory,
-} from "./ErrorResponse";
-import {
-	RemoveMemberAction,
-	RemoveMemberActionFactory,
-} from "./RemoveMemberAction";
-import {
-	ResponseMetadata,
-	ResponseMetadataFactory,
-} from "./ResponseMetadata";
-import {
-	ValidationError,
-	ValidationErrorFactory,
-} from "./ValidationError";
-import {
-	VolatileResource,
-	VolatileResourceFactory,
-} from "./VolatileResource";
+import { TransientDirectContainer, TransientDirectContainerFactory } from "./DirectContainer";
+import { DocumentMetadata, DocumentMetadataFactory } from "./DocumentMetadata";
+import { Error, ErrorFactory } from "./Error";
+import { ErrorResponse, ErrorResponseFactory } from "./ErrorResponse";
+import { Map, MapFactory } from "./Map";
+import { MapEntry, MapEntryFactory } from "./MapEntry";
+import { ResponseMetadata, ResponseMetadataFactory } from "./ResponseMetadata";
+import { ValidationError, ValidationErrorFactory } from "./ValidationError";
+import { VolatileResource, VolatileResourceFactory } from "./VolatileResource";
 
 describe( module( "carbonldp/LDP" ), ():void => {
 

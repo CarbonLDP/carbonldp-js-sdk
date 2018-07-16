@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var FreeResources_1 = require("../FreeResources/FreeResources");
-var Parser_1 = require("../JSONLD/Parser");
+var JSONLDParser_1 = require("../JSONLD/JSONLDParser");
 var ErrorResponse_1 = require("../LDP/ErrorResponse");
 var Pointer_1 = require("../Pointer/Pointer");
 var URI_1 = require("../RDF/URI");
@@ -31,7 +31,7 @@ function _getErrorResponseParserFn(registry) {
             return Promise.reject(error);
         if (!error.response.data)
             return Promise.reject(error);
-        return new Parser_1.JSONLDParser()
+        return new JSONLDParser_1.JSONLDParser()
             .parse(error.response.data)
             .then(function (freeNodes) {
             var freeResources = FreeResources_1.FreeResources.parseFreeNodes(registry, freeNodes);

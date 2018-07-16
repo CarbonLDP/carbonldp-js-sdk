@@ -1,8 +1,11 @@
-import { ModelFactory } from "../Model/ModelFactory";
 import { ModelSchema } from "../Model/ModelSchema";
-import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Resource } from "../Resource/Resource";
+
 import { C } from "../Vocabularies/C";
+
 import { MapEntry } from "./MapEntry";
 
 

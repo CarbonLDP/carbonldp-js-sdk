@@ -1,9 +1,8 @@
-import { Document } from "../Document";
-import { Pointer } from "../Pointer";
-import {
-	TransientAccessPoint,
-	TransientAccessPointFactory,
-} from "./TransientAccessPoint";
+import { Document } from "../Document/Document";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { TransientAccessPoint, TransientAccessPointFactory } from "./TransientAccessPoint";
 
 
 export interface AccessPoint extends Document {

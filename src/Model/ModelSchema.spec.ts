@@ -1,12 +1,9 @@
-import { ObjectSchema } from "../ObjectSchema";
-import {
-	hasProperty,
-	interfaze,
-	module,
-	OPTIONAL
-} from "../test/JasmineExtender";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { hasProperty, interfaze, module, OPTIONAL } from "../test/JasmineExtender";
 
 import { ModelSchema } from "./ModelSchema";
+
 
 describe( module( "carbonldp/Model" ), ():void => {
 

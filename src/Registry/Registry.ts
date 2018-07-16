@@ -5,7 +5,9 @@ import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 
-import { Pointer, PointerLibrary, PointerValidator } from "../Pointer";
+import { Pointer } from "../Pointer/Pointer";
+import { PointerLibrary } from "../Pointer/PointerLibrary";
+import { PointerValidator } from "../Pointer/PointerValidator";
 
 import { isObject } from "../Utils";
 

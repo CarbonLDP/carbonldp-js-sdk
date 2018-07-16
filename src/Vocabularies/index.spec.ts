@@ -1,9 +1,4 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC,
-} from "../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
 
 import * as Vocabularies from "./";
 
@@ -14,6 +9,7 @@ import { RDF } from "./RDF";
 import { SHACL } from "./SHACL";
 import { VCARD } from "./VCARD";
 import { XSD } from "./XSD";
+
 
 describe( module( "carbonldp/Vocabularies" ), ():void => {
 

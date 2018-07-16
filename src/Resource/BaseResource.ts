@@ -1,5 +1,7 @@
-import { BasePointer } from "../Pointer";
-import { RegisteredPointer, Registry } from "../Registry/index";
+import { BasePointer } from "../Pointer/BasePointer";
+
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+import { Registry } from "../Registry/Registry";
 
 
 export interface BaseResource extends BasePointer {

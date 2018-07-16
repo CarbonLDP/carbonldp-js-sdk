@@ -1,6 +1,6 @@
-import { ModelFactory } from "../Model";
-import { Resource } from "../Resource";
-import { C } from "../Vocabularies";
+import { ModelFactory } from "../Model/ModelFactory";
+import { Resource } from "../Resource/Resource";
+import { C } from "../Vocabularies/C";
 export interface VolatileResource extends Resource {
 }
 export interface VolatileResourceFactory extends ModelFactory<VolatileResource> {

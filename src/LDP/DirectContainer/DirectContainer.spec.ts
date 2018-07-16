@@ -1,14 +1,9 @@
-import { Document } from "../../Document";
-import {
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../../test/JasmineExtender";
-import { LDP } from "../../Vocabularies";
+import { Document } from "../../Document/Document";
+
+import { hasSignature, interfaze, method, module, OBLIGATORY, property, STATIC } from "../../test/JasmineExtender";
+
+import { LDP } from "../../Vocabularies/LDP";
+
 import { DirectContainer } from "./DirectContainer";
 import { TransientDirectContainer } from "./TransientDirectContainer";
 

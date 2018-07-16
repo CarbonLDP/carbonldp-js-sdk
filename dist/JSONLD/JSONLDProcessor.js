@@ -438,4 +438,4 @@ var JSONLDProcessor = (function () {
 }());
 exports.JSONLDProcessor = JSONLDProcessor;
 
-//# sourceMappingURL=Processor.js.map
+//# sourceMappingURL=JSONLDProcessor.js.map

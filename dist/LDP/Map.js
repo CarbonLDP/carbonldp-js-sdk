@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = require("../Resource");
+var Resource_1 = require("../Resource/Resource");
 var C_1 = require("../Vocabularies/C");
 var SCHEMA = {
     "entries": {

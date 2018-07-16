@@ -1,7 +1,4 @@
-import {
-	Pointer,
-	PointerLibrary,
-} from "../Pointer";
+import { Pointer, PointerLibrary } from "../Pointer";
 import {
 	hasMethod,
 	hasProperty,

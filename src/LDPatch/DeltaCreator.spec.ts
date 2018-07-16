@@ -16,13 +16,13 @@ import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 
 import { Pointer } from "../Pointer/Pointer";
 
-import { clazz, constructor, hasSignature, INSTANCE, method, module, } from "../test/JasmineExtender";
+import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
 import { XSD } from "../Vocabularies/XSD";
 
 import { DeltaCreator } from "./DeltaCreator";
 
-import { AddToken, DeleteToken, PrefixToken, SliceToken, UpdateListToken, } from "./Tokens";
+import { AddToken, DeleteToken, PrefixToken, SliceToken, UpdateListToken } from "./Tokens";
 
 
 describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {

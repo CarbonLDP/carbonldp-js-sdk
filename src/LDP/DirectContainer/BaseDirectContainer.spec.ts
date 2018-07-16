@@ -1,11 +1,4 @@
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	OPTIONAL
-} from "../../test/JasmineExtender";
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, OPTIONAL } from "../../test/JasmineExtender";
 
 
 describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {

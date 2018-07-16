@@ -1,4 +1,4 @@
-import { DigestedObjectSchema } from "../ObjectSchema";
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 export declare class QueryableMetadata {
     static readonly ALL: Readonly<DigestedObjectSchema>;
     readonly schema: DigestedObjectSchema;

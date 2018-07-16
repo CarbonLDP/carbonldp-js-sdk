@@ -6,7 +6,7 @@ var FreeResources_1 = require("../../FreeResources/FreeResources");
 var BadResponseError_1 = require("../../HTTP/Errors/ServerErrors/BadResponseError");
 var Request_1 = require("../../HTTP/Request");
 var JSONLDCompacter_1 = require("../../JSONLD/JSONLDCompacter");
-var Parser_1 = require("../../JSONLD/Parser");
+var JSONLDParser_1 = require("../../JSONLD/JSONLDParser");
 var AddMemberAction_1 = require("../../LDP/AddMemberAction");
 var RemoveMemberAction_1 = require("../../LDP/RemoveMemberAction");
 var ResponseMetadata_1 = require("../../LDP/ResponseMetadata");
@@ -20,7 +20,7 @@ var C_1 = require("../../Vocabularies/C");
 var LDP_1 = require("../../Vocabularies/LDP");
 var Utils_2 = require("../Utils");
 var HTTPRepositoryTrait_1 = require("./HTTPRepositoryTrait");
-var __JSONLD_PARSER = new Parser_1.JSONLDParser();
+var __JSONLD_PARSER = new JSONLDParser_1.JSONLDParser();
 function __setDefaultRequestOptions(requestOptions, interactionModel) {
     if (interactionModel)
         Request_1.RequestUtils.setPreferredInteractionModel(interactionModel, requestOptions);

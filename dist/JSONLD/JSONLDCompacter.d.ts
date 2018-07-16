@@ -1,8 +1,8 @@
-import { Document } from "../Document";
+import { Document } from "../Document/Document";
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
-import { ObjectSchemaResolver } from "../ObjectSchema";
-import { RDFDocument } from "../RDF";
-import { JSONLDConverter } from "./Converter";
+import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
+import { RDFDocument } from "../RDF/Document";
+import { JSONLDConverter } from "./JSONLDConverter";
 export declare class JSONLDCompacter {
     private readonly registry;
     private readonly root?;

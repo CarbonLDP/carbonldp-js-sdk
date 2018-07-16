@@ -1,6 +1,8 @@
 import * as Utils from "./../Utils";
+
 import { RDFNode } from "./Node";
 import { URI } from "./URI";
+
 
 export interface RDFDocument extends RDFNode {
 	"@id":string;

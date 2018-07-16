@@ -1,8 +1,6 @@
-import { Document } from "../../Document";
-import {
-	TransientDirectContainer,
-	TransientDirectContainerFactory
-} from "./TransientDirectContainer";
+import { Document } from "../../Document/Document";
+
+import { TransientDirectContainer, TransientDirectContainerFactory } from "./TransientDirectContainer";
 
 
 export interface DirectContainer extends Document {

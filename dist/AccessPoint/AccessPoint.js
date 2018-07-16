@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = require("../Document");
+var Document_1 = require("../Document/Document");
 var TransientAccessPoint_1 = require("./TransientAccessPoint");
 exports.AccessPoint = {
     TYPE: TransientAccessPoint_1.TransientAccessPoint.TYPE,

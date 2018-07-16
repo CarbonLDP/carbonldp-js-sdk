@@ -1,11 +1,10 @@
 import { SPARQLER } from "sparqler";
-import {
-	Container,
-	FinishClause
-} from "sparqler/clauses";
+import { Container, FinishClause } from "sparqler/clauses";
 import { finishDecorator } from "sparqler/clauses/decorators";
+
 import { SPARQLDocumentsRepositoryTrait } from "../DocumentsRepository/Traits/SPARQLDocumentsRepositoryTrait";
 import { SPARQLSelectResults } from "./SelectResults";
+
 
 export interface FinishSPARQLSelect extends FinishClause {
 	execute<T extends object>():Promise<SPARQLSelectResults<T>>;

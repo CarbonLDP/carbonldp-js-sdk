@@ -1,4 +1,4 @@
-import { PointerLibrary } from "../Pointer";
+import { PointerLibrary } from "../Pointer/PointerLibrary";
 import { RDFList } from "./List";
 import { RDFLiteral } from "./Literal";
 import { RDFNode } from "./Node";

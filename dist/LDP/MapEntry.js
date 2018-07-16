@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vocabularies_1 = require("../Vocabularies");
+var C_1 = require("../Vocabularies/C");
 var SCHEMA = {
     "entryKey": {
-        "@id": Vocabularies_1.C.entryKey,
+        "@id": C_1.C.entryKey,
     },
     "entryValue": {
-        "@id": Vocabularies_1.C.entryValue,
+        "@id": C_1.C.entryValue,
     },
 };
 exports.MapEntry = {

@@ -1,10 +1,7 @@
-import {
-	enumeration,
-	hasEnumeral,
-	isDefined,
-	module
-} from "../test/JasmineExtender";
+import { enumeration, hasEnumeral, isDefined, module } from "../test/JasmineExtender";
+
 import { ContainerType } from "./ContainerType";
+
 
 describe( module( "carbonldp/ObjectSchema" ), ():void => {
 

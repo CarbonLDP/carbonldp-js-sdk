@@ -1,17 +1,10 @@
-import {
-	clazz,
-	extendsClass,
-	hasConstructor,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-} from "./../test/JasmineExtender";
+import { clazz, extendsClass, hasConstructor, hasProperty, INSTANCE, isDefined, module } from "../test/JasmineExtender";
 
 import * as Utils from "./../Utils";
 import { AbstractError } from "./AbstractError";
 
 import * as IllegalStateError from "./IllegalStateError";
+
 
 // TODO: Refactor tests
 describe( module( "carbonldp/Errors/IllegalStateError" ), function():void {

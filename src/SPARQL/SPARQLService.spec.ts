@@ -1,27 +1,20 @@
-import * as Errors from "../Errors";
+import { NotImplementedError } from "../Errors/NotImplementedError";
 
-import {
-	Header,
-	RequestOptions,
-	RequestUtils,
-	Response
-} from "../HTTP";
-import {
-	Pointer,
-	PointerLibrary,
-} from "../Pointer";
-import {
-	clazz,
-	hasMethod,
-	isDefined,
-	module,
-	STATIC,
-} from "../test/JasmineExtender";
+import { Header } from "../HTTP/Header";
+import { RequestOptions, RequestUtils } from "../HTTP/Request";
+import { Response } from "../HTTP/Response";
+
+import { Pointer } from "../Pointer/Pointer";
+import { PointerLibrary } from "../Pointer/PointerLibrary";
+
+import { clazz, hasMethod, isDefined, module, STATIC } from "../test/JasmineExtender";
+
 import * as Utils from "./../Utils";
+
 import { SPARQLRawResults } from "./RawResults";
 import { SPARQLSelectResults } from "./SelectResults";
-
 import * as Service from "./SPARQLService";
+
 
 describe( module( "carbonldp/SPARQL/SPARQLService" ), ():void => {
 	it( isDefined(), ():void => {
@@ -302,7 +295,7 @@ describe( module( "carbonldp/SPARQL/SPARQLService" ), ():void => {
 					},
 					( error:Error ):void => {
 						expect( spyRaw ).toHaveBeenCalledWith( "http://example.com/sparql-endpoint/with-bnode/", selectQuery, jasmine.any( Object ) );
-						expect( error instanceof Errors.NotImplementedError ).toEqual( true );
+						expect( error instanceof NotImplementedError ).toEqual( true );
 					}
 					)
 				);

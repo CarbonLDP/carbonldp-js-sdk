@@ -5,6 +5,7 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./Builder"));
 __export(require("./RawResultsParser"));
-__export(require("./Service"));
+var SPARQLService_1 = require("./SPARQLService");
+exports.SPARQLService = SPARQLService_1.SPARQLService;
 
 //# sourceMappingURL=index.js.map

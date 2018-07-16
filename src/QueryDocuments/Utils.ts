@@ -10,9 +10,11 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 
-import { DigestedObjectSchemaProperty } from "../ObjectSchema";
+import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 import { isObject } from "../Utils";
+
 import { QueryContext } from "./QueryContext";
+
 
 export function getLevelRegExp( property:string ):RegExp {
 	if( property ) property += ".";

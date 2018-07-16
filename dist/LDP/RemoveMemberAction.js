@@ -1,16 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = require("../Resource");
-var Vocabularies_1 = require("../Vocabularies");
+var Resource_1 = require("../Resource/Resource");
+var C_1 = require("../Vocabularies/C");
 var SCHEMA = {
     "targetMembers": {
-        "@id": Vocabularies_1.C.targetMember,
+        "@id": C_1.C.targetMember,
         "@type": "@id",
         "@container": "@set",
     },
 };
 exports.RemoveMemberAction = {
-    TYPE: Vocabularies_1.C.RemoveMemberAction,
+    TYPE: C_1.C.RemoveMemberAction,
     SCHEMA: SCHEMA,
     is: function (value) {
         return Resource_1.Resource.is(value)

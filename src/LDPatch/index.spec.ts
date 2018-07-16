@@ -1,9 +1,4 @@
-import {
-	INSTANCE,
-	module,
-	reexports,
-	STATIC,
-} from "../test/JasmineExtender";
+import { INSTANCE, module, reexports, STATIC } from "../test/JasmineExtender";
 
 import * as Module from "./";
 

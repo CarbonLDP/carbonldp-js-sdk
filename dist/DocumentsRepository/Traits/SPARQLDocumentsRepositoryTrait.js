@@ -4,7 +4,7 @@ var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
 var GeneralRepository_1 = require("../../GeneralRepository/GeneralRepository");
 var ModelDecorator_1 = require("../../Model/ModelDecorator");
 var Builder_1 = require("../../SPARQL/Builder");
-var Service_1 = require("../../SPARQL/Service");
+var SPARQLService_1 = require("../../SPARQL/SPARQLService");
 var Utils_1 = require("../Utils");
 exports.SPARQLDocumentsRepositoryTrait = {
     PROTOTYPE: {
@@ -12,7 +12,7 @@ exports.SPARQLDocumentsRepositoryTrait = {
             if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
-            return Service_1.SPARQLService
+            return SPARQLService_1.SPARQLService
                 .executeASKQuery(url, askQuery, requestOptions)
                 .then(function (_a) {
                 var rawResults = _a[0];
@@ -24,7 +24,7 @@ exports.SPARQLDocumentsRepositoryTrait = {
             if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
-            return Service_1.SPARQLService
+            return SPARQLService_1.SPARQLService
                 .executeSELECTQuery(url, selectQuery, this.$context.registry, requestOptions)
                 .then(function (_a) {
                 var selectResults = _a[0];
@@ -36,7 +36,7 @@ exports.SPARQLDocumentsRepositoryTrait = {
             if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
-            return Service_1.SPARQLService
+            return SPARQLService_1.SPARQLService
                 .executeUPDATE(url, update, requestOptions)
                 .then(function () { })
                 .catch(Utils_1._getErrorResponseParserFn(this.$context.registry));

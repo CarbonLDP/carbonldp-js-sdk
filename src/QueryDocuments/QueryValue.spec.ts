@@ -1,24 +1,19 @@
-import {
-	IRIToken,
-	LiteralToken
-} from "sparqler/tokens";
+import { IRIToken, LiteralToken } from "sparqler/tokens";
 
 import { createMockContext } from "../../test/helpers/mocks";
-import { AbstractContext } from "../Context";
-import { IllegalArgumentError } from "../Errors";
-import {
-	clazz,
-	constructor,
-	hasSignature,
-	INSTANCE,
-	method,
-	module,
-} from "../test/JasmineExtender";
-import { XSD } from "../Vocabularies";
-import { QueryContext } from "./QueryContext";
 
+import { AbstractContext } from "../Context/AbstractContext";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
+
+import { XSD } from "../Vocabularies/XSD";
+
+import { QueryContext } from "./QueryContext";
 import * as Module from "./QueryValue";
 import { QueryValue } from "./QueryValue";
+
 
 describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 

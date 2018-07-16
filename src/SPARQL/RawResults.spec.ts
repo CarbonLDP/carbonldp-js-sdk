@@ -1,14 +1,9 @@
-import {
-	hasProperty,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-	OPTIONAL,
-} from "./../test/JasmineExtender";
+import { hasProperty, interfaze, isDefined, module, OBLIGATORY, OPTIONAL } from "../test/JasmineExtender";
+
 import * as Utils from "./../Utils";
 
 import * as RawResults from "./RawResults";
+
 
 describe( module( "carbonldp/SPARQL/RawResults" ), ():void => {
 

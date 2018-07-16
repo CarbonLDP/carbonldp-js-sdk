@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Converter_1 = require("../JSONLD/Converter");
+var JSONLDConverter_1 = require("../JSONLD/JSONLDConverter");
 var ModelDecorator_1 = require("../Model/ModelDecorator");
 var DigestedObjectSchema_1 = require("../ObjectSchema/DigestedObjectSchema");
 var Pointer_1 = require("../Pointer/Pointer");
@@ -57,7 +57,7 @@ exports.Resource = {
             var resourceSchema = context && context.registry ?
                 context.registry.getSchemaFor(this) : generalSchema;
             var jsonldConverter = context ?
-                context.jsonldConverter : new Converter_1.JSONLDConverter();
+                context.jsonldConverter : new JSONLDConverter_1.JSONLDConverter();
             return jsonldConverter.expand(this, generalSchema, resourceSchema);
         },
     },

@@ -1,10 +1,10 @@
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import { GeneralRepository } from "../GeneralRepository/GeneralRepository";
-import { JSONLDConverter } from "../JSONLD/Converter";
+import { JSONLDConverter } from "../JSONLD/JSONLDConverter";
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
-import { RegisteredPointer } from "../Registry";
-import { ResolvablePointer } from "../Repository";
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+import { ResolvablePointer } from "../Repository/ResolvablePointer";
 export interface Context<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer> {
     readonly registry: GeneralRegistry<REGISTRY> | undefined;
     readonly repository: GeneralRepository<REPOSITORY> | undefined;

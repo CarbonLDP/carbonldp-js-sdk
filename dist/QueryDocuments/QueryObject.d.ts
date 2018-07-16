@@ -1,5 +1,5 @@
 import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
-import { Pointer } from "../Pointer";
+import { Pointer } from "../Pointer/Pointer";
 import { QueryContext } from "./QueryContext";
 export declare class QueryObject {
     private _context;

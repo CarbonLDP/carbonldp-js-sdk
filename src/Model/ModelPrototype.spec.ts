@@ -1,10 +1,7 @@
-import {
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY
-} from "../test/JasmineExtender";
+import { hasProperty, interfaze, module, OBLIGATORY } from "../test/JasmineExtender";
+
 import { ModelPrototype } from "./ModelPrototype";
+
 
 describe( module( "carbonldp/Model" ), () => {
 

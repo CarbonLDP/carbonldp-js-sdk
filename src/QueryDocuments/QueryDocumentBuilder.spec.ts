@@ -10,33 +10,28 @@ import {
 } from "sparqler/tokens";
 
 import { createMockContext } from "../../test/helpers/mocks";
-import { AbstractContext } from "../Context";
-import {
-	IllegalArgumentError,
-	IllegalStateError
-} from "../Errors";
-import { DigestedObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import {
-	clazz,
-	constructor,
-	hasSignature,
-	INSTANCE,
-	method,
-	module,
-	property,
-} from "../test/JasmineExtender";
-import { QueryContextBuilder } from "./QueryContextBuilder";
 
+import { AbstractContext } from "../Context/AbstractContext";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+import { IllegalStateError } from "../Errors/IllegalStateError";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { clazz, constructor, hasSignature, INSTANCE, method, module, property } from "../test/JasmineExtender";
+
+import { QueryContextBuilder } from "./QueryContextBuilder";
 import * as Module from "./QueryDocumentBuilder";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-
 import * as QueryObjectModule from "./QueryObject";
 import { QueryObject } from "./QueryObject";
 import { QueryProperty } from "./QueryProperty";
 import * as QueryValueModule from "./QueryValue";
 import { QueryValue } from "./QueryValue";
 import { QueryVariable } from "./QueryVariable";
+
 
 describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => {
 

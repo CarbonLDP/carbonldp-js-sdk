@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = require("../Resource");
-var Vocabularies_1 = require("../Vocabularies");
+var Resource_1 = require("../Resource/Resource");
+var C_1 = require("../Vocabularies/C");
 exports.VolatileResource = {
-    TYPE: Vocabularies_1.C.VolatileResource,
+    TYPE: C_1.C.VolatileResource,
     is: function (value) {
         return Resource_1.Resource.is(value)
             && value.hasType(exports.VolatileResource.TYPE);

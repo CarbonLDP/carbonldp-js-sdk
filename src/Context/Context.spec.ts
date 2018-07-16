@@ -1,4 +1,3 @@
-import * as Context from "./Context";
 import {
 	hasMethod,
 	hasProperty,
@@ -9,7 +8,9 @@ import {
 	module,
 	OBLIGATORY,
 } from "../test/JasmineExtender";
+
 import * as Utils from "../Utils";
+import * as Context from "./Context";
 
 describe( module( "carbonldp/Context" ), ():void => {
 

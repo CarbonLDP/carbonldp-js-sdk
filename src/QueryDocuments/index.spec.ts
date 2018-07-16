@@ -1,31 +1,21 @@
-import {
-	INSTANCE,
-	module,
-	reexports
-} from "../test/JasmineExtender";
+import { INSTANCE, module, reexports } from "../test/JasmineExtender";
+
 import * as QueryDocument from "./index";
+
 import { QueryableMetadata } from "./QueryableMetadata";
 import { QueryContext } from "./QueryContext";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryContextPartial } from "./QueryContextPartial";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import {
-	QueryDocumentsBuilder,
-	QueryDocumentsBuilderOrderData,
-} from "./QueryDocumentsBuilder";
-import {
-	QueryMetadata,
-	QueryMetadataFactory,
-} from "./QueryMetadata";
+import { QueryDocumentsBuilder, QueryDocumentsBuilderOrderData } from "./QueryDocumentsBuilder";
+import { QueryMetadata, QueryMetadataFactory } from "./QueryMetadata";
 import { QueryObject } from "./QueryObject";
-import {
-	QueryProperty,
-	QueryPropertyType,
-} from "./QueryProperty";
+import { QueryProperty, QueryPropertyType } from "./QueryProperty";
 import { QuerySchema } from "./QuerySchema";
 import { QuerySchemaProperty } from "./QuerySchemaProperty";
 import { QueryValue } from "./QueryValue";
 import { QueryVariable } from "./QueryVariable";
+
 
 describe( module( "carbonldp/QueryDocuments" ), ():void => {
 

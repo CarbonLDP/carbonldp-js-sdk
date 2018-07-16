@@ -1,4 +1,5 @@
-import { Document } from "../Document";
+import { Document } from "../Document/Document";
+
 import {
 	extendsClass,
 	hasProperty,
@@ -10,14 +11,10 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import {
-	AccessPoint,
-	AccessPointFactory
-} from "./AccessPoint";
-import {
-	TransientAccessPoint,
-	TransientAccessPointFactory
-} from "./TransientAccessPoint";
+
+import { AccessPoint, AccessPointFactory } from "./AccessPoint";
+import { TransientAccessPoint, TransientAccessPointFactory } from "./TransientAccessPoint";
+
 
 describe( module( "carbonldp/AccessPoint" ), ():void => {
 

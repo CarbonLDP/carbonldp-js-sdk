@@ -1,10 +1,10 @@
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import { GeneralRepository } from "../GeneralRepository/GeneralRepository";
-import { JSONLDConverter } from "../JSONLD/Converter";
+import { JSONLDConverter } from "../JSONLD/JSONLDConverter";
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
-import { RegisteredPointer } from "../Registry";
-import { ResolvablePointer } from "../Repository";
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+import { ResolvablePointer } from "../Repository/ResolvablePointer";
 import { Context } from "./Context";
 import { ContextSettings } from "./ContextSettings";
 export declare abstract class AbstractContext<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer, PARENT extends AbstractContext = undefined> implements Context {

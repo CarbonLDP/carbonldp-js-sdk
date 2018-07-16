@@ -1,18 +1,15 @@
-import * as Errors from "../Errors";
-import {
-	RequestOptions,
-	RequestService,
-	RequestUtils,
-} from "../HTTP/Request";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+import { NotImplementedError } from "../Errors/NotImplementedError";
+
+import { RequestOptions, RequestService, RequestUtils } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { StringParser } from "../HTTP/StringParser";
-import { PointerLibrary } from "../Pointer";
+
+import { PointerLibrary } from "../Pointer/PointerLibrary";
+
 import { RDFLiteral } from "../RDF/Literal";
-import {
-	SPARQLRawBindingObject,
-	SPARQLRawBindingProperty,
-	SPARQLRawResults,
-} from "./RawResults";
+
+import { SPARQLRawBindingObject, SPARQLRawBindingProperty, SPARQLRawResults } from "./RawResults";
 import { SPARQLRawResultsParser } from "./RawResultsParser";
 import { SPARQLSelectResults } from "./SelectResults";
 
@@ -106,7 +103,7 @@ export class SPARQLService {
 			case "uri":
 				return pointerLibrary.getPointer( rawBindingProperty.value );
 			case "bnode":
-				throw new Errors.NotImplementedError( "BNodes cannot be queried directly" );
+				throw new NotImplementedError( "BNodes cannot be queried directly" );
 			case "literal":
 				if( "datatype" in rawBindingProperty ) {
 					return RDFLiteral.parse( rawBindingProperty.value, rawBindingProperty.datatype );
@@ -114,7 +111,7 @@ export class SPARQLService {
 					return RDFLiteral.parse( rawBindingProperty.value );
 				}
 			default:
-				throw new Errors.IllegalArgumentError( "The bindingProperty has an unsupported type" );
+				throw new IllegalArgumentError( "The bindingProperty has an unsupported type" );
 		}
 	}
 

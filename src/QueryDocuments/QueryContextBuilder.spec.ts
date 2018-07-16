@@ -16,6 +16,7 @@ import { QueryContextBuilder } from "./QueryContextBuilder";
 
 import { QueryProperty, QueryPropertyType } from "./QueryProperty";
 
+
 describe( module( "carbonldp/QueryDocuments/QueryContextBuilder" ), ():void => {
 
 	it( "should exists", ():void => {

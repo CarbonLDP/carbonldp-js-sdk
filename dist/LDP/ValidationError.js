@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vocabularies_1 = require("../Vocabularies");
+var C_1 = require("../Vocabularies/C");
 var SCHEMA = {
     "errorDetails": {
-        "@id": Vocabularies_1.C.errorDetails,
+        "@id": C_1.C.errorDetails,
         "@type": "@id",
     },
 };
 exports.ValidationError = {
-    TYPE: Vocabularies_1.C.ValidationError,
+    TYPE: C_1.C.ValidationError,
     SCHEMA: SCHEMA,
 };
 

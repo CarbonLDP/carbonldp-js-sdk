@@ -1,14 +1,10 @@
-import {
-	clazz,
-	hasMethod,
-	INSTANCE,
-	isDefined,
-	module,
-} from "./../test/JasmineExtender";
+import { clazz, hasMethod, INSTANCE, isDefined, module } from "../test/JasmineExtender";
+
 import * as Utils from "./../Utils";
 import { SPARQLRawResults } from "./RawResults";
 
 import * as RawResultsParser from "./RawResultsParser";
+
 
 describe( module( "carbonldp/SPARQL/RawResultsParser" ), ():void => {
 

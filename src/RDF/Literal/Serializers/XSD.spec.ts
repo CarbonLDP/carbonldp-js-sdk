@@ -1,16 +1,11 @@
 import { IllegalArgumentError } from "../../../Errors/IllegalArgumentError";
-import {
-	clazz,
-	hasMethod,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-	STATIC,
-} from "../../../test/JasmineExtender";
+
+import { clazz, hasMethod, hasProperty, INSTANCE, isDefined, module, STATIC } from "../../../test/JasmineExtender";
+
 import * as Utils from "./../../../Utils";
 
 import * as XSD from "./XSD";
+
 
 describe( module(
 	"carbonldp/RDF/Literal/Serializers/XSD"

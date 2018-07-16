@@ -1,5 +1,5 @@
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
-import { RegisteredPointer } from "../Registry";
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
 import { AbstractContext } from "./AbstractContext";
 export declare class GlobalContext extends AbstractContext<RegisteredPointer, undefined, undefined> {
     static readonly instance: GlobalContext;

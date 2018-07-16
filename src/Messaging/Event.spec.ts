@@ -1,10 +1,7 @@
-import {
-	enumeration,
-	hasEnumeral,
-	isDefined,
-	module
-} from "../test/JasmineExtender";
+import { enumeration, hasEnumeral, isDefined, module } from "../test/JasmineExtender";
+
 import * as MessagingEvent from "./Event";
+
 
 describe( module( "carbonldp/Messaging/Event" ), ():void => {
 

@@ -41,10 +41,7 @@ import { XSD } from "../../Vocabularies/XSD";
 
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 
-import {
-	SPARQLDocumentsRepositoryTrait,
-	SPARQLDocumentsRepositoryTraitFactory
-} from "./SPARQLDocumentsRepositoryTrait";
+import { SPARQLDocumentsRepositoryTrait, SPARQLDocumentsRepositoryTraitFactory } from "./SPARQLDocumentsRepositoryTrait";
 
 
 describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositoryTrait" ), () => {

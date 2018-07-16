@@ -1,13 +1,7 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __importStar(require("../Errors"));
+var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
+var NotImplementedError_1 = require("../Errors/NotImplementedError");
 var Request_1 = require("../HTTP/Request");
 var StringParser_1 = require("../HTTP/StringParser");
 var Literal_1 = require("../RDF/Literal");
@@ -93,7 +87,7 @@ var SPARQLService = (function () {
             case "uri":
                 return pointerLibrary.getPointer(rawBindingProperty.value);
             case "bnode":
-                throw new Errors.NotImplementedError("BNodes cannot be queried directly");
+                throw new NotImplementedError_1.NotImplementedError("BNodes cannot be queried directly");
             case "literal":
                 if ("datatype" in rawBindingProperty) {
                     return Literal_1.RDFLiteral.parse(rawBindingProperty.value, rawBindingProperty.datatype);
@@ -102,7 +96,7 @@ var SPARQLService = (function () {
                     return Literal_1.RDFLiteral.parse(rawBindingProperty.value);
                 }
             default:
-                throw new Errors.IllegalArgumentError("The bindingProperty has an unsupported type");
+                throw new IllegalArgumentError_1.IllegalArgumentError("The bindingProperty has an unsupported type");
         }
     };
     SPARQLService.DEFAULT_OPTIONS = {};
@@ -112,4 +106,4 @@ var SPARQLService = (function () {
 }());
 exports.SPARQLService = SPARQLService;
 
-//# sourceMappingURL=Service.js.map
+//# sourceMappingURL=SPARQLService.js.map

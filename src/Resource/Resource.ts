@@ -1,5 +1,7 @@
 import { Context } from "../Context/Context";
 
+import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
+
 import { JSONLDConverter } from "../JSONLD/JSONLDConverter";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
@@ -14,7 +16,6 @@ import { Pointer } from "../Pointer/Pointer";
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 
-import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
 import { Registry } from "../Registry/Registry";
 

@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
-var Converter_1 = require("../JSONLD/Converter");
+var JSONLDConverter_1 = require("../JSONLD/JSONLDConverter");
 var DigestedObjectSchema_1 = require("../ObjectSchema/DigestedObjectSchema");
 var ObjectSchemaDigester_1 = require("../ObjectSchema/ObjectSchemaDigester");
-var RDF_1 = require("../RDF");
+var URI_1 = require("../RDF/URI");
 var AbstractContext = (function () {
     function AbstractContext(parentContext) {
         this._parentContext = parentContext;
         this._typeObjectSchemaMap = new Map();
-        this.jsonldConverter = new Converter_1.JSONLDConverter(parentContext && parentContext.jsonldConverter.literalSerializers);
+        this.jsonldConverter = new JSONLDConverter_1.JSONLDConverter(parentContext && parentContext.jsonldConverter.literalSerializers);
     }
     Object.defineProperty(AbstractContext.prototype, "baseURI", {
         get: function () { return this._baseURI; },
@@ -22,7 +22,7 @@ var AbstractContext = (function () {
         configurable: true
     });
     AbstractContext.prototype.resolve = function (relativeURI) {
-        return RDF_1.URI.resolve(this.baseURI, relativeURI);
+        return URI_1.URI.resolve(this.baseURI, relativeURI);
     };
     AbstractContext.prototype.hasObjectSchema = function (type) {
         type = this._resolveTypeURI(type);

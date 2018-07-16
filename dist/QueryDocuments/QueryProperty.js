@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
-var ObjectSchema_1 = require("../ObjectSchema");
+var DigestedObjectSchema_1 = require("../ObjectSchema/DigestedObjectSchema");
 var Utils_1 = require("./Utils");
 var QueryPropertyType;
 (function (QueryPropertyType) {
@@ -42,7 +42,7 @@ var QueryProperty = (function () {
     QueryProperty.prototype.getSchema = function () {
         if (this._schema)
             return this._schema;
-        return this._schema = new ObjectSchema_1.DigestedObjectSchema();
+        return this._schema = new DigestedObjectSchema_1.DigestedObjectSchema();
     };
     QueryProperty.prototype.isOptional = function () {
         return this._optional;

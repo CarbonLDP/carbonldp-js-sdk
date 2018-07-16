@@ -1,6 +1,6 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
-import { C } from "../Vocabularies";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { Resource } from "../Resource/Resource";
+import { C } from "../Vocabularies/C";
 
 
 export interface MapEntry<K, V> extends Resource {

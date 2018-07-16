@@ -1,1 +1,1 @@
-{"version":3,"sources":["DocumentsRegistry/index.ts"],"names":[],"mappings":";;AAAA,yDAAwD;AAA/C,gDAAA,iBAAiB,CAAA","file":"index.js","sourcesContent":["export { DocumentsRegistry } from \"./DocumentsRegistry\";\n"]}
+{"version":3,"sources":["DocumentsRegistry/index.ts"],"names":[],"mappings":";;AACA,yDAAwD;AAA/C,gDAAA,iBAAiB,CAAA","file":"index.js","sourcesContent":["export { BaseDocumentsRegistry } from \"./BaseDocumentsRegistry\";\nexport { DocumentsRegistry } from \"./DocumentsRegistry\";\n"]}

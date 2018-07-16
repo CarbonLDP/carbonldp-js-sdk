@@ -1,13 +1,7 @@
-import {
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
+import { hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
 
 import { VCARD } from "./VCARD";
+
 
 describe( module( "carbonldp/Vocabularies/VCARD" ), ():void => {
 

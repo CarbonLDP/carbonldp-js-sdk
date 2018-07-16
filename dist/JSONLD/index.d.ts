@@ -1,4 +1,4 @@
 export * from "./JSONLDCompacter";
-export * from "./Converter";
-export * from "./Parser";
-export * from "./Processor";
+export * from "./JSONLDConverter";
+export * from "./JSONLDParser";
+export * from "./JSONLDProcessor";

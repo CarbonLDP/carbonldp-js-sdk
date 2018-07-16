@@ -1,17 +1,11 @@
-import {
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
+import { hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
+
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 
 import { ValidationReport } from "./ValidationReport";
-
 import { ValidationResult } from "./ValidationResult";
+
 
 describe( module( "carbonldp/SHACL/ValidationReport" ), ():void => {
 

@@ -15,7 +15,8 @@ import {
 	QueryToken,
 	SelectToken,
 	SubjectToken,
-	ValuesToken, VariableToken
+	ValuesToken,
+	VariableToken
 } from "sparqler/tokens";
 
 import { spyOnDecorated } from "../../../test/helpers/jasmine/spies";

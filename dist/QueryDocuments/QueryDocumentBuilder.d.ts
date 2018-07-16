@@ -1,4 +1,4 @@
-import { Pointer } from "../Pointer";
+import { Pointer } from "../Pointer/Pointer";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryObject } from "./QueryObject";
 import { QueryProperty } from "./QueryProperty";

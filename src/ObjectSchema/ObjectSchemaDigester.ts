@@ -1,8 +1,12 @@
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { InvalidJSONLDSyntaxError } from "../Errors/InvalidJSONLDSyntaxError";
+
 import { URI } from "../RDF/URI";
+
 import * as Utils from "../Utils";
+
 import { XSD } from "../Vocabularies/XSD";
+
 import { ContainerType } from "./ContainerType";
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";

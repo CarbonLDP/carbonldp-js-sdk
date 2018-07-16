@@ -1,14 +1,6 @@
 import { VariableToken } from "sparqler/tokens";
 
-import {
-	clazz,
-	constructor,
-	extendsClass,
-	hasSignature,
-	INSTANCE,
-	method,
-	module
-} from "../test/JasmineExtender";
+import { clazz, constructor, extendsClass, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
 import * as Module from "./QueryVariable";
 import { QueryVariable } from "./QueryVariable";

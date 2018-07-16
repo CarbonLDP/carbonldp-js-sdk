@@ -1,4 +1,4 @@
-import { isBNodeLabel, isRelative, } from "sparqler/iri";
+import { isBNodeLabel, isRelative } from "sparqler/iri";
 import {
 	BlankNodeToken,
 	CollectionToken,
@@ -26,7 +26,7 @@ import { isString } from "../Utils";
 
 import { XSD } from "../Vocabularies/XSD";
 
-import { AddToken, DeleteToken, LDPatchToken, PrefixToken, SliceToken, UpdateListToken, } from "./Tokens";
+import { AddToken, DeleteToken, LDPatchToken, PrefixToken, SliceToken, UpdateListToken } from "./Tokens";
 
 
 interface ArrayDelta {

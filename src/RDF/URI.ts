@@ -2,11 +2,7 @@ import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 
-import {
-	isString,
-	StringUtils,
-	UUIDUtils,
-} from "../Utils";
+import { isString, StringUtils, UUIDUtils } from "../Utils";
 
 
 export interface URIFactory {

@@ -1,19 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Model_1 = require("../Model");
+var ModelDecorator_1 = require("../Model/ModelDecorator");
 var Utils_1 = require("../Utils");
 exports.Pointer = {
     PROTOTYPE: {
         get $id() { return ""; },
     },
     isDecorated: function (object) {
-        return Model_1.ModelDecorator
+        return ModelDecorator_1.ModelDecorator
             .hasPropertiesFrom(exports.Pointer.PROTOTYPE, object);
     },
     decorate: function (object) {
         if (exports.Pointer.isDecorated(object))
             return object;
-        return Model_1.ModelDecorator
+        return ModelDecorator_1.ModelDecorator
             .definePropertiesFrom(exports.Pointer.PROTOTYPE, object);
     },
     is: function (value) {

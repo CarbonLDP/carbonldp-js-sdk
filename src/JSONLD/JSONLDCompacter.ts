@@ -1,29 +1,27 @@
-import { Document } from "../Document";
-import { IllegalArgumentError } from "../Errors";
+import { Document } from "../Document/Document";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaResolver,
-} from "../ObjectSchema";
-import {
-	Pointer,
-	PointerLibrary,
-} from "../Pointer";
-import {
-	QueryableMetadata,
-	QueryContextBuilder,
-	QueryPropertyType,
-} from "../QueryDocuments";
-import { QueryContextPartial } from "../QueryDocuments/";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
+
+import { Pointer } from "../Pointer/Pointer";
+import { PointerLibrary } from "../Pointer/PointerLibrary";
+
+import { QueryableMetadata } from "../QueryDocuments/QueryableMetadata";
 import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
-import {
-	RDFDocument,
-	RDFNode,
-} from "../RDF";
-import {
-	RegisteredPointer,
-	Registry
-} from "../Registry";
+import { QueryContextBuilder } from "../QueryDocuments/QueryContextBuilder";
+import { QueryContextPartial } from "../QueryDocuments/QueryContextPartial";
+import { QueryPropertyType } from "../QueryDocuments/QueryProperty";
+
+import { RDFDocument } from "../RDF/Document";
+import { RDFNode } from "../RDF/Node";
+
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+import { Registry } from "../Registry/Registry";
+
 import { JSONLDConverter } from "./JSONLDConverter";
 
 

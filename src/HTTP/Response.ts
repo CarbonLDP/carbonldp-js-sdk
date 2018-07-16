@@ -1,9 +1,8 @@
-import {
-	ClientRequest,
-	IncomingMessage,
-} from "http";
+import { ClientRequest, IncomingMessage } from "http";
+
 import { BadResponseError } from "./Errors/ServerErrors/BadResponseError";
 import { Header } from "./Header";
+
 
 export class Response {
 	readonly status:number;

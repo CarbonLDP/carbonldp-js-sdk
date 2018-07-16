@@ -1,6 +1,6 @@
-import { DocumentsContext } from "../Context";
+import { DocumentsContext } from "../Context/DocumentsContext";
 import { EventMessage } from "./EventMessage";
-import { MessagingOptions } from "./Options";
+import { MessagingOptions } from "./MessagingOptions";
 export declare class MessagingService {
     readonly context: DocumentsContext;
     private _options;

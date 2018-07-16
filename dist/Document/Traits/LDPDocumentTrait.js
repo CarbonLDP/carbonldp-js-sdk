@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Utils_1 = require("../../DocumentsRepository/Utils");
 var ModelDecorator_1 = require("../../Model/ModelDecorator");
 var Pointer_1 = require("../../Pointer/Pointer");
 var URI_1 = require("../../RDF/URI");
 var ResolvablePointer_1 = require("../../Repository/ResolvablePointer");
-var Utils_1 = require("../../DocumentsRepository/Utils");
 var Utils_2 = require("../../Utils");
 var TransientDocument_1 = require("../TransientDocument");
 function __parseMemberParams(resource, args) {

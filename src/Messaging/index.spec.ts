@@ -1,64 +1,22 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC
-} from "../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
 
 import * as Messaging from "./";
 
-import {
-	ChildCreated,
-	ChildCreatedFactory,
-} from "./ChildCreated";
-import {
-	DocumentCreated,
-	DocumentCreatedFactory,
-} from "./DocumentCreated";
-import {
-	DocumentCreatedDetails,
-	DocumentCreatedDetailsFactory,
-} from "./DocumentCreatedDetails";
-import {
-	DocumentDeleted,
-	DocumentDeletedFactory,
-} from "./DocumentDeleted";
-import {
-	DocumentModified,
-	DocumentModifiedFactory,
-} from "./DocumentModified";
+import { ChildCreated, ChildCreatedFactory } from "./ChildCreated";
+import { DocumentCreated, DocumentCreatedFactory } from "./DocumentCreated";
+import { DocumentCreatedDetails, DocumentCreatedDetailsFactory } from "./DocumentCreatedDetails";
+import { DocumentDeleted, DocumentDeletedFactory } from "./DocumentDeleted";
+import { DocumentModified, DocumentModifiedFactory } from "./DocumentModified";
 import { Event } from "./Event";
-import {
-	EventMessage,
-	EventMessageFactory,
-} from "./EventMessage";
-import {
-	MemberAdded,
-	MemberAddedFactory,
-} from "./MemberAdded";
-import {
-	MemberAddedDetails,
-	MemberAddedDetailsFactory,
-} from "./MemberAddedDetails";
-import {
-	MemberDetails,
-	MemberDetailsFactory,
-} from "./MemberDetails";
-import {
-	MemberRemoved,
-	MemberRemovedFactory,
-} from "./MemberRemoved";
-import {
-	MemberRemovedDetails,
-	MemberRemovedDetailsFactory,
-} from "./MemberRemovedDetails";
+import { EventMessage, EventMessageFactory } from "./EventMessage";
+import { MemberAdded, MemberAddedFactory } from "./MemberAdded";
+import { MemberAddedDetails, MemberAddedDetailsFactory } from "./MemberAddedDetails";
+import { MemberDetails, MemberDetailsFactory } from "./MemberDetails";
+import { MemberRemoved, MemberRemovedFactory } from "./MemberRemoved";
+import { MemberRemovedDetails, MemberRemovedDetailsFactory } from "./MemberRemovedDetails";
 import { MessagingOptions } from "./MessagingOptions";
 import { MessagingService } from "./MessagingService";
-import {
-	createDestination,
-	parseURIPattern,
-	validateEventType,
-} from "./Utils";
+import { createDestination, parseURIPattern, validateEventType } from "./Utils";
 
 
 describe( module( "carbonldp/Messaging" ), ():void => {

@@ -1,4 +1,5 @@
-import { Pointer } from "../Pointer";
+import { Pointer } from "../Pointer/Pointer";
+
 
 export interface SPARQLBindingObject {
 	[ binding:string ]:string | number | boolean | Date | Pointer;

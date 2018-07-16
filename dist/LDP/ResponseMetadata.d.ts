@@ -1,6 +1,6 @@
-import { ModelSchema } from "../Model";
-import { ObjectSchema } from "../ObjectSchema";
-import { C } from "../Vocabularies";
+import { ModelSchema } from "../Model/ModelSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { C } from "../Vocabularies/C";
 import { DocumentMetadata } from "./DocumentMetadata";
 import { VolatileResource } from "./VolatileResource";
 export interface ResponseMetadata extends VolatileResource {

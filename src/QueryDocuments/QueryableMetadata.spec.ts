@@ -1,18 +1,14 @@
-import {
-	createMockDigestedSchema,
-	createMockDigestedSchemaProperty
-} from "../../test/helpers/mocks";
-import { IllegalArgumentError } from "../Errors";
-import { DigestedObjectSchema } from "../ObjectSchema";
-import {
-	clazz,
-	constructor,
-	hasSignature,
-	module
-} from "../test/JasmineExtender";
+import { createMockDigestedSchema, createMockDigestedSchemaProperty } from "../../test/helpers/mocks";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+
+import { clazz, constructor, hasSignature, module } from "../test/JasmineExtender";
 
 import * as Module from "./QueryableMetadata";
 import { QueryableMetadata } from "./QueryableMetadata";
+
 
 describe( module( "carbonldp/QueryDocuments/QueryableMetadata" ), ():void => {
 

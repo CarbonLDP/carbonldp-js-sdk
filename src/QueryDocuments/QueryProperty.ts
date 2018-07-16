@@ -1,18 +1,12 @@
-import {
-	OptionalToken,
-	PatternToken,
-	SubjectToken
-} from "sparqler/tokens";
+import { OptionalToken, PatternToken, SubjectToken } from "sparqler/tokens";
 
-import { DigestedObjectSchema } from "../ObjectSchema";
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+
 import { QueryContext } from "./QueryContext";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import { QueryVariable } from "./QueryVariable";
-import {
-	createAllPattern,
-	createGraphPattern,
-	createTypesPattern
-} from "./Utils";
+import { createAllPattern, createGraphPattern, createTypesPattern } from "./Utils";
+
 
 export enum QueryPropertyType {
 	FULL,

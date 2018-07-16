@@ -1,31 +1,38 @@
-import { Document } from "../Document";
+import { Document } from "../Document/Document";
+
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
-import {
-	AddMemberAction,
-	DocumentMetadata,
-	Error,
-	ErrorResponse,
-	Map,
-	MapEntry,
-	RemoveMemberAction,
-	ResponseMetadata,
-	ValidationError
-} from "../LDP";
-import {
-	ChildCreated,
-	DocumentCreatedDetails,
-	DocumentDeleted,
-	DocumentModified,
-	MemberAdded,
-	MemberAddedDetails,
-	MemberRemoved,
-	MemberRemovedDetails,
-} from "../Messaging";
-import { DigestedObjectSchema } from "../ObjectSchema";
-import { QueryMetadata } from "../QueryDocuments";
-import { RegisteredPointer } from "../Registry";
-import { ValidationReport, ValidationResult, } from "../SHACL";
-import { PlatformInstance, PlatformMetadata, } from "../System";
+
+import { AddMemberAction } from "../LDP/AddMemberAction";
+import { DocumentMetadata } from "../LDP/DocumentMetadata";
+import { Error } from "../LDP/Error";
+import { ErrorResponse } from "../LDP/ErrorResponse";
+import { Map } from "../LDP/Map";
+import { MapEntry } from "../LDP/MapEntry";
+import { RemoveMemberAction } from "../LDP/RemoveMemberAction";
+import { ResponseMetadata } from "../LDP/ResponseMetadata";
+import { ValidationError } from "../LDP/ValidationError";
+
+import { ChildCreated } from "../Messaging/ChildCreated";
+import { DocumentCreatedDetails } from "../Messaging/DocumentCreatedDetails";
+import { DocumentDeleted } from "../Messaging/DocumentDeleted";
+import { DocumentModified } from "../Messaging/DocumentModified";
+import { MemberAdded } from "../Messaging/MemberAdded";
+import { MemberAddedDetails } from "../Messaging/MemberAddedDetails";
+import { MemberRemoved } from "../Messaging/MemberRemoved";
+import { MemberRemovedDetails } from "../Messaging/MemberRemovedDetails";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+
+import { QueryMetadata } from "../QueryDocuments/QueryMetadata";
+
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+
+import { ValidationReport } from "../SHACL/ValidationReport";
+import { ValidationResult } from "../SHACL/ValidationResult";
+
+import { PlatformInstance } from "../System/PlatformInstance";
+import { PlatformMetadata } from "../System/PlatformMetadata";
+
 import { AbstractContext } from "./AbstractContext";
 
 

@@ -1,7 +1,7 @@
-import { ModelFactory } from "../../Model";
-import { TransientDocument } from "../../Document";
-import { Pointer } from "../../Pointer";
-import { LDP } from "../../Vocabularies";
+import { TransientDocument } from "../../Document/TransientDocument";
+import { ModelFactory } from "../../Model/ModelFactory";
+import { Pointer } from "../../Pointer/Pointer";
+import { LDP } from "../../Vocabularies/LDP";
 import { BaseDirectContainer } from "./BaseDirectContainer";
 export interface TransientDirectContainer extends TransientDocument {
     membershipResource?: Pointer;

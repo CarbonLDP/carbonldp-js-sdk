@@ -1,7 +1,4 @@
-import {
-	hasFunction,
-	isFunction
-} from "../Utils";
+import { hasFunction, isFunction } from "../Utils";
 
 
 export interface ModelDecorator<MODEL extends object, BASE extends object = object> {

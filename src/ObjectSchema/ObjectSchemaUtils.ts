@@ -1,6 +1,8 @@
 import { ObjectUtils } from "../Utils";
+
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";
+
 
 export class ObjectSchemaUtils {
 	static resolveProperty( schema:DigestedObjectSchema, definition:DigestedObjectSchemaProperty, inSame?:boolean ):DigestedObjectSchemaProperty {

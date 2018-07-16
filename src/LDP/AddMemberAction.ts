@@ -1,11 +1,13 @@
-import { ModelFactory } from "../Model";
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import {
-	BaseResource,
-	Resource
-} from "../Resource";
-import { C } from "../Vocabularies";
+import { ModelFactory } from "../Model/ModelFactory";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { BaseResource } from "../Resource/BaseResource";
+import { Resource } from "../Resource/Resource";
+
+import { C } from "../Vocabularies/C";
 
 
 export interface BaseAddMemberAction extends BaseResource {

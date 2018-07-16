@@ -20,6 +20,7 @@ import { QueryContext } from "./QueryContext";
 
 import * as Utils from "./Utils";
 
+
 describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 	it( "should exists", ():void => {

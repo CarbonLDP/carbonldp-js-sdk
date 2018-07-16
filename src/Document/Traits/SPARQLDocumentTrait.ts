@@ -14,7 +14,7 @@ import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 import { FinishSPARQLSelect } from "../../SPARQL/Builder";
 import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
 
-import { isObject, } from "../../Utils";
+import { isObject } from "../../Utils";
 
 import { TransientDocument } from "../TransientDocument";
 

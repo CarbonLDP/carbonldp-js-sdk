@@ -1,7 +1,7 @@
-import { ModelFactory } from "../Model";
-import { TransientDirectContainer } from "../LDP";
-import { Pointer } from "../Pointer";
-import { C } from "../Vocabularies";
+import { TransientDirectContainer } from "../LDP/DirectContainer/TransientDirectContainer";
+import { ModelFactory } from "../Model/ModelFactory";
+import { Pointer } from "../Pointer/Pointer";
+import { C } from "../Vocabularies/C";
 import { BaseAccessPoint } from "./BaseAccessPoint";
 export interface TransientAccessPoint extends TransientDirectContainer {
     hasMemberRelation: Pointer;

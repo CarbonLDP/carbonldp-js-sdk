@@ -1,6 +1,6 @@
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
-import { PointerLibrary } from "../Pointer";
+import { PointerLibrary } from "../Pointer/PointerLibrary";
 import { SPARQLRawResults } from "./RawResults";
 import { SPARQLSelectResults } from "./SelectResults";
 export declare class SPARQLService {

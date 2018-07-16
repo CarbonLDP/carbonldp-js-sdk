@@ -1,9 +1,5 @@
-import {
-	hasProperty,
-	interfaze,
-	module,
-	OPTIONAL
-} from "../test/JasmineExtender";
+import { hasProperty, interfaze, module, OPTIONAL } from "../test/JasmineExtender";
+
 
 describe( module( "carbonldp/Fragment" ), ():void => {
 

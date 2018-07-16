@@ -1,9 +1,9 @@
 import { InvalidJSONLDSyntaxError } from "../Errors/InvalidJSONLDSyntaxError";
-import { NotImplementedError, } from "../Errors/NotImplementedError";
+import { NotImplementedError } from "../Errors/NotImplementedError";
 
 import { Header } from "../HTTP/Header";
 import { JSONParser } from "../HTTP/JSONParser";
-import { RequestOptions, RequestService, RequestUtils, } from "../HTTP/Request";
+import { RequestOptions, RequestService, RequestUtils } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 
 import { ContainerType } from "../ObjectSchema/ContainerType";

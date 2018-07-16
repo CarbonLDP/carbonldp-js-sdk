@@ -1,32 +1,11 @@
-import {
-	CollectionToken,
-	IRIToken,
-	LiteralToken,
-	PredicateToken,
-	PrefixedNameToken,
-	SubjectToken,
-} from "sparqler/tokens";
+import { CollectionToken, IRIToken, LiteralToken, PredicateToken, PrefixedNameToken, SubjectToken } from "sparqler/tokens";
 import * as TokenUtils from "sparqler/tokens/utils";
 
-import {
-	clazz,
-	constructor,
-	hasProperty,
-	hasSignature,
-	INSTANCE,
-	method,
-	module,
-} from "../test/JasmineExtender";
+import { clazz, constructor, hasProperty, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
 import * as Module from "./Tokens";
-import {
-	AddToken,
-	DeleteToken,
-	LDPatchToken,
-	PrefixToken,
-	SliceToken,
-	UpdateListToken,
-} from "./Tokens";
+import { AddToken, DeleteToken, LDPatchToken, PrefixToken, SliceToken, UpdateListToken } from "./Tokens";
+
 
 describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 

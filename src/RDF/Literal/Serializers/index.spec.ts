@@ -1,9 +1,5 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC,
-} from "../../../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../../../test/JasmineExtender";
+
 import * as Utils from "../../../Utils";
 
 import * as Serializers from "./";
@@ -30,6 +26,7 @@ import {
 	UnsignedLongSerializer,
 	unsignedLongSerializer,
 } from "./XSD";
+
 
 describe( module(
 	"carbonldp/RDF/Literal/Serializers"

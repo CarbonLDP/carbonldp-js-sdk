@@ -1,5 +1,5 @@
-import { BaseDocument } from "../../Document";
-import { Pointer } from "../../Pointer";
+import { BaseDocument } from "../../Document/BaseDocument";
+import { Pointer } from "../../Pointer/Pointer";
 
 
 export interface BaseDirectContainer extends BaseDocument {

@@ -1,9 +1,12 @@
 import { XSD } from "../Vocabularies/XSD";
-import * as Utils from "./../Utils";
+
+import * as Utils from "../Utils";
+
 import { RDFList } from "./List";
 import { RDFLiteral } from "./Literal";
 import { URI } from "./URI";
 import { RDFValue } from "./Value";
+
 
 export type RDFNodePropertyValue = string | RDFNode | RDFList | RDFValue | RDFLiteral;
 

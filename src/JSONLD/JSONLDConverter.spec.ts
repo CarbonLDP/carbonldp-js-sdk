@@ -1,12 +1,11 @@
-import {
-	Pointer,
-	PointerLibrary,
-} from "../Pointer";
+import { Pointer, PointerLibrary } from "../Pointer";
+
 import { RDFList } from "../RDF/List";
 import { RDFLiteral } from "../RDF/Literal";
 import { Serializer } from "../RDF/Literal/Serializer";
 import { RDFNode } from "../RDF/Node";
 import { RDFValue } from "../RDF/Value";
+
 import {
 	clazz,
 	hasConstructor,
@@ -17,11 +16,15 @@ import {
 	method,
 	module,
 } from "../test/JasmineExtender";
+
 import * as Utils from "../Utils";
+
 import { XSD } from "../Vocabularies/XSD";
+
 import * as ObjectSchema from "./../ObjectSchema";
 
 import { JSONLDConverter } from "./JSONLDConverter";
+
 
 describe( module( "carbonldp/JSONLD/JSONLDConverter" ), ():void => {
 

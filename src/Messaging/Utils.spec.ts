@@ -1,5 +1,4 @@
-import { CarbonLDP } from "../CarbonLDP";
-import { IllegalArgumentError, IllegalStateError } from "../Errors";
+import { IllegalArgumentError } from "../Errors";
 import { hasSignature, method, module, STATIC } from "../test/JasmineExtender";
 import * as MessagingUtils from "./Utils";
 

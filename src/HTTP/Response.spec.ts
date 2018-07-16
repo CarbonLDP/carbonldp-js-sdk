@@ -1,7 +1,4 @@
-import {
-	ClientRequest,
-	IncomingMessage
-} from "http";
+import { ClientRequest, IncomingMessage } from "http";
 
 import {
 	clazz,
@@ -13,9 +10,10 @@ import {
 	isDefined,
 	module,
 } from "../test/JasmineExtender";
-import * as Utils from "./../Utils";
-import { Header } from "./Header";
 
+import * as Utils from "./../Utils";
+
+import { Header } from "./Header";
 import { Response } from "./Response";
 
 describe( module( "carbonldp/HTTP/Response" ), ():void => {

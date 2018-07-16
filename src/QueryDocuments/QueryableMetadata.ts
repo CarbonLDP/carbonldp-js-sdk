@@ -1,9 +1,7 @@
-import { IllegalArgumentError } from "../Errors";
-import {
-	DigestedObjectSchema,
-	DigestedObjectSchemaProperty,
-	ObjectSchemaUtils,
-} from "../ObjectSchema";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
 
 export class QueryableMetadata {

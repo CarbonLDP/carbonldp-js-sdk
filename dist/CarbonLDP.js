@@ -18,21 +18,28 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
-var AccessPoint_1 = require("./AccessPoint");
+var AccessPoint_1 = require("./AccessPoint/AccessPoint");
+var TransientAccessPoint_1 = require("./AccessPoint/TransientAccessPoint");
 var AbstractContext_1 = require("./Context/AbstractContext");
 var DocumentsContext_1 = require("./Context/DocumentsContext");
 var GlobalContext_1 = require("./Context/GlobalContext");
 var Document_1 = require("./Document/Document");
 var Errors = __importStar(require("./Errors"));
-var Errors_1 = require("./Errors");
+var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 var Fragment_1 = require("./Fragment/Fragment");
+var TransientFragment_1 = require("./Fragment/TransientFragment");
 var FreeResources_1 = require("./FreeResources/FreeResources");
 var HTTP = __importStar(require("./HTTP"));
 var JSONLD = __importStar(require("./JSONLD"));
 var LDP = __importStar(require("./LDP"));
 var LDPatch = __importStar(require("./LDPatch"));
 var Messaging = __importStar(require("./Messaging"));
-var ObjectSchema_1 = require("./ObjectSchema");
+var ContainerType_1 = require("./ObjectSchema/ContainerType");
+var DigestedObjectSchema_1 = require("./ObjectSchema/DigestedObjectSchema");
+var DigestedObjectSchemaProperty_1 = require("./ObjectSchema/DigestedObjectSchemaProperty");
+var ObjectSchemaDigester_1 = require("./ObjectSchema/ObjectSchemaDigester");
+var ObjectSchemaUtils_1 = require("./ObjectSchema/ObjectSchemaUtils");
+var PointerType_1 = require("./ObjectSchema/PointerType");
 var Pointer_1 = require("./Pointer/Pointer");
 var RDF = __importStar(require("./RDF"));
 var Resource_1 = require("./Resource/Resource");
@@ -88,6 +95,7 @@ var CarbonLDP = (function (_super) {
     };
     CarbonLDP.AbstractContext = AbstractContext_1.AbstractContext;
     CarbonLDP.AccessPoint = AccessPoint_1.AccessPoint;
+    CarbonLDP.TransientAccessPoint = TransientAccessPoint_1.TransientAccessPoint;
     CarbonLDP.Errors = Errors;
     CarbonLDP.FreeResources = FreeResources_1.FreeResources;
     CarbonLDP.HTTP = HTTP;
@@ -96,14 +104,15 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.LDPatch = LDPatch;
     CarbonLDP.Messaging = Messaging;
     CarbonLDP.Vocabularies = Vocabularies;
-    CarbonLDP.ObjectSchemaUtils = ObjectSchema_1.ObjectSchemaUtils;
-    CarbonLDP.ObjectSchemaDigester = ObjectSchema_1.ObjectSchemaDigester;
-    CarbonLDP.DigestedObjectSchemaProperty = ObjectSchema_1.DigestedObjectSchemaProperty;
-    CarbonLDP.PointerType = ObjectSchema_1.PointerType;
-    CarbonLDP.ContainerType = ObjectSchema_1.ContainerType;
-    CarbonLDP.DigestedObjectSchema = ObjectSchema_1.DigestedObjectSchema;
+    CarbonLDP.ObjectSchemaUtils = ObjectSchemaUtils_1.ObjectSchemaUtils;
+    CarbonLDP.ObjectSchemaDigester = ObjectSchemaDigester_1.ObjectSchemaDigester;
+    CarbonLDP.DigestedObjectSchemaProperty = DigestedObjectSchemaProperty_1.DigestedObjectSchemaProperty;
+    CarbonLDP.PointerType = PointerType_1.PointerType;
+    CarbonLDP.ContainerType = ContainerType_1.ContainerType;
+    CarbonLDP.DigestedObjectSchema = DigestedObjectSchema_1.DigestedObjectSchema;
     CarbonLDP.Document = Document_1.Document;
     CarbonLDP.Fragment = Fragment_1.Fragment;
+    CarbonLDP.TransientFragment = TransientFragment_1.TransientFragment;
     CarbonLDP.Pointer = Pointer_1.Pointer;
     CarbonLDP.RDF = RDF;
     CarbonLDP.TransientResource = Resource_1.Resource;
@@ -122,18 +131,18 @@ function getURLFrom(urlOrSettings) {
 }
 function getURLFromString(url) {
     if (!RDF.URI.hasProtocol(url))
-        throw new Errors_1.IllegalArgumentError("The URL must contain a valid protocol: \"http://\", \"https://\".");
+        throw new IllegalArgumentError_1.IllegalArgumentError("The URL must contain a valid protocol: \"http://\", \"https://\".");
     if (url.endsWith("/"))
         return url;
     return url + "/";
 }
 function getURLFromSettings(settings) {
     if (!Utils.isString(settings.host))
-        throw new Errors_1.IllegalArgumentError("The settings object must contains a valid host string.");
+        throw new IllegalArgumentError_1.IllegalArgumentError("The settings object must contains a valid host string.");
     if (iri_1.hasProtocol(settings.host))
-        throw new Errors_1.IllegalArgumentError("The host must not contain a protocol.");
+        throw new IllegalArgumentError_1.IllegalArgumentError("The host must not contain a protocol.");
     if (settings.host.includes(":"))
-        throw new Errors_1.IllegalArgumentError("The host must not contain a port.");
+        throw new IllegalArgumentError_1.IllegalArgumentError("The host must not contain a port.");
     var protocol = settings.ssl === false ? "http://" : "https://";
     var host = settings.host.endsWith("/") ? settings.host.slice(0, -1) : settings.host;
     var url = "" + protocol + host + "/";

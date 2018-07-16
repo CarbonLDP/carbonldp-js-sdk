@@ -1,11 +1,4 @@
-import {
-	clazz,
-	hasMethod,
-	hasProperty,
-	isDefined,
-	module,
-	STATIC,
-} from "./test/JasmineExtender";
+import { clazz, hasMethod, hasProperty, isDefined, module, STATIC } from "./test/JasmineExtender";
 
 import * as Utils from "./Utils";
 

@@ -1,5 +1,5 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { Resource } from "../Resource/Resource";
 import { Map } from "./Map";
 export interface Error extends Resource {
     errorCode: string;

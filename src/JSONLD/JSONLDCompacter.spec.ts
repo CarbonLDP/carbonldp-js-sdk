@@ -15,8 +15,8 @@ import { RDFNode } from "../RDF/Node";
 
 import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
-import { JSONLDConverter } from "./JSONLDConverter";
 import { JSONLDCompacter } from "./JSONLDCompacter";
+import { JSONLDConverter } from "./JSONLDConverter";
 
 
 describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {

@@ -1,10 +1,10 @@
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype,
-	ModelTypeGuard
-} from "../Model";
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
 import { isObject } from "../Utils";
+
 import { BasePointer } from "./BasePointer";
 
 

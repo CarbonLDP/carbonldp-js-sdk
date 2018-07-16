@@ -15,9 +15,7 @@ __export(require("./MemberAddedDetails"));
 __export(require("./MemberDetails"));
 __export(require("./MemberRemoved"));
 __export(require("./MemberRemovedDetails"));
-__export(require("./Service"));
+__export(require("./MessagingService"));
 __export(require("./Utils"));
-var EventEmitterDocumentsRepositoryTrait_1 = require("../DocumentsRepository/Traits/EventEmitterDocumentsRepositoryTrait");
-exports.EventEmitterDocumentsRepositoryTrait = EventEmitterDocumentsRepositoryTrait_1.EventEmitterDocumentsRepositoryTrait;
 
 //# sourceMappingURL=index.js.map

@@ -1,15 +1,12 @@
-import {
-	OptionalToken,
-	ValuesToken,
-	VariableToken,
-} from "sparqler/tokens";
+import { OptionalToken, ValuesToken, VariableToken } from "sparqler/tokens";
 
 import { createMockContext } from "../../test/helpers/mocks";
-import { AbstractContext } from "../Context";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaDigester,
-} from "../ObjectSchema";
+
+import { AbstractContext } from "../Context/AbstractContext";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
+
 import {
 	clazz,
 	constructor,
@@ -21,13 +18,11 @@ import {
 	method,
 	module,
 } from "../test/JasmineExtender";
-import { QueryContext } from "./QueryContext";
 
+import { QueryContext } from "./QueryContext";
 import * as Module from "./QueryProperty";
-import {
-	QueryProperty,
-	QueryPropertyType
-} from "./QueryProperty";
+import { QueryProperty, QueryPropertyType } from "./QueryProperty";
+
 
 describe( module( "carbonldp/QueryDocuments/QueryProperty" ), ():void => {
 

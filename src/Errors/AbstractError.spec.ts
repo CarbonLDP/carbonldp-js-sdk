@@ -1,11 +1,5 @@
-import {
-	clazz,
-	hasConstructor,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-} from "../test/JasmineExtender";
+import { clazz, hasConstructor, hasProperty, INSTANCE, isDefined, module } from "../test/JasmineExtender";
+
 import * as Utils from "./../Utils";
 
 import * as AbstractError from "./AbstractError";

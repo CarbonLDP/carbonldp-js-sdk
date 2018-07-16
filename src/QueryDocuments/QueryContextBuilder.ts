@@ -1,20 +1,16 @@
-import { AbstractContext } from "../Context";
-import { IllegalArgumentError } from "../Errors";
-import {
-	DigestedObjectSchema,
-	DigestedObjectSchemaProperty,
-	ObjectSchemaDigester,
-	ObjectSchemaUtils,
-} from "../ObjectSchema";
+import { AbstractContext } from "../Context/AbstractContext";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
+import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
+import { ObjectSchemaUtils } from "../ObjectSchema/ObjectSchemaUtils";
+
 import { QueryContext } from "./QueryContext";
-import {
-	QueryProperty,
-	QueryPropertyType,
-} from "./QueryProperty";
-import {
-	getLevelRegExp,
-	getParentPath,
-} from "./Utils";
+import { QueryProperty, QueryPropertyType } from "./QueryProperty";
+import { getLevelRegExp, getParentPath } from "./Utils";
+
 
 export class QueryContextBuilder extends QueryContext {
 

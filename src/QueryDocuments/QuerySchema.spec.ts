@@ -1,11 +1,7 @@
-import {
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY
-} from "../test/JasmineExtender";
+import { hasProperty, interfaze, module, OBLIGATORY } from "../test/JasmineExtender";
 
 import { QuerySchema } from "./QuerySchema";
+
 
 describe( module( "carbonldp/QueryDocuments/QuerySchema" ), ():void => {
 

@@ -1,6 +1,9 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { Resource } from "../Resource/Resource";
+
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 

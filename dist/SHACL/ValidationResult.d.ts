@@ -1,6 +1,6 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { Pointer } from "../Pointer/Pointer";
+import { Resource } from "../Resource/Resource";
 export interface ValidationResult extends Resource {
     focusNode: Pointer;
     resultPath?: Pointer;

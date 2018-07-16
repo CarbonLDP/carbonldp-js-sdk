@@ -1,5 +1,5 @@
 import { PatternToken, SubjectToken } from "sparqler/tokens";
-import { DigestedObjectSchemaProperty } from "../ObjectSchema";
+import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 import { QueryContext } from "./QueryContext";
 export declare function getLevelRegExp(property: string): RegExp;
 export declare function createPropertyPatterns(context: QueryContext, resourcePath: string, propertyPath: string, propertyDefinition: DigestedObjectSchemaProperty): PatternToken[];

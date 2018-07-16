@@ -5,7 +5,7 @@ import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
-import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { URI } from "../RDF/URI";
 

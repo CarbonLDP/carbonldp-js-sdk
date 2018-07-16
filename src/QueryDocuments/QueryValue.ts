@@ -1,10 +1,14 @@
 import { isAbsolute } from "sparqler/iri";
 import { LiteralToken } from "sparqler/tokens";
 
-import { IllegalArgumentError } from "../Errors";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
 import { isDate } from "../Utils";
-import { XSD } from "../Vocabularies";
+
+import { XSD } from "../Vocabularies/XSD";
+
 import { QueryContext } from "./QueryContext";
+
 
 export class QueryValue {
 	private readonly _value:string | number | boolean | Date;

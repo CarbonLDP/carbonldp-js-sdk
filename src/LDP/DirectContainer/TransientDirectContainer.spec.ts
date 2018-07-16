@@ -1,6 +1,9 @@
-import { TransientDocument } from "../../Document";
-import { IllegalArgumentError } from "../../Errors";
-import { Pointer } from "../../Pointer";
+import { TransientDocument } from "../../Document/TransientDocument";
+
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+
+import { Pointer } from "../../Pointer/Pointer";
+
 import {
 	extendsClass,
 	hasMethod,
@@ -13,7 +16,9 @@ import {
 	property,
 	STATIC,
 } from "../../test/JasmineExtender";
-import { LDP } from "../../Vocabularies";
+
+import { LDP } from "../../Vocabularies/LDP";
+
 import { BaseDirectContainer } from "./BaseDirectContainer";
 import { TransientDirectContainer } from "./TransientDirectContainer";
 

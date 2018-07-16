@@ -8,7 +8,9 @@ import {
 	VariableOrIRI,
 } from "sparqler/tokens";
 import { joinPatterns } from "sparqler/tokens/utils";
+
 import { isNumber } from "../Utils";
+
 
 export type StatementToken = AddToken | DeleteToken | UpdateListToken;
 

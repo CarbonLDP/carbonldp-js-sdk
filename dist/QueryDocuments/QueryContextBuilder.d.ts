@@ -1,5 +1,6 @@
-import { AbstractContext } from "../Context";
-import { DigestedObjectSchema, DigestedObjectSchemaProperty } from "../ObjectSchema";
+import { AbstractContext } from "../Context/AbstractContext";
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 import { QueryContext } from "./QueryContext";
 import { QueryProperty } from "./QueryProperty";
 export declare class QueryContextBuilder extends QueryContext {

@@ -1,10 +1,10 @@
 import { createMockDigestedSchema } from "../../test/helpers/mocks";
 
-import { IllegalArgumentError, } from "../Errors/IllegalArgumentError";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 
-import { clazz, constructor, hasProperty, hasSignature, INSTANCE, method, module, } from "../test/JasmineExtender";
+import { clazz, constructor, hasProperty, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
 import { AbstractContext } from "./AbstractContext";
 import { ContextSettings } from "./ContextSettings";

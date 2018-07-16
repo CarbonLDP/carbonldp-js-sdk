@@ -1,8 +1,8 @@
-import { VolatileResource } from "../LDP";
-import { ObjectSchema } from "../ObjectSchema";
+import { VolatileResource } from "../LDP/VolatileResource";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { PlatformMetadata } from "./PlatformMetadata";
 export interface PlatformInstance extends VolatileResource {
-    _registry: PlatformMetadata;
+    $registry: PlatformMetadata;
     buildDate: Date;
     version: string;
 }

@@ -1,5 +1,5 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { Resource } from "../Resource/Resource";
 export interface MapEntry<K, V> extends Resource {
     entryKey: K;
     entryValue: V;

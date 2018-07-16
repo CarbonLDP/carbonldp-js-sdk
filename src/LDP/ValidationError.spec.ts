@@ -1,16 +1,11 @@
-import { Resource } from "../Resource";
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
+import { Resource } from "../Resource/Resource";
+
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
 
 import { ValidationError } from "./ValidationError";
+
 
 describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 

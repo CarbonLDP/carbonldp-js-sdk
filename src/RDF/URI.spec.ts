@@ -1,8 +1,7 @@
-import {
-	DigestedObjectSchema,
-	ObjectSchema,
-	ObjectSchemaDigester,
-} from "../ObjectSchema";
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
+
 import {
 	hasMethod,
 	hasSignature,
@@ -14,9 +13,11 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import * as Utils from "./../Utils";
+
+import * as Utils from "../Utils";
 
 import { URI } from "./URI";
+
 
 describe( module( "carbonldp/RDF/URI" ), ():void => {
 

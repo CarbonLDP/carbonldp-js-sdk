@@ -1,26 +1,17 @@
-import {
-	IRIToken,
-	PrefixedNameToken,
-	PrefixToken
-} from "sparqler/tokens";
+import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
 import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
 import { createMockContext } from "../../test/helpers/mocks";
-import { AbstractContext } from "../Context";
-import { IllegalArgumentError } from "../Errors";
-import {
-	clazz,
-	constructor,
-	hasSignature,
-	INSTANCE,
-	method,
-	module
-} from "../test/JasmineExtender";
+
+import { AbstractContext } from "../Context/AbstractContext";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
 import * as Module from "./QueryContext";
 import { QueryContext } from "./QueryContext";
-
 import { QueryVariable } from "./QueryVariable";
+
 
 describe( module( "carbonldp/QueryDocuments/QueryContext" ), ():void => {
 

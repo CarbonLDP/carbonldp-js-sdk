@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("../Errors");
-var Pointer_1 = require("../Pointer");
-var QueryDocuments_1 = require("../QueryDocuments");
-var QueryDocuments_2 = require("../QueryDocuments/");
-var RDF_1 = require("../RDF");
-var Registry_1 = require("../Registry");
+var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
+var Pointer_1 = require("../Pointer/Pointer");
+var QueryableMetadata_1 = require("../QueryDocuments/QueryableMetadata");
+var QueryContextBuilder_1 = require("../QueryDocuments/QueryContextBuilder");
+var QueryContextPartial_1 = require("../QueryDocuments/QueryContextPartial");
+var QueryProperty_1 = require("../QueryDocuments/QueryProperty");
+var Document_1 = require("../RDF/Document");
+var Registry_1 = require("../Registry/Registry");
 var JSONLDCompacter = (function () {
     function JSONLDCompacter(registry, root, schemaResolver, jsonldConverter) {
         this.registry = registry;
@@ -23,11 +25,11 @@ var JSONLDCompacter = (function () {
         if (!mainDocuments || !mainDocuments.length)
             mainDocuments = rdfDocuments;
         rdfDocuments.forEach(function (rdfDocument) {
-            var _a = RDF_1.RDFDocument.getNodes(rdfDocument), documentNodes = _a[0], fragmentNodes = _a[1];
+            var _a = Document_1.RDFDocument.getNodes(rdfDocument), documentNodes = _a[0], fragmentNodes = _a[1];
             if (documentNodes.length === 0)
-                throw new Errors_1.IllegalArgumentError("The RDFDocument \"" + rdfDocument["@id"] + "\" does not contain a document resource.");
+                throw new IllegalArgumentError_1.IllegalArgumentError("The RDFDocument \"" + rdfDocument["@id"] + "\" does not contain a document resource.");
             if (documentNodes.length > 1)
-                throw new Errors_1.IllegalArgumentError("The RDFDocument \"" + rdfDocument["@id"] + "\" contains multiple document resources.");
+                throw new IllegalArgumentError_1.IllegalArgumentError("The RDFDocument \"" + rdfDocument["@id"] + "\" contains multiple document resources.");
             var documentNode = documentNodes[0];
             var targetDocument = _this._getResource(documentNode, _this.registry);
             var currentFragments = targetDocument
@@ -141,15 +143,15 @@ var JSONLDCompacter = (function () {
         return false;
     };
     JSONLDCompacter.prototype._willBePartial = function (resource, schema, path) {
-        if (this.resolver instanceof QueryDocuments_2.QueryContextPartial)
+        if (this.resolver instanceof QueryContextPartial_1.QueryContextPartial)
             return true;
-        if (!(this.resolver instanceof QueryDocuments_1.QueryContextBuilder))
+        if (!(this.resolver instanceof QueryContextBuilder_1.QueryContextBuilder))
             return false;
         var type = this.resolver.hasProperty(path) ?
             this.resolver.getProperty(path).getType() : void 0;
-        if (type !== QueryDocuments_1.QueryPropertyType.PARTIAL && type !== QueryDocuments_1.QueryPropertyType.ALL)
+        if (type !== QueryProperty_1.QueryPropertyType.PARTIAL && type !== QueryProperty_1.QueryPropertyType.ALL)
             return false;
-        resource._queryableMetadata = new QueryDocuments_1.QueryableMetadata(type === QueryDocuments_1.QueryPropertyType.ALL ? QueryDocuments_1.QueryableMetadata.ALL : schema, resource._queryableMetadata);
+        resource._queryableMetadata = new QueryableMetadata_1.QueryableMetadata(type === QueryProperty_1.QueryPropertyType.ALL ? QueryableMetadata_1.QueryableMetadata.ALL : schema, resource._queryableMetadata);
         return true;
     };
     return JSONLDCompacter;

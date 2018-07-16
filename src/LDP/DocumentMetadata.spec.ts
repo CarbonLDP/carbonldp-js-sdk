@@ -1,7 +1,5 @@
-import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasMethod,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -10,11 +8,14 @@ import {
 	property,
 	STATIC
 } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
+
 import * as Utils from "./../Utils";
 
 import { DocumentMetadata } from "./DocumentMetadata";
+
 
 describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 

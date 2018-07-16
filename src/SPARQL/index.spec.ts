@@ -1,27 +1,13 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC,
-} from "../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
+
 import * as Utils from "../Utils";
 
 import * as SPARQL from "./";
 
-import {
-	FinishSPARQLSelect,
-	SPARQLBuilder,
-} from "./Builder";
-import {
-	SPARQLRawBindingObject,
-	SPARQLRawBindingProperty,
-	SPARQLRawResults,
-} from "./RawResults";
+import { FinishSPARQLSelect, SPARQLBuilder } from "./Builder";
+import { SPARQLRawBindingObject, SPARQLRawBindingProperty, SPARQLRawResults } from "./RawResults";
 import { SPARQLRawResultsParser } from "./RawResultsParser";
-import {
-	SPARQLBindingObject,
-	SPARQLSelectResults,
-} from "./SelectResults";
+import { SPARQLBindingObject, SPARQLSelectResults } from "./SelectResults";
 import { SPARQLService } from "./SPARQLService";
 
 
