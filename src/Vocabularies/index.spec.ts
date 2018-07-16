@@ -3,11 +3,9 @@ import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
 import * as Vocabularies from "./";
 
 import { C } from "./C";
-import { CS } from "./CS";
 import { LDP } from "./LDP";
 import { RDF } from "./RDF";
 import { SHACL } from "./SHACL";
-import { VCARD } from "./VCARD";
 import { XSD } from "./XSD";
 
 
@@ -25,15 +23,6 @@ describe( module( "carbonldp/Vocabularies" ), ():void => {
 	), ():void => {
 		expect( Vocabularies.C ).toBeDefined();
 		expect( Vocabularies.C ).toBe( C );
-	} );
-
-	it( reexports(
-		STATIC,
-		"CS",
-		"CarbonLDP.Vocabularies.CS"
-	), ():void => {
-		expect( Vocabularies.CS ).toBeDefined();
-		expect( Vocabularies.CS ).toBe( CS );
 	} );
 
 	it( reexports(
@@ -61,15 +50,6 @@ describe( module( "carbonldp/Vocabularies" ), ():void => {
 	), ():void => {
 		expect( Vocabularies.SHACL ).toBeDefined();
 		expect( Vocabularies.SHACL ).toBe( SHACL );
-	} );
-
-	it( reexports(
-		STATIC,
-		"VCARD",
-		"CarbonLDP.Vocabularies.VCARD"
-	), ():void => {
-		expect( Vocabularies.VCARD ).toBeDefined();
-		expect( Vocabularies.VCARD ).toBe( VCARD );
 	} );
 
 	it( reexports(
