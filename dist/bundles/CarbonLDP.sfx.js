@@ -4154,8 +4154,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var XSD_1 = __webpack_require__(11);
 var Utils = __importStar(__webpack_require__(0));
+var XSD_1 = __webpack_require__(11);
 var List_1 = __webpack_require__(41);
 var Literal_1 = __webpack_require__(53);
 var URI_1 = __webpack_require__(8);
@@ -5010,8 +5010,15 @@ exports.RDFLiteral = {
 
 "use strict";
 
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var Utils_1 = __webpack_require__(0);
 var ObjectSchemaUtils = (function () {
     function ObjectSchemaUtils() {
     }
@@ -5021,7 +5028,7 @@ var ObjectSchemaUtils = (function () {
         var resolvedURI = schema.resolveURI(uri, { vocab: true });
         var resolvedType = schema.resolveURI(type, { vocab: true, base: true });
         if (resolvedURI !== uri || resolvedType !== type) {
-            definition = inSame ? definition : Utils_1.ObjectUtils.clone(definition);
+            definition = inSame ? definition : __assign({}, definition);
             definition.uri = resolvedURI;
             definition.literalType = resolvedType;
         }

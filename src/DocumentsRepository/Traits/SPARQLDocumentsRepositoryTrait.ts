@@ -15,8 +15,8 @@ import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { DigestedObjectSchema } from "../../ObjectSchema/DigestedObjectSchema";
 
-import { FinishSPARQLSelect, SPARQLBuilder } from "../../SPARQL/SPARQLBuilder";
 import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
+import { FinishSPARQLSelect, SPARQLBuilder } from "../../SPARQL/SPARQLBuilder";
 import { SPARQLService } from "../../SPARQL/SPARQLService";
 
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";

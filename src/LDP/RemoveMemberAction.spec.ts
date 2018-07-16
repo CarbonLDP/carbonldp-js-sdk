@@ -17,8 +17,7 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 
-import * as Utils from "../Utils"
-	;
+import * as Utils from "../Utils";
 import { C } from "../Vocabularies/C";
 
 import { BaseRemoveMemberAction, RemoveMemberAction } from "./RemoveMemberAction";

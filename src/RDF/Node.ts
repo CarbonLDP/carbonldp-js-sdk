@@ -1,6 +1,5 @@
-import { XSD } from "../Vocabularies/XSD";
-
 import * as Utils from "../Utils";
+import { XSD } from "../Vocabularies/XSD";
 
 import { RDFList } from "./List";
 import { RDFLiteral } from "./Literal";

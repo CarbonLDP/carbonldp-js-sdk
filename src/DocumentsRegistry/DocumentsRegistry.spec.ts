@@ -259,6 +259,8 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 				expect( registry.__modelDecorators ).toEqual( new Map( [
 					[ "a-type", decorator ],
 				] ) );
+
+				$context.parentContext.registry.__modelDecorators.clear();
 			} );
 
 		} );

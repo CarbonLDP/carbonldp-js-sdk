@@ -4,8 +4,8 @@ import { RequestOptions } from "../../HTTP/Request";
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
-import { FinishSPARQLSelect } from "../../SPARQL/SPARQLBuilder";
 import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
+import { FinishSPARQLSelect } from "../../SPARQL/SPARQLBuilder";
 import { TransientDocument } from "../TransientDocument";
 export interface BaseSPARQLDocumentTrait {
     $repository: SPARQLDocumentsRepositoryTrait;

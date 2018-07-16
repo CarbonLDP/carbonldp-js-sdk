@@ -7,8 +7,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var XSD_1 = require("../Vocabularies/XSD");
 var Utils = __importStar(require("../Utils"));
+var XSD_1 = require("../Vocabularies/XSD");
 var List_1 = require("./List");
 var Literal_1 = require("./Literal");
 var URI_1 = require("./URI");

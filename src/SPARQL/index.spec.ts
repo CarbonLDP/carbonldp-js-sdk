@@ -3,11 +3,10 @@ import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
 import * as Utils from "../Utils";
 
 import * as SPARQL from "./";
-
-import { FinishSPARQLSelect, SPARQLBuilder } from "./SPARQLBuilder";
 import { SPARQLRawBindingObject, SPARQLRawBindingProperty, SPARQLRawResults } from "./RawResults";
 import { SPARQLRawResultsParser } from "./RawResultsParser";
 import { SPARQLBindingObject, SPARQLSelectResults } from "./SelectResults";
+import { FinishSPARQLSelect, SPARQLBuilder } from "./SPARQLBuilder";
 import { SPARQLService } from "./SPARQLService";
 
 

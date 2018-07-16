@@ -13,23 +13,16 @@ import {
 	extendsClass,
 	hasSignature,
 	interfaze,
-	isDefined,
 	method,
 	module,
 	OBLIGATORY,
 } from "../test/JasmineExtender";
 
-import * as Builder from "./SPARQLBuilder";
-import { FinishSPARQLSelect, SPARQLBuilder } from "./SPARQLBuilder";
 import { SPARQLSelectResults } from "./SelectResults";
+import { FinishSPARQLSelect, SPARQLBuilder } from "./SPARQLBuilder";
 
 
-describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customized SPARQLER class." ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( Builder ).toBeDefined();
-		expect( Builder ).toEqual( jasmine.any( Object ) );
-	} );
+describe( module( "carbonldp/SPARQL/SPARQLBuilder", "Module that reexports the customized SPARQLER class." ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.SPARQL.FinishSPARQLSelect",

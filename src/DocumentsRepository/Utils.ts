@@ -1,7 +1,5 @@
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 
-import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
-
 import { FreeResources } from "../FreeResources/FreeResources";
 
 import { HTTPError } from "../HTTP/Errors/HTTPError";

@@ -15,9 +15,9 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 
-import { XSD } from "../Vocabularies/XSD";
-
 import * as Utils from "../Utils";
+
+import { XSD } from "../Vocabularies/XSD";
 
 import * as Module from "./Literal";
 import { RDFLiteral } from "./Literal";

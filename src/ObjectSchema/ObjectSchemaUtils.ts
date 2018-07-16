@@ -1,5 +1,3 @@
-import { ObjectUtils } from "../Utils";
-
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";
 
@@ -13,7 +11,7 @@ export class ObjectSchemaUtils {
 		const resolvedType:string = schema.resolveURI( type, { vocab: true, base: true } );
 
 		if( resolvedURI !== uri || resolvedType !== type ) {
-			definition = inSame ? definition : ObjectUtils.clone( definition );
+			definition = inSame ? definition : { ...definition };
 			definition.uri = resolvedURI;
 			definition.literalType = resolvedType;
 		}
