@@ -4,7 +4,7 @@ var Utils_1 = require("../Utils");
 var ObjectSchemaUtils = (function () {
     function ObjectSchemaUtils() {
     }
-    ObjectSchemaUtils.resolveProperty = function (schema, definition, inSame) {
+    ObjectSchemaUtils._resolveProperty = function (schema, definition, inSame) {
         var uri = definition.uri;
         var type = definition.literalType;
         var resolvedURI = schema.resolveURI(uri, { vocab: true });

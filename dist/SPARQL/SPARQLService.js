@@ -47,7 +47,7 @@ var SPARQLService = (function () {
                     if (!bindingColumn.hasOwnProperty(bindingRow))
                         continue;
                     var bindingCell = bindingColumn[bindingRow];
-                    binding[bindingRow] = SPARQLService.parseRawBindingProperty(bindingCell, pointerLibrary);
+                    binding[bindingRow] = SPARQLService.__parseRawBindingProperty(bindingCell, pointerLibrary);
                 }
                 bindings.push(binding);
             }
@@ -82,7 +82,7 @@ var SPARQLService = (function () {
         Request_1.RequestUtils.setContentTypeHeader("application/sparql-update", options);
         return Request_1.RequestService.post(url, updateQuery, options);
     };
-    SPARQLService.parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
+    SPARQLService.__parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
         switch (rawBindingProperty.type) {
             case "uri":
                 return pointerLibrary.getPointer(rawBindingProperty.value);

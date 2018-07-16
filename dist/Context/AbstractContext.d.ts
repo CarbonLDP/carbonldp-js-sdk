@@ -26,8 +26,8 @@ export declare abstract class AbstractContext<REGISTRY extends RegisteredPointer
     extendObjectSchema(objectSchema: ObjectSchema): this;
     clearObjectSchema(type?: string): void;
     _getTypeObjectSchemas(): DigestedObjectSchema[];
-    protected _getObjectSchemasTypes(): string[];
-    protected _extendGeneralSchema(digestedSchema: DigestedObjectSchema): void;
-    protected _extendTypeSchema(digestedSchema: DigestedObjectSchema, type: string): void;
-    private _resolveTypeURI;
+    protected __getObjectSchemasTypes(): string[];
+    protected __extendGeneralSchema(digestedSchema: DigestedObjectSchema): void;
+    protected __extendTypeSchema(digestedSchema: DigestedObjectSchema, type: string): void;
+    private __resolveTypeURI;
 }

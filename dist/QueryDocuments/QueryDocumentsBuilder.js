@@ -51,7 +51,7 @@ var QueryDocumentsBuilder = (function (_super) {
             if (propertyPatternsPath)
                 propertyPattern.addPattern(propertyPatternsPath);
             propertyPatternsPath = propertyPattern;
-            propertyObj = this._context.getProperty(Utils_1.getParentPath(propertyObj.name));
+            propertyObj = this._context.getProperty(Utils_1._getParentPath(propertyObj.name));
         }
         this._orderData = orderData;
         select.addPattern(propertyPatternsPath);

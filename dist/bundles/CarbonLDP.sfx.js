@@ -2939,7 +2939,7 @@ var UnknownError_1 = __webpack_require__(106);
 var Header_1 = __webpack_require__(70);
 var HTTPMethod_1 = __webpack_require__(107);
 var Response_1 = __webpack_require__(108);
-function onResolve(resolve, reject, response) {
+function __onResolve(resolve, reject, response) {
     if (response.status >= 200 && response.status <= 299) {
         resolve(response);
     }
@@ -2949,7 +2949,7 @@ function onResolve(resolve, reject, response) {
         reject(new (index_1.statusCodeMap.get(response.status))(response.data, response));
     }
 }
-function sendWithBrowser(method, url, body, options) {
+function __sendWithBrowser(method, url, body, options) {
     return new Promise(function (resolve, reject) {
         var request = options.request ? options.request : new XMLHttpRequest();
         request.open(method, url, true);
@@ -2961,7 +2961,7 @@ function sendWithBrowser(method, url, body, options) {
             request.timeout = options.timeout;
         request.onload = request.onerror = function () {
             var response = new Response_1.Response(request);
-            onResolve(resolve, reject, response);
+            __onResolve(resolve, reject, response);
         };
         if (body) {
             request.send(body);
@@ -2971,7 +2971,7 @@ function sendWithBrowser(method, url, body, options) {
         }
     });
 }
-function sendWithNode(method, url, body, options) {
+function __sendWithNode(method, url, body, options) {
     return new Promise(function (resolve, reject) {
         function returnResponse(request, res) {
             var rawData = [];
@@ -2982,7 +2982,7 @@ function sendWithNode(method, url, body, options) {
             }).on("end", function () {
                 var data = Buffer.concat(rawData).toString("utf8");
                 var response = new Response_1.Response(request, data, res);
-                onResolve(resolve, reject, response);
+                __onResolve(resolve, reject, response);
             });
         }
         var numberOfRedirects = 0;
@@ -3012,19 +3012,19 @@ function sendWithNode(method, url, body, options) {
             });
             request.on("error", function (error) {
                 var response = new Response_1.Response(request, error.message);
-                onResolve(resolve, reject, response);
+                __onResolve(resolve, reject, response);
             });
             request.end(body);
         }
         sendRequestWithRedirect(url);
     });
 }
-function sendRequest(method, url, body, options) {
+function __sendRequest(method, url, body, options) {
     return typeof XMLHttpRequest !== "undefined" ?
-        sendWithBrowser(method, url, body, options) :
-        sendWithNode(method, url, body, options);
+        __sendWithBrowser(method, url, body, options) :
+        __sendWithNode(method, url, body, options);
 }
-function isBody(data) {
+function __isBody(data) {
     return Utils_1.isString(data)
         || typeof Blob !== "undefined" && data instanceof Blob
         || typeof Buffer !== "undefined" && data instanceof Buffer;
@@ -3040,7 +3040,7 @@ var RequestService = (function () {
         var body = null;
         var options = Utils_1.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
         parser = Utils_1.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
-        if (isBody(bodyOrOptions)) {
+        if (__isBody(bodyOrOptions)) {
             body = bodyOrOptions;
         }
         else {
@@ -3049,10 +3049,10 @@ var RequestService = (function () {
         options = Object.assign({}, RequestService.defaultOptions, options);
         if (Utils_1.isNumber(method))
             method = HTTPMethod_1.HTTPMethod[method];
-        var requestPromise = sendRequest(method, url, body, options)
+        var requestPromise = __sendRequest(method, url, body, options)
             .then(function (response) {
             if (method === "GET" && options.headers)
-                return _this._handleGETResponse(url, options, response);
+                return _this.__handleGETResponse(url, options, response);
             else
                 return response;
         });
@@ -3101,25 +3101,25 @@ var RequestService = (function () {
         if (parser === void 0) { parser = null; }
         return RequestService.send(HTTPMethod_1.HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser);
     };
-    RequestService._handleGETResponse = function (url, requestOptions, response) {
+    RequestService.__handleGETResponse = function (url, requestOptions, response) {
         var _this = this;
         return Promise.resolve()
             .then(function () {
-            if (_this._contentTypeIsAccepted(requestOptions, response))
+            if (_this.__contentTypeIsAccepted(requestOptions, response))
                 return response;
-            _this._setNoCacheHeaders(requestOptions);
-            if (!_this._isChromiumAgent())
-                _this._setFalseETag(requestOptions);
-            return sendRequest("GET", url, null, requestOptions)
+            _this.__setNoCacheHeaders(requestOptions);
+            if (!_this.__isChromiumAgent())
+                _this.__setFalseETag(requestOptions);
+            return __sendRequest("GET", url, null, requestOptions)
                 .then(function (noCachedResponse) {
-                if (!_this._contentTypeIsAccepted(requestOptions, response)) {
+                if (!_this.__contentTypeIsAccepted(requestOptions, response)) {
                     throw new BadResponseError_1.BadResponseError("The server responded with an unacceptable Content-Type", response);
                 }
                 return noCachedResponse;
             });
         });
     };
-    RequestService._contentTypeIsAccepted = function (requestOptions, response) {
+    RequestService.__contentTypeIsAccepted = function (requestOptions, response) {
         var accepts = requestOptions.headers.has("accept") ?
             requestOptions.headers.get("accept").values :
             [];
@@ -3128,15 +3128,15 @@ var RequestService = (function () {
             null;
         return !contentType || accepts.some(contentType.hasValue, contentType);
     };
-    RequestService._setNoCacheHeaders = function (requestOptions) {
+    RequestService.__setNoCacheHeaders = function (requestOptions) {
         requestOptions.headers
             .set("pragma", new Header_1.Header("no-cache"))
             .set("cache-control", new Header_1.Header("no-cache, max-age=0"));
     };
-    RequestService._isChromiumAgent = function () {
-        return typeof window !== "undefined" && !window["chrome"];
+    RequestService.__isChromiumAgent = function () {
+        return typeof window !== "undefined" && !!window["chrome"];
     };
-    RequestService._setFalseETag = function (requestOptions) {
+    RequestService.__setFalseETag = function (requestOptions) {
         requestOptions.headers.set("if-none-match", new Header_1.Header());
     };
     RequestService.defaultOptions = {
@@ -3315,7 +3315,7 @@ var ObjectSchemaDigester = (function () {
             }
         }
         return digestedSchema ?
-            ObjectSchemaUtils_1.ObjectSchemaUtils.resolveProperty(digestedSchema, digestedDefinition, true) :
+            ObjectSchemaUtils_1.ObjectSchemaUtils._resolveProperty(digestedSchema, digestedDefinition, true) :
             digestedDefinition;
     };
     ObjectSchemaDigester.combineDigestedObjectSchemas = function (digestedSchemas) {
@@ -4335,14 +4335,14 @@ exports.LDP = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(5);
 var Utils_1 = __webpack_require__(0);
-function getLevelRegExp(property) {
+function _getLevelRegExp(property) {
     if (property)
         property += ".";
     var parsedName = property.replace(/\./g, "\\.");
     return new RegExp("^" + parsedName + "[^.]+$");
 }
-exports.getLevelRegExp = getLevelRegExp;
-function createPropertyPatterns(context, resourcePath, propertyPath, propertyDefinition) {
+exports._getLevelRegExp = _getLevelRegExp;
+function _createPropertyPatterns(context, resourcePath, propertyPath, propertyDefinition) {
     var uri = propertyDefinition.uri, literalType = propertyDefinition.literalType, pointerType = propertyDefinition.pointerType;
     var propertyIRI = context.compactIRI(uri);
     var resource = context.getVariable(resourcePath);
@@ -4359,51 +4359,51 @@ function createPropertyPatterns(context, resourcePath, propertyPath, propertyDef
             .push(new tokens_1.FilterToken("! isLiteral( " + propertyObject + " )"));
     return propertyPatterns;
 }
-exports.createPropertyPatterns = createPropertyPatterns;
-function createTypesPattern(context, resourcePath) {
+exports._createPropertyPatterns = _createPropertyPatterns;
+function _createTypesPattern(context, resourcePath) {
     return new tokens_1.OptionalToken()
         .addPattern(new tokens_1.SubjectToken(context.getVariable(resourcePath))
         .addPredicate(new tokens_1.PredicateToken("a")
         .addObject(context.getVariable(resourcePath + ".types"))));
 }
-exports.createTypesPattern = createTypesPattern;
-function createGraphPattern(context, resourcePath) {
+exports._createTypesPattern = _createTypesPattern;
+function _createGraphPattern(context, resourcePath) {
     return new tokens_1.GraphToken(context.getVariable(resourcePath))
         .addPattern(new tokens_1.SubjectToken(context.getVariable(resourcePath + "._subject"))
         .addPredicate(new tokens_1.PredicateToken(context.getVariable(resourcePath + "._predicate"))
         .addObject(context.getVariable(resourcePath + "._object"))));
 }
-exports.createGraphPattern = createGraphPattern;
-function createAllPattern(context, resourcePath) {
+exports._createGraphPattern = _createGraphPattern;
+function _createAllPattern(context, resourcePath) {
     return new tokens_1.SubjectToken(context.getVariable(resourcePath))
         .addPredicate(new tokens_1.PredicateToken(context.getVariable(resourcePath + "._predicate"))
         .addObject(context.getVariable(resourcePath + "._object")));
 }
-exports.createAllPattern = createAllPattern;
-function getParentPath(path) {
+exports._createAllPattern = _createAllPattern;
+function _getParentPath(path) {
     return path
         .split(".")
         .slice(0, -1)
         .join(".");
 }
-exports.getParentPath = getParentPath;
-function getAllTriples(patterns) {
+exports._getParentPath = _getParentPath;
+function _getAllTriples(patterns) {
     var subjectsMap = new Map();
-    internalTripleAdder(subjectsMap, patterns);
+    __internalTripleAdder(subjectsMap, patterns);
     return Array.from(subjectsMap.values());
 }
-exports.getAllTriples = getAllTriples;
-function isFullTriple(triple) {
+exports._getAllTriples = _getAllTriples;
+function __isFullTriple(triple) {
     return triple
         .predicates
         .map(function (x) { return x.predicate; })
         .some(function (x) { return Utils_1.isObject(x) && x.token === "variable"; });
 }
-function internalTripleAdder(subjectsMap, patterns) {
+function __internalTripleAdder(subjectsMap, patterns) {
     patterns.forEach(function (pattern) {
         var _a;
         if (pattern.token === "optional" || pattern.token === "graph")
-            return internalTripleAdder(subjectsMap, pattern.patterns);
+            return __internalTripleAdder(subjectsMap, pattern.patterns);
         if (pattern.token !== "subject")
             return;
         var valid = pattern.predicates
@@ -4411,15 +4411,15 @@ function internalTripleAdder(subjectsMap, patterns) {
             .some(function (objects) { return objects.some(function (object) { return object.token === "variable"; }); });
         if (!valid)
             return;
-        var subject = getSubject(subjectsMap, pattern);
-        if (isFullTriple(subject))
+        var subject = __getSubject(subjectsMap, pattern);
+        if (__isFullTriple(subject))
             return;
-        if (isFullTriple(pattern))
+        if (__isFullTriple(pattern))
             subject.predicates.length = 0;
         (_a = subject.predicates).push.apply(_a, pattern.predicates);
     });
 }
-function getSubject(subjectsMap, original) {
+function __getSubject(subjectsMap, original) {
     var subjectStr = original.subject.toString();
     if (subjectsMap.has(subjectStr))
         return subjectsMap.get(subjectStr);
@@ -4427,23 +4427,23 @@ function getSubject(subjectsMap, original) {
     subjectsMap.set(subjectStr, subject);
     return subject;
 }
-function getPathProperty(element, path) {
+function _getPathProperty(element, path) {
     if (element === void 0 || !path)
         return element;
     var _a = path.split("."), propName = _a[0], restParts = _a.slice(1);
     var property = element[propName];
     var restPath = restParts.join(".");
-    return getPathProperty(property, restPath);
+    return _getPathProperty(property, restPath);
 }
-exports.getPathProperty = getPathProperty;
-function areDifferentType(a, b) {
+exports._getPathProperty = _getPathProperty;
+function _areDifferentType(a, b) {
     if (typeof a !== typeof b)
         return true;
     if (typeof a === "object")
         return a instanceof Date !== b instanceof Date;
     return false;
 }
-exports.areDifferentType = areDifferentType;
+exports._areDifferentType = _areDifferentType;
 
 
 /***/ }),
@@ -5113,12 +5113,12 @@ exports.QueryProperty = QueryProperty;
 function getFunctionPattern(type) {
     switch (type) {
         case QueryPropertyType.ALL:
-            return Utils_1.createAllPattern;
+            return Utils_1._createAllPattern;
         case QueryPropertyType.FULL:
-            return Utils_1.createGraphPattern;
+            return Utils_1._createGraphPattern;
         case QueryPropertyType.EMPTY:
         case QueryPropertyType.PARTIAL:
-            return Utils_1.createTypesPattern;
+            return Utils_1._createTypesPattern;
         default:
             return null;
     }
@@ -5689,21 +5689,21 @@ var JSONLDConverter = (function () {
         var digestedSchema = !pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
         pointerLibrary = !pointerLibrary ? digestedSchemaOrPointerLibrary : pointerLibrary;
         if (!Array.isArray(expandedObjectOrObjects))
-            return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary, strict);
+            return this.__compactSingle(expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary, strict);
         var expandedObjects = expandedObjectOrObjects;
         var targetObjects = !!targetObjectOrObjects ? targetObjectOrObjects : [];
         for (var i = 0, length_1 = expandedObjects.length; i < length_1; i++) {
             var expandedObject = expandedObjects[i];
             var targetObject = targetObjects[i] = !!targetObjects[i] ? targetObjects[i] : {};
-            this.compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary, strict);
+            this.__compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary, strict);
         }
         return targetObjects;
     };
     JSONLDConverter.prototype.expand = function (compactedObjectOrObjects, generalSchema, digestedSchema) {
         if (!Array.isArray(compactedObjectOrObjects))
-            return this.expandSingle(compactedObjectOrObjects, generalSchema, digestedSchema);
+            return this.__expandSingle(compactedObjectOrObjects, generalSchema, digestedSchema);
     };
-    JSONLDConverter.prototype.expandSingle = function (compactedObject, generalSchema, digestedSchema) {
+    JSONLDConverter.prototype.__expandSingle = function (compactedObject, generalSchema, digestedSchema) {
         var _this = this;
         var expandedObject = {};
         expandedObject["@id"] = !!compactedObject["$id"] ? compactedObject["$id"] : "";
@@ -5722,27 +5722,27 @@ var JSONLDConverter = (function () {
             var expandedPropertyName = digestedSchema.resolveURI(propertyName, { vocab: true });
             if (URI_1.URI.isRelative(expandedPropertyName))
                 return;
-            var expandedValue = _this.expandProperty(propertyName, value, digestedSchema, generalSchema);
+            var expandedValue = _this.__expandProperty(propertyName, value, digestedSchema, generalSchema);
             if (expandedValue === null)
                 return;
             expandedObject[expandedPropertyName] = expandedValue;
         });
         return expandedObject;
     };
-    JSONLDConverter.prototype.expandProperty = function (propertyName, propertyValue, digestedSchema, generalSchema) {
+    JSONLDConverter.prototype.__expandProperty = function (propertyName, propertyValue, digestedSchema, generalSchema) {
         var definition = digestedSchema.properties.get(propertyName);
         var propertyContainer = definition ? definition.containerType : void 0;
         if (propertyContainer === ContainerType_1.ContainerType.LANGUAGE)
-            return this.expandPropertyLanguageMap(propertyValue);
+            return this.__expandPropertyLanguageMap(propertyValue);
         propertyValue = Array.isArray(propertyValue) ? propertyValue : [propertyValue];
         if (propertyContainer === null)
             propertyValue = [propertyValue[0]];
         var propertyType = definition ? definition.literal : null;
         var expandedValues = propertyType === true ?
-            this.expandPropertyLiteral(propertyValue, definition, digestedSchema) :
+            this.__expandPropertyLiteral(propertyValue, definition, digestedSchema) :
             propertyType === false ?
-                this.expandPropertyPointer(propertyValue, digestedSchema, generalSchema) :
-                this.expandPropertyValue(propertyValue, digestedSchema, generalSchema);
+                this.__expandPropertyPointer(propertyValue, digestedSchema, generalSchema) :
+                this.__expandPropertyValue(propertyValue, digestedSchema, generalSchema);
         var filteredValues = expandedValues.filter(function (value) { return value !== null; });
         if (!filteredValues.length)
             return null;
@@ -5752,23 +5752,23 @@ var JSONLDConverter = (function () {
             ];
         return filteredValues;
     };
-    JSONLDConverter.prototype.expandPropertyValue = function (propertyValue, digestedSchema, generalSchema) {
+    JSONLDConverter.prototype.__expandPropertyValue = function (propertyValue, digestedSchema, generalSchema) {
         var _this = this;
-        return propertyValue.map(function (value) { return _this.expandValue(value, digestedSchema, generalSchema); });
+        return propertyValue.map(function (value) { return _this.__expandValue(value, digestedSchema, generalSchema); });
     };
-    JSONLDConverter.prototype.expandPropertyPointer = function (propertyValue, digestedSchema, generalSchema) {
+    JSONLDConverter.prototype.__expandPropertyPointer = function (propertyValue, digestedSchema, generalSchema) {
         var _this = this;
-        return propertyValue.map(function (value) { return _this.expandPointerValue(value, digestedSchema, generalSchema); });
+        return propertyValue.map(function (value) { return _this.__expandPointerValue(value, digestedSchema, generalSchema); });
     };
-    JSONLDConverter.prototype.expandPropertyLiteral = function (propertyValue, definition, digestedSchema) {
+    JSONLDConverter.prototype.__expandPropertyLiteral = function (propertyValue, definition, digestedSchema) {
         var _this = this;
         var literalType = digestedSchema.resolveURI(definition.literalType, { vocab: true, base: true });
-        var expandedValues = propertyValue.map(function (value) { return _this.expandLiteralValue(value, literalType); });
+        var expandedValues = propertyValue.map(function (value) { return _this.__expandLiteralValue(value, literalType); });
         if (definition.language)
             expandedValues.forEach(function (value) { return value["@language"] = definition.language; });
         return expandedValues;
     };
-    JSONLDConverter.prototype.expandPropertyLanguageMap = function (propertyValue) {
+    JSONLDConverter.prototype.__expandPropertyLanguageMap = function (propertyValue) {
         var _this = this;
         if (!Utils_1.isObject(propertyValue)) {
             return null;
@@ -5780,7 +5780,7 @@ var JSONLDConverter = (function () {
         });
         return mapValues;
     };
-    JSONLDConverter.prototype.expandPointerValue = function (propertyValue, digestedSchema, generalSchema) {
+    JSONLDConverter.prototype.__expandPointerValue = function (propertyValue, digestedSchema, generalSchema) {
         var isStringID = Utils_1.isString(propertyValue);
         var id = Pointer_1.Pointer.is(propertyValue) ?
             propertyValue.$id :
@@ -5792,14 +5792,14 @@ var JSONLDConverter = (function () {
         var resolved = generalSchema.resolveURI(id, { vocab: isStringID });
         return { "@id": resolved };
     };
-    JSONLDConverter.prototype.expandValue = function (propertyValue, digestedSchema, generalSchema) {
+    JSONLDConverter.prototype.__expandValue = function (propertyValue, digestedSchema, generalSchema) {
         if (Array.isArray(propertyValue))
             return null;
         return Pointer_1.Pointer.is(propertyValue) ?
-            this.expandPointerValue(propertyValue, generalSchema, digestedSchema) :
-            this.expandLiteralValue(propertyValue, Utils_2.guessXSDType(propertyValue));
+            this.__expandPointerValue(propertyValue, generalSchema, digestedSchema) :
+            this.__expandLiteralValue(propertyValue, Utils_2._guessXSDType(propertyValue));
     };
-    JSONLDConverter.prototype.expandLiteralValue = function (literalValue, literalType) {
+    JSONLDConverter.prototype.__expandLiteralValue = function (literalValue, literalType) {
         if (literalType === null)
             return null;
         if (!this.literalSerializers.has(literalType))
@@ -5809,13 +5809,13 @@ var JSONLDConverter = (function () {
             .serialize(literalValue);
         return { "@value": serializedValue, "@type": literalType };
     };
-    JSONLDConverter.prototype.compactSingle = function (expandedObject, targetObject, digestedSchema, pointerLibrary, strict) {
+    JSONLDConverter.prototype.__compactSingle = function (expandedObject, targetObject, digestedSchema, pointerLibrary, strict) {
         var _this = this;
         if (!expandedObject["@id"])
             throw new IllegalArgumentError_1.IllegalArgumentError("The expandedObject doesn't have an @id defined.");
         targetObject["$id"] = expandedObject["@id"];
         targetObject["types"] = !!expandedObject["@type"] ? expandedObject["@type"] : [];
-        var propertyURINameMap = this.getPropertyURINameMap(digestedSchema);
+        var propertyURINameMap = this.__getPropertyURINameMap(digestedSchema);
         Utils_1.forEachOwnProperty(expandedObject, function (propertyURI, propertyValues) {
             if (propertyURI === "@id")
                 return;
@@ -5828,14 +5828,14 @@ var JSONLDConverter = (function () {
                 digestedSchema.vocab !== null ?
                     URI_1.URI.getRelativeURI(propertyURI, digestedSchema.vocab) :
                     propertyURI;
-            var targetValue = _this.getPropertyValue(propertyName, propertyValues, digestedSchema, pointerLibrary);
+            var targetValue = _this.__getPropertyValue(propertyName, propertyValues, digestedSchema, pointerLibrary);
             if (targetValue === null || targetValue === void 0)
                 return;
             targetObject[propertyName] = targetValue;
         });
         return targetObject;
     };
-    JSONLDConverter.prototype.getPropertyContainerType = function (propertyValues) {
+    JSONLDConverter.prototype.__getPropertyContainerType = function (propertyValues) {
         if (propertyValues.length === 1) {
             if (List_1.RDFList.is(propertyValues[0]))
                 return ContainerType_1.ContainerType.LIST;
@@ -5845,11 +5845,11 @@ var JSONLDConverter = (function () {
         }
         return null;
     };
-    JSONLDConverter.prototype.getPropertyValue = function (propertyName, propertyValues, digestedSchema, pointerLibrary) {
+    JSONLDConverter.prototype.__getPropertyValue = function (propertyName, propertyValues, digestedSchema, pointerLibrary) {
         var definition = digestedSchema.properties.get(propertyName);
         var propertyContainer = definition ?
             definition.containerType :
-            this.getPropertyContainerType(propertyValues);
+            this.__getPropertyContainerType(propertyValues);
         if (propertyContainer === ContainerType_1.ContainerType.LANGUAGE)
             return Node_1.RDFNode.getPropertyLanguageMap(propertyValues);
         if (propertyContainer === ContainerType_1.ContainerType.LIST) {
@@ -5865,10 +5865,10 @@ var JSONLDConverter = (function () {
         if (propertyContainer === null)
             propertyValues = [propertyValues[0]];
         var compactedValues = propertyType === true ?
-            this.compactPropertyLiteral(propertyValues, definition, digestedSchema) :
+            this.__compactPropertyLiteral(propertyValues, definition, digestedSchema) :
             propertyType === false ?
-                this.getPropertyPointers(propertyValues, pointerLibrary) :
-                this.getProperties(propertyValues, pointerLibrary);
+                this.__getPropertyPointers(propertyValues, pointerLibrary) :
+                this.__getProperties(propertyValues, pointerLibrary);
         if (!compactedValues)
             return null;
         var filteredValues = compactedValues.filter(function (value) { return value !== null; });
@@ -5878,7 +5878,7 @@ var JSONLDConverter = (function () {
             return filteredValues[0];
         return filteredValues;
     };
-    JSONLDConverter.prototype.getPropertyURINameMap = function (digestedSchema) {
+    JSONLDConverter.prototype.__getPropertyURINameMap = function (digestedSchema) {
         var map = new Map();
         digestedSchema.properties.forEach(function (definition, propertyName) {
             var uri = digestedSchema.resolveURI(definition.uri, { vocab: true });
@@ -5886,19 +5886,19 @@ var JSONLDConverter = (function () {
         });
         return map;
     };
-    JSONLDConverter.prototype.compactPropertyLiteral = function (propertyValues, definition, digestedSchema) {
+    JSONLDConverter.prototype.__compactPropertyLiteral = function (propertyValues, definition, digestedSchema) {
         var literalType = definition.literalType === null ?
             XSD_1.XSD.string : digestedSchema.resolveURI(definition.literalType, { vocab: true, base: true });
         return Node_1.RDFNode.getPropertyLiterals(propertyValues, literalType);
     };
-    JSONLDConverter.prototype.getProperties = function (propertyValues, pointerLibrary) {
+    JSONLDConverter.prototype.__getProperties = function (propertyValues, pointerLibrary) {
         if (!Array.isArray(propertyValues))
             return;
         return propertyValues
             .map(Value_1.RDFValue.parse.bind(null, pointerLibrary))
             .filter(function (value) { return !Utils_1.isNull(value); });
     };
-    JSONLDConverter.prototype.getPropertyPointers = function (propertyValues, pointerLibrary) {
+    JSONLDConverter.prototype.__getPropertyPointers = function (propertyValues, pointerLibrary) {
         if (!Array.isArray(propertyValues))
             return;
         return propertyValues
@@ -5955,7 +5955,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Header = (function () {
     function Header(values) {
         this.values = Array.isArray(values) ?
-            values : Header._parseValues(values);
+            values : Header.__parseValues(values);
     }
     Header.parseHeaders = function (headersString) {
         var headers = new Map();
@@ -5967,7 +5967,7 @@ var Header = (function () {
             if (parts.length < 2)
                 throw new Error("ParseError: The header couldn't be parsed.");
             var name = parts[0].trim().toLowerCase();
-            var values = Header._parseValues(parts.slice(1).join(":"));
+            var values = Header.__parseValues(parts.slice(1).join(":"));
             if (headers.has(name)) {
                 (_a = headers.get(name).values).push.apply(_a, values);
             }
@@ -5977,7 +5977,7 @@ var Header = (function () {
         });
         return headers;
     };
-    Header._parseValues = function (strValues) {
+    Header.__parseValues = function (strValues) {
         if (!strValues)
             return [];
         return strValues
@@ -6008,7 +6008,7 @@ var Utils_1 = __webpack_require__(0);
 var ObjectSchemaUtils = (function () {
     function ObjectSchemaUtils() {
     }
-    ObjectSchemaUtils.resolveProperty = function (schema, definition, inSame) {
+    ObjectSchemaUtils._resolveProperty = function (schema, definition, inSame) {
         var uri = definition.uri;
         var type = definition.literalType;
         var resolvedURI = schema.resolveURI(uri, { vocab: true });
@@ -6228,14 +6228,14 @@ var AbstractContext = (function () {
         return URI_1.URI.resolve(this.baseURI, relativeURI);
     };
     AbstractContext.prototype.hasObjectSchema = function (type) {
-        type = this._resolveTypeURI(type);
+        type = this.__resolveTypeURI(type);
         if (this._typeObjectSchemaMap.has(type))
             return true;
         return !!this.parentContext && this.parentContext.hasObjectSchema(type);
     };
     AbstractContext.prototype.getObjectSchema = function (type) {
         if (!!type) {
-            type = this._resolveTypeURI(type);
+            type = this.__resolveTypeURI(type);
             if (this._typeObjectSchemaMap.has(type))
                 return this._typeObjectSchemaMap.get(type);
             if (this.parentContext && this.parentContext.hasObjectSchema(type))
@@ -6261,10 +6261,10 @@ var AbstractContext = (function () {
         objectSchema = objectSchema ? objectSchema : typeOrObjectSchema;
         var digestedSchema = ObjectSchemaDigester_1.ObjectSchemaDigester.digestSchema(objectSchema);
         if (!type) {
-            this._extendGeneralSchema(digestedSchema);
+            this.__extendGeneralSchema(digestedSchema);
         }
         else {
-            this._extendTypeSchema(digestedSchema, type);
+            this.__extendTypeSchema(digestedSchema, type);
         }
         return this;
     };
@@ -6273,19 +6273,19 @@ var AbstractContext = (function () {
             this._generalObjectSchema = this.parentContext ? null : new DigestedObjectSchema_1.DigestedObjectSchema();
         }
         else {
-            type = this._resolveTypeURI(type);
+            type = this.__resolveTypeURI(type);
             this._typeObjectSchemaMap.delete(type);
         }
     };
     AbstractContext.prototype._getTypeObjectSchemas = function () {
-        var types = this._getObjectSchemasTypes();
+        var types = this.__getObjectSchemasTypes();
         return types.map(this.getObjectSchema, this);
     };
-    AbstractContext.prototype._getObjectSchemasTypes = function () {
+    AbstractContext.prototype.__getObjectSchemasTypes = function () {
         var localTypes = Array.from(this._typeObjectSchemaMap.keys());
         if (!this._parentContext)
             return localTypes;
-        var allTypes = this._parentContext._getObjectSchemasTypes();
+        var allTypes = this._parentContext.__getObjectSchemasTypes();
         for (var _i = 0, localTypes_1 = localTypes; _i < localTypes_1.length; _i++) {
             var type = localTypes_1[_i];
             if (allTypes.indexOf(type) !== -1)
@@ -6294,7 +6294,7 @@ var AbstractContext = (function () {
         }
         return allTypes;
     };
-    AbstractContext.prototype._extendGeneralSchema = function (digestedSchema) {
+    AbstractContext.prototype.__extendGeneralSchema = function (digestedSchema) {
         var digestedSchemaToExtend;
         if (!!this._generalObjectSchema) {
             digestedSchemaToExtend = this._generalObjectSchema;
@@ -6310,8 +6310,8 @@ var AbstractContext = (function () {
             digestedSchema,
         ]);
     };
-    AbstractContext.prototype._extendTypeSchema = function (digestedSchema, type) {
-        type = this._resolveTypeURI(type);
+    AbstractContext.prototype.__extendTypeSchema = function (digestedSchema, type) {
+        type = this.__resolveTypeURI(type);
         var digestedSchemaToExtend;
         if (this._typeObjectSchemaMap.has(type)) {
             digestedSchemaToExtend = this._typeObjectSchemaMap.get(type);
@@ -6328,7 +6328,7 @@ var AbstractContext = (function () {
         ]);
         this._typeObjectSchemaMap.set(type, extendedDigestedSchema);
     };
-    AbstractContext.prototype._resolveTypeURI = function (uri) {
+    AbstractContext.prototype.__resolveTypeURI = function (uri) {
         return this.getObjectSchema()
             .resolveURI(uri, { vocab: true });
     };
@@ -6420,12 +6420,12 @@ var JSONLDCompacter = (function () {
             if (documentNodes.length > 1)
                 throw new IllegalArgumentError_1.IllegalArgumentError("The RDFDocument \"" + rdfDocument["@id"] + "\" contains multiple document resources.");
             var documentNode = documentNodes[0];
-            var targetDocument = _this._getResource(documentNode, _this.registry);
+            var targetDocument = _this.__getResource(documentNode, _this.registry);
             var currentFragments = targetDocument
                 .getPointers(true)
                 .map(function (pointer) { return pointer.$id; });
             var newFragments = fragmentNodes
-                .map(function (fragmentNode) { return _this._getResource(fragmentNode, targetDocument); })
+                .map(function (fragmentNode) { return _this.__getResource(fragmentNode, targetDocument); })
                 .map(function (fragment) { return fragment.$id; });
             var newFragmentsSet = new Set(newFragments);
             currentFragments
@@ -6442,7 +6442,7 @@ var JSONLDCompacter = (function () {
             return compactionNode.resource;
         });
         while (compactionQueue.length) {
-            this._processCompactionQueue(compactionQueue);
+            this.__processCompactionQueue(compactionQueue);
             this.compactionMap.forEach(function (node, key, map) {
                 if (node.processed)
                     map.delete(key);
@@ -6460,9 +6460,9 @@ var JSONLDCompacter = (function () {
         });
         return mainCompactedDocuments;
     };
-    JSONLDCompacter.prototype._compactNode = function (node, resource, containerLibrary, path) {
+    JSONLDCompacter.prototype.__compactNode = function (node, resource, containerLibrary, path) {
         var schema = this.resolver.getSchemaFor(node, path);
-        var isPartial = this._setOrRemovePartial(resource, schema, path);
+        var isPartial = this.__setOrRemovePartial(resource, schema, path);
         var compactedData = this.converter.compact(node, {}, schema, containerLibrary, isPartial);
         var addedProperties = [];
         new Set(Object.keys(resource).concat(Object.keys(compactedData))).forEach(function (key) {
@@ -6484,7 +6484,7 @@ var JSONLDCompacter = (function () {
         return addedProperties
             .filter(function (x) { return schema.properties.has(x); });
     };
-    JSONLDCompacter.prototype._getResource = function (node, registry) {
+    JSONLDCompacter.prototype.__getResource = function (node, registry) {
         var resource = registry.getPointer(node["@id"], true);
         if (Registry_1.Registry.isDecorated(resource))
             registry = resource;
@@ -6492,7 +6492,7 @@ var JSONLDCompacter = (function () {
             .set(resource.$id, { paths: [], node: node, resource: resource, registry: registry });
         return resource;
     };
-    JSONLDCompacter.prototype._processCompactionQueue = function (compactionQueue) {
+    JSONLDCompacter.prototype.__processCompactionQueue = function (compactionQueue) {
         while (compactionQueue.length) {
             var targetNode = compactionQueue.shift();
             if (!this.compactionMap.has(targetNode))
@@ -6500,7 +6500,7 @@ var JSONLDCompacter = (function () {
             var compactionNode = this.compactionMap.get(targetNode);
             compactionNode.processed = true;
             var targetPath = compactionNode.paths.shift();
-            var addedProperties = this._compactNode(compactionNode.node, compactionNode.resource, compactionNode.registry, targetPath);
+            var addedProperties = this.__compactNode(compactionNode.node, compactionNode.resource, compactionNode.registry, targetPath);
             for (var _i = 0, addedProperties_1 = addedProperties; _i < addedProperties_1.length; _i++) {
                 var propertyName = addedProperties_1[_i];
                 if (!compactionNode.resource.hasOwnProperty(propertyName))
@@ -6524,14 +6524,14 @@ var JSONLDCompacter = (function () {
             }
         }
     };
-    JSONLDCompacter.prototype._setOrRemovePartial = function (resource, schema, path) {
-        if (this._willBePartial(resource, schema, path))
+    JSONLDCompacter.prototype.__setOrRemovePartial = function (resource, schema, path) {
+        if (this.__willBePartial(resource, schema, path))
             return true;
         if (resource._queryableMetadata)
             resource._queryableMetadata = void 0;
         return false;
     };
-    JSONLDCompacter.prototype._willBePartial = function (resource, schema, path) {
+    JSONLDCompacter.prototype.__willBePartial = function (resource, schema, path) {
         if (this.resolver instanceof QueryContextPartial_1.QueryContextPartial)
             return true;
         if (!(this.resolver instanceof QueryContextBuilder_1.QueryContextBuilder))
@@ -6629,7 +6629,7 @@ var SPARQLService = (function () {
                     if (!bindingColumn.hasOwnProperty(bindingRow))
                         continue;
                     var bindingCell = bindingColumn[bindingRow];
-                    binding[bindingRow] = SPARQLService.parseRawBindingProperty(bindingCell, pointerLibrary);
+                    binding[bindingRow] = SPARQLService.__parseRawBindingProperty(bindingCell, pointerLibrary);
                 }
                 bindings.push(binding);
             }
@@ -6664,7 +6664,7 @@ var SPARQLService = (function () {
         Request_1.RequestUtils.setContentTypeHeader("application/sparql-update", options);
         return Request_1.RequestService.post(url, updateQuery, options);
     };
-    SPARQLService.parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
+    SPARQLService.__parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
         switch (rawBindingProperty.type) {
             case "uri":
                 return pointerLibrary.getPointer(rawBindingProperty.value);
@@ -7489,7 +7489,7 @@ exports.RDFValue = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils_1 = __webpack_require__(0);
 var XSD_1 = __webpack_require__(11);
-function guessXSDType(value) {
+function _guessXSDType(value) {
     if (Utils_1.isFunction(value))
         return null;
     if (Utils_1.isString(value))
@@ -7502,7 +7502,7 @@ function guessXSDType(value) {
         return XSD_1.XSD.boolean;
     return null;
 }
-exports.guessXSDType = guessXSDType;
+exports._guessXSDType = _guessXSDType;
 
 
 /***/ }),
@@ -7579,8 +7579,8 @@ var JSONLDProcessor = (function () {
     function JSONLDProcessor() {
     }
     JSONLDProcessor.expand = function (input) {
-        return JSONLDProcessor.retrieveContexts(input, Object.create(null), "").then(function () {
-            var expanded = JSONLDProcessor.process(new DigestedObjectSchema_1.DigestedObjectSchema(), input);
+        return JSONLDProcessor.__retrieveContexts(input, Object.create(null), "").then(function () {
+            var expanded = JSONLDProcessor.__process(new DigestedObjectSchema_1.DigestedObjectSchema(), input);
             if (Utils.isObject(expanded) && "@graph" in expanded && Object.keys(expanded).length === 1) {
                 expanded = expanded["@graph"];
             }
@@ -7592,7 +7592,7 @@ var JSONLDProcessor = (function () {
             return expanded;
         });
     };
-    JSONLDProcessor.getTargetFromLinkHeader = function (header) {
+    JSONLDProcessor.__getTargetFromLinkHeader = function (header) {
         var rLinkHeader = /\s*<([^>]*?)>\s*(?:;\s*(.*))?/;
         for (var _i = 0, _a = header.values; _i < _a.length; _i++) {
             var value = _a[_i];
@@ -7614,19 +7614,19 @@ var JSONLDProcessor = (function () {
         }
         return null;
     };
-    JSONLDProcessor.findContextURLs = function (input, contexts, base, replace) {
+    JSONLDProcessor.__findContextURLs = function (input, contexts, base, replace) {
         if (replace === void 0) { replace = false; }
         var previousContexts = Object.keys(contexts).length;
         if (Utils.isArray(input)) {
             for (var _i = 0, _a = input; _i < _a.length; _i++) {
                 var element = _a[_i];
-                JSONLDProcessor.findContextURLs(element, contexts, base);
+                JSONLDProcessor.__findContextURLs(element, contexts, base);
             }
         }
         else if (Utils.isPlainObject(input)) {
             for (var key in input) {
                 if ("@context" !== key) {
-                    JSONLDProcessor.findContextURLs(input[key], contexts, base);
+                    JSONLDProcessor.__findContextURLs(input[key], contexts, base);
                     continue;
                 }
                 var urlOrArrayOrContext = input[key];
@@ -7667,11 +7667,11 @@ var JSONLDProcessor = (function () {
         }
         return previousContexts < Object.keys(contexts).length;
     };
-    JSONLDProcessor.retrieveContexts = function (input, contextsRequested, base) {
+    JSONLDProcessor.__retrieveContexts = function (input, contextsRequested, base) {
         if (Object.keys(contextsRequested).length > MAX_CONTEXT_URLS)
             return Promise.reject(new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("Maximum number of @context URLs exceeded."));
         var contextToResolved = Object.create(null);
-        if (!JSONLDProcessor.findContextURLs(input, contextToResolved, base))
+        if (!JSONLDProcessor.__findContextURLs(input, contextToResolved, base))
             return Promise.resolve();
         function resolved(url, promise) {
             return promise.then(function (_a) {
@@ -7684,7 +7684,7 @@ var JSONLDProcessor = (function () {
                     header = response.getHeader("Link");
                     var link = void 0;
                     if (!!header)
-                        link = JSONLDProcessor.getTargetFromLinkHeader(header);
+                        link = JSONLDProcessor.__getTargetFromLinkHeader(header);
                     if (!!link)
                         contextWrapper["@context"] = link;
                 }
@@ -7692,7 +7692,7 @@ var JSONLDProcessor = (function () {
                     contextWrapper["@context"] = ("@context" in object) ? object["@context"] : {};
                 }
                 contextToResolved[url] = contextWrapper["@context"];
-                return JSONLDProcessor.retrieveContexts(contextWrapper, _contextsRequested, url);
+                return JSONLDProcessor.__retrieveContexts(contextWrapper, _contextsRequested, url);
             });
         }
         var promises = [];
@@ -7714,10 +7714,10 @@ var JSONLDProcessor = (function () {
                 return state_1.value;
         }
         return Promise.all(promises).then(function () {
-            JSONLDProcessor.findContextURLs(input, contextToResolved, base, true);
+            JSONLDProcessor.__findContextURLs(input, contextToResolved, base, true);
         });
     };
-    JSONLDProcessor.isKeyword = function (value) {
+    JSONLDProcessor.__isKeyword = function (value) {
         if (!Utils.isString(value))
             return false;
         switch (value) {
@@ -7745,7 +7745,7 @@ var JSONLDProcessor = (function () {
                 return false;
         }
     };
-    JSONLDProcessor.isValidType = function (value) {
+    JSONLDProcessor.__isValidType = function (value) {
         if (Utils.isString(value))
             return true;
         if (!Utils.isArray(value))
@@ -7757,12 +7757,12 @@ var JSONLDProcessor = (function () {
         }
         return true;
     };
-    JSONLDProcessor.expandURI = function (schema, uri, relativeTo) {
-        if (JSONLDProcessor.isKeyword(uri))
+    JSONLDProcessor.__expandURI = function (schema, uri, relativeTo) {
+        if (JSONLDProcessor.__isKeyword(uri))
             return uri;
         return schema.resolveURI(uri, relativeTo);
     };
-    JSONLDProcessor.expandLanguageMap = function (languageMap) {
+    JSONLDProcessor.__expandLanguageMap = function (languageMap) {
         var expandedLanguage = [];
         var keys = Object.keys(languageMap).sort();
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
@@ -7784,19 +7784,19 @@ var JSONLDProcessor = (function () {
         }
         return expandedLanguage;
     };
-    JSONLDProcessor.getContainer = function (context, property) {
+    JSONLDProcessor.__getContainer = function (context, property) {
         if (context.properties.has(property))
             return context.properties.get(property).containerType;
         return void 0;
     };
-    JSONLDProcessor.expandValue = function (context, value, propertyName) {
+    JSONLDProcessor.__expandValue = function (context, value, propertyName) {
         if (Utils.isNull(value) || !Utils.isDefined(value))
             return null;
         if (propertyName === "@id") {
-            return JSONLDProcessor.expandURI(context, value, { base: true });
+            return JSONLDProcessor.__expandURI(context, value, { base: true });
         }
         else if (propertyName === "@type") {
-            return JSONLDProcessor.expandURI(context, value, { vocab: true, base: true });
+            return JSONLDProcessor.__expandURI(context, value, { vocab: true, base: true });
         }
         var definition = new DigestedObjectSchemaProperty_1.DigestedObjectSchemaProperty();
         if (context.properties.has(propertyName))
@@ -7805,9 +7805,9 @@ var JSONLDProcessor = (function () {
             var options = { base: true };
             if (definition.pointerType === PointerType_1.PointerType.VOCAB)
                 options.vocab = true;
-            return { "@id": JSONLDProcessor.expandURI(context, value, options) };
+            return { "@id": JSONLDProcessor.__expandURI(context, value, options) };
         }
-        if (JSONLDProcessor.isKeyword(propertyName))
+        if (JSONLDProcessor.__isKeyword(propertyName))
             return value;
         var expandedValue = {};
         if (definition.literalType) {
@@ -7823,21 +7823,21 @@ var JSONLDProcessor = (function () {
         expandedValue["@value"] = value;
         return expandedValue;
     };
-    JSONLDProcessor.process = function (context, element, activeProperty, insideList) {
+    JSONLDProcessor.__process = function (context, element, activeProperty, insideList) {
         if (Utils.isNull(element) || !Utils.isDefined(element))
             return null;
         if (!Utils.isArray(element) && !Utils.isObject(element)) {
             if (!insideList && (activeProperty === null || activeProperty === "@graph"))
                 return null;
-            return JSONLDProcessor.expandValue(context, element, activeProperty);
+            return JSONLDProcessor.__expandValue(context, element, activeProperty);
         }
         if (Utils.isArray(element)) {
-            var container = JSONLDProcessor.getContainer(context, activeProperty);
+            var container = JSONLDProcessor.__getContainer(context, activeProperty);
             insideList = insideList || container === ContainerType_1.ContainerType.LIST;
             var expanded = [];
             for (var _i = 0, _a = element; _i < _a.length; _i++) {
                 var item = _a[_i];
-                var expandedItem = JSONLDProcessor.process(context, item, activeProperty);
+                var expandedItem = JSONLDProcessor.__process(context, item, activeProperty);
                 if (expandedItem === null)
                     continue;
                 if (insideList && (Utils.isArray(expandedItem) || List_1.RDFList.is(expandedItem)))
@@ -7861,14 +7861,14 @@ var JSONLDProcessor = (function () {
             var key = keys_2[_b];
             if (key === "@context")
                 continue;
-            var uri = JSONLDProcessor.expandURI(context, key, { vocab: true });
-            if (!uri || !(URI_1.URI.isAbsolute(uri) || URI_1.URI.isBNodeID(uri) || JSONLDProcessor.isKeyword(uri)))
+            var uri = JSONLDProcessor.__expandURI(context, key, { vocab: true });
+            if (!uri || !(URI_1.URI.isAbsolute(uri) || URI_1.URI.isBNodeID(uri) || JSONLDProcessor.__isKeyword(uri)))
                 continue;
             var value = element[key];
-            if (JSONLDProcessor.isKeyword(uri)) {
+            if (JSONLDProcessor.__isKeyword(uri)) {
                 if (uri === "@id" && !Utils.isString(value))
                     throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@id\" value must a string.");
-                if (uri === "@type" && !JSONLDProcessor.isValidType(value))
+                if (uri === "@type" && !JSONLDProcessor.__isValidType(value))
                     throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@type\" value must a string, an array of strings.");
                 if (uri === "@graph" && !(Utils.isObject(value) || Utils.isArray(value)))
                     throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@graph\" value must not be an object or an array.");
@@ -7889,9 +7889,9 @@ var JSONLDProcessor = (function () {
                     throw new NotImplementedError_1.NotImplementedError("The SDK does not support \"@index\" and \"@reverse\" tags.");
             }
             var expandedValue = void 0;
-            var container = JSONLDProcessor.getContainer(context, key);
+            var container = JSONLDProcessor.__getContainer(context, key);
             if (container === ContainerType_1.ContainerType.LANGUAGE && Utils.isObject(value)) {
-                expandedValue = JSONLDProcessor.expandLanguageMap(value);
+                expandedValue = JSONLDProcessor.__expandLanguageMap(value);
             }
             else {
                 var nextActiveProperty = key;
@@ -7901,7 +7901,7 @@ var JSONLDProcessor = (function () {
                     if (isList && activeProperty === "@graph")
                         nextActiveProperty = null;
                 }
-                expandedValue = JSONLDProcessor.process(context, value, nextActiveProperty, isList);
+                expandedValue = JSONLDProcessor.__process(context, value, nextActiveProperty, isList);
             }
             if (expandedValue === null && uri !== "@value")
                 continue;
@@ -7911,7 +7911,7 @@ var JSONLDProcessor = (function () {
                 expandedValue = { "@list": expandedValue };
             }
             var useArray = ["@type", "@id", "@value", "@language"].indexOf(uri) === -1;
-            JSONLDProcessor.addValue(expandedElement, uri, expandedValue, { propertyIsArray: useArray });
+            JSONLDProcessor.__addValue(expandedElement, uri, expandedValue, { propertyIsArray: useArray });
         }
         if ("@value" in expandedElement) {
             if (expandedElement["@value"] === null)
@@ -7926,18 +7926,18 @@ var JSONLDProcessor = (function () {
         }
         return expandedElement;
     };
-    JSONLDProcessor.addValue = function (element, propertyName, value, options) {
+    JSONLDProcessor.__addValue = function (element, propertyName, value, options) {
         if (Utils.isArray(value)) {
             var values = value;
             if (values.length === 0 && options.propertyIsArray && !Utils.hasProperty(element, propertyName))
                 element[propertyName] = [];
             for (var _i = 0, values_2 = values; _i < values_2.length; _i++) {
                 var item = values_2[_i];
-                JSONLDProcessor.addValue(element, propertyName, item, options);
+                JSONLDProcessor.__addValue(element, propertyName, item, options);
             }
         }
         else if (propertyName in element) {
-            if (!JSONLDProcessor.hasValue(element, propertyName, value)) {
+            if (!JSONLDProcessor.__hasValue(element, propertyName, value)) {
                 var items = element[propertyName];
                 if (!Utils.isArray(items))
                     items = element[propertyName] = [items];
@@ -7948,14 +7948,14 @@ var JSONLDProcessor = (function () {
             element[propertyName] = options.propertyIsArray ? [value] : value;
         }
     };
-    JSONLDProcessor.hasProperty = function (element, propertyName) {
+    JSONLDProcessor.__hasProperty = function (element, propertyName) {
         if (propertyName in element) {
             var item = element[propertyName];
             return !Utils.isArray(item) || item.length > 0;
         }
         return false;
     };
-    JSONLDProcessor.compareValues = function (value1, value2) {
+    JSONLDProcessor.__compareValues = function (value1, value2) {
         if (value1 === value2)
             return true;
         if (Utils.isObject(value1) && Utils.isObject(value2)) {
@@ -7970,20 +7970,20 @@ var JSONLDProcessor = (function () {
         }
         return false;
     };
-    JSONLDProcessor.hasValue = function (element, propertyName, value) {
-        if (JSONLDProcessor.hasProperty(element, propertyName)) {
+    JSONLDProcessor.__hasValue = function (element, propertyName, value) {
+        if (JSONLDProcessor.__hasProperty(element, propertyName)) {
             var item = element[propertyName];
             var isList = List_1.RDFList.is(item);
             if (isList || Utils.isArray(item)) {
                 var items = isList ? item["@list"] : item;
                 for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
                     var entry = items_1[_i];
-                    if (JSONLDProcessor.compareValues(entry, value))
+                    if (JSONLDProcessor.__compareValues(entry, value))
                         return true;
                 }
             }
             else if (!Utils.isArray(value)) {
-                return JSONLDProcessor.compareValues(item, value);
+                return JSONLDProcessor.__compareValues(item, value);
             }
         }
         return false;
@@ -8292,12 +8292,12 @@ exports.GeneralRegistry = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = __webpack_require__(2);
 var URI_1 = __webpack_require__(8);
-function validateEventType(event) {
+function _validateEventType(event) {
     if (!/(access-point|child|\*)\.(created|\*)|(document|\*)\.(modified|deleted|\*)|(member|\*)\.(added|removed|\*)/.test(event))
         throw new IllegalArgumentError_1.IllegalArgumentError("Provided event type \"" + event + "\" is invalid.");
 }
-exports.validateEventType = validateEventType;
-function parseURIPattern(uriPattern, baseURI) {
+exports._validateEventType = _validateEventType;
+function _parseURIPattern(uriPattern, baseURI) {
     if (!URI_1.URI.isBaseOf(baseURI, uriPattern))
         throw new IllegalArgumentError_1.IllegalArgumentError("\"" + uriPattern + "\" is out of scope.");
     if (uriPattern === "/")
@@ -8313,13 +8313,13 @@ function parseURIPattern(uriPattern, baseURI) {
             .replace(/\./g, "^");
     }).join(".");
 }
-exports.parseURIPattern = parseURIPattern;
-function createDestination(event, uriPattern, baseURI) {
-    validateEventType(event);
-    uriPattern = parseURIPattern(uriPattern, baseURI);
+exports._parseURIPattern = _parseURIPattern;
+function _createDestination(event, uriPattern, baseURI) {
+    _validateEventType(event);
+    uriPattern = _parseURIPattern(uriPattern, baseURI);
     return "/topic/" + event + (uriPattern ? "." + uriPattern : uriPattern);
 }
-exports.createDestination = createDestination;
+exports._createDestination = _createDestination;
 
 
 /***/ }),
@@ -8333,9 +8333,9 @@ var IllegalArgumentError_1 = __webpack_require__(2);
 var DigestedObjectSchema_1 = __webpack_require__(15);
 var QueryableMetadata = (function () {
     function QueryableMetadata(schema, previousPartial) {
-        this.schema = this.mergeSchemas(previousPartial ? previousPartial.schema : new DigestedObjectSchema_1.DigestedObjectSchema(), schema);
+        this.schema = this.__mergeSchemas(previousPartial ? previousPartial.schema : new DigestedObjectSchema_1.DigestedObjectSchema(), schema);
     }
-    QueryableMetadata.prototype.mergeSchemas = function (oldSchema, newSchema) {
+    QueryableMetadata.prototype.__mergeSchemas = function (oldSchema, newSchema) {
         if (newSchema === QueryableMetadata.ALL || oldSchema === QueryableMetadata.ALL)
             return QueryableMetadata.ALL;
         newSchema.prefixes.forEach(function (newURI, namespace) {
@@ -8400,7 +8400,7 @@ var QueryContextBuilder = (function (_super) {
         return this._propertiesMap.has(name);
     };
     QueryContextBuilder.prototype.hasProperties = function (name) {
-        var levelRegex = Utils_1.getLevelRegExp(name);
+        var levelRegex = Utils_1._getLevelRegExp(name);
         return Array.from(this._propertiesMap.keys())
             .some(function (propertyName) { return levelRegex.test(propertyName); });
     };
@@ -8413,7 +8413,7 @@ var QueryContextBuilder = (function (_super) {
         return this._propertiesMap.get(name);
     };
     QueryContextBuilder.prototype.getProperties = function (name) {
-        var levelRegex = Utils_1.getLevelRegExp(name);
+        var levelRegex = Utils_1._getLevelRegExp(name);
         return Array.from(this._propertiesMap.entries())
             .filter(function (_a) {
             var propertyName = _a[0];
@@ -8425,13 +8425,13 @@ var QueryContextBuilder = (function (_super) {
         });
     };
     QueryContextBuilder.prototype.getInheritTypeDefinition = function (existingSchema, propertyName, propertyURI) {
-        var schemas = [existingSchema].concat(this._getTypeSchemas());
+        var schemas = [existingSchema].concat(this.__getTypeSchemas());
         for (var _i = 0, schemas_1 = schemas; _i < schemas_1.length; _i++) {
             var schema = schemas_1[_i];
             if (!schema.properties.has(propertyName))
                 continue;
             var mergeSchema = ObjectSchemaDigester_1.ObjectSchemaDigester.combineDigestedObjectSchemas([existingSchema, schema]);
-            var digestedProperty = ObjectSchemaUtils_1.ObjectSchemaUtils.resolveProperty(mergeSchema, schema.properties.get(propertyName));
+            var digestedProperty = ObjectSchemaUtils_1.ObjectSchemaUtils._resolveProperty(mergeSchema, schema.properties.get(propertyName));
             if (!propertyURI || propertyURI === digestedProperty.uri)
                 return digestedProperty;
         }
@@ -8463,12 +8463,12 @@ var QueryContextBuilder = (function (_super) {
                     throw new IllegalArgumentError_1.IllegalArgumentError("Property \"" + path + "\" is not a resource.");
             }
         }
-        var parent = this.getProperty(Utils_1.getParentPath(path));
+        var parent = this.getProperty(Utils_1._getParentPath(path));
         if (!parent || parent.getType() !== QueryProperty_1.QueryPropertyType.FULL)
             throw new IllegalArgumentError_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
         return _super.prototype.getSchemaFor.call(this, object);
     };
-    QueryContextBuilder.prototype._getTypeSchemas = function () {
+    QueryContextBuilder.prototype.__getTypeSchemas = function () {
         if (this._schemas)
             return this._schemas;
         return this._schemas = this.context ?
@@ -8647,7 +8647,7 @@ var QueryDocumentBuilder = (function () {
             var fullPath = parent + "." + name;
             if (this._context.hasProperty(fullPath))
                 return this._context.getProperty(fullPath);
-            var directPath = Utils_2.getParentPath(fullPath);
+            var directPath = Utils_2._getParentPath(fullPath);
             if (this._context.hasProperty(directPath)) {
                 var direct = this._context.getProperty(directPath);
                 var directType = direct.getType();
@@ -8656,7 +8656,7 @@ var QueryDocumentBuilder = (function () {
                     return direct._builder._addProperty(propertyName, INHERIT);
                 }
             }
-            parent = Utils_2.getParentPath(parent);
+            parent = Utils_2._getParentPath(parent);
         }
         throw new IllegalArgumentError_1.IllegalArgumentError("The \"" + name + "\" property was not declared.");
     };
@@ -8719,17 +8719,17 @@ var QueryDocumentBuilder = (function () {
         var property = this._document;
         while (property.isOptional()) {
             property.setOptional(false);
-            var parentPath = Utils_2.getParentPath(property.name);
+            var parentPath = Utils_2._getParentPath(property.name);
             property = this._context.getProperty(parentPath);
         }
         return this;
     };
     QueryDocumentBuilder.prototype._addProperty = function (propertyName, propertyDefinition) {
         var _a, _b;
-        var digestedDefinition = this.addPropertyDefinition(propertyName, propertyDefinition);
+        var digestedDefinition = this.__addPropertyDefinition(propertyName, propertyDefinition);
         var name = this._document.name + "." + propertyName;
         var property = (_a = this._context
-            .addProperty(name)).addPattern.apply(_a, Utils_2.createPropertyPatterns(this._context, this._document.name, name, digestedDefinition));
+            .addProperty(name)).addPattern.apply(_a, Utils_2._createPropertyPatterns(this._context, this._document.name, name, digestedDefinition));
         if ("query" in propertyDefinition) {
             if (digestedDefinition.literal === false) {
                 property.setType(QueryProperty_1.QueryPropertyType.PARTIAL);
@@ -8741,7 +8741,7 @@ var QueryDocumentBuilder = (function () {
         (_b = this._document).addPattern.apply(_b, property.getPatterns());
         return property;
     };
-    QueryDocumentBuilder.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
+    QueryDocumentBuilder.prototype.__addPropertyDefinition = function (propertyName, propertyDefinition) {
         var digestedDefinition = ObjectSchemaDigester_1.ObjectSchemaDigester.digestProperty(propertyName, propertyDefinition, this._schema);
         var uri = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
         var inheritDefinition = this._context.getInheritTypeDefinition(this._schema, propertyName, uri);
@@ -8892,7 +8892,7 @@ var DeltaCreator = (function () {
         var _a;
         var schema = this.__getSchema(id, previousResource, currentResource);
         var resource = iri_1.isBNodeLabel(id) ?
-            new tokens_1.BlankNodeToken(id) : this._compactIRI(schema, id);
+            new tokens_1.BlankNodeToken(id) : this.__compactIRI(schema, id);
         var updateLists = [];
         var addTriples = new tokens_1.SubjectToken(resource);
         var deleteTriples = new tokens_1.SubjectToken(resource);
@@ -8907,40 +8907,40 @@ var DeltaCreator = (function () {
                 typesDefinition : schema.properties.get(propertyName);
             var oldValue = previousResource[propertyName];
             var newValue = currentResource[propertyName];
-            if (definition && definition.containerType === ContainerType_1.ContainerType.LIST && isValidValue(oldValue)) {
+            if (definition && definition.containerType === ContainerType_1.ContainerType.LIST && __isValidValue(oldValue)) {
                 var listUpdates = [];
-                if (!isValidValue(newValue)) {
+                if (!__isValidValue(newValue)) {
                     deleteTriples.addPredicate(new tokens_1.PredicateToken(predicateURI).addObject(new tokens_1.CollectionToken()));
                     listUpdates.push({ slice: [0, void 0], objects: [] });
                 }
                 else {
                     var tempDefinition = __assign({}, definition, { containerType: ContainerType_1.ContainerType.SET });
-                    listUpdates.push.apply(listUpdates, getListDelta(_this._getObjects(oldValue, schema, tempDefinition), _this._getObjects(newValue, schema, tempDefinition)));
+                    listUpdates.push.apply(listUpdates, __getListDelta(_this.__getObjects(oldValue, schema, tempDefinition), _this.__getObjects(newValue, schema, tempDefinition)));
                 }
                 if (!listUpdates.length)
                     return;
-                _this._addPrefixFrom(predicateURI, schema);
+                _this.__addPrefixFrom(predicateURI, schema);
                 listUpdates.forEach(function (updateDelta) {
                     var collection = new tokens_1.CollectionToken();
                     updateDelta.objects.forEach(function (object) {
                         collection.addObject(object);
-                        _this._addPrefixFrom(object, schema);
+                        _this.__addPrefixFrom(object, schema);
                     });
                     updateLists.push(new Tokens_1.UpdateListToken(resource, predicateURI, updateDelta.objects.length ?
                         new Tokens_1.SliceToken(updateDelta.slice[0], updateDelta.slice[0]) : new (Tokens_1.SliceToken.bind.apply(Tokens_1.SliceToken, [void 0].concat(updateDelta.slice)))(), collection));
                 });
             }
             else {
-                var oldObjects = _this._getObjects(oldValue, schema, definition);
-                var newObjects = _this._getObjects(newValue, schema, definition);
-                var setDelta = getArrayDelta(oldObjects, newObjects);
+                var oldObjects = _this.__getObjects(oldValue, schema, definition);
+                var newObjects = _this.__getObjects(newValue, schema, definition);
+                var setDelta = __getArrayDelta(oldObjects, newObjects);
                 var addValues = function (objects, triple) {
                     if (!objects.length)
                         return;
                     var predicate = new tokens_1.PredicateToken(predicateURI);
                     objects.forEach(function (object) {
                         predicate.addObject(object);
-                        _this._addPrefixFrom(object, schema);
+                        _this.__addPrefixFrom(object, schema);
                     });
                     triple.addPredicate(predicate);
                 };
@@ -8956,8 +8956,8 @@ var DeltaCreator = (function () {
         var predicates = updateLists.concat(addTriples.predicates, deleteTriples.predicates);
         if (!predicates.length)
             return;
-        this._addPrefixFrom(resource, schema);
-        predicates.forEach(function (x) { return _this._addPrefixFrom(x.predicate, schema); });
+        this.__addPrefixFrom(resource, schema);
+        predicates.forEach(function (x) { return _this.__addPrefixFrom(x.predicate, schema); });
     };
     DeltaCreator.prototype.__getSchema = function (id, previousResource, currentResource) {
         var types = new Set();
@@ -8975,36 +8975,36 @@ var DeltaCreator = (function () {
         var uri = propertyDefinition && propertyDefinition.uri ?
             propertyDefinition.uri :
             propertyName;
-        return this._compactIRI(schema, uri);
+        return this.__compactIRI(schema, uri);
     };
-    DeltaCreator.prototype._getObjects = function (value, schema, definition) {
+    DeltaCreator.prototype.__getObjects = function (value, schema, definition) {
         var _a;
         var values = (Array.isArray(value) ?
             !definition || definition.containerType !== null ? value : value.slice(0, 1) :
-            [value]).filter(isValidValue);
+            [value]).filter(__isValidValue);
         if (definition && definition.containerType === ContainerType_1.ContainerType.LIST) {
-            if (!isValidValue(value))
+            if (!__isValidValue(value))
                 return [];
             var collection = new tokens_1.CollectionToken();
-            (_a = collection.objects).push.apply(_a, this._expandValues(values, schema, definition));
+            (_a = collection.objects).push.apply(_a, this.__expandValues(values, schema, definition));
             return [collection];
         }
         if (definition && definition.containerType === ContainerType_1.ContainerType.LANGUAGE) {
-            return this._expandLanguageMap(values, schema);
+            return this.__expandLanguageMap(values, schema);
         }
-        return this._expandValues(values, schema, definition);
+        return this.__expandValues(values, schema, definition);
     };
-    DeltaCreator.prototype._expandValues = function (values, schema, definition) {
+    DeltaCreator.prototype.__expandValues = function (values, schema, definition) {
         var _this = this;
         var areDefinedLiteral = definition && definition.literal !== null ? definition.literal : null;
         return values.map(function (value) {
             var isLiteral = areDefinedLiteral !== null ? areDefinedLiteral : !Pointer_1.Pointer.is(value);
             if (isLiteral)
-                return _this._expandLiteral(value, schema, definition);
-            return _this._expandPointer(value, schema);
-        }).filter(isValidValue);
+                return _this.__expandLiteral(value, schema, definition);
+            return _this.__expandPointer(value, schema);
+        }).filter(__isValidValue);
     };
-    DeltaCreator.prototype._expandLanguageMap = function (values, schema) {
+    DeltaCreator.prototype.__expandLanguageMap = function (values, schema) {
         var _this = this;
         if (!values.length)
             return [];
@@ -9014,32 +9014,32 @@ var DeltaCreator = (function () {
             var tempDefinition = new DigestedObjectSchemaProperty_1.DigestedObjectSchemaProperty();
             tempDefinition.language = key;
             tempDefinition.literalType = XSD_1.XSD.string;
-            return _this._expandLiteral(value, schema, tempDefinition);
-        }).filter(isValidValue);
+            return _this.__expandLiteral(value, schema, tempDefinition);
+        }).filter(__isValidValue);
     };
-    DeltaCreator.prototype._expandPointer = function (value, schema) {
+    DeltaCreator.prototype.__expandPointer = function (value, schema) {
         var id = Pointer_1.Pointer.is(value) ? value.$id : value;
         if (!Utils_2.isString(id))
             return null;
         return iri_1.isBNodeLabel(id) ?
             new tokens_1.BlankNodeToken(id) :
-            this._compactIRI(schema, id);
+            this.__compactIRI(schema, id);
     };
-    DeltaCreator.prototype._expandLiteral = function (value, schema, definition) {
+    DeltaCreator.prototype.__expandLiteral = function (value, schema, definition) {
         var type = definition && definition.literalType ?
             definition.literalType :
-            Utils_1.guessXSDType(value);
+            Utils_1._guessXSDType(value);
         if (!this.context.jsonldConverter.literalSerializers.has(type))
             return null;
         value = this.context.jsonldConverter.literalSerializers.get(type).serialize(value);
         var literal = new tokens_1.LiteralToken(value);
         if (type !== XSD_1.XSD.string)
-            literal.setType(this._compactIRI(schema, type));
+            literal.setType(this.__compactIRI(schema, type));
         if (definition && definition.language !== void 0)
             literal.setLanguage(definition.language);
         return literal;
     };
-    DeltaCreator.prototype._compactIRI = function (schema, iri) {
+    DeltaCreator.prototype.__compactIRI = function (schema, iri) {
         if (iri_1.isRelative(iri) && schema.vocab)
             iri = schema.vocab + iri;
         var matchPrefix = Array.from(schema.prefixes.entries())
@@ -9051,14 +9051,14 @@ var DeltaCreator = (function () {
             return new tokens_1.IRIToken(iri);
         return new tokens_1.PrefixedNameToken(matchPrefix[0], iri.substr(matchPrefix[1].length));
     };
-    DeltaCreator.prototype._addPrefixFrom = function (object, schema) {
+    DeltaCreator.prototype.__addPrefixFrom = function (object, schema) {
         var _this = this;
         if (object instanceof tokens_1.CollectionToken)
             return object.objects.forEach(function (collectionObject) {
-                _this._addPrefixFrom(collectionObject, schema);
+                _this.__addPrefixFrom(collectionObject, schema);
             });
         if (object instanceof tokens_1.LiteralToken)
-            return this._addPrefixFrom(object.type, schema);
+            return this.__addPrefixFrom(object.type, schema);
         if (!(object instanceof tokens_1.PrefixedNameToken))
             return;
         var namespace = object.namespace;
@@ -9070,7 +9070,7 @@ var DeltaCreator = (function () {
     return DeltaCreator;
 }());
 exports.DeltaCreator = DeltaCreator;
-function getArrayDelta(oldValues, newValues) {
+function __getArrayDelta(oldValues, newValues) {
     var objectMapper = function (object) { return ["" + object, object]; };
     var toAdd = new Map(newValues.map(objectMapper));
     var toDelete = new Map(oldValues.map(objectMapper));
@@ -9085,7 +9085,7 @@ function getArrayDelta(oldValues, newValues) {
         toDelete: Array.from(toDelete.values()),
     };
 }
-function getListDelta(oldValues, newValues) {
+function __getListDelta(oldValues, newValues) {
     var nodeMapper = function (object, index) { return ({
         identifier: "" + object,
         object: object,
@@ -9134,7 +9134,7 @@ function getListDelta(oldValues, newValues) {
     });
     return updates;
 }
-function isValidValue(value) {
+function __isValidValue(value) {
     return value !== null && value !== void 0;
 }
 
@@ -10043,7 +10043,7 @@ var MessagingService = (function () {
     };
     MessagingService.prototype.reconnect = function (onConnect, onError) {
         var _this = this;
-        if (onError === void 0) { onError = this._broadcastError.bind(this); }
+        if (onError === void 0) { onError = this.__broadcastError.bind(this); }
         if (!this._client)
             this._attempts = 0;
         else if (this._client.connected)
@@ -10067,7 +10067,7 @@ var MessagingService = (function () {
             if ("reason" in errorFrameOrEvent) {
                 if (canReconnect) {
                     if (++_this._attempts === 1)
-                        _this._saveSubscriptions();
+                        _this.__saveSubscriptions();
                     setTimeout(function () { return _this.reconnect(onConnect, onError); }, _this._options.reconnectDelay);
                     return;
                 }
@@ -10099,7 +10099,7 @@ var MessagingService = (function () {
             id: subscriptionID,
             errorCallback: onError,
         });
-        var subscribeTo = this._makeSubscription(subscriptionID, destination, onEvent, onError);
+        var subscribeTo = this.__makeSubscription(subscriptionID, destination, onEvent, onError);
         if (this._client.connected)
             return subscribeTo();
         this._subscriptionsQueue.push(subscribeTo);
@@ -10116,14 +10116,14 @@ var MessagingService = (function () {
             this._subscriptionsMap.delete(destination);
         this._client.unsubscribe(subscriptionID);
     };
-    MessagingService.prototype._broadcastError = function (error) {
+    MessagingService.prototype.__broadcastError = function (error) {
         if (!this._subscriptionsMap)
             return;
         this._subscriptionsMap.forEach(function (callbacksMap) { return callbacksMap.forEach(function (subscription) {
             subscription.errorCallback(error);
         }); });
     };
-    MessagingService.prototype._makeSubscription = function (id, destination, eventCallback, errorCallback) {
+    MessagingService.prototype.__makeSubscription = function (id, destination, eventCallback, errorCallback) {
         var _this = this;
         return function () { return _this._client.subscribe(destination, function (message) {
             new JSONLDParser_1.JSONLDParser()
@@ -10142,12 +10142,12 @@ var MessagingService = (function () {
                 .catch(errorCallback);
         }, { id: id }); };
     };
-    MessagingService.prototype._saveSubscriptions = function () {
+    MessagingService.prototype.__saveSubscriptions = function () {
         var _this = this;
         if (this._subscriptionsQueue.length || !this._subscriptionsMap)
             return;
         this._subscriptionsMap.forEach(function (callbackMap, destination) { return callbackMap.forEach(function (subscription, eventCallback) {
-            var subscribeTo = _this._makeSubscription(subscription.id, destination, eventCallback, subscription.errorCallback);
+            var subscribeTo = _this.__makeSubscription(subscription.id, destination, eventCallback, subscription.errorCallback);
             _this._subscriptionsQueue.push(subscribeTo);
         }); });
     };
@@ -11371,11 +11371,11 @@ var GlobalContext = (function (_super) {
         _this._baseURI = "";
         _this._generalObjectSchema = new DigestedObjectSchema_1.DigestedObjectSchema();
         _this.registry = GeneralRegistry_1.GeneralRegistry.createFrom({ $context: _this, __modelDecorator: RegisteredPointer_1.RegisteredPointer });
-        _this._registerDefaultObjectSchemas();
-        _this._registerDefaultDecorators();
+        _this.__registerDefaultObjectSchemas();
+        _this.__registerDefaultDecorators();
         return _this;
     }
-    GlobalContext.prototype._registerDefaultObjectSchemas = function () {
+    GlobalContext.prototype.__registerDefaultObjectSchemas = function () {
         this
             .extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA)
             .extendObjectSchema(PlatformMetadata_1.PlatformMetadata.TYPE, PlatformMetadata_1.PlatformMetadata.SCHEMA)
@@ -11401,7 +11401,7 @@ var GlobalContext = (function (_super) {
             .extendObjectSchema(MemberRemoved_1.MemberRemoved.TYPE, MemberRemoved_1.MemberRemoved.SCHEMA)
             .extendObjectSchema(MemberRemovedDetails_1.MemberRemovedDetails.TYPE, MemberRemovedDetails_1.MemberRemovedDetails.SCHEMA);
     };
-    GlobalContext.prototype._registerDefaultDecorators = function () {
+    GlobalContext.prototype.__registerDefaultDecorators = function () {
     };
     GlobalContext.instance = new GlobalContext();
     return GlobalContext;
@@ -11914,7 +11914,7 @@ var Vocabularies = __importStar(__webpack_require__(295));
 var CarbonLDP = (function (_super) {
     __extends(CarbonLDP, _super);
     function CarbonLDP(urlOrSettings) {
-        var _this = _super.call(this, getURLFrom(urlOrSettings)) || this;
+        var _this = _super.call(this, __getURLFrom(urlOrSettings)) || this;
         _this._settings = {
             vocabulary: "vocabularies/main/#",
             paths: {
@@ -11934,8 +11934,7 @@ var CarbonLDP = (function (_super) {
                 },
             },
         };
-        var settings = getSettingsFrom(urlOrSettings);
-        _this._extendsSettings(settings);
+        _this._extendsSettings(__getSettingsFrom(urlOrSettings));
         _this.documents = _this.registry.getPointer(_this._baseURI, true);
         return _this;
     }
@@ -11987,19 +11986,19 @@ var CarbonLDP = (function (_super) {
     return CarbonLDP;
 }(DocumentsContext_1.DocumentsContext));
 exports.CarbonLDP = CarbonLDP;
-function getURLFrom(urlOrSettings) {
+function __getURLFrom(urlOrSettings) {
     return Utils.isString(urlOrSettings) ?
-        getURLFromString(urlOrSettings) :
-        getURLFromSettings(urlOrSettings);
+        __getURLFromString(urlOrSettings) :
+        __getURLFromSettings(urlOrSettings);
 }
-function getURLFromString(url) {
+function __getURLFromString(url) {
     if (!RDF.URI.hasProtocol(url))
         throw new IllegalArgumentError_1.IllegalArgumentError("The URL must contain a valid protocol: \"http://\", \"https://\".");
     if (url.endsWith("/"))
         return url;
     return url + "/";
 }
-function getURLFromSettings(settings) {
+function __getURLFromSettings(settings) {
     if (!Utils.isString(settings.host))
         throw new IllegalArgumentError_1.IllegalArgumentError("The settings object must contains a valid host string.");
     if (iri_1.hasProtocol(settings.host))
@@ -12013,7 +12012,7 @@ function getURLFromSettings(settings) {
         return url;
     return url.slice(0, -1) + (":" + settings.port + "/");
 }
-function getSettingsFrom(urlOrSettings) {
+function __getSettingsFrom(urlOrSettings) {
     if (Utils.isString(urlOrSettings))
         return {};
     return Object.assign({}, urlOrSettings, { ssl: null, host: null, port: null });
@@ -13810,7 +13809,7 @@ var DocumentsContext = (function (_super) {
         _this.messaging = new MessagingService_1.MessagingService(_this);
         return _this;
     }
-    DocumentsContext._mergePaths = function (target, source) {
+    DocumentsContext.__mergePaths = function (target, source) {
         if (!source)
             return target;
         if (!target)
@@ -13845,7 +13844,7 @@ var DocumentsContext = (function (_super) {
             if (sourcePath.slug !== void 0)
                 targetDocPaths.slug = sourcePath.slug;
             if (sourcePath.paths !== void 0)
-                targetDocPaths.paths = DocumentsContext._mergePaths(targetDocPaths.paths, sourcePath.paths);
+                targetDocPaths.paths = DocumentsContext.__mergePaths(targetDocPaths.paths, sourcePath.paths);
         }
         return target;
     };
@@ -13869,7 +13868,7 @@ var DocumentsContext = (function (_super) {
         return this.resolve(url);
     };
     DocumentsContext.prototype._extendPaths = function (paths) {
-        this._settings.paths = DocumentsContext._mergePaths(this._settings.paths, paths);
+        this._settings.paths = DocumentsContext.__mergePaths(this._settings.paths, paths);
     };
     DocumentsContext.prototype._extendsSettings = function (settings) {
         this._extendPaths(settings.paths);
@@ -14058,7 +14057,7 @@ exports.EventEmitterDocumentsRepositoryTrait = {
     PROTOTYPE: {
         on: function (event, uriPattern, onEvent, onError) {
             try {
-                var destination = Utils_1.createDestination(event, uriPattern, this.$context.baseURI);
+                var destination = Utils_1._createDestination(event, uriPattern, this.$context.baseURI);
                 this.$context.messaging.subscribe(destination, onEvent, onError);
             }
             catch (error) {
@@ -14069,7 +14068,7 @@ exports.EventEmitterDocumentsRepositoryTrait = {
         },
         off: function (event, uriPattern, onEvent, onError) {
             try {
-                var destination = Utils_1.createDestination(event, uriPattern, this.$context.baseURI);
+                var destination = Utils_1._createDestination(event, uriPattern, this.$context.baseURI);
                 this.$context.messaging.unsubscribe(destination, onEvent);
             }
             catch (error) {
@@ -14081,7 +14080,7 @@ exports.EventEmitterDocumentsRepositoryTrait = {
         one: function (event, uriPattern, onEvent, onError) {
             var _this = this;
             try {
-                var destination_1 = Utils_1.createDestination(event, uriPattern, this.$context.baseURI);
+                var destination_1 = Utils_1._createDestination(event, uriPattern, this.$context.baseURI);
                 var onEventWrapper_1 = function (message) {
                     onEvent(message);
                     _this.$context.messaging.unsubscribe(destination_1, onEventWrapper_1);
@@ -14208,7 +14207,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
         .addObject(queryContext.getVariable(targetName))))
         .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
     var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
-    var triples = Utils_1.getAllTriples(constructPatterns);
+    var triples = Utils_1._getAllTriples(constructPatterns);
     construct.addTriple.apply(construct, triples);
     Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferResultsContext] }, requestOptions);
     return SPARQLService_1.SPARQLService
@@ -14286,8 +14285,8 @@ function __executeBuilder(repository, url, requestOptions, queryContext, targetP
         var _a = queryBuilder._orderData, path = _a.path, flow = _a.flow;
         var inverter = flow === "DESC" ? -1 : 1;
         return documents.sort(function (a, b) {
-            a = Utils_1.getPathProperty(a, path);
-            b = Utils_1.getPathProperty(b, path);
+            a = Utils_1._getPathProperty(a, path);
+            b = Utils_1._getPathProperty(b, path);
             var aValue = Pointer_1.Pointer.is(a) ? a.$id : a;
             var bValue = Pointer_1.Pointer.is(b) ? b.$id : b;
             if (aValue === bValue)
@@ -14296,7 +14295,7 @@ function __executeBuilder(repository, url, requestOptions, queryContext, targetP
                 return -1 * inverter;
             if (bValue === void 0)
                 return inverter;
-            if (!Utils_1.areDifferentType(a, b)) {
+            if (!Utils_1._areDifferentType(a, b)) {
                 if (Pointer_1.Pointer.is(a)) {
                     var aIsBNode = URI_1.URI.isBNodeID(aValue);
                     var bIsBNode = URI_1.URI.isBNodeID(bValue);
@@ -14351,14 +14350,14 @@ function __getQueryable(repository, uri, requestOptions, queryBuilderFn, target)
 }
 function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
     if (resource._queryableMetadata.schema === QueryableMetadata_1.QueryableMetadata.ALL) {
-        parentAdder.addPattern(Utils_1.createAllPattern(queryContext, parentName));
+        parentAdder.addPattern(Utils_1._createAllPattern(queryContext, parentName));
         return;
     }
-    parentAdder.addPattern(Utils_1.createTypesPattern(queryContext, parentName));
+    parentAdder.addPattern(Utils_1._createTypesPattern(queryContext, parentName));
     resource._queryableMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
         var _a;
         var path = parentName + "." + propertyName;
-        var propertyPattern = (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, Utils_1.createPropertyPatterns(queryContext, parentName, path, digestedProperty));
+        var propertyPattern = (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, Utils_1._createPropertyPatterns(queryContext, parentName, path, digestedProperty));
         parentAdder.addPattern(propertyPattern);
         var propertyValues = Array.isArray(resource[propertyName]) ? resource[propertyName] : [resource[propertyName]];
         var propertyFragment = propertyValues
@@ -14679,7 +14678,7 @@ var QueryDocumentsBuilder = (function (_super) {
             if (propertyPatternsPath)
                 propertyPattern.addPattern(propertyPatternsPath);
             propertyPatternsPath = propertyPattern;
-            propertyObj = this._context.getProperty(Utils_1.getParentPath(propertyObj.name));
+            propertyObj = this._context.getProperty(Utils_1._getParentPath(propertyObj.name));
         }
         this._orderData = orderData;
         select.addPattern(propertyPatternsPath);
@@ -15249,7 +15248,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = __webpack_require__(2);
 var GeneralRepository_1 = __webpack_require__(77);
 var ModelDecorator_1 = __webpack_require__(4);
-var Builder_1 = __webpack_require__(122);
+var SPARQLBuilder_1 = __webpack_require__(122);
 var SPARQLService_1 = __webpack_require__(80);
 var Utils_1 = __webpack_require__(27);
 exports.SPARQLDocumentsRepositoryTrait = {
@@ -15292,7 +15291,7 @@ exports.SPARQLDocumentsRepositoryTrait = {
                 throw new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope.");
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             var schema = this.$context.registry.getGeneralSchema();
-            var builder = new Builder_1.SPARQLBuilder(this, url)
+            var builder = new SPARQLBuilder_1.SPARQLBuilder(this, url)
                 .base(schema.base)
                 .vocab(schema.vocab);
             schema.prefixes.forEach(function (name, prefix) {

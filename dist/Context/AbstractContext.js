@@ -25,14 +25,14 @@ var AbstractContext = (function () {
         return URI_1.URI.resolve(this.baseURI, relativeURI);
     };
     AbstractContext.prototype.hasObjectSchema = function (type) {
-        type = this._resolveTypeURI(type);
+        type = this.__resolveTypeURI(type);
         if (this._typeObjectSchemaMap.has(type))
             return true;
         return !!this.parentContext && this.parentContext.hasObjectSchema(type);
     };
     AbstractContext.prototype.getObjectSchema = function (type) {
         if (!!type) {
-            type = this._resolveTypeURI(type);
+            type = this.__resolveTypeURI(type);
             if (this._typeObjectSchemaMap.has(type))
                 return this._typeObjectSchemaMap.get(type);
             if (this.parentContext && this.parentContext.hasObjectSchema(type))
@@ -58,10 +58,10 @@ var AbstractContext = (function () {
         objectSchema = objectSchema ? objectSchema : typeOrObjectSchema;
         var digestedSchema = ObjectSchemaDigester_1.ObjectSchemaDigester.digestSchema(objectSchema);
         if (!type) {
-            this._extendGeneralSchema(digestedSchema);
+            this.__extendGeneralSchema(digestedSchema);
         }
         else {
-            this._extendTypeSchema(digestedSchema, type);
+            this.__extendTypeSchema(digestedSchema, type);
         }
         return this;
     };
@@ -70,19 +70,19 @@ var AbstractContext = (function () {
             this._generalObjectSchema = this.parentContext ? null : new DigestedObjectSchema_1.DigestedObjectSchema();
         }
         else {
-            type = this._resolveTypeURI(type);
+            type = this.__resolveTypeURI(type);
             this._typeObjectSchemaMap.delete(type);
         }
     };
     AbstractContext.prototype._getTypeObjectSchemas = function () {
-        var types = this._getObjectSchemasTypes();
+        var types = this.__getObjectSchemasTypes();
         return types.map(this.getObjectSchema, this);
     };
-    AbstractContext.prototype._getObjectSchemasTypes = function () {
+    AbstractContext.prototype.__getObjectSchemasTypes = function () {
         var localTypes = Array.from(this._typeObjectSchemaMap.keys());
         if (!this._parentContext)
             return localTypes;
-        var allTypes = this._parentContext._getObjectSchemasTypes();
+        var allTypes = this._parentContext.__getObjectSchemasTypes();
         for (var _i = 0, localTypes_1 = localTypes; _i < localTypes_1.length; _i++) {
             var type = localTypes_1[_i];
             if (allTypes.indexOf(type) !== -1)
@@ -91,7 +91,7 @@ var AbstractContext = (function () {
         }
         return allTypes;
     };
-    AbstractContext.prototype._extendGeneralSchema = function (digestedSchema) {
+    AbstractContext.prototype.__extendGeneralSchema = function (digestedSchema) {
         var digestedSchemaToExtend;
         if (!!this._generalObjectSchema) {
             digestedSchemaToExtend = this._generalObjectSchema;
@@ -107,8 +107,8 @@ var AbstractContext = (function () {
             digestedSchema,
         ]);
     };
-    AbstractContext.prototype._extendTypeSchema = function (digestedSchema, type) {
-        type = this._resolveTypeURI(type);
+    AbstractContext.prototype.__extendTypeSchema = function (digestedSchema, type) {
+        type = this.__resolveTypeURI(type);
         var digestedSchemaToExtend;
         if (this._typeObjectSchemaMap.has(type)) {
             digestedSchemaToExtend = this._typeObjectSchemaMap.get(type);
@@ -125,7 +125,7 @@ var AbstractContext = (function () {
         ]);
         this._typeObjectSchemaMap.set(type, extendedDigestedSchema);
     };
-    AbstractContext.prototype._resolveTypeURI = function (uri) {
+    AbstractContext.prototype.__resolveTypeURI = function (uri) {
         return this.getObjectSchema()
             .resolveURI(uri, { vocab: true });
     };

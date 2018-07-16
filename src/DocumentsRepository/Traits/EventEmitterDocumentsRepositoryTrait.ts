@@ -11,7 +11,7 @@ import { Event } from "../../Messaging/Event";
 import { EventMessage } from "../../Messaging/EventMessage";
 import { MemberAdded } from "../../Messaging/MemberAdded";
 import { MemberRemoved } from "../../Messaging/MemberRemoved";
-import { createDestination } from "../../Messaging/Utils";
+import { _createDestination } from "../../Messaging/Utils";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
@@ -66,7 +66,7 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 	PROTOTYPE: {
 		on<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
 			try {
-				const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
+				const destination:string = _createDestination( event, uriPattern, this.$context.baseURI );
 				this.$context.messaging.subscribe( destination, onEvent, onError );
 
 			} catch( error ) {
@@ -77,7 +77,7 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 
 		off<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
 			try {
-				const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
+				const destination:string = _createDestination( event, uriPattern, this.$context.baseURI );
 				this.$context.messaging.unsubscribe( destination, onEvent );
 
 			} catch( error ) {
@@ -88,7 +88,7 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 
 		one<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
 			try {
-				const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
+				const destination:string = _createDestination( event, uriPattern, this.$context.baseURI );
 
 				const onEventWrapper:OnEvent<T> = message => {
 					onEvent( message );

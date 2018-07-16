@@ -33,7 +33,7 @@ export function createMockDigestedSchemaProperty( values?:Partial<DigestedObject
 
 export function createMockQueryableMetadata( schema:ObjectSchema = {} ):QueryableMetadata {
 	const digestedSchema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( schema );
-	digestedSchema.properties.forEach( definition => ObjectSchemaUtils.resolveProperty( digestedSchema, definition, true ) );
+	digestedSchema.properties.forEach( definition => ObjectSchemaUtils._resolveProperty( digestedSchema, definition, true ) );
 	return new QueryableMetadata( digestedSchema );
 }
 

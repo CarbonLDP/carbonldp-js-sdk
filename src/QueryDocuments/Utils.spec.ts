@@ -28,7 +28,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		expect( Utils ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( method( INSTANCE, "getLevelRegExp" ), ():void => {
+	describe( method( INSTANCE, "_getLevelRegExp" ), ():void => {
 
 		it( hasSignature(
 			"Creates a regex to match child properties by name since an specific property",
@@ -40,35 +40,35 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		} );
 
 		it( "should exists", ():void => {
-			expect( Utils.getLevelRegExp ).toBeDefined();
-			expect( Utils.getLevelRegExp ).toEqual( jasmine.any( Function ) );
+			expect( Utils._getLevelRegExp ).toBeDefined();
+			expect( Utils._getLevelRegExp ).toEqual( jasmine.any( Function ) );
 		} );
 
 		it( "should create a regex for no property level", ():void => {
-			const regex:RegExp = Utils.getLevelRegExp( "" );
+			const regex:RegExp = Utils._getLevelRegExp( "" );
 			expect( regex ).toEqual( /^[^.]+$/ );
 		} );
 
 		it( "should create a regex for a specific property level", ():void => {
-			const documentLevel:RegExp = Utils.getLevelRegExp( "document" );
+			const documentLevel:RegExp = Utils._getLevelRegExp( "document" );
 			expect( documentLevel ).toEqual( /^document\.[^.]+$/ );
 
-			const propertyLevel:RegExp = Utils.getLevelRegExp( "property" );
+			const propertyLevel:RegExp = Utils._getLevelRegExp( "property" );
 			expect( propertyLevel ).toEqual( /^property\.[^.]+$/ );
 		} );
 
 		it( "should create a regex for a specific sub property level", ():void => {
-			const subPropertyLevel:RegExp = Utils.getLevelRegExp( "property.sub-property" );
+			const subPropertyLevel:RegExp = Utils._getLevelRegExp( "property.sub-property" );
 			expect( subPropertyLevel ).toEqual( /^property\.sub-property\.[^.]+$/ );
 
-			const subSubPropertyLevel:RegExp = Utils.getLevelRegExp( "property.sub-property.sub-sub-property" );
+			const subSubPropertyLevel:RegExp = Utils._getLevelRegExp( "property.sub-property.sub-sub-property" );
 			expect( subSubPropertyLevel ).toEqual( /^property\.sub-property\.sub-sub-property\.[^.]+$/ );
 		} );
 
 	} );
 
 
-	describe( method( INSTANCE, "createPropertyPatterns" ), ():void => {
+	describe( method( INSTANCE, "_createPropertyPatterns" ), ():void => {
 
 		it( hasSignature(
 			"Creates the base patterns for a query property.",
@@ -83,8 +83,8 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		} );
 
 		it( "should exists", ():void => {
-			expect( Utils.createPropertyPatterns ).toBeDefined();
-			expect( Utils.createPropertyPatterns ).toEqual( jasmine.any( Function ) );
+			expect( Utils._createPropertyPatterns ).toBeDefined();
+			expect( Utils._createPropertyPatterns ).toEqual( jasmine.any( Function ) );
 		} );
 
 
@@ -94,7 +94,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		} );
 
 		it( "should return a subject pattern", () => {
-			const patterns:PatternToken[] = Utils.createPropertyPatterns(
+			const patterns:PatternToken[] = Utils._createPropertyPatterns(
 				context,
 				"resource",
 				"property",
@@ -128,7 +128,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		} );
 
 		it( "should return a filter datatype when definition specified a literal type", () => {
-			const patterns:PatternToken[] = Utils.createPropertyPatterns(
+			const patterns:PatternToken[] = Utils._createPropertyPatterns(
 				context,
 				"resource",
 				"property",
@@ -150,7 +150,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		} );
 
 		it( "should return a filter not literals when definition specified a pointer type", () => {
-			const patterns:PatternToken[] = Utils.createPropertyPatterns(
+			const patterns:PatternToken[] = Utils._createPropertyPatterns(
 				context,
 				"resource",
 				"property",
@@ -173,7 +173,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 	} );
 
-	describe( method( INSTANCE, "createTypesPattern" ), ():void => {
+	describe( method( INSTANCE, "_createTypesPattern" ), ():void => {
 
 		it( hasSignature(
 			"Creates the pattern to query the types of a property/resource",
@@ -186,8 +186,8 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		} );
 
 		it( "should exists", ():void => {
-			expect( Utils.createTypesPattern ).toBeDefined();
-			expect( Utils.createTypesPattern ).toEqual( jasmine.any( Function ) );
+			expect( Utils._createTypesPattern ).toBeDefined();
+			expect( Utils._createTypesPattern ).toEqual( jasmine.any( Function ) );
 		} );
 
 
@@ -197,7 +197,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		} );
 
 		it( "should return a pattern token for types", () => {
-			const pattern:PatternToken = Utils.createTypesPattern( context, "resource" );
+			const pattern:PatternToken = Utils._createTypesPattern( context, "resource" );
 			expect<any>( pattern ).toEqual( jasmine.objectContaining( {
 				token: "optional" as "optional",
 				patterns: [
@@ -226,7 +226,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 	} );
 
-	describe( method( INSTANCE, "createGraphPattern" ), ():void => {
+	describe( method( INSTANCE, "_createGraphPattern" ), ():void => {
 
 		it( hasSignature(
 			"Creates the graph pattern of a complete query.",
@@ -239,8 +239,8 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		} );
 
 		it( "should exists", ():void => {
-			expect( Utils.createTypesPattern ).toBeDefined();
-			expect( Utils.createTypesPattern ).toEqual( jasmine.any( Function ) );
+			expect( Utils._createTypesPattern ).toBeDefined();
+			expect( Utils._createTypesPattern ).toEqual( jasmine.any( Function ) );
 		} );
 
 
@@ -250,7 +250,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		} );
 
 		it( "should return a pattern token for the resource", () => {
-			const pattern:PatternToken = Utils.createGraphPattern( context, "resource" );
+			const pattern:PatternToken = Utils._createGraphPattern( context, "resource" );
 			expect<any>( pattern ).toEqual( jasmine.objectContaining( {
 				token: "graph" as "graph",
 				graph: jasmine.objectContaining( {
@@ -286,7 +286,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 	} );
 
-	describe( method( INSTANCE, "createAllPattern" ), ():void => {
+	describe( method( INSTANCE, "_createAllPattern" ), ():void => {
 
 		it( hasSignature(
 			"Creates the pattern of return the all the properties of a resource (only the first level).",
@@ -298,8 +298,8 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		), ():void => {} );
 
 		it( "should exists", ():void => {
-			expect( Utils.createAllPattern ).toBeDefined();
-			expect( Utils.createAllPattern ).toEqual( jasmine.any( Function ) );
+			expect( Utils._createAllPattern ).toBeDefined();
+			expect( Utils._createAllPattern ).toEqual( jasmine.any( Function ) );
 		} );
 
 
@@ -309,7 +309,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		} );
 
 		it( "should return a pattern token for the resource", () => {
-			const pattern:PatternToken = Utils.createAllPattern( context, "resource" );
+			const pattern:PatternToken = Utils._createAllPattern( context, "resource" );
 			expect<any>( pattern ).toEqual( jasmine.objectContaining( {
 				token: "subject" as "subject",
 				subject: jasmine.objectContaining( {
@@ -337,7 +337,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 	} );
 
 
-	describe( method( INSTANCE, "getParentPath" ), ():void => {
+	describe( method( INSTANCE, "_getParentPath" ), ():void => {
 
 		it( hasSignature(
 			"Returns the path for the immediately parent for the one provided.",
@@ -348,30 +348,30 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		), ():void => {} );
 
 		it( "should exists", ():void => {
-			expect( Utils.getParentPath ).toBeDefined();
-			expect( Utils.getParentPath ).toEqual( jasmine.any( Function ) );
+			expect( Utils._getParentPath ).toBeDefined();
+			expect( Utils._getParentPath ).toEqual( jasmine.any( Function ) );
 		} );
 
 
 		it( "should return empty when no parent", () => {
-			const path:string = Utils.getParentPath( "resource" );
+			const path:string = Utils._getParentPath( "resource" );
 			expect( path ).toBe( "" );
 		} );
 
 		it( "should return the parent path when only one parent", () => {
-			const path:string = Utils.getParentPath( "parent.resource" );
+			const path:string = Utils._getParentPath( "parent.resource" );
 			expect( path ).toBe( "parent" );
 		} );
 
 		it( "should return the parent path when more that one parent", () => {
-			const path:string = Utils.getParentPath( "parent3.parent2.parent1.resource" );
+			const path:string = Utils._getParentPath( "parent3.parent2.parent1.resource" );
 			expect( path ).toBe( "parent3.parent2.parent1" );
 		} );
 
 	} );
 
 
-	describe( method( INSTANCE, "getAllTriples" ), () => {
+	describe( method( INSTANCE, "_getAllTriples" ), () => {
 
 		it( hasSignature(
 			"Search and return all the triples variables (compacted in same subject) in all the levels of the patterns provided.",
@@ -382,8 +382,8 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		), ():void => {} );
 
 		it( "should exists", ():void => {
-			expect( Utils.getAllTriples ).toBeDefined();
-			expect( Utils.getAllTriples ).toEqual( jasmine.any( Function ) );
+			expect( Utils._getAllTriples ).toBeDefined();
+			expect( Utils._getAllTriples ).toEqual( jasmine.any( Function ) );
 		} );
 
 
@@ -395,7 +395,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [] );
 		} );
 
@@ -407,7 +407,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
 				new SubjectToken( new IRIToken( "https://example.com/" ) )
 					.addPredicate( new PredicateToken( "a" )
@@ -428,7 +428,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
 				new SubjectToken( new IRIToken( "https://example.com/" ) )
 					.addPredicate( new PredicateToken( "a" )
@@ -452,7 +452,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
 				new SubjectToken( new IRIToken( "https://example.com/" ) )
 					.addPredicate( new PredicateToken( "a" )
@@ -482,7 +482,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
 				new SubjectToken( new IRIToken( "https://example.com/" ) )
 					.addPredicate( new PredicateToken( "a" )
@@ -509,7 +509,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
 				new SubjectToken( new IRIToken( "https://example.com/" ) )
 					.addPredicate( new PredicateToken( "a" )
@@ -539,7 +539,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
 				new SubjectToken( new IRIToken( "https://example.com/" ) )
 					.addPredicate( new PredicateToken( "a" )
@@ -577,7 +577,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
 				new SubjectToken( new IRIToken( "https://example.com/" ) )
 					.addPredicate( new PredicateToken( "a" )
@@ -619,7 +619,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
 				new SubjectToken( new IRIToken( "https://example.com/" ) )
 					.addPredicate( new PredicateToken( "a" )
@@ -653,7 +653,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
 				new SubjectToken( new IRIToken( "https://example.com/" ) )
 					.addPredicate( new PredicateToken( "a" )
@@ -679,7 +679,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
 				new SubjectToken( new IRIToken( "https://example.com/" ) )
 					.addPredicate( new PredicateToken( new VariableToken( "predicates" ) )
@@ -714,7 +714,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					),
 			];
 
-			const returned:PatternToken[] = Utils.getAllTriples( patterns );
+			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
 				new SubjectToken( new IRIToken( "https://example.com/" ) )
 					.addPredicate( new PredicateToken( new VariableToken( "predicates" ) )
@@ -726,7 +726,7 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 	} );
 
 
-	describe( method( INSTANCE, "getPathProperty" ), () => {
+	describe( method( INSTANCE, "_getPathProperty" ), () => {
 
 		it( hasSignature(
 			"Search and returns the property value indicated by the specified path inside the element provided.",
@@ -738,47 +738,47 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		), ():void => {} );
 
 		it( "should exists", ():void => {
-			expect( Utils.getPathProperty ).toBeDefined();
-			expect( Utils.getPathProperty ).toEqual( jasmine.any( Function ) );
+			expect( Utils._getPathProperty ).toBeDefined();
+			expect( Utils._getPathProperty ).toEqual( jasmine.any( Function ) );
 		} );
 
 
 		it( "should return element when empty path", () => {
 			const element:{} = { the: "object" };
-			const returned:{} = Utils.getPathProperty( element, "" );
+			const returned:{} = Utils._getPathProperty( element, "" );
 
 			expect( returned ).toBe( element );
 		} );
 
 		it( "should return undefined when undefined element", () => {
-			const returned:undefined = Utils.getPathProperty( void 0, "path" );
+			const returned:undefined = Utils._getPathProperty( void 0, "path" );
 			expect( returned ).toBeUndefined();
 		} );
 
 
 		it( "should return the property specified by one level path", () => {
-			const returned:any = Utils.getPathProperty( { path: "value" }, "path" );
+			const returned:any = Utils._getPathProperty( { path: "value" }, "path" );
 			expect( returned ).toBe( "value" );
 		} );
 
 		it( "should return undefined when no property by one level path", () => {
-			const returned:any = Utils.getPathProperty( {}, "path" );
+			const returned:any = Utils._getPathProperty( {}, "path" );
 			expect( returned ).toBeUndefined();
 		} );
 
 		it( "should return the property specified by two level path", () => {
-			const returned:any = Utils.getPathProperty( { path1: { path2: "value" } }, "path1.path2" );
+			const returned:any = Utils._getPathProperty( { path1: { path2: "value" } }, "path1.path2" );
 			expect( returned ).toBe( "value" );
 		} );
 
 		it( "should return undefined when no property by two level path", () => {
-			const returned:any = Utils.getPathProperty( { path1: {} }, "path1.path2" );
+			const returned:any = Utils._getPathProperty( { path1: {} }, "path1.path2" );
 			expect( returned ).toBeUndefined();
 		} );
 
 	} );
 
-	describe( method( INSTANCE, "areDifferentType" ), () => {
+	describe( method( INSTANCE, "_areDifferentType" ), () => {
 
 		it( hasSignature(
 			"Returns true if the two elements provided can be classified as different type, simulating basic comparision in the SPARQL language",
@@ -790,66 +790,66 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		), ():void => {} );
 
 		it( "should exists", ():void => {
-			expect( Utils.areDifferentType ).toBeDefined();
-			expect( Utils.areDifferentType ).toEqual( jasmine.any( Function ) );
+			expect( Utils._areDifferentType ).toBeDefined();
+			expect( Utils._areDifferentType ).toEqual( jasmine.any( Function ) );
 		} );
 
 
 		it( "should return true when number and string", () => {
-			expect( Utils.areDifferentType( 1, "" ) ).toBe( true );
-			expect( Utils.areDifferentType( "", 2 ) ).toBe( true );
+			expect( Utils._areDifferentType( 1, "" ) ).toBe( true );
+			expect( Utils._areDifferentType( "", 2 ) ).toBe( true );
 		} );
 
 		it( "should return true when number and boolean", () => {
-			expect( Utils.areDifferentType( 1, true ) ).toBe( true );
-			expect( Utils.areDifferentType( true, 2.2 ) ).toBe( true );
+			expect( Utils._areDifferentType( 1, true ) ).toBe( true );
+			expect( Utils._areDifferentType( true, 2.2 ) ).toBe( true );
 		} );
 
 		it( "should return true when number and object", () => {
-			expect( Utils.areDifferentType( 1, {} ) ).toBe( true );
-			expect( Utils.areDifferentType( {}, 2.2 ) ).toBe( true );
+			expect( Utils._areDifferentType( 1, {} ) ).toBe( true );
+			expect( Utils._areDifferentType( {}, 2.2 ) ).toBe( true );
 		} );
 
 		it( "should return true when string and boolean", () => {
-			expect( Utils.areDifferentType( "", true ) ).toBe( true );
-			expect( Utils.areDifferentType( false, "" ) ).toBe( true );
+			expect( Utils._areDifferentType( "", true ) ).toBe( true );
+			expect( Utils._areDifferentType( false, "" ) ).toBe( true );
 		} );
 
 		it( "should return true when string and object", () => {
-			expect( Utils.areDifferentType( "", {} ) ).toBe( true );
-			expect( Utils.areDifferentType( {}, "" ) ).toBe( true );
+			expect( Utils._areDifferentType( "", {} ) ).toBe( true );
+			expect( Utils._areDifferentType( {}, "" ) ).toBe( true );
 		} );
 
 		it( "should return true when boolean and object", () => {
-			expect( Utils.areDifferentType( true, {} ) ).toBe( true );
-			expect( Utils.areDifferentType( {}, false ) ).toBe( true );
+			expect( Utils._areDifferentType( true, {} ) ).toBe( true );
+			expect( Utils._areDifferentType( {}, false ) ).toBe( true );
 		} );
 
 
 		it( "should return false when both number", () => {
-			expect( Utils.areDifferentType( 1, 2.2 ) ).toBe( false );
+			expect( Utils._areDifferentType( 1, 2.2 ) ).toBe( false );
 		} );
 
 		it( "should return false when both string", () => {
-			expect( Utils.areDifferentType( "string1", "string2" ) ).toBe( false );
+			expect( Utils._areDifferentType( "string1", "string2" ) ).toBe( false );
 		} );
 
 		it( "should return false when both boolean", () => {
-			expect( Utils.areDifferentType( false, false ) ).toBe( false );
+			expect( Utils._areDifferentType( false, false ) ).toBe( false );
 		} );
 
 
 		it( "should return false when both object", () => {
-			expect( Utils.areDifferentType( {}, {} ) ).toBe( false );
+			expect( Utils._areDifferentType( {}, {} ) ).toBe( false );
 		} );
 
 		it( "should return true when object & Date", () => {
-			expect( Utils.areDifferentType( {}, new Date() ) ).toBe( true );
-			expect( Utils.areDifferentType( new Date(), {} ) ).toBe( true );
+			expect( Utils._areDifferentType( {}, new Date() ) ).toBe( true );
+			expect( Utils._areDifferentType( new Date(), {} ) ).toBe( true );
 		} );
 
 		it( "should return false when both Date", () => {
-			expect( Utils.areDifferentType( new Date(), new Date() ) ).toBe( false );
+			expect( Utils._areDifferentType( new Date(), new Date() ) ).toBe( false );
 		} );
 
 	} );

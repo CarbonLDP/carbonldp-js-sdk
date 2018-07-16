@@ -6,8 +6,8 @@ import { TransientAccessPoint } from "./AccessPoint/TransientAccessPoint";
 import { CarbonLDPSettings } from "./CarbonLDPSettings";
 
 import { AbstractContext } from "./Context/AbstractContext";
-import { ContextSettings } from "./Context/ContextSettings";
 import { DocumentsContext } from "./Context/DocumentsContext";
+import { DocumentsContextSettings } from "./Context/DocumentsContextSettings";
 import { GlobalContext } from "./Context/GlobalContext";
 
 import { Document } from "./Document/Document";
@@ -89,7 +89,7 @@ export class CarbonLDP extends DocumentsContext {
 	constructor( url:string );
 	constructor( settings:CarbonLDPSettings );
 	constructor( urlOrSettings:string | CarbonLDPSettings ) {
-		super( getURLFrom( urlOrSettings ) );
+		super( __getURLFrom( urlOrSettings ) );
 
 		this._settings = {
 			vocabulary: "vocabularies/main/#",
@@ -110,8 +110,7 @@ export class CarbonLDP extends DocumentsContext {
 				},
 			},
 		};
-		const settings:ContextSettings = getSettingsFrom( urlOrSettings );
-		this._extendsSettings( settings );
+		this._extendsSettings( __getSettingsFrom( urlOrSettings ) );
 
 		// Root document
 		this.documents = this.registry.getPointer( this._baseURI, true );
@@ -130,14 +129,14 @@ export class CarbonLDP extends DocumentsContext {
 }
 
 
-function getURLFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):string {
+function __getURLFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):string {
 	return Utils.isString( urlOrSettings ) ?
-		getURLFromString( urlOrSettings ) :
-		getURLFromSettings( urlOrSettings )
+		__getURLFromString( urlOrSettings ) :
+		__getURLFromSettings( urlOrSettings )
 		;
 }
 
-function getURLFromString( this:void, url:string ):string {
+function __getURLFromString( this:void, url:string ):string {
 	if( ! RDF.URI.hasProtocol( url ) )
 		throw new IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
 
@@ -145,7 +144,7 @@ function getURLFromString( this:void, url:string ):string {
 	return url + "/";
 }
 
-function getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
+function __getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
 	if( ! Utils.isString( settings.host ) )
 		throw new IllegalArgumentError( `The settings object must contains a valid host string.` );
 
@@ -164,7 +163,7 @@ function getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
 }
 
 
-function getSettingsFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):ContextSettings {
+function __getSettingsFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):DocumentsContextSettings {
 	if( Utils.isString( urlOrSettings ) ) return {};
 	return Object.assign( {}, urlOrSettings, { ssl: null, host: null, port: null } );
 }

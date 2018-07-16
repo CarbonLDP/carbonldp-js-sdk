@@ -4,9 +4,9 @@ var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var DigestedObjectSchema_1 = require("../ObjectSchema/DigestedObjectSchema");
 var QueryableMetadata = (function () {
     function QueryableMetadata(schema, previousPartial) {
-        this.schema = this.mergeSchemas(previousPartial ? previousPartial.schema : new DigestedObjectSchema_1.DigestedObjectSchema(), schema);
+        this.schema = this.__mergeSchemas(previousPartial ? previousPartial.schema : new DigestedObjectSchema_1.DigestedObjectSchema(), schema);
     }
-    QueryableMetadata.prototype.mergeSchemas = function (oldSchema, newSchema) {
+    QueryableMetadata.prototype.__mergeSchemas = function (oldSchema, newSchema) {
         if (newSchema === QueryableMetadata.ALL || oldSchema === QueryableMetadata.ALL)
             return QueryableMetadata.ALL;
         newSchema.prefixes.forEach(function (newURI, namespace) {

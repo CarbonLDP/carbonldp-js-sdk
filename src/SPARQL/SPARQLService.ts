@@ -58,7 +58,7 @@ export class SPARQLService {
 						if( ! bindingColumn.hasOwnProperty( bindingRow ) ) continue;
 
 						let bindingCell:SPARQLRawBindingProperty = bindingColumn[ bindingRow ];
-						binding[ bindingRow ] = SPARQLService.parseRawBindingProperty( bindingCell, pointerLibrary );
+						binding[ bindingRow ] = SPARQLService.__parseRawBindingProperty( bindingCell, pointerLibrary );
 					}
 					bindings.push( binding );
 				}
@@ -98,7 +98,7 @@ export class SPARQLService {
 		return RequestService.post( url, updateQuery, options );
 	}
 
-	private static parseRawBindingProperty( rawBindingProperty:SPARQLRawBindingProperty, pointerLibrary:PointerLibrary ):any {
+	private static __parseRawBindingProperty( rawBindingProperty:SPARQLRawBindingProperty, pointerLibrary:PointerLibrary ):any {
 		switch( rawBindingProperty.type ) {
 			case "uri":
 				return pointerLibrary.getPointer( rawBindingProperty.value );

@@ -2,12 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var URI_1 = require("../RDF/URI");
-function validateEventType(event) {
+function _validateEventType(event) {
     if (!/(access-point|child|\*)\.(created|\*)|(document|\*)\.(modified|deleted|\*)|(member|\*)\.(added|removed|\*)/.test(event))
         throw new IllegalArgumentError_1.IllegalArgumentError("Provided event type \"" + event + "\" is invalid.");
 }
-exports.validateEventType = validateEventType;
-function parseURIPattern(uriPattern, baseURI) {
+exports._validateEventType = _validateEventType;
+function _parseURIPattern(uriPattern, baseURI) {
     if (!URI_1.URI.isBaseOf(baseURI, uriPattern))
         throw new IllegalArgumentError_1.IllegalArgumentError("\"" + uriPattern + "\" is out of scope.");
     if (uriPattern === "/")
@@ -23,12 +23,12 @@ function parseURIPattern(uriPattern, baseURI) {
             .replace(/\./g, "^");
     }).join(".");
 }
-exports.parseURIPattern = parseURIPattern;
-function createDestination(event, uriPattern, baseURI) {
-    validateEventType(event);
-    uriPattern = parseURIPattern(uriPattern, baseURI);
+exports._parseURIPattern = _parseURIPattern;
+function _createDestination(event, uriPattern, baseURI) {
+    _validateEventType(event);
+    uriPattern = _parseURIPattern(uriPattern, baseURI);
     return "/topic/" + event + (uriPattern ? "." + uriPattern : uriPattern);
 }
-exports.createDestination = createDestination;
+exports._createDestination = _createDestination;
 
 //# sourceMappingURL=Utils.js.map

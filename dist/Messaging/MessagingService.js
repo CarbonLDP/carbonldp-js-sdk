@@ -51,7 +51,7 @@ var MessagingService = (function () {
     };
     MessagingService.prototype.reconnect = function (onConnect, onError) {
         var _this = this;
-        if (onError === void 0) { onError = this._broadcastError.bind(this); }
+        if (onError === void 0) { onError = this.__broadcastError.bind(this); }
         if (!this._client)
             this._attempts = 0;
         else if (this._client.connected)
@@ -75,7 +75,7 @@ var MessagingService = (function () {
             if ("reason" in errorFrameOrEvent) {
                 if (canReconnect) {
                     if (++_this._attempts === 1)
-                        _this._saveSubscriptions();
+                        _this.__saveSubscriptions();
                     setTimeout(function () { return _this.reconnect(onConnect, onError); }, _this._options.reconnectDelay);
                     return;
                 }
@@ -107,7 +107,7 @@ var MessagingService = (function () {
             id: subscriptionID,
             errorCallback: onError,
         });
-        var subscribeTo = this._makeSubscription(subscriptionID, destination, onEvent, onError);
+        var subscribeTo = this.__makeSubscription(subscriptionID, destination, onEvent, onError);
         if (this._client.connected)
             return subscribeTo();
         this._subscriptionsQueue.push(subscribeTo);
@@ -124,14 +124,14 @@ var MessagingService = (function () {
             this._subscriptionsMap.delete(destination);
         this._client.unsubscribe(subscriptionID);
     };
-    MessagingService.prototype._broadcastError = function (error) {
+    MessagingService.prototype.__broadcastError = function (error) {
         if (!this._subscriptionsMap)
             return;
         this._subscriptionsMap.forEach(function (callbacksMap) { return callbacksMap.forEach(function (subscription) {
             subscription.errorCallback(error);
         }); });
     };
-    MessagingService.prototype._makeSubscription = function (id, destination, eventCallback, errorCallback) {
+    MessagingService.prototype.__makeSubscription = function (id, destination, eventCallback, errorCallback) {
         var _this = this;
         return function () { return _this._client.subscribe(destination, function (message) {
             new JSONLDParser_1.JSONLDParser()
@@ -150,12 +150,12 @@ var MessagingService = (function () {
                 .catch(errorCallback);
         }, { id: id }); };
     };
-    MessagingService.prototype._saveSubscriptions = function () {
+    MessagingService.prototype.__saveSubscriptions = function () {
         var _this = this;
         if (this._subscriptionsQueue.length || !this._subscriptionsMap)
             return;
         this._subscriptionsMap.forEach(function (callbackMap, destination) { return callbackMap.forEach(function (subscription, eventCallback) {
-            var subscribeTo = _this._makeSubscription(subscription.id, destination, eventCallback, subscription.errorCallback);
+            var subscribeTo = _this.__makeSubscription(subscription.id, destination, eventCallback, subscription.errorCallback);
             _this._subscriptionsQueue.push(subscribeTo);
         }); });
     };

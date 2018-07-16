@@ -11,10 +11,10 @@ export class QueryableMetadata {
 	readonly schema:DigestedObjectSchema;
 
 	constructor( schema:DigestedObjectSchema, previousPartial?:QueryableMetadata ) {
-		this.schema = this.mergeSchemas( previousPartial ? previousPartial.schema : new DigestedObjectSchema(), schema );
+		this.schema = this.__mergeSchemas( previousPartial ? previousPartial.schema : new DigestedObjectSchema(), schema );
 	}
 
-	private mergeSchemas( oldSchema:DigestedObjectSchema, newSchema:DigestedObjectSchema ):DigestedObjectSchema {
+	private __mergeSchemas( oldSchema:DigestedObjectSchema, newSchema:DigestedObjectSchema ):DigestedObjectSchema {
 		if( newSchema === QueryableMetadata.ALL || oldSchema === QueryableMetadata.ALL ) return QueryableMetadata.ALL;
 
 		newSchema.prefixes.forEach( ( newURI, namespace ) => {

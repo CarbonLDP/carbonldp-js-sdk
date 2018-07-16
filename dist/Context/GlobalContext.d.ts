@@ -7,6 +7,6 @@ export declare class GlobalContext extends AbstractContext<RegisteredPointer, un
     readonly repository: undefined;
     protected _baseURI: "";
     private constructor();
-    private _registerDefaultObjectSchemas;
-    private _registerDefaultDecorators;
+    private __registerDefaultObjectSchemas;
+    private __registerDefaultDecorators;
 }

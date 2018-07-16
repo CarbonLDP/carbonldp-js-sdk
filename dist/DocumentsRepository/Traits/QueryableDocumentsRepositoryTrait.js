@@ -40,7 +40,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
         .addObject(queryContext.getVariable(targetName))))
         .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
     var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
-    var triples = Utils_1.getAllTriples(constructPatterns);
+    var triples = Utils_1._getAllTriples(constructPatterns);
     construct.addTriple.apply(construct, triples);
     Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferResultsContext] }, requestOptions);
     return SPARQLService_1.SPARQLService
@@ -118,8 +118,8 @@ function __executeBuilder(repository, url, requestOptions, queryContext, targetP
         var _a = queryBuilder._orderData, path = _a.path, flow = _a.flow;
         var inverter = flow === "DESC" ? -1 : 1;
         return documents.sort(function (a, b) {
-            a = Utils_1.getPathProperty(a, path);
-            b = Utils_1.getPathProperty(b, path);
+            a = Utils_1._getPathProperty(a, path);
+            b = Utils_1._getPathProperty(b, path);
             var aValue = Pointer_1.Pointer.is(a) ? a.$id : a;
             var bValue = Pointer_1.Pointer.is(b) ? b.$id : b;
             if (aValue === bValue)
@@ -128,7 +128,7 @@ function __executeBuilder(repository, url, requestOptions, queryContext, targetP
                 return -1 * inverter;
             if (bValue === void 0)
                 return inverter;
-            if (!Utils_1.areDifferentType(a, b)) {
+            if (!Utils_1._areDifferentType(a, b)) {
                 if (Pointer_1.Pointer.is(a)) {
                     var aIsBNode = URI_1.URI.isBNodeID(aValue);
                     var bIsBNode = URI_1.URI.isBNodeID(bValue);
@@ -183,14 +183,14 @@ function __getQueryable(repository, uri, requestOptions, queryBuilderFn, target)
 }
 function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
     if (resource._queryableMetadata.schema === QueryableMetadata_1.QueryableMetadata.ALL) {
-        parentAdder.addPattern(Utils_1.createAllPattern(queryContext, parentName));
+        parentAdder.addPattern(Utils_1._createAllPattern(queryContext, parentName));
         return;
     }
-    parentAdder.addPattern(Utils_1.createTypesPattern(queryContext, parentName));
+    parentAdder.addPattern(Utils_1._createTypesPattern(queryContext, parentName));
     resource._queryableMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
         var _a;
         var path = parentName + "." + propertyName;
-        var propertyPattern = (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, Utils_1.createPropertyPatterns(queryContext, parentName, path, digestedProperty));
+        var propertyPattern = (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, Utils_1._createPropertyPatterns(queryContext, parentName, path, digestedProperty));
         parentAdder.addPattern(propertyPattern);
         var propertyValues = Array.isArray(resource[propertyName]) ? resource[propertyName] : [resource[propertyName]];
         var propertyFragment = propertyValues

@@ -21,7 +21,7 @@ var UnknownError_1 = require("./Errors/UnknownError");
 var Header_1 = require("./Header");
 var HTTPMethod_1 = require("./HTTPMethod");
 var Response_1 = require("./Response");
-function onResolve(resolve, reject, response) {
+function __onResolve(resolve, reject, response) {
     if (response.status >= 200 && response.status <= 299) {
         resolve(response);
     }
@@ -31,7 +31,7 @@ function onResolve(resolve, reject, response) {
         reject(new (index_1.statusCodeMap.get(response.status))(response.data, response));
     }
 }
-function sendWithBrowser(method, url, body, options) {
+function __sendWithBrowser(method, url, body, options) {
     return new Promise(function (resolve, reject) {
         var request = options.request ? options.request : new XMLHttpRequest();
         request.open(method, url, true);
@@ -43,7 +43,7 @@ function sendWithBrowser(method, url, body, options) {
             request.timeout = options.timeout;
         request.onload = request.onerror = function () {
             var response = new Response_1.Response(request);
-            onResolve(resolve, reject, response);
+            __onResolve(resolve, reject, response);
         };
         if (body) {
             request.send(body);
@@ -53,7 +53,7 @@ function sendWithBrowser(method, url, body, options) {
         }
     });
 }
-function sendWithNode(method, url, body, options) {
+function __sendWithNode(method, url, body, options) {
     return new Promise(function (resolve, reject) {
         function returnResponse(request, res) {
             var rawData = [];
@@ -64,7 +64,7 @@ function sendWithNode(method, url, body, options) {
             }).on("end", function () {
                 var data = Buffer.concat(rawData).toString("utf8");
                 var response = new Response_1.Response(request, data, res);
-                onResolve(resolve, reject, response);
+                __onResolve(resolve, reject, response);
             });
         }
         var numberOfRedirects = 0;
@@ -94,19 +94,19 @@ function sendWithNode(method, url, body, options) {
             });
             request.on("error", function (error) {
                 var response = new Response_1.Response(request, error.message);
-                onResolve(resolve, reject, response);
+                __onResolve(resolve, reject, response);
             });
             request.end(body);
         }
         sendRequestWithRedirect(url);
     });
 }
-function sendRequest(method, url, body, options) {
+function __sendRequest(method, url, body, options) {
     return typeof XMLHttpRequest !== "undefined" ?
-        sendWithBrowser(method, url, body, options) :
-        sendWithNode(method, url, body, options);
+        __sendWithBrowser(method, url, body, options) :
+        __sendWithNode(method, url, body, options);
 }
-function isBody(data) {
+function __isBody(data) {
     return Utils_1.isString(data)
         || typeof Blob !== "undefined" && data instanceof Blob
         || typeof Buffer !== "undefined" && data instanceof Buffer;
@@ -122,7 +122,7 @@ var RequestService = (function () {
         var body = null;
         var options = Utils_1.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
         parser = Utils_1.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
-        if (isBody(bodyOrOptions)) {
+        if (__isBody(bodyOrOptions)) {
             body = bodyOrOptions;
         }
         else {
@@ -131,10 +131,10 @@ var RequestService = (function () {
         options = Object.assign({}, RequestService.defaultOptions, options);
         if (Utils_1.isNumber(method))
             method = HTTPMethod_1.HTTPMethod[method];
-        var requestPromise = sendRequest(method, url, body, options)
+        var requestPromise = __sendRequest(method, url, body, options)
             .then(function (response) {
             if (method === "GET" && options.headers)
-                return _this._handleGETResponse(url, options, response);
+                return _this.__handleGETResponse(url, options, response);
             else
                 return response;
         });
@@ -183,25 +183,25 @@ var RequestService = (function () {
         if (parser === void 0) { parser = null; }
         return RequestService.send(HTTPMethod_1.HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser);
     };
-    RequestService._handleGETResponse = function (url, requestOptions, response) {
+    RequestService.__handleGETResponse = function (url, requestOptions, response) {
         var _this = this;
         return Promise.resolve()
             .then(function () {
-            if (_this._contentTypeIsAccepted(requestOptions, response))
+            if (_this.__contentTypeIsAccepted(requestOptions, response))
                 return response;
-            _this._setNoCacheHeaders(requestOptions);
-            if (!_this._isChromiumAgent())
-                _this._setFalseETag(requestOptions);
-            return sendRequest("GET", url, null, requestOptions)
+            _this.__setNoCacheHeaders(requestOptions);
+            if (!_this.__isChromiumAgent())
+                _this.__setFalseETag(requestOptions);
+            return __sendRequest("GET", url, null, requestOptions)
                 .then(function (noCachedResponse) {
-                if (!_this._contentTypeIsAccepted(requestOptions, response)) {
+                if (!_this.__contentTypeIsAccepted(requestOptions, response)) {
                     throw new BadResponseError_1.BadResponseError("The server responded with an unacceptable Content-Type", response);
                 }
                 return noCachedResponse;
             });
         });
     };
-    RequestService._contentTypeIsAccepted = function (requestOptions, response) {
+    RequestService.__contentTypeIsAccepted = function (requestOptions, response) {
         var accepts = requestOptions.headers.has("accept") ?
             requestOptions.headers.get("accept").values :
             [];
@@ -210,15 +210,15 @@ var RequestService = (function () {
             null;
         return !contentType || accepts.some(contentType.hasValue, contentType);
     };
-    RequestService._setNoCacheHeaders = function (requestOptions) {
+    RequestService.__setNoCacheHeaders = function (requestOptions) {
         requestOptions.headers
             .set("pragma", new Header_1.Header("no-cache"))
             .set("cache-control", new Header_1.Header("no-cache, max-age=0"));
     };
-    RequestService._isChromiumAgent = function () {
-        return typeof window !== "undefined" && !window["chrome"];
+    RequestService.__isChromiumAgent = function () {
+        return typeof window !== "undefined" && !!window["chrome"];
     };
-    RequestService._setFalseETag = function (requestOptions) {
+    RequestService.__setFalseETag = function (requestOptions) {
         requestOptions.headers.set("if-none-match", new Header_1.Header());
     };
     RequestService.defaultOptions = {

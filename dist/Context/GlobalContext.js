@@ -44,11 +44,11 @@ var GlobalContext = (function (_super) {
         _this._baseURI = "";
         _this._generalObjectSchema = new DigestedObjectSchema_1.DigestedObjectSchema();
         _this.registry = GeneralRegistry_1.GeneralRegistry.createFrom({ $context: _this, __modelDecorator: RegisteredPointer_1.RegisteredPointer });
-        _this._registerDefaultObjectSchemas();
-        _this._registerDefaultDecorators();
+        _this.__registerDefaultObjectSchemas();
+        _this.__registerDefaultDecorators();
         return _this;
     }
-    GlobalContext.prototype._registerDefaultObjectSchemas = function () {
+    GlobalContext.prototype.__registerDefaultObjectSchemas = function () {
         this
             .extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA)
             .extendObjectSchema(PlatformMetadata_1.PlatformMetadata.TYPE, PlatformMetadata_1.PlatformMetadata.SCHEMA)
@@ -74,7 +74,7 @@ var GlobalContext = (function (_super) {
             .extendObjectSchema(MemberRemoved_1.MemberRemoved.TYPE, MemberRemoved_1.MemberRemoved.SCHEMA)
             .extendObjectSchema(MemberRemovedDetails_1.MemberRemovedDetails.TYPE, MemberRemovedDetails_1.MemberRemovedDetails.SCHEMA);
     };
-    GlobalContext.prototype._registerDefaultDecorators = function () {
+    GlobalContext.prototype.__registerDefaultDecorators = function () {
     };
     GlobalContext.instance = new GlobalContext();
     return GlobalContext;

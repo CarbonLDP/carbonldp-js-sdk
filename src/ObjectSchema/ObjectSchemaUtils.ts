@@ -5,7 +5,7 @@ import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";
 
 
 export class ObjectSchemaUtils {
-	static resolveProperty( schema:DigestedObjectSchema, definition:DigestedObjectSchemaProperty, inSame?:boolean ):DigestedObjectSchemaProperty {
+	static _resolveProperty( schema:DigestedObjectSchema, definition:DigestedObjectSchemaProperty, inSame?:boolean ):DigestedObjectSchemaProperty {
 		const uri:string = definition.uri;
 		const type:string = definition.literalType;
 

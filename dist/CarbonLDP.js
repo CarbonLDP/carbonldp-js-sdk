@@ -51,7 +51,7 @@ var Vocabularies = __importStar(require("./Vocabularies"));
 var CarbonLDP = (function (_super) {
     __extends(CarbonLDP, _super);
     function CarbonLDP(urlOrSettings) {
-        var _this = _super.call(this, getURLFrom(urlOrSettings)) || this;
+        var _this = _super.call(this, __getURLFrom(urlOrSettings)) || this;
         _this._settings = {
             vocabulary: "vocabularies/main/#",
             paths: {
@@ -71,8 +71,7 @@ var CarbonLDP = (function (_super) {
                 },
             },
         };
-        var settings = getSettingsFrom(urlOrSettings);
-        _this._extendsSettings(settings);
+        _this._extendsSettings(__getSettingsFrom(urlOrSettings));
         _this.documents = _this.registry.getPointer(_this._baseURI, true);
         return _this;
     }
@@ -124,19 +123,19 @@ var CarbonLDP = (function (_super) {
     return CarbonLDP;
 }(DocumentsContext_1.DocumentsContext));
 exports.CarbonLDP = CarbonLDP;
-function getURLFrom(urlOrSettings) {
+function __getURLFrom(urlOrSettings) {
     return Utils.isString(urlOrSettings) ?
-        getURLFromString(urlOrSettings) :
-        getURLFromSettings(urlOrSettings);
+        __getURLFromString(urlOrSettings) :
+        __getURLFromSettings(urlOrSettings);
 }
-function getURLFromString(url) {
+function __getURLFromString(url) {
     if (!RDF.URI.hasProtocol(url))
         throw new IllegalArgumentError_1.IllegalArgumentError("The URL must contain a valid protocol: \"http://\", \"https://\".");
     if (url.endsWith("/"))
         return url;
     return url + "/";
 }
-function getURLFromSettings(settings) {
+function __getURLFromSettings(settings) {
     if (!Utils.isString(settings.host))
         throw new IllegalArgumentError_1.IllegalArgumentError("The settings object must contains a valid host string.");
     if (iri_1.hasProtocol(settings.host))
@@ -150,7 +149,7 @@ function getURLFromSettings(settings) {
         return url;
     return url.slice(0, -1) + (":" + settings.port + "/");
 }
-function getSettingsFrom(urlOrSettings) {
+function __getSettingsFrom(urlOrSettings) {
     if (Utils.isString(urlOrSettings))
         return {};
     return Object.assign({}, urlOrSettings, { ssl: null, host: null, port: null });

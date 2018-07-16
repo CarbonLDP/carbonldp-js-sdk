@@ -19,8 +19,8 @@ import {
 	OBLIGATORY,
 } from "../test/JasmineExtender";
 
-import * as Builder from "./Builder";
-import { FinishSPARQLSelect, SPARQLBuilder } from "./Builder";
+import * as Builder from "./SPARQLBuilder";
+import { FinishSPARQLSelect, SPARQLBuilder } from "./SPARQLBuilder";
 import { SPARQLSelectResults } from "./SelectResults";
 
 

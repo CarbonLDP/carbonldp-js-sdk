@@ -2,14 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var Utils_1 = require("../Utils");
-function getLevelRegExp(property) {
+function _getLevelRegExp(property) {
     if (property)
         property += ".";
     var parsedName = property.replace(/\./g, "\\.");
     return new RegExp("^" + parsedName + "[^.]+$");
 }
-exports.getLevelRegExp = getLevelRegExp;
-function createPropertyPatterns(context, resourcePath, propertyPath, propertyDefinition) {
+exports._getLevelRegExp = _getLevelRegExp;
+function _createPropertyPatterns(context, resourcePath, propertyPath, propertyDefinition) {
     var uri = propertyDefinition.uri, literalType = propertyDefinition.literalType, pointerType = propertyDefinition.pointerType;
     var propertyIRI = context.compactIRI(uri);
     var resource = context.getVariable(resourcePath);
@@ -26,51 +26,51 @@ function createPropertyPatterns(context, resourcePath, propertyPath, propertyDef
             .push(new tokens_1.FilterToken("! isLiteral( " + propertyObject + " )"));
     return propertyPatterns;
 }
-exports.createPropertyPatterns = createPropertyPatterns;
-function createTypesPattern(context, resourcePath) {
+exports._createPropertyPatterns = _createPropertyPatterns;
+function _createTypesPattern(context, resourcePath) {
     return new tokens_1.OptionalToken()
         .addPattern(new tokens_1.SubjectToken(context.getVariable(resourcePath))
         .addPredicate(new tokens_1.PredicateToken("a")
         .addObject(context.getVariable(resourcePath + ".types"))));
 }
-exports.createTypesPattern = createTypesPattern;
-function createGraphPattern(context, resourcePath) {
+exports._createTypesPattern = _createTypesPattern;
+function _createGraphPattern(context, resourcePath) {
     return new tokens_1.GraphToken(context.getVariable(resourcePath))
         .addPattern(new tokens_1.SubjectToken(context.getVariable(resourcePath + "._subject"))
         .addPredicate(new tokens_1.PredicateToken(context.getVariable(resourcePath + "._predicate"))
         .addObject(context.getVariable(resourcePath + "._object"))));
 }
-exports.createGraphPattern = createGraphPattern;
-function createAllPattern(context, resourcePath) {
+exports._createGraphPattern = _createGraphPattern;
+function _createAllPattern(context, resourcePath) {
     return new tokens_1.SubjectToken(context.getVariable(resourcePath))
         .addPredicate(new tokens_1.PredicateToken(context.getVariable(resourcePath + "._predicate"))
         .addObject(context.getVariable(resourcePath + "._object")));
 }
-exports.createAllPattern = createAllPattern;
-function getParentPath(path) {
+exports._createAllPattern = _createAllPattern;
+function _getParentPath(path) {
     return path
         .split(".")
         .slice(0, -1)
         .join(".");
 }
-exports.getParentPath = getParentPath;
-function getAllTriples(patterns) {
+exports._getParentPath = _getParentPath;
+function _getAllTriples(patterns) {
     var subjectsMap = new Map();
-    internalTripleAdder(subjectsMap, patterns);
+    __internalTripleAdder(subjectsMap, patterns);
     return Array.from(subjectsMap.values());
 }
-exports.getAllTriples = getAllTriples;
-function isFullTriple(triple) {
+exports._getAllTriples = _getAllTriples;
+function __isFullTriple(triple) {
     return triple
         .predicates
         .map(function (x) { return x.predicate; })
         .some(function (x) { return Utils_1.isObject(x) && x.token === "variable"; });
 }
-function internalTripleAdder(subjectsMap, patterns) {
+function __internalTripleAdder(subjectsMap, patterns) {
     patterns.forEach(function (pattern) {
         var _a;
         if (pattern.token === "optional" || pattern.token === "graph")
-            return internalTripleAdder(subjectsMap, pattern.patterns);
+            return __internalTripleAdder(subjectsMap, pattern.patterns);
         if (pattern.token !== "subject")
             return;
         var valid = pattern.predicates
@@ -78,15 +78,15 @@ function internalTripleAdder(subjectsMap, patterns) {
             .some(function (objects) { return objects.some(function (object) { return object.token === "variable"; }); });
         if (!valid)
             return;
-        var subject = getSubject(subjectsMap, pattern);
-        if (isFullTriple(subject))
+        var subject = __getSubject(subjectsMap, pattern);
+        if (__isFullTriple(subject))
             return;
-        if (isFullTriple(pattern))
+        if (__isFullTriple(pattern))
             subject.predicates.length = 0;
         (_a = subject.predicates).push.apply(_a, pattern.predicates);
     });
 }
-function getSubject(subjectsMap, original) {
+function __getSubject(subjectsMap, original) {
     var subjectStr = original.subject.toString();
     if (subjectsMap.has(subjectStr))
         return subjectsMap.get(subjectStr);
@@ -94,22 +94,22 @@ function getSubject(subjectsMap, original) {
     subjectsMap.set(subjectStr, subject);
     return subject;
 }
-function getPathProperty(element, path) {
+function _getPathProperty(element, path) {
     if (element === void 0 || !path)
         return element;
     var _a = path.split("."), propName = _a[0], restParts = _a.slice(1);
     var property = element[propName];
     var restPath = restParts.join(".");
-    return getPathProperty(property, restPath);
+    return _getPathProperty(property, restPath);
 }
-exports.getPathProperty = getPathProperty;
-function areDifferentType(a, b) {
+exports._getPathProperty = _getPathProperty;
+function _areDifferentType(a, b) {
     if (typeof a !== typeof b)
         return true;
     if (typeof a === "object")
         return a instanceof Date !== b instanceof Date;
     return false;
 }
-exports.areDifferentType = areDifferentType;
+exports._areDifferentType = _areDifferentType;
 
 //# sourceMappingURL=Utils.js.map

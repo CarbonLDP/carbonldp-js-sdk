@@ -5,7 +5,7 @@ import { IllegalStateError } from "../Errors/IllegalStateError";
 
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import { QueryProperty } from "./QueryProperty";
-import { getParentPath } from "./Utils";
+import { _getParentPath } from "./Utils";
 
 
 export interface QueryDocumentsBuilderOrderData {
@@ -55,7 +55,7 @@ export class QueryDocumentsBuilder extends QueryDocumentBuilder {
 			if( propertyPatternsPath ) propertyPattern.addPattern( propertyPatternsPath );
 			propertyPatternsPath = propertyPattern;
 
-			propertyObj = this._context.getProperty( getParentPath( propertyObj.name ) );
+			propertyObj = this._context.getProperty( _getParentPath( propertyObj.name ) );
 		}
 
 		this._orderData = orderData;

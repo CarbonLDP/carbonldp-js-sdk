@@ -27,7 +27,7 @@ import { QueryProperty, QueryPropertyType } from "./QueryProperty";
 import { QuerySchema } from "./QuerySchema";
 import { QuerySchemaProperty } from "./QuerySchemaProperty";
 import { QueryValue } from "./QueryValue";
-import { createPropertyPatterns, getParentPath } from "./Utils";
+import { _createPropertyPatterns, _getParentPath } from "./Utils";
 
 
 const INHERIT:Readonly<{}> = Object.freeze( {} );
@@ -68,7 +68,7 @@ export class QueryDocumentBuilder {
 
 			if( this._context.hasProperty( fullPath ) ) return this._context.getProperty( fullPath );
 
-			const directPath:string = getParentPath( fullPath );
+			const directPath:string = _getParentPath( fullPath );
 			if( this._context.hasProperty( directPath ) ) {
 				const direct:QueryProperty = this._context.getProperty( directPath );
 				const directType:QueryPropertyType = direct.getType();
@@ -78,7 +78,7 @@ export class QueryDocumentBuilder {
 				}
 			}
 
-			parent = getParentPath( parent );
+			parent = _getParentPath( parent );
 		}
 
 		throw new IllegalArgumentError( `The "${ name }" property was not declared.` );
@@ -152,7 +152,7 @@ export class QueryDocumentBuilder {
 		while( property.isOptional() ) {
 			property.setOptional( false );
 
-			const parentPath:string = getParentPath( property.name );
+			const parentPath:string = _getParentPath( property.name );
 			property = this._context.getProperty( parentPath );
 		}
 
@@ -160,12 +160,12 @@ export class QueryDocumentBuilder {
 	}
 
 	_addProperty( propertyName:string, propertyDefinition:QuerySchemaProperty ):QueryProperty {
-		const digestedDefinition:DigestedObjectSchemaProperty = this.addPropertyDefinition( propertyName, propertyDefinition );
+		const digestedDefinition:DigestedObjectSchemaProperty = this.__addPropertyDefinition( propertyName, propertyDefinition );
 		const name:string = `${ this._document.name }.${ propertyName }`;
 
 		const property:QueryProperty = this._context
 			.addProperty( name )
-			.addPattern( ...createPropertyPatterns(
+			.addPattern( ..._createPropertyPatterns(
 				this._context,
 				this._document.name,
 				name,
@@ -187,7 +187,7 @@ export class QueryDocumentBuilder {
 		return property;
 	}
 
-	private addPropertyDefinition( propertyName:string, propertyDefinition:ObjectSchemaProperty ):DigestedObjectSchemaProperty {
+	private __addPropertyDefinition( propertyName:string, propertyDefinition:ObjectSchemaProperty ):DigestedObjectSchemaProperty {
 		const digestedDefinition:DigestedObjectSchemaProperty = ObjectSchemaDigester.digestProperty( propertyName, propertyDefinition, this._schema );
 
 		const uri:string = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;

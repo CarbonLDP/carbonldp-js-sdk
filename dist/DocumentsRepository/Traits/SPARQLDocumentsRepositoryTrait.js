@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
 var GeneralRepository_1 = require("../../GeneralRepository/GeneralRepository");
 var ModelDecorator_1 = require("../../Model/ModelDecorator");
-var Builder_1 = require("../../SPARQL/Builder");
+var SPARQLBuilder_1 = require("../../SPARQL/SPARQLBuilder");
 var SPARQLService_1 = require("../../SPARQL/SPARQLService");
 var Utils_1 = require("../Utils");
 exports.SPARQLDocumentsRepositoryTrait = {
@@ -46,7 +46,7 @@ exports.SPARQLDocumentsRepositoryTrait = {
                 throw new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope.");
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             var schema = this.$context.registry.getGeneralSchema();
-            var builder = new Builder_1.SPARQLBuilder(this, url)
+            var builder = new SPARQLBuilder_1.SPARQLBuilder(this, url)
                 .base(schema.base)
                 .vocab(schema.vocab);
             schema.prefixes.forEach(function (name, prefix) {

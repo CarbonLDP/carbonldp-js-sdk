@@ -31,12 +31,12 @@ var JSONLDCompacter = (function () {
             if (documentNodes.length > 1)
                 throw new IllegalArgumentError_1.IllegalArgumentError("The RDFDocument \"" + rdfDocument["@id"] + "\" contains multiple document resources.");
             var documentNode = documentNodes[0];
-            var targetDocument = _this._getResource(documentNode, _this.registry);
+            var targetDocument = _this.__getResource(documentNode, _this.registry);
             var currentFragments = targetDocument
                 .getPointers(true)
                 .map(function (pointer) { return pointer.$id; });
             var newFragments = fragmentNodes
-                .map(function (fragmentNode) { return _this._getResource(fragmentNode, targetDocument); })
+                .map(function (fragmentNode) { return _this.__getResource(fragmentNode, targetDocument); })
                 .map(function (fragment) { return fragment.$id; });
             var newFragmentsSet = new Set(newFragments);
             currentFragments
@@ -53,7 +53,7 @@ var JSONLDCompacter = (function () {
             return compactionNode.resource;
         });
         while (compactionQueue.length) {
-            this._processCompactionQueue(compactionQueue);
+            this.__processCompactionQueue(compactionQueue);
             this.compactionMap.forEach(function (node, key, map) {
                 if (node.processed)
                     map.delete(key);
@@ -71,9 +71,9 @@ var JSONLDCompacter = (function () {
         });
         return mainCompactedDocuments;
     };
-    JSONLDCompacter.prototype._compactNode = function (node, resource, containerLibrary, path) {
+    JSONLDCompacter.prototype.__compactNode = function (node, resource, containerLibrary, path) {
         var schema = this.resolver.getSchemaFor(node, path);
-        var isPartial = this._setOrRemovePartial(resource, schema, path);
+        var isPartial = this.__setOrRemovePartial(resource, schema, path);
         var compactedData = this.converter.compact(node, {}, schema, containerLibrary, isPartial);
         var addedProperties = [];
         new Set(Object.keys(resource).concat(Object.keys(compactedData))).forEach(function (key) {
@@ -95,7 +95,7 @@ var JSONLDCompacter = (function () {
         return addedProperties
             .filter(function (x) { return schema.properties.has(x); });
     };
-    JSONLDCompacter.prototype._getResource = function (node, registry) {
+    JSONLDCompacter.prototype.__getResource = function (node, registry) {
         var resource = registry.getPointer(node["@id"], true);
         if (Registry_1.Registry.isDecorated(resource))
             registry = resource;
@@ -103,7 +103,7 @@ var JSONLDCompacter = (function () {
             .set(resource.$id, { paths: [], node: node, resource: resource, registry: registry });
         return resource;
     };
-    JSONLDCompacter.prototype._processCompactionQueue = function (compactionQueue) {
+    JSONLDCompacter.prototype.__processCompactionQueue = function (compactionQueue) {
         while (compactionQueue.length) {
             var targetNode = compactionQueue.shift();
             if (!this.compactionMap.has(targetNode))
@@ -111,7 +111,7 @@ var JSONLDCompacter = (function () {
             var compactionNode = this.compactionMap.get(targetNode);
             compactionNode.processed = true;
             var targetPath = compactionNode.paths.shift();
-            var addedProperties = this._compactNode(compactionNode.node, compactionNode.resource, compactionNode.registry, targetPath);
+            var addedProperties = this.__compactNode(compactionNode.node, compactionNode.resource, compactionNode.registry, targetPath);
             for (var _i = 0, addedProperties_1 = addedProperties; _i < addedProperties_1.length; _i++) {
                 var propertyName = addedProperties_1[_i];
                 if (!compactionNode.resource.hasOwnProperty(propertyName))
@@ -135,14 +135,14 @@ var JSONLDCompacter = (function () {
             }
         }
     };
-    JSONLDCompacter.prototype._setOrRemovePartial = function (resource, schema, path) {
-        if (this._willBePartial(resource, schema, path))
+    JSONLDCompacter.prototype.__setOrRemovePartial = function (resource, schema, path) {
+        if (this.__willBePartial(resource, schema, path))
             return true;
         if (resource._queryableMetadata)
             resource._queryableMetadata = void 0;
         return false;
     };
-    JSONLDCompacter.prototype._willBePartial = function (resource, schema, path) {
+    JSONLDCompacter.prototype.__willBePartial = function (resource, schema, path) {
         if (this.resolver instanceof QueryContextPartial_1.QueryContextPartial)
             return true;
         if (!(this.resolver instanceof QueryContextBuilder_1.QueryContextBuilder))

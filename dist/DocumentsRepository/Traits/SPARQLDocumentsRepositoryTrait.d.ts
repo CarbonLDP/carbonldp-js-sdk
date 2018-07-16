@@ -5,7 +5,7 @@ import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 import { RequestOptions } from "../../HTTP/Request";
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
-import { FinishSPARQLSelect } from "../../SPARQL/Builder";
+import { FinishSPARQLSelect } from "../../SPARQL/SPARQLBuilder";
 import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";

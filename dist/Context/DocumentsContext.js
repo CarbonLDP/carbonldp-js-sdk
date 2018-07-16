@@ -28,7 +28,7 @@ var DocumentsContext = (function (_super) {
         _this.messaging = new MessagingService_1.MessagingService(_this);
         return _this;
     }
-    DocumentsContext._mergePaths = function (target, source) {
+    DocumentsContext.__mergePaths = function (target, source) {
         if (!source)
             return target;
         if (!target)
@@ -63,7 +63,7 @@ var DocumentsContext = (function (_super) {
             if (sourcePath.slug !== void 0)
                 targetDocPaths.slug = sourcePath.slug;
             if (sourcePath.paths !== void 0)
-                targetDocPaths.paths = DocumentsContext._mergePaths(targetDocPaths.paths, sourcePath.paths);
+                targetDocPaths.paths = DocumentsContext.__mergePaths(targetDocPaths.paths, sourcePath.paths);
         }
         return target;
     };
@@ -87,7 +87,7 @@ var DocumentsContext = (function (_super) {
         return this.resolve(url);
     };
     DocumentsContext.prototype._extendPaths = function (paths) {
-        this._settings.paths = DocumentsContext._mergePaths(this._settings.paths, paths);
+        this._settings.paths = DocumentsContext.__mergePaths(this._settings.paths, paths);
     };
     DocumentsContext.prototype._extendsSettings = function (settings) {
         this._extendPaths(settings.paths);

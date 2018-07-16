@@ -21,7 +21,7 @@ import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { Pointer } from "../../Pointer/Pointer";
 
-import { FinishSPARQLSelect } from "../../SPARQL/Builder";
+import { FinishSPARQLSelect } from "../../SPARQL/SPARQLBuilder";
 import { SPARQLService } from "../../SPARQL/SPARQLService";
 
 import {

@@ -11,7 +11,7 @@ import { URI } from "../../RDF/URI";
 
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 
-import { FinishSPARQLSelect } from "../../SPARQL/Builder";
+import { FinishSPARQLSelect } from "../../SPARQL/SPARQLBuilder";
 import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
 
 import { isObject } from "../../Utils";

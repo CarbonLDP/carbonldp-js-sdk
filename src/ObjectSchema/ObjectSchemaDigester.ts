@@ -88,7 +88,7 @@ export class ObjectSchemaDigester {
 		}
 
 		return digestedSchema ?
-			ObjectSchemaUtils.resolveProperty( digestedSchema, digestedDefinition, true ) :
+			ObjectSchemaUtils._resolveProperty( digestedSchema, digestedDefinition, true ) :
 			digestedDefinition;
 	}
 

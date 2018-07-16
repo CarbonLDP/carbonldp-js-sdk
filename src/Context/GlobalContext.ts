@@ -49,12 +49,12 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined,
 		this._generalObjectSchema = new DigestedObjectSchema();
 		this.registry = GeneralRegistry.createFrom( { $context: this, __modelDecorator: RegisteredPointer } );
 
-		this._registerDefaultObjectSchemas();
-		this._registerDefaultDecorators();
+		this.__registerDefaultObjectSchemas();
+		this.__registerDefaultDecorators();
 	}
 
 
-	private _registerDefaultObjectSchemas():void {
+	private __registerDefaultObjectSchemas():void {
 		this
 			.extendObjectSchema( Document.TYPE, Document.SCHEMA )
 
@@ -88,6 +88,6 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined,
 		;
 	}
 
-	private _registerDefaultDecorators():void {
+	private __registerDefaultDecorators():void {
 	}
 }

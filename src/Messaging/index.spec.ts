@@ -16,7 +16,7 @@ import { MemberRemoved, MemberRemovedFactory } from "./MemberRemoved";
 import { MemberRemovedDetails, MemberRemovedDetailsFactory } from "./MemberRemovedDetails";
 import { MessagingOptions } from "./MessagingOptions";
 import { MessagingService } from "./MessagingService";
-import { createDestination, parseURIPattern, validateEventType } from "./Utils";
+import { _createDestination, _parseURIPattern, _validateEventType } from "./Utils";
 
 
 describe( module( "carbonldp/Messaging" ), ():void => {
@@ -256,8 +256,8 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 		"validateEventType",
 		"carbonldp/Messaging/Utils#validateEventType"
 	), ():void => {
-		expect( Messaging.validateEventType ).toBeDefined();
-		expect( Messaging.validateEventType ).toBe( validateEventType );
+		expect( Messaging._validateEventType ).toBeDefined();
+		expect( Messaging._validateEventType ).toBe( _validateEventType );
 	} );
 
 	it( reexports(
@@ -265,8 +265,8 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 		"parseURIPattern",
 		"carbonldp/Messaging/Utils#parseURIPattern"
 	), ():void => {
-		expect( Messaging.parseURIPattern ).toBeDefined();
-		expect( Messaging.parseURIPattern ).toBe( parseURIPattern );
+		expect( Messaging._parseURIPattern ).toBeDefined();
+		expect( Messaging._parseURIPattern ).toBe( _parseURIPattern );
 	} );
 
 	it( reexports(
@@ -274,8 +274,8 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 		"createDestination",
 		"carbonldp/Messaging/Utils#createDestination"
 	), ():void => {
-		expect( Messaging.createDestination ).toBeDefined();
-		expect( Messaging.createDestination ).toBe( createDestination );
+		expect( Messaging._createDestination ).toBeDefined();
+		expect( Messaging._createDestination ).toBe( _createDestination );
 	} );
 
 } );

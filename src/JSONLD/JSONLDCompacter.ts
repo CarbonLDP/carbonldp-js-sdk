@@ -65,7 +65,7 @@ export class JSONLDCompacter {
 			if( documentNodes.length > 1 ) throw new IllegalArgumentError( `The RDFDocument "${ rdfDocument[ "@id" ] }" contains multiple document resources.` );
 			const documentNode:RDFNode = documentNodes[ 0 ];
 
-			const targetDocument:Document = this._getResource( documentNode, this.registry );
+			const targetDocument:Document = this.__getResource( documentNode, this.registry );
 
 			const currentFragments:string[] = targetDocument
 				.getPointers( true )
@@ -73,7 +73,7 @@ export class JSONLDCompacter {
 			;
 
 			const newFragments:string[] = fragmentNodes
-				.map( fragmentNode => this._getResource( fragmentNode, targetDocument ) )
+				.map( fragmentNode => this.__getResource( fragmentNode, targetDocument ) )
 				.map( fragment => fragment.$id )
 			;
 
@@ -96,7 +96,7 @@ export class JSONLDCompacter {
 			} );
 
 		while( compactionQueue.length ) {
-			this._processCompactionQueue( compactionQueue );
+			this.__processCompactionQueue( compactionQueue );
 
 			this.compactionMap.forEach( ( node, key, map ) => {
 				if( node.processed ) map.delete( key );
@@ -119,10 +119,10 @@ export class JSONLDCompacter {
 	}
 
 
-	private _compactNode( node:RDFNode, resource:QueryablePointer, containerLibrary:PointerLibrary, path:string ):string[] {
+	private __compactNode( node:RDFNode, resource:QueryablePointer, containerLibrary:PointerLibrary, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
 
-		const isPartial:boolean = this._setOrRemovePartial( resource, schema, path );
+		const isPartial:boolean = this.__setOrRemovePartial( resource, schema, path );
 
 		const compactedData:object = this.converter.compact( node, {}, schema, containerLibrary, isPartial );
 
@@ -153,7 +153,7 @@ export class JSONLDCompacter {
 			;
 	}
 
-	private _getResource<M extends QueryablePointer & RegisteredPointer>( node:RDFNode, registry:Registry<M> ):M {
+	private __getResource<M extends QueryablePointer & RegisteredPointer>( node:RDFNode, registry:Registry<M> ):M {
 		const resource:M = registry.getPointer( node[ "@id" ], true );
 
 		if( Registry.isDecorated( resource ) ) registry = resource;
@@ -164,7 +164,7 @@ export class JSONLDCompacter {
 		return resource;
 	}
 
-	private _processCompactionQueue( compactionQueue:string[] ):void {
+	private __processCompactionQueue( compactionQueue:string[] ):void {
 		while( compactionQueue.length ) {
 			const targetNode:string = compactionQueue.shift();
 
@@ -174,7 +174,7 @@ export class JSONLDCompacter {
 
 			const targetPath:string = compactionNode.paths.shift();
 
-			const addedProperties:string[] = this._compactNode( compactionNode.node, compactionNode.resource, compactionNode.registry, targetPath );
+			const addedProperties:string[] = this.__compactNode( compactionNode.node, compactionNode.resource, compactionNode.registry, targetPath );
 
 			for( const propertyName of addedProperties ) {
 				if( ! compactionNode.resource.hasOwnProperty( propertyName ) ) continue;
@@ -200,14 +200,14 @@ export class JSONLDCompacter {
 	}
 
 
-	private _setOrRemovePartial( resource:QueryablePointer, schema:DigestedObjectSchema, path:string ):boolean {
-		if( this._willBePartial( resource, schema, path ) ) return true;
+	private __setOrRemovePartial( resource:QueryablePointer, schema:DigestedObjectSchema, path:string ):boolean {
+		if( this.__willBePartial( resource, schema, path ) ) return true;
 
 		if( resource._queryableMetadata ) resource._queryableMetadata = void 0;
 		return false;
 	}
 
-	private _willBePartial( resource:QueryablePointer, schema:DigestedObjectSchema, path:string ):boolean {
+	private __willBePartial( resource:QueryablePointer, schema:DigestedObjectSchema, path:string ):boolean {
 		if( this.resolver instanceof QueryContextPartial ) return true;
 		if( ! (this.resolver instanceof QueryContextBuilder) ) return false;
 

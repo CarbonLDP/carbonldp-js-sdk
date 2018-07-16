@@ -15,5 +15,5 @@ export declare class QueryContextBuilder extends QueryContext {
     getInheritTypeDefinition(existingSchema: DigestedObjectSchema, propertyName: string, propertyURI?: string): DigestedObjectSchemaProperty;
     hasSchemaFor(object: object, path?: string): boolean;
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;
-    private _getTypeSchemas;
+    private __getTypeSchemas;
 }

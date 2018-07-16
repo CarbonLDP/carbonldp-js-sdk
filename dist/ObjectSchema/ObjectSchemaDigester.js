@@ -80,7 +80,7 @@ var ObjectSchemaDigester = (function () {
             }
         }
         return digestedSchema ?
-            ObjectSchemaUtils_1.ObjectSchemaUtils.resolveProperty(digestedSchema, digestedDefinition, true) :
+            ObjectSchemaUtils_1.ObjectSchemaUtils._resolveProperty(digestedSchema, digestedDefinition, true) :
             digestedDefinition;
     };
     ObjectSchemaDigester.combineDigestedObjectSchemas = function (digestedSchemas) {

@@ -16,7 +16,7 @@ import { isObject } from "../Utils";
 import { QueryContext } from "./QueryContext";
 
 
-export function getLevelRegExp( property:string ):RegExp {
+export function _getLevelRegExp( property:string ):RegExp {
 	if( property ) property += ".";
 	const parsedName:string = property.replace( /\./g, "\\." );
 
@@ -24,7 +24,7 @@ export function getLevelRegExp( property:string ):RegExp {
 }
 
 
-export function createPropertyPatterns( context:QueryContext, resourcePath:string, propertyPath:string, propertyDefinition:DigestedObjectSchemaProperty ):PatternToken[] {
+export function _createPropertyPatterns( context:QueryContext, resourcePath:string, propertyPath:string, propertyDefinition:DigestedObjectSchemaProperty ):PatternToken[] {
 	const { uri, literalType, pointerType } = propertyDefinition;
 
 	const propertyIRI:IRIToken | PrefixedNameToken = context.compactIRI( uri );
@@ -45,7 +45,7 @@ export function createPropertyPatterns( context:QueryContext, resourcePath:strin
 	return propertyPatterns;
 }
 
-export function createTypesPattern( context:QueryContext, resourcePath:string ):PatternToken {
+export function _createTypesPattern( context:QueryContext, resourcePath:string ):PatternToken {
 	return new OptionalToken()
 		.addPattern( new SubjectToken( context.getVariable( resourcePath ) )
 			.addPredicate( new PredicateToken( "a" )
@@ -54,7 +54,7 @@ export function createTypesPattern( context:QueryContext, resourcePath:string ):
 		);
 }
 
-export function createGraphPattern( context:QueryContext, resourcePath:string ):PatternToken {
+export function _createGraphPattern( context:QueryContext, resourcePath:string ):PatternToken {
 	return new GraphToken( context.getVariable( resourcePath ) )
 		.addPattern( new SubjectToken( context.getVariable( `${ resourcePath }._subject` ) )
 			.addPredicate( new PredicateToken( context.getVariable( `${ resourcePath }._predicate` ) )
@@ -63,7 +63,7 @@ export function createGraphPattern( context:QueryContext, resourcePath:string ):
 		;
 }
 
-export function createAllPattern( context:QueryContext, resourcePath:string ):PatternToken {
+export function _createAllPattern( context:QueryContext, resourcePath:string ):PatternToken {
 	return new SubjectToken( context.getVariable( resourcePath ) )
 		.addPredicate( new PredicateToken( context.getVariable( `${ resourcePath }._predicate` ) )
 			.addObject( context.getVariable( `${ resourcePath }._object` ) )
@@ -72,7 +72,7 @@ export function createAllPattern( context:QueryContext, resourcePath:string ):Pa
 }
 
 
-export function getParentPath( path:string ):string {
+export function _getParentPath( path:string ):string {
 	return path
 		.split( "." )
 		.slice( 0, - 1 )
@@ -81,14 +81,14 @@ export function getParentPath( path:string ):string {
 }
 
 
-export function getAllTriples( patterns:PatternToken[] ):SubjectToken[] {
+export function _getAllTriples( patterns:PatternToken[] ):SubjectToken[] {
 	const subjectsMap:Map<string, SubjectToken> = new Map();
-	internalTripleAdder( subjectsMap, patterns );
+	__internalTripleAdder( subjectsMap, patterns );
 
 	return Array.from( subjectsMap.values() );
 }
 
-function isFullTriple( triple:SubjectToken ):boolean {
+function __isFullTriple( triple:SubjectToken ):boolean {
 	return triple
 		.predicates
 		.map( x => x.predicate )
@@ -96,10 +96,10 @@ function isFullTriple( triple:SubjectToken ):boolean {
 		;
 }
 
-function internalTripleAdder( subjectsMap:Map<string, SubjectToken>, patterns:PatternToken[] ):void {
+function __internalTripleAdder( subjectsMap:Map<string, SubjectToken>, patterns:PatternToken[] ):void {
 	patterns.forEach( ( pattern:PatternToken ) => {
 		if( pattern.token === "optional" || pattern.token === "graph" )
-			return internalTripleAdder( subjectsMap, pattern.patterns );
+			return __internalTripleAdder( subjectsMap, pattern.patterns );
 
 		if( pattern.token !== "subject" ) return;
 
@@ -108,15 +108,15 @@ function internalTripleAdder( subjectsMap:Map<string, SubjectToken>, patterns:Pa
 			.some( objects => objects.some( object => object.token === "variable" ) );
 		if( ! valid ) return;
 
-		const subject:SubjectToken = getSubject( subjectsMap, pattern );
-		if( isFullTriple( subject ) ) return;
+		const subject:SubjectToken = __getSubject( subjectsMap, pattern );
+		if( __isFullTriple( subject ) ) return;
 
-		if( isFullTriple( pattern ) ) subject.predicates.length = 0;
+		if( __isFullTriple( pattern ) ) subject.predicates.length = 0;
 		subject.predicates.push( ...pattern.predicates );
 	} );
 }
 
-function getSubject( subjectsMap:Map<string, SubjectToken>, original:SubjectToken ):SubjectToken {
+function __getSubject( subjectsMap:Map<string, SubjectToken>, original:SubjectToken ):SubjectToken {
 	const subjectStr:string = original.subject.toString();
 	if( subjectsMap.has( subjectStr ) ) return subjectsMap.get( subjectStr );
 
@@ -127,7 +127,7 @@ function getSubject( subjectsMap:Map<string, SubjectToken>, original:SubjectToke
 }
 
 
-export function getPathProperty( element:any, path:string ):any {
+export function _getPathProperty( element:any, path:string ):any {
 	if( element === void 0 || ! path ) return element;
 
 	const [ propName, ...restParts ] = path.split( "." );
@@ -135,10 +135,10 @@ export function getPathProperty( element:any, path:string ):any {
 	const property:any = element[ propName ];
 	const restPath:string = restParts.join( "." );
 
-	return getPathProperty( property, restPath );
+	return _getPathProperty( property, restPath );
 }
 
-export function areDifferentType( a:any, b:any ):boolean {
+export function _areDifferentType( a:any, b:any ):boolean {
 	if( typeof a !== typeof b ) return true;
 	if( typeof a === "object" ) return a instanceof Date !== b instanceof Date;
 

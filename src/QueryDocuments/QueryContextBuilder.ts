@@ -9,7 +9,7 @@ import { ObjectSchemaUtils } from "../ObjectSchema/ObjectSchemaUtils";
 
 import { QueryContext } from "./QueryContext";
 import { QueryProperty, QueryPropertyType } from "./QueryProperty";
-import { getLevelRegExp, getParentPath } from "./Utils";
+import { _getLevelRegExp, _getParentPath } from "./Utils";
 
 
 export class QueryContextBuilder extends QueryContext {
@@ -27,7 +27,7 @@ export class QueryContextBuilder extends QueryContext {
 	}
 
 	hasProperties( name:string ):boolean {
-		const levelRegex:RegExp = getLevelRegExp( name );
+		const levelRegex:RegExp = _getLevelRegExp( name );
 		return Array.from( this._propertiesMap.keys() )
 			.some( propertyName => levelRegex.test( propertyName ) );
 	}
@@ -43,20 +43,20 @@ export class QueryContextBuilder extends QueryContext {
 	}
 
 	getProperties( name:string ):QueryProperty[] {
-		const levelRegex:RegExp = getLevelRegExp( name );
+		const levelRegex:RegExp = _getLevelRegExp( name );
 		return Array.from( this._propertiesMap.entries() )
 			.filter( ( [ propertyName ] ) => levelRegex.test( propertyName ) )
 			.map( ( [ propertyName, property ] ) => property );
 	}
 
 	getInheritTypeDefinition( existingSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty {
-		const schemas:DigestedObjectSchema[] = [ existingSchema, ...this._getTypeSchemas() ];
+		const schemas:DigestedObjectSchema[] = [ existingSchema, ...this.__getTypeSchemas() ];
 
 		for( const schema of schemas ) {
 			if( ! schema.properties.has( propertyName ) ) continue;
 
 			const mergeSchema:DigestedObjectSchema = ObjectSchemaDigester.combineDigestedObjectSchemas( [ existingSchema, schema ] );
-			const digestedProperty:DigestedObjectSchemaProperty = ObjectSchemaUtils.resolveProperty( mergeSchema, schema.properties.get( propertyName ) );
+			const digestedProperty:DigestedObjectSchemaProperty = ObjectSchemaUtils._resolveProperty( mergeSchema, schema.properties.get( propertyName ) );
 
 			if( ! propertyURI || propertyURI === digestedProperty.uri ) return digestedProperty;
 		}
@@ -94,14 +94,14 @@ export class QueryContextBuilder extends QueryContext {
 			}
 		}
 
-		const parent:QueryProperty = this.getProperty( getParentPath( path ) );
+		const parent:QueryProperty = this.getProperty( _getParentPath( path ) );
 		if( ! parent || parent.getType() !== QueryPropertyType.FULL )
 			throw new IllegalArgumentError( `Schema path "${ path }" does not exists.` );
 
 		return super.getSchemaFor( object );
 	}
 
-	private _getTypeSchemas():DigestedObjectSchema[] {
+	private __getTypeSchemas():DigestedObjectSchema[] {
 		if( this._schemas ) return this._schemas;
 
 		return this._schemas = this.context ?

@@ -46,7 +46,7 @@ var DeltaCreator = (function () {
         var _a;
         var schema = this.__getSchema(id, previousResource, currentResource);
         var resource = iri_1.isBNodeLabel(id) ?
-            new tokens_1.BlankNodeToken(id) : this._compactIRI(schema, id);
+            new tokens_1.BlankNodeToken(id) : this.__compactIRI(schema, id);
         var updateLists = [];
         var addTriples = new tokens_1.SubjectToken(resource);
         var deleteTriples = new tokens_1.SubjectToken(resource);
@@ -61,40 +61,40 @@ var DeltaCreator = (function () {
                 typesDefinition : schema.properties.get(propertyName);
             var oldValue = previousResource[propertyName];
             var newValue = currentResource[propertyName];
-            if (definition && definition.containerType === ContainerType_1.ContainerType.LIST && isValidValue(oldValue)) {
+            if (definition && definition.containerType === ContainerType_1.ContainerType.LIST && __isValidValue(oldValue)) {
                 var listUpdates = [];
-                if (!isValidValue(newValue)) {
+                if (!__isValidValue(newValue)) {
                     deleteTriples.addPredicate(new tokens_1.PredicateToken(predicateURI).addObject(new tokens_1.CollectionToken()));
                     listUpdates.push({ slice: [0, void 0], objects: [] });
                 }
                 else {
                     var tempDefinition = __assign({}, definition, { containerType: ContainerType_1.ContainerType.SET });
-                    listUpdates.push.apply(listUpdates, getListDelta(_this._getObjects(oldValue, schema, tempDefinition), _this._getObjects(newValue, schema, tempDefinition)));
+                    listUpdates.push.apply(listUpdates, __getListDelta(_this.__getObjects(oldValue, schema, tempDefinition), _this.__getObjects(newValue, schema, tempDefinition)));
                 }
                 if (!listUpdates.length)
                     return;
-                _this._addPrefixFrom(predicateURI, schema);
+                _this.__addPrefixFrom(predicateURI, schema);
                 listUpdates.forEach(function (updateDelta) {
                     var collection = new tokens_1.CollectionToken();
                     updateDelta.objects.forEach(function (object) {
                         collection.addObject(object);
-                        _this._addPrefixFrom(object, schema);
+                        _this.__addPrefixFrom(object, schema);
                     });
                     updateLists.push(new Tokens_1.UpdateListToken(resource, predicateURI, updateDelta.objects.length ?
                         new Tokens_1.SliceToken(updateDelta.slice[0], updateDelta.slice[0]) : new (Tokens_1.SliceToken.bind.apply(Tokens_1.SliceToken, [void 0].concat(updateDelta.slice)))(), collection));
                 });
             }
             else {
-                var oldObjects = _this._getObjects(oldValue, schema, definition);
-                var newObjects = _this._getObjects(newValue, schema, definition);
-                var setDelta = getArrayDelta(oldObjects, newObjects);
+                var oldObjects = _this.__getObjects(oldValue, schema, definition);
+                var newObjects = _this.__getObjects(newValue, schema, definition);
+                var setDelta = __getArrayDelta(oldObjects, newObjects);
                 var addValues = function (objects, triple) {
                     if (!objects.length)
                         return;
                     var predicate = new tokens_1.PredicateToken(predicateURI);
                     objects.forEach(function (object) {
                         predicate.addObject(object);
-                        _this._addPrefixFrom(object, schema);
+                        _this.__addPrefixFrom(object, schema);
                     });
                     triple.addPredicate(predicate);
                 };
@@ -110,8 +110,8 @@ var DeltaCreator = (function () {
         var predicates = updateLists.concat(addTriples.predicates, deleteTriples.predicates);
         if (!predicates.length)
             return;
-        this._addPrefixFrom(resource, schema);
-        predicates.forEach(function (x) { return _this._addPrefixFrom(x.predicate, schema); });
+        this.__addPrefixFrom(resource, schema);
+        predicates.forEach(function (x) { return _this.__addPrefixFrom(x.predicate, schema); });
     };
     DeltaCreator.prototype.__getSchema = function (id, previousResource, currentResource) {
         var types = new Set();
@@ -129,36 +129,36 @@ var DeltaCreator = (function () {
         var uri = propertyDefinition && propertyDefinition.uri ?
             propertyDefinition.uri :
             propertyName;
-        return this._compactIRI(schema, uri);
+        return this.__compactIRI(schema, uri);
     };
-    DeltaCreator.prototype._getObjects = function (value, schema, definition) {
+    DeltaCreator.prototype.__getObjects = function (value, schema, definition) {
         var _a;
         var values = (Array.isArray(value) ?
             !definition || definition.containerType !== null ? value : value.slice(0, 1) :
-            [value]).filter(isValidValue);
+            [value]).filter(__isValidValue);
         if (definition && definition.containerType === ContainerType_1.ContainerType.LIST) {
-            if (!isValidValue(value))
+            if (!__isValidValue(value))
                 return [];
             var collection = new tokens_1.CollectionToken();
-            (_a = collection.objects).push.apply(_a, this._expandValues(values, schema, definition));
+            (_a = collection.objects).push.apply(_a, this.__expandValues(values, schema, definition));
             return [collection];
         }
         if (definition && definition.containerType === ContainerType_1.ContainerType.LANGUAGE) {
-            return this._expandLanguageMap(values, schema);
+            return this.__expandLanguageMap(values, schema);
         }
-        return this._expandValues(values, schema, definition);
+        return this.__expandValues(values, schema, definition);
     };
-    DeltaCreator.prototype._expandValues = function (values, schema, definition) {
+    DeltaCreator.prototype.__expandValues = function (values, schema, definition) {
         var _this = this;
         var areDefinedLiteral = definition && definition.literal !== null ? definition.literal : null;
         return values.map(function (value) {
             var isLiteral = areDefinedLiteral !== null ? areDefinedLiteral : !Pointer_1.Pointer.is(value);
             if (isLiteral)
-                return _this._expandLiteral(value, schema, definition);
-            return _this._expandPointer(value, schema);
-        }).filter(isValidValue);
+                return _this.__expandLiteral(value, schema, definition);
+            return _this.__expandPointer(value, schema);
+        }).filter(__isValidValue);
     };
-    DeltaCreator.prototype._expandLanguageMap = function (values, schema) {
+    DeltaCreator.prototype.__expandLanguageMap = function (values, schema) {
         var _this = this;
         if (!values.length)
             return [];
@@ -168,32 +168,32 @@ var DeltaCreator = (function () {
             var tempDefinition = new DigestedObjectSchemaProperty_1.DigestedObjectSchemaProperty();
             tempDefinition.language = key;
             tempDefinition.literalType = XSD_1.XSD.string;
-            return _this._expandLiteral(value, schema, tempDefinition);
-        }).filter(isValidValue);
+            return _this.__expandLiteral(value, schema, tempDefinition);
+        }).filter(__isValidValue);
     };
-    DeltaCreator.prototype._expandPointer = function (value, schema) {
+    DeltaCreator.prototype.__expandPointer = function (value, schema) {
         var id = Pointer_1.Pointer.is(value) ? value.$id : value;
         if (!Utils_2.isString(id))
             return null;
         return iri_1.isBNodeLabel(id) ?
             new tokens_1.BlankNodeToken(id) :
-            this._compactIRI(schema, id);
+            this.__compactIRI(schema, id);
     };
-    DeltaCreator.prototype._expandLiteral = function (value, schema, definition) {
+    DeltaCreator.prototype.__expandLiteral = function (value, schema, definition) {
         var type = definition && definition.literalType ?
             definition.literalType :
-            Utils_1.guessXSDType(value);
+            Utils_1._guessXSDType(value);
         if (!this.context.jsonldConverter.literalSerializers.has(type))
             return null;
         value = this.context.jsonldConverter.literalSerializers.get(type).serialize(value);
         var literal = new tokens_1.LiteralToken(value);
         if (type !== XSD_1.XSD.string)
-            literal.setType(this._compactIRI(schema, type));
+            literal.setType(this.__compactIRI(schema, type));
         if (definition && definition.language !== void 0)
             literal.setLanguage(definition.language);
         return literal;
     };
-    DeltaCreator.prototype._compactIRI = function (schema, iri) {
+    DeltaCreator.prototype.__compactIRI = function (schema, iri) {
         if (iri_1.isRelative(iri) && schema.vocab)
             iri = schema.vocab + iri;
         var matchPrefix = Array.from(schema.prefixes.entries())
@@ -205,14 +205,14 @@ var DeltaCreator = (function () {
             return new tokens_1.IRIToken(iri);
         return new tokens_1.PrefixedNameToken(matchPrefix[0], iri.substr(matchPrefix[1].length));
     };
-    DeltaCreator.prototype._addPrefixFrom = function (object, schema) {
+    DeltaCreator.prototype.__addPrefixFrom = function (object, schema) {
         var _this = this;
         if (object instanceof tokens_1.CollectionToken)
             return object.objects.forEach(function (collectionObject) {
-                _this._addPrefixFrom(collectionObject, schema);
+                _this.__addPrefixFrom(collectionObject, schema);
             });
         if (object instanceof tokens_1.LiteralToken)
-            return this._addPrefixFrom(object.type, schema);
+            return this.__addPrefixFrom(object.type, schema);
         if (!(object instanceof tokens_1.PrefixedNameToken))
             return;
         var namespace = object.namespace;
@@ -224,7 +224,7 @@ var DeltaCreator = (function () {
     return DeltaCreator;
 }());
 exports.DeltaCreator = DeltaCreator;
-function getArrayDelta(oldValues, newValues) {
+function __getArrayDelta(oldValues, newValues) {
     var objectMapper = function (object) { return ["" + object, object]; };
     var toAdd = new Map(newValues.map(objectMapper));
     var toDelete = new Map(oldValues.map(objectMapper));
@@ -239,7 +239,7 @@ function getArrayDelta(oldValues, newValues) {
         toDelete: Array.from(toDelete.values()),
     };
 }
-function getListDelta(oldValues, newValues) {
+function __getListDelta(oldValues, newValues) {
     var nodeMapper = function (object, index) { return ({
         identifier: "" + object,
         object: object,
@@ -288,7 +288,7 @@ function getListDelta(oldValues, newValues) {
     });
     return updates;
 }
-function isValidValue(value) {
+function __isValidValue(value) {
     return value !== null && value !== void 0;
 }
 

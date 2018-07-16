@@ -5,7 +5,7 @@ import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { QueryContext } from "./QueryContext";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import { QueryVariable } from "./QueryVariable";
-import { createAllPattern, createGraphPattern, createTypesPattern } from "./Utils";
+import { _createAllPattern, _createGraphPattern, _createTypesPattern } from "./Utils";
 
 
 export enum QueryPropertyType {
@@ -100,14 +100,14 @@ type FunctionPattern = ( context:QueryContext, resourcePath:string ) => PatternT
 function getFunctionPattern( type:QueryPropertyType | undefined ):null | FunctionPattern {
 	switch( type ) {
 		case QueryPropertyType.ALL:
-			return createAllPattern;
+			return _createAllPattern;
 
 		case QueryPropertyType.FULL:
-			return createGraphPattern;
+			return _createGraphPattern;
 
 		case QueryPropertyType.EMPTY:
 		case QueryPropertyType.PARTIAL:
-			return createTypesPattern;
+			return _createTypesPattern;
 
 		default:
 			return null;

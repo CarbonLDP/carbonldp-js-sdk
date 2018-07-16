@@ -34,7 +34,7 @@ export interface RetrievalPreferences {
 type ResolveCallback = ( response:Response ) => void;
 type RejectCallback = ( error:HTTPError ) => void;
 
-function onResolve( resolve:ResolveCallback, reject:RejectCallback, response:Response ):void {
+function __onResolve( resolve:ResolveCallback, reject:RejectCallback, response:Response ):void {
 	if( response.status >= 200 && response.status <= 299 ) {
 		resolve( response );
 	} else {
@@ -45,7 +45,7 @@ function onResolve( resolve:ResolveCallback, reject:RejectCallback, response:Res
 	}
 }
 
-function sendWithBrowser( method:string, url:string, body:string | Blob, options:RequestOptions ):Promise<Response> {
+function __sendWithBrowser( method:string, url:string, body:string | Blob, options:RequestOptions ):Promise<Response> {
 	return new Promise<Response>( ( resolve:ResolveCallback, reject:RejectCallback ):void => {
 		let request:XMLHttpRequest = options.request ? options.request : new XMLHttpRequest();
 		request.open( method, url, true );
@@ -58,7 +58,7 @@ function sendWithBrowser( method:string, url:string, body:string | Blob, options
 
 		request.onload = request.onerror = () => {
 			let response:Response = new Response( request );
-			onResolve( resolve, reject, response );
+			__onResolve( resolve, reject, response );
 		};
 
 		if( body ) {
@@ -69,7 +69,7 @@ function sendWithBrowser( method:string, url:string, body:string | Blob, options
 	} );
 }
 
-function sendWithNode( method:string, url:string, body:string | Buffer, options:RequestOptions ):Promise<Response> {
+function __sendWithNode( method:string, url:string, body:string | Buffer, options:RequestOptions ):Promise<Response> {
 	return new Promise<Response>( ( resolve:ResolveCallback, reject:RejectCallback ):void => {
 		function returnResponse( request:HTTP.ClientRequest, res:HTTP.IncomingMessage ):void {
 			let rawData:Buffer[] = [];
@@ -81,7 +81,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 				let data:string = Buffer.concat( rawData ).toString( "utf8" );
 				let response:Response = new Response( request, data, res );
 
-				onResolve( resolve, reject, response );
+				__onResolve( resolve, reject, response );
 			} );
 		}
 
@@ -115,7 +115,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 
 			request.on( "error", ( error ) => {
 				let response:Response = new Response( request, error.message );
-				onResolve( resolve, reject, response );
+				__onResolve( resolve, reject, response );
 			} );
 			request.end( body );
 		}
@@ -125,13 +125,13 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 	} );
 }
 
-function sendRequest( method:string, url:string, body:string | Blob | Buffer, options:RequestOptions ):Promise<Response> {
+function __sendRequest( method:string, url:string, body:string | Blob | Buffer, options:RequestOptions ):Promise<Response> {
 	return typeof XMLHttpRequest !== "undefined" ?
-		sendWithBrowser( method, url, <string | Blob> body, options ) :
-		sendWithNode( method, url, <string | Buffer> body, options );
+		__sendWithBrowser( method, url, <string | Blob> body, options ) :
+		__sendWithNode( method, url, <string | Buffer> body, options );
 }
 
-function isBody( data:string | Blob | Buffer ):boolean {
+function __isBody( data:string | Blob | Buffer ):boolean {
 	return isString( data )
 		|| typeof Blob !== "undefined" && data instanceof Blob
 		|| typeof Buffer !== "undefined" && data instanceof Buffer;
@@ -152,7 +152,7 @@ export class RequestService {
 		let options:RequestOptions = hasProperty( optionsOrParser, "parse" ) ? bodyOrOptions : optionsOrParser;
 		parser = hasProperty( optionsOrParser, "parse" ) ? optionsOrParser : parser;
 
-		if( isBody( bodyOrOptions ) ) {
+		if( __isBody( bodyOrOptions ) ) {
 			body = bodyOrOptions;
 		} else {
 			options = bodyOrOptions ? bodyOrOptions : options;
@@ -162,9 +162,9 @@ export class RequestService {
 
 		if( isNumber( method ) ) method = HTTPMethod[ method ];
 
-		const requestPromise:Promise<Response> = sendRequest( method, url, body, options )
+		const requestPromise:Promise<Response> = __sendRequest( method, url, body, options )
 			.then( response => {
-				if( method === "GET" && options.headers ) return this._handleGETResponse( url, options, response );
+				if( method === "GET" && options.headers ) return this.__handleGETResponse( url, options, response );
 				else return response;
 			} )
 		;
@@ -226,18 +226,18 @@ export class RequestService {
 	 * GET requests can be affected by previously cached resources that were originally requested with a different Accept header. This method identifies that
 	 * and retries the request with headers that force browsers to ignore cache.
 	 */
-	private static _handleGETResponse( url:string, requestOptions:RequestOptions, response:Response ):Promise<Response> {
+	private static __handleGETResponse( url:string, requestOptions:RequestOptions, response:Response ):Promise<Response> {
 		return Promise.resolve()
 			.then( () => {
-				if( this._contentTypeIsAccepted( requestOptions, response ) ) return response;
+				if( this.__contentTypeIsAccepted( requestOptions, response ) ) return response;
 
-				this._setNoCacheHeaders( requestOptions );
+				this.__setNoCacheHeaders( requestOptions );
 
-				if( ! this._isChromiumAgent() ) this._setFalseETag( requestOptions );
+				if( ! this.__isChromiumAgent() ) this.__setFalseETag( requestOptions );
 
-				return sendRequest( "GET", url, null, requestOptions )
+				return __sendRequest( "GET", url, null, requestOptions )
 					.then( noCachedResponse => {
-						if( ! this._contentTypeIsAccepted( requestOptions, response ) ) {
+						if( ! this.__contentTypeIsAccepted( requestOptions, response ) ) {
 							throw new BadResponseError( "The server responded with an unacceptable Content-Type", response );
 						}
 
@@ -246,7 +246,7 @@ export class RequestService {
 			} );
 	}
 
-	private static _contentTypeIsAccepted( requestOptions:RequestOptions, response:Response ):boolean {
+	private static __contentTypeIsAccepted( requestOptions:RequestOptions, response:Response ):boolean {
 		const accepts:string[] = requestOptions.headers.has( "accept" ) ?
 			requestOptions.headers.get( "accept" ).values :
 			[]
@@ -259,18 +259,18 @@ export class RequestService {
 		return ! contentType || accepts.some( contentType.hasValue, contentType );
 	}
 
-	private static _setNoCacheHeaders( requestOptions:RequestOptions ):void {
+	private static __setNoCacheHeaders( requestOptions:RequestOptions ):void {
 		requestOptions.headers
 			.set( "pragma", new Header( "no-cache" ) )
 			.set( "cache-control", new Header( "no-cache, max-age=0" ) )
 		;
 	}
 
-	private static _isChromiumAgent():boolean {
-		return typeof window !== "undefined" && ! window[ "chrome" ];
+	private static __isChromiumAgent():boolean {
+		return typeof window !== "undefined" && ! ! window[ "chrome" ];
 	}
 
-	private static _setFalseETag( requestOptions:RequestOptions ):void {
+	private static __setFalseETag( requestOptions:RequestOptions ):void {
 		requestOptions.headers.set( "if-none-match", new Header() );
 	}
 }

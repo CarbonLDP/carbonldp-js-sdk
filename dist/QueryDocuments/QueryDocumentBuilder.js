@@ -29,7 +29,7 @@ var QueryDocumentBuilder = (function () {
             var fullPath = parent + "." + name;
             if (this._context.hasProperty(fullPath))
                 return this._context.getProperty(fullPath);
-            var directPath = Utils_2.getParentPath(fullPath);
+            var directPath = Utils_2._getParentPath(fullPath);
             if (this._context.hasProperty(directPath)) {
                 var direct = this._context.getProperty(directPath);
                 var directType = direct.getType();
@@ -38,7 +38,7 @@ var QueryDocumentBuilder = (function () {
                     return direct._builder._addProperty(propertyName, INHERIT);
                 }
             }
-            parent = Utils_2.getParentPath(parent);
+            parent = Utils_2._getParentPath(parent);
         }
         throw new IllegalArgumentError_1.IllegalArgumentError("The \"" + name + "\" property was not declared.");
     };
@@ -101,17 +101,17 @@ var QueryDocumentBuilder = (function () {
         var property = this._document;
         while (property.isOptional()) {
             property.setOptional(false);
-            var parentPath = Utils_2.getParentPath(property.name);
+            var parentPath = Utils_2._getParentPath(property.name);
             property = this._context.getProperty(parentPath);
         }
         return this;
     };
     QueryDocumentBuilder.prototype._addProperty = function (propertyName, propertyDefinition) {
         var _a, _b;
-        var digestedDefinition = this.addPropertyDefinition(propertyName, propertyDefinition);
+        var digestedDefinition = this.__addPropertyDefinition(propertyName, propertyDefinition);
         var name = this._document.name + "." + propertyName;
         var property = (_a = this._context
-            .addProperty(name)).addPattern.apply(_a, Utils_2.createPropertyPatterns(this._context, this._document.name, name, digestedDefinition));
+            .addProperty(name)).addPattern.apply(_a, Utils_2._createPropertyPatterns(this._context, this._document.name, name, digestedDefinition));
         if ("query" in propertyDefinition) {
             if (digestedDefinition.literal === false) {
                 property.setType(QueryProperty_1.QueryPropertyType.PARTIAL);
@@ -123,7 +123,7 @@ var QueryDocumentBuilder = (function () {
         (_b = this._document).addPattern.apply(_b, property.getPatterns());
         return property;
     };
-    QueryDocumentBuilder.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
+    QueryDocumentBuilder.prototype.__addPropertyDefinition = function (propertyName, propertyDefinition) {
         var digestedDefinition = ObjectSchemaDigester_1.ObjectSchemaDigester.digestProperty(propertyName, propertyDefinition, this._schema);
         var uri = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
         var inheritDefinition = this._context.getInheritTypeDefinition(this._schema, propertyName, uri);

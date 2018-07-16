@@ -28,4 +28,4 @@ var SPARQLBuilder = (function (_super) {
 }(sparqler_1.SPARQLER));
 exports.SPARQLBuilder = SPARQLBuilder;
 
-//# sourceMappingURL=Builder.js.map
+//# sourceMappingURL=SPARQLBuilder.js.map

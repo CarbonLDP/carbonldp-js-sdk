@@ -73,12 +73,12 @@ exports.QueryProperty = QueryProperty;
 function getFunctionPattern(type) {
     switch (type) {
         case QueryPropertyType.ALL:
-            return Utils_1.createAllPattern;
+            return Utils_1._createAllPattern;
         case QueryPropertyType.FULL:
-            return Utils_1.createGraphPattern;
+            return Utils_1._createGraphPattern;
         case QueryPropertyType.EMPTY:
         case QueryPropertyType.PARTIAL:
-            return Utils_1.createTypesPattern;
+            return Utils_1._createTypesPattern;
         default:
             return null;
     }

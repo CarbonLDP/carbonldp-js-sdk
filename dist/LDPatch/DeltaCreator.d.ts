@@ -10,11 +10,11 @@ export declare class DeltaCreator {
     addResource(id: string, previousResource: object, currentResource: object): void;
     private __getSchema;
     private _getPropertyIRI;
-    private _getObjects;
-    private _expandValues;
-    private _expandLanguageMap;
-    private _expandPointer;
-    private _expandLiteral;
-    private _compactIRI;
-    private _addPrefixFrom;
+    private __getObjects;
+    private __expandValues;
+    private __expandLanguageMap;
+    private __expandPointer;
+    private __expandLiteral;
+    private __compactIRI;
+    private __addPrefixFrom;
 }

@@ -42,12 +42,12 @@ import { QueryDocumentsBuilder } from "../../QueryDocuments/QueryDocumentsBuilde
 import { QueryMetadata } from "../../QueryDocuments/QueryMetadata";
 import { QueryProperty, QueryPropertyType } from "../../QueryDocuments/QueryProperty";
 import {
-	areDifferentType,
-	createAllPattern,
-	createPropertyPatterns,
-	createTypesPattern,
-	getAllTriples,
-	getPathProperty
+	_areDifferentType,
+	_createAllPattern,
+	_createPropertyPatterns,
+	_createTypesPattern,
+	_getAllTriples,
+	_getPathProperty
 } from "../../QueryDocuments/Utils";
 
 import { RDFDocument } from "../../RDF/Document";
@@ -114,7 +114,7 @@ function __executePatterns<T extends object>( this:void, repository:QueryableDoc
 	const query:QueryToken = new QueryToken( construct )
 		.addPrologues( ...queryContext.getPrologues() );
 
-	const triples:SubjectToken[] = getAllTriples( constructPatterns );
+	const triples:SubjectToken[] = _getAllTriples( constructPatterns );
 	construct.addTriple( ...triples );
 
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions );
@@ -206,8 +206,8 @@ function __executeBuilder<T extends object>( repository:QueryableDocumentsReposi
 			const inverter:number = flow === "DESC" ? - 1 : 1;
 
 			return documents.sort( ( a:any, b:any ) => {
-				a = getPathProperty( a, path );
-				b = getPathProperty( b, path );
+				a = _getPathProperty( a, path );
+				b = _getPathProperty( b, path );
 
 				const aValue:any = Pointer.is( a ) ? a.$id : a;
 				const bValue:any = Pointer.is( b ) ? b.$id : b;
@@ -217,7 +217,7 @@ function __executeBuilder<T extends object>( repository:QueryableDocumentsReposi
 				if( aValue === void 0 ) return - 1 * inverter;
 				if( bValue === void 0 ) return inverter;
 
-				if( ! areDifferentType( a, b ) ) {
+				if( ! _areDifferentType( a, b ) ) {
 					if( Pointer.is( a ) ) {
 						const aIsBNode:boolean = URI.isBNodeID( aValue );
 						const bIsBNode:boolean = URI.isBNodeID( bValue );
@@ -271,17 +271,17 @@ function __getQueryable<T extends object>( repository:QueryableDocumentsReposito
 
 function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:OptionalToken, resource:QueryablePointer, parentName:string ):void {
 	if( resource._queryableMetadata.schema === QueryableMetadata.ALL ) {
-		parentAdder.addPattern( createAllPattern( queryContext, parentName ) );
+		parentAdder.addPattern( _createAllPattern( queryContext, parentName ) );
 		return;
 	}
 
-	parentAdder.addPattern( createTypesPattern( queryContext, parentName ) );
+	parentAdder.addPattern( _createTypesPattern( queryContext, parentName ) );
 
 	resource._queryableMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
 		const path:string = `${ parentName }.${ propertyName }`;
 
 		const propertyPattern:OptionalToken = new OptionalToken()
-			.addPattern( ...createPropertyPatterns(
+			.addPattern( ..._createPropertyPatterns(
 				queryContext,
 				parentName,
 				path,

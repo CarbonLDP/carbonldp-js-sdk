@@ -50,7 +50,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 
 
 	hasObjectSchema( type:string ):boolean {
-		type = this._resolveTypeURI( type );
+		type = this.__resolveTypeURI( type );
 		if( this._typeObjectSchemaMap.has( type ) ) return true;
 		return ! ! this.parentContext && this.parentContext.hasObjectSchema( type );
 	}
@@ -58,7 +58,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 	getObjectSchema( type?:string ):DigestedObjectSchema {
 		if( ! ! type ) {
 			// Type specific schema
-			type = this._resolveTypeURI( type );
+			type = this.__resolveTypeURI( type );
 			if( this._typeObjectSchemaMap.has( type ) ) return this._typeObjectSchemaMap.get( type );
 			if( this.parentContext && this.parentContext.hasObjectSchema( type ) ) return this.parentContext.getObjectSchema( type );
 
@@ -92,9 +92,9 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 		const digestedSchema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( objectSchema );
 
 		if( ! type ) {
-			this._extendGeneralSchema( digestedSchema );
+			this.__extendGeneralSchema( digestedSchema );
 		} else {
-			this._extendTypeSchema( digestedSchema, type );
+			this.__extendTypeSchema( digestedSchema, type );
 		}
 
 		return this;
@@ -104,22 +104,22 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 		if( ! type ) {
 			this._generalObjectSchema = this.parentContext ? null : new DigestedObjectSchema();
 		} else {
-			type = this._resolveTypeURI( type );
+			type = this.__resolveTypeURI( type );
 			this._typeObjectSchemaMap.delete( type );
 		}
 	}
 
 	_getTypeObjectSchemas():DigestedObjectSchema[] {
-		const types:string[] = this._getObjectSchemasTypes();
+		const types:string[] = this.__getObjectSchemasTypes();
 		return types.map( this.getObjectSchema, this );
 	}
 
-	protected _getObjectSchemasTypes():string[] {
+	protected __getObjectSchemasTypes():string[] {
 		const localTypes:string[] = Array.from( this._typeObjectSchemaMap.keys() );
 
 		if( ! this._parentContext ) return localTypes;
 
-		const allTypes:string[] = this._parentContext._getObjectSchemasTypes();
+		const allTypes:string[] = this._parentContext.__getObjectSchemasTypes();
 		for( const type of localTypes ) {
 			if( allTypes.indexOf( type ) !== - 1 ) continue;
 			allTypes.push( type );
@@ -128,7 +128,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 		return allTypes;
 	}
 
-	protected _extendGeneralSchema( digestedSchema:DigestedObjectSchema ):void {
+	protected __extendGeneralSchema( digestedSchema:DigestedObjectSchema ):void {
 		let digestedSchemaToExtend:DigestedObjectSchema;
 		if( ! ! this._generalObjectSchema ) {
 			digestedSchemaToExtend = this._generalObjectSchema;
@@ -144,8 +144,8 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 		] );
 	}
 
-	protected _extendTypeSchema( digestedSchema:DigestedObjectSchema, type:string ):void {
-		type = this._resolveTypeURI( type );
+	protected __extendTypeSchema( digestedSchema:DigestedObjectSchema, type:string ):void {
+		type = this.__resolveTypeURI( type );
 		let digestedSchemaToExtend:DigestedObjectSchema;
 
 		if( this._typeObjectSchemaMap.has( type ) ) {
@@ -164,7 +164,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 		this._typeObjectSchemaMap.set( type, extendedDigestedSchema );
 	}
 
-	private _resolveTypeURI( uri:string ):string {
+	private __resolveTypeURI( uri:string ):string {
 		return this.getObjectSchema()
 			.resolveURI( uri, { vocab: true } );
 	}

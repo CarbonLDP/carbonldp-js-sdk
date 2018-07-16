@@ -27,7 +27,7 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	protected _settings?:DocumentsContextSettings;
 
 
-	private static _mergePaths( this:void, target:Paths, source:Paths ):Paths {
+	private static __mergePaths( this:void, target:Paths, source:Paths ):Paths {
 		if( ! source ) return target;
 		if( ! target ) return ObjectUtils.clone( source, { objects: true } );
 
@@ -62,7 +62,7 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 				target[ key ] = { slug: targetPath } : targetPath;
 
 			if( sourcePath.slug !== void 0 ) targetDocPaths.slug = sourcePath.slug;
-			if( sourcePath.paths !== void 0 ) targetDocPaths.paths = DocumentsContext._mergePaths( targetDocPaths.paths, sourcePath.paths );
+			if( sourcePath.paths !== void 0 ) targetDocPaths.paths = DocumentsContext.__mergePaths( targetDocPaths.paths, sourcePath.paths );
 		}
 
 		return target;
@@ -126,7 +126,7 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	}
 
 	protected _extendPaths( paths:Paths ):void {
-		this._settings.paths = DocumentsContext._mergePaths( this._settings.paths, paths );
+		this._settings.paths = DocumentsContext.__mergePaths( this._settings.paths, paths );
 	}
 
 	protected _extendsSettings( settings:DocumentsContextSettings ):void {

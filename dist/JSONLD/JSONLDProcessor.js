@@ -25,8 +25,8 @@ var JSONLDProcessor = (function () {
     function JSONLDProcessor() {
     }
     JSONLDProcessor.expand = function (input) {
-        return JSONLDProcessor.retrieveContexts(input, Object.create(null), "").then(function () {
-            var expanded = JSONLDProcessor.process(new DigestedObjectSchema_1.DigestedObjectSchema(), input);
+        return JSONLDProcessor.__retrieveContexts(input, Object.create(null), "").then(function () {
+            var expanded = JSONLDProcessor.__process(new DigestedObjectSchema_1.DigestedObjectSchema(), input);
             if (Utils.isObject(expanded) && "@graph" in expanded && Object.keys(expanded).length === 1) {
                 expanded = expanded["@graph"];
             }
@@ -38,7 +38,7 @@ var JSONLDProcessor = (function () {
             return expanded;
         });
     };
-    JSONLDProcessor.getTargetFromLinkHeader = function (header) {
+    JSONLDProcessor.__getTargetFromLinkHeader = function (header) {
         var rLinkHeader = /\s*<([^>]*?)>\s*(?:;\s*(.*))?/;
         for (var _i = 0, _a = header.values; _i < _a.length; _i++) {
             var value = _a[_i];
@@ -60,19 +60,19 @@ var JSONLDProcessor = (function () {
         }
         return null;
     };
-    JSONLDProcessor.findContextURLs = function (input, contexts, base, replace) {
+    JSONLDProcessor.__findContextURLs = function (input, contexts, base, replace) {
         if (replace === void 0) { replace = false; }
         var previousContexts = Object.keys(contexts).length;
         if (Utils.isArray(input)) {
             for (var _i = 0, _a = input; _i < _a.length; _i++) {
                 var element = _a[_i];
-                JSONLDProcessor.findContextURLs(element, contexts, base);
+                JSONLDProcessor.__findContextURLs(element, contexts, base);
             }
         }
         else if (Utils.isPlainObject(input)) {
             for (var key in input) {
                 if ("@context" !== key) {
-                    JSONLDProcessor.findContextURLs(input[key], contexts, base);
+                    JSONLDProcessor.__findContextURLs(input[key], contexts, base);
                     continue;
                 }
                 var urlOrArrayOrContext = input[key];
@@ -113,11 +113,11 @@ var JSONLDProcessor = (function () {
         }
         return previousContexts < Object.keys(contexts).length;
     };
-    JSONLDProcessor.retrieveContexts = function (input, contextsRequested, base) {
+    JSONLDProcessor.__retrieveContexts = function (input, contextsRequested, base) {
         if (Object.keys(contextsRequested).length > MAX_CONTEXT_URLS)
             return Promise.reject(new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("Maximum number of @context URLs exceeded."));
         var contextToResolved = Object.create(null);
-        if (!JSONLDProcessor.findContextURLs(input, contextToResolved, base))
+        if (!JSONLDProcessor.__findContextURLs(input, contextToResolved, base))
             return Promise.resolve();
         function resolved(url, promise) {
             return promise.then(function (_a) {
@@ -130,7 +130,7 @@ var JSONLDProcessor = (function () {
                     header = response.getHeader("Link");
                     var link = void 0;
                     if (!!header)
-                        link = JSONLDProcessor.getTargetFromLinkHeader(header);
+                        link = JSONLDProcessor.__getTargetFromLinkHeader(header);
                     if (!!link)
                         contextWrapper["@context"] = link;
                 }
@@ -138,7 +138,7 @@ var JSONLDProcessor = (function () {
                     contextWrapper["@context"] = ("@context" in object) ? object["@context"] : {};
                 }
                 contextToResolved[url] = contextWrapper["@context"];
-                return JSONLDProcessor.retrieveContexts(contextWrapper, _contextsRequested, url);
+                return JSONLDProcessor.__retrieveContexts(contextWrapper, _contextsRequested, url);
             });
         }
         var promises = [];
@@ -160,10 +160,10 @@ var JSONLDProcessor = (function () {
                 return state_1.value;
         }
         return Promise.all(promises).then(function () {
-            JSONLDProcessor.findContextURLs(input, contextToResolved, base, true);
+            JSONLDProcessor.__findContextURLs(input, contextToResolved, base, true);
         });
     };
-    JSONLDProcessor.isKeyword = function (value) {
+    JSONLDProcessor.__isKeyword = function (value) {
         if (!Utils.isString(value))
             return false;
         switch (value) {
@@ -191,7 +191,7 @@ var JSONLDProcessor = (function () {
                 return false;
         }
     };
-    JSONLDProcessor.isValidType = function (value) {
+    JSONLDProcessor.__isValidType = function (value) {
         if (Utils.isString(value))
             return true;
         if (!Utils.isArray(value))
@@ -203,12 +203,12 @@ var JSONLDProcessor = (function () {
         }
         return true;
     };
-    JSONLDProcessor.expandURI = function (schema, uri, relativeTo) {
-        if (JSONLDProcessor.isKeyword(uri))
+    JSONLDProcessor.__expandURI = function (schema, uri, relativeTo) {
+        if (JSONLDProcessor.__isKeyword(uri))
             return uri;
         return schema.resolveURI(uri, relativeTo);
     };
-    JSONLDProcessor.expandLanguageMap = function (languageMap) {
+    JSONLDProcessor.__expandLanguageMap = function (languageMap) {
         var expandedLanguage = [];
         var keys = Object.keys(languageMap).sort();
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
@@ -230,19 +230,19 @@ var JSONLDProcessor = (function () {
         }
         return expandedLanguage;
     };
-    JSONLDProcessor.getContainer = function (context, property) {
+    JSONLDProcessor.__getContainer = function (context, property) {
         if (context.properties.has(property))
             return context.properties.get(property).containerType;
         return void 0;
     };
-    JSONLDProcessor.expandValue = function (context, value, propertyName) {
+    JSONLDProcessor.__expandValue = function (context, value, propertyName) {
         if (Utils.isNull(value) || !Utils.isDefined(value))
             return null;
         if (propertyName === "@id") {
-            return JSONLDProcessor.expandURI(context, value, { base: true });
+            return JSONLDProcessor.__expandURI(context, value, { base: true });
         }
         else if (propertyName === "@type") {
-            return JSONLDProcessor.expandURI(context, value, { vocab: true, base: true });
+            return JSONLDProcessor.__expandURI(context, value, { vocab: true, base: true });
         }
         var definition = new DigestedObjectSchemaProperty_1.DigestedObjectSchemaProperty();
         if (context.properties.has(propertyName))
@@ -251,9 +251,9 @@ var JSONLDProcessor = (function () {
             var options = { base: true };
             if (definition.pointerType === PointerType_1.PointerType.VOCAB)
                 options.vocab = true;
-            return { "@id": JSONLDProcessor.expandURI(context, value, options) };
+            return { "@id": JSONLDProcessor.__expandURI(context, value, options) };
         }
-        if (JSONLDProcessor.isKeyword(propertyName))
+        if (JSONLDProcessor.__isKeyword(propertyName))
             return value;
         var expandedValue = {};
         if (definition.literalType) {
@@ -269,21 +269,21 @@ var JSONLDProcessor = (function () {
         expandedValue["@value"] = value;
         return expandedValue;
     };
-    JSONLDProcessor.process = function (context, element, activeProperty, insideList) {
+    JSONLDProcessor.__process = function (context, element, activeProperty, insideList) {
         if (Utils.isNull(element) || !Utils.isDefined(element))
             return null;
         if (!Utils.isArray(element) && !Utils.isObject(element)) {
             if (!insideList && (activeProperty === null || activeProperty === "@graph"))
                 return null;
-            return JSONLDProcessor.expandValue(context, element, activeProperty);
+            return JSONLDProcessor.__expandValue(context, element, activeProperty);
         }
         if (Utils.isArray(element)) {
-            var container = JSONLDProcessor.getContainer(context, activeProperty);
+            var container = JSONLDProcessor.__getContainer(context, activeProperty);
             insideList = insideList || container === ContainerType_1.ContainerType.LIST;
             var expanded = [];
             for (var _i = 0, _a = element; _i < _a.length; _i++) {
                 var item = _a[_i];
-                var expandedItem = JSONLDProcessor.process(context, item, activeProperty);
+                var expandedItem = JSONLDProcessor.__process(context, item, activeProperty);
                 if (expandedItem === null)
                     continue;
                 if (insideList && (Utils.isArray(expandedItem) || List_1.RDFList.is(expandedItem)))
@@ -307,14 +307,14 @@ var JSONLDProcessor = (function () {
             var key = keys_2[_b];
             if (key === "@context")
                 continue;
-            var uri = JSONLDProcessor.expandURI(context, key, { vocab: true });
-            if (!uri || !(URI_1.URI.isAbsolute(uri) || URI_1.URI.isBNodeID(uri) || JSONLDProcessor.isKeyword(uri)))
+            var uri = JSONLDProcessor.__expandURI(context, key, { vocab: true });
+            if (!uri || !(URI_1.URI.isAbsolute(uri) || URI_1.URI.isBNodeID(uri) || JSONLDProcessor.__isKeyword(uri)))
                 continue;
             var value = element[key];
-            if (JSONLDProcessor.isKeyword(uri)) {
+            if (JSONLDProcessor.__isKeyword(uri)) {
                 if (uri === "@id" && !Utils.isString(value))
                     throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@id\" value must a string.");
-                if (uri === "@type" && !JSONLDProcessor.isValidType(value))
+                if (uri === "@type" && !JSONLDProcessor.__isValidType(value))
                     throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@type\" value must a string, an array of strings.");
                 if (uri === "@graph" && !(Utils.isObject(value) || Utils.isArray(value)))
                     throw new InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError("\"@graph\" value must not be an object or an array.");
@@ -335,9 +335,9 @@ var JSONLDProcessor = (function () {
                     throw new NotImplementedError_1.NotImplementedError("The SDK does not support \"@index\" and \"@reverse\" tags.");
             }
             var expandedValue = void 0;
-            var container = JSONLDProcessor.getContainer(context, key);
+            var container = JSONLDProcessor.__getContainer(context, key);
             if (container === ContainerType_1.ContainerType.LANGUAGE && Utils.isObject(value)) {
-                expandedValue = JSONLDProcessor.expandLanguageMap(value);
+                expandedValue = JSONLDProcessor.__expandLanguageMap(value);
             }
             else {
                 var nextActiveProperty = key;
@@ -347,7 +347,7 @@ var JSONLDProcessor = (function () {
                     if (isList && activeProperty === "@graph")
                         nextActiveProperty = null;
                 }
-                expandedValue = JSONLDProcessor.process(context, value, nextActiveProperty, isList);
+                expandedValue = JSONLDProcessor.__process(context, value, nextActiveProperty, isList);
             }
             if (expandedValue === null && uri !== "@value")
                 continue;
@@ -357,7 +357,7 @@ var JSONLDProcessor = (function () {
                 expandedValue = { "@list": expandedValue };
             }
             var useArray = ["@type", "@id", "@value", "@language"].indexOf(uri) === -1;
-            JSONLDProcessor.addValue(expandedElement, uri, expandedValue, { propertyIsArray: useArray });
+            JSONLDProcessor.__addValue(expandedElement, uri, expandedValue, { propertyIsArray: useArray });
         }
         if ("@value" in expandedElement) {
             if (expandedElement["@value"] === null)
@@ -372,18 +372,18 @@ var JSONLDProcessor = (function () {
         }
         return expandedElement;
     };
-    JSONLDProcessor.addValue = function (element, propertyName, value, options) {
+    JSONLDProcessor.__addValue = function (element, propertyName, value, options) {
         if (Utils.isArray(value)) {
             var values = value;
             if (values.length === 0 && options.propertyIsArray && !Utils.hasProperty(element, propertyName))
                 element[propertyName] = [];
             for (var _i = 0, values_2 = values; _i < values_2.length; _i++) {
                 var item = values_2[_i];
-                JSONLDProcessor.addValue(element, propertyName, item, options);
+                JSONLDProcessor.__addValue(element, propertyName, item, options);
             }
         }
         else if (propertyName in element) {
-            if (!JSONLDProcessor.hasValue(element, propertyName, value)) {
+            if (!JSONLDProcessor.__hasValue(element, propertyName, value)) {
                 var items = element[propertyName];
                 if (!Utils.isArray(items))
                     items = element[propertyName] = [items];
@@ -394,14 +394,14 @@ var JSONLDProcessor = (function () {
             element[propertyName] = options.propertyIsArray ? [value] : value;
         }
     };
-    JSONLDProcessor.hasProperty = function (element, propertyName) {
+    JSONLDProcessor.__hasProperty = function (element, propertyName) {
         if (propertyName in element) {
             var item = element[propertyName];
             return !Utils.isArray(item) || item.length > 0;
         }
         return false;
     };
-    JSONLDProcessor.compareValues = function (value1, value2) {
+    JSONLDProcessor.__compareValues = function (value1, value2) {
         if (value1 === value2)
             return true;
         if (Utils.isObject(value1) && Utils.isObject(value2)) {
@@ -416,20 +416,20 @@ var JSONLDProcessor = (function () {
         }
         return false;
     };
-    JSONLDProcessor.hasValue = function (element, propertyName, value) {
-        if (JSONLDProcessor.hasProperty(element, propertyName)) {
+    JSONLDProcessor.__hasValue = function (element, propertyName, value) {
+        if (JSONLDProcessor.__hasProperty(element, propertyName)) {
             var item = element[propertyName];
             var isList = List_1.RDFList.is(item);
             if (isList || Utils.isArray(item)) {
                 var items = isList ? item["@list"] : item;
                 for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
                     var entry = items_1[_i];
-                    if (JSONLDProcessor.compareValues(entry, value))
+                    if (JSONLDProcessor.__compareValues(entry, value))
                         return true;
                 }
             }
             else if (!Utils.isArray(value)) {
-                return JSONLDProcessor.compareValues(item, value);
+                return JSONLDProcessor.__compareValues(item, value);
             }
         }
         return false;

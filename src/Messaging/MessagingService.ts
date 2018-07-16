@@ -60,7 +60,7 @@ export class MessagingService {
 		this.reconnect( onConnect, onError );
 	}
 
-	reconnect( onConnect?:() => void, onError:( error:Error ) => void = this._broadcastError.bind( this ) ):void {
+	reconnect( onConnect?:() => void, onError:( error:Error ) => void = this.__broadcastError.bind( this ) ):void {
 		if( ! this._client ) this._attempts = 0;
 		else if( this._client.connected ) this._client.disconnect();
 		if( ! this._subscriptionsMap ) this._subscriptionsMap = new Map();
@@ -82,7 +82,7 @@ export class MessagingService {
 			let errorMessage:string;
 			if( "reason" in errorFrameOrEvent ) {
 				if( canReconnect ) {
-					if( ++ this._attempts === 1 ) this._saveSubscriptions();
+					if( ++ this._attempts === 1 ) this.__saveSubscriptions();
 					setTimeout( () => this.reconnect( onConnect, onError ), this._options.reconnectDelay );
 					return;
 				}
@@ -111,7 +111,7 @@ export class MessagingService {
 			errorCallback: onError,
 		} );
 
-		const subscribeTo:() => void = this._makeSubscription( subscriptionID, destination, onEvent, onError );
+		const subscribeTo:() => void = this.__makeSubscription( subscriptionID, destination, onEvent, onError );
 		if( this._client.connected ) return subscribeTo();
 		this._subscriptionsQueue.push( subscribeTo );
 	}
@@ -130,14 +130,14 @@ export class MessagingService {
 		this._client.unsubscribe( subscriptionID );
 	}
 
-	private _broadcastError( error:Error ):void {
+	private __broadcastError( error:Error ):void {
 		if( ! this._subscriptionsMap ) return;
 		this._subscriptionsMap.forEach( callbacksMap => callbacksMap.forEach( subscription => {
 			subscription.errorCallback( error );
 		} ) );
 	}
 
-	private _makeSubscription( id:string, destination:string, eventCallback:( data:EventMessage ) => void, errorCallback:( error:Error ) => void ):() => void {
+	private __makeSubscription( id:string, destination:string, eventCallback:( data:EventMessage ) => void, errorCallback:( error:Error ) => void ):() => void {
 		return () => this._client.subscribe( destination, message => {
 			new JSONLDParser()
 				.parse( message.body )
@@ -160,10 +160,10 @@ export class MessagingService {
 		}, { id } );
 	}
 
-	private _saveSubscriptions():void {
+	private __saveSubscriptions():void {
 		if( this._subscriptionsQueue.length || ! this._subscriptionsMap ) return;
 		this._subscriptionsMap.forEach( ( callbackMap, destination ) => callbackMap.forEach( ( subscription, eventCallback ) => {
-			const subscribeTo:() => void = this._makeSubscription( subscription.id, destination, eventCallback, subscription.errorCallback );
+			const subscribeTo:() => void = this.__makeSubscription( subscription.id, destination, eventCallback, subscription.errorCallback );
 			this._subscriptionsQueue.push( subscribeTo );
 		} ) );
 	}

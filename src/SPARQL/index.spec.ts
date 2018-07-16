@@ -4,7 +4,7 @@ import * as Utils from "../Utils";
 
 import * as SPARQL from "./";
 
-import { FinishSPARQLSelect, SPARQLBuilder } from "./Builder";
+import { FinishSPARQLSelect, SPARQLBuilder } from "./SPARQLBuilder";
 import { SPARQLRawBindingObject, SPARQLRawBindingProperty, SPARQLRawResults } from "./RawResults";
 import { SPARQLRawResultsParser } from "./RawResultsParser";
 import { SPARQLBindingObject, SPARQLSelectResults } from "./SelectResults";
