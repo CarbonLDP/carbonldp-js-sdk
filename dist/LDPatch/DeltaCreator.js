@@ -1,12 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
@@ -58,7 +50,7 @@ var DeltaCreator = (function () {
             var predicateURI = propertyName === "types" ?
                 "a" : _this._getPropertyIRI(schema, propertyName);
             var definition = predicateURI === "a" ?
-                typesDefinition : schema.properties.get(propertyName);
+                typesDefinition : schema.getProperty(propertyName);
             var oldValue = previousResource[propertyName];
             var newValue = currentResource[propertyName];
             if (definition && definition.containerType === ContainerType_1.ContainerType.LIST && __isValidValue(oldValue)) {
@@ -68,8 +60,8 @@ var DeltaCreator = (function () {
                     listUpdates.push({ slice: [0, void 0], objects: [] });
                 }
                 else {
-                    var tempDefinition = __assign({}, definition, { containerType: ContainerType_1.ContainerType.SET });
-                    listUpdates.push.apply(listUpdates, __getListDelta(_this.__getObjects(oldValue, schema, tempDefinition), _this.__getObjects(newValue, schema, tempDefinition)));
+                    definition.containerType = ContainerType_1.ContainerType.SET;
+                    listUpdates.push.apply(listUpdates, __getListDelta(_this.__getObjects(oldValue, schema, definition), _this.__getObjects(newValue, schema, definition)));
                 }
                 if (!listUpdates.length)
                     return;
@@ -121,8 +113,13 @@ var DeltaCreator = (function () {
         if ("types" in currentResource)
             currentResource
                 .types.forEach(types.add, types);
+        var mergeResource = {
+            $id: id,
+            types: Array.from(types),
+            _queryableMetadata: currentResource._queryableMetadata || previousResource._queryableMetadata,
+        };
         return this.context
-            .registry.getSchemaFor({ $id: id, types: Array.from(types) });
+            .registry.getSchemaFor(mergeResource);
     };
     DeltaCreator.prototype._getPropertyIRI = function (schema, propertyName) {
         var propertyDefinition = schema.properties.get(propertyName);
@@ -194,8 +191,7 @@ var DeltaCreator = (function () {
         return literal;
     };
     DeltaCreator.prototype.__compactIRI = function (schema, iri) {
-        if (iri_1.isRelative(iri) && schema.vocab)
-            iri = schema.vocab + iri;
+        iri = schema.resolveURI(iri, { vocab: true });
         var matchPrefix = Array.from(schema.prefixes.entries())
             .find(function (_a) {
             var prefixURI = _a[1];

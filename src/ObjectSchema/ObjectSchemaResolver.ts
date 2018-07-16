@@ -74,12 +74,12 @@ export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
 			return ! path;
 		},
 
-		getSchemaFor( this:ObjectSchemaResolver, object:object ):DigestedObjectSchema {
+		getSchemaFor( this:ObjectSchemaResolver, object:object | QueryablePointer ):DigestedObjectSchema {
 			const schema:DigestedObjectSchema = "types" in object || "$id" in object ?
 				__getSchemaForResource( this.$context, object ) :
 				__getSchemaForNode( this.$context, object );
 
-			if( ! QueryablePointer.isDecorated( object ) || ! object.isQueried() )
+			if( ! ("_queryableMetadata" in object) || ! object._queryableMetadata )
 				return schema;
 
 			return ObjectSchemaDigester

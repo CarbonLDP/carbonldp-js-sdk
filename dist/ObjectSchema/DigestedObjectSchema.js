@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var URI_1 = require("../RDF/URI");
+var ObjectSchemaUtils_1 = require("./ObjectSchemaUtils");
 var DigestedObjectSchema = (function () {
     function DigestedObjectSchema() {
         this.base = "";
@@ -28,6 +29,11 @@ var DigestedObjectSchema = (function () {
         if (relativeTo.base)
             return URI_1.URI.resolve(this.base, uri);
         return uri;
+    };
+    DigestedObjectSchema.prototype.getProperty = function (name) {
+        if (!this.properties.has(name))
+            return void 0;
+        return ObjectSchemaUtils_1.ObjectSchemaUtils._resolveProperty(this, this.properties.get(name));
     };
     return DigestedObjectSchema;
 }());

@@ -10,4 +10,5 @@ export declare class DigestedObjectSchema {
         vocab?: boolean;
         base?: boolean;
     }): string;
+    getProperty(name: string): DigestedObjectSchemaProperty | undefined;
 }

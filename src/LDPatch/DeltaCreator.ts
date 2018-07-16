@@ -1,4 +1,4 @@
-import { isBNodeLabel, isRelative } from "sparqler/iri";
+import { isBNodeLabel } from "sparqler/iri";
 import {
 	BlankNodeToken,
 	CollectionToken,
@@ -22,6 +22,10 @@ import { PointerType } from "../ObjectSchema/PointerType";
 
 import { Pointer } from "../Pointer/Pointer";
 
+import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
+
+import { Resource } from "../Resource/Resource";
+
 import { isString } from "../Utils";
 
 import { XSD } from "../Vocabularies/XSD";
@@ -43,6 +47,9 @@ const typesDefinition:DigestedObjectSchemaProperty = new DigestedObjectSchemaPro
 typesDefinition.literal = false;
 typesDefinition.pointerType = PointerType.ID;
 typesDefinition.containerType = ContainerType.SET;
+
+
+type TargetResource = Partial<Pick<Resource, "types"> & Pick<QueryablePointer, "_queryableMetadata">>;
 
 
 export class DeltaCreator {
@@ -96,7 +103,7 @@ export class DeltaCreator {
 				"a" : this._getPropertyIRI( schema, propertyName );
 
 			const definition:DigestedObjectSchemaProperty = predicateURI === "a" ?
-				typesDefinition : schema.properties.get( propertyName );
+				typesDefinition : schema.getProperty( propertyName );
 
 			const oldValue:any = previousResource[ propertyName ];
 			const newValue:any = currentResource[ propertyName ];
@@ -109,11 +116,11 @@ export class DeltaCreator {
 					listUpdates.push( { slice: [ 0, void 0 ], objects: [] } );
 
 				} else {
-					const tempDefinition:DigestedObjectSchemaProperty = { ...definition, containerType: ContainerType.SET };
+					definition.containerType = ContainerType.SET;
 
 					listUpdates.push( ...__getListDelta(
-						this.__getObjects( oldValue, schema, tempDefinition ),
-						this.__getObjects( newValue, schema, tempDefinition )
+						this.__getObjects( oldValue, schema, definition ),
+						this.__getObjects( newValue, schema, definition )
 					) );
 				}
 
@@ -176,7 +183,7 @@ export class DeltaCreator {
 		predicates.forEach( x => this.__addPrefixFrom( x.predicate, schema ) );
 	}
 
-	private __getSchema( id:string, previousResource:{ types?:string[] }, currentResource:{ types?:string[] } ):DigestedObjectSchema {
+	private __getSchema( id:string, previousResource:TargetResource, currentResource:TargetResource ):DigestedObjectSchema {
 		const types:Set<string> = new Set();
 
 		if( "types" in previousResource ) previousResource
@@ -184,8 +191,15 @@ export class DeltaCreator {
 		if( "types" in currentResource ) currentResource
 			.types.forEach( types.add, types );
 
+
+		const mergeResource:Pointer & Required<TargetResource> = {
+			$id: id,
+			types: Array.from( types ),
+			_queryableMetadata: currentResource._queryableMetadata || previousResource._queryableMetadata,
+		};
+
 		return this.context
-			.registry.getSchemaFor( { $id: id, types: Array.from( types ) } );
+			.registry.getSchemaFor( mergeResource );
 	}
 
 	private _getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
@@ -270,7 +284,7 @@ export class DeltaCreator {
 	}
 
 	private __compactIRI( schema:DigestedObjectSchema, iri:string ):IRIToken | PrefixedNameToken {
-		if( isRelative( iri ) && schema.vocab ) iri = schema.vocab + iri;
+		iri = schema.resolveURI( iri, { vocab: true } );
 
 		const matchPrefix:[ string, string ] = Array.from( schema.prefixes.entries() )
 			.find( ( [ , prefixURI ] ) => iri.startsWith( prefixURI ) );

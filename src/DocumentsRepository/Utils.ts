@@ -12,6 +12,7 @@ import { ErrorResponse } from "../LDP/ErrorResponse";
 
 import { Pointer } from "../Pointer/Pointer";
 
+import { RDFDocument } from "../RDF/Document";
 import { RDFNode } from "../RDF/Node";
 
 import { URI } from "../RDF/URI";
@@ -51,15 +52,16 @@ export function _getErrorResponseParserFn( this:void, registry:DocumentsRegistry
 
 		return new JSONLDParser()
 			.parse( error.response.data )
-			.then( ( freeNodes:RDFNode[] ) => {
+			.then( ( rdfNodes:RDFNode[] ) => {
+				const freeNodes:RDFNode[] = RDFDocument.getFreeNodes( rdfNodes );
 				const freeResources:FreeResources = FreeResources.parseFreeNodes( registry, freeNodes );
 
 				const errorResponses:ErrorResponse[] = freeResources
 					.getPointers( true )
 					.filter( ErrorResponse.is );
 
-				if( errorResponses.length === 0 ) return Promise.reject( new IllegalArgumentError( "The response string does not contains a c:ErrorResponse." ) );
-				if( errorResponses.length > 1 ) return Promise.reject( new IllegalArgumentError( "The response string contains multiple c:ErrorResponse." ) );
+				if( errorResponses.length === 0 )
+					return Promise.reject( error );
 
 				const errorResponse:ErrorResponse = Object.assign( error, errorResponses[ 0 ] );
 				error.message = ErrorResponse.getMessage( errorResponse );

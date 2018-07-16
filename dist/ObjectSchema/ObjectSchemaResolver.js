@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ModelDecorator_1 = require("../Model/ModelDecorator");
-var QueryablePointer_1 = require("../QueryDocuments/QueryablePointer");
 var Node_1 = require("../RDF/Node");
 var URI_1 = require("../RDF/URI");
 var C_1 = require("../Vocabularies/C");
@@ -43,7 +42,7 @@ exports.ObjectSchemaResolver = {
             var schema = "types" in object || "$id" in object ?
                 __getSchemaForResource(this.$context, object) :
                 __getSchemaForNode(this.$context, object);
-            if (!QueryablePointer_1.QueryablePointer.isDecorated(object) || !object.isQueried())
+            if (!("_queryableMetadata" in object) || !object._queryableMetadata)
                 return schema;
             return ObjectSchemaDigester_1.ObjectSchemaDigester
                 ._combineSchemas([

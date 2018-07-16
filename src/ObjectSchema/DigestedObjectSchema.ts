@@ -1,6 +1,7 @@
 import { URI } from "../RDF/URI";
 
 import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";
+import { ObjectSchemaUtils } from "./ObjectSchemaUtils";
 
 
 export class DigestedObjectSchema {
@@ -38,6 +39,11 @@ export class DigestedObjectSchema {
 		if( relativeTo.base ) return URI.resolve( this.base, uri );
 
 		return uri;
+	}
+
+	getProperty( name:string ):DigestedObjectSchemaProperty | undefined {
+		if( ! this.properties.has( name) ) return void 0;
+		return ObjectSchemaUtils._resolveProperty( this, this.properties.get( name ) );
 	}
 
 }

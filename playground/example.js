@@ -78,7 +78,7 @@
 		}
 	} );
 
-	xdescribe( "Tests >", () => {
+	describe( "Tests >", () => {
 		let childrenToCreate = 6;
 		let parent;
 		let children;
@@ -213,7 +213,7 @@
 		} ) );
 
 		it( `can modify partial documents`, async( async function() {
-			let [ [ child ] ] = await carbon2.documents.getChildren( parent.id, _ => _
+			let [ child ] = await carbon2.documents.getChildren( "http://localhost:8083/", _ => _
 				.withType( "ex:Child" )
 				.properties( {
 					"index": {
@@ -228,14 +228,16 @@
 
 			await child.save();
 
-			const [ freshChild ] = await carbon2.documents.get( child.id );
+			const freshChild = await carbon2.documents.get( child.$id );
 
 			expect( freshChild.index ).toEqual( 100 );
 			expect( freshChild.somethingElse ).toEqual( "Hello world!" );
+			expect( freshChild.modified ).toEqual( jasmine.any( Date ) );
 		} ) );
+
 	} );
 
-	describe( "Auth Tests >", () => {
+	xdescribe( "Auth Tests >", () => {
 
 		let app; // CarbonLDP
 		beforeEach( () => {
@@ -355,7 +357,7 @@
 
 		} );
 
-		describe( "When Users", () => {
+		xdescribe( "When Users", () => {
 			let user;
 
 			it( "should register user", async () => {

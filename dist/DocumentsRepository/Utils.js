@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var FreeResources_1 = require("../FreeResources/FreeResources");
 var JSONLDParser_1 = require("../JSONLD/JSONLDParser");
 var ErrorResponse_1 = require("../LDP/ErrorResponse");
 var Pointer_1 = require("../Pointer/Pointer");
+var Document_1 = require("../RDF/Document");
 var URI_1 = require("../RDF/URI");
 var Utils_1 = require("../Utils");
 function _parseURIParams(resource, uri, args) {
@@ -33,15 +33,14 @@ function _getErrorResponseParserFn(registry) {
             return Promise.reject(error);
         return new JSONLDParser_1.JSONLDParser()
             .parse(error.response.data)
-            .then(function (freeNodes) {
+            .then(function (rdfNodes) {
+            var freeNodes = Document_1.RDFDocument.getFreeNodes(rdfNodes);
             var freeResources = FreeResources_1.FreeResources.parseFreeNodes(registry, freeNodes);
             var errorResponses = freeResources
                 .getPointers(true)
                 .filter(ErrorResponse_1.ErrorResponse.is);
             if (errorResponses.length === 0)
-                return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The response string does not contains a c:ErrorResponse."));
-            if (errorResponses.length > 1)
-                return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The response string contains multiple c:ErrorResponse."));
+                return Promise.reject(error);
             var errorResponse = Object.assign(error, errorResponses[0]);
             error.message = ErrorResponse_1.ErrorResponse.getMessage(errorResponse);
             return Promise.reject(error);
