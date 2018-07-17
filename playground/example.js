@@ -1,10 +1,4 @@
 (function() {
-	function async( test ) {
-		return function( done ) {
-			test().then( done ).catch( done.fail );
-		};
-	}
-
 	const carbon1 = new CarbonLDP( "http://localhost:8083" );
 	const carbon2 = new CarbonLDP( "http://localhost:8083" );
 	const carbon3 = new CarbonLDP( "http://localhost:8083" );
@@ -55,6 +49,16 @@
 		"index": {
 			"@id": "ex:index",
 			"@type": "xsd:integer",
+		},
+		"myRelation": {
+			"@id": "ex:my-relation",
+			"@type": "@id",
+			"@container": "@set",
+		},
+		"myInverseRelation": {
+			"@id": "ex:my-inverse-relation",
+			"@type": "@id",
+			"@container": "@set",
 		}
 	} );
 	carbon1.extendObjectSchema( "ex:NestedChild", {
@@ -84,7 +88,12 @@
 		let children;
 		let child;
 
-		it( "can create a document", async( async function() {
+		afterAll( async function() {
+			if( ! parent ) return;
+			await parent.delete();
+		} );
+
+		it( "can create a document", async function() {
 			let createdParent = await carbon1.documents.createAndRetrieve( "/", {
 				types: [ "ex:Parent" ]
 			} );
@@ -92,9 +101,9 @@
 			expect( Array.isArray( createdParent.types ) ).toBeTruthy();
 
 			parent = createdParent;
-		} ) );
+		} );
 
-		it( `can create ${childrenToCreate} children`, async( async function() {
+		it( `can create ${childrenToCreate} children`, async function() {
 			for( let i = 0; i < childrenToCreate; i ++ ) {
 				let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
 
@@ -104,15 +113,15 @@
 				} );
 			}
 			expect( null ).nothing();
-		} ) );
+		} );
 
-		it( "can refresh the parent", async( async function() {
+		it( "can refresh the parent", async function() {
 			await parent.refresh();
 
 			expect( parent.contains.length ).toEqual( childrenToCreate );
-		} ) );
+		} );
 
-		it( "can retrieve all the children", async( async function() {
+		it( "can retrieve all the children", async function() {
 			let retrievedChildren = await parent.getChildren();
 
 			expect( retrievedChildren.length ).toEqual( childrenToCreate );
@@ -127,33 +136,33 @@
 			}
 
 			children = retrievedChildren;
-		} ) );
+		} );
 
-		it( "can list the children", async( async function() {
+		it( "can list the children", async function() {
 			const shallowChildren = await carbon3.documents.listChildren( parent.$id );
 
 			expect( shallowChildren.length ).toEqual( childrenToCreate );
-		} ) );
+		} );
 
-		it( "can remove one member", async( async function() {
+		it( "can remove one member", async function() {
 			await parent.removeMember( children[ 0 ] );
 
 			expect( null ).nothing();
-		} ) );
+		} );
 
-		it( "can retrieve all the members", async( async function() {
+		it( "can retrieve all the members", async function() {
 			let members = await parent.getMembers();
 
 			expect( members.length ).toEqual( childrenToCreate - 1 );
-		} ) );
+		} );
 
-		it( "can retrieve children of a specific type", async( async function() {
+		it( "can retrieve children of a specific type", async function() {
 			let filteredChildren = await parent.getChildren( _ => _.withType( "ex:Even" ) );
 
 			expect( filteredChildren.length ).toEqual( childrenToCreate / 2 );
-		} ) );
+		} );
 
-		it( "can retrieve children with a property that has a specific value", async( async function() {
+		it( "can retrieve children with a property that has a specific value", async function() {
 			let filteredChildren = await parent.getChildren( _ => _
 				.withType( "ex:Child" )
 				.properties( {
@@ -168,9 +177,9 @@
 			expect( filteredChildren[ 0 ].index ).toEqual( 3 );
 
 			child = filteredChildren[ 0 ];
-		} ) );
+		} );
 
-		it( `can create nested documents`, async( async function() {
+		it( `can create nested documents`, async function() {
 			for( let i = 0; i < childrenToCreate; i ++ ) {
 				let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
 
@@ -180,9 +189,9 @@
 				} );
 			}
 			expect( null ).nothing();
-		} ) );
+		} );
 
-		it( `can retrieve nested documents`, async( async function() {
+		it( `can retrieve nested documents`, async function() {
 			let childrenWithNestedDocuments = await carbon2.documents.getChildren( parent.$id, _ => _
 				.withType( "ex:Child" )
 				.properties( {
@@ -210,9 +219,9 @@
 			childWithNestedDocuments.contains.forEach( nestedDocument =>
 				expect( nestedDocument.index ).toBeDefined()
 			);
-		} ) );
+		} );
 
-		it( `can modify partial documents`, async( async function() {
+		it( `can modify partial documents`, async function() {
 			let [ child ] = await carbon2.documents.getChildren( parent.$id, _ => _
 				.withType( "ex:Child" )
 				.properties( {
@@ -233,7 +242,113 @@
 			expect( freshChild.index ).toEqual( 100 );
 			expect( freshChild.somethingElse ).toEqual( "Hello world!" );
 			expect( freshChild.modified ).toEqual( jasmine.any( Date ) );
-		} ) );
+		} );
+
+
+		let accessPoint;
+
+		describe( "AccessPoint's", function() {
+
+			it( `can create an access point`, async function() {
+				accessPoint = await child.create( CarbonLDP.AccessPoint.create( {
+					hasMemberRelation: "ex:my-relation",
+					isMemberOfRelation: "ex:my-inverse-relation",
+				} ) );
+
+				expect( null ).nothing();
+			} );
+
+			it( `should add a member from access point`, async function() {
+				const member = await parent.create( {
+					types: [ "ex:Child" ],
+					the: "member",
+				} );
+
+				await accessPoint.addMember( member );
+
+				await child.get();
+				await member.resolve();
+
+				expect( child.myRelation ).toEqual( [
+					member,
+				] );
+				expect( member.myInverseRelation ).toEqual( [
+					child,
+				] );
+			} );
+
+			it( `should add members from access point`, async function() {
+				const members = [ ...Array( 5 ) ].map( ( _, i ) => ({
+					types: [ "ex:Child" ],
+					the: "member " + (i + 1),
+					index: i + 1,
+				}) );
+				await parent.create( members );
+
+				await accessPoint.addMembers( members );
+
+				await child.get( { ensureLatest: true } );
+
+				await Promise.all( members
+					.map( async member => await member.resolve() )
+				);
+
+				expect( child.myRelation ).toEqual( jasmine.arrayContaining( members ) );
+				expect( members[ 0 ].myInverseRelation ).toEqual( [
+					child,
+				] );
+				expect( members[ 1 ].myInverseRelation ).toEqual( [
+					child,
+				] );
+			} );
+
+			it( `should remove member from access point`, async function() {
+				const members = await accessPoint.getMembers();
+
+				await accessPoint.removeMember( members[ 0 ] );
+
+				await child.refresh();
+				expect( child.myRelation.length ).toEqual( members.length - 1 );
+				expect( child.myRelation ).not.toContain( members[ 0 ] );
+
+				await members[ 0 ].refresh();
+				expect( members[ 0 ].myInverseRelation ).not.toBeDefined();
+			} );
+
+			it( `should remove members from access point`, async function() {
+				const members = await accessPoint.getMembers();
+
+				await accessPoint.removeMembers( [ members[ 0 ], members[ 1 ] ] );
+
+				await child.refresh();
+				expect( child.myRelation.length ).toEqual( members.length - 2 );
+				expect( child.myRelation.length ).not.toContain( members[ 0 ] );
+				expect( child.myRelation.length ).not.toContain( members[ 1 ] );
+
+				await Promise.all( members
+					.map( async member => await member.refresh() )
+				);
+
+				expect( members[ 0 ].myInverseRelation ).not.toBeDefined();
+				expect( members[ 1 ].myInverseRelation ).not.toBeDefined();
+			} );
+
+			it( `should remove all rest members from access point`, async function() {
+				const members = await accessPoint.getMembers();
+				expect( members.length ).toBeGreaterThan( 0, "The child document has no members left" );
+
+				await accessPoint.removeMembers();
+
+				await child.refresh();
+				expect( child.myRelation ).not.toBeDefined();
+
+				for( let member of members ) {
+					await member.refresh();
+					expect( member.myInverseRelation ).not.toBeDefined();
+				}
+			} );
+
+		} );
 
 	} );
 })();
