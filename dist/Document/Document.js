@@ -59,44 +59,44 @@ exports.Document = {
         },
     },
     PROTOTYPE: {
-        get __savedFragments() { return []; },
-        _syncSavedFragments: function () {
-            this.__savedFragments = Array
-                .from(this.__resourcesMap.values());
-            this.__savedFragments
-                .forEach(function (fragment) { return fragment._syncSnapshot(); });
+        get $__savedFragments() { return []; },
+        $_syncSavedFragments: function () {
+            this.$__savedFragments = Array
+                .from(this.$__resourcesMap.values());
+            this.$__savedFragments
+                .forEach(function (fragment) { return fragment.$_syncSnapshot(); });
         },
-        _syncSnapshot: function () {
-            ResolvablePointer_1.ResolvablePointer.PROTOTYPE._syncSnapshot.call(this);
-            this._syncSavedFragments();
+        $_syncSnapshot: function () {
+            ResolvablePointer_1.ResolvablePointer.PROTOTYPE.$_syncSnapshot.call(this);
+            this.$_syncSavedFragments();
         },
-        isDirty: function () {
+        $isDirty: function () {
             var _this = this;
-            var isSelfDirty = ResolvablePointer_1.ResolvablePointer.PROTOTYPE.isDirty.call(this);
+            var isSelfDirty = ResolvablePointer_1.ResolvablePointer.PROTOTYPE.$isDirty.call(this);
             if (isSelfDirty)
                 return true;
             var hasRemovedFragments = this
-                .__savedFragments
-                .some(function (fragment) { return !_this.hasFragment(fragment.$id); });
+                .$__savedFragments
+                .some(function (fragment) { return !_this.$hasFragment(fragment.$id); });
             if (hasRemovedFragments)
                 return true;
             var hasNewFragments = this
-                .__savedFragments.length !== this.__resourcesMap.size;
+                .$__savedFragments.length !== this.$__resourcesMap.size;
             if (hasNewFragments)
                 return true;
             return this
-                .__savedFragments
-                .some(function (fragment) { return fragment.isDirty(); });
+                .$__savedFragments
+                .some(function (fragment) { return fragment.$isDirty(); });
         },
-        revert: function () {
+        $revert: function () {
             var _this = this;
-            ResolvablePointer_1.ResolvablePointer.PROTOTYPE.revert.call(this);
-            this.__resourcesMap.clear();
+            ResolvablePointer_1.ResolvablePointer.PROTOTYPE.$revert.call(this);
+            this.$__resourcesMap.clear();
             this
-                .__savedFragments
+                .$__savedFragments
                 .forEach(function (fragment) {
-                fragment.revert();
-                _this.__resourcesMap.set(fragment.$slug, fragment);
+                fragment.$revert();
+                _this.$__resourcesMap.set(fragment.$slug, fragment);
             });
         },
     },
@@ -116,7 +116,7 @@ exports.Document = {
         if (exports.Document.isDecorated(object))
             return object;
         var base = Object.assign(object, {
-            __modelDecorator: Fragment_1.Fragment,
+            $__modelDecorator: Fragment_1.Fragment,
         });
         var target = ModelDecorator_1.ModelDecorator
             .decorateMultiple(base, SPARQLDocumentTrait_1.SPARQLDocumentTrait, EventEmitterDocumentTrait_1.EventEmitterDocumentTrait, QueryableDocumentTrait_1.QueryableDocumentTrait);

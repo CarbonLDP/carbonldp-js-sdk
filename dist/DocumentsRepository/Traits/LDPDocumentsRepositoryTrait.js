@@ -46,10 +46,10 @@ function __changeNodesID(resource, map) {
         .forEach(function (_a) {
         var entryKey = _a.entryKey, entryValue = _a.entryValue;
         var node = resource
-            .getPointer(entryKey.$id, true);
-        resource.removePointer(entryKey.$id);
+            .$getPointer(entryKey.$id, true);
+        resource.$removePointer(entryKey.$id);
         node.$id = entryValue.$id;
-        resource._addPointer(node);
+        resource.$_addPointer(node);
     });
 }
 function __applyResponseMetadata(repository, freeNodes) {
@@ -57,7 +57,7 @@ function __applyResponseMetadata(repository, freeNodes) {
         return;
     var freeResources = FreeResources_1.FreeResources.parseFreeNodes(repository.$context.registry, freeNodes);
     var responseMetadata = freeResources
-        .getPointers(true)
+        .$getPointers(true)
         .find(ResponseMetadata_1.ResponseMetadata.is);
     responseMetadata
         .documentsMetadata
@@ -88,7 +88,7 @@ function __createChild(repository, parentURI, requestOptions, child, slug) {
         throw new IllegalArgumentError_1.IllegalArgumentError("Cannot persist an already resolvable pointer.");
     var transient = TransientDocument_1.TransientDocument.is(child) ?
         child : TransientDocument_1.TransientDocument.decorate(child);
-    transient._normalize();
+    transient.$_normalize();
     transient.$registry = repository.$context.registry;
     var body = JSON.stringify(transient);
     if (!!slug)
@@ -104,11 +104,11 @@ function __createChild(repository, parentURI, requestOptions, child, slug) {
         if (locationHeader.values.length !== 1)
             throw new BadResponseError_1.BadResponseError("The response contains more than one Location header.", response);
         transient.$id = locationHeader.values[0].toString();
-        var document = repository.$context.registry._addPointer(transient);
+        var document = repository.$context.registry.$_addPointer(transient);
         document
-            .getFragments()
-            .forEach(document.__modelDecorator.decorate);
-        document._syncSnapshot();
+            .$getFragments()
+            .forEach(document.$__modelDecorator.decorate);
+        document.$_syncSnapshot();
         return __applyResponseRepresentation(repository, document, response);
     })
         .catch(function (error) {
@@ -117,7 +117,7 @@ function __createChild(repository, parentURI, requestOptions, child, slug) {
     });
 }
 function __createChildren(retrievalType, repository, uri, children, slugsOrOptions, requestOptions) {
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.$context.registry.$inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     requestOptions = Request_1.RequestUtils.isOptions(slugsOrOptions) ?
@@ -153,26 +153,26 @@ function __createChildren(retrievalType, repository, uri, children, slugsOrOptio
 function __sendPatch(repository, document, requestOptions) {
     if (!ResolvablePointer_1.ResolvablePointer.is(document))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The document isn't a resolvable pointer."));
-    if (!repository.$context.registry.inScope(document.$id))
+    if (!repository.$context.registry.$inScope(document.$id))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + document.$id + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(document.$id, { base: true });
-    if (!document.isDirty())
+    if (!document.$isDirty())
         return Promise.resolve(document);
-    document._normalize();
+    document.$_normalize();
     __setDefaultRequestOptions(requestOptions);
     Request_1.RequestUtils.setContentTypeHeader("text/ldpatch", requestOptions);
     Request_1.RequestUtils.setIfMatchHeader(document.$eTag, requestOptions);
     var deltaCreator = new DeltaCreator_1.DeltaCreator(repository.$context);
-    deltaCreator.addResource(document.$id, document._snapshot, document);
+    deltaCreator.addResource(document.$id, document.$_snapshot, document);
     document
-        .getPointers(true)
+        .$getPointers(true)
         .forEach(function (pointer) {
-        deltaCreator.addResource(pointer.$id, pointer._snapshot, pointer);
+        deltaCreator.addResource(pointer.$id, pointer.$_snapshot, pointer);
     });
-    document.__savedFragments
-        .filter(function (pointer) { return !document.hasPointer(pointer.$id); })
+    document.$__savedFragments
+        .filter(function (pointer) { return !document.$hasPointer(pointer.$id); })
         .forEach(function (pointer) {
-        deltaCreator.addResource(pointer.$id, pointer._snapshot, {});
+        deltaCreator.addResource(pointer.$id, pointer.$_snapshot, {});
     });
     var body = deltaCreator.getPatch();
     return Request_1.RequestService
@@ -186,7 +186,7 @@ function __parseMembers(registry, pointers) {
     return pointers
         .map(function (pointer) {
         if (Utils_1.isString(pointer))
-            return registry.getPointer(pointer);
+            return registry.$getPointer(pointer);
         if (Pointer_1.Pointer.is(pointer))
             return pointer;
     })
@@ -194,14 +194,14 @@ function __parseMembers(registry, pointers) {
 }
 function __sendAddAction(repository, uri, members, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.$context.registry.$inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
     Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
     var freeResources = FreeResources_1.FreeResources.createFrom({ $registry: repository.$context.registry });
     var targetMembers = __parseMembers(repository.$context.registry, members);
-    freeResources._addPointer(AddMemberAction_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
+    freeResources.$_addPointer(AddMemberAction_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
     var body = JSON.stringify(freeResources);
     return Request_1.RequestService
         .put(url, body, requestOptions)
@@ -210,7 +210,7 @@ function __sendAddAction(repository, uri, members, requestOptions) {
 }
 function __sendRemoveAction(repository, uri, members, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.$context.registry.$inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
@@ -221,7 +221,7 @@ function __sendRemoveAction(repository, uri, members, requestOptions) {
     }, requestOptions);
     var freeResources = FreeResources_1.FreeResources.createFrom({ $registry: repository.$context.registry });
     var targetMembers = __parseMembers(repository.$context.registry, members);
-    freeResources._addPointer(RemoveMemberAction_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
+    freeResources.$_addPointer(RemoveMemberAction_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
     var body = JSON.stringify(freeResources);
     return Request_1.RequestService
         .delete(url, body, requestOptions)
@@ -230,7 +230,7 @@ function __sendRemoveAction(repository, uri, members, requestOptions) {
 }
 function __sendRemoveAll(repository, uri, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.$context.registry.$inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
@@ -252,18 +252,18 @@ function __sendRemoveAll(repository, uri, requestOptions) {
 }
 exports.LDPDocumentsRepositoryTrait = {
     PROTOTYPE: {
-        get: function (uri, requestOptions) {
+        $get: function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .get.call(this, uri, requestOptions)
+                .$get.call(this, uri, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
-        exists: function (uri, requestOptions) {
+        $exists: function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .exists.call(this, uri, requestOptions)
+                .$exists.call(this, uri, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
         create: function (uri, children, slugsOrOptions, requestOptions) {
@@ -272,29 +272,29 @@ exports.LDPDocumentsRepositoryTrait = {
         createAndRetrieve: function (uri, children, slugsOrOptions, requestOptions) {
             return __createChildren("representation", this, uri, children, slugsOrOptions, requestOptions);
         },
-        refresh: function (document, requestOptions) {
+        $refresh: function (document, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             Request_1.RequestUtils.setIfNoneMatchHeader(document.$eTag, requestOptions);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .refresh.call(this, document, requestOptions)
+                .$refresh.call(this, document, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
-        save: function (document, requestOptions) {
+        $save: function (document, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             Request_1.RequestUtils.setPreferredRetrieval("minimal", requestOptions);
             return __sendPatch(this, document, requestOptions);
         },
-        saveAndRefresh: function (document, requestOptions) {
+        $saveAndRefresh: function (document, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             Request_1.RequestUtils.setPreferredRetrieval("representation", requestOptions);
             return __sendPatch(this, document, requestOptions);
         },
-        delete: function (uri, requestOptions) {
+        $delete: function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .delete.call(this, uri, requestOptions)
+                .$delete.call(this, uri, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
         addMember: function (uri, member, requestOptions) {
@@ -325,7 +325,7 @@ exports.LDPDocumentsRepositoryTrait = {
                 if (!target)
                     throw new BadResponseError_1.BadResponseError("No document \"" + id + "\" was returned.", response);
                 target.$eTag = response.getETag();
-                target._resolved = true;
+                target.$_resolved = true;
                 return target;
             });
         },

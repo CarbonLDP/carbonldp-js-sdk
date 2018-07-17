@@ -55,7 +55,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				$id: "https://example.com/",
 			}, data ) );
 
-			mock._normalize();
+			mock.$_normalize();
 
 			return mock;
 		}
@@ -79,19 +79,19 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"__modelDecorator",
+			"$__modelDecorator",
 			"CarbonLDP.Model.ModelDecorator<CarbonLDP.Fragment>"
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"__resourcesMap",
+			"$__resourcesMap",
 			"Map<string, CarbonLDP.Fragment>"
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"__savedFragments",
+			"$__savedFragments",
 			"CarbonLDP.Fragment[]",
 			"Array with a copy of every fragment that that is currently persisted in the server."
 		), ():void => {} );
@@ -148,7 +148,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 		), ():void => {} );
 
 
-		describe( method( OBLIGATORY, "getPointer" ), () => {
+		describe( method( OBLIGATORY, "$getPointer" ), () => {
 
 			it( hasSignature(
 				[
@@ -168,13 +168,13 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should exists", ():void => {
 				const registry:Document = createMock();
 
-				expect( registry.getPointer ).toBeDefined();
-				expect( registry.getPointer ).toEqual( jasmine.any( Function ) );
+				expect( registry.$getPointer ).toBeDefined();
+				expect( registry.$getPointer ).toEqual( jasmine.any( Function ) );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "getPointers" ), () => {
+		describe( method( OBLIGATORY, "$getPointers" ), () => {
 
 			it( hasSignature(
 				"Returns all the pointers stored the registry hierarchy.",
@@ -192,14 +192,14 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should exists", ():void => {
 				const registry:Document = createMock();
 
-				expect( registry.getPointers ).toBeDefined();
-				expect( registry.getPointers ).toEqual( jasmine.any( Function ) );
+				expect( registry.$getPointers ).toBeDefined();
+				expect( registry.$getPointers ).toEqual( jasmine.any( Function ) );
 			} );
 
 		} );
 
 
-		describe( method( OBLIGATORY, "getFragment" ), () => {
+		describe( method( OBLIGATORY, "$getFragment" ), () => {
 
 			it( hasSignature(
 				[ "T" ],
@@ -209,13 +209,13 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should exists", ():void => {
 				const document:Document = createMock();
 
-				expect( document.getFragment ).toBeDefined();
-				expect( document.getFragment ).toEqual( jasmine.any( Function ) );
+				expect( document.$getFragment ).toBeDefined();
+				expect( document.$getFragment ).toEqual( jasmine.any( Function ) );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "getFragments" ), () => {
+		describe( method( OBLIGATORY, "$getFragments" ), () => {
 
 			it( hasSignature(
 				"Returns an array with all the fragments in the Document.",
@@ -225,13 +225,13 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should exists", ():void => {
 				const document:Document = createMock();
 
-				expect( document.getFragments ).toBeDefined();
-				expect( document.getFragments ).toEqual( jasmine.any( Function ) );
+				expect( document.$getFragments ).toBeDefined();
+				expect( document.$getFragments ).toEqual( jasmine.any( Function ) );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "createFragment" ), () => {
+		describe( method( OBLIGATORY, "$createFragment" ), () => {
 
 			it( hasSignature(
 				[ "T" ],
@@ -252,13 +252,13 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should exists", ():void => {
 				const document:Document = createMock();
 
-				expect( document.createFragment ).toBeDefined();
-				expect( document.createFragment ).toEqual( jasmine.any( Function ) );
+				expect( document.$createFragment ).toBeDefined();
+				expect( document.$createFragment ).toEqual( jasmine.any( Function ) );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "removeFragment" ), ():void => {
+		describe( method( OBLIGATORY, "$removeFragment" ), ():void => {
 
 			it( hasSignature(
 				"Remove the fragment referenced by the `CarbonLDP.Fragment` provided from the Document.", [
@@ -277,14 +277,14 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should exists", ():void => {
 				const document:Document = createMock();
 
-				expect( document.removeFragment ).toBeDefined();
-				expect( document.removeFragment ).toEqual( jasmine.any( Function ) );
+				expect( document.$removeFragment ).toBeDefined();
+				expect( document.$removeFragment ).toEqual( jasmine.any( Function ) );
 			} );
 
 		} );
 
 
-		describe( method( OBLIGATORY, "get" ), () => {
+		describe( method( OBLIGATORY, "$get" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -328,7 +328,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		} );
 
-		describe( method( OBLIGATORY, "resolve" ), () => {
+		describe( method( OBLIGATORY, "$resolve" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -352,7 +352,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 		} );
 
 
-		describe( method( OBLIGATORY, "refresh" ), () => {
+		describe( method( OBLIGATORY, "$refresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -365,7 +365,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		} );
 
-		describe( method( OBLIGATORY, "save" ), () => {
+		describe( method( OBLIGATORY, "$save" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -378,7 +378,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		} );
 
-		describe( method( OBLIGATORY, "saveAndRefresh" ), () => {
+		describe( method( OBLIGATORY, "$saveAndRefresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -392,7 +392,27 @@ describe( module( "carbonldp/Document" ), ():void => {
 		} );
 
 
-		describe( method( OBLIGATORY, "_syncSavedFragments" ), () => {
+		describe( method( OBLIGATORY, "delete" ), () => {
+
+			it( hasSignature(
+				"Deletes the resource referred by the URI provided from the server.", [
+					{ name: "uri", type: "string", description: "The resource to be deleted." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<void>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Deletes the current document.", [
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<void>" }
+			), ():void => {} );
+
+		} );
+
+
+		describe( method( OBLIGATORY, "$_syncSavedFragments" ), () => {
 
 			it( hasSignature(
 				"Set all the current fragments in the document as fragments that has been saved in the server."
@@ -401,8 +421,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should exists", ():void => {
 				const resource:Document = createMock();
 
-				expect( resource._syncSavedFragments ).toBeDefined();
-				expect( resource._syncSavedFragments ).toEqual( jasmine.any( Function ) );
+				expect( resource.$_syncSavedFragments ).toBeDefined();
+				expect( resource.$_syncSavedFragments ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -411,135 +431,135 @@ describe( module( "carbonldp/Document" ), ():void => {
 		} );
 
 
-		// TODO: Test ._syncSnapshot
+		// TODO: Test .$_syncSnapshot
 
-		describe( "Document.isDirty", () => {
+		describe( "Document.$isDirty", () => {
 
 			it( "should exists", ():void => {
 				const resource:Document = createMock();
 
-				expect( resource.isDirty ).toBeDefined();
-				expect( resource.isDirty ).toEqual( jasmine.any( Function ) );
+				expect( resource.$isDirty ).toBeDefined();
+				expect( resource.$isDirty ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should return true if self is dirty", () => {
 				const resource:Document = createMock( { newData: true } );
 
-				const returned:boolean = resource.isDirty();
+				const returned:boolean = resource.$isDirty();
 				expect( returned ).toBe( true );
 			} );
 
 
 			it( "should return true when removed fragments", () => {
 				const resource:Document = createMock();
-				resource.createFragment( "_:1" );
-				resource._syncSavedFragments();
+				resource.$createFragment( "_:1" );
+				resource.$_syncSavedFragments();
 
-				expect( resource.isDirty() ).toBe( false );
+				expect( resource.$isDirty() ).toBe( false );
 
-				resource.removeFragment( "_:1" );
-				expect( resource.isDirty() ).toBe( true );
+				resource.$removeFragment( "_:1" );
+				expect( resource.$isDirty() ).toBe( true );
 			} );
 
 			it( "should return true when new fragments", () => {
 				const resource:Document = createMock();
-				resource.createFragment( "_:1" );
+				resource.$createFragment( "_:1" );
 
-				expect( resource.isDirty() ).toBe( true );
+				expect( resource.$isDirty() ).toBe( true );
 			} );
 
 			it( "should return true when removed and new fragments", () => {
 				const resource:Document = createMock();
-				resource.createFragment( "_:1" );
-				resource._syncSavedFragments();
+				resource.$createFragment( "_:1" );
+				resource.$_syncSavedFragments();
 
-				expect( resource.isDirty() ).toBe( false );
+				expect( resource.$isDirty() ).toBe( false );
 
-				resource.removeFragment( "_:1" );
-				resource.createFragment( "_:2" );
-				expect( resource.isDirty() ).toBe( true );
+				resource.$removeFragment( "_:1" );
+				resource.$createFragment( "_:2" );
+				expect( resource.$isDirty() ).toBe( true );
 			} );
 
 
 			it( "should return true when any saved fragment is dirty", () => {
 				const resource:Document = createMock();
 
-				resource.createFragment( "_:1" );
-				resource.createFragment( "#fragment" );
-				const target:{ newData?:boolean } = resource.createFragment<{ newData?:boolean }>( {}, "_:2" );
-				resource._syncSavedFragments();
+				resource.$createFragment( "_:1" );
+				resource.$createFragment( "#fragment" );
+				const target:{ newData?:boolean } = resource.$createFragment<{ newData?:boolean }>( {}, "_:2" );
+				resource.$_syncSavedFragments();
 
-				expect( resource.isDirty() ).toBe( false );
+				expect( resource.$isDirty() ).toBe( false );
 
 				target.newData = true;
-				expect( resource.isDirty() ).toBe( true );
+				expect( resource.$isDirty() ).toBe( true );
 			} );
 
 		} );
 
-		describe( "Document.revert", () => {
+		describe( "Document.$revert", () => {
 
 			it( "should exists", ():void => {
 				const resource:Document = createMock( {} );
 
-				expect( resource.revert ).toBeDefined();
-				expect( resource.revert ).toEqual( jasmine.any( Function ) );
+				expect( resource.$revert ).toBeDefined();
+				expect( resource.$revert ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should revert self changes", () => {
 				const resource:Document = createMock( { newData: true } );
 
-				resource.revert();
+				resource.$revert();
 				expect( resource as {} ).toEqual( {} );
 			} );
 
 
 			it( "should add deleted fragment", () => {
 				const resource:Document = createMock();
-				resource.createFragment( { the: "fragment" }, "_:1" );
-				resource._syncSavedFragments();
+				resource.$createFragment( { the: "fragment" }, "_:1" );
+				resource.$_syncSavedFragments();
 
-				resource.removeFragment( "_:1" );
-				resource.revert();
+				resource.$removeFragment( "_:1" );
+				resource.$revert();
 
-				expect( resource.getFragment( "_:1" ) ).toEqual( { the: "fragment" } );
+				expect( resource.$getFragment( "_:1" ) ).toEqual( { the: "fragment" } );
 			} );
 
 			it( "should remove new fragments", () => {
 				const resource:Document = createMock();
 
-				resource.createFragment( { the: "fragment" }, "_:1" );
-				resource.revert();
+				resource.$createFragment( { the: "fragment" }, "_:1" );
+				resource.$revert();
 
-				expect( resource.hasFragment( "_:1" ) ).toEqual( false );
+				expect( resource.$hasFragment( "_:1" ) ).toEqual( false );
 			} );
 
 			it( "should add deleted fragments and remove new ones", () => {
 				const resource:Document = createMock();
-				resource.createFragment( { the: "fragment" }, "_:1" );
-				resource._syncSavedFragments();
+				resource.$createFragment( { the: "fragment" }, "_:1" );
+				resource.$_syncSavedFragments();
 
-				resource.removeFragment( "_:1" );
-				resource.createFragment( { the: "another-fragment" }, "_:2" );
-				resource.revert();
+				resource.$removeFragment( "_:1" );
+				resource.$createFragment( { the: "another-fragment" }, "_:2" );
+				resource.$revert();
 
-				expect( resource.getFragment( "_:1" ) ).toEqual( { the: "fragment" } );
-				expect( resource.hasFragment( "_:2" ) ).toEqual( false );
+				expect( resource.$getFragment( "_:1" ) ).toEqual( { the: "fragment" } );
+				expect( resource.$hasFragment( "_:2" ) ).toEqual( false );
 			} );
 
 
 			it( "should revert changes in fragments", () => {
 				const resource:Document = createMock();
 
-				resource.createFragment( "_:1" );
-				resource.createFragment( "#fragment" );
-				const target:{ newData?:boolean } = resource.createFragment<{ newData?:boolean }>( {}, "_:2" );
-				resource._syncSavedFragments();
+				resource.$createFragment( "_:1" );
+				resource.$createFragment( "#fragment" );
+				const target:{ newData?:boolean } = resource.$createFragment<{ newData?:boolean }>( {}, "_:2" );
+				resource.$_syncSavedFragments();
 
 				target.newData = true;
-				resource.revert();
+				resource.$revert();
 
 				expect( target ).toEqual( {} );
 			} );
@@ -560,7 +580,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 		} );
 
 		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Document, CarbonLDP.Document.Traits.SPARQLDocumentTrait & CarbonLDP.Document.Traits.EventEmitterDocumentTrait & CarbonLDP.Document.Traits.QueryableDocumentTrait, \"_syncSnapshot\" | \"isDirty\" | \"revert\">" ), () => {
-			const target:ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, "_syncSnapshot" | "isDirty" | "revert"> = {} as DocumentFactory;
+			const target:ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, "$_syncSnapshot" | "$isDirty" | "$revert"> = {} as DocumentFactory;
 			expect( target ).toBeDefined();
 		} );
 
@@ -603,18 +623,18 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			let object:typeof Document.PROTOTYPE;
 			beforeEach( ():void => {
-				object = createNonEnumerable<typeof Document.PROTOTYPE>( {
+				object = createNonEnumerable<DocumentFactory["PROTOTYPE"]>( {
 					created: null,
 					modified: null,
 					accessPoints: null,
 					contains: null,
 
-					__savedFragments: [],
-					_syncSavedFragments: ():any => {},
+					$__savedFragments: [],
+					$_syncSavedFragments: ():any => {},
 
-					_syncSnapshot: ():any => {},
-					isDirty: ():any => {},
-					revert: ():any => {},
+					$_syncSnapshot: ():any => {},
+					$isDirty: ():any => {},
+					$revert: ():any => {},
 				} );
 			} );
 
@@ -654,28 +674,28 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 
 			it( "should return false when no __savedFragments", ():void => {
-				delete object.__savedFragments;
+				delete object.$__savedFragments;
 				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
 			it( "should return false when no _syncSavedFragments", ():void => {
-				delete object._syncSavedFragments;
+				delete object.$_syncSavedFragments;
 				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
 
 			it( "should return false when no _syncSnapshot", ():void => {
-				delete object._syncSnapshot;
+				delete object.$_syncSnapshot;
 				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
 			it( "should return false when no isDirty", ():void => {
-				delete object.isDirty;
+				delete object.$isDirty;
 				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
 			it( "should return false when no revert", ():void => {
-				delete object.revert;
+				delete object.$revert;
 				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
@@ -852,14 +872,14 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should add __modelDecorator as FragmentFactory", () => {
+			it( "should add $__modelDecorator as FragmentFactory", () => {
 				const document:Document = Document.decorate( {
 					$repository: $context.repository,
 					$registry: $context.registry,
 					the: "object",
 				} );
 
-				expect( document.__modelDecorator ).toBe( Fragment );
+				expect( document.$__modelDecorator ).toBe( Fragment );
 			} );
 
 		} );

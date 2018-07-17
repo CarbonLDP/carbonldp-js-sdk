@@ -62,7 +62,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
             throw e;
         }
         var targetSet = new Set(freeResources
-            .getPointers(true)
+            .$getPointers(true)
             .filter(QueryMetadata_1.QueryMetadata.is)
             .map(function (x) { return x.target; })
             .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
@@ -71,7 +71,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
         if (target)
             target.$eTag = void 0;
         freeResources
-            .getPointers(true)
+            .$getPointers(true)
             .filter(ResponseMetadata_1.ResponseMetadata.is)
             .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[C_1.C.documentMetadata]; })
             .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
@@ -82,7 +82,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
             var eTag = documentMetadata.eTag || documentMetadata[C_1.C.eTag];
             if (!eTag)
                 return;
-            relatedDocument._resolved = true;
+            relatedDocument.$_resolved = true;
             if (relatedDocument.$eTag === void 0)
                 relatedDocument.$eTag = eTag;
             if (relatedDocument.$eTag !== eTag)
@@ -168,7 +168,7 @@ function __executeBuilder(repository, url, requestOptions, queryContext, targetP
     });
 }
 function __getQueryable(repository, uri, requestOptions, queryBuilderFn, target) {
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.$context.registry.$inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
@@ -182,12 +182,12 @@ function __getQueryable(repository, uri, requestOptions, queryBuilderFn, target)
         .then(function (documents) { return documents[0]; });
 }
 function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
-    if (resource._queryableMetadata.schema === QueryableMetadata_1.QueryableMetadata.ALL) {
+    if (resource.$_queryableMetadata.schema === QueryableMetadata_1.QueryableMetadata.ALL) {
         parentAdder.addPattern(Utils_1._createAllPattern(queryContext, parentName));
         return;
     }
     parentAdder.addPattern(Utils_1._createTypesPattern(queryContext, parentName));
-    resource._queryableMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
+    resource.$_queryableMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
         var _a;
         var path = parentName + "." + propertyName;
         var propertyPattern = (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, Utils_1._createPropertyPatterns(queryContext, parentName, path, digestedProperty));
@@ -195,7 +195,7 @@ function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
         var propertyValues = Array.isArray(resource[propertyName]) ? resource[propertyName] : [resource[propertyName]];
         var propertyFragment = propertyValues
             .filter(QueryablePointer_1.QueryablePointer.is)
-            .find(function (fragment) { return fragment.isQueried(); });
+            .find(function (fragment) { return fragment.$isQueried(); });
         if (!propertyFragment)
             return;
         __addRefreshPatterns(queryContext, propertyPattern, propertyFragment, path);
@@ -203,7 +203,7 @@ function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
 }
 function __refreshQueryable(repository, document, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.inScope(document.$id, true))
+    if (!repository.$context.registry.$inScope(document.$id, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + document.$id + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(document.$id, { base: true });
     var queryContext = new QueryContextPartial_1.QueryContextPartial(document, repository.$context);
@@ -217,7 +217,7 @@ function __refreshQueryable(repository, document, requestOptions) {
         .then(function (documents) { return documents[0]; });
 }
 function __executeChildrenBuilder(repository, uri, requestOptions, queryBuilderFn) {
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.$context.registry.$inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
@@ -233,7 +233,7 @@ function __executeChildrenBuilder(repository, uri, requestOptions, queryBuilderF
     return __executeBuilder(repository, url, requestOptions, queryContext, childrenProperty, queryBuilderFn);
 }
 function __executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn) {
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.$context.registry.$inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
@@ -257,13 +257,13 @@ function __executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn
 }
 exports.QueryableDocumentsRepositoryTrait = {
     PROTOTYPE: {
-        get: function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+        $get: function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
             var requestOptions = Utils_2.isObject(requestOptionsOrQueryBuilderFn) ?
                 requestOptionsOrQueryBuilderFn : {};
             queryBuilderFn = Utils_2.isFunction(requestOptionsOrQueryBuilderFn) ?
                 requestOptionsOrQueryBuilderFn : queryBuilderFn;
-            var target = this.$context.registry.hasPointer(uri) ?
-                this.$context.registry.getPointer(uri, true) :
+            var target = this.$context.registry.$hasPointer(uri) ?
+                this.$context.registry.$getPointer(uri, true) :
                 void 0;
             if (queryBuilderFn) {
                 var types_1 = target ? target.types : [];
@@ -272,29 +272,29 @@ exports.QueryableDocumentsRepositoryTrait = {
                     return queryBuilderFn.call(void 0, _);
                 });
             }
-            if (target && target.isQueried())
+            if (target && target.$isQueried())
                 requestOptions.ensureLatest = true;
             return LDPDocumentsRepositoryTrait_1.LDPDocumentsRepositoryTrait.PROTOTYPE
-                .get.call(this, uri, requestOptions);
+                .$get.call(this, uri, requestOptions);
         },
-        resolve: function (document, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
-            return this.get(document.$id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
+        $resolve: function (document, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+            return this.$get(document.$id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
         },
-        refresh: function (document, requestOptions) {
-            if (!document.isQueried())
+        $refresh: function (document, requestOptions) {
+            if (!document.$isQueried())
                 return LDPDocumentsRepositoryTrait_1.LDPDocumentsRepositoryTrait.PROTOTYPE
-                    .refresh.call(this, document, requestOptions);
+                    .$refresh.call(this, document, requestOptions);
             return __refreshQueryable(this, document, requestOptions);
         },
-        saveAndRefresh: function (document, requestOptions) {
+        $saveAndRefresh: function (document, requestOptions) {
             var _this = this;
-            if (!document._queryableMetadata)
+            if (!document.$_queryableMetadata)
                 return LDPDocumentsRepositoryTrait_1.LDPDocumentsRepositoryTrait.PROTOTYPE
-                    .saveAndRefresh.call(this, document, requestOptions);
+                    .$saveAndRefresh.call(this, document, requestOptions);
             if (document.$eTag === null)
                 return Promise.reject(new IllegalStateError_1.IllegalStateError("The document \"" + document.$id + "\" is locally outdated and cannot be saved."));
             var cloneOptions = Request_1.RequestUtils.cloneOptions(requestOptions || {});
-            return this.save(document, cloneOptions)
+            return this.$save(document, cloneOptions)
                 .then(function (doc) {
                 return __refreshQueryable(_this, doc, requestOptions);
             });

@@ -16,9 +16,9 @@ export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer
     decorate(object: {
         types?: string[];
     }): void;
-    _addPointer<T extends object>(pointer: T & Pointer): T & M;
-    _getLocalID(id: string): string;
+    $_addPointer<T extends object>(pointer: T & Pointer): T & M;
+    $_getLocalID(id: string): string;
 }
-export declare type OverloadedFns = "$context" | "$registry" | "_addPointer" | "_getLocalID";
+export declare type OverloadedFns = "$context" | "$registry" | "$_addPointer" | "$_getLocalID";
 export declare type GeneralRegistryFactory = ModelPrototype<GeneralRegistry, Registry & ObjectSchemaResolver, OverloadedFns> & ModelDecorator<GeneralRegistry<any>, BaseGeneralRegistry> & ModelFactory<GeneralRegistry<any>, BaseGeneralRegistry>;
 export declare const GeneralRegistry: GeneralRegistryFactory;

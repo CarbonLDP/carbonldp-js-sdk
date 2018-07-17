@@ -65,7 +65,7 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 				isTransientResource = spyOn( Resource, "is" )
 					.and.returnValue( true );
 				mockObject = jasmine.createSpyObj( {
-					hasType: true,
+					$hasType: true,
 				} );
 			} );
 
@@ -76,7 +76,7 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 
 			it( "should has type c:VolatileResource", () => {
 				VolatileResource.is( mockObject );
-				expect( mockObject.hasType ).toHaveBeenCalledWith( C.VolatileResource );
+				expect( mockObject.$hasType ).toHaveBeenCalledWith( C.VolatileResource );
 			} );
 
 			it( "should return true when all assertions", () => {

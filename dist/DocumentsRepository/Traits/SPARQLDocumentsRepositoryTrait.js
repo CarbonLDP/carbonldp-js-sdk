@@ -9,7 +9,7 @@ var Utils_1 = require("../Utils");
 exports.SPARQLDocumentsRepositoryTrait = {
     PROTOTYPE: {
         executeASKQuery: function (uri, askQuery, requestOptions) {
-            if (!this.$context.registry.inScope(uri, true))
+            if (!this.$context.registry.$inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return SPARQLService_1.SPARQLService
@@ -21,7 +21,7 @@ exports.SPARQLDocumentsRepositoryTrait = {
                 .catch(Utils_1._getErrorResponseParserFn(this.$context.registry));
         },
         executeSELECTQuery: function (uri, selectQuery, requestOptions) {
-            if (!this.$context.registry.inScope(uri, true))
+            if (!this.$context.registry.$inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return SPARQLService_1.SPARQLService
@@ -33,7 +33,7 @@ exports.SPARQLDocumentsRepositoryTrait = {
                 .catch(Utils_1._getErrorResponseParserFn(this.$context.registry));
         },
         executeUPDATE: function (uri, update, requestOptions) {
-            if (!this.$context.registry.inScope(uri, true))
+            if (!this.$context.registry.$inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return SPARQLService_1.SPARQLService
@@ -42,7 +42,7 @@ exports.SPARQLDocumentsRepositoryTrait = {
                 .catch(Utils_1._getErrorResponseParserFn(this.$context.registry));
         },
         sparql: function (uri) {
-            if (!this.$context.registry.inScope(uri, true))
+            if (!this.$context.registry.$inScope(uri, true))
                 throw new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope.");
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             var schema = this.$context.registry.getGeneralSchema();

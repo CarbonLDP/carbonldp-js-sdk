@@ -20,30 +20,30 @@ export interface Registry<M extends RegisteredPointer = RegisteredPointer> exten
 	// TODO: Change to unknown
 	readonly $registry:Registry<any> | undefined;
 
-	readonly __modelDecorator:ModelDecorator<M, BaseRegisteredPointer>;
-	readonly __resourcesMap:Map<string, M>;
+	readonly $__modelDecorator:ModelDecorator<M, BaseRegisteredPointer>;
+	readonly $__resourcesMap:Map<string, M>;
 
 
-	inScope( idOrPointer:string | Pointer ):boolean;
-	inScope( idOrPointer:string | Pointer, local:true ):boolean;
+	$inScope( idOrPointer:string | Pointer ):boolean;
+	$inScope( idOrPointer:string | Pointer, local:true ):boolean;
 
 
-	hasPointer( id:string ):boolean;
-	hasPointer( id:string, local:true ):boolean;
+	$hasPointer( id:string ):boolean;
+	$hasPointer( id:string, local:true ):boolean;
 
-	getPointer( id:string ):RegisteredPointer;
-	getPointer( id:string, local:true ):M;
+	$getPointer( id:string ):RegisteredPointer;
+	$getPointer( id:string, local:true ):M;
 
-	getPointers():RegisteredPointer[];
-	getPointers( local:true ):M[];
+	$getPointers():RegisteredPointer[];
+	$getPointers( local:true ):M[];
 
-	removePointer( idOrPointer:string | RegisteredPointer ):boolean;
-	removePointer( idOrPointer:string | RegisteredPointer, local:true ):boolean;
+	$removePointer( idOrPointer:string | RegisteredPointer ):boolean;
+	$removePointer( idOrPointer:string | RegisteredPointer, local:true ):boolean;
 
 
-	_getLocalID( id:string ):string;
+	$_getLocalID( id:string ):string;
 
-	_addPointer<T extends object>( pointer:T & Pointer ):T & M;
+	$_addPointer<T extends object>( pointer:T & Pointer ):T & M;
 }
 
 
@@ -58,89 +58,89 @@ export const Registry:RegistryFactory = {
 	PROTOTYPE: {
 		$registry: void 0,
 
-		get __modelDecorator():ModelDecorator<RegisteredPointer> {
-			throw new IllegalArgumentError( `Property "__modelDecorator" is required` );
+		get $__modelDecorator():ModelDecorator<RegisteredPointer> {
+			throw new IllegalArgumentError( `Property "$__modelDecorator" is required` );
 		},
 
-		get __resourcesMap():Map<string, RegisteredPointer> { return new Map(); },
+		get $__resourcesMap():Map<string, RegisteredPointer> { return new Map(); },
 
 
-		inScope( this:Registry, idOrPointer:string | Pointer, local?:true ):boolean {
+		$inScope( this:Registry, idOrPointer:string | Pointer, local?:true ):boolean {
 			try {
 				const id:string = Pointer.getID( idOrPointer );
-				this._getLocalID( id );
+				this.$_getLocalID( id );
 				return true;
 			} catch {
 				if( local === true || ! this.$registry ) return false;
-				return this.$registry.inScope( idOrPointer );
+				return this.$registry.$inScope( idOrPointer );
 			}
 		},
 
 
-		hasPointer( this:Registry, id:string, local?:true ):boolean {
-			if( this.inScope( id, true ) ) {
-				const localID:string = this._getLocalID( id );
-				if( this.__resourcesMap.has( localID ) ) return true;
+		$hasPointer( this:Registry, id:string, local?:true ):boolean {
+			if( this.$inScope( id, true ) ) {
+				const localID:string = this.$_getLocalID( id );
+				if( this.$__resourcesMap.has( localID ) ) return true;
 			}
 
 			if( local === true || ! this.$registry ) return false;
-			return this.$registry.hasPointer( id );
+			return this.$registry.$hasPointer( id );
 		},
 
-		getPointer( this:Registry, id:string, local?:true ):RegisteredPointer {
-			if( ! this.inScope( id, true ) ) {
+		$getPointer( this:Registry, id:string, local?:true ):RegisteredPointer {
+			if( ! this.$inScope( id, true ) ) {
 				if( local === true || ! this.$registry ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
-				return this.$registry.getPointer( id );
+				return this.$registry.$getPointer( id );
 			}
 
-			const localID:string = this._getLocalID( id );
-			if( this.__resourcesMap.has( localID ) ) return this.__resourcesMap.get( localID );
+			const localID:string = this.$_getLocalID( id );
+			if( this.$__resourcesMap.has( localID ) ) return this.$__resourcesMap.get( localID );
 
-			if( local !== true && this.$registry && this.$registry.hasPointer( id ) )
-				return this.$registry.getPointer( id );
+			if( local !== true && this.$registry && this.$registry.$hasPointer( id ) )
+				return this.$registry.$getPointer( id );
 
-			return this._addPointer( { $id: id } );
+			return this.$_addPointer( { $id: id } );
 		},
 
-		getPointers( this:Registry, local?:true ):RegisteredPointer[] {
-			const pointers:RegisteredPointer[] = Array.from( this.__resourcesMap.values() );
+		$getPointers( this:Registry, local?:true ):RegisteredPointer[] {
+			const pointers:RegisteredPointer[] = Array.from( this.$__resourcesMap.values() );
 			if( local === true || ! this.$registry ) return pointers;
 
 			return [
-				...this.$registry.getPointers(),
+				...this.$registry.$getPointers(),
 				...pointers,
 			];
 		},
 
-		removePointer( this:Registry, idOrPointer:string | RegisteredPointer, local?:true ):boolean {
+		$removePointer( this:Registry, idOrPointer:string | RegisteredPointer, local?:true ):boolean {
 			const id:string = Pointer.getID( idOrPointer );
 
-			if( this.inScope( id, true ) ) {
-				const localID:string = this._getLocalID( id );
-				if( this.__resourcesMap.delete( localID ) ) return true;
+			if( this.$inScope( id, true ) ) {
+				const localID:string = this.$_getLocalID( id );
+				if( this.$__resourcesMap.delete( localID ) ) return true;
 			}
 
 			if( local === true || ! this.$registry ) return false;
-			return this.$registry.removePointer( idOrPointer );
+			return this.$registry.$removePointer( idOrPointer );
 		},
 
 
-		_addPointer<T extends object>( this:Registry, pointer:T & Pointer ):T & RegisteredPointer {
+		$_addPointer<T extends object>( this:Registry, pointer:T & Pointer ):T & RegisteredPointer {
 			if( ! pointer.$id ) throw new IllegalArgumentError( "The pointer $id cannot be empty." );
 
-			const localID:string = this._getLocalID( pointer.$id );
-			if( this.__resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being used.` );
+			const localID:string = this.$_getLocalID( pointer.$id );
+			if( this.$__resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being used.` );
 
-			const resource:T & RegisteredPointer = this.__modelDecorator
+			const resource:T & RegisteredPointer = this.$__modelDecorator
 				.decorate( Object.assign( pointer, {
 					$registry: this,
 				} ) );
 
-			this.__resourcesMap.set( localID, resource );
+			this.$__resourcesMap.set( localID, resource );
 			return resource;
 		},
 
-		_getLocalID( this:Registry, id:string ):never {
+		$_getLocalID( this:Registry, id:string ):never {
 			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		},
 	},

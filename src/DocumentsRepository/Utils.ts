@@ -55,7 +55,7 @@ export function _getErrorResponseParserFn( this:void, registry:DocumentsRegistry
 				const freeResources:FreeResources = FreeResources.parseFreeNodes( registry, freeNodes );
 
 				const errorResponses:ErrorResponse[] = freeResources
-					.getPointers( true )
+					.$getPointers( true )
 					.filter( ErrorResponse.is );
 
 				if( errorResponses.length === 0 )

@@ -27,15 +27,15 @@ describe( module( "carbonldp/DocumentsRepository/Traits/HTTPRepositoryTrait" ), 
 		} );
 
 
-		// TODO: Document & Test .get
-		// TODO: Document & Test .resolve
-		// TODO: Document & Test .exists
+		// TODO: Document & Test .$get
+		// TODO: Document & Test .$resolve
+		// TODO: Document & Test .$exists
 
-		// TODO: Document & Test .refresh
-		// TODO: Document & Test .save
-		// TODO: Document & Test .saveAndRefresh
+		// TODO: Document & Test .$refresh
+		// TODO: Document & Test .$save
+		// TODO: Document & Test .$saveAndRefresh
 
-		// TODO: Document & Test .delete
+		// TODO: Document & Test .$delete
 
 		// TODO: Document & Test ._parseResponseData
 

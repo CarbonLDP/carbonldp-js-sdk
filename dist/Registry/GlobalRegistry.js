@@ -16,7 +16,7 @@ exports.GlobalRegistry = {
     },
     createFrom: function (object) {
         var baseObject = Object.assign(object, {
-            __modelDecorator: RegisteredPointer_1.RegisteredPointer,
+            $__modelDecorator: RegisteredPointer_1.RegisteredPointer,
         });
         return GeneralRegistry_1.GeneralRegistry.createFrom(baseObject);
     },

@@ -41,14 +41,14 @@ exports.GeneralRegistry = {
                 .map(function (type) { return _this.__modelDecorators.get(type); })
                 .forEach(function (decorator) { return decorator.decorate(object); });
         },
-        _addPointer: function (pointer) {
+        $_addPointer: function (pointer) {
             if (this.$context.repository)
                 Object.assign(pointer, { $repository: this.$context.repository });
-            var resource = Registry_1.Registry.PROTOTYPE._addPointer.call(this, pointer);
+            var resource = Registry_1.Registry.PROTOTYPE.$_addPointer.call(this, pointer);
             resource.$id = this.$context.getObjectSchema().resolveURI(resource.$id, { base: true });
             return resource;
         },
-        _getLocalID: function (id) {
+        $_getLocalID: function (id) {
             var uri = this.$context.getObjectSchema().resolveURI(id, { base: true });
             if (!URI_1.URI.isAbsolute(uri) || !URI_1.URI.isBaseOf(this.$context.baseURI, uri))
                 throw new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope.");

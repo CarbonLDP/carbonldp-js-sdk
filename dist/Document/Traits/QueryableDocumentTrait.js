@@ -6,22 +6,22 @@ var QueryablePointer_1 = require("../../QueryDocuments/QueryablePointer");
 var LDPDocumentTrait_1 = require("./LDPDocumentTrait");
 exports.QueryableDocumentTrait = {
     PROTOTYPE: {
-        getChildren: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
+        $getChildren: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrQueryBuilderFnOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).getChildren.apply(_a, [_uri].concat(_args));
         },
-        getMembers: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
+        $getMembers: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrQueryBuilderFnOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).getMembers.apply(_a, [_uri].concat(_args));
         },
-        listChildren: function (uriOrOptions, requestOptions) {
+        $listChildren: function (uriOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).listChildren.apply(_a, [_uri].concat(_args));
         },
-        listMembers: function (uriOrOptions, requestOptions) {
+        $listMembers: function (uriOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).listMembers.apply(_a, [_uri].concat(_args));

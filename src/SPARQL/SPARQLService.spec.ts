@@ -193,11 +193,11 @@ describe( module( "carbonldp/SPARQL/SPARQLService" ), ():void => {
 				} );
 
 				class MockedPointerLibrary implements PointerLibrary {
-					hasPointer( id:string ):boolean {
+					$hasPointer( id:string ):boolean {
 						return false;
 					}
 
-					getPointer( id:string ):Pointer {
+					$getPointer( id:string ):Pointer {
 						return {
 							$id: id,
 						};
@@ -276,11 +276,11 @@ describe( module( "carbonldp/SPARQL/SPARQLService" ), ():void => {
 				} );
 
 				class MockedPointerLibrary implements PointerLibrary {
-					hasPointer( id:string ):boolean {
+					$hasPointer( id:string ):boolean {
 						return false;
 					}
 
-					getPointer( id:string ):Pointer {
+					$getPointer( id:string ):Pointer {
 						return {
 							$id: id,
 						};

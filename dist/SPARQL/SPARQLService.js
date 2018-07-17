@@ -85,7 +85,7 @@ var SPARQLService = (function () {
     SPARQLService.__parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
         switch (rawBindingProperty.type) {
             case "uri":
-                return pointerLibrary.getPointer(rawBindingProperty.value);
+                return pointerLibrary.$getPointer(rawBindingProperty.value);
             case "bnode":
                 throw new NotImplementedError_1.NotImplementedError("BNodes cannot be queried directly");
             case "literal":

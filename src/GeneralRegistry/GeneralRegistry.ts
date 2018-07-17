@@ -35,17 +35,17 @@ export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer
 	decorate( object:{ types?:string[] } ):void;
 
 
-	_addPointer<T extends object>( pointer:T & Pointer ):T & M;
+	$_addPointer<T extends object>( pointer:T & Pointer ):T & M;
 
-	_getLocalID( id:string ):string;
+	$_getLocalID( id:string ):string;
 }
 
 
 export type OverloadedFns =
 	| "$context"
 	| "$registry"
-	| "_addPointer"
-	| "_getLocalID"
+	| "$_addPointer"
+	| "$_getLocalID"
 	;
 
 export type GeneralRegistryFactory =
@@ -88,18 +88,18 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 		},
 
 
-		_addPointer<T extends object>( this:GeneralRegistry, pointer:T & Pointer ):T & RegisteredPointer {
+		$_addPointer<T extends object>( this:GeneralRegistry, pointer:T & Pointer ):T & RegisteredPointer {
 			if( this.$context.repository )
 				Object.assign<T, BaseResolvablePointer>( pointer, { $repository: this.$context.repository } );
 
-			const resource:T & RegisteredPointer = Registry.PROTOTYPE._addPointer.call( this, pointer );
+			const resource:T & RegisteredPointer = Registry.PROTOTYPE.$_addPointer.call( this, pointer );
 
 			resource.$id = this.$context.getObjectSchema().resolveURI( resource.$id, { base: true } );
 
 			return resource;
 		},
 
-		_getLocalID( this:GeneralRegistry, id:string ):string {
+		$_getLocalID( this:GeneralRegistry, id:string ):string {
 			const uri:string = this.$context.getObjectSchema().resolveURI( id, { base: true } );
 
 			if( ! URI.isAbsolute( uri ) || ! URI.isBaseOf( this.$context.baseURI, uri ) )

@@ -111,7 +111,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 		function createMock<T extends {}>( data?:T & Partial<GeneralRegistry> ):T & GeneralRegistry {
 			return GeneralRegistry.createFrom( Object.assign( {
 				$context,
-				__modelDecorator: RegisteredPointer,
+				$__modelDecorator: RegisteredPointer,
 			}, data ) );
 		}
 
@@ -252,23 +252,23 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 		} );
 
 
-		describe( "GeneralRegistry._addPointer", () => {
+		describe( "GeneralRegistry.$_addPointer", () => {
 
 			it( "should call registry prototype ._addPointer", () => {
 				$context = createMockContext( { repository: void 0 } );
 
 				const registry:GeneralRegistry = createMock();
-				const spy:jasmine.Spy = spyOn( Registry.PROTOTYPE, "_addPointer" )
+				const spy:jasmine.Spy = spyOn( Registry.PROTOTYPE, "$_addPointer" )
 					.and.returnValue( { $id: "the resource from super" } );
 
-				registry._addPointer( { $id: "the resource" } );
+				registry.$_addPointer( { $id: "the resource" } );
 				expect( spy ).toHaveBeenCalledWith( { $id: "the resource" } );
 			} );
 
 			it( "should resolve ID from context base when relative", () => {
 				const registry:GeneralRegistry = createMock();
 
-				const returned:Pointer = registry._addPointer( { $id: "resource/" } );
+				const returned:Pointer = registry.$_addPointer( { $id: "resource/" } );
 				expect( returned.$id ).toEqual( "https://example.com/resource/" );
 			} );
 
@@ -277,7 +277,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 
 				const registry:GeneralRegistry = createMock();
 
-				const returned:Pointer = registry._addPointer( { $id: "ex:resource/" } );
+				const returned:Pointer = registry.$_addPointer( { $id: "ex:resource/" } );
 				expect( returned.$id ).toEqual( "https://example.com/resource/" );
 			} );
 
@@ -285,7 +285,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 			it( "should add $repository property if context has one", () => {
 				const registry:GeneralRegistry<ResolvablePointer & RegisteredPointer> = createMock();
 
-				const returned:{ $repository:Repository } = registry._addPointer( { $id: "resource/" } );
+				const returned:{ $repository:Repository } = registry.$_addPointer( { $id: "resource/" } );
 
 				expect( returned.$repository ).toBeDefined();
 				expect( returned.$repository ).toBe( $context.repository );
@@ -295,19 +295,19 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 				$context = createMockContext( { repository: void 0 } );
 				const registry:GeneralRegistry<ResolvablePointer & RegisteredPointer> = createMock();
 
-				const returned:{ $repository?:Repository } = registry._addPointer( { $id: "resource/" } );
+				const returned:{ $repository?:Repository } = registry.$_addPointer( { $id: "resource/" } );
 
 				expect( returned.$repository ).toBeUndefined();
 			} );
 
 		} );
 
-		describe( "GeneralRegistry._getLocalID", () => {
+		describe( "GeneralRegistry.$_getLocalID", () => {
 
 			it( "should return relative uri from context base", () => {
 				const registry:GeneralRegistry = createMock();
 
-				const returned:string = registry._getLocalID( "https://example.com/resource/" );
+				const returned:string = registry.$_getLocalID( "https://example.com/resource/" );
 				expect( returned ).toBe( "resource/" );
 			} );
 
@@ -315,7 +315,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 				const registry:GeneralRegistry = createMock();
 
 				expect( () => {
-					registry._getLocalID( "https://example.org/another-domain/" );
+					registry.$_getLocalID( "https://example.org/another-domain/" );
 				} ).toThrowError( IllegalArgumentError, `"https://example.org/another-domain/" is out of scope.` );
 			} );
 
@@ -324,7 +324,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 
 				const registry:GeneralRegistry = createMock();
 
-				const returned:string = registry._getLocalID( "ex:resource/" );
+				const returned:string = registry.$_getLocalID( "ex:resource/" );
 				expect( returned ).toBe( "resource/" );
 			} );
 
@@ -383,7 +383,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" )
 					.and.callThrough();
 
-				GeneralRegistry.decorate( { $context, __modelDecorator: RegisteredPointer, the: "object" } );
+				GeneralRegistry.decorate( { $context, $__modelDecorator: RegisteredPointer, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( GeneralRegistry.PROTOTYPE, { the: "object" } );
 			} );
@@ -393,7 +393,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 					.and.returnValue( true );
 
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
-				GeneralRegistry.decorate( { $context, __modelDecorator: RegisteredPointer } );
+				GeneralRegistry.decorate( { $context, $__modelDecorator: RegisteredPointer } );
 
 				expect( spy ).not.toHaveBeenCalled();
 			} );
@@ -403,7 +403,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 				const spy:jasmine.Spy = spyOn( Registry, "decorate" )
 					.and.callThrough();
 
-				GeneralRegistry.decorate( { $context, __modelDecorator: RegisteredPointer, the: "object" } );
+				GeneralRegistry.decorate( { $context, $__modelDecorator: RegisteredPointer, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
@@ -412,7 +412,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 				const spy:jasmine.Spy = spyOn( ObjectSchemaResolver, "decorate" )
 					.and.callThrough();
 
-				GeneralRegistry.decorate( { $context, __modelDecorator: RegisteredPointer, the: "object" } );
+				GeneralRegistry.decorate( { $context, $__modelDecorator: RegisteredPointer, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
@@ -420,7 +420,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 
 			it( "should throw error if no $context", () => {
 				expect( () => {
-					GeneralRegistry.decorate( { __modelDecorator: RegisteredPointer } as any );
+					GeneralRegistry.decorate( { $__modelDecorator: RegisteredPointer } as any );
 				} ).toThrowError( IllegalArgumentError, "Property $context is required." );
 			} );
 
@@ -439,13 +439,13 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 				const spy:jasmine.Spy = spyOn( GeneralRegistry, "createFrom" )
 					.and.callThrough();
 
-				GeneralRegistry.create( { $context, __modelDecorator: RegisteredPointer, the: "object" } );
+				GeneralRegistry.create( { $context, $__modelDecorator: RegisteredPointer, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
 			it( "should not return same object", () => {
-				const object:BaseGeneralRegistry & { the:string } = { $context, __modelDecorator: RegisteredPointer, the: "object" };
+				const object:BaseGeneralRegistry & { the:string } = { $context, $__modelDecorator: RegisteredPointer, the: "object" };
 				const returned:object = GeneralRegistry.create( object );
 
 				expect( returned ).not.toBe( object );
@@ -465,13 +465,13 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 				const spy:jasmine.Spy = spyOn( GeneralRegistry, "decorate" )
 					.and.callThrough();
 
-				GeneralRegistry.createFrom( { $context, __modelDecorator: RegisteredPointer, the: "object" } );
+				GeneralRegistry.createFrom( { $context, $__modelDecorator: RegisteredPointer, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
 			it( "should return same object", () => {
-				const object:BaseGeneralRegistry & { the:string } = { $context, __modelDecorator: RegisteredPointer, the: "object" };
+				const object:BaseGeneralRegistry & { the:string } = { $context, $__modelDecorator: RegisteredPointer, the: "object" };
 				const returned:object = GeneralRegistry.createFrom( object );
 
 				expect( returned ).toBe( object );
@@ -490,7 +490,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 
 
 				const registry:GeneralRegistry = GeneralRegistry
-					.createFrom( { $context, __modelDecorator: RegisteredPointer } );
+					.createFrom( { $context, $__modelDecorator: RegisteredPointer } );
 
 				expect( registry.__modelDecorators ).toEqual( new Map( [
 					[ "a-type", decorator ],

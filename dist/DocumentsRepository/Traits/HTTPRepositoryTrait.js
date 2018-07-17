@@ -42,14 +42,14 @@ var ModelDecorator_1 = require("../../Model/ModelDecorator");
 var ResolvablePointer_1 = require("../../Repository/ResolvablePointer");
 exports.HTTPRepositoryTrait = {
     PROTOTYPE: {
-        get: function (uri, requestOptions) {
+        $get: function (uri, requestOptions) {
             var _this = this;
-            if (!this.$context.registry.inScope(uri, true))
+            if (!this.$context.registry.$inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
-            if (this.$context.registry.hasPointer(url, true)) {
-                var resource = this.$context.registry.getPointer(url, true);
-                if (resource.isResolved()) {
+            if (this.$context.registry.$hasPointer(url, true)) {
+                var resource = this.$context.registry.$getPointer(url, true);
+                if (resource.$isResolved()) {
                     if (!requestOptions.ensureLatest)
                         return Promise.resolve(resource);
                     Request_1.RequestUtils.setIfNoneMatchHeader(resource.$eTag, requestOptions);
@@ -61,11 +61,11 @@ exports.HTTPRepositoryTrait = {
                 return _this._parseResponseData(response, url);
             });
         },
-        resolve: function (resource, requestOptions) {
-            return this.get(resource.$id, requestOptions);
+        $resolve: function (resource, requestOptions) {
+            return this.$get(resource.$id, requestOptions);
         },
-        exists: function (uri, requestOptions) {
-            if (!this.$context.registry.inScope(uri, true))
+        $exists: function (uri, requestOptions) {
+            if (!this.$context.registry.$inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return Request_1.RequestService
@@ -77,11 +77,11 @@ exports.HTTPRepositoryTrait = {
                 return Promise.reject(error);
             });
         },
-        refresh: function (resource, requestOptions) {
+        $refresh: function (resource, requestOptions) {
             var _this = this;
             if (!ResolvablePointer_1.ResolvablePointer.is(resource))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The resource isn't a resolvable pointer."));
-            if (!this.$context.registry.inScope(resource.$id, true))
+            if (!this.$context.registry.$inScope(resource.$id, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + resource.$id + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(resource.$id, { base: true });
             return Request_1.RequestService
@@ -95,34 +95,34 @@ exports.HTTPRepositoryTrait = {
                 return Promise.reject(error);
             });
         },
-        save: function (resource, requestOptions) {
+        $save: function (resource, requestOptions) {
             if (!ResolvablePointer_1.ResolvablePointer.is(resource))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The resource isn't a resolvable pointer."));
-            if (!this.$context.registry.inScope(resource.$id, true))
+            if (!this.$context.registry.$inScope(resource.$id, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + resource.$id + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(resource.$id, { base: true });
-            if (!resource.isDirty())
+            if (!resource.$isDirty())
                 return Promise.resolve(resource);
             var body = JSON.stringify(resource);
             return Request_1.RequestService
                 .put(url, body, requestOptions)
                 .then(function () { return resource; });
         },
-        saveAndRefresh: function (resource, requestOptions) {
+        $saveAndRefresh: function (resource, requestOptions) {
             var _this = this;
             return this
-                .save(resource, requestOptions)
-                .then(function () { return _this.refresh(resource, requestOptions); });
+                .$save(resource, requestOptions)
+                .then(function () { return _this.$refresh(resource, requestOptions); });
         },
-        delete: function (uri, requestOptions) {
+        $delete: function (uri, requestOptions) {
             var _this = this;
-            if (!this.$context.registry.inScope(uri, true))
+            if (!this.$context.registry.$inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return Request_1.RequestService
                 .delete(url, requestOptions)
                 .then(function () {
-                _this.$context.registry.removePointer(url);
+                _this.$context.registry.$removePointer(url);
             });
         },
         _parseResponseData: function (response, id) {
@@ -130,9 +130,9 @@ exports.HTTPRepositoryTrait = {
                 var resolvable;
                 return __generator(this, function (_a) {
                     resolvable = this.$context.registry
-                        .getPointer(id, true);
+                        .$getPointer(id, true);
                     resolvable.$eTag = response.getETag();
-                    resolvable._resolved = true;
+                    resolvable.$_resolved = true;
                     return [2, resolvable];
                 });
             });

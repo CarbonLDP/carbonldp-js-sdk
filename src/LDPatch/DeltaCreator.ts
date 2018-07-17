@@ -49,7 +49,7 @@ typesDefinition.pointerType = PointerType.ID;
 typesDefinition.containerType = ContainerType.SET;
 
 
-type TargetResource = Partial<Pick<Resource, "types"> & Pick<QueryablePointer, "_queryableMetadata">>;
+type TargetResource = Partial<Pick<Resource, "types"> & Pick<QueryablePointer, "$_queryableMetadata">>;
 
 
 export class DeltaCreator {
@@ -195,7 +195,7 @@ export class DeltaCreator {
 		const mergeResource:Pointer & Required<TargetResource> = {
 			$id: id,
 			types: Array.from( types ),
-			_queryableMetadata: currentResource._queryableMetadata || previousResource._queryableMetadata,
+			$_queryableMetadata: currentResource.$_queryableMetadata || previousResource.$_queryableMetadata,
 		};
 
 		return this.context

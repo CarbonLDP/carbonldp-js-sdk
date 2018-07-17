@@ -11,7 +11,7 @@ exports.RDFValue = {
         if (Literal_1.RDFLiteral.is(value))
             return Literal_1.RDFLiteral.parse(value);
         if (Node_1.RDFNode.is(value))
-            return pointerLibrary.getPointer(value["@id"]);
+            return pointerLibrary.$getPointer(value["@id"]);
         if (List_1.RDFList.is(value))
             return value["@list"]
                 .map(exports.RDFValue.parse.bind(null, pointerLibrary));

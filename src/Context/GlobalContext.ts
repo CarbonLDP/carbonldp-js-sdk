@@ -47,7 +47,7 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined,
 	private constructor() {
 		super();
 		this._generalObjectSchema = new DigestedObjectSchema();
-		this.registry = GeneralRegistry.createFrom( { $context: this, __modelDecorator: RegisteredPointer } );
+		this.registry = GeneralRegistry.createFrom( { $context: this, $__modelDecorator: RegisteredPointer } );
 
 		this.__registerDefaultObjectSchemas();
 		this.__registerDefaultDecorators();

@@ -36,7 +36,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 				$repository: context.repository,
 
 				$id: "https://example.com/resource/",
-				_queryableMetadata: createMockQueryableMetadata( {
+				$_queryableMetadata: createMockQueryableMetadata( {
 					"documentProperty": {
 						"@id": "https://example.com/ns#document-property",
 					},
@@ -90,7 +90,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 
 				const helper:( name:string ) => void = name => {
 					const returnedValue:any = queryContext.getSchemaFor( {}, name );
-					expect( returnedValue ).toBe( resource._queryableMetadata.schema );
+					expect( returnedValue ).toBe( resource.$_queryableMetadata.schema );
 				};
 
 				helper( "document" );
@@ -102,7 +102,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 				const queryContext:QueryContextPartial = new QueryContextPartial( resource, context );
 				const fragment:QueryablePointer = QueryablePointer.decorate<Partial<QueryablePointer>>( {
 					$repository: context.repository,
-					_queryableMetadata: createMockQueryableMetadata( {
+					$_queryableMetadata: createMockQueryableMetadata( {
 						"fragmentProperty": {
 							"@id": "https://example.com/ns#fragment-property",
 						},
@@ -116,7 +116,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 
 				const helper:( name:string ) => void = name => {
 					const returnedValue:any = queryContext.getSchemaFor( {}, name );
-					expect( returnedValue ).toBe( fragment._queryableMetadata.schema );
+					expect( returnedValue ).toBe( fragment.$_queryableMetadata.schema );
 				};
 
 				helper( "document.property" );

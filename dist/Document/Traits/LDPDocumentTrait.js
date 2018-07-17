@@ -15,33 +15,33 @@ function __parseMemberParams(resource, args) {
 }
 exports.LDPDocumentTrait = {
     PROTOTYPE: {
-        create: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
+        $create: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).create.apply(_a, [_uri].concat(_args));
         },
-        createAndRetrieve: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
+        $createAndRetrieve: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).createAndRetrieve.apply(_a, [_uri].concat(_args));
         },
-        addMember: function (uriOrMember, memberOrOptions, requestOptions) {
+        $addMember: function (uriOrMember, memberOrOptions, requestOptions) {
             var _a;
             var _b = __parseMemberParams(this, arguments), uri = _b.uri, params = _b.params;
             return (_a = this.$repository).addMember.apply(_a, [uri].concat(params));
         },
-        addMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
+        $addMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrMembers, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).addMembers.apply(_a, [_uri].concat(_args));
         },
-        removeMember: function (uriOrMember, memberOrOptions, requestOptions) {
+        $removeMember: function (uriOrMember, memberOrOptions, requestOptions) {
             var _a;
             var _b = __parseMemberParams(this, arguments), uri = _b.uri, params = _b.params;
             return (_a = this.$repository).removeMember.apply(_a, [uri].concat(params));
         },
-        removeMembers: function (uriOrMembersOrOptions, membersOrOptions, requestOptions) {
+        $removeMembers: function (uriOrMembersOrOptions, membersOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrMembersOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).removeMembers.apply(_a, [_uri].concat(_args));

@@ -15,7 +15,7 @@ exports.TransientAccessPoint = {
         var accessPoint = TransientDirectContainer_1.TransientDirectContainer
             .createFrom(object);
         accessPoint
-            .addType(exports.TransientAccessPoint.TYPE);
+            .$addType(exports.TransientAccessPoint.TYPE);
         return accessPoint;
     },
 };

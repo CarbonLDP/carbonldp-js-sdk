@@ -44,7 +44,7 @@ export const TransientAccessPoint:TransientAccessPointFactory = {
 			.createFrom<T>( object );
 
 		accessPoint
-			.addType( TransientAccessPoint.TYPE );
+			.$addType( TransientAccessPoint.TYPE );
 
 		return accessPoint;
 	},

@@ -16,17 +16,17 @@ export interface TransientDocument extends Resource, Registry<TransientFragment>
     isMemberOfRelation?: Pointer;
     insertedContentRelation?: Pointer;
     defaultInteractionModel?: Pointer;
-    hasFragment(id: string): boolean;
-    getFragment<T extends object>(id: string): (T & TransientFragment) | null;
-    getFragments(): TransientFragment[];
-    createFragment<T extends object>(object: T, id?: string): T & TransientFragment;
-    createFragment(id?: string): TransientFragment;
-    removeFragment(slugOrFragment: string | TransientFragment): boolean;
-    _normalize(): void;
-    _getLocalID(id: string): string;
+    $hasFragment(id: string): boolean;
+    $getFragment<T extends object>(id: string): (T & TransientFragment) | null;
+    $getFragments(): TransientFragment[];
+    $createFragment<T extends object>(object: T, id?: string): T & TransientFragment;
+    $createFragment(id?: string): TransientFragment;
+    $removeFragment(slugOrFragment: string | TransientFragment): boolean;
+    $_normalize(): void;
+    $_getLocalID(id: string): string;
     toJSON(contextOrKey?: Context | string): RDFDocument;
 }
-declare type OverriddenMembers = "$registry" | "_getLocalID" | "getPointer" | "toJSON";
+declare type OverriddenMembers = "$registry" | "$_getLocalID" | "$getPointer" | "toJSON";
 export declare type TransientDocumentFactory = ModelPrototype<TransientDocument, Resource & Registry<TransientFragment>, OverriddenMembers> & ModelDecorator<TransientDocument, BaseDocument> & ModelFactoryOptional<TransientDocument, BaseDocument> & ModelTypeGuard<TransientDocument>;
 export declare const TransientDocument: TransientDocumentFactory;
 export {};

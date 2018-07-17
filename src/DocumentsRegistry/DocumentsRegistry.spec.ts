@@ -62,7 +62,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "registry" ), () => {
+		describe( method( OBLIGATORY, "register" ), () => {
 
 			it( hasSignature(
 				[
@@ -82,7 +82,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 			it( "should call .getPointer with local", () => {
 				const registry:DocumentsRegistry = createMock();
 
-				const spy:jasmine.Spy = spyOnDecorated( registry, "getPointer" );
+				const spy:jasmine.Spy = spyOnDecorated( registry, "$getPointer" );
 
 				registry.register( "https://example.com/resource/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", true );
@@ -176,9 +176,9 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 			} );
 
 
-			it( "should add __modelDecorator as Document", () => {
+			it( "should add $__modelDecorator as Document", () => {
 				const registry:DocumentsRegistry = DocumentsRegistry.decorate( { $context } );
-				expect( registry.__modelDecorator ).toBe( Document );
+				expect( registry.$__modelDecorator ).toBe( Document );
 			} );
 
 		} );

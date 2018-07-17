@@ -11,9 +11,9 @@ export interface Resource extends RegisteredPointer {
     types: string[];
     $registry: Registry<RegisteredPointer> | undefined;
     $slug: string;
-    addType(type: string): void;
-    hasType(type: string): boolean;
-    removeType(type: string): void;
+    $addType(type: string): void;
+    $hasType(type: string): boolean;
+    $removeType(type: string): void;
     toJSON(contextOrKey: Context | string): RDFNode;
 }
 export declare type ResourceFactory = ModelPrototype<Resource, RegisteredPointer> & ModelDecorator<Resource, BaseResource> & ModelFactoryOptional<Resource> & ModelTypeGuard<Resource>;

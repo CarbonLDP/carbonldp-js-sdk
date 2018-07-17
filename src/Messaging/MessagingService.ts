@@ -146,7 +146,7 @@ export class MessagingService {
 						.parseFreeNodes( this.context.registry, data );
 
 					const eventMessage:EventMessage | undefined = freeResources
-						.getPointers( true )
+						.$getPointers( true )
 						.find( EventMessage.is );
 
 					// TODO: Implement specific error

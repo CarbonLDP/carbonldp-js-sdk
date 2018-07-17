@@ -45,7 +45,7 @@ export const RemoveMemberAction:RemoveMemberActionFactory = {
 
 	is( value:any ):value is RemoveMemberAction {
 		return Resource.is( value )
-			&& value.hasType( RemoveMemberAction.TYPE )
+			&& value.$hasType( RemoveMemberAction.TYPE )
 			;
 	},
 
@@ -57,7 +57,7 @@ export const RemoveMemberAction:RemoveMemberActionFactory = {
 	createFrom<T extends object>( object:T & BaseRemoveMemberAction ):T & RemoveMemberAction {
 		const resource:T & RemoveMemberAction = Resource.createFrom( object );
 
-		resource.addType( RemoveMemberAction.TYPE );
+		resource.$addType( RemoveMemberAction.TYPE );
 
 		return resource;
 	},

@@ -43,7 +43,7 @@ var GlobalContext = (function (_super) {
         var _this = _super.call(this) || this;
         _this._baseURI = "";
         _this._generalObjectSchema = new DigestedObjectSchema_1.DigestedObjectSchema();
-        _this.registry = GeneralRegistry_1.GeneralRegistry.createFrom({ $context: _this, __modelDecorator: RegisteredPointer_1.RegisteredPointer });
+        _this.registry = GeneralRegistry_1.GeneralRegistry.createFrom({ $context: _this, $__modelDecorator: RegisteredPointer_1.RegisteredPointer });
         _this.__registerDefaultObjectSchemas();
         _this.__registerDefaultDecorators();
         return _this;

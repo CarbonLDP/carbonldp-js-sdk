@@ -72,7 +72,7 @@ export function createMockContext<PARENT extends AbstractContext<any, any, any> 
 				data.registry :
 				GeneralRegistry.create( {
 					$context: this,
-					__modelDecorator: decorator,
+					$__modelDecorator: decorator,
 				} );
 
 			this.repository = data && "repository" in data ?

@@ -11,11 +11,11 @@ import { Resource } from "../Resource/Resource";
 import { BaseFreeResources } from "./BaseFreeResources";
 export interface FreeResources extends Registry<Resource> {
     $registry: GeneralRegistry<any>;
-    _getLocalID(id: string): string;
-    _addPointer<T extends object>(base: T & Partial<Pointer>): T & Resource;
+    $_getLocalID(id: string): string;
+    $_addPointer<T extends object>(base: T & Partial<Pointer>): T & Resource;
     toJSON(contextOrKey?: Context | string): RDFNode[];
 }
-export declare type OverriddenMembers = "$registry" | "_getLocalID" | "_addPointer";
+export declare type OverriddenMembers = "$registry" | "$_getLocalID" | "$_addPointer";
 export interface FreeResourcesUtils {
     parseFreeNodes(registry: GeneralRegistry<any>, freeNodes: RDFNode[]): FreeResources;
 }

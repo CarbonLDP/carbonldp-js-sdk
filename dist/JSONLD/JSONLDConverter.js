@@ -266,7 +266,7 @@ var JSONLDConverter = (function () {
         return propertyValues
             .filter(Node_1.RDFNode.is)
             .map(Node_1.RDFNode.getID)
-            .map(pointerLibrary.getPointer, pointerLibrary)
+            .map(pointerLibrary.$getPointer, pointerLibrary)
             .filter(function (pointer) { return !Utils_1.isNull(pointer); });
     };
     return JSONLDConverter;

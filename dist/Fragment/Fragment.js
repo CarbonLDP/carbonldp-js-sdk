@@ -11,10 +11,10 @@ exports.Fragment = {
         set $repository(document) {
             this.$registry = document;
         },
-        get _resolved() {
-            return this.$document._resolved;
+        get $_resolved() {
+            return this.$document.$_resolved;
         },
-        set _resolved(_value) { },
+        set $_resolved(_value) { },
     },
     isDecorated: function (object) {
         return ModelDecorator_1.ModelDecorator

@@ -68,18 +68,18 @@ import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
 
 
 export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositoryTrait {
-	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
-	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	$get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
+	$get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	$get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
-	resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
-	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	$resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
+	$resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	$resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 
-	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+	$refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
-	saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+	$saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
 	getChildren<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
@@ -136,7 +136,7 @@ function __executePatterns<T extends object>( this:void, repository:QueryableDoc
 			}
 
 			const targetSet:Set<string> = new Set( freeResources
-				.getPointers( true )
+				.$getPointers( true )
 				.filter<QueryMetadata>( QueryMetadata.is )
 				.map<Pointer | Pointer[]>( x => x.target )
 				// Alternative to flatMap
@@ -148,7 +148,7 @@ function __executePatterns<T extends object>( this:void, repository:QueryableDoc
 			if( target ) target.$eTag = void 0;
 
 			freeResources
-				.getPointers( true )
+				.$getPointers( true )
 				.filter( ResponseMetadata.is )
 				.map<DocumentMetadata[] | DocumentMetadata>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ C.documentMetadata ] )
 				.map<DocumentMetadata[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
@@ -159,7 +159,7 @@ function __executePatterns<T extends object>( this:void, repository:QueryableDoc
 					const eTag:string = documentMetadata.eTag || documentMetadata[ C.eTag ];
 
 					if( ! eTag ) return;
-					relatedDocument._resolved = true;
+					relatedDocument.$_resolved = true;
 
 					if( relatedDocument.$eTag === void 0 ) relatedDocument.$eTag = eTag;
 					if( relatedDocument.$eTag !== eTag ) relatedDocument.$eTag = null;
@@ -250,7 +250,7 @@ function __executeBuilder<T extends object>( repository:QueryableDocumentsReposi
 }
 
 function __getQueryable<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn, target?:Document ):Promise<T & Document> {
-	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	if( ! repository.$context.registry.$inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.$context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	const queryContext:QueryContextBuilder = new QueryContextBuilder( repository.$context );
@@ -270,14 +270,14 @@ function __getQueryable<T extends object>( repository:QueryableDocumentsReposito
 
 
 function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:OptionalToken, resource:QueryablePointer, parentName:string ):void {
-	if( resource._queryableMetadata.schema === QueryableMetadata.ALL ) {
+	if( resource.$_queryableMetadata.schema === QueryableMetadata.ALL ) {
 		parentAdder.addPattern( _createAllPattern( queryContext, parentName ) );
 		return;
 	}
 
 	parentAdder.addPattern( _createTypesPattern( queryContext, parentName ) );
 
-	resource._queryableMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
+	resource.$_queryableMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
 		const path:string = `${ parentName }.${ propertyName }`;
 
 		const propertyPattern:OptionalToken = new OptionalToken()
@@ -292,7 +292,7 @@ function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:Opt
 		const propertyValues:any[] = Array.isArray( resource[ propertyName ] ) ? resource[ propertyName ] : [ resource[ propertyName ] ];
 		const propertyFragment:QueryablePointer = propertyValues
 			.filter( QueryablePointer.is )
-			.find( fragment => fragment.isQueried() );
+			.find( fragment => fragment.$isQueried() );
 		if( ! propertyFragment ) return;
 
 		__addRefreshPatterns( queryContext, propertyPattern, propertyFragment, path );
@@ -300,7 +300,7 @@ function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:Opt
 }
 
 function __refreshQueryable<T extends object>( this:void, repository:QueryableDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
-	if( ! repository.$context.registry.inScope( document.$id, true ) ) return Promise.reject( new IllegalArgumentError( `"${ document.$id }" is out of scope.` ) );
+	if( ! repository.$context.registry.$inScope( document.$id, true ) ) return Promise.reject( new IllegalArgumentError( `"${ document.$id }" is out of scope.` ) );
 	const url:string = repository.$context.getObjectSchema().resolveURI( document.$id, { base: true } );
 
 	const queryContext:QueryContextPartial = new QueryContextPartial( document, repository.$context );
@@ -322,7 +322,7 @@ function __refreshQueryable<T extends object>( this:void, repository:QueryableDo
 
 
 function __executeChildrenBuilder<T extends object>( this:void, repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn ):Promise<(T & Document)[]> {
-	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	if( ! repository.$context.registry.$inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.$context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	const queryContext:QueryContextBuilder = new QueryContextBuilder( repository.$context );
@@ -344,7 +344,7 @@ function __executeChildrenBuilder<T extends object>( this:void, repository:Query
 }
 
 function __executeMembersBuilder<T extends object>( this:void, repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]> {
-	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	if( ! repository.$context.registry.$inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.$context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	const queryContext:QueryContextBuilder = new QueryContextBuilder( repository.$context );
@@ -377,10 +377,10 @@ function __executeMembersBuilder<T extends object>( this:void, repository:Querya
 
 
 export type OverriddenMembers =
-	| "get"
-	| "resolve"
-	| "refresh"
-	| "saveAndRefresh"
+	| "$get"
+	| "$resolve"
+	| "$refresh"
+	| "$saveAndRefresh"
 	;
 
 export type QueryableDocumentsRepositoryTraitFactory =
@@ -392,15 +392,15 @@ type QueryBuilderFn = Function & (( queryBuilder:QueryDocumentBuilder ) => Query
 
 export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTraitFactory = {
 	PROTOTYPE: {
-		get<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
+		$get<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
 			const requestOptions:GETOptions = isObject( requestOptionsOrQueryBuilderFn ) ?
 				requestOptionsOrQueryBuilderFn : {};
 
 			queryBuilderFn = isFunction( requestOptionsOrQueryBuilderFn ) ?
 				requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
-			const target:Document | undefined = this.$context.registry.hasPointer( uri ) ?
-				this.$context.registry.getPointer( uri, true ) :
+			const target:Document | undefined = this.$context.registry.$hasPointer( uri ) ?
+				this.$context.registry.$getPointer( uri, true ) :
 				void 0;
 
 			if( queryBuilderFn ) {
@@ -411,31 +411,31 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 				} );
 			}
 
-			if( target && target.isQueried() ) requestOptions.ensureLatest = true;
+			if( target && target.$isQueried() ) requestOptions.ensureLatest = true;
 			return LDPDocumentsRepositoryTrait.PROTOTYPE
-				.get.call( this, uri, requestOptions );
+				.$get.call( this, uri, requestOptions );
 		},
 
-		resolve<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptionsOrQueryBuilderFn?:RequestOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
-			return this.get( document.$id, requestOptionsOrQueryBuilderFn, queryBuilderFn );
+		$resolve<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptionsOrQueryBuilderFn?:RequestOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
+			return this.$get( document.$id, requestOptionsOrQueryBuilderFn, queryBuilderFn );
 		},
 
 
-		refresh<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-			if( ! document.isQueried() ) return LDPDocumentsRepositoryTrait.PROTOTYPE
-				.refresh.call( this, document, requestOptions );
+		$refresh<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
+			if( ! document.$isQueried() ) return LDPDocumentsRepositoryTrait.PROTOTYPE
+				.$refresh.call( this, document, requestOptions );
 
 			return __refreshQueryable<T>( this, document, requestOptions );
 		},
 
-		saveAndRefresh<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-			if( ! document._queryableMetadata ) return LDPDocumentsRepositoryTrait.PROTOTYPE
-				.saveAndRefresh.call( this, document, requestOptions );
+		$saveAndRefresh<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
+			if( ! document.$_queryableMetadata ) return LDPDocumentsRepositoryTrait.PROTOTYPE
+				.$saveAndRefresh.call( this, document, requestOptions );
 
 			if( document.$eTag === null ) return Promise.reject( new IllegalStateError( `The document "${ document.$id }" is locally outdated and cannot be saved.` ) );
 
 			const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions || {} );
-			return this.save<T & Document>( document, cloneOptions )
+			return this.$save<T & Document>( document, cloneOptions )
 				.then<T & Document>( doc => {
 					return __refreshQueryable( this, doc, requestOptions );
 				} );

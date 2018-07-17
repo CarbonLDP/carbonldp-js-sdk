@@ -71,7 +71,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 		} );
 
 
-		describe( method( OBLIGATORY, "executeASKQuery" ), () => {
+		describe( method( OBLIGATORY, "$executeASKQuery" ), () => {
 
 			it( hasSignature(
 				"Executes an ASK query on a document and returns the response of the query in form of a boolean.", [
@@ -89,8 +89,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 			), () => {} );
 
 			it( "should exists", () => {
-				expect( resource.executeASKQuery ).toBeDefined();
-				expect( resource.executeASKQuery ).toEqual( jasmine.any( Function ) );
+				expect( resource.$executeASKQuery ).toBeDefined();
+				expect( resource.$executeASKQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -102,40 +102,40 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 
 
 			it( "should call repository with $id when no URI and no options", async () => {
-				await resource.executeASKQuery( "query" );
+				await resource.$executeASKQuery( "query" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", "query", undefined );
 			} );
 
 			it( "should call repository with $id when no URI and custom options", async () => {
-				await resource.executeASKQuery( "query", { timeout: 5050 } );
+				await resource.$executeASKQuery( "query", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", "query", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with absolute URI and no options", async () => {
-				await resource.executeASKQuery( "https://example.com/another-resource/", "query" );
+				await resource.$executeASKQuery( "https://example.com/another-resource/", "query" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", "query", undefined );
 			} );
 
 			it( "should call repository with absolute URI and custom options", async () => {
-				await resource.executeASKQuery( "https://example.com/another-resource/", "query", { timeout: 5050 } );
+				await resource.$executeASKQuery( "https://example.com/another-resource/", "query", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", "query", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with resolved relative URI and no options", async () => {
-				await resource.executeASKQuery( "relative/", "query" );
+				await resource.$executeASKQuery( "relative/", "query" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", "query", undefined );
 			} );
 
 			it( "should call repository with resolved relative URI and custom options", async () => {
-				await resource.executeASKQuery( "relative/", "query", { timeout: 5050 } );
+				await resource.$executeASKQuery( "relative/", "query", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", "query", { timeout: 5050 } );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "executeSELECTQuery" ), () => {
+		describe( method( OBLIGATORY, "$executeSELECTQuery" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -155,8 +155,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 			), () => {} );
 
 			it( "should exists", () => {
-				expect( resource.executeSELECTQuery ).toBeDefined();
-				expect( resource.executeSELECTQuery ).toEqual( jasmine.any( Function ) );
+				expect( resource.$executeSELECTQuery ).toBeDefined();
+				expect( resource.$executeSELECTQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -168,40 +168,40 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 
 
 			it( "should call repository with $id when no URI and no options", async () => {
-				await resource.executeSELECTQuery( "query" );
+				await resource.$executeSELECTQuery( "query" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", "query", undefined );
 			} );
 
 			it( "should call repository with $id when no URI and custom options", async () => {
-				await resource.executeSELECTQuery( "query", { timeout: 5050 } );
+				await resource.$executeSELECTQuery( "query", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", "query", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with absolute URI and no options", async () => {
-				await resource.executeSELECTQuery( "https://example.com/another-resource/", "query" );
+				await resource.$executeSELECTQuery( "https://example.com/another-resource/", "query" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", "query", undefined );
 			} );
 
 			it( "should call repository with absolute URI and custom options", async () => {
-				await resource.executeSELECTQuery( "https://example.com/another-resource/", "query", { timeout: 5050 } );
+				await resource.$executeSELECTQuery( "https://example.com/another-resource/", "query", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", "query", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with resolved relative URI and no options", async () => {
-				await resource.executeSELECTQuery( "relative/", "query" );
+				await resource.$executeSELECTQuery( "relative/", "query" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", "query", undefined );
 			} );
 
 			it( "should call repository with resolved relative URI and custom options", async () => {
-				await resource.executeSELECTQuery( "relative/", "query", { timeout: 5050 } );
+				await resource.$executeSELECTQuery( "relative/", "query", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", "query", { timeout: 5050 } );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "executeUPDATE" ), () => {
+		describe( method( OBLIGATORY, "$executeUPDATE" ), () => {
 
 			it( hasSignature(
 				"Executes a DESCRIBE query on a document and returns a string with the resulting model.", [
@@ -219,8 +219,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 			), () => {} );
 
 			it( "should exists", () => {
-				expect( resource.executeUPDATE ).toBeDefined();
-				expect( resource.executeUPDATE ).toEqual( jasmine.any( Function ) );
+				expect( resource.$executeUPDATE ).toBeDefined();
+				expect( resource.$executeUPDATE ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -232,34 +232,34 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 
 
 			it( "should call repository with $id when no URI and no options", async () => {
-				await resource.executeUPDATE( "update" );
+				await resource.$executeUPDATE( "update" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", "update", undefined );
 			} );
 
 			it( "should call repository with $id when no URI and custom options", async () => {
-				await resource.executeUPDATE( "update", { timeout: 5050 } );
+				await resource.$executeUPDATE( "update", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", "update", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with absolute URI and no options", async () => {
-				await resource.executeUPDATE( "https://example.com/another-resource/", "update" );
+				await resource.$executeUPDATE( "https://example.com/another-resource/", "update" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", "update", undefined );
 			} );
 
 			it( "should call repository with absolute URI and custom options", async () => {
-				await resource.executeUPDATE( "https://example.com/another-resource/", "update", { timeout: 5050 } );
+				await resource.$executeUPDATE( "https://example.com/another-resource/", "update", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", "update", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with resolved relative URI and no options", async () => {
-				await resource.executeUPDATE( "relative/", "update" );
+				await resource.$executeUPDATE( "relative/", "update" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", "update", undefined );
 			} );
 
 			it( "should call repository with resolved relative URI and custom options", async () => {
-				await resource.executeUPDATE( "relative/", "update", { timeout: 5050 } );
+				await resource.$executeUPDATE( "relative/", "update", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", "update", { timeout: 5050 } );
 			} );
 
@@ -267,7 +267,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 		} );
 
 
-		describe( method( OBLIGATORY, "sparql" ), () => {
+		describe( method( OBLIGATORY, "$sparql" ), () => {
 
 			it( hasSignature(
 				"Method that creates an instance of SPARQLER for the specified document, or the current document if no URI is provided.",
@@ -278,8 +278,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 			), () => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.sparql ).toBeDefined();
-				expect( resource.sparql ).toEqual( jasmine.any( Function ) );
+				expect( resource.$sparql ).toBeDefined();
+				expect( resource.$sparql ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -291,19 +291,19 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 
 
 			it( "should call repository with $id when no URI", async () => {
-				await resource.sparql();
+				await resource.$sparql();
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
 			} );
 
 
 			it( "should call repository with absolute URI", async () => {
-				await resource.sparql( "https://example.com/another-resource/" );
+				await resource.$sparql( "https://example.com/another-resource/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
 			} );
 
 
 			it( "should call repository with resolved relative URI", async () => {
-				await resource.sparql( "relative/" );
+				await resource.$sparql( "relative/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
 			} );
 

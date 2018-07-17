@@ -73,7 +73,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
-			"addType",
+			"$addType",
 			"Adds a type to the current resource.", [
 				{ name: "type", type: "string", description: "The type to be added." },
 			]
@@ -81,7 +81,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
-			"hasType",
+			"$hasType",
 			"Returns true if the current resource contains the type specified.", [
 				{ name: "type", type: "string", description: "The type to look for." },
 			]
@@ -89,11 +89,14 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
-			"removeType",
+			"$removeType",
 			"Remove the type specified from the current resource.", [
 				{ name: "type", type: "string", description: "The type to be removed." },
 			]
 		), ():void => {} );
+
+
+		// TODO: Document & Test .toJSON
 
 	} );
 
@@ -146,14 +149,14 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 			let object:ResourceFactory[ "PROTOTYPE" ];
 			beforeEach( ():void => {
-				object = createNonEnumerable( {
+				object = createNonEnumerable<ResourceFactory[ "PROTOTYPE" ]>( {
 					types: [],
 
 					$slug: "",
 
-					addType: ():any => {},
-					hasType: ():any => {},
-					removeType: ():any => {},
+					$addType: ():any => {},
+					$hasType: ():any => {},
+					$removeType: ():any => {},
 					toJSON: ():any => {},
 				} );
 			} );
@@ -172,18 +175,18 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				expect( Resource.isDecorated( object ) ).toBe( false );
 			} );
 
-			it( "should return false if no addType", () => {
-				delete object.addType;
+			it( "should return false if no $addType", () => {
+				delete object.$addType;
 				expect( Resource.isDecorated( object ) ).toBe( false );
 			} );
 
-			it( "should return false if no hasType", () => {
-				delete object.hasType;
+			it( "should return false if no $hasType", () => {
+				delete object.$hasType;
 				expect( Resource.isDecorated( object ) ).toBe( false );
 			} );
 
-			it( "should return false if no removeType", () => {
-				delete object.removeType;
+			it( "should return false if no $removeType", () => {
+				delete object.$removeType;
 				expect( Resource.isDecorated( object ) ).toBe( false );
 			} );
 
@@ -203,15 +206,14 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 			let object:ResourceFactory[ "PROTOTYPE" ];
 			beforeEach( ():void => {
-				object = createNonEnumerable( {
+				object = createNonEnumerable<ResourceFactory[ "PROTOTYPE" ]>( {
 					types: [],
 
-					$registry: void 0,
 					$slug: "",
 
-					addType: ():any => {},
-					hasType: ():any => {},
-					removeType: ():any => {},
+					$addType: ():any => {},
+					$hasType: ():any => {},
+					$removeType: ():any => {},
 					toJSON: ():any => {},
 				} );
 			} );
@@ -368,12 +370,12 @@ describe( module( "carbonldp/Resource" ), ():void => {
 			describe( "Resource.addType", ():void => {
 
 				it( "should exists", ():void => {
-					expect( resource.addType ).toBeDefined();
-					expect( resource.addType ).toEqual( jasmine.any( Function ) );
+					expect( resource.$addType ).toBeDefined();
+					expect( resource.$addType ).toEqual( jasmine.any( Function ) );
 				} );
 
 				it( "should add type", ():void => {
-					resource.addType( "http://example.com/types#Type-1" );
+					resource.$addType( "http://example.com/types#Type-1" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 					] );
@@ -382,7 +384,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				it( "should append type", ():void => {
 					resource.types = [ "http://example.com/types#Type-1" ];
 
-					resource.addType( "http://example.com/types#Type-2" );
+					resource.$addType( "http://example.com/types#Type-2" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 						"http://example.com/types#Type-2",
@@ -395,7 +397,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/types#Type-2",
 					];
 
-					resource.addType( "http://example.com/types#Type-1" );
+					resource.$addType( "http://example.com/types#Type-1" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 						"http://example.com/types#Type-2",
@@ -403,7 +405,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add resolved type from prefixed provided", ():void => {
-					resource.addType( "exTypes:Type-1" );
+					resource.$addType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 					] );
@@ -412,25 +414,25 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				it( "should add un-resolved type from prefixed provided when no registry", ():void => {
 					delete resource.$registry;
 
-					resource.addType( "exTypes:Type-1" );
+					resource.$addType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
 						"exTypes:Type-1",
 					] );
 				} );
 
 				it( "should add un-resolved type from prefixed provided when no registry's context", ():void => {
-					resource.$registry = Registry.create( { __modelDecorator: Resource } );
+					resource.$registry = Registry.create( { $__modelDecorator: Resource } );
 
-					resource.addType( "exTypes:Type-1" );
+					resource.$addType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
 						"exTypes:Type-1",
 					] );
 				} );
 
 				it( "should add resolved type from prefixed provided when parent from registry has a context", ():void => {
-					resource.$registry = Registry.create( { $registry: resource.$registry, __modelDecorator: Resource } );
+					resource.$registry = Registry.create( { $registry: resource.$registry, $__modelDecorator: Resource } );
 
-					resource.addType( "exTypes:Type-1" );
+					resource.$addType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 					] );
@@ -442,7 +444,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/types#Type-2",
 					];
 
-					resource.addType( "exTypes:Type-1" );
+					resource.$addType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 						"http://example.com/types#Type-2",
@@ -450,7 +452,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add resolved type with @vocab from relative provided", ():void => {
-					resource.addType( "Type-1" );
+					resource.$addType( "Type-1" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/ns#Type-1",
 					] );
@@ -459,16 +461,16 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				it( "should add un-resolved type from relative provided when no registry", ():void => {
 					resource.$registry = void 0;
 
-					resource.addType( "Type-1" );
+					resource.$addType( "Type-1" );
 					expect( resource.types ).toEqual( [
 						"Type-1",
 					] );
 				} );
 
 				it( "should add un-resolved type from relative provided when no registry's context", ():void => {
-					resource.$registry = Registry.create( { __modelDecorator: Resource } );
+					resource.$registry = Registry.create( { $__modelDecorator: Resource } );
 
-					resource.addType( "Type-1" );
+					resource.$addType( "Type-1" );
 					expect( resource.types ).toEqual( [
 						"Type-1",
 					] );
@@ -479,19 +481,19 @@ describe( module( "carbonldp/Resource" ), ():void => {
 			describe( "Resource.hasType", ():void => {
 
 				it( "should exists", ():void => {
-					expect( resource.hasType ).toBeDefined();
-					expect( resource.hasType ).toEqual( jasmine.any( Function ) );
+					expect( resource.$hasType ).toBeDefined();
+					expect( resource.$hasType ).toEqual( jasmine.any( Function ) );
 				} );
 
 				it( "should return false when non-existent type", ():void => {
-					const returned:boolean = resource.hasType( "http://example.com/types#Type-1" );
+					const returned:boolean = resource.$hasType( "http://example.com/types#Type-1" );
 					expect( returned ).toEqual( false );
 				} );
 
 				it( "should return true when exists type", ():void => {
 					resource.types = [ "http://example.com/types#Type-1" ];
 
-					const returned:boolean = resource.hasType( "http://example.com/types#Type-1" );
+					const returned:boolean = resource.$hasType( "http://example.com/types#Type-1" );
 					expect( returned ).toEqual( true );
 				} );
 
@@ -501,12 +503,12 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/types#Type-2",
 					];
 
-					const returned:boolean = resource.hasType( "http://example.com/types#Type-1" );
+					const returned:boolean = resource.$hasType( "http://example.com/types#Type-1" );
 					expect( returned ).toEqual( true );
 				} );
 
 				it( "should return false when non-existent type from a prefixed one", ():void => {
-					const returned:boolean = resource.hasType( "exTypes:Type-1" );
+					const returned:boolean = resource.$hasType( "exTypes:Type-1" );
 					expect( returned ).toEqual( false );
 				} );
 
@@ -516,7 +518,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/types#Type-2",
 					];
 
-					const returned:boolean = resource.hasType( "exTypes:Type-1" );
+					const returned:boolean = resource.$hasType( "exTypes:Type-1" );
 					expect( returned ).toEqual( true );
 				} );
 
@@ -526,7 +528,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/ns#Type-2",
 					];
 
-					const returned:boolean = resource.hasType( "Type-1" );
+					const returned:boolean = resource.$hasType( "Type-1" );
 					expect( returned ).toEqual( true );
 				} );
 
@@ -535,8 +537,8 @@ describe( module( "carbonldp/Resource" ), ():void => {
 			describe( "Resource.removeType", ():void => {
 
 				it( "should exists", ():void => {
-					expect( resource.removeType ).toBeDefined();
-					expect( resource.removeType ).toEqual( jasmine.any( Function ) );
+					expect( resource.$removeType ).toBeDefined();
+					expect( resource.$removeType ).toEqual( jasmine.any( Function ) );
 				} );
 
 				it( "should remove type when exists", ():void => {
@@ -545,7 +547,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/types#Type-2",
 					];
 
-					resource.removeType( "http://example.com/types#Type-2" );
+					resource.$removeType( "http://example.com/types#Type-2" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 					] );
@@ -556,7 +558,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/types#Type-1",
 					];
 
-					resource.removeType( "http://example.com/types#Type-2" );
+					resource.$removeType( "http://example.com/types#Type-2" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 					] );
@@ -568,7 +570,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/types#Type-2",
 					];
 
-					resource.removeType( "exTypes:Type-2" );
+					resource.$removeType( "exTypes:Type-2" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 					] );
@@ -579,7 +581,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/types#Type-1",
 					];
 
-					resource.removeType( "exTypes:Type-2" );
+					resource.$removeType( "exTypes:Type-2" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 					] );
@@ -591,34 +593,34 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/types#Type-1",
 					];
 
-					resource.removeType( "exTypes:Type-1" );
+					resource.$removeType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 					] );
 				} );
 
 				it( "should not remove prefixed type when no registry's context", ():void => {
-					resource.$registry = Registry.create( { __modelDecorator: Resource } );
+					resource.$registry = Registry.create( { $__modelDecorator: Resource } );
 
 					resource.types = [
 						"http://example.com/types#Type-1",
 					];
 
-					resource.removeType( "exTypes:Type-1" );
+					resource.$removeType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 					] );
 				} );
 
 				it( "should remove resolved prefixed type when exists & registry parent has a context", ():void => {
-					resource.$registry = Registry.create( { $registry: resource.$registry, __modelDecorator: Resource } );
+					resource.$registry = Registry.create( { $registry: resource.$registry, $__modelDecorator: Resource } );
 
 					resource.types = [
 						"http://example.com/types#Type-1",
 						"http://example.com/types#Type-2",
 					];
 
-					resource.removeType( "exTypes:Type-2" );
+					resource.$removeType( "exTypes:Type-2" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 					] );
@@ -630,7 +632,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/ns#Type-2",
 					];
 
-					resource.removeType( "Type-2" );
+					resource.$removeType( "Type-2" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/ns#Type-1",
 					] );
@@ -641,7 +643,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/ns#Type-1",
 					];
 
-					resource.removeType( "Type-2" );
+					resource.$removeType( "Type-2" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/ns#Type-1",
 					] );
@@ -653,20 +655,20 @@ describe( module( "carbonldp/Resource" ), ():void => {
 						"http://example.com/ns#Type-1",
 					];
 
-					resource.removeType( "Type-1" );
+					resource.$removeType( "Type-1" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/ns#Type-1",
 					] );
 				} );
 
 				it( "should not remove relative type when no registry's context", ():void => {
-					resource.$registry = Registry.create( { __modelDecorator: Resource } );
+					resource.$registry = Registry.create( { $__modelDecorator: Resource } );
 
 					resource.types = [
 						"http://example.com/ns#Type-1",
 					];
 
-					resource.removeType( "Type-1" );
+					resource.$removeType( "Type-1" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/ns#Type-1",
 					] );

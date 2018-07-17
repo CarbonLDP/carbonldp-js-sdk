@@ -32,7 +32,7 @@ var QueryContextPartial = (function (_super) {
             if (!schemaLibrary)
                 return _super.prototype.getSchemaFor.call(this, object);
         }
-        return schemaLibrary._queryableMetadata.schema;
+        return schemaLibrary.$_queryableMetadata.schema;
     };
     return QueryContextPartial;
 }(QueryContext_1.QueryContext));

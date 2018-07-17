@@ -33,17 +33,17 @@ exports.Resource = {
             return URI_1.URI.getSlug(this.$id);
         },
         set $slug(slug) { },
-        addType: function (type) {
+        $addType: function (type) {
             type = __resolveURI(this, type);
             if (this.types.indexOf(type) !== -1)
                 return;
             this.types.push(type);
         },
-        hasType: function (type) {
+        $hasType: function (type) {
             type = __resolveURI(this, type);
             return this.types.indexOf(type) !== -1;
         },
-        removeType: function (type) {
+        $removeType: function (type) {
             type = __resolveURI(this, type);
             var index = this.types.indexOf(type);
             if (index !== -1)

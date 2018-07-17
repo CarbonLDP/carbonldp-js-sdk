@@ -51,7 +51,7 @@ export const ErrorResponse:ErrorResponseFactory = {
 
 	is( value:any ):value is ErrorResponse {
 		return Resource.is( value )
-			&& value.hasType( ErrorResponse.TYPE )
+			&& value.$hasType( ErrorResponse.TYPE )
 			;
 	},
 

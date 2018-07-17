@@ -14,7 +14,7 @@ exports.Map = {
     SCHEMA: SCHEMA,
     is: function (object) {
         return Resource_1.Resource.is(object)
-            && object.hasType(exports.Map.TYPE)
+            && object.$hasType(exports.Map.TYPE)
             && object.hasOwnProperty("entries");
     },
 };

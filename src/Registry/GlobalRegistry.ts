@@ -31,7 +31,7 @@ export const GlobalRegistry:GlobalRegistryFactory = {
 
 	createFrom<T extends object>( object:T & BaseGlobalRegistry ):T & GlobalRegistry {
 		const baseObject:T & BaseGlobalRegistry & BaseGeneralRegistry = Object.assign( object, {
-			__modelDecorator: RegisteredPointer,
+			$__modelDecorator: RegisteredPointer,
 		} );
 
 		// FIXME
