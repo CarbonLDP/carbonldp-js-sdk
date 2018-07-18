@@ -88,19 +88,18 @@
 		let children;
 		let child;
 
+		beforeAll( async function() {
+			parent = await carbon1.documents.create( { types: [ "ex:Parent" ] } );
+		} );
+
 		afterAll( async function() {
 			if( ! parent ) return;
 			await parent.delete();
 		} );
 
+
 		it( "can create a document", async function() {
-			let createdParent = await carbon1.documents.createAndRetrieve( "/", {
-				types: [ "ex:Parent" ]
-			} );
-
-			expect( Array.isArray( createdParent.types ) ).toBeTruthy();
-
-			parent = createdParent;
+			expect( Array.isArray( parent.types ) ).toBeTruthy();
 		} );
 
 		it( `can create ${childrenToCreate} children`, async function() {
@@ -245,9 +244,190 @@
 		} );
 
 
-		let accessPoint;
+		fdescribe( "Creations >", function() {
 
-		describe( "AccessPoint's", function() {
+			let doc;
+			afterEach( async function() {
+				if( ! doc ) return;
+				await doc.delete();
+			} );
+
+
+			it( "should create object", async function() {
+				doc = await parent.create( {} );
+
+				expect( doc.$slug ).toMatch( /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i );
+			} );
+
+			it( "should create object with options", async function() {
+				doc = await parent.create( { the: "document" }, {} );
+
+				expect( doc.$slug ).toMatch( /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i );
+			} );
+
+			it( "should create object with slug", async function() {
+				doc = await parent.create( {}, "the-slug" );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+			} );
+
+			it( "should create object with slug and options", async function() {
+				doc = await parent.create( {}, "the-slug", {} );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+			} );
+
+
+			it( "should create and retrieve object", async function() {
+				doc = await parent.createAndRetrieve( {} );
+
+				expect( doc ).toEqual( {
+					created: jasmine.any( Date ),
+					modified: jasmine.any( Date ),
+					hasMemberRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:member" ),
+					} ),
+					insertedContentRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:MemberSubject" ),
+					} ),
+					membershipResource: doc,
+				} );
+			} );
+
+			it( "should create and retrieve object with slug", async function() {
+				doc = await parent.createAndRetrieve( {}, "the-slug" );
+
+				expect( doc ).toEqual( {
+					created: jasmine.any( Date ),
+					modified: jasmine.any( Date ),
+					hasMemberRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:member" ),
+					} ),
+					insertedContentRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:MemberSubject" ),
+					} ),
+					membershipResource: doc,
+				} );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+			} );
+
+
+			it( "should create object with @id", async function() {
+				doc = await parent.create( { $id: "the-slug/" } );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+			} );
+
+			it( "should create object with @id and slug", async function() {
+				doc = await parent.create( { $id: "the-slug/" }, "ignored-slug" );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+			} );
+
+
+			it( "should create access point", async function() {
+				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+					$id: "the-slug/",
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
+				} ) );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+
+				await parent.refresh();
+				expect( parent.accessPoints ).toContain( doc );
+			} );
+
+			it( "should create access point with options", async function() {
+				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+					$id: "the-slug/",
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
+				} ), {} );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+
+				await parent.refresh();
+				expect( parent.accessPoints ).toContain( doc );
+			} );
+
+			it( "should create access point with slug", async function() {
+				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
+				} ), "the-slug" );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+
+				await parent.refresh();
+				expect( parent.accessPoints ).toContain( doc );
+			} );
+
+			it( "should create access point with slug and options", async function() {
+				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
+				} ), "the-slug", {} );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+
+				await parent.refresh();
+				expect( parent.accessPoints ).toContain( doc );
+			} );
+
+
+			it( "should create object with nested objects", async function() {
+				doc = await parent.create( {
+					nested1: { index: 1 },
+					nested2: [ { index: 2 }, { index: 3 } ],
+				} );
+
+				expect( doc ).toEqual( {
+					nested1: { index: 1 },
+					nested2: [ { index: 2 }, { index: 3 } ],
+				} );
+			} );
+
+			it( "should create and retrieve object with nested", async function() {
+				const nested = { the: "nested one" };
+				doc = await parent.createAndRetrieve( { nested: nested } );
+
+				console.log( doc );
+				expect( doc ).toEqual( {
+					created: jasmine.any( Date ),
+					modified: jasmine.any( Date ),
+					hasMemberRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:member" ),
+					} ),
+					insertedContentRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:MemberSubject" ),
+					} ),
+					membershipResource: doc,
+
+					nested: nested,
+				} );
+			} );
+
+			it( "should updated nested when refreshed", async function() {
+				const nested = { the: "nested one" };
+				doc = await parent.create( { nested: nested } );
+
+				const copy = await carbon2.documents.get( doc.$id );
+				copy.nested.the = "updated nested one";
+
+				await copy.save();
+
+				await doc.refresh();
+				expect( nested ).toEqual( { the: "updated nested one" } );
+			} );
+
+		} );
+
+
+		describe( "AccessPoint >", function() {
+
+			let accessPoint;
 
 			it( `can create an access point`, async function() {
 				accessPoint = await child.create( CarbonLDP.AccessPoint.create( {
@@ -257,6 +437,7 @@
 
 				expect( null ).nothing();
 			} );
+
 
 			it( `should add a member from access point`, async function() {
 				const member = await parent.create( {

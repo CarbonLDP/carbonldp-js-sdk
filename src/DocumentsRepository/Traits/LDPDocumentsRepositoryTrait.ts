@@ -152,7 +152,7 @@ function __applyResponseRepresentation<T extends object>( repository:LDPDocument
 			__applyResponseMetadata( repository, freeNodes );
 
 			const preferenceHeader:Header = response.getHeader( "Preference-Applied" );
-			if( preferenceHeader === null || preferenceHeader.toString() !== "return=representation" ) return resource as T & Document;
+			if( preferenceHeader === null || ! preferenceHeader.hasValue( "return=representation" ) ) return resource as T & Document;
 
 			return repository._parseResponseData<T>( response, resource.$id );
 		} )
@@ -196,8 +196,6 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 			document
 				.getFragments()
 				.forEach( document.__modelDecorator.decorate );
-
-			document._syncSnapshot();
 
 			return __applyResponseRepresentation<T>( repository, document, response );
 		} )
