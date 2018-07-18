@@ -486,7 +486,7 @@ describe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
 
 					expect( Resource.is( message ) ).toBe( true );
 					expect( message.$id ).toBe( "_:1" );
-					expect( message.$hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
+					expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
 					expect( Pointer.is( message.target ) ).toBe( true );
 					expect( message.target.$id ).toBe( "https://example.com/created-child/" );
@@ -537,7 +537,7 @@ describe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
 
 						expect( Resource.is( message ) ).toBe( true );
 						expect( message.$id ).toBe( "_:1" );
-						expect( message.$hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
+						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
 						expect( Pointer.is( message.target ) ).toBe( true );
 						expect( message.target.$id ).toBe( `https://example.com/created-child-${ index }/` );
@@ -671,7 +671,7 @@ describe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
 
 						expect( Resource.is( message ) ).toBe( true );
 						expect( message.$id ).toBe( "_:1" );
-						expect( message.$hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
+						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
 						expect( Pointer.is( message.target ) ).toBe( true );
 						expect( message.target.$id ).toBe( `https://example.com/created-child-${ index }/` );

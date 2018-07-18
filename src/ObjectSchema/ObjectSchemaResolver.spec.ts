@@ -286,7 +286,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 				const resource:object = QueryablePointer.decorate<Partial<QueryablePointer> & BaseResource>( {
 					$repository: $context.repository,
 					types: [ "Type-1" ],
-					$_queryableMetadata: createMockQueryableMetadata( {
+					_queryableMetadata: createMockQueryableMetadata( {
 						"inQueryableMetadata": {},
 					} ),
 				} );

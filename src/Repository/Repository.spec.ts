@@ -45,8 +45,8 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should exists", ():void => {
 				const repository:Repository = createMock();
 
-				expect( repository.$get ).toBeDefined();
-				expect( repository.$get ).toEqual( jasmine.any( Function ) );
+				expect( repository.get ).toBeDefined();
+				expect( repository.get ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -54,7 +54,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				const repository:Repository = createMock();
 
 				await repository
-					.$get( "uri" )
+					.get( "uri" )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						expect( () => {throw error; } ).toThrowError( NotImplementedError, "Must be implemented for a specific repository implementation." );
@@ -76,8 +76,8 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should exists", ():void => {
 				const repository:Repository = createMock();
 
-				expect( repository.$resolve ).toBeDefined();
-				expect( repository.$resolve ).toEqual( jasmine.any( Function ) );
+				expect( repository.resolve ).toBeDefined();
+				expect( repository.resolve ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -85,7 +85,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				const repository:Repository = createMock();
 
 				await repository
-					.$resolve( ResolvablePointer.decorate( { $repository: repository } ) )
+					.resolve( ResolvablePointer.decorate( { $repository: repository } ) )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						expect( () => {throw error; } ).toThrowError( NotImplementedError, "Must be implemented for a specific repository implementation." );
@@ -107,8 +107,8 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should exists", ():void => {
 				const repository:Repository = createMock();
 
-				expect( repository.$exists ).toBeDefined();
-				expect( repository.$exists ).toEqual( jasmine.any( Function ) );
+				expect( repository.exists ).toBeDefined();
+				expect( repository.exists ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -116,7 +116,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				const repository:Repository = createMock();
 
 				await repository
-					.$exists( "uri" )
+					.exists( "uri" )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						expect( () => {throw error; } ).toThrowError( NotImplementedError, "Must be implemented for a specific repository implementation." );
@@ -139,8 +139,8 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should exists", ():void => {
 				const repository:Repository = createMock();
 
-				expect( repository.$save ).toBeDefined();
-				expect( repository.$save ).toEqual( jasmine.any( Function ) );
+				expect( repository.save ).toBeDefined();
+				expect( repository.save ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -148,7 +148,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				const repository:Repository = createMock();
 
 				await repository
-					.$save( ResolvablePointer.decorate( { $repository: repository } ) )
+					.save( ResolvablePointer.decorate( { $repository: repository } ) )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						expect( () => {throw error; } ).toThrowError( NotImplementedError, "Must be implemented for a specific repository implementation." );
@@ -170,8 +170,8 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should exists", ():void => {
 				const repository:Repository = createMock();
 
-				expect( repository.$refresh ).toBeDefined();
-				expect( repository.$refresh ).toEqual( jasmine.any( Function ) );
+				expect( repository.refresh ).toBeDefined();
+				expect( repository.refresh ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -179,7 +179,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				const repository:Repository = createMock();
 
 				await repository
-					.$refresh( ResolvablePointer.decorate( { $repository: repository } ) )
+					.refresh( ResolvablePointer.decorate( { $repository: repository } ) )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						expect( () => {throw error; } ).toThrowError( NotImplementedError, "Must be implemented for a specific repository implementation." );
@@ -201,8 +201,8 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should exists", ():void => {
 				const repository:Repository = createMock();
 
-				expect( repository.$saveAndRefresh ).toBeDefined();
-				expect( repository.$saveAndRefresh ).toEqual( jasmine.any( Function ) );
+				expect( repository.saveAndRefresh ).toBeDefined();
+				expect( repository.saveAndRefresh ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -210,7 +210,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				const repository:Repository = createMock();
 
 				await repository
-					.$saveAndRefresh( ResolvablePointer.decorate( { $repository: repository } ) )
+					.saveAndRefresh( ResolvablePointer.decorate( { $repository: repository } ) )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						expect( () => {throw error; } ).toThrowError( NotImplementedError, "Must be implemented for a specific repository implementation." );
@@ -233,8 +233,8 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should exists", ():void => {
 				const repository:Repository = createMock();
 
-				expect( repository.$delete ).toBeDefined();
-				expect( repository.$delete ).toEqual( jasmine.any( Function ) );
+				expect( repository.delete ).toBeDefined();
+				expect( repository.delete ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -242,7 +242,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				const repository:Repository = createMock();
 
 				await repository
-					.$exists( "uri" )
+					.exists( "uri" )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						expect( () => {throw error; } ).toThrowError( NotImplementedError, "Must be implemented for a specific repository implementation." );

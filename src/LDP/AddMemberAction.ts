@@ -46,7 +46,7 @@ export const AddMemberAction:AddMemberActionFactory = {
 
 	is( value:any ):value is AddMemberAction {
 		return Resource.is( value )
-			&& value.$hasType( AddMemberAction.TYPE )
+			&& value.hasType( AddMemberAction.TYPE )
 			;
 	},
 
@@ -59,7 +59,7 @@ export const AddMemberAction:AddMemberActionFactory = {
 	createFrom<T extends object>( object:T & BaseAddMemberAction ):T & AddMemberAction {
 		const resource:T & AddMemberAction = Resource.createFrom( object );
 
-		resource.$addType( AddMemberAction.TYPE );
+		resource.addType( AddMemberAction.TYPE );
 
 		return resource;
 	},

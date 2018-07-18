@@ -266,7 +266,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 				builder.object( "http://example.com/resource/" );
 				expect( spy ).toHaveBeenCalledWith( queryContext, "http://example.com/resource/" );
 
-				const pointer:Pointer = context.registry.$getPointer( "http://example.com/resource/" );
+				const pointer:Pointer = context.registry.getPointer( "http://example.com/resource/" );
 				builder.object( pointer );
 				expect( spy ).toHaveBeenCalledWith( queryContext, pointer );
 			} );
@@ -274,7 +274,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 			it( "should return a QueryObject", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 				expect( builder.object( "http://example.com/resource/" ) ).toEqual( jasmine.any( QueryObject ) );
-				expect( builder.object( context.registry.$getPointer( "http://example.com/resource/" ) ) ).toEqual( jasmine.any( QueryObject ) );
+				expect( builder.object( context.registry.getPointer( "http://example.com/resource/" ) ) ).toEqual( jasmine.any( QueryObject ) );
 			} );
 
 		} );

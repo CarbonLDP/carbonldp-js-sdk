@@ -9,5 +9,5 @@ export interface DocumentsRegistry extends GeneralRegistry<Document> {
     readonly $context: DocumentsContext;
     register(id: string): Document;
 }
-export declare type DocumentsRegistryFactory = ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>, "$_getLocalID"> & ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry> & ModelFactory<DocumentsRegistry, BaseDocumentsRegistry>;
+export declare type DocumentsRegistryFactory = ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>, "_getLocalID"> & ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry> & ModelFactory<DocumentsRegistry, BaseDocumentsRegistry>;
 export declare const DocumentsRegistry: DocumentsRegistryFactory;

@@ -56,10 +56,10 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"$eTag",
+			"_eTag",
 			"string | undefined",
 			"The identifier that describes the state of the last data retrieved for the current pointer."
-		), () => {
+		), ():void => {
 			const target:ResolvablePointer[ "$eTag" ] = "" as string | undefined;
 			expect( target ).toBeDefined();
 		} );
@@ -67,25 +67,25 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"$_resolved",
+			"_resolved",
 			"boolean | undefined"
 		), ():void => {
-			const target:ResolvablePointer[ "$_resolved" ] = true as boolean | undefined;
+			const target:ResolvablePointer[ "_resolved" ] = true as boolean | undefined;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"$_snapshot",
+			"_snapshot",
 			"object",
 			"The shallow copy of the pointer, which is used to track its changes."
 		), ():void => {
-			const target:ResolvablePointer[ "$_snapshot" ] = {} as object;
+			const target:ResolvablePointer[ "_snapshot" ] = {} as object;
 			expect( target ).toBeDefined();
 		} );
 
 
-		describe( method( OBLIGATORY, "$isResolved" ), ():void => {
+		describe( method( OBLIGATORY, "isResolved" ), ():void => {
 
 			it( hasSignature(
 				{ type: "boolean" }
@@ -94,36 +94,36 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should exists", ():void => {
 				const resource:ResolvablePointer = createMock();
 
-				expect( resource.$isResolved ).toBeDefined();
-				expect( resource.$isResolved ).toEqual( jasmine.any( Function ) );
+				expect( resource.isResolved ).toBeDefined();
+				expect( resource.isResolved ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should return false when _resolved undefined", ():void => {
 				const resource:ResolvablePointer = createMock();
 
-				const returned:boolean = resource.$isResolved();
+				const returned:boolean = resource.isResolved();
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false when _resolved false", ():void => {
-				const resource:ResolvablePointer = createMock( { $_resolved: false } );
+				const resource:ResolvablePointer = createMock( { _resolved: false } );
 
-				const returned:boolean = resource.$isResolved();
+				const returned:boolean = resource.isResolved();
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return true when _resolved true", ():void => {
-				const resource:ResolvablePointer = createMock( { $_resolved: true } );
+				const resource:ResolvablePointer = createMock( { _resolved: true } );
 
-				const returned:boolean = resource.$isResolved();
+				const returned:boolean = resource.isResolved();
 				expect( returned ).toBe( true );
 			} );
 
 		} );
 
 
-		describe( method( OBLIGATORY, "$_syncSnapshot" ), ():void => {
+		describe( method( OBLIGATORY, "_syncSnapshot" ), ():void => {
 
 			it( hasSignature(
 				"Updates the snapshot with the data of the resource."
@@ -132,36 +132,36 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should exists", ():void => {
 				const resource:ResolvablePointer = createMock();
 
-				expect( resource.$_syncSnapshot ).toBeDefined();
-				expect( resource.$_syncSnapshot ).toEqual( jasmine.any( Function ) );
+				expect( resource._syncSnapshot ).toBeDefined();
+				expect( resource._syncSnapshot ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should not alter previous snapshot", ():void => {
 				const resource:ResolvablePointer = createMock();
 
-				const previous:{} = resource.$_snapshot;
+				const previous:{} = resource._snapshot;
 
 				Object.assign( resource, { the: "new property" } );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
-				expect( resource.$_snapshot ).not.toBe( previous );
+				expect( resource._snapshot ).not.toBe( previous );
 			} );
 
 			it( "should not assign itself as snapshot", ():void => {
 				const resource:ResolvablePointer = createMock();
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
-				expect( resource.$_snapshot ).not.toBe( resource );
+				expect( resource._snapshot ).not.toBe( resource );
 			} );
 
 			it( "should sync new property", ():void => {
 				const resource:ResolvablePointer = createMock();
 
 				Object.assign( resource, { the: "new property" } );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
-				expect( resource.$_snapshot ).toEqual( jasmine.objectContaining( { the: "new property" } ) );
+				expect( resource._snapshot ).toEqual( jasmine.objectContaining( { the: "new property" } ) );
 			} );
 
 			it( "should sync types (non-enumerable)", ():void => {
@@ -169,9 +169,9 @@ describe( module( "carbonldp/Repository" ), () => {
 				createNonEnumerable( resource );
 
 				resource.types.push( "https://example.com/ns#Type" );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
-				expect( resource.$_snapshot ).toEqual( jasmine.objectContaining( {
+				expect( resource._snapshot ).toEqual( jasmine.objectContaining( {
 					types: [ "https://example.com/ns#Type" ],
 				} ) );
 			} );
@@ -180,16 +180,16 @@ describe( module( "carbonldp/Repository" ), () => {
 				const resource:ResolvablePointer = createMock();
 
 				resource.$id = "https://example.com/resource/";
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
-				expect( resource.$_snapshot ).not.toEqual( jasmine.objectContaining( {
+				expect( resource._snapshot ).not.toEqual( jasmine.objectContaining( {
 					id: "https://example.com/resource/",
 				} ) );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$isDirty" ), ():void => {
+		describe( method( OBLIGATORY, "isDirty" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the resource presents differences from its snapshot.",
@@ -200,63 +200,63 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should exists", ():void => {
 				const resource:ResolvablePointer = createMock();
 
-				expect( resource.$isDirty ).toBeDefined();
-				expect( resource.$isDirty ).toEqual( jasmine.any( Function ) );
+				expect( resource.isDirty ).toBeDefined();
+				expect( resource.isDirty ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should return false if synced", ():void => {
 				const resource:ResolvablePointer = createMock( { the: "resource" } );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
-				expect( resource.$isDirty() ).toBe( false );
+				expect( resource.isDirty() ).toBe( false );
 			} );
 
 			it( "should return true if new property", ():void => {
 				const resource:ResolvablePointer = createMock();
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				Object.assign( resource, { the: "new property" } );
 
-				expect( resource.$isDirty() ).toBe( true );
+				expect( resource.isDirty() ).toBe( true );
 			} );
 
 			it( "should return true if deleted property", ():void => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property" } );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				delete resource.the;
 
-				expect( resource.$isDirty() ).toBe( true );
+				expect( resource.isDirty() ).toBe( true );
 			} );
 
 			it( "should return true if null property", ():void => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property" } );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				resource.the = null;
 
-				expect( resource.$isDirty() ).toBe( true );
+				expect( resource.isDirty() ).toBe( true );
 			} );
 
 			it( "should return true if altered property", ():void => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property value" } );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				resource.the = "new property value";
 
-				expect( resource.$isDirty() ).toBe( true );
+				expect( resource.isDirty() ).toBe( true );
 			} );
 
 
 			it( "should return true if new type", ():void => {
 				const resource:ResolvablePointer & { types:string[] } = createMock( { types: [] } );
 				createNonEnumerable( resource );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				resource.types.push( "https://example.com/ns#Type" );
 
-				expect( resource.$isDirty() ).toBe( true );
+				expect( resource.isDirty() ).toBe( true );
 			} );
 
 			it( "should return true if deleted type", ():void => {
@@ -264,11 +264,11 @@ describe( module( "carbonldp/Repository" ), () => {
 					types: [ "https://example.com/ns#Type", "https://example.com/ns#Type-2" ],
 				} );
 				createNonEnumerable( resource );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				resource.types.splice( 1, 1 );
 
-				expect( resource.$isDirty() ).toBe( true );
+				expect( resource.isDirty() ).toBe( true );
 			} );
 
 
@@ -276,11 +276,11 @@ describe( module( "carbonldp/Repository" ), () => {
 				const resource:ResolvablePointer = createMock( {
 					id: "https://example.com/resource/",
 				} );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				resource.$id = "https://exampple.com/another-resource/";
 
-				expect( resource.$isDirty() ).toBe( false );
+				expect( resource.isDirty() ).toBe( false );
 			} );
 
 			it( "should return false if related resource content altered", ():void => {
@@ -290,15 +290,15 @@ describe( module( "carbonldp/Repository" ), () => {
 					relation: relatedResource,
 				} );
 
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 				Object.assign( relatedResource, { the: "change in content" } );
 
-				expect( resource.$isDirty() ).toBe( false );
+				expect( resource.isDirty() ).toBe( false );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$revert" ), ():void => {
+		describe( method( OBLIGATORY, "revert" ), ():void => {
 
 			it( hasSignature(
 				"Revert the changes made to the resource into the state of the snapshot."
@@ -307,17 +307,17 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should exists", ():void => {
 				const resource:ResolvablePointer = createMock( {} );
 
-				expect( resource.$revert ).toBeDefined();
-				expect( resource.$revert ).toEqual( jasmine.any( Function ) );
+				expect( resource.revert ).toBeDefined();
+				expect( resource.revert ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should revert change in property", ():void => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property value" } );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				resource.the = "new property value";
-				resource.$revert();
+				resource.revert();
 
 				expect( resource ).toEqual( jasmine.objectContaining( {
 					the: "old property value",
@@ -326,10 +326,10 @@ describe( module( "carbonldp/Repository" ), () => {
 
 			it( "should revert add deleted property", ():void => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property" } );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				delete resource.the;
-				resource.$revert();
+				resource.revert();
 
 				expect( resource ).toEqual( jasmine.objectContaining( {
 					the: "old property",
@@ -338,10 +338,10 @@ describe( module( "carbonldp/Repository" ), () => {
 
 			it( "should revert add null-ed property", ():void => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property" } );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				resource.the = null;
-				resource.$revert();
+				resource.revert();
 
 				expect( resource ).toEqual( jasmine.objectContaining( {
 					the: "old property",
@@ -350,10 +350,10 @@ describe( module( "carbonldp/Repository" ), () => {
 
 			it( "should revert remove new property", ():void => {
 				const resource:ResolvablePointer & { the?:string } = createMock( {} );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				resource.the = "new property";
-				resource.$revert();
+				resource.revert();
 
 				expect( resource ).not.toEqual( jasmine.objectContaining( {
 					the: "new property",
@@ -366,10 +366,10 @@ describe( module( "carbonldp/Repository" ), () => {
 					types: [ "https://example.com/ns#Type" ],
 				} );
 				createNonEnumerable( resource );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				resource.types.push( "https://example.com/ns#Type-2" );
-				resource.$revert();
+				resource.revert();
 
 				expect( resource ).toEqual( jasmine.objectContaining( {
 					types: [ "https://example.com/ns#Type" ],
@@ -381,10 +381,10 @@ describe( module( "carbonldp/Repository" ), () => {
 					types: [ "https://example.com/ns#Type", "https://example.com/ns#Type-2" ],
 				} );
 				createNonEnumerable( resource );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				resource.types.splice( 1, 1 );
-				resource.$revert();
+				resource.revert();
 
 				expect( resource ).toEqual( jasmine.objectContaining( {
 					types: [ "https://example.com/ns#Type", "https://example.com/ns#Type-2" ],
@@ -396,10 +396,10 @@ describe( module( "carbonldp/Repository" ), () => {
 				const resource:ResolvablePointer = createMock( {
 					id: "https://example.com/resource/",
 				} );
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 
 				resource.$id = "https://exampple.com/another-resource/";
-				resource.$revert();
+				resource.revert();
 
 				expect( resource ).toEqual( jasmine.objectContaining( {
 					$id: "https://exampple.com/another-resource/",
@@ -413,9 +413,9 @@ describe( module( "carbonldp/Repository" ), () => {
 					relation: relatedResource,
 				} );
 
-				resource.$_syncSnapshot();
+				resource._syncSnapshot();
 				Object.assign( relatedResource, { the: "change in content" } );
-				resource.$revert();
+				resource.revert();
 
 				expect( relatedResource ).toEqual( jasmine.objectContaining( {
 					the: "change in content",
@@ -425,16 +425,16 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "$get" ), () => {
+		describe( method( OBLIGATORY, "get" ), () => {
 			// TODO: Document
 
 			it( "should send to $id when no provided", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$get" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "get" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$get();
+				await resource.get();
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
 			} );
@@ -442,10 +442,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should resolve relative with $id when provided", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$get" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "get" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$get( "relative/" );
+				await resource.get( "relative/" );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
 			} );
@@ -453,10 +453,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass absolute when provided", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$get" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "get" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$get( "https://example.com/another-resource/" );
+				await resource.get( "https://example.com/another-resource/" );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
 			} );
@@ -465,10 +465,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when no URI", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$get" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "get" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$get( { object: "1" }, { object: "2" } );
+				await resource.get( { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
 			} );
@@ -476,26 +476,26 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when URI", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$get" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "get" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$get( "relative/", { object: "1" }, { object: "2" } );
+				await resource.get( "relative/", { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$resolve" ), () => {
+		describe( method( OBLIGATORY, "resolve" ), () => {
 			// TODO: Document
 
 			it( "should send to self when no provided", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$resolve" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "resolve" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$resolve();
+				await resource.resolve();
 
 				expect( spy ).toHaveBeenCalledWith( resource );
 			} );
@@ -503,11 +503,11 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass resource when provided", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$resolve" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "resolve" )
 					.and.returnValue( Promise.resolve() );
 
 				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$resolve( target );
+				await resource.resolve( target );
 
 				expect( spy ).toHaveBeenCalledWith( target );
 			} );
@@ -516,10 +516,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when no resource", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$resolve" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "resolve" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$resolve( { object: "1" }, { object: "2" } );
+				await resource.resolve( { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
 			} );
@@ -527,27 +527,27 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when resource", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$resolve" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "resolve" )
 					.and.returnValue( Promise.resolve() );
 
 				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$resolve( target, { object: "1" }, { object: "2" } );
+				await resource.resolve( target, { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$exists" ), () => {
+		describe( method( OBLIGATORY, "exists" ), () => {
 			// TODO: Document
 
 			it( "should send to $id when no provided", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$exists" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "exists" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$exists();
+				await resource.exists();
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
 			} );
@@ -555,10 +555,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should resolve relative with $id when provided", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$exists" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "exists" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$exists( "relative/" );
+				await resource.exists( "relative/" );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
 			} );
@@ -566,10 +566,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass absolute when provided", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$exists" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "exists" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$exists( "https://example.com/another-resource/" );
+				await resource.exists( "https://example.com/another-resource/" );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
 			} );
@@ -578,10 +578,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when no URI", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$exists" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "exists" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$exists( { object: "1" }, { object: "2" } );
+				await resource.exists( { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
 			} );
@@ -589,10 +589,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when URI", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$exists" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "exists" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$exists( "relative/", { object: "1" }, { object: "2" } );
+				await resource.exists( "relative/", { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
 			} );
@@ -600,16 +600,16 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "$refresh" ), () => {
+		describe( method( OBLIGATORY, "refresh" ), () => {
 			// TODO: Document
 
 			it( "should send to self when no provided", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$refresh" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "refresh" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$refresh();
+				await resource.refresh();
 
 				expect( spy ).toHaveBeenCalledWith( resource );
 			} );
@@ -617,11 +617,11 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass resource when provided", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$refresh" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "refresh" )
 					.and.returnValue( Promise.resolve() );
 
 				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$refresh( target );
+				await resource.refresh( target );
 
 				expect( spy ).toHaveBeenCalledWith( target );
 			} );
@@ -630,10 +630,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when no resource", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$refresh" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "refresh" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$refresh( { object: "1" }, { object: "2" } );
+				await resource.refresh( { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
 			} );
@@ -641,27 +641,27 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when resource", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$refresh" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "refresh" )
 					.and.returnValue( Promise.resolve() );
 
 				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$refresh( target, { object: "1" }, { object: "2" } );
+				await resource.refresh( target, { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$save" ), () => {
+		describe( method( OBLIGATORY, "save" ), () => {
 			// TODO: Document
 
 			it( "should send to self when no provided", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$save" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "save" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$save();
+				await resource.save();
 
 				expect( spy ).toHaveBeenCalledWith( resource );
 			} );
@@ -669,11 +669,11 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass resource when provided", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$save" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "save" )
 					.and.returnValue( Promise.resolve() );
 
 				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$save( target );
+				await resource.save( target );
 
 				expect( spy ).toHaveBeenCalledWith( target );
 			} );
@@ -682,10 +682,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when no resource", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$save" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "save" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$save( { object: "1" }, { object: "2" } );
+				await resource.save( { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
 			} );
@@ -693,27 +693,27 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when resource", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$save" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "save" )
 					.and.returnValue( Promise.resolve() );
 
 				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$save( target, { object: "1" }, { object: "2" } );
+				await resource.save( target, { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$saveAndRefresh" ), () => {
+		describe( method( OBLIGATORY, "saveAndRefresh" ), () => {
 			// TODO: Document
 
 			it( "should send to self when no provided", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$saveAndRefresh" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "saveAndRefresh" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$saveAndRefresh();
+				await resource.saveAndRefresh();
 
 				expect( spy ).toHaveBeenCalledWith( resource );
 			} );
@@ -721,11 +721,11 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass resource when provided", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$saveAndRefresh" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "saveAndRefresh" )
 					.and.returnValue( Promise.resolve() );
 
 				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$saveAndRefresh( target );
+				await resource.saveAndRefresh( target );
 
 				expect( spy ).toHaveBeenCalledWith( target );
 			} );
@@ -734,10 +734,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when no resource", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$saveAndRefresh" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "saveAndRefresh" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$saveAndRefresh( { object: "1" }, { object: "2" } );
+				await resource.saveAndRefresh( { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
 			} );
@@ -745,11 +745,11 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when resource", async () => {
 				const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$saveAndRefresh" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "saveAndRefresh" )
 					.and.returnValue( Promise.resolve() );
 
 				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$saveAndRefresh( target, { object: "1" }, { object: "2" } );
+				await resource.saveAndRefresh( target, { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
 			} );
@@ -757,16 +757,16 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "$delete" ), () => {
+		describe( method( OBLIGATORY, "delete" ), () => {
 			// TODO: Document
 
 			it( "should send to $id when no provided", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$delete" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "delete" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$delete();
+				await resource.delete();
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
 			} );
@@ -774,10 +774,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should resolve relative with $id when provided", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$delete" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "delete" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$delete( "relative/" );
+				await resource.delete( "relative/" );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
 			} );
@@ -785,10 +785,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass absolute when provided", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$delete" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "delete" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$delete( "https://example.com/another-resource/" );
+				await resource.delete( "https://example.com/another-resource/" );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
 			} );
@@ -797,10 +797,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when no URI", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$delete" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "delete" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$delete( { object: "1" }, { object: "2" } );
+				await resource.delete( { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
 			} );
@@ -808,10 +808,10 @@ describe( module( "carbonldp/Repository" ), () => {
 			it( "should pass params when URI", async () => {
 				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$delete" )
+				const spy:jasmine.Spy = spyOnDecorated( $repository, "delete" )
 					.and.returnValue( Promise.resolve() );
 
-				await resource.$delete( "relative/", { object: "1" }, { object: "2" } );
+				await resource.delete( "relative/", { object: "1" }, { object: "2" } );
 
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
 			} );
@@ -905,12 +905,12 @@ describe( module( "carbonldp/Repository" ), () => {
 
 			it( "should set _resolve to false by default", () => {
 				const pointer:ResolvablePointer = ResolvablePointer.decorate( { $repository } );
-				expect( pointer.$_resolved ).toBe( false );
+				expect( pointer._resolved ).toBe( false );
 			} );
 
 			it( "should set _resolve to {} by default", () => {
 				const pointer:ResolvablePointer = ResolvablePointer.decorate( { $repository } );
-				expect( pointer.$_snapshot ).toEqual( {} );
+				expect( pointer._snapshot ).toEqual( {} );
 			} );
 
 		} );

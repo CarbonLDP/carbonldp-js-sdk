@@ -24,7 +24,7 @@ export interface DocumentsRegistry extends GeneralRegistry<Document> {
 
 
 export type DocumentsRegistryFactory =
-	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>, "$_getLocalID">
+	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>, "_getLocalID">
 	& ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry>
 	& ModelFactory<DocumentsRegistry, BaseDocumentsRegistry>
 	;
@@ -32,12 +32,12 @@ export type DocumentsRegistryFactory =
 export const DocumentsRegistry:DocumentsRegistryFactory = {
 	PROTOTYPE: {
 		register( this:DocumentsRegistry, id:string ):Document {
-			return this.$getPointer( id, true );
+			return this.getPointer( id, true );
 		},
 
-		$_getLocalID( this:DocumentsRegistry, id:string ):string {
-			if( URI.hasFragment( id ) ) Registry.PROTOTYPE.$_getLocalID.call( this, id );
-			return GeneralRegistry.PROTOTYPE.$_getLocalID.call( this, id );
+		_getLocalID( this:DocumentsRegistry, id:string ):string {
+			if( URI.hasFragment( id ) ) Registry.PROTOTYPE._getLocalID.call( this, id );
+			return GeneralRegistry.PROTOTYPE._getLocalID.call( this, id );
 		},
 	},
 
@@ -50,8 +50,8 @@ export const DocumentsRegistry:DocumentsRegistryFactory = {
 	decorate<T extends BaseDocumentsRegistry>( object:T ):T & DocumentsRegistry {
 		if( DocumentsRegistry.isDecorated( object ) ) return object;
 
-		const base:T & BaseGeneralRegistry = Object.assign<T, Pick<BaseGeneralRegistry, "$__modelDecorator">>( object, {
-			$__modelDecorator: Document,
+		const base:T & BaseGeneralRegistry = Object.assign( object, {
+			__modelDecorator: Document,
 		} );
 
 		const target:T & GeneralRegistry<Document> = ModelDecorator

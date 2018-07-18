@@ -19,7 +19,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			],
 			{ type: "boolean" }
 		), ():void => {
-			const target:PointerLibrary[ "$hasPointer" ] = ( id:string ) => true as boolean;
+			const target:PointerLibrary[ "hasPointer" ] = ( id:string ) => true as boolean;
 			expect( target ).toBeDefined();
 		} );
 
@@ -31,7 +31,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			],
 			{ type: "boolean" }
 		), ():void => {
-			const target:PointerLibrary[ "$getPointer" ] = ( id:string ) => null as Pointer;
+			const target:PointerLibrary[ "getPointer" ] = ( id:string ) => null as Pointer;
 			expect( target ).toBeDefined();
 		} );
 

@@ -23,7 +23,7 @@ exports.ErrorResponse = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return Resource_1.Resource.is(value)
-            && value.$hasType(exports.ErrorResponse.TYPE);
+            && value.hasType(exports.ErrorResponse.TYPE);
     },
     getMessage: function (errorResponse) {
         var errors = getErrors(errorResponse);

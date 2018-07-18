@@ -25,9 +25,9 @@ import { BaseFreeResources } from "./BaseFreeResources";
 export interface FreeResources extends Registry<Resource> {
 	$registry:GeneralRegistry<any>;
 
-	$_getLocalID( id:string ):string;
+	_getLocalID( id:string ):string;
 
-	$_addPointer<T extends object>( base:T & Partial<Pointer> ):T & Resource;
+	_addPointer<T extends object>( base:T & Partial<Pointer> ):T & Resource;
 
 
 	toJSON( contextOrKey?:Context | string ):RDFNode[];
@@ -36,8 +36,8 @@ export interface FreeResources extends Registry<Resource> {
 
 export type OverriddenMembers =
 	| "$registry"
-	| "$_getLocalID"
-	| "$_addPointer"
+	| "_getLocalID"
+	| "_addPointer"
 	;
 
 export interface FreeResourcesUtils {
@@ -56,20 +56,20 @@ export const FreeResources:FreeResourcesFactory = {
 	PROTOTYPE: {
 		$registry: void 0,
 
-		$_getLocalID( this:FreeResources, id:string ):string {
+		_getLocalID( this:FreeResources, id:string ):string {
 			if( URI.isBNodeID( id ) ) return id;
-			return Registry.PROTOTYPE.$_getLocalID.call( this, id );
+			return Registry.PROTOTYPE._getLocalID.call( this, id );
 		},
 
-		$_addPointer<T extends object>( this:FreeResources, base:T & Partial<Pointer> ):T & Resource {
+		_addPointer<T extends object>( this:FreeResources, base:T & Partial<Pointer> ):T & Resource {
 			if( ! base.$id ) base.$id = URI.generateBNodeID();
-			return Registry.PROTOTYPE.$_addPointer.call( this, base );
+			return Registry.PROTOTYPE._addPointer.call( this, base );
 		},
 
 
 		toJSON( this:FreeResources, contextOrKey?:Context | string ):RDFNode[] {
 			return this
-				.$getPointers( true )
+				.getPointers( true )
 				.map( resource => resource.toJSON( contextOrKey ) )
 				;
 		},
@@ -100,8 +100,8 @@ export const FreeResources:FreeResourcesFactory = {
 	decorate<T extends BaseFreeResources>( object:T ):T & FreeResources {
 		if( FreeResources.isDecorated( object ) ) return object;
 
-		const base:T & BaseRegistry<Resource> = Object.assign<T, Pick<FreeResources, "$__modelDecorator">>( object, {
-			$__modelDecorator: Resource,
+		const base:T & BaseRegistry<Resource> = Object.assign( object, {
+			__modelDecorator: Resource,
 		} );
 
 		const resource:T & Registry<Resource> = ModelDecorator
@@ -120,7 +120,7 @@ export const FreeResources:FreeResourcesFactory = {
 			.forEach( node => {
 				const digestedSchema:DigestedObjectSchema = registry.getSchemaFor( node );
 
-				const target:object = freeResources.$getPointer( node[ "@id" ], true );
+				const target:object = freeResources.getPointer( node[ "@id" ], true );
 				registry.$context.jsonldConverter.compact( node, target, digestedSchema, freeResources );
 			} );
 

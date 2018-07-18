@@ -101,7 +101,7 @@ export class SPARQLService {
 	private static __parseRawBindingProperty( rawBindingProperty:SPARQLRawBindingProperty, pointerLibrary:PointerLibrary ):any {
 		switch( rawBindingProperty.type ) {
 			case "uri":
-				return pointerLibrary.$getPointer( rawBindingProperty.value );
+				return pointerLibrary.getPointer( rawBindingProperty.value );
 			case "bnode":
 				throw new NotImplementedError( "BNodes cannot be queried directly" );
 			case "literal":

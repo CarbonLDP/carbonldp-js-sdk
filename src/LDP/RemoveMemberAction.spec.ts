@@ -96,7 +96,7 @@ describe( module( "carbonldp/Members/RemoveMemberAction" ), ():void => {
 					.and.returnValue( true );
 
 				mockObject = jasmine.createSpyObj( {
-					$hasType: true,
+					hasType: true,
 				} );
 			} );
 
@@ -108,7 +108,7 @@ describe( module( "carbonldp/Members/RemoveMemberAction" ), ():void => {
 
 			it( "should have type c:RemoveMemberAction", () => {
 				RemoveMemberAction.is( mockObject );
-				expect( mockObject.$hasType ).toHaveBeenCalledWith( C.RemoveMemberAction );
+				expect( mockObject.hasType ).toHaveBeenCalledWith( C.RemoveMemberAction );
 			} );
 
 			it( "should return true when all assertions", () => {

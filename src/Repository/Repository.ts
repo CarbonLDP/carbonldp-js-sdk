@@ -10,15 +10,15 @@ import { ResolvablePointer } from "./ResolvablePointer";
 
 
 export interface Repository<MODEL extends ResolvablePointer = ResolvablePointer> {
-	$get( uri:string, ...params:any[] ):Promise<MODEL>;
-	$resolve( resource:MODEL, ...params:any[] ):Promise<MODEL>;
-	$exists( uri:string, ...params:any[] ):Promise<boolean>;
+	get( uri:string, ...params:any[] ):Promise<MODEL>;
+	resolve( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	exists( uri:string, ...params:any[] ):Promise<boolean>;
 
-	$refresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
-	$save( resource:MODEL, ...params:any[] ):Promise<MODEL>;
-	$saveAndRefresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	refresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	save( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	saveAndRefresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
 
-	$delete( uri:string, ...params:any[] ):Promise<void>;
+	delete( uri:string, ...params:any[] ):Promise<void>;
 }
 
 
@@ -34,15 +34,15 @@ export type RepositoryFactory =
 
 export const Repository:RepositoryFactory = {
 	PROTOTYPE: {
-		$get: __throwNotImplemented,
-		$resolve: __throwNotImplemented,
-		$exists: __throwNotImplemented,
+		get: __throwNotImplemented,
+		resolve: __throwNotImplemented,
+		exists: __throwNotImplemented,
 
-		$refresh: __throwNotImplemented,
-		$save: __throwNotImplemented,
-		$saveAndRefresh: __throwNotImplemented,
+		refresh: __throwNotImplemented,
+		save: __throwNotImplemented,
+		saveAndRefresh: __throwNotImplemented,
 
-		$delete: __throwNotImplemented,
+		delete: __throwNotImplemented,
 	},
 
 

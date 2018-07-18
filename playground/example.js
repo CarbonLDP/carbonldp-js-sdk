@@ -85,7 +85,7 @@
 		let child;
 
 		it( "can create a document", async( async function() {
-			let createdParent = await carbon1.documents.$createAndRetrieve( "/", {
+			let createdParent = await carbon1.documents.createAndRetrieve( "/", {
 				types: [ "ex:Parent" ]
 			} );
 
@@ -113,7 +113,7 @@
 		} ) );
 
 		it( "can retrieve all the children", async( async function() {
-			let retrievedChildren = await parent.$getChildren();
+			let retrievedChildren = await parent.getChildren();
 
 			expect( retrievedChildren.length ).toEqual( childrenToCreate );
 
@@ -130,31 +130,31 @@
 		} ) );
 
 		it( "can list the children", async( async function() {
-			const shallowChildren = await carbon3.documents.$listChildren( parent.$id );
+			const shallowChildren = await carbon3.documents.listChildren( parent.$id );
 
 			expect( shallowChildren.length ).toEqual( childrenToCreate );
 		} ) );
 
 		it( "can remove one member", async( async function() {
-			await parent.$removeMember( children[ 0 ] );
+			await parent.removeMember( children[ 0 ] );
 
 			expect( null ).nothing();
 		} ) );
 
 		it( "can retrieve all the members", async( async function() {
-			let members = await parent.$getMembers();
+			let members = await parent.getMembers();
 
 			expect( members.length ).toEqual( childrenToCreate - 1 );
 		} ) );
 
 		it( "can retrieve children of a specific type", async( async function() {
-			let filteredChildren = await parent.$getChildren( _ => _.withType( "ex:Even" ) );
+			let filteredChildren = await parent.getChildren( _ => _.withType( "ex:Even" ) );
 
 			expect( filteredChildren.length ).toEqual( childrenToCreate / 2 );
 		} ) );
 
 		it( "can retrieve children with a property that has a specific value", async( async function() {
-			let filteredChildren = await parent.$getChildren( _ => _
+			let filteredChildren = await parent.getChildren( _ => _
 				.withType( "ex:Child" )
 				.properties( {
 					"index": {
@@ -183,7 +183,7 @@
 		} ) );
 
 		it( `can retrieve nested documents`, async( async function() {
-			let childrenWithNestedDocuments = await carbon2.documents.$getChildren( parent.$id, _ => _
+			let childrenWithNestedDocuments = await carbon2.documents.getChildren( parent.$id, _ => _
 				.withType( "ex:Child" )
 				.properties( {
 					"index": {
@@ -213,7 +213,7 @@
 		} ) );
 
 		it( `can modify partial documents`, async( async function() {
-			let [ child ] = await carbon2.documents.$getChildren( parent.$id, _ => _
+			let [ child ] = await carbon2.documents.getChildren( parent.$id, _ => _
 				.withType( "ex:Child" )
 				.properties( {
 					"index": {
@@ -226,9 +226,9 @@
 			child.index = 100;
 			child.somethingElse = "Hello world!";
 
-			await child.$save();
+			await child.save();
 
-			const freshChild = await carbon2.documents.$get( child.$id );
+			const freshChild = await carbon2.documents.get( child.$id );
 
 			expect( freshChild.index ).toEqual( 100 );
 			expect( freshChild.somethingElse ).toEqual( "Hello world!" );

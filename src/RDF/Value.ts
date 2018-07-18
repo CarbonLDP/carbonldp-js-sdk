@@ -28,7 +28,7 @@ export const RDFValue:RDFValueFactory = {
 			return RDFLiteral.parse( value );
 
 		if( RDFNode.is( value ) )
-			return pointerLibrary.$getPointer( value[ "@id" ] );
+			return pointerLibrary.getPointer( value[ "@id" ] );
 
 		if( RDFList.is( value ) )
 			return value[ "@list" ]

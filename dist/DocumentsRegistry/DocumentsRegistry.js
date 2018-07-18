@@ -16,12 +16,12 @@ var Registry_1 = require("../Registry/Registry");
 exports.DocumentsRegistry = {
     PROTOTYPE: {
         register: function (id) {
-            return this.$getPointer(id, true);
+            return this.getPointer(id, true);
         },
-        $_getLocalID: function (id) {
+        _getLocalID: function (id) {
             if (URI_1.URI.hasFragment(id))
-                Registry_1.Registry.PROTOTYPE.$_getLocalID.call(this, id);
-            return GeneralRegistry_1.GeneralRegistry.PROTOTYPE.$_getLocalID.call(this, id);
+                Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
+            return GeneralRegistry_1.GeneralRegistry.PROTOTYPE._getLocalID.call(this, id);
         },
     },
     isDecorated: function (object) {
@@ -32,7 +32,7 @@ exports.DocumentsRegistry = {
         if (exports.DocumentsRegistry.isDecorated(object))
             return object;
         var base = Object.assign(object, {
-            $__modelDecorator: Document_1.Document,
+            __modelDecorator: Document_1.Document,
         });
         var target = ModelDecorator_1.ModelDecorator
             .decorateMultiple(base, GeneralRegistry_1.GeneralRegistry);

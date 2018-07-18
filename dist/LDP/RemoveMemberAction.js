@@ -14,7 +14,7 @@ exports.RemoveMemberAction = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return Resource_1.Resource.is(value)
-            && value.$hasType(exports.RemoveMemberAction.TYPE);
+            && value.hasType(exports.RemoveMemberAction.TYPE);
     },
     create: function (data) {
         var copy = Object.assign({}, data);
@@ -22,7 +22,7 @@ exports.RemoveMemberAction = {
     },
     createFrom: function (object) {
         var resource = Resource_1.Resource.createFrom(object);
-        resource.$addType(exports.RemoveMemberAction.TYPE);
+        resource.addType(exports.RemoveMemberAction.TYPE);
         return resource;
     },
 };

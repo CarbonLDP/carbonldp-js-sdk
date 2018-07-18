@@ -79,13 +79,13 @@ export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
 				__getSchemaForResource( this.$context, object ) :
 				__getSchemaForNode( this.$context, object );
 
-			if( ! ("$_queryableMetadata" in object) || ! object.$_queryableMetadata )
+			if( ! ("_queryableMetadata" in object) || ! object._queryableMetadata )
 				return schema;
 
 			return ObjectSchemaDigester
 				._combineSchemas( [
 					schema,
-					object.$_queryableMetadata.schema,
+					object._queryableMetadata.schema,
 				] );
 		},
 	},

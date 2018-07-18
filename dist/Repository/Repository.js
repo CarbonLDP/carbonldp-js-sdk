@@ -7,13 +7,13 @@ function __throwNotImplemented() {
 }
 exports.Repository = {
     PROTOTYPE: {
-        $get: __throwNotImplemented,
-        $resolve: __throwNotImplemented,
-        $exists: __throwNotImplemented,
-        $refresh: __throwNotImplemented,
-        $save: __throwNotImplemented,
-        $saveAndRefresh: __throwNotImplemented,
-        $delete: __throwNotImplemented,
+        get: __throwNotImplemented,
+        resolve: __throwNotImplemented,
+        exists: __throwNotImplemented,
+        refresh: __throwNotImplemented,
+        save: __throwNotImplemented,
+        saveAndRefresh: __throwNotImplemented,
+        delete: __throwNotImplemented,
     },
     isDecorated: function (object) {
         return ModelDecorator_1.ModelDecorator

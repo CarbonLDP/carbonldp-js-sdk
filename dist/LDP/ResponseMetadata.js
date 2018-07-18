@@ -14,7 +14,7 @@ exports.ResponseMetadata = {
     SCHEMA: SCHEMA,
     is: function (object) {
         return VolatileResource_1.VolatileResource.is(object)
-            && object.$hasType(exports.ResponseMetadata.TYPE);
+            && object.hasType(exports.ResponseMetadata.TYPE);
     },
 };
 

@@ -22,7 +22,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				],
 				{ type: "boolean" }
 			), ():void => {
-				const target:PointerValidator[ "$inScope" ] = ( pointer:Pointer ) => false as boolean;
+				const target:PointerValidator[ "inScope" ] = ( pointer:Pointer ) => false as boolean;
 				expect( target ).toBeDefined();
 			} );
 
@@ -32,7 +32,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				],
 				{ type: "boolean" }
 			), ():void => {
-				const target:PointerValidator[ "$inScope" ] = ( id:string ) => false as boolean;
+				const target:PointerValidator[ "inScope" ] = ( id:string ) => false as boolean;
 				expect( target ).toBeDefined();
 			} );
 

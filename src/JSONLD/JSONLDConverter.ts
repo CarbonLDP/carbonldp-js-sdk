@@ -319,7 +319,7 @@ export class JSONLDConverter {
 		return propertyValues
 			.filter( RDFNode.is )
 			.map( RDFNode.getID )
-			.map( pointerLibrary.$getPointer, pointerLibrary )
+			.map( pointerLibrary.getPointer, pointerLibrary )
 			.filter( pointer => ! isNull( pointer ) )
 			;
 	}

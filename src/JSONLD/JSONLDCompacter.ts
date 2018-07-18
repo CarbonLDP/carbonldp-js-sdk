@@ -68,7 +68,7 @@ export class JSONLDCompacter {
 			const targetDocument:Document = this.__getResource( documentNode, this.registry );
 
 			const currentFragments:string[] = targetDocument
-				.$getPointers( true )
+				.getPointers( true )
 				.map( pointer => pointer.$id )
 			;
 
@@ -80,7 +80,7 @@ export class JSONLDCompacter {
 			const newFragmentsSet:Set<string> = new Set( newFragments );
 			currentFragments
 				.filter( id => ! newFragmentsSet.has( id ) )
-				.forEach( id => targetDocument.$removePointer( id ) )
+				.forEach( id => targetDocument.removePointer( id ) )
 			;
 		} );
 
@@ -109,9 +109,9 @@ export class JSONLDCompacter {
 
 		rdfDocuments
 			.map( rdfDocument => rdfDocument[ "@id" ] )
-			.map( id => this.registry.$getPointer( id, true ) )
+			.map( id => this.registry.getPointer( id, true ) )
 			.forEach( persistedDocument => {
-				persistedDocument.$_syncSnapshot();
+				persistedDocument._syncSnapshot();
 				this.registry.decorate( persistedDocument );
 			} );
 
@@ -154,7 +154,7 @@ export class JSONLDCompacter {
 	}
 
 	private __getResource<M extends QueryablePointer & RegisteredPointer>( node:RDFNode, registry:Registry<M> ):M {
-		const resource:M = registry.$getPointer( node[ "@id" ], true );
+		const resource:M = registry.getPointer( node[ "@id" ], true );
 
 		if( Registry.isDecorated( resource ) ) registry = resource;
 
@@ -203,7 +203,7 @@ export class JSONLDCompacter {
 	private __setOrRemovePartial( resource:QueryablePointer, schema:DigestedObjectSchema, path:string ):boolean {
 		if( this.__willBePartial( resource, schema, path ) ) return true;
 
-		if( resource.$_queryableMetadata ) resource.$_queryableMetadata = void 0;
+		if( resource._queryableMetadata ) resource._queryableMetadata = void 0;
 		return false;
 	}
 
@@ -216,9 +216,9 @@ export class JSONLDCompacter {
 
 		if( type !== QueryPropertyType.PARTIAL && type !== QueryPropertyType.ALL ) return false;
 
-		resource.$_queryableMetadata = new QueryableMetadata(
+		resource._queryableMetadata = new QueryableMetadata(
 			type === QueryPropertyType.ALL ? QueryableMetadata.ALL : schema,
-			resource.$_queryableMetadata
+			resource._queryableMetadata
 		);
 		return true;
 	}

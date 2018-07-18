@@ -24,7 +24,7 @@ export const VolatileResource:VolatileResourceFactory = {
 
 	is( value:any ):value is VolatileResource {
 		return Resource.is( value )
-			&& value.$hasType( VolatileResource.TYPE );
+			&& value.hasType( VolatileResource.TYPE );
 	},
 
 	create<T extends object>( data?:T ):T & VolatileResource {
@@ -34,7 +34,7 @@ export const VolatileResource:VolatileResourceFactory = {
 
 	createFrom<T extends object>( object:T ):T & VolatileResource {
 		const resource:T & Resource = Resource.createFrom( object );
-		resource.$addType( VolatileResource.TYPE );
+		resource.addType( VolatileResource.TYPE );
 
 		return resource;
 	},

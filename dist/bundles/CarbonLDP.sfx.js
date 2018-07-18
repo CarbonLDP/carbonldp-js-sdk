@@ -1499,17 +1499,17 @@ exports.Resource = {
             return URI_1.URI.getSlug(this.$id);
         },
         set $slug(slug) { },
-        $addType: function (type) {
+        addType: function (type) {
             type = __resolveURI(this, type);
             if (this.types.indexOf(type) !== -1)
                 return;
             this.types.push(type);
         },
-        $hasType: function (type) {
+        hasType: function (type) {
             type = __resolveURI(this, type);
             return this.types.indexOf(type) !== -1;
         },
-        $removeType: function (type) {
+        removeType: function (type) {
             type = __resolveURI(this, type);
             var index = this.types.indexOf(type);
             if (index !== -1)
@@ -2698,76 +2698,76 @@ exports.ResolvablePointer = {
             throw new IllegalArgumentError_1.IllegalArgumentError("Property \"$repository\" is required.");
         },
         $eTag: void 0,
-        $_resolved: false,
-        $isResolved: function () {
-            return this.$_resolved;
+        _resolved: false,
+        isResolved: function () {
+            return this._resolved;
         },
-        $_snapshot: {},
-        $_syncSnapshot: function () {
+        _snapshot: {},
+        _syncSnapshot: function () {
             var clone = Utils_2.ObjectUtils.clone(this, { arrays: true });
             if (this.types)
                 clone.types = this.types.slice();
-            this.$_snapshot = clone;
+            this._snapshot = clone;
         },
-        $isDirty: function () {
+        isDirty: function () {
             return !Utils_2.ObjectUtils
-                .areEqual(this, this.$_snapshot, { arrays: true });
+                .areEqual(this, this._snapshot, { arrays: true });
         },
-        $revert: function () {
-            __internalRevert(this, this.$_snapshot);
+        revert: function () {
+            __internalRevert(this, this._snapshot);
             if (!this.types)
                 this.types = [];
         },
-        $get: function (uri) {
+        get: function (uri) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uri, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).$get.apply(_a, [_uri].concat(_args));
+            return (_a = this.$repository).get.apply(_a, [_uri].concat(_args));
         },
-        $resolve: function (resource) {
+        resolve: function (resource) {
             var _a;
             var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).$resolve.apply(_a, [_resource].concat(_args));
+            return (_a = this.$repository).resolve.apply(_a, [_resource].concat(_args));
         },
-        $exists: function (uri) {
+        exists: function (uri) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uri, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).$exists.apply(_a, [_uri].concat(_args));
+            return (_a = this.$repository).exists.apply(_a, [_uri].concat(_args));
         },
-        $refresh: function (resource) {
+        refresh: function (resource) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
             var _a;
             var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).$refresh.apply(_a, [_resource].concat(_args));
+            return (_a = this.$repository).refresh.apply(_a, [_resource].concat(_args));
         },
-        $save: function (resource) {
+        save: function (resource) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
             var _a;
             var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).$save.apply(_a, [_resource].concat(_args));
+            return (_a = this.$repository).save.apply(_a, [_resource].concat(_args));
         },
-        $saveAndRefresh: function (resource) {
+        saveAndRefresh: function (resource) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
             var _a;
             var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).$saveAndRefresh.apply(_a, [_resource].concat(_args));
+            return (_a = this.$repository).saveAndRefresh.apply(_a, [_resource].concat(_args));
         },
-        $delete: function (uri) {
+        delete: function (uri) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
             var _a;
             var _b = Utils_1._parseURIParams(this, uri, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).$delete.apply(_a, [_uri].concat(_args));
+            return (_a = this.$repository).delete.apply(_a, [_uri].concat(_args));
         },
     },
     isDecorated: function (object) {
@@ -2901,7 +2901,7 @@ function _getErrorResponseParserFn(registry) {
             var freeNodes = Document_1.RDFDocument.getFreeNodes(rdfNodes);
             var freeResources = FreeResources_1.FreeResources.parseFreeNodes(registry, freeNodes);
             var errorResponses = freeResources
-                .$getPointers(true)
+                .getPointers(true)
                 .filter(ErrorResponse_1.ErrorResponse.is);
             if (errorResponses.length === 0)
                 return Promise.reject(error);
@@ -3443,11 +3443,11 @@ function __convertNested(resource, target, tracker) {
         var idOrSlug = __getObjectId(next);
         if (tracker.has(idOrSlug))
             return;
-        if (!resource.$inScope(idOrSlug, true))
+        if (!resource.inScope(idOrSlug, true))
             return;
-        var fragment = resource.$hasPointer(idOrSlug, true) ?
-            resource.$getPointer(idOrSlug, true) :
-            resource.$createFragment(next, idOrSlug);
+        var fragment = resource.hasPointer(idOrSlug, true) ?
+            resource.getPointer(idOrSlug, true) :
+            resource.createFragment(next, idOrSlug);
         tracker.add(fragment.$id);
         __convertNested(resource, fragment, tracker);
     });
@@ -3455,65 +3455,65 @@ function __convertNested(resource, target, tracker) {
 exports.TransientDocument = {
     PROTOTYPE: {
         $registry: void 0,
-        $_normalize: function () {
+        _normalize: function () {
             var usedFragments = new Set();
             __convertNested(this, this, usedFragments);
-            this.$getPointers(true)
+            this.getPointers(true)
                 .map(Pointer_1.Pointer.getID)
                 .filter(URI_1.URI.isBNodeID)
                 .filter(function (id) { return !usedFragments.has(id); })
-                .forEach(this.$removePointer, this);
+                .forEach(this.removePointer, this);
         },
-        $_getLocalID: function (id) {
+        _getLocalID: function (id) {
             if (URI_1.URI.isBNodeID(id))
                 return id;
             if (URI_1.URI.isFragmentOf(id, this.$id))
                 return URI_1.URI.getFragment(id);
             throw new IllegalArgumentError_1.IllegalArgumentError("\"" + id + "\" is out of scope.");
         },
-        $getPointer: function (id, local) {
+        getPointer: function (id, local) {
             id = URI_1.URI.resolve(this.$id, id);
-            return Registry_1.Registry.PROTOTYPE.$getPointer.call(this, id, local);
+            return Registry_1.Registry.PROTOTYPE.getPointer.call(this, id, local);
         },
-        $hasFragment: function (id) {
+        hasFragment: function (id) {
             id = __getLabelFrom(id);
-            if (!this.$inScope(id, true))
+            if (!this.inScope(id, true))
                 return false;
-            var localID = this.$_getLocalID(id);
-            return this.$__resourcesMap.has(localID);
+            var localID = this._getLocalID(id);
+            return this.__resourcesMap.has(localID);
         },
-        $getFragment: function (id) {
+        getFragment: function (id) {
             id = __getLabelFrom(id);
-            var localID = this.$_getLocalID(id);
-            var resource = this.$__resourcesMap.get(localID);
+            var localID = this._getLocalID(id);
+            var resource = this.__resourcesMap.get(localID);
             if (!resource)
                 return null;
             return resource;
         },
-        $getFragments: function () {
-            return this.$getPointers(true);
+        getFragments: function () {
+            return this.getPointers(true);
         },
-        $createFragment: function (isOrObject, id) {
+        createFragment: function (isOrObject, id) {
             var object = Utils_1.isObject(isOrObject) ? isOrObject : {};
             if (Utils_1.isString(isOrObject))
                 id = isOrObject;
             var $id = id ? __getLabelFrom(id) : __getObjectId(object);
-            var fragment = this.$_addPointer(Object
+            var fragment = this._addPointer(Object
                 .assign(object, { $id: $id }));
             __convertNested(this, fragment);
             return fragment;
         },
-        $removeFragment: function (fragmentOrSlug) {
+        removeFragment: function (fragmentOrSlug) {
             var id = __getLabelFrom(Pointer_1.Pointer.getID(fragmentOrSlug));
-            if (!this.$inScope(id, true))
+            if (!this.inScope(id, true))
                 return false;
-            return this.$removePointer(id);
+            return this.removePointer(id);
         },
         toJSON: function (contextOrKey) {
             var nodes = [
                 Resource_1.Resource.PROTOTYPE.toJSON.call(this, contextOrKey)
             ].concat(this
-                .$getFragments()
+                .getFragments()
                 .map(function (resource) { return resource.toJSON(contextOrKey); }));
             return {
                 "@id": this.$id,
@@ -3529,7 +3529,7 @@ exports.TransientDocument = {
         if (exports.TransientDocument.isDecorated(object))
             return object;
         var base = ModelDecorator_1.ModelDecorator.definePropertiesFrom({
-            $__modelDecorator: TransientFragment_1.TransientFragment,
+            __modelDecorator: TransientFragment_1.TransientFragment,
         }, object);
         var resource = ModelDecorator_1.ModelDecorator
             .decorateMultiple(base, Resource_1.Resource, Registry_1.Registry);
@@ -3855,44 +3855,44 @@ exports.Document = {
         },
     },
     PROTOTYPE: {
-        get $__savedFragments() { return []; },
-        $_syncSavedFragments: function () {
-            this.$__savedFragments = Array
-                .from(this.$__resourcesMap.values());
-            this.$__savedFragments
-                .forEach(function (fragment) { return fragment.$_syncSnapshot(); });
+        get __savedFragments() { return []; },
+        _syncSavedFragments: function () {
+            this.__savedFragments = Array
+                .from(this.__resourcesMap.values());
+            this.__savedFragments
+                .forEach(function (fragment) { return fragment._syncSnapshot(); });
         },
-        $_syncSnapshot: function () {
-            ResolvablePointer_1.ResolvablePointer.PROTOTYPE.$_syncSnapshot.call(this);
-            this.$_syncSavedFragments();
+        _syncSnapshot: function () {
+            ResolvablePointer_1.ResolvablePointer.PROTOTYPE._syncSnapshot.call(this);
+            this._syncSavedFragments();
         },
-        $isDirty: function () {
+        isDirty: function () {
             var _this = this;
-            var isSelfDirty = ResolvablePointer_1.ResolvablePointer.PROTOTYPE.$isDirty.call(this);
+            var isSelfDirty = ResolvablePointer_1.ResolvablePointer.PROTOTYPE.isDirty.call(this);
             if (isSelfDirty)
                 return true;
             var hasRemovedFragments = this
-                .$__savedFragments
-                .some(function (fragment) { return !_this.$hasFragment(fragment.$id); });
+                .__savedFragments
+                .some(function (fragment) { return !_this.hasFragment(fragment.$id); });
             if (hasRemovedFragments)
                 return true;
             var hasNewFragments = this
-                .$__savedFragments.length !== this.$__resourcesMap.size;
+                .__savedFragments.length !== this.__resourcesMap.size;
             if (hasNewFragments)
                 return true;
             return this
-                .$__savedFragments
-                .some(function (fragment) { return fragment.$isDirty(); });
+                .__savedFragments
+                .some(function (fragment) { return fragment.isDirty(); });
         },
-        $revert: function () {
+        revert: function () {
             var _this = this;
-            ResolvablePointer_1.ResolvablePointer.PROTOTYPE.$revert.call(this);
-            this.$__resourcesMap.clear();
+            ResolvablePointer_1.ResolvablePointer.PROTOTYPE.revert.call(this);
+            this.__resourcesMap.clear();
             this
-                .$__savedFragments
+                .__savedFragments
                 .forEach(function (fragment) {
-                fragment.$revert();
-                _this.$__resourcesMap.set(fragment.$slug, fragment);
+                fragment.revert();
+                _this.__resourcesMap.set(fragment.$slug, fragment);
             });
         },
     },
@@ -3912,7 +3912,7 @@ exports.Document = {
         if (exports.Document.isDecorated(object))
             return object;
         var base = Object.assign(object, {
-            $__modelDecorator: Fragment_1.Fragment,
+            __modelDecorator: Fragment_1.Fragment,
         });
         var target = ModelDecorator_1.ModelDecorator
             .decorateMultiple(base, SPARQLDocumentTrait_1.SPARQLDocumentTrait, EventEmitterDocumentTrait_1.EventEmitterDocumentTrait, QueryableDocumentTrait_1.QueryableDocumentTrait);
@@ -3938,19 +3938,19 @@ var Resource_1 = __webpack_require__(17);
 exports.FreeResources = {
     PROTOTYPE: {
         $registry: void 0,
-        $_getLocalID: function (id) {
+        _getLocalID: function (id) {
             if (URI_1.URI.isBNodeID(id))
                 return id;
-            return Registry_1.Registry.PROTOTYPE.$_getLocalID.call(this, id);
+            return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
         },
-        $_addPointer: function (base) {
+        _addPointer: function (base) {
             if (!base.$id)
                 base.$id = URI_1.URI.generateBNodeID();
-            return Registry_1.Registry.PROTOTYPE.$_addPointer.call(this, base);
+            return Registry_1.Registry.PROTOTYPE._addPointer.call(this, base);
         },
         toJSON: function (contextOrKey) {
             return this
-                .$getPointers(true)
+                .getPointers(true)
                 .map(function (resource) { return resource.toJSON(contextOrKey); });
         },
     },
@@ -3973,7 +3973,7 @@ exports.FreeResources = {
         if (exports.FreeResources.isDecorated(object))
             return object;
         var base = Object.assign(object, {
-            $__modelDecorator: Resource_1.Resource,
+            __modelDecorator: Resource_1.Resource,
         });
         var resource = ModelDecorator_1.ModelDecorator
             .decorateMultiple(base, Registry_1.Registry);
@@ -3986,7 +3986,7 @@ exports.FreeResources = {
         freeNodes
             .forEach(function (node) {
             var digestedSchema = registry.getSchemaFor(node);
-            var target = freeResources.$getPointer(node["@id"], true);
+            var target = freeResources.getPointer(node["@id"], true);
             registry.$context.jsonldConverter.compact(node, target, digestedSchema, freeResources);
         });
         return freeResources;
@@ -4009,76 +4009,76 @@ var Utils_1 = __webpack_require__(0);
 exports.Registry = {
     PROTOTYPE: {
         $registry: void 0,
-        get $__modelDecorator() {
-            throw new IllegalArgumentError_1.IllegalArgumentError("Property \"$__modelDecorator\" is required");
+        get __modelDecorator() {
+            throw new IllegalArgumentError_1.IllegalArgumentError("Property \"__modelDecorator\" is required");
         },
-        get $__resourcesMap() { return new Map(); },
-        $inScope: function (idOrPointer, local) {
+        get __resourcesMap() { return new Map(); },
+        inScope: function (idOrPointer, local) {
             try {
                 var id = Pointer_1.Pointer.getID(idOrPointer);
-                this.$_getLocalID(id);
+                this._getLocalID(id);
                 return true;
             }
             catch (_a) {
                 if (local === true || !this.$registry)
                     return false;
-                return this.$registry.$inScope(idOrPointer);
+                return this.$registry.inScope(idOrPointer);
             }
         },
-        $hasPointer: function (id, local) {
-            if (this.$inScope(id, true)) {
-                var localID = this.$_getLocalID(id);
-                if (this.$__resourcesMap.has(localID))
+        hasPointer: function (id, local) {
+            if (this.inScope(id, true)) {
+                var localID = this._getLocalID(id);
+                if (this.__resourcesMap.has(localID))
                     return true;
             }
             if (local === true || !this.$registry)
                 return false;
-            return this.$registry.$hasPointer(id);
+            return this.$registry.hasPointer(id);
         },
-        $getPointer: function (id, local) {
-            if (!this.$inScope(id, true)) {
+        getPointer: function (id, local) {
+            if (!this.inScope(id, true)) {
                 if (local === true || !this.$registry)
                     throw new IllegalArgumentError_1.IllegalArgumentError("\"" + id + "\" is out of scope.");
-                return this.$registry.$getPointer(id);
+                return this.$registry.getPointer(id);
             }
-            var localID = this.$_getLocalID(id);
-            if (this.$__resourcesMap.has(localID))
-                return this.$__resourcesMap.get(localID);
-            if (local !== true && this.$registry && this.$registry.$hasPointer(id))
-                return this.$registry.$getPointer(id);
-            return this.$_addPointer({ $id: id });
+            var localID = this._getLocalID(id);
+            if (this.__resourcesMap.has(localID))
+                return this.__resourcesMap.get(localID);
+            if (local !== true && this.$registry && this.$registry.hasPointer(id))
+                return this.$registry.getPointer(id);
+            return this._addPointer({ $id: id });
         },
-        $getPointers: function (local) {
-            var pointers = Array.from(this.$__resourcesMap.values());
+        getPointers: function (local) {
+            var pointers = Array.from(this.__resourcesMap.values());
             if (local === true || !this.$registry)
                 return pointers;
-            return this.$registry.$getPointers().concat(pointers);
+            return this.$registry.getPointers().concat(pointers);
         },
-        $removePointer: function (idOrPointer, local) {
+        removePointer: function (idOrPointer, local) {
             var id = Pointer_1.Pointer.getID(idOrPointer);
-            if (this.$inScope(id, true)) {
-                var localID = this.$_getLocalID(id);
-                if (this.$__resourcesMap.delete(localID))
+            if (this.inScope(id, true)) {
+                var localID = this._getLocalID(id);
+                if (this.__resourcesMap.delete(localID))
                     return true;
             }
             if (local === true || !this.$registry)
                 return false;
-            return this.$registry.$removePointer(idOrPointer);
+            return this.$registry.removePointer(idOrPointer);
         },
-        $_addPointer: function (pointer) {
+        _addPointer: function (pointer) {
             if (!pointer.$id)
                 throw new IllegalArgumentError_1.IllegalArgumentError("The pointer $id cannot be empty.");
-            var localID = this.$_getLocalID(pointer.$id);
-            if (this.$__resourcesMap.has(localID))
+            var localID = this._getLocalID(pointer.$id);
+            if (this.__resourcesMap.has(localID))
                 throw new IDAlreadyInUseError_1.IDAlreadyInUseError("\"" + pointer.$id + "\" is already being used.");
-            var resource = this.$__modelDecorator
+            var resource = this.__modelDecorator
                 .decorate(Object.assign(pointer, {
                 $registry: this,
             }));
-            this.$__resourcesMap.set(localID, resource);
+            this.__resourcesMap.set(localID, resource);
             return resource;
         },
-        $_getLocalID: function (id) {
+        _getLocalID: function (id) {
             throw new IllegalArgumentError_1.IllegalArgumentError("\"" + id + "\" is out of scope.");
         },
     },
@@ -4847,9 +4847,9 @@ var ModelDecorator_1 = __webpack_require__(4);
 var ResolvablePointer_1 = __webpack_require__(24);
 exports.QueryablePointer = {
     PROTOTYPE: {
-        $_queryableMetadata: void 0,
-        $isQueried: function () {
-            return !!this.$_queryableMetadata;
+        _queryableMetadata: void 0,
+        isQueried: function () {
+            return !!this._queryableMetadata;
         },
     },
     isDecorated: function (object) {
@@ -5277,7 +5277,7 @@ exports.ResponseMetadata = {
     SCHEMA: SCHEMA,
     is: function (object) {
         return VolatileResource_1.VolatileResource.is(object)
-            && object.$hasType(exports.ResponseMetadata.TYPE);
+            && object.hasType(exports.ResponseMetadata.TYPE);
     },
 };
 
@@ -5944,7 +5944,7 @@ var JSONLDConverter = (function () {
         return propertyValues
             .filter(Node_1.RDFNode.is)
             .map(Node_1.RDFNode.getID)
-            .map(pointerLibrary.$getPointer, pointerLibrary)
+            .map(pointerLibrary.getPointer, pointerLibrary)
             .filter(function (pointer) { return !Utils_1.isNull(pointer); });
     };
     return JSONLDConverter;
@@ -6067,7 +6067,7 @@ exports.ErrorResponse = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return Resource_1.Resource.is(value)
-            && value.$hasType(exports.ErrorResponse.TYPE);
+            && value.hasType(exports.ErrorResponse.TYPE);
     },
     getMessage: function (errorResponse) {
         var errors = getErrors(errorResponse);
@@ -6188,7 +6188,7 @@ exports.TransientDirectContainer = {
     TYPE: LDP_1.LDP.DirectContainer,
     is: function (value) {
         return TransientDocument_1.TransientDocument.is(value)
-            && value.$hasType(exports.TransientDirectContainer.TYPE)
+            && value.hasType(exports.TransientDirectContainer.TYPE)
             && value.hasOwnProperty("membershipResource");
     },
     create: function (data) {
@@ -6202,7 +6202,7 @@ exports.TransientDirectContainer = {
             throw new IllegalArgumentError_1.IllegalArgumentError("The property hasMemberRelation is required.");
         var container = TransientDocument_1.TransientDocument.is(object) ?
             object : TransientDocument_1.TransientDocument.createFrom(object);
-        container.$addType(exports.TransientDirectContainer.TYPE);
+        container.addType(exports.TransientDirectContainer.TYPE);
         return container;
     },
 };
@@ -6434,7 +6434,7 @@ var JSONLDCompacter = (function () {
             var documentNode = documentNodes[0];
             var targetDocument = _this.__getResource(documentNode, _this.registry);
             var currentFragments = targetDocument
-                .$getPointers(true)
+                .getPointers(true)
                 .map(function (pointer) { return pointer.$id; });
             var newFragments = fragmentNodes
                 .map(function (fragmentNode) { return _this.__getResource(fragmentNode, targetDocument); })
@@ -6442,7 +6442,7 @@ var JSONLDCompacter = (function () {
             var newFragmentsSet = new Set(newFragments);
             currentFragments
                 .filter(function (id) { return !newFragmentsSet.has(id); })
-                .forEach(function (id) { return targetDocument.$removePointer(id); });
+                .forEach(function (id) { return targetDocument.removePointer(id); });
         });
         var compactionQueue = mainDocuments
             .map(function (rdfDocument) { return rdfDocument["@id"]; });
@@ -6465,9 +6465,9 @@ var JSONLDCompacter = (function () {
         }
         rdfDocuments
             .map(function (rdfDocument) { return rdfDocument["@id"]; })
-            .map(function (id) { return _this.registry.$getPointer(id, true); })
+            .map(function (id) { return _this.registry.getPointer(id, true); })
             .forEach(function (persistedDocument) {
-            persistedDocument.$_syncSnapshot();
+            persistedDocument._syncSnapshot();
             _this.registry.decorate(persistedDocument);
         });
         return mainCompactedDocuments;
@@ -6497,7 +6497,7 @@ var JSONLDCompacter = (function () {
             .filter(function (x) { return schema.properties.has(x); });
     };
     JSONLDCompacter.prototype.__getResource = function (node, registry) {
-        var resource = registry.$getPointer(node["@id"], true);
+        var resource = registry.getPointer(node["@id"], true);
         if (Registry_1.Registry.isDecorated(resource))
             registry = resource;
         this.compactionMap
@@ -6539,8 +6539,8 @@ var JSONLDCompacter = (function () {
     JSONLDCompacter.prototype.__setOrRemovePartial = function (resource, schema, path) {
         if (this.__willBePartial(resource, schema, path))
             return true;
-        if (resource.$_queryableMetadata)
-            resource.$_queryableMetadata = void 0;
+        if (resource._queryableMetadata)
+            resource._queryableMetadata = void 0;
         return false;
     };
     JSONLDCompacter.prototype.__willBePartial = function (resource, schema, path) {
@@ -6552,7 +6552,7 @@ var JSONLDCompacter = (function () {
             this.resolver.getProperty(path).getType() : void 0;
         if (type !== QueryProperty_1.QueryPropertyType.PARTIAL && type !== QueryProperty_1.QueryPropertyType.ALL)
             return false;
-        resource.$_queryableMetadata = new QueryableMetadata_1.QueryableMetadata(type === QueryProperty_1.QueryPropertyType.ALL ? QueryableMetadata_1.QueryableMetadata.ALL : schema, resource.$_queryableMetadata);
+        resource._queryableMetadata = new QueryableMetadata_1.QueryableMetadata(type === QueryProperty_1.QueryPropertyType.ALL ? QueryableMetadata_1.QueryableMetadata.ALL : schema, resource._queryableMetadata);
         return true;
     };
     return JSONLDCompacter;
@@ -6573,7 +6573,7 @@ exports.VolatileResource = {
     TYPE: C_1.C.VolatileResource,
     is: function (value) {
         return Resource_1.Resource.is(value)
-            && value.$hasType(exports.VolatileResource.TYPE);
+            && value.hasType(exports.VolatileResource.TYPE);
     },
     create: function (data) {
         var copy = Object.assign({}, data);
@@ -6581,7 +6581,7 @@ exports.VolatileResource = {
     },
     createFrom: function (object) {
         var resource = Resource_1.Resource.createFrom(object);
-        resource.$addType(exports.VolatileResource.TYPE);
+        resource.addType(exports.VolatileResource.TYPE);
         return resource;
     },
 };
@@ -6679,7 +6679,7 @@ var SPARQLService = (function () {
     SPARQLService.__parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
         switch (rawBindingProperty.type) {
             case "uri":
-                return pointerLibrary.$getPointer(rawBindingProperty.value);
+                return pointerLibrary.getPointer(rawBindingProperty.value);
             case "bnode":
                 throw new NotImplementedError_1.NotImplementedError("BNodes cannot be queried directly");
             case "literal":
@@ -6722,7 +6722,7 @@ exports.AddMemberAction = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return Resource_1.Resource.is(value)
-            && value.$hasType(exports.AddMemberAction.TYPE);
+            && value.hasType(exports.AddMemberAction.TYPE);
     },
     create: function (data) {
         var copy = Object.assign({}, data);
@@ -6730,7 +6730,7 @@ exports.AddMemberAction = {
     },
     createFrom: function (object) {
         var resource = Resource_1.Resource.createFrom(object);
-        resource.$addType(exports.AddMemberAction.TYPE);
+        resource.addType(exports.AddMemberAction.TYPE);
         return resource;
     },
 };
@@ -6757,7 +6757,7 @@ exports.RemoveMemberAction = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return Resource_1.Resource.is(value)
-            && value.$hasType(exports.RemoveMemberAction.TYPE);
+            && value.hasType(exports.RemoveMemberAction.TYPE);
     },
     create: function (data) {
         var copy = Object.assign({}, data);
@@ -6765,7 +6765,7 @@ exports.RemoveMemberAction = {
     },
     createFrom: function (object) {
         var resource = Resource_1.Resource.createFrom(object);
-        resource.$addType(exports.RemoveMemberAction.TYPE);
+        resource.addType(exports.RemoveMemberAction.TYPE);
         return resource;
     },
 };
@@ -7245,10 +7245,10 @@ exports.Fragment = {
         set $repository(document) {
             this.$registry = document;
         },
-        get $_resolved() {
-            return this.$document.$_resolved;
+        get _resolved() {
+            return this.$document._resolved;
         },
-        set $_resolved(_value) { },
+        set _resolved(_value) { },
     },
     isDecorated: function (object) {
         return ModelDecorator_1.ModelDecorator
@@ -7483,7 +7483,7 @@ exports.RDFValue = {
         if (Literal_1.RDFLiteral.is(value))
             return Literal_1.RDFLiteral.parse(value);
         if (Node_1.RDFNode.is(value))
-            return pointerLibrary.$getPointer(value["@id"]);
+            return pointerLibrary.getPointer(value["@id"]);
         if (List_1.RDFList.is(value))
             return value["@list"]
                 .map(exports.RDFValue.parse.bind(null, pointerLibrary));
@@ -8201,7 +8201,7 @@ exports.TransientAccessPoint = {
         var accessPoint = TransientDirectContainer_1.TransientDirectContainer
             .createFrom(object);
         accessPoint
-            .$addType(exports.TransientAccessPoint.TYPE);
+            .addType(exports.TransientAccessPoint.TYPE);
         return accessPoint;
     },
 };
@@ -8255,14 +8255,14 @@ exports.GeneralRegistry = {
                 .map(function (type) { return _this.__modelDecorators.get(type); })
                 .forEach(function (decorator) { return decorator.decorate(object); });
         },
-        $_addPointer: function (pointer) {
+        _addPointer: function (pointer) {
             if (this.$context.repository)
                 Object.assign(pointer, { $repository: this.$context.repository });
-            var resource = Registry_1.Registry.PROTOTYPE.$_addPointer.call(this, pointer);
+            var resource = Registry_1.Registry.PROTOTYPE._addPointer.call(this, pointer);
             resource.$id = this.$context.getObjectSchema().resolveURI(resource.$id, { base: true });
             return resource;
         },
-        $_getLocalID: function (id) {
+        _getLocalID: function (id) {
             var uri = this.$context.getObjectSchema().resolveURI(id, { base: true });
             if (!URI_1.URI.isAbsolute(uri) || !URI_1.URI.isBaseOf(this.$context.baseURI, uri))
                 throw new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope.");
@@ -8616,7 +8616,7 @@ var QueryContextPartial = (function (_super) {
             if (!schemaLibrary)
                 return _super.prototype.getSchemaFor.call(this, object);
         }
-        return schemaLibrary.$_queryableMetadata.schema;
+        return schemaLibrary._queryableMetadata.schema;
     };
     return QueryContextPartial;
 }(QueryContext_1.QueryContext));
@@ -8797,7 +8797,7 @@ exports.QueryMetadata = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return VolatileResource_1.VolatileResource.is(value)
-            && value.$hasType(exports.QueryMetadata.TYPE);
+            && value.hasType(exports.QueryMetadata.TYPE);
     },
 };
 
@@ -8974,7 +8974,7 @@ var DeltaCreator = (function () {
         var mergeResource = {
             $id: id,
             types: Array.from(types),
-            $_queryableMetadata: currentResource.$_queryableMetadata || previousResource.$_queryableMetadata,
+            _queryableMetadata: currentResource._queryableMetadata || previousResource._queryableMetadata,
         };
         return this.context
             .registry.getSchemaFor(mergeResource);
@@ -10140,7 +10140,7 @@ var MessagingService = (function () {
                 var freeResources = FreeResources_1.FreeResources
                     .parseFreeNodes(_this.context.registry, data);
                 var eventMessage = freeResources
-                    .$getPointers(true)
+                    .getPointers(true)
                     .find(EventMessage_1.EventMessage.is);
                 if (!eventMessage)
                     throw new Error("No message was returned by the notification.");
@@ -11378,7 +11378,7 @@ var GlobalContext = (function (_super) {
         var _this = _super.call(this) || this;
         _this._baseURI = "";
         _this._generalObjectSchema = new DigestedObjectSchema_1.DigestedObjectSchema();
-        _this.registry = GeneralRegistry_1.GeneralRegistry.createFrom({ $context: _this, $__modelDecorator: RegisteredPointer_1.RegisteredPointer });
+        _this.registry = GeneralRegistry_1.GeneralRegistry.createFrom({ $context: _this, __modelDecorator: RegisteredPointer_1.RegisteredPointer });
         _this.__registerDefaultObjectSchemas();
         _this.__registerDefaultDecorators();
         return _this;
@@ -11496,7 +11496,7 @@ exports.Map = {
     SCHEMA: SCHEMA,
     is: function (object) {
         return Resource_1.Resource.is(object)
-            && object.$hasType(exports.Map.TYPE)
+            && object.hasType(exports.Map.TYPE)
             && object.hasOwnProperty("entries");
     },
 };
@@ -11943,7 +11943,7 @@ var CarbonLDP = (function (_super) {
             },
         };
         _this._extendsSettings(__getSettingsFrom(urlOrSettings));
-        _this.documents = _this.registry.$getPointer(_this._baseURI, true);
+        _this.documents = _this.registry.getPointer(_this._baseURI, true);
         return _this;
     }
     Object.defineProperty(CarbonLDP, "version", {
@@ -11960,7 +11960,7 @@ var CarbonLDP = (function (_super) {
         var _this = this;
         return Utils.promiseMethod(function () {
             var uri = _this._resolvePath("system.platform");
-            return _this.documents.$get(uri);
+            return _this.documents.get(uri);
         });
     };
     CarbonLDP.AbstractContext = AbstractContext_1.AbstractContext;
@@ -13559,32 +13559,32 @@ function __parseParams(resource, uriPatternOROnEvent, onEventOrOnError, onError)
 }
 exports.EventEmitterDocumentTrait = {
     PROTOTYPE: {
-        $on: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
+        on: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
             var _a = __parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, $onError = _a.onError;
             return this.$repository.on(event, uriPattern, onEvent, $onError);
         },
-        $off: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
+        off: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
             var _a = __parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, $onError = _a.onError;
             return this.$repository.off(event, uriPattern, onEvent, $onError);
         },
-        $one: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
+        one: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
             var _a = __parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, $onError = _a.onError;
             return this.$repository.one(event, uriPattern, onEvent, $onError);
         },
-        $onChildCreated: function (uriPatternOROnEvent, onEventOrOnError, onError) {
-            return this.$on(Event_1.Event.CHILD_CREATED, uriPatternOROnEvent, onEventOrOnError, onError);
+        onChildCreated: function (uriPatternOROnEvent, onEventOrOnError, onError) {
+            return this.on(Event_1.Event.CHILD_CREATED, uriPatternOROnEvent, onEventOrOnError, onError);
         },
-        $onDocumentModified: function (uriPatternOROnEvent, onEventOrOnError, onError) {
-            return this.$on(Event_1.Event.DOCUMENT_MODIFIED, uriPatternOROnEvent, onEventOrOnError, onError);
+        onDocumentModified: function (uriPatternOROnEvent, onEventOrOnError, onError) {
+            return this.on(Event_1.Event.DOCUMENT_MODIFIED, uriPatternOROnEvent, onEventOrOnError, onError);
         },
-        $onDocumentDeleted: function (uriPatternOROnEvent, onEventOrOnError, onError) {
-            return this.$on(Event_1.Event.DOCUMENT_DELETED, uriPatternOROnEvent, onEventOrOnError, onError);
+        onDocumentDeleted: function (uriPatternOROnEvent, onEventOrOnError, onError) {
+            return this.on(Event_1.Event.DOCUMENT_DELETED, uriPatternOROnEvent, onEventOrOnError, onError);
         },
-        $onMemberAdded: function (uriPatternOROnEvent, onEventOrOnError, onError) {
-            return this.$on(Event_1.Event.MEMBER_ADDED, uriPatternOROnEvent, onEventOrOnError, onError);
+        onMemberAdded: function (uriPatternOROnEvent, onEventOrOnError, onError) {
+            return this.on(Event_1.Event.MEMBER_ADDED, uriPatternOROnEvent, onEventOrOnError, onError);
         },
-        $onMemberRemoved: function (uriPatternOROnEvent, onEventOrOnError, onError) {
-            return this.$on(Event_1.Event.MEMBER_REMOVED, uriPatternOROnEvent, onEventOrOnError, onError);
+        onMemberRemoved: function (uriPatternOROnEvent, onEventOrOnError, onError) {
+            return this.on(Event_1.Event.MEMBER_REMOVED, uriPatternOROnEvent, onEventOrOnError, onError);
         },
     },
     isDecorated: function (object) {
@@ -13616,22 +13616,22 @@ var QueryablePointer_1 = __webpack_require__(52);
 var LDPDocumentTrait_1 = __webpack_require__(218);
 exports.QueryableDocumentTrait = {
     PROTOTYPE: {
-        $getChildren: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
+        getChildren: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrQueryBuilderFnOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).getChildren.apply(_a, [_uri].concat(_args));
         },
-        $getMembers: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
+        getMembers: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrQueryBuilderFnOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).getMembers.apply(_a, [_uri].concat(_args));
         },
-        $listChildren: function (uriOrOptions, requestOptions) {
+        listChildren: function (uriOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).listChildren.apply(_a, [_uri].concat(_args));
         },
-        $listMembers: function (uriOrOptions, requestOptions) {
+        listMembers: function (uriOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).listMembers.apply(_a, [_uri].concat(_args));
@@ -13675,33 +13675,33 @@ function __parseMemberParams(resource, args) {
 }
 exports.LDPDocumentTrait = {
     PROTOTYPE: {
-        $create: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
+        create: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).create.apply(_a, [_uri].concat(_args));
         },
-        $createAndRetrieve: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
+        createAndRetrieve: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).createAndRetrieve.apply(_a, [_uri].concat(_args));
         },
-        $addMember: function (uriOrMember, memberOrOptions, requestOptions) {
+        addMember: function (uriOrMember, memberOrOptions, requestOptions) {
             var _a;
             var _b = __parseMemberParams(this, arguments), uri = _b.uri, params = _b.params;
             return (_a = this.$repository).addMember.apply(_a, [uri].concat(params));
         },
-        $addMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
+        addMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrMembers, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).addMembers.apply(_a, [_uri].concat(_args));
         },
-        $removeMember: function (uriOrMember, memberOrOptions, requestOptions) {
+        removeMember: function (uriOrMember, memberOrOptions, requestOptions) {
             var _a;
             var _b = __parseMemberParams(this, arguments), uri = _b.uri, params = _b.params;
             return (_a = this.$repository).removeMember.apply(_a, [uri].concat(params));
         },
-        $removeMembers: function (uriOrMembersOrOptions, membersOrOptions, requestOptions) {
+        removeMembers: function (uriOrMembersOrOptions, membersOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrMembersOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).removeMembers.apply(_a, [_uri].concat(_args));
@@ -13749,19 +13749,19 @@ function __parseParams(resource, uriOrQuery, queryOrOptions, options) {
 }
 exports.SPARQLDocumentTrait = {
     PROTOTYPE: {
-        $executeASKQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
+        executeASKQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
             var _a = __parseParams(this, uriOrQuery, queryOrOptions, requestOptions), uri = _a.uri, query = _a.query, options = _a.options;
             return this.$repository.executeASKQuery(uri, query, options);
         },
-        $executeSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
+        executeSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
             var _a = __parseParams(this, uriOrQuery, queryOrOptions, requestOptions), uri = _a.uri, query = _a.query, options = _a.options;
             return this.$repository.executeSELECTQuery(uri, query, options);
         },
-        $executeUPDATE: function (uriOrQuery, updateOrOptions, requestOptions) {
+        executeUPDATE: function (uriOrQuery, updateOrOptions, requestOptions) {
             var _a = __parseParams(this, uriOrQuery, updateOrOptions, requestOptions), uri = _a.uri, query = _a.query, options = _a.options;
             return this.$repository.executeUPDATE(uri, query, options);
         },
-        $sparql: function (uri) {
+        sparql: function (uri) {
             var $uri = uri ? URI_1.URI.resolve(this.$id, uri) : this.$id;
             return this.$repository.sparql($uri);
         },
@@ -13911,12 +13911,12 @@ var Registry_1 = __webpack_require__(39);
 exports.DocumentsRegistry = {
     PROTOTYPE: {
         register: function (id) {
-            return this.$getPointer(id, true);
+            return this.getPointer(id, true);
         },
-        $_getLocalID: function (id) {
+        _getLocalID: function (id) {
             if (URI_1.URI.hasFragment(id))
-                Registry_1.Registry.PROTOTYPE.$_getLocalID.call(this, id);
-            return GeneralRegistry_1.GeneralRegistry.PROTOTYPE.$_getLocalID.call(this, id);
+                Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
+            return GeneralRegistry_1.GeneralRegistry.PROTOTYPE._getLocalID.call(this, id);
         },
     },
     isDecorated: function (object) {
@@ -13927,7 +13927,7 @@ exports.DocumentsRegistry = {
         if (exports.DocumentsRegistry.isDecorated(object))
             return object;
         var base = Object.assign(object, {
-            $__modelDecorator: Document_1.Document,
+            __modelDecorator: Document_1.Document,
         });
         var target = ModelDecorator_1.ModelDecorator
             .decorateMultiple(base, GeneralRegistry_1.GeneralRegistry);
@@ -13993,12 +13993,12 @@ exports.ObjectSchemaResolver = {
             var schema = "types" in object || "$id" in object ?
                 __getSchemaForResource(this.$context, object) :
                 __getSchemaForNode(this.$context, object);
-            if (!("$_queryableMetadata" in object) || !object.$_queryableMetadata)
+            if (!("_queryableMetadata" in object) || !object._queryableMetadata)
                 return schema;
             return ObjectSchemaDigester_1.ObjectSchemaDigester
                 ._combineSchemas([
                 schema,
-                object.$_queryableMetadata.schema,
+                object._queryableMetadata.schema,
             ]);
         },
     },
@@ -14146,13 +14146,13 @@ function __throwNotImplemented() {
 }
 exports.Repository = {
     PROTOTYPE: {
-        $get: __throwNotImplemented,
-        $resolve: __throwNotImplemented,
-        $exists: __throwNotImplemented,
-        $refresh: __throwNotImplemented,
-        $save: __throwNotImplemented,
-        $saveAndRefresh: __throwNotImplemented,
-        $delete: __throwNotImplemented,
+        get: __throwNotImplemented,
+        resolve: __throwNotImplemented,
+        exists: __throwNotImplemented,
+        refresh: __throwNotImplemented,
+        save: __throwNotImplemented,
+        saveAndRefresh: __throwNotImplemented,
+        delete: __throwNotImplemented,
     },
     isDecorated: function (object) {
         return ModelDecorator_1.ModelDecorator
@@ -14236,7 +14236,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
             throw e;
         }
         var targetSet = new Set(freeResources
-            .$getPointers(true)
+            .getPointers(true)
             .filter(QueryMetadata_1.QueryMetadata.is)
             .map(function (x) { return x.target; })
             .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
@@ -14245,7 +14245,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
         if (target)
             target.$eTag = void 0;
         freeResources
-            .$getPointers(true)
+            .getPointers(true)
             .filter(ResponseMetadata_1.ResponseMetadata.is)
             .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[C_1.C.documentMetadata]; })
             .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
@@ -14256,7 +14256,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
             var eTag = documentMetadata.eTag || documentMetadata[C_1.C.eTag];
             if (!eTag)
                 return;
-            relatedDocument.$_resolved = true;
+            relatedDocument._resolved = true;
             if (relatedDocument.$eTag === void 0)
                 relatedDocument.$eTag = eTag;
             if (relatedDocument.$eTag !== eTag)
@@ -14342,7 +14342,7 @@ function __executeBuilder(repository, url, requestOptions, queryContext, targetP
     });
 }
 function __getQueryable(repository, uri, requestOptions, queryBuilderFn, target) {
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
@@ -14356,12 +14356,12 @@ function __getQueryable(repository, uri, requestOptions, queryBuilderFn, target)
         .then(function (documents) { return documents[0]; });
 }
 function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
-    if (resource.$_queryableMetadata.schema === QueryableMetadata_1.QueryableMetadata.ALL) {
+    if (resource._queryableMetadata.schema === QueryableMetadata_1.QueryableMetadata.ALL) {
         parentAdder.addPattern(Utils_1._createAllPattern(queryContext, parentName));
         return;
     }
     parentAdder.addPattern(Utils_1._createTypesPattern(queryContext, parentName));
-    resource.$_queryableMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
+    resource._queryableMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
         var _a;
         var path = parentName + "." + propertyName;
         var propertyPattern = (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, Utils_1._createPropertyPatterns(queryContext, parentName, path, digestedProperty));
@@ -14369,7 +14369,7 @@ function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
         var propertyValues = Array.isArray(resource[propertyName]) ? resource[propertyName] : [resource[propertyName]];
         var propertyFragment = propertyValues
             .filter(QueryablePointer_1.QueryablePointer.is)
-            .find(function (fragment) { return fragment.$isQueried(); });
+            .find(function (fragment) { return fragment.isQueried(); });
         if (!propertyFragment)
             return;
         __addRefreshPatterns(queryContext, propertyPattern, propertyFragment, path);
@@ -14377,7 +14377,7 @@ function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
 }
 function __refreshQueryable(repository, document, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.$inScope(document.$id, true))
+    if (!repository.$context.registry.inScope(document.$id, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + document.$id + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(document.$id, { base: true });
     var queryContext = new QueryContextPartial_1.QueryContextPartial(document, repository.$context);
@@ -14391,7 +14391,7 @@ function __refreshQueryable(repository, document, requestOptions) {
         .then(function (documents) { return documents[0]; });
 }
 function __executeChildrenBuilder(repository, uri, requestOptions, queryBuilderFn) {
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
@@ -14407,7 +14407,7 @@ function __executeChildrenBuilder(repository, uri, requestOptions, queryBuilderF
     return __executeBuilder(repository, url, requestOptions, queryContext, childrenProperty, queryBuilderFn);
 }
 function __executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn) {
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
@@ -14431,13 +14431,13 @@ function __executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn
 }
 exports.QueryableDocumentsRepositoryTrait = {
     PROTOTYPE: {
-        $get: function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+        get: function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
             var requestOptions = Utils_2.isObject(requestOptionsOrQueryBuilderFn) ?
                 requestOptionsOrQueryBuilderFn : {};
             queryBuilderFn = Utils_2.isFunction(requestOptionsOrQueryBuilderFn) ?
                 requestOptionsOrQueryBuilderFn : queryBuilderFn;
-            var target = this.$context.registry.$hasPointer(uri) ?
-                this.$context.registry.$getPointer(uri, true) :
+            var target = this.$context.registry.hasPointer(uri) ?
+                this.$context.registry.getPointer(uri, true) :
                 void 0;
             if (queryBuilderFn) {
                 var types_1 = target ? target.types : [];
@@ -14446,29 +14446,29 @@ exports.QueryableDocumentsRepositoryTrait = {
                     return queryBuilderFn.call(void 0, _);
                 });
             }
-            if (target && target.$isQueried())
+            if (target && target.isQueried())
                 requestOptions.ensureLatest = true;
             return LDPDocumentsRepositoryTrait_1.LDPDocumentsRepositoryTrait.PROTOTYPE
-                .$get.call(this, uri, requestOptions);
+                .get.call(this, uri, requestOptions);
         },
-        $resolve: function (document, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
-            return this.$get(document.$id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
+        resolve: function (document, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+            return this.get(document.$id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
         },
-        $refresh: function (document, requestOptions) {
-            if (!document.$isQueried())
+        refresh: function (document, requestOptions) {
+            if (!document.isQueried())
                 return LDPDocumentsRepositoryTrait_1.LDPDocumentsRepositoryTrait.PROTOTYPE
-                    .$refresh.call(this, document, requestOptions);
+                    .refresh.call(this, document, requestOptions);
             return __refreshQueryable(this, document, requestOptions);
         },
-        $saveAndRefresh: function (document, requestOptions) {
+        saveAndRefresh: function (document, requestOptions) {
             var _this = this;
-            if (!document.$_queryableMetadata)
+            if (!document._queryableMetadata)
                 return LDPDocumentsRepositoryTrait_1.LDPDocumentsRepositoryTrait.PROTOTYPE
-                    .$saveAndRefresh.call(this, document, requestOptions);
+                    .saveAndRefresh.call(this, document, requestOptions);
             if (document.$eTag === null)
                 return Promise.reject(new IllegalStateError_1.IllegalStateError("The document \"" + document.$id + "\" is locally outdated and cannot be saved."));
             var cloneOptions = Request_1.RequestUtils.cloneOptions(requestOptions || {});
-            return this.$save(document, cloneOptions)
+            return this.save(document, cloneOptions)
                 .then(function (doc) {
                 return __refreshQueryable(_this, doc, requestOptions);
             });
@@ -14786,10 +14786,10 @@ function __changeNodesID(resource, map) {
         .forEach(function (_a) {
         var entryKey = _a.entryKey, entryValue = _a.entryValue;
         var node = resource
-            .$getPointer(entryKey.$id, true);
-        resource.$removePointer(entryKey.$id);
+            .getPointer(entryKey.$id, true);
+        resource.removePointer(entryKey.$id);
         node.$id = entryValue.$id;
-        resource.$_addPointer(node);
+        resource._addPointer(node);
     });
 }
 function __applyResponseMetadata(repository, freeNodes) {
@@ -14797,7 +14797,7 @@ function __applyResponseMetadata(repository, freeNodes) {
         return;
     var freeResources = FreeResources_1.FreeResources.parseFreeNodes(repository.$context.registry, freeNodes);
     var responseMetadata = freeResources
-        .$getPointers(true)
+        .getPointers(true)
         .find(ResponseMetadata_1.ResponseMetadata.is);
     responseMetadata
         .documentsMetadata
@@ -14828,7 +14828,7 @@ function __createChild(repository, parentURI, requestOptions, child, slug) {
         throw new IllegalArgumentError_1.IllegalArgumentError("Cannot persist an already resolvable pointer.");
     var transient = TransientDocument_1.TransientDocument.is(child) ?
         child : TransientDocument_1.TransientDocument.decorate(child);
-    transient.$_normalize();
+    transient._normalize();
     transient.$registry = repository.$context.registry;
     var body = JSON.stringify(transient);
     if (!!slug)
@@ -14844,11 +14844,11 @@ function __createChild(repository, parentURI, requestOptions, child, slug) {
         if (locationHeader.values.length !== 1)
             throw new BadResponseError_1.BadResponseError("The response contains more than one Location header.", response);
         transient.$id = locationHeader.values[0].toString();
-        var document = repository.$context.registry.$_addPointer(transient);
+        var document = repository.$context.registry._addPointer(transient);
         document
-            .$getFragments()
-            .forEach(document.$__modelDecorator.decorate);
-        document.$_syncSnapshot();
+            .getFragments()
+            .forEach(document.__modelDecorator.decorate);
+        document._syncSnapshot();
         return __applyResponseRepresentation(repository, document, response);
     })
         .catch(function (error) {
@@ -14857,7 +14857,7 @@ function __createChild(repository, parentURI, requestOptions, child, slug) {
     });
 }
 function __createChildren(retrievalType, repository, uri, children, slugsOrOptions, requestOptions) {
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     requestOptions = Request_1.RequestUtils.isOptions(slugsOrOptions) ?
@@ -14893,26 +14893,26 @@ function __createChildren(retrievalType, repository, uri, children, slugsOrOptio
 function __sendPatch(repository, document, requestOptions) {
     if (!ResolvablePointer_1.ResolvablePointer.is(document))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The document isn't a resolvable pointer."));
-    if (!repository.$context.registry.$inScope(document.$id))
+    if (!repository.$context.registry.inScope(document.$id))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + document.$id + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(document.$id, { base: true });
-    if (!document.$isDirty())
+    if (!document.isDirty())
         return Promise.resolve(document);
-    document.$_normalize();
+    document._normalize();
     __setDefaultRequestOptions(requestOptions);
     Request_1.RequestUtils.setContentTypeHeader("text/ldpatch", requestOptions);
     Request_1.RequestUtils.setIfMatchHeader(document.$eTag, requestOptions);
     var deltaCreator = new DeltaCreator_1.DeltaCreator(repository.$context);
-    deltaCreator.addResource(document.$id, document.$_snapshot, document);
+    deltaCreator.addResource(document.$id, document._snapshot, document);
     document
-        .$getPointers(true)
+        .getPointers(true)
         .forEach(function (pointer) {
-        deltaCreator.addResource(pointer.$id, pointer.$_snapshot, pointer);
+        deltaCreator.addResource(pointer.$id, pointer._snapshot, pointer);
     });
-    document.$__savedFragments
-        .filter(function (pointer) { return !document.$hasPointer(pointer.$id); })
+    document.__savedFragments
+        .filter(function (pointer) { return !document.hasPointer(pointer.$id); })
         .forEach(function (pointer) {
-        deltaCreator.addResource(pointer.$id, pointer.$_snapshot, {});
+        deltaCreator.addResource(pointer.$id, pointer._snapshot, {});
     });
     var body = deltaCreator.getPatch();
     return Request_1.RequestService
@@ -14926,7 +14926,7 @@ function __parseMembers(registry, pointers) {
     return pointers
         .map(function (pointer) {
         if (Utils_1.isString(pointer))
-            return registry.$getPointer(pointer);
+            return registry.getPointer(pointer);
         if (Pointer_1.Pointer.is(pointer))
             return pointer;
     })
@@ -14934,14 +14934,14 @@ function __parseMembers(registry, pointers) {
 }
 function __sendAddAction(repository, uri, members, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
     Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
     var freeResources = FreeResources_1.FreeResources.createFrom({ $registry: repository.$context.registry });
     var targetMembers = __parseMembers(repository.$context.registry, members);
-    freeResources.$_addPointer(AddMemberAction_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
+    freeResources._addPointer(AddMemberAction_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
     var body = JSON.stringify(freeResources);
     return Request_1.RequestService
         .put(url, body, requestOptions)
@@ -14950,7 +14950,7 @@ function __sendAddAction(repository, uri, members, requestOptions) {
 }
 function __sendRemoveAction(repository, uri, members, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
@@ -14961,7 +14961,7 @@ function __sendRemoveAction(repository, uri, members, requestOptions) {
     }, requestOptions);
     var freeResources = FreeResources_1.FreeResources.createFrom({ $registry: repository.$context.registry });
     var targetMembers = __parseMembers(repository.$context.registry, members);
-    freeResources.$_addPointer(RemoveMemberAction_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
+    freeResources._addPointer(RemoveMemberAction_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
     var body = JSON.stringify(freeResources);
     return Request_1.RequestService
         .delete(url, body, requestOptions)
@@ -14970,7 +14970,7 @@ function __sendRemoveAction(repository, uri, members, requestOptions) {
 }
 function __sendRemoveAll(repository, uri, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
@@ -14992,18 +14992,18 @@ function __sendRemoveAll(repository, uri, requestOptions) {
 }
 exports.LDPDocumentsRepositoryTrait = {
     PROTOTYPE: {
-        $get: function (uri, requestOptions) {
+        get: function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .$get.call(this, uri, requestOptions)
+                .get.call(this, uri, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
-        $exists: function (uri, requestOptions) {
+        exists: function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .$exists.call(this, uri, requestOptions)
+                .exists.call(this, uri, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
         create: function (uri, children, slugsOrOptions, requestOptions) {
@@ -15012,29 +15012,29 @@ exports.LDPDocumentsRepositoryTrait = {
         createAndRetrieve: function (uri, children, slugsOrOptions, requestOptions) {
             return __createChildren("representation", this, uri, children, slugsOrOptions, requestOptions);
         },
-        $refresh: function (document, requestOptions) {
+        refresh: function (document, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             Request_1.RequestUtils.setIfNoneMatchHeader(document.$eTag, requestOptions);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .$refresh.call(this, document, requestOptions)
+                .refresh.call(this, document, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
-        $save: function (document, requestOptions) {
+        save: function (document, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             Request_1.RequestUtils.setPreferredRetrieval("minimal", requestOptions);
             return __sendPatch(this, document, requestOptions);
         },
-        $saveAndRefresh: function (document, requestOptions) {
+        saveAndRefresh: function (document, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             Request_1.RequestUtils.setPreferredRetrieval("representation", requestOptions);
             return __sendPatch(this, document, requestOptions);
         },
-        $delete: function (uri, requestOptions) {
+        delete: function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .$delete.call(this, uri, requestOptions)
+                .delete.call(this, uri, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
         addMember: function (uri, member, requestOptions) {
@@ -15065,7 +15065,7 @@ exports.LDPDocumentsRepositoryTrait = {
                 if (!target)
                     throw new BadResponseError_1.BadResponseError("No document \"" + id + "\" was returned.", response);
                 target.$eTag = response.getETag();
-                target.$_resolved = true;
+                target._resolved = true;
                 return target;
             });
         },
@@ -15134,14 +15134,14 @@ var ModelDecorator_1 = __webpack_require__(4);
 var ResolvablePointer_1 = __webpack_require__(24);
 exports.HTTPRepositoryTrait = {
     PROTOTYPE: {
-        $get: function (uri, requestOptions) {
+        get: function (uri, requestOptions) {
             var _this = this;
-            if (!this.$context.registry.$inScope(uri, true))
+            if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
-            if (this.$context.registry.$hasPointer(url, true)) {
-                var resource = this.$context.registry.$getPointer(url, true);
-                if (resource.$isResolved()) {
+            if (this.$context.registry.hasPointer(url, true)) {
+                var resource = this.$context.registry.getPointer(url, true);
+                if (resource.isResolved()) {
                     if (!requestOptions.ensureLatest)
                         return Promise.resolve(resource);
                     Request_1.RequestUtils.setIfNoneMatchHeader(resource.$eTag, requestOptions);
@@ -15153,11 +15153,11 @@ exports.HTTPRepositoryTrait = {
                 return _this._parseResponseData(response, url);
             });
         },
-        $resolve: function (resource, requestOptions) {
-            return this.$get(resource.$id, requestOptions);
+        resolve: function (resource, requestOptions) {
+            return this.get(resource.$id, requestOptions);
         },
-        $exists: function (uri, requestOptions) {
-            if (!this.$context.registry.$inScope(uri, true))
+        exists: function (uri, requestOptions) {
+            if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return Request_1.RequestService
@@ -15169,11 +15169,11 @@ exports.HTTPRepositoryTrait = {
                 return Promise.reject(error);
             });
         },
-        $refresh: function (resource, requestOptions) {
+        refresh: function (resource, requestOptions) {
             var _this = this;
             if (!ResolvablePointer_1.ResolvablePointer.is(resource))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The resource isn't a resolvable pointer."));
-            if (!this.$context.registry.$inScope(resource.$id, true))
+            if (!this.$context.registry.inScope(resource.$id, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + resource.$id + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(resource.$id, { base: true });
             return Request_1.RequestService
@@ -15187,34 +15187,34 @@ exports.HTTPRepositoryTrait = {
                 return Promise.reject(error);
             });
         },
-        $save: function (resource, requestOptions) {
+        save: function (resource, requestOptions) {
             if (!ResolvablePointer_1.ResolvablePointer.is(resource))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The resource isn't a resolvable pointer."));
-            if (!this.$context.registry.$inScope(resource.$id, true))
+            if (!this.$context.registry.inScope(resource.$id, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + resource.$id + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(resource.$id, { base: true });
-            if (!resource.$isDirty())
+            if (!resource.isDirty())
                 return Promise.resolve(resource);
             var body = JSON.stringify(resource);
             return Request_1.RequestService
                 .put(url, body, requestOptions)
                 .then(function () { return resource; });
         },
-        $saveAndRefresh: function (resource, requestOptions) {
+        saveAndRefresh: function (resource, requestOptions) {
             var _this = this;
             return this
-                .$save(resource, requestOptions)
-                .then(function () { return _this.$refresh(resource, requestOptions); });
+                .save(resource, requestOptions)
+                .then(function () { return _this.refresh(resource, requestOptions); });
         },
-        $delete: function (uri, requestOptions) {
+        delete: function (uri, requestOptions) {
             var _this = this;
-            if (!this.$context.registry.$inScope(uri, true))
+            if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return Request_1.RequestService
                 .delete(url, requestOptions)
                 .then(function () {
-                _this.$context.registry.$removePointer(url);
+                _this.$context.registry.removePointer(url);
             });
         },
         _parseResponseData: function (response, id) {
@@ -15222,9 +15222,9 @@ exports.HTTPRepositoryTrait = {
                 var resolvable;
                 return __generator(this, function (_a) {
                     resolvable = this.$context.registry
-                        .$getPointer(id, true);
+                        .getPointer(id, true);
                     resolvable.$eTag = response.getETag();
-                    resolvable.$_resolved = true;
+                    resolvable._resolved = true;
                     return [2, resolvable];
                 });
             });
@@ -15261,7 +15261,7 @@ var Utils_1 = __webpack_require__(27);
 exports.SPARQLDocumentsRepositoryTrait = {
     PROTOTYPE: {
         executeASKQuery: function (uri, askQuery, requestOptions) {
-            if (!this.$context.registry.$inScope(uri, true))
+            if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return SPARQLService_1.SPARQLService
@@ -15273,7 +15273,7 @@ exports.SPARQLDocumentsRepositoryTrait = {
                 .catch(Utils_1._getErrorResponseParserFn(this.$context.registry));
         },
         executeSELECTQuery: function (uri, selectQuery, requestOptions) {
-            if (!this.$context.registry.$inScope(uri, true))
+            if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return SPARQLService_1.SPARQLService
@@ -15285,7 +15285,7 @@ exports.SPARQLDocumentsRepositoryTrait = {
                 .catch(Utils_1._getErrorResponseParserFn(this.$context.registry));
         },
         executeUPDATE: function (uri, update, requestOptions) {
-            if (!this.$context.registry.$inScope(uri, true))
+            if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return SPARQLService_1.SPARQLService
@@ -15294,7 +15294,7 @@ exports.SPARQLDocumentsRepositoryTrait = {
                 .catch(Utils_1._getErrorResponseParserFn(this.$context.registry));
         },
         sparql: function (uri) {
-            if (!this.$context.registry.$inScope(uri, true))
+            if (!this.$context.registry.inScope(uri, true))
                 throw new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope.");
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             var schema = this.$context.registry.getGeneralSchema();

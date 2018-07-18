@@ -34,7 +34,7 @@ export const QueryMetadata:QueryMetadataFactory = {
 
 	is( value:any ):value is QueryMetadata {
 		return VolatileResource.is( value )
-			&& value.$hasType( QueryMetadata.TYPE );
+			&& value.hasType( QueryMetadata.TYPE );
 	},
 
 };

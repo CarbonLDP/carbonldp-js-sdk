@@ -6,7 +6,7 @@ exports.VolatileResource = {
     TYPE: C_1.C.VolatileResource,
     is: function (value) {
         return Resource_1.Resource.is(value)
-            && value.$hasType(exports.VolatileResource.TYPE);
+            && value.hasType(exports.VolatileResource.TYPE);
     },
     create: function (data) {
         var copy = Object.assign({}, data);
@@ -14,7 +14,7 @@ exports.VolatileResource = {
     },
     createFrom: function (object) {
         var resource = Resource_1.Resource.createFrom(object);
-        resource.$addType(exports.VolatileResource.TYPE);
+        resource.addType(exports.VolatileResource.TYPE);
         return resource;
     },
 };

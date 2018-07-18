@@ -19,19 +19,19 @@ function __parseParams(resource, uriOrQuery, queryOrOptions, options) {
 }
 exports.SPARQLDocumentTrait = {
     PROTOTYPE: {
-        $executeASKQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
+        executeASKQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
             var _a = __parseParams(this, uriOrQuery, queryOrOptions, requestOptions), uri = _a.uri, query = _a.query, options = _a.options;
             return this.$repository.executeASKQuery(uri, query, options);
         },
-        $executeSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
+        executeSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
             var _a = __parseParams(this, uriOrQuery, queryOrOptions, requestOptions), uri = _a.uri, query = _a.query, options = _a.options;
             return this.$repository.executeSELECTQuery(uri, query, options);
         },
-        $executeUPDATE: function (uriOrQuery, updateOrOptions, requestOptions) {
+        executeUPDATE: function (uriOrQuery, updateOrOptions, requestOptions) {
             var _a = __parseParams(this, uriOrQuery, updateOrOptions, requestOptions), uri = _a.uri, query = _a.query, options = _a.options;
             return this.$repository.executeUPDATE(uri, query, options);
         },
-        $sparql: function (uri) {
+        sparql: function (uri) {
             var $uri = uri ? URI_1.URI.resolve(this.$id, uri) : this.$id;
             return this.$repository.sparql($uri);
         },
