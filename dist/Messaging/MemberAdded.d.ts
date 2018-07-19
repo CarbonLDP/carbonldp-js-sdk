@@ -1,4 +1,4 @@
-import { ObjectSchema } from "../ObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { EventMessage } from "./EventMessage";
 import { MemberAddedDetails } from "./MemberAddedDetails";
 export interface MemberAdded extends EventMessage {

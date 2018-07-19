@@ -1,10 +1,7 @@
-import {
-	enumeration,
-	hasEnumeral,
-	isDefined,
-	module
-} from "../test/JasmineExtender";
+import { enumeration, hasEnumeral, isDefined, module } from "../test/JasmineExtender";
+
 import * as MessagingEvent from "./Event";
+
 
 describe( module( "carbonldp/Messaging/Event" ), ():void => {
 
@@ -23,16 +20,6 @@ describe( module( "carbonldp/Messaging/Event" ), ():void => {
 		it( hasEnumeral( "CHILD_CREATED" ), ():void => {
 			expect( MessagingEvent.Event.CHILD_CREATED ).toBeDefined();
 			expect( MessagingEvent.Event.CHILD_CREATED ).toBe( "child.created" );
-		} );
-
-		it( hasEnumeral( "ACCESS_POINT_CREATED" ), ():void => {
-			expect( MessagingEvent.Event.ACCESS_POINT_CREATED ).toBeDefined();
-			expect( MessagingEvent.Event.ACCESS_POINT_CREATED ).toBe( "access-point.created" );
-		} );
-
-		it( hasEnumeral( "DOCUMENT_CREATED" ), ():void => {
-			expect( MessagingEvent.Event.DOCUMENT_CREATED ).toBeDefined();
-			expect( MessagingEvent.Event.DOCUMENT_CREATED ).toBe( "*.created" );
 		} );
 
 		it( hasEnumeral( "DOCUMENT_MODIFIED" ), ():void => {

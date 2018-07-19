@@ -1,5 +1,7 @@
-import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Document } from "../Document/Document";
+
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
 	hasProperty,
@@ -10,9 +12,11 @@ import {
 	property,
 	STATIC
 } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
 
 import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
+
 
 describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 
@@ -27,16 +31,16 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 		} );
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:TransientResource = {} as DocumentCreatedDetails;
+			const target:Resource = {} as DocumentCreatedDetails;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"createdDocuments",
-			"CarbonLDP.Pointer[]"
+			"CarbonLDP.Document[]"
 		), ():void => {
-			const target:DocumentCreatedDetails[ "createdDocuments" ] = [] as Pointer[];
+			const target:DocumentCreatedDetails[ "createdDocuments" ] = [] as Document[];
 			expect( target ).toBeDefined();
 		} );
 

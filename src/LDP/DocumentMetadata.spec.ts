@@ -1,7 +1,5 @@
-import { TransientResource } from "../Resource";
 import {
 	extendsClass,
-	hasMethod,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -10,11 +8,14 @@ import {
 	property,
 	STATIC
 } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
+
 import * as Utils from "./../Utils";
 
 import { DocumentMetadata } from "./DocumentMetadata";
+
 
 describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 
@@ -43,7 +44,7 @@ describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"bNodesMap",
-			"CarbonLDP.LDP.Map<CarbonLDP.TransientBlankNode, CarbonLDP.TransientBlankNode>",
+			"CarbonLDP.LDP.Map<CarbonLDP.Pointer, CarbonLDP.Pointer>",
 			"A `c:Map` object that contains the changes of persisted BNode IDs."
 		), ():void => {} );
 

@@ -1,18 +1,24 @@
-import { TransientDirectContainer } from "../LDP";
-import { Pointer } from "../Pointer";
+import { TransientDirectContainer } from "../LDP/DirectContainer/TransientDirectContainer";
+
+import { Pointer } from "../Pointer/Pointer";
+
 import {
 	extendsClass,
 	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	OPTIONAL,
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { C } from "../Vocabularies";
+
+import { C } from "../Vocabularies/C";
+
 import { BaseAccessPoint } from "./BaseAccessPoint";
 import { TransientAccessPoint } from "./TransientAccessPoint";
 
@@ -60,14 +66,38 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 			"CarbonLDP.Vocabularies.C.AccessPoint"
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.TransientAccessPoint` object", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "value is CarbonLDP.TransientAccessPoint" }
-		), ():void => {} );
+		describe( method( OBLIGATORY, "is" ), ():void => {
+
+			it( hasSignature(
+				"Returns true if the object provided is considered a `CarbonLDP.TransientAccessPoint` object", [
+					{ name: "value", type: "any" },
+				],
+				{ type: "value is CarbonLDP.TransientAccessPoint" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( TransientAccessPoint.is ).toBeDefined();
+				expect( TransientAccessPoint.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let isTransientDirectContainer:jasmine.Spy;
+			beforeEach( ():void => {
+				isTransientDirectContainer = spyOn( TransientDirectContainer, "is" )
+					.and.returnValue( true );
+			} );
+
+			it( "should be a TransientDirectContainer", () => {
+				TransientAccessPoint.is( { the: "object" } );
+				expect( isTransientDirectContainer ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should return true when all assertions", () => {
+				const returned:boolean = TransientAccessPoint.is( {} );
+				expect( returned ).toBe( true );
+			} );
+
+		} );
 
 		it( hasMethod(
 			OBLIGATORY,
@@ -116,8 +146,6 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 
 		} );
 
-		// TODO: Test `AccessPoint.is`
-
 		describe( "TransientAccessPoint.create", ():void => {
 
 			it( "should exists", ():void => {
@@ -157,7 +185,8 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 			} );
 
 			it( "should call TransientDirectContainer.createFrom", ():void => {
-				const spy:jasmine.Spy = spyOn( TransientDirectContainer, "createFrom" );
+				const spy:jasmine.Spy = spyOn( TransientDirectContainer, "createFrom" )
+					.and.callThrough();
 
 				const base:BaseAccessPoint = {
 					membershipResource: Pointer.create(),
@@ -176,6 +205,16 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 				const returned:TransientAccessPoint = TransientAccessPoint.createFrom( base );
 
 				expect( base ).toBe( returned );
+			} );
+
+
+			it( "should add c:AccessPoint type", () => {
+				const returned:TransientAccessPoint = TransientAccessPoint.createFrom( {
+					membershipResource: Pointer.create(),
+					hasMemberRelation: "http://example.com/myNamespace#some-relation",
+				} );
+
+				expect( returned.types ).toContain( C.AccessPoint );
 			} );
 
 		} );

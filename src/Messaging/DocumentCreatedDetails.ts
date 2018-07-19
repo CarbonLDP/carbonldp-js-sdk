@@ -1,11 +1,14 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Document } from "../Document/Document";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Resource } from "../Resource/Resource";
+
 import { C } from "../Vocabularies/C";
 
 
-export interface DocumentCreatedDetails extends TransientResource {
-	createdDocuments:Pointer[];
+export interface DocumentCreatedDetails extends Resource {
+	createdDocuments:Document[];
 }
 
 

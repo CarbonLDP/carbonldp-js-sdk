@@ -1,14 +1,29 @@
+import { TransientDocument } from "../Document/TransientDocument";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
+import { URI } from "../RDF/URI";
+
+import { Resource } from "../Resource/Resource";
+
 import {
-	hasMethod,
+	extendsClass,
 	hasProperty,
 	interfaze,
 	module,
 	OBLIGATORY,
-	STATIC,
+	OPTIONAL,
+	property,
+	STATIC
 } from "../test/JasmineExtender";
-import { TransientDocument } from "../Document";
-import { BaseFragment } from "./BaseFragment";
-import { TransientFragment } from "./TransientFragment";
+
+import { BaseTransientFragment } from "./BaseTransientFragment";
+import { TransientFragment, TransientFragmentFactory } from "./TransientFragment";
 
 
 describe( module( "carbonldp/Fragment" ), ():void => {
@@ -18,12 +33,38 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		"Interface of an in-memory fragment of a document."
 	), ():void => {
 
+		let fragment:TransientFragment;
+		beforeEach( ():void => {
+			fragment = TransientFragment
+				.create( { $registry: TransientDocument.create() } );
+		} );
+
 		it( hasProperty(
-			OBLIGATORY,
-			"_document",
+			OPTIONAL,
+			"$registry",
 			"CarbonLDP.TransientDocument",
-			"The document the fragment belongs to."
+			"The registry where the transient fragment belongs to."
 		), ():void => {} );
+
+		describe( property(
+			OBLIGATORY,
+			"$document",
+			"CarbonLDP.TransientDocument",
+			"The transient document where the transient fragment belongs to."
+		), ():void => {
+
+			it( "should be the $registry", () => {
+				expect( fragment.$document ).toBe( fragment.$registry );
+			} );
+
+			it( "should assign the $registry ", () => {
+				const document:TransientDocument = TransientDocument.create();
+				fragment.$document = document;
+
+				expect( fragment.$registry ).toBe( document );
+			} );
+
+		} );
 
 	} );
 
@@ -32,53 +73,25 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		"Interface with the factory, decorate and utils methods of a `CarbonLDP.TransientFragment` object."
 	), ():void => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `CarbonLDP.TransientFragment` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "object is CarbonLDP.TransientFragment" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.TransientFragment, CarbonLDP.Resource>" ), () => {
+			const target:ModelPrototype<TransientFragment, Resource> = {} as TransientFragmentFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.TransientFragment` object.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "value is CarbonLDP.TransientFragment" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.TransientFragment, CarbonLDP.BaseTransientFragment>" ), () => {
+			const target:ModelDecorator<TransientFragment, BaseTransientFragment> = {} as TransientFragmentFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"create",
-			[ "T extends object" ],
-			"Creates a Fragment with the ID if provided.", [
-				{ name: "data", type: "T & CarbonLDP.BaseFragment", description: "Data to be used in the creation of the fragment" },
-			],
-			{ type: "T & CarbonLDP.TransientFragment" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelTypeGuard<CarbonLDP.TransientFragment>" ), () => {
+			const target:ModelTypeGuard<TransientFragment> = {} as TransientFragmentFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"createFrom",
-			[ "T extends object" ],
-			"Creates a Fragment from an object with the ID if provided.", [
-				{ name: "object", type: "T & CarbonLDP.BaseFragment", description: "Object that will be converted to a fragment." },
-			],
-			{ type: "T & CarbonLDP.TransientFragment" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"decorate",
-			[ "T extends object" ],
-			"Decorates the object with the required `CarbonLDP.TransientFragment` properties and methods.", [
-				{ name: "object", type: "T", description: "Object that will be converted to a fragment." },
-			],
-			{ type: "T & CarbonLDP.TransientFragment" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.TransientFragment, CarbonLDP.BaseTransientFragment>" ), () => {
+			const target:ModelFactory<TransientFragment, BaseTransientFragment> = {} as TransientFragmentFactory;
+			expect( target ).toBeDefined();
+		} );
 
 	} );
 
@@ -94,33 +107,26 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			expect( TransientFragment ).toEqual( jasmine.any( Object ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( "TransientFragment.isDecorated", ():void => {
-			expect( TransientFragment.isDecorated ).toBeDefined();
-			expect( TransientFragment.isDecorated ).toEqual( jasmine.any( Function ) );
 
-			let resource:Partial<TransientFragment> = undefined;
-			expect( TransientFragment.isDecorated( resource ) ).toBe( false );
-
-			resource = Object.defineProperty( {}, "_document", {
-				writable: true,
-				configurable: true,
-				enumerable: false,
-				value: null,
-			} );
-			expect( TransientFragment.isDecorated( resource ) ).toBe( true );
-
-			delete resource._document;
-			expect( TransientFragment.isDecorated( resource ) ).toBe( false );
-			resource._document = null;
+		let $registry:TransientDocument;
+		beforeEach( ():void => {
+			$registry = TransientDocument.create();
 		} );
 
-		// TODO: Add tests for `Fragment.is`
+		describe( "TransientFragment.isDecorated", ():void => {
 
-		let document:TransientDocument;
-		beforeAll( ():void => {
-			document = TransientDocument.create();
-			document.id = "http://example.com/document/";
+			it( "should exists", ():void => {
+				expect( TransientFragment.isDecorated ).toBeDefined();
+				expect( TransientFragment.isDecorated ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call TransientResource.isDecorated", ():void => {
+				const spy:jasmine.Spy = spyOn( Resource, "isDecorated" );
+
+				TransientFragment.isDecorated( { the: "object" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
 		} );
 
 		describe( "TransientFragment.create", ():void => {
@@ -130,40 +136,30 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 				expect( TransientFragment.create ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should maintain _document property", ():void => {
-				const fragment:TransientFragment = TransientFragment.create( {
-					_document: document,
-				} );
+			it( "should fill bNode label id when no provided", ():void => {
+				const fragment:TransientFragment = TransientFragment.create( { $registry } );
 
-				expect( fragment._document ).toBe( document );
-			} );
-
-			it( "should fill empty id when no provided", ():void => {
-				const fragment:TransientFragment = TransientFragment.create( {
-					_document: document,
-				} );
-
-				expect( fragment.id ).toBe( "" );
+				expect( URI.isBNodeID( fragment.$id ) ).toBe( true );
 			} );
 
 			it( "should maintain id when provided", ():void => {
 				const fragment:TransientFragment = TransientFragment.create( {
-					id: "#fragment",
-					_document: document,
+					$registry,
+					$id: "#fragment",
 				} );
 
-				expect( fragment.id ).toBe( "#fragment" );
+				expect( fragment.$id ).toBe( "#fragment" );
 			} );
 
 			it( "should call TransientFragment.createFrom", ():void => {
 				const spy:jasmine.Spy = spyOn( TransientFragment, "createFrom" );
 
-				TransientFragment.create( { the: "fragment", _document: document } );
-				expect( spy ).toHaveBeenCalledWith( { the: "fragment", _document: document } );
+				TransientFragment.create( { $registry, the: "fragment" } );
+				expect( spy ).toHaveBeenCalledWith( { $registry, the: "fragment" } );
 			} );
 
 			it( "should return different reference", ():void => {
-				const object:BaseFragment = { _document: document };
+				const object:BaseTransientFragment = { $registry };
 				const returned:TransientFragment = TransientFragment.create( object );
 
 				expect( object ).not.toBe( returned );
@@ -178,40 +174,30 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 				expect( TransientFragment.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should maintain _document property", ():void => {
-				const fragment:TransientFragment = TransientFragment.createFrom( {
-					_document: document,
-				} );
+			it( "should fill bNode label id when no provided", ():void => {
+				const fragment:TransientFragment = TransientFragment.createFrom( { $registry } );
 
-				expect( fragment._document ).toBe( document );
-			} );
-
-			it( "should fill empty id when no provided", ():void => {
-				const fragment:TransientFragment = TransientFragment.createFrom( {
-					_document: document,
-				} );
-
-				expect( fragment.id ).toBe( "" );
+				expect( URI.isBNodeID( fragment.$id ) ).toBe( true );
 			} );
 
 			it( "should maintain id when provided", ():void => {
 				const fragment:TransientFragment = TransientFragment.createFrom( {
-					id: "#fragment",
-					_document: document,
+					$registry,
+					$id: "#fragment",
 				} );
 
-				expect( fragment.id ).toBe( "#fragment" );
+				expect( fragment.$id ).toBe( "#fragment" );
 			} );
 
 			it( "should call TransientFragment.decorate", ():void => {
 				const spy:jasmine.Spy = spyOn( TransientFragment, "decorate" );
 
-				TransientFragment.createFrom( { the: "fragment", _document: document } );
-				expect( spy ).toHaveBeenCalledWith( { the: "fragment", _document: document } );
+				TransientFragment.createFrom( { $registry, the: "fragment" } );
+				expect( spy ).toHaveBeenCalledWith( { $registry, the: "fragment" } );
 			} );
 
 			it( "should return same reference", ():void => {
-				const object:BaseFragment = { _document: document };
+				const object:BaseTransientFragment = { $registry };
 				const returned:TransientFragment = TransientFragment.createFrom( object );
 
 				expect( object ).toBe( returned );
@@ -219,7 +205,27 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 		} );
 
-		// TODO: Add tests for `Fragment.decorate`
+		describe( "TransientFragment.decorate", ():void => {
+
+			it( "should exists", ():void => {
+				expect( TransientFragment.decorate ).toBeDefined();
+				expect( TransientFragment.decorate ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call Resource.decorate", ():void => {
+				const spy:jasmine.Spy = spyOn( Resource, "decorate" );
+
+				TransientFragment.decorate( { $registry, the: "object" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should throw error when no $registry", () => {
+				expect( () => {
+					TransientFragment.decorate( {} as any );
+				} ).toThrowError( IllegalArgumentError, `Property "$registry" is required.` );
+			} );
+
+		} );
 
 	} );
 

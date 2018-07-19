@@ -41,11 +41,11 @@ export declare class RequestService {
     static delete(url: string, body: string, options?: RequestOptions): Promise<Response>;
     static delete<T>(url: string, options?: RequestOptions, parser?: Parser<T>): Promise<[T, Response]>;
     static delete<T>(url: string, body: string, options?: RequestOptions, parser?: Parser<T>): Promise<[T, Response]>;
-    private static _handleGETResponse(url, requestOptions, response);
-    private static _contentTypeIsAccepted(requestOptions, response);
-    private static _setNoCacheHeaders(requestOptions);
-    private static _isChromiumAgent();
-    private static _setFalseETag(requestOptions);
+    private static __handleGETResponse;
+    private static __contentTypeIsAccepted;
+    private static __setNoCacheHeaders;
+    private static __isChromiumAgent;
+    private static __setFalseETag;
 }
 export declare class RequestUtils {
     static getHeader(headerName: string, requestOptions: RequestOptions, initialize?: boolean): Header;

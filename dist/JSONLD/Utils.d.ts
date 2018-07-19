@@ -1,1 +1,1 @@
-export declare function guessXSDType(value: any): string;
+export declare function _guessXSDType(value: any): string;

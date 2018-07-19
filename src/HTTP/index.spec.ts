@@ -1,9 +1,5 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC,
-} from "../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
+
 import * as Utils from "../Utils";
 
 import * as HTTP from "./";
@@ -13,13 +9,7 @@ import { Header } from "./Header";
 import { HTTPMethod } from "./HTTPMethod";
 import { JSONParser } from "./JSONParser";
 import { Parser } from "./Parser";
-import {
-	GETOptions,
-	RequestOptions,
-	RequestService,
-	RequestUtils,
-	RetrievalPreferences,
-} from "./Request";
+import { GETOptions, RequestOptions, RequestService, RequestUtils, RetrievalPreferences } from "./Request";
 import { Response } from "./Response";
 import { StatusCode } from "./StatusCode";
 import { StringParser } from "./StringParser";

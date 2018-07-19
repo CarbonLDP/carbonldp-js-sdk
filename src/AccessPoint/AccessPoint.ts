@@ -1,22 +1,18 @@
-import { Pointer } from "../Pointer";
-import { ProtectedDocument } from "../ProtectedDocument";
-import { C } from "../Vocabularies";
-import {
-	TransientAccessPoint,
-	TransientAccessPointFactory,
-} from "./TransientAccessPoint";
+import { Document } from "../Document/Document";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { TransientAccessPoint, TransientAccessPointFactory } from "./TransientAccessPoint";
 
 
-export interface AccessPoint extends ProtectedDocument {
-	membershipResource:Pointer;
+export interface AccessPoint extends Document {
+	membershipResource:Document;
 	hasMemberRelation:Pointer;
 	isMemberOfRelation?:Pointer;
 	insertedContentRelation?:Pointer;
 }
 
 export interface AccessPointFactory extends TransientAccessPointFactory {
-	TYPE:C[ "AccessPoint" ];
-
 	is( value:any ):value is AccessPoint;
 }
 
@@ -25,7 +21,7 @@ export const AccessPoint:AccessPointFactory = {
 
 	is: ( value ):value is AccessPoint =>
 		TransientAccessPoint.is( value )
-		&& ProtectedDocument.is( value )
+		&& Document.is( value )
 	,
 
 	create: TransientAccessPoint.create,

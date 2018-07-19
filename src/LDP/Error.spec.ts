@@ -1,17 +1,12 @@
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
+
 import * as Utils from "./../Utils";
 
 import { Error } from "./Error";
+
 
 describe( module( "carbonldp/LDP/Error" ), ():void => {
 

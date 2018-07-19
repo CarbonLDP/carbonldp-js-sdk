@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Utils_1 = require("../Utils");
 var List_1 = require("./List");
 var Literal_1 = require("./Literal");
 var Node_1 = require("./Node");
-var Utils_1 = require("../Utils");
 exports.RDFValue = {
     parse: function (pointerLibrary, value) {
         if (Utils_1.isString(value))

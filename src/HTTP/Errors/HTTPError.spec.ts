@@ -60,7 +60,7 @@ describe( module(
 		), ():void => {
 			let error:HTTPError.HTTPError = new HTTPError.HTTPError( "Message of the error", response );
 
-			expect( error instanceof AbstractError ).toBe( true );
+			expect( error ).toEqual( jasmine.any( AbstractError ) );
 		} );
 
 		it( hasConstructor( [
@@ -70,7 +70,7 @@ describe( module(
 			let error:HTTPError.HTTPError = new HTTPError.HTTPError( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof HTTPError.HTTPError ).toBe( true );
+			expect( error ).toEqual( jasmine.any( HTTPError.HTTPError ) );
 		} );
 
 		it( hasMethod(
@@ -117,30 +117,7 @@ describe( module(
 			let error:HTTPError.HTTPError = new HTTPError.HTTPError( "Message of the error", response );
 
 			expect( error.response ).toBeDefined();
-			expect( error.response instanceof Response );
 			expect( error.response ).toBe( response );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"errors",
-			"CarbonLDP.LDP.Error[]"
-		), ():void => {
-			let error:HTTPError.HTTPError = new HTTPError.HTTPError( "Message of the error", response );
-
-			expect( error.errors ).toBeDefined();
-			expect( Utils.isArray( error.errors ) ).toEqual( true );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"requestID",
-			"string"
-		), ():void => {
-			let error:HTTPError.HTTPError = new HTTPError.HTTPError( "Message of the error", response );
-
-			expect( error.requestID ).toBeDefined();
-			expect( error.requestID ).toEqual( null );
 		} );
 
 	} );

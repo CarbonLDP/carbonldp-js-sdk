@@ -1,7 +1,5 @@
-import * as QueryDocument from "./QueryDocument";
-export * from "./Builder";
+export * from "./SPARQLBuilder";
 export * from "./RawResults";
 export * from "./RawResultsParser";
 export * from "./SelectResults";
-export * from "./Service";
-export { QueryDocument };
+export { SPARQLService } from "./SPARQLService";

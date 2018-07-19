@@ -1,10 +1,5 @@
-import {
-	clazz,
-	hasMethod,
-	INSTANCE,
-	isDefined,
-	module,
-} from "../test/JasmineExtender";
+import { clazz, hasMethod, INSTANCE, isDefined, module } from "../test/JasmineExtender";
+
 import * as Utils from "./../Utils";
 
 import * as JSONParser from "./JSONParser";

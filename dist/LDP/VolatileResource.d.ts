@@ -1,7 +1,7 @@
-import { ModelFactory } from "../core/ModelFactory";
-import { TransientResource } from "../Resource";
+import { ModelFactory } from "../Model/ModelFactory";
+import { Resource } from "../Resource/Resource";
 import { C } from "../Vocabularies/C";
-export interface VolatileResource extends TransientResource {
+export interface VolatileResource extends Resource {
 }
 export interface VolatileResourceFactory extends ModelFactory<VolatileResource> {
     TYPE: C["VolatileResource"];

@@ -8,40 +8,24 @@ import {
 	SubjectToken,
 } from "sparqler/tokens";
 
-import { JSONLDConverter } from "../JSONLD/Converter";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaDigester,
-} from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
-import {
-	clazz,
-	constructor,
-	hasSignature,
-	INSTANCE,
-	method,
-	module,
-} from "../test/JasmineExtender";
+import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
+import { createMockContext } from "../../test/helpers/mocks/core";
+
+import { Context } from "../Context/Context";
+import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
+
 import { XSD } from "../Vocabularies/XSD";
 
-import * as Module from "./DeltaCreator";
 import { DeltaCreator } from "./DeltaCreator";
 
-import {
-	AddToken,
-	DeleteToken,
-	PrefixToken,
-	SliceToken,
-	UpdateListToken,
-} from "./Tokens";
+import { AddToken, DeleteToken, PrefixToken, SliceToken, UpdateListToken } from "./Tokens";
+
 
 describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
-
-	it( "should exists", ():void => {
-		expect( Module ).toBeDefined();
-		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
 
 	describe( clazz( "CarbonLDP.LDPatch.DeltaCreator", "Creator of LDPatch deltas" ), ():void => {
 
@@ -50,16 +34,16 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 			expect( DeltaCreator ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let jsonldConverter:JSONLDConverter;
+		let context:Context;
 		beforeEach( () => {
-			jsonldConverter = new JSONLDConverter();
+			context = createMockContext();
 		} );
 
 		describe( constructor(), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "jsonldConverter", type: "CarbonLDP.JSONLD.JSONLDConverter", description: "The converted of JSON-LD to Javascript and viceversa to use." },
+					{ name: "context", type: "CarbonLDP.Context" },
 				]
 			), ():void => {
 			} );
@@ -70,23 +54,18 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				expect( delta ).toEqual( jasmine.any( DeltaCreator ) );
 			} );
 
-			it( "should store the JSONLDConverter", ():void => {
-				const delta:DeltaCreator = new DeltaCreator( jsonldConverter );
-				expect( delta[ "jsonldConverter" ] ).toBe( jsonldConverter );
-			} );
-
 			it( "should initialize the LD Patch add token", ():void => {
-				const delta:DeltaCreator = new DeltaCreator( jsonldConverter );
+				const delta:DeltaCreator = new DeltaCreator( context );
 				expect( delta[ "addToken" ] ).toEqual( new AddToken() );
 			} );
 
 			it( "should initialize the LD Patch delete token", ():void => {
-				const delta:DeltaCreator = new DeltaCreator( jsonldConverter );
+				const delta:DeltaCreator = new DeltaCreator( context );
 				expect( delta[ "deleteToken" ] ).toEqual( new DeleteToken() );
 			} );
 
 			it( "should initialize the LD Patch update lists tokens", ():void => {
-				const delta:DeltaCreator = new DeltaCreator( jsonldConverter );
+				const delta:DeltaCreator = new DeltaCreator( context );
 				expect( delta[ "updateLists" ] ).toEqual( [] );
 			} );
 
@@ -98,8 +77,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				"Creates and adds the delta to the patch, of the provided old and new resource.",
 				[
 					{ name: "schema", type: "CarbonLDP.DigestedObjectSchema", description: "The schema of the resource to create its delta." },
-					{ name: "oldResource", type: "CarbonLDP.TransientResource", description: "The old representation of the resource to create the delta." },
-					{ name: "newResource", type: "CarbonLDP.TransientResource", description: "The current representation of the resource to create the delta." },
+					{ name: "previousResource", type: "CarbonLDP.TransientResource", description: "The old representation of the resource to create the delta." },
+					{ name: "currentResource", type: "CarbonLDP.TransientResource", description: "The current representation of the resource to create the delta." },
 				]
 			), ():void => {
 			} );
@@ -112,25 +91,23 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 			describe( "When property not in the schema", ():void => {
 
-				let schema:DigestedObjectSchema;
+				let id:string;
 				beforeEach( ():void => {
-					schema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 					} );
+					id = "http://example.org/resource/";
 				} );
 
 				it( "should guess deleted string", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: "string",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -140,17 +117,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess deleted number", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: 1,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
@@ -160,17 +134,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess deleted boolean", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: true,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
@@ -180,17 +151,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess deleted date", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: new Date( "2000-01-01" ),
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
@@ -200,17 +168,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess deleted resource pointer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					const previousResource:object = {
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
+					};
+					const currentResource:object = {};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new IRIToken( "http://example.org/pointer/" ) )
@@ -220,17 +185,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess deleted blank node pointer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "_:blank-node" } ),
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					const previousResource:object = {
+						property: Pointer.create( { $id: "_:blank-node" } ),
+					};
+					const currentResource:object = {};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new BlankNodeToken( "_:blank-node" ) )
@@ -240,23 +202,20 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess deleted array", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: [
 							"string",
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -270,21 +229,18 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should ignore deleted functions", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: [
 							"valid value",
 							():void => {},
 						],
 						invalidFunction():void {},
-					} as object );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "valid value" ) )
@@ -294,10 +250,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should ignore deleted unsupported elements", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: [
 							"valid value",
 							new Map(),
@@ -306,12 +261,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						property1: {},
 						property2: new Map(),
 						property3: new Set(),
-					} as object );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "valid value" ) )
@@ -322,18 +275,15 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 
 				it( "should guess added string", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {};
+					const currentResource:object = {
 						property: "string",
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -343,17 +293,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess added number", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {};
+					const currentResource:object = {
 						property: 1,
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
@@ -363,17 +310,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess added boolean", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {};
+					const currentResource:object = {
 						property: true,
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
@@ -382,17 +326,17 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess added date", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: new Date( "2000-01-01" ),
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
@@ -401,17 +345,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess added resource pointer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
-					} );
+					const previousResource:object = {};
+					const currentResource:object = {
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new IRIToken( "http://example.org/pointer/" ) )
@@ -420,17 +361,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess added blank node pointer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "_:blank-node" } ),
-					} );
+					const previousResource:object = {};
+					const currentResource:object = {
+						property: Pointer.create( { $id: "_:blank-node" } ),
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new BlankNodeToken( "_:blank-node" ) )
@@ -439,23 +377,20 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess added array", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {};
+					const currentResource:object = {
 						property: [
 							"string",
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -469,21 +404,18 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should ignore added functions", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {};
+					const currentResource:object = {
 						property: [
 							"valid value",
 							():void => {},
 						],
 						invalidFunction():void {},
-					} as object );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "valid value" ) )
@@ -493,13 +425,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should ignore added unsupported elements", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {};
+					const currentResource:object = {
 						property: [
 							"valid value",
 							{},
@@ -509,9 +438,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						property1: {},
 						property2: new Map(),
 						property3: new Set(),
-					} as object );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "valid value" ) )
@@ -522,18 +451,16 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 
 				it( "should delete new property if set to null", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: "string",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
 						property: null,
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -543,18 +470,16 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should delete new property if set to undefined", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: "string",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
 						property: void 0,
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -564,18 +489,16 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add old property if set to null", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: void 0,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
 						property: "string",
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -585,18 +508,16 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add old property if set to undefined", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: void 0,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
 						property: "string",
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -607,10 +528,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 
 				it( "should detect added and deleted elements from an array", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						property: [
 							"delete string",
 							10,
@@ -619,14 +539,13 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							true,
 							false,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "_:1" } ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "_:1" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
 						property: [
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 							new Date( "2000-01-01" ),
 							new Date( "2010-10-10" ),
 							true,
@@ -634,9 +553,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							10.01,
 							"add string",
 						],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "delete string" ) )
@@ -655,18 +574,16 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 
 				it( "should detect deleted types", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
 						types: [ "http://example.org/vocab#Document", "Type-1", "Type-2" ],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
 						types: [ "Type-1" ],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( "a" )
 							.addObject( new IRIToken( "http://example.org/vocab#Document" ) )
@@ -680,25 +597,30 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 			describe( "When property in the schema", ():void => {
 
-				it( "should add deleted string", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+				let id:string;
+				beforeEach( ():void => {
+					id = "http://example.org/resource/";
+				} );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+				it( "should add deleted string", ():void => {
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
+
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: "string",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -708,9 +630,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add deleted string with language", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -718,15 +640,15 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: "string",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ).setLanguage( "en" ) )
@@ -736,24 +658,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add deleted integer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.integer,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: 1,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "1" ).setType( XSD.integer ) )
@@ -763,24 +685,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add deleted float", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.float,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: 10.01,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "10.01" ).setType( XSD.float ) )
@@ -790,24 +712,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add deleted boolean", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#the-property",
 							"@type": XSD.boolean,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: true,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#the-property" ) )
 							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
@@ -817,24 +739,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add deleted date", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.date,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: new Date( "2000-01-01" ),
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "2000-01-01" ).setType( XSD.date ) )
@@ -844,24 +766,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add deleted resource pointer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": "@id",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new IRIToken( "http://example.org/pointer/" ) )
@@ -871,24 +793,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add deleted blank node pointer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": "@id",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "_:blank-node" } ),
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+						property: Pointer.create( { $id: "_:blank-node" } ),
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new BlankNodeToken( "_:blank-node" ) )
@@ -898,29 +820,29 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess deleted first element from array without a type an container", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							"string",
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -930,30 +852,30 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess deleted set without a type", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@set",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							"string",
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -967,28 +889,28 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add deleted string set", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@set",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							"string 1",
 							"string 2",
 							"string 3",
 						],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string 1" ) )
@@ -1000,9 +922,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add deleted language map", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -1010,19 +932,19 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: {
 							"en": "string",
 							"en-US": "US string",
 							"es": "cadena",
 						},
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ).setLanguage( "en" ) )
@@ -1034,30 +956,30 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add deleted list without a type", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@list",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							"string",
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
 							new IRIToken( "http://example.org/resource/" ),
@@ -1075,9 +997,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add deleted string list", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.string,
@@ -1085,19 +1007,19 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							"string 1",
 							"string 2",
 							"string 3",
 						],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
 							new IRIToken( "http://example.org/resource/" ),
@@ -1116,24 +1038,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 
 				it( "should add added string", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: "string",
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -1143,9 +1065,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add added string with language", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -1153,15 +1075,15 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: "string",
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ).setLanguage( "en" ) )
@@ -1171,24 +1093,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add added integer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.integer,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: 1,
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "1" ).setType( XSD.integer ) )
@@ -1198,24 +1120,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add added float", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.float,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: 10.01,
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "10.01" ).setType( XSD.float ) )
@@ -1225,24 +1147,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add added boolean", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#the-property",
 							"@type": XSD.boolean,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: true,
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#the-property" ) )
 							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
@@ -1252,24 +1174,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add added date", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.date,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: new Date( "2000-01-01" ),
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "2000-01-01" ).setType( XSD.date ) )
@@ -1279,24 +1201,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add added resource pointer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": "@id",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
-					} );
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new IRIToken( "http://example.org/pointer/" ) )
@@ -1306,24 +1228,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add added blank node pointer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": "@id",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "_:blank-node" } ),
-					} );
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+						property: Pointer.create( { $id: "_:blank-node" } ),
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new BlankNodeToken( "_:blank-node" ) )
@@ -1333,29 +1255,29 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess added first element from set without a type an container", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							"string",
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -1365,30 +1287,30 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess added set without a type", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@set",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							"string",
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -1402,28 +1324,28 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add added string set", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@set",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							"string 1",
 							"string 2",
 							"string 3",
 						],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string 1" ) )
@@ -1435,9 +1357,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add added language map", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -1445,19 +1367,19 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: {
 							"en": "string",
 							"en-US": "US string",
 							"es": "cadena",
 						},
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ).setLanguage( "en" ) )
@@ -1469,30 +1391,30 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should guess added list without a type", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@list",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							"string",
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new CollectionToken()
@@ -1508,9 +1430,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add added string list", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.string,
@@ -1518,19 +1440,19 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							"string 1",
 							"string 2",
 							"string 3",
 						],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new CollectionToken()
@@ -1545,25 +1467,25 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 
 				it( "should delete new property if set to null", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: "string",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: null,
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -1572,25 +1494,25 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should delete new property if set to undefined", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: "string",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: void 0,
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -1599,25 +1521,25 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add old property if set to null", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: void 0,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: "string",
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -1627,25 +1549,25 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add old property if set to undefined", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: void 0,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: "string",
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -1656,24 +1578,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 
 				it( "should allow relative strings to be converted to pointers", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": "@id",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: "pointer",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new IRIToken( "http://example.org/vocab#pointer" ) )
@@ -1682,24 +1604,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should allow absolute strings to be converted to pointers", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": "@id",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: "http://example.org/pointer",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new IRIToken( "http://example.org/pointer" ) )
@@ -1708,9 +1630,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should ignore non supported value to be pointer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property1": {
 							"@type": "@id",
@@ -1726,27 +1648,27 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property1: {},
 						property2: 1,
 						property3: true,
 						property4: new Date(),
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
 				} );
 
 
 				it( "should detect added and deleted elements from an integer set", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.integer,
@@ -1754,26 +1676,26 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							1,
 							10,
 							10.01,
 							12345,
 						],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							1,
 							10,
 							10,
 							67890,
 						],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "12345" ).setType( XSD.integer ) )
@@ -1788,35 +1710,35 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 
 				it( "should detect added and deleted elements from a list", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@container": "@list",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							1,
 							10,
 							10.01,
 							12345,
 						],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							10,
 							1,
 							10.01,
 							67890,
 						],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
 							new IRIToken( "http://example.org/resource/" ),
@@ -1850,9 +1772,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should detect added and deleted elements from an integer list", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.integer,
@@ -1860,26 +1782,26 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							1,
 							10,
 							10.01,
 							12345,
 						],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: [
 							10,
 							1,
 							10.01,
 							67890,
 						],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
 							new IRIToken( "http://example.org/resource/" ),
@@ -1907,25 +1829,25 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should compact updates list", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@container": "@list",
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: [ 1, 2, 3, 4, 5, 6 ],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
 						property: [ 4, 1, 2, "s-1", "s-2", 6, "s-3", 3 ],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
 							new IRIToken( "http://example.org/resource/" ),
@@ -1959,26 +1881,28 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 			describe( "When prefix in schema", ():void => {
 
-				it( "should compact literal type", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+				let id:string;
+				beforeEach( ():void => {
+					id = "http://example.org/resource/";
+				} );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+				it( "should compact literal type", ():void => {
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
+
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"xsd": XSD.namespace,
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: true,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					const spy:jasmine.Spy = spyOn( deltaCreator, "compactIRI" as any ).and.callThrough();
-
-					deltaCreator.addResource( schema, oldResource, newResource );
-					expect( spy ).toHaveBeenCalledWith( schema, XSD.boolean );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( true ).setType( new PrefixedNameToken( "xsd", "boolean" ) ) )
@@ -1987,47 +1911,44 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add literal type prefix in the prefix map", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"xsd": XSD.namespace,
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: true,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
 						[ "xsd", new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) ],
 					] ) );
 				} );
 
 				it( "should compact property URI", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"ex": "http://example.org/vocab#",
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: true,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					const spy:jasmine.Spy = spyOn( deltaCreator, "compactIRI" as any ).and.callThrough();
-
-					deltaCreator.addResource( schema, oldResource, newResource );
-					expect( spy ).toHaveBeenCalledWith( schema, "property" );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex", "property" ) )
 							.addObject( new LiteralToken( true ).setType( new IRIToken( XSD.boolean ) ) )
@@ -2036,47 +1957,44 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add property's prefix in the prefix map", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"ex": "http://example.org/vocab#",
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						property: true,
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
 						[ "ex", new PrefixToken( "ex", new IRIToken( "http://example.org/vocab#" ) ) ],
 					] ) );
 				} );
 
 				it( "should compact any pointer", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"base": "http://example.org/",
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
-					} );
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
+					};
 
-					const spy:jasmine.Spy = spyOn( deltaCreator, "compactIRI" as any ).and.callThrough();
-
-					deltaCreator.addResource( schema, oldResource, newResource );
-					expect( spy ).toHaveBeenCalledWith( schema, "http://example.org/pointer/" );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new PrefixedNameToken( "base", "resource/" ) )
 						.addPredicate( new PredicateToken( new PrefixedNameToken( "base", "vocab#property" ) )
 							.addObject( new PrefixedNameToken( "base", "pointer/" ) )
@@ -2086,22 +2004,22 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add pointer's prefix to the prefix map", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"base": "http://example.org/",
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
-					} );
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
 						[ "base", new PrefixToken( "base", new IRIToken( "http://example.org/" ) ) ],
 					] ) );
@@ -2109,25 +2027,25 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 
 				it( "should add used prefixes", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"base": "http://example.org/",
 						"xsd": XSD.namespace,
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						integers: [ 1 ],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
 						integers: [ 1, 2 ],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
 						[ "xsd", new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) ],
 						[ "base", new PrefixToken( "base", new IRIToken( "http://example.org/" ) ) ],
@@ -2135,25 +2053,25 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should ignore unused prefixes", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"base": "http://example.org/",
 						"xsd": XSD.namespace,
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
+					const previousResource:object = {
+						$id: "http://example.org/resource/",
 						integers: [ 1, 2 ],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
+					};
+					const currentResource:object = {
+						$id: "http://example.org/resource/",
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
 						integers: [ 1, 2 ],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
 						[ "base", new PrefixToken( "base", new IRIToken( "http://example.org/" ) ) ],
 					] ) );
@@ -2163,25 +2081,30 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 			describe( "When blank node resource", ():void => {
 
-				it( "should delete simple properties", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+				let id:string;
+				beforeEach( ():void => {
+					id = "_:blank-node";
+				} );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+				it( "should delete simple properties", ():void => {
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
+
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "_:blank-node",
+					const previousResource:object = {
+						$id: "_:blank-node",
 						property: "string",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "_:blank-node",
-					} );
+					};
+					const currentResource:object = {
+						$id: "_:blank-node",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -2191,24 +2114,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add simple properties", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "_:blank-node",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "_:blank-node",
+					const previousResource:object = {
+						$id: "_:blank-node",
+					};
+					const currentResource:object = {
+						$id: "_:blank-node",
 						property: "string",
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -2218,24 +2141,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should delete simple properties", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "_:blank-node",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "_:blank-node",
+					const previousResource:object = {
+						$id: "_:blank-node",
+					};
+					const currentResource:object = {
+						$id: "_:blank-node",
 						property: "string",
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
@@ -2245,9 +2168,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should delete list", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.string,
@@ -2255,19 +2178,19 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "_:blank-node",
+					const previousResource:object = {
+						$id: "_:blank-node",
 						property: [
 							"string 1",
 							"string 2",
 							"string 3",
 						],
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "_:blank-node",
-					} );
+					};
+					const currentResource:object = {
+						$id: "_:blank-node",
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
 							new BlankNodeToken( "_:blank-node" ),
@@ -2285,9 +2208,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				} );
 
 				it( "should add list", ():void => {
-					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+					const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
+					context.extendObjectSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.string,
@@ -2295,19 +2218,19 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:TransientResource = TransientResource.createFrom( {
-						id: "_:blank-node",
-					} );
-					const newResource:TransientResource = TransientResource.createFrom( {
-						id: "_:blank-node",
+					const previousResource:object = {
+						$id: "_:blank-node",
+					};
+					const currentResource:object = {
+						$id: "_:blank-node",
 						property: [
 							"string 1",
 							"string 2",
 							"string 3",
 						],
-					} );
+					};
 
-					deltaCreator.addResource( schema, oldResource, newResource );
+					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new CollectionToken()
@@ -2323,47 +2246,64 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 			} );
 
 			it( "should append multiple resources changes", ():void => {
-				const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+				const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
-					"@vocab": "http://example.org/vocab#",
-					"property": {
-						"@type": XSD.string,
-					},
-				} ), TransientResource.createFrom( {
-					id: "http://example.org/resource/",
-					property: "string",
-				} ), TransientResource.createFrom( {
-					id: "http://example.org/resource/",
-				} ) );
+				spyOnDecorated( context.registry, "getSchemaFor" ).and.callFake( object => {
+					if( object.$id === "http://example.org/resource/" )
+						return ObjectSchemaDigester.digestSchema( {
+							"@vocab": "http://example.org/vocab#",
+							"property": {
+								"@type": XSD.string,
+							},
+						} );
 
-				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
-					"@vocab": "http://example.org/vocab#",
-					"property": {
-						"@type": XSD.integer,
-					},
-				} ), TransientResource.createFrom( {
-					id: "http://example.org/resource/#fragment",
-				} ), TransientResource.createFrom( {
-					id: "http://example.org/resource/#fragment",
-					property: 10.01,
-				} ) );
+					if( object.$id === "http://example.org/resource/#fragment" )
+						return ObjectSchemaDigester.digestSchema( {
+							"@vocab": "http://example.org/vocab#",
+							"property": {
+								"@type": XSD.integer,
+							},
+						} );
 
-				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
-					"@vocab": "http://example.org/vocab#",
-					"property1": {
-						"@type": XSD.string,
+					if( object.$id === "_:blank-node" )
+						return ObjectSchemaDigester.digestSchema( {
+							"@vocab": "http://example.org/vocab#",
+							"property1": {
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@type": XSD.string,
+							},
+						} );
+				} );
+
+				deltaCreator.addResource(
+					"http://example.org/resource/",
+					{
+						id: "http://example.org/resource/",
+						property: "string",
 					},
-					"property2": {
-						"@type": XSD.string,
+					{
+						id: "http://example.org/resource/",
+					}
+				);
+
+				deltaCreator.addResource(
+					"http://example.org/resource/#fragment",
+					{},
+					{ property: 10.01 }
+				);
+
+				deltaCreator.addResource(
+					"_:blank-node",
+					{
+						property1: "delete string",
 					},
-				} ), TransientResource.createFrom( {
-					id: "_:blank-node",
-					property1: "delete string",
-				} ), TransientResource.createFrom( {
-					id: "_:blank-node",
-					property2: "add string",
-				} ) );
+					{
+						$id: "_:blank-node",
+						property2: "add string",
+					}
+				);
 
 				expect( deltaCreator[ "updateLists" ] ).toEqual( [] );
 				expect( deltaCreator[ "addToken" ].triples ).toEqual( [
@@ -2388,6 +2328,37 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				] );
 			} );
 
+
+			it( "should ignore ID when only in current", ():void => {
+				const deltaCreator:DeltaCreator = new DeltaCreator( context );
+
+				const id:string = "http://example.org/resource/";
+
+				const previousResource:object = {};
+				const currentResource:object = {
+					$id: "https://example.com/resource/",
+				};
+
+				deltaCreator.addResource( id, previousResource, currentResource );
+				expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
+				expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
+			} );
+
+			it( "should ignore ID when only in previous", ():void => {
+				const deltaCreator:DeltaCreator = new DeltaCreator( context );
+
+				deltaCreator.addResource(
+					"http://example.org/resource/",
+					{
+						$id: "https://example.com/resource/",
+					},
+					{}
+				);
+
+				expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
+				expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
+			} );
+
 		} );
 
 		describe( method( INSTANCE, "getPatch" ), ():void => {
@@ -2405,63 +2376,81 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 			} );
 
 			it( "should return LD Patch string", ():void => {
-				const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+				const deltaCreator:DeltaCreator = new DeltaCreator( context );
 
-				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
-					"@vocab": "http://example.org/vocab#",
-					"schema": "http://schema.org",
-					"xsd": XSD.namespace,
-					"property1": {
-						"@type": XSD.string,
-					},
-					"property2": {
-						"@container": "@list",
-					},
-				} ), TransientResource.createFrom( {
-					id: "http://example.org/resource/",
-					property1: "string",
-					property2: [ "string", 1, new Date(), Pointer.create( { id: "_:blank-node" } ) ],
-				} ), TransientResource.createFrom( {
-					id: "http://example.org/resource/",
-				} ) );
+				spyOnDecorated( context.registry, "getSchemaFor" ).and.callFake( object => {
+					if( object.$id === "http://example.org/resource/" )
+						return ObjectSchemaDigester.digestSchema( {
+							"@vocab": "http://example.org/vocab#",
+							"schema": "http://schema.org",
+							"xsd": XSD.namespace,
+							"property1": {
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@container": "@list",
+							},
+						} );
 
-				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
-					"@vocab": "http://example.org/vocab#",
-					"schema": "http://schema.org",
-					"resource": "http://example.org/resource/#",
-					"xsd": XSD.namespace,
-					"property1": {
-						"@type": XSD.integer,
-					},
-					"property2": {
-						"@container": "@list",
-					},
-				} ), TransientResource.createFrom( {
-					id: "http://example.org/resource/#fragment",
-					property2: [ 1, 2, 3, 4, 5 ],
-				} ), TransientResource.createFrom( {
-					id: "http://example.org/resource/#fragment",
-					property1: 10.01,
-					property2: [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ],
-				} ) );
+					if( object.$id === "http://example.org/resource/#fragment" )
+						return ObjectSchemaDigester.digestSchema( {
+							"@vocab": "http://example.org/vocab#",
+							"schema": "http://schema.org",
+							"resource": "http://example.org/resource/#",
+							"xsd": XSD.namespace,
+							"property1": {
+								"@type": XSD.integer,
+							},
+							"property2": {
+								"@container": "@list",
+							},
+						} );
 
-				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
-					"@vocab": "http://example.org/vocab#",
-					"schema": "http://schema.org",
-					"xsd": XSD.namespace,
-					"property1": {
-						"@type": XSD.string,
+					if( object.$id === "_:blank-node" )
+						return ObjectSchemaDigester.digestSchema( {
+							"@vocab": "http://example.org/vocab#",
+							"schema": "http://schema.org",
+							"xsd": XSD.namespace,
+							"property1": {
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@type": XSD.string,
+							},
+						} );
+				} );
+
+				deltaCreator.addResource(
+					"http://example.org/resource/",
+					{
+						property1: "string",
+						property2: [ "string", 1, new Date(), Pointer.create( { $id: "_:blank-node" } ) ],
 					},
-					"property2": {
-						"@type": XSD.string,
+					{
+						$id: "http://example.org/resource/",
+					}
+				);
+
+				deltaCreator.addResource(
+					"http://example.org/resource/#fragment",
+					{
+						property2: [ 1, 2, 3, 4, 5 ],
 					},
-				} ), TransientResource.createFrom( {
-					id: "_:blank-node",
-					property1: "delete string",
-				} ), TransientResource.createFrom( {
-					id: "_:blank-node",
-					property2: "add string",
-				} ) );
+					{
+						property1: 10.01,
+						property2: [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ],
+					}
+				);
+
+				deltaCreator.addResource(
+					"_:blank-node",
+					{
+						property1: "delete string",
+					},
+					{
+						property2: "add string",
+					}
+				);
 
 				expect( deltaCreator.getPatch() ).toBe( `` +
 					`@prefix xsd: <${ XSD.namespace }>. ` +

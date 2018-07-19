@@ -1,17 +1,12 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC,
-} from "../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
+
 import * as Utils from "../Utils";
 
 import * as JSONLD from "./";
-
-import { JSONLDCompacter } from "./Compacter";
-import { JSONLDConverter } from "./Converter";
-import { JSONLDParser } from "./Parser";
-import { JSONLDProcessor } from "./Processor";
+import { JSONLDCompacter } from "./JSONLDCompacter";
+import { JSONLDConverter } from "./JSONLDConverter";
+import { JSONLDParser } from "./JSONLDParser";
+import { JSONLDProcessor } from "./JSONLDProcessor";
 
 describe( module( "carbonldp/JSONLD" ), ():void => {
 

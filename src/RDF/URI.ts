@@ -1,10 +1,9 @@
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
-import { DigestedObjectSchema } from "../ObjectSchema";
-import {
-	isString,
-	StringUtils,
-	UUIDUtils,
-} from "../Utils";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+
+import { isString, StringUtils, UUIDUtils } from "../Utils";
+
 
 export interface URIFactory {
 	hasFragment( uri:string ):boolean;
@@ -101,7 +100,8 @@ export const URI:URIFactory = {
 	isFragmentOf( fragmentURI:string, uri:string ):boolean {
 		if( ! URI.hasFragment( fragmentURI ) ) return false;
 
-		return URI.getDocumentURI( fragmentURI ) === uri;
+		const documentURI:string = URI.getDocumentURI( fragmentURI );
+		return documentURI === "" || documentURI === uri;
 	},
 
 	isBaseOf( baseURI:string, uri:string ):boolean {
@@ -148,11 +148,11 @@ export const URI:URIFactory = {
 		uri = uriParts[ 0 ];
 
 		if( uri === "" ) return uri;
-		if( uri === "/" ) return uri;
+		if( uri === "/" ) return "";
 
 		let parts:string[] = uri.split( "/" );
 		if( parts[ parts.length - 1 ] === "" ) {
-			return parts[ parts.length - 2 ] + "/";
+			return parts[ parts.length - 2 ];
 		} else {
 			return parts[ parts.length - 1 ];
 		}
@@ -189,7 +189,7 @@ export const URI:URIFactory = {
 
 		if( StringUtils.startsWith( childURI, "?" ) || StringUtils.startsWith( childURI, "#" ) ) {
 			if( URI.hasQuery( path ) ) path = path.substr( 0, path.indexOf( "?" ) );
-			if( URI.hasFragment( path ) && ( ! StringUtils.startsWith( childURI, "?" ) || StringUtils.endsWith( path, "#" ) ) ) path = URI.getDocumentURI( path );
+			if( URI.hasFragment( path ) && (! StringUtils.startsWith( childURI, "?" ) || StringUtils.endsWith( path, "#" )) ) path = URI.getDocumentURI( path );
 		} else {
 			path = path.substr( 0, path.lastIndexOf( "/" ) + 1 );
 			if( ! StringUtils.endsWith( path, "?" ) && ! StringUtils.endsWith( path, "#" ) && ! StringUtils.endsWith( path, "/" ) ) path += "/";

@@ -1,13 +1,7 @@
-import {
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
+import { hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
 
 import { LDP } from "./LDP";
+
 
 describe( module( "carbonldp/Vocabularies/LDP" ), ():void => {
 

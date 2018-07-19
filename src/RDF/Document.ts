@@ -1,11 +1,11 @@
-import { Parser } from "../HTTP/Parser";
-import { JSONLDParser } from "../JSONLD/Parser";
 import * as Utils from "./../Utils";
+
 import { RDFNode } from "./Node";
 import { URI } from "./URI";
 
-export interface RDFDocument {
-	"@id"?:string;
+
+export interface RDFDocument extends RDFNode {
+	"@id":string;
 	"@graph":RDFNode[];
 }
 
@@ -18,7 +18,10 @@ export interface RDFDocumentFactory {
 
 	getDocuments( objects:object | object[] ):RDFDocument[];
 
+	getFreeNodes( objects:object | object[] ):RDFNode[];
+
 	getResources( objects:object | object[] ):RDFNode[];
+
 
 	getDocumentResources( document:RDFNode[] | RDFDocument ):RDFNode[];
 
@@ -36,13 +39,10 @@ export const RDFDocument:RDFDocumentFactory = {
 	},
 
 	create( resources:RDFNode[], uri?:string ):RDFDocument {
-		const document:RDFDocument = {
+		return {
+			"@id": uri ? uri : "",
 			"@graph": resources,
 		};
-
-		if( uri ) document[ "@id" ] = uri;
-
-		return document;
 	},
 
 
@@ -55,8 +55,16 @@ export const RDFDocument:RDFDocumentFactory = {
 		return [];
 	},
 
+	getFreeNodes( objects:object | object[] ):RDFNode[] {
+		if( ! Array.isArray( objects ) ) return [];
+
+		return objects
+			.filter( element => ! RDFDocument.is( element ) )
+			.filter( RDFNode.is );
+	},
+
 	getResources( objects:object | object[] ):RDFNode[] {
-		const resources:RDFNode[] = RDFNode.getFreeNodes( objects );
+		const resources:RDFNode[] = RDFDocument.getFreeNodes( objects );
 
 		RDFDocument
 			.getDocuments( objects )
@@ -66,6 +74,7 @@ export const RDFDocument:RDFDocumentFactory = {
 
 		return resources;
 	},
+
 
 	getDocumentResources( document:RDFDocument | RDFNode[] ):RDFNode[] {
 		return RDFDocument
@@ -114,10 +123,3 @@ export const RDFDocument:RDFDocumentFactory = {
 	},
 
 };
-
-
-export class RDFDocumentParser extends JSONLDParser implements Parser<RDFDocument[]> {
-	parse( input:string ):Promise<RDFDocument[]> {
-		return super.parse( input ).then( RDFDocument.getDocuments );
-	}
-}

@@ -1,5 +1,6 @@
 import { BaseDirectContainer } from "../LDP/DirectContainer";
-import { Pointer } from "../Pointer";
+
+import { Pointer } from "../Pointer/Pointer";
 
 
 export interface BaseAccessPoint extends BaseDirectContainer {

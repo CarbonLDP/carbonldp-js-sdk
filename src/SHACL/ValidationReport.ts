@@ -1,6 +1,8 @@
-import { ObjectSchema } from "../ObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
+
 import { ValidationResult } from "./ValidationResult";
 
 

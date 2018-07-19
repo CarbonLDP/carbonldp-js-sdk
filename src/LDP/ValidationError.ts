@@ -1,11 +1,15 @@
-import { ModelSchema } from "../core/ModelSchema";
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
-import { C } from "../Vocabularies";
+import { ModelSchema } from "../Model/ModelSchema";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { Resource } from "../Resource/Resource";
+
+import { C } from "../Vocabularies/C";
 
 
-export interface ValidationError extends TransientResource {
+export interface ValidationError extends Resource {
 	errorDetails:Pointer;
 }
 

@@ -1,16 +1,11 @@
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
+
 import * as Utils from "./../Utils";
 
 import { MapEntry } from "./MapEntry";
+
 
 describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 
@@ -20,7 +15,7 @@ describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 		"Entries of the `CarbonLDP.LDP.Map` with the key/value pair."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.TransientBlankNode" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

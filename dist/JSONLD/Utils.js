@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils_1 = require("../Utils");
 var XSD_1 = require("../Vocabularies/XSD");
-function guessXSDType(value) {
+function _guessXSDType(value) {
     if (Utils_1.isFunction(value))
         return null;
     if (Utils_1.isString(value))
@@ -15,6 +15,6 @@ function guessXSDType(value) {
         return XSD_1.XSD.boolean;
     return null;
 }
-exports.guessXSDType = guessXSDType;
+exports._guessXSDType = _guessXSDType;
 
 //# sourceMappingURL=Utils.js.map

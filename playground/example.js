@@ -1,10 +1,4 @@
 (function() {
-	function async( test ) {
-		return function( done ) {
-			test().then( done ).catch( done.fail );
-		};
-	}
-
 	const carbon1 = new CarbonLDP( "http://localhost:8083" );
 	const carbon2 = new CarbonLDP( "http://localhost:8083" );
 	const carbon3 = new CarbonLDP( "http://localhost:8083" );
@@ -55,6 +49,16 @@
 		"index": {
 			"@id": "ex:index",
 			"@type": "xsd:integer",
+		},
+		"myRelation": {
+			"@id": "ex:my-relation",
+			"@type": "@id",
+			"@container": "@set",
+		},
+		"myInverseRelation": {
+			"@id": "ex:my-inverse-relation",
+			"@type": "@id",
+			"@container": "@set",
 		}
 	} );
 	carbon1.extendObjectSchema( "ex:NestedChild", {
@@ -78,42 +82,46 @@
 		}
 	} );
 
-	xdescribe( "Tests >", () => {
+	describe( "Tests >", () => {
 		let childrenToCreate = 6;
 		let parent;
 		let children;
 		let child;
 
-		it( "can create a document", async( async function() {
-			let [ createdParent ] = await carbon1.documents.createChildAndRetrieve( "/", {
-				types: [ "ex:Parent" ]
-			} );
+		beforeAll( async function() {
+			parent = await carbon1.documents.create( { types: [ "ex:Parent" ] } );
+		} );
 
-			expect( Array.isArray( createdParent.types ) ).toBeTruthy();
+		afterAll( async function() {
+			if( ! parent ) return;
+			await parent.delete();
+		} );
 
-			parent = createdParent;
-		} ) );
 
-		it( `can create ${childrenToCreate} children`, async( async function() {
+		it( "can create a document", async function() {
+			expect( Array.isArray( parent.types ) ).toBeTruthy();
+		} );
+
+		it( `can create ${childrenToCreate} children`, async function() {
 			for( let i = 0; i < childrenToCreate; i ++ ) {
 				let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
 
-				await parent.createChild( {
+				await parent.create( {
 					types: [ "ex:Child", type ],
 					index: i + 1,
 				} );
 			}
-			expect().nothing();
-		} ) );
+			expect( null ).nothing();
+		} );
 
-		it( "can refresh the parent", async( async function() {
+		it( "can refresh the parent", async function() {
 			await parent.refresh();
 
 			expect( parent.contains.length ).toEqual( childrenToCreate );
-		} ) );
+		} );
 
-		it( "can retrieve all the children", async( async function() {
-			let [ retrievedChildren ] = await parent.getChildren();
+		it( "can retrieve all the children", async function() {
+			let retrievedChildren = await parent.getChildren();
 
 			expect( retrievedChildren.length ).toEqual( childrenToCreate );
 
@@ -127,34 +135,34 @@
 			}
 
 			children = retrievedChildren;
-		} ) );
+		} );
 
-		it( "can list the children", async( async function() {
-			const [ shallowChildren ] = await carbon3.documents.listChildren( parent.id );
+		it( "can list the children", async function() {
+			const shallowChildren = await carbon3.documents.listChildren( parent.$id );
 
 			expect( shallowChildren.length ).toEqual( childrenToCreate );
-		} ) );
+		} );
 
-		it( "can remove one member", async( async function() {
+		it( "can remove one member", async function() {
 			await parent.removeMember( children[ 0 ] );
 
-			expect().nothing();
-		} ) );
+			expect( null ).nothing();
+		} );
 
-		it( "can retrieve all the members", async( async function() {
-			let [ members ] = await parent.getMembers();
+		it( "can retrieve all the members", async function() {
+			let members = await parent.getMembers();
 
 			expect( members.length ).toEqual( childrenToCreate - 1 );
-		} ) );
+		} );
 
-		it( "can retrieve children of a specific type", async( async function() {
-			let [ filteredChildren ] = await parent.getChildren( _ => _.withType( "ex:Even" ) );
+		it( "can retrieve children of a specific type", async function() {
+			let filteredChildren = await parent.getChildren( _ => _.withType( "ex:Even" ) );
 
 			expect( filteredChildren.length ).toEqual( childrenToCreate / 2 );
-		} ) );
+		} );
 
-		it( "can retrieve children with a property that has a specific value", async( async function() {
-			let [ filteredChildren ] = await parent.getChildren( _ => _
+		it( "can retrieve children with a property that has a specific value", async function() {
+			let filteredChildren = await parent.getChildren( _ => _
 				.withType( "ex:Child" )
 				.properties( {
 					"index": {
@@ -168,22 +176,22 @@
 			expect( filteredChildren[ 0 ].index ).toEqual( 3 );
 
 			child = filteredChildren[ 0 ];
-		} ) );
+		} );
 
-		it( `can create nested documents`, async( async function() {
+		it( `can create nested documents`, async function() {
 			for( let i = 0; i < childrenToCreate; i ++ ) {
 				let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
 
-				await child.createChild( {
+				await child.create( {
 					types: [ "ex:NestedChild", type ],
 					index: i + 1,
 				} );
 			}
-			expect().nothing();
-		} ) );
+			expect( null ).nothing();
+		} );
 
-		it( `can retrieve nested documents`, async( async function() {
-			let [ childrenWithNestedDocuments ] = await carbon2.documents.getChildren( parent.id, _ => _
+		it( `can retrieve nested documents`, async function() {
+			let childrenWithNestedDocuments = await carbon2.documents.getChildren( parent.$id, _ => _
 				.withType( "ex:Child" )
 				.properties( {
 					"index": {
@@ -210,10 +218,10 @@
 			childWithNestedDocuments.contains.forEach( nestedDocument =>
 				expect( nestedDocument.index ).toBeDefined()
 			);
-		} ) );
+		} );
 
-		it( `can modify partial documents`, async( async function() {
-			let [ [ child ] ] = await carbon2.documents.getChildren( parent.id, _ => _
+		it( `can modify partial documents`, async function() {
+			let [ child ] = await carbon2.documents.getChildren( parent.$id, _ => _
 				.withType( "ex:Child" )
 				.properties( {
 					"index": {
@@ -228,238 +236,300 @@
 
 			await child.save();
 
-			const [ freshChild ] = await carbon2.documents.get( child.id );
+			const freshChild = await carbon2.documents.get( child.$id );
 
 			expect( freshChild.index ).toEqual( 100 );
 			expect( freshChild.somethingElse ).toEqual( "Hello world!" );
-		} ) );
-	} );
-
-	describe( "Auth Tests >", () => {
-
-		let app; // CarbonLDP
-		beforeEach( () => {
-			app = new CarbonLDP( "http://localhost:8083" );
+			expect( freshChild.modified ).toEqual( jasmine.any( Date ) );
 		} );
 
-		xdescribe( "When BASIC auth", () => {
 
-			let token;
-			beforeEach( () => {
-				token = CarbonLDP.Auth.AuthMethod.BASIC;
+		fdescribe( "Creations >", function() {
+
+			let doc;
+			afterEach( async function() {
+				if( ! doc ) return;
+				await doc.delete();
 			} );
 
-			it( "should add credentials", async () => {
-				const credentials = await app.auth.authenticateUsing( token, "user01", "pass01" );
 
-				expect( credentials ).toEqual( jasmine.objectContaining( {
-					username: "user01",
-					password: "pass01",
+			it( "should create object", async function() {
+				doc = await parent.create( {} );
+
+				expect( doc.$slug ).toMatch( /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i );
+			} );
+
+			it( "should create object with options", async function() {
+				doc = await parent.create( { the: "document" }, {} );
+
+				expect( doc.$slug ).toMatch( /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i );
+			} );
+
+			it( "should create object with slug", async function() {
+				doc = await parent.create( {}, "the-slug" );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+			} );
+
+			it( "should create object with slug and options", async function() {
+				doc = await parent.create( {}, "the-slug", {} );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+			} );
+
+
+			it( "should create and retrieve object", async function() {
+				doc = await parent.createAndRetrieve( {} );
+
+				expect( doc ).toEqual( {
+					created: jasmine.any( Date ),
+					modified: jasmine.any( Date ),
+					hasMemberRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:member" ),
+					} ),
+					insertedContentRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:MemberSubject" ),
+					} ),
+					membershipResource: doc,
+				} );
+			} );
+
+			it( "should create and retrieve object with slug", async function() {
+				doc = await parent.createAndRetrieve( {}, "the-slug" );
+
+				expect( doc ).toEqual( {
+					created: jasmine.any( Date ),
+					modified: jasmine.any( Date ),
+					hasMemberRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:member" ),
+					} ),
+					insertedContentRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:MemberSubject" ),
+					} ),
+					membershipResource: doc,
+				} );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+			} );
+
+
+			it( "should create object with @id", async function() {
+				doc = await parent.create( { $id: "the-slug/" } );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+			} );
+
+			it( "should create object with @id and slug", async function() {
+				doc = await parent.create( { $id: "the-slug/" }, "ignored-slug" );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+			} );
+
+
+			it( "should create access point", async function() {
+				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+					$id: "the-slug/",
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
 				} ) );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+
+				await parent.refresh();
+				expect( parent.accessPoints ).toContain( doc );
 			} );
 
-			it( "should get with BASIC auth", async () => {
-				await app.auth.authenticateUsing( token, "user01", "pass01" );
-				const doc = await app.documents.get( ".system/platform/" );
+			it( "should create access point with options", async function() {
+				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+					$id: "the-slug/",
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
+				} ), {} );
 
-				expect( doc ).toBeDefined()
+				expect( doc.$slug ).toBe( "the-slug" );
+
+				await parent.refresh();
+				expect( parent.accessPoints ).toContain( doc );
 			} );
 
-			it( "should unauthorized with BASIC auth", async () => {
-				try {
-					await app.auth.authenticateUsing( token, "user01", "incorrect-pass" );
-					fail( "should not reach here" );
-				} catch( e ) {
-					expect( e.response.status ).toBe( 401 );
-				}
+			it( "should create access point with slug", async function() {
+				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
+				} ), "the-slug" );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+
+				await parent.refresh();
+				expect( parent.accessPoints ).toContain( doc );
+			} );
+
+			it( "should create access point with slug and options", async function() {
+				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
+				} ), "the-slug", {} );
+
+				expect( doc.$slug ).toBe( "the-slug" );
+
+				await parent.refresh();
+				expect( parent.accessPoints ).toContain( doc );
+			} );
+
+
+			it( "should create object with nested objects", async function() {
+				doc = await parent.create( {
+					nested1: { index: 1 },
+					nested2: [ { index: 2 }, { index: 3 } ],
+				} );
+
+				expect( doc ).toEqual( {
+					nested1: { index: 1 },
+					nested2: [ { index: 2 }, { index: 3 } ],
+				} );
+			} );
+
+			it( "should create and retrieve object with nested", async function() {
+				const nested = { the: "nested one" };
+				doc = await parent.createAndRetrieve( { nested: nested } );
+
+				console.log( doc );
+				expect( doc ).toEqual( {
+					created: jasmine.any( Date ),
+					modified: jasmine.any( Date ),
+					hasMemberRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:member" ),
+					} ),
+					insertedContentRelation: jasmine.objectContaining( {
+						$id: carbon1.getObjectSchema().resolveURI( "ldp:MemberSubject" ),
+					} ),
+					membershipResource: doc,
+
+					nested: nested,
+				} );
+			} );
+
+			it( "should updated nested when refreshed", async function() {
+				const nested = { the: "nested one" };
+				doc = await parent.create( { nested: nested } );
+
+				const copy = await carbon2.documents.get( doc.$id );
+				copy.nested.the = "updated nested one";
+
+				await copy.save();
+
+				await doc.refresh();
+				expect( nested ).toEqual( { the: "updated nested one" } );
 			} );
 
 		} );
 
-		xdescribe( "When TOKEN auth", () => {
 
-			let token;
-			beforeEach( () => {
-				token = CarbonLDP.Auth.AuthMethod.TOKEN;
-			} );
+		describe( "AccessPoint >", function() {
 
-			let storedCredentials;
-			it( "should add credentials", async () => {
-				const credentials = await app.auth.authenticateUsing( token, "user01", "pass01" );
+			let accessPoint;
 
-				expect( credentials ).toEqual( jasmine.objectContaining( {
-					token: jasmine.any( String ),
-					expires: jasmine.any( Date ),
+			it( `can create an access point`, async function() {
+				accessPoint = await child.create( CarbonLDP.AccessPoint.create( {
+					hasMemberRelation: "ex:my-relation",
+					isMemberOfRelation: "ex:my-inverse-relation",
 				} ) );
 
-				storedCredentials = JSON.parse( JSON.stringify( credentials ) );
+				expect( null ).nothing();
 			} );
 
-			it( "should get with TOKEN auth", async () => {
-				await app.auth.authenticateUsing( token, "user01", "pass01" );
 
-				await app.documents.get( ".system/platform/" );
-				expect().nothing();
+			it( `should add a member from access point`, async function() {
+				const member = await parent.create( {
+					types: [ "ex:Child" ],
+					the: "member",
+				} );
+
+				await accessPoint.addMember( member );
+
+				await child.get();
+				await member.resolve();
+
+				expect( child.myRelation ).toEqual( [
+					member,
+				] );
+				expect( member.myInverseRelation ).toEqual( [
+					child,
+				] );
 			} );
 
-			it( "should resolve authenticated user", async () => {
-				await app.auth.authenticateUsing( token, "user01", "pass01" );
+			it( `should add members from access point`, async function() {
+				const members = [ ...Array( 5 ) ].map( ( _, i ) => ({
+					types: [ "ex:Child" ],
+					the: "member " + (i + 1),
+					index: i + 1,
+				}) );
+				await parent.create( members );
 
-				const user = await app.auth.authenticatedUser.resolve( _ => _
-					.properties( { name: _.inherit } )
+				await accessPoint.addMembers( members );
+
+				await child.get( { ensureLatest: true } );
+
+				await Promise.all( members
+					.map( async member => await member.resolve() )
 				);
 
-				expect( user ).toEqual( jasmine.objectContaining( {
-					name: jasmine.any( String ),
-				} ) );
-				console.log( user );
+				expect( child.myRelation ).toEqual( jasmine.arrayContaining( members ) );
+				expect( members[ 0 ].myInverseRelation ).toEqual( [
+					child,
+				] );
+				expect( members[ 1 ].myInverseRelation ).toEqual( [
+					child,
+				] );
 			} );
 
-			it( "should unauthorized with TOKEN auth", async () => {
-				try {
-					await app.auth.authenticateUsing( token, "user01", "incorrect-pass" );
-					fail( "should not reach here" );
-				} catch( e ) {
-					expect( e.response.status ).toBe( 401 );
+			it( `should remove member from access point`, async function() {
+				const members = await accessPoint.getMembers();
+
+				await accessPoint.removeMember( members[ 0 ] );
+
+				await child.refresh();
+				expect( child.myRelation.length ).toEqual( members.length - 1 );
+				expect( child.myRelation ).not.toContain( members[ 0 ] );
+
+				await members[ 0 ].refresh();
+				expect( members[ 0 ].myInverseRelation ).not.toBeDefined();
+			} );
+
+			it( `should remove members from access point`, async function() {
+				const members = await accessPoint.getMembers();
+
+				await accessPoint.removeMembers( [ members[ 0 ], members[ 1 ] ] );
+
+				await child.refresh();
+				expect( child.myRelation.length ).toEqual( members.length - 2 );
+				expect( child.myRelation.length ).not.toContain( members[ 0 ] );
+				expect( child.myRelation.length ).not.toContain( members[ 1 ] );
+
+				await Promise.all( members
+					.map( async member => await member.refresh() )
+				);
+
+				expect( members[ 0 ].myInverseRelation ).not.toBeDefined();
+				expect( members[ 1 ].myInverseRelation ).not.toBeDefined();
+			} );
+
+			it( `should remove all rest members from access point`, async function() {
+				const members = await accessPoint.getMembers();
+				expect( members.length ).toBeGreaterThan( 0, "The child document has no members left" );
+
+				await accessPoint.removeMembers();
+
+				await child.refresh();
+				expect( child.myRelation ).not.toBeDefined();
+
+				for( let member of members ) {
+					await member.refresh();
+					expect( member.myInverseRelation ).not.toBeDefined();
 				}
-			} );
-
-
-			it( "should authenticate with stored credentials", async () => {
-				const credentials = await app.auth.authenticateUsing( token, storedCredentials );
-
-				expect( credentials ).toEqual( jasmine.objectContaining( {
-					token: jasmine.any( String ),
-					expires: jasmine.any( Date ),
-				} ) );
-			} );
-
-
-			it( "should get with stored credentials", async () => {
-				await app.auth.authenticateUsing( token, storedCredentials );
-
-				await app.documents.get( ".system/platform/" );
-				expect().nothing();
-			} );
-
-			it( "should unauthorized with wrong stored credentials", async () => {
-				const credentials = Object.assign( {}, storedCredentials, { token: "wrong" } );
-
-				try {
-					await app.auth.authenticateUsing( token, credentials );
-					fail( "should not reach here" );
-				} catch( e ) {
-					expect( e.response.status ).toBe( 401 );
-				}
-			} );
-
-		} );
-
-		describe( "When Users", () => {
-			let user;
-
-			it( "should register user", async () => {
-				user = await app.auth
-					.users
-					.createChild( CarbonLDP.Auth.User.create( {
-						name: "User 02",
-						credentials: CarbonLDP.Auth.UsernameAndPasswordCredentials.create( {
-							username: "user02",
-							password: "pass02",
-						} ),
-					} ), "user02/" )
-				;
-
-				expect( CarbonLDP.Auth.PersistedUser.is( user ) ).toBe( true );
-
-				console.log( user );
-			} );
-
-			it( "should list users", async () => {
-				const users = await  app.auth
-					.users
-					.listChildren();
-
-				expect( users ).toEqual( jasmine.any( Array ) );
-				expect( users ).toContain( jasmine.objectContaining( {
-					id: app.resolve( "users/user02/" ),
-				} ) );
-
-				expect( users ).not.toContain( jasmine.objectContaining( {
-					id: app.resolve( "users/user02/" ),
-					name: "User 02",
-					created: jasmine.any( Date ),
-					modified: jasmine.any( Date ),
-				} ) );
-
-				const user = users.find( user => user.id === app.resolve( "users/user02/" ) );
-				expect( CarbonLDP.Auth.PersistedUser.is( user ) ).toBe( true );
-
-				console.log( users );
-			} );
-
-			it( "should get users", async () => {
-				const users = await  app.auth
-					.users
-					.getChildren();
-
-				expect( users ).toEqual( jasmine.any( Array ) );
-				expect( users ).toContain( jasmine.objectContaining( {
-					id: app.resolve( "users/user02/" ),
-					name: "User 02",
-					created: jasmine.any( Date ),
-					modified: jasmine.any( Date ),
-				} ) );
-
-				const user = users.find( user => user.id === app.resolve( "users/user02/" ) );
-				expect( CarbonLDP.Auth.PersistedUser.is( user ) ).toBe( true );
-
-				console.log( users );
-			} );
-
-			it( "should change username", async () => {
-				user.updateCredentials( "another-user" );
-				await user.saveAndRefresh();
-
-				await app.auth.authenticate( "another-user", "pass02" );
-
-				user.updateCredentials( "user02" );
-				await user.save();
-
-				expect().nothing();
-			} );
-
-			it( "should change password", async () => {
-				user.updateCredentials( null, "another-pass" );
-				await user.saveAndRefresh();
-
-				await app.auth.authenticate( "user02", "another-pass" );
-
-				user.updateCredentials( null, "pass02" );
-				await user.save();
-
-				expect().nothing();
-			} );
-
-			it( "should change username & password", async () => {
-				user.updateCredentials( "another-user", "another-pass" );
-				await user.saveAndRefresh();
-
-				await app.auth.authenticate( "another-user", "another-pass" );
-
-				user.updateCredentials( "user02", "pass02" );
-				await user.save();
-
-				expect().nothing();
-			} );
-
-			afterAll( async () => {
-				if( ! user ) return;
-				await app.documents.delete( user.id );
 			} );
 
 		} );
 
 	} );
-
 })();

@@ -1,6 +1,9 @@
-import * as Errors from "../../../Errors";
+import { IllegalArgumentError } from "../../../Errors/IllegalArgumentError";
+
 import { Serializer } from "../Serializer";
+
 import * as Utils from "./../../../Utils";
+
 
 function pad( value:number ):string {
 	let paddedValue:string = String( value );
@@ -12,7 +15,7 @@ const notNumberError:string = "The value is not a number.";
 
 export class DateSerializer implements Serializer {
 	serialize( value:any ):string {
-		if( ! Utils.isDate( value ) ) throw new Errors.IllegalArgumentError( "The value is not a Date object." );
+		if( ! Utils.isDate( value ) ) throw new IllegalArgumentError( "The value is not a Date object." );
 
 		return value.getUTCFullYear() + "-" + pad( (value.getUTCMonth() + 1) ) + "-" + pad( value.getUTCDate() );
 	}
@@ -22,7 +25,7 @@ export let dateSerializer:DateSerializer = new DateSerializer();
 
 export class DateTimeSerializer implements Serializer {
 	serialize( value:any ):string {
-		if( ! Utils.isDate( value ) ) throw new Errors.IllegalArgumentError( "The value is not a Date object." );
+		if( ! Utils.isDate( value ) ) throw new IllegalArgumentError( "The value is not a Date object." );
 
 		return value.toISOString();
 	}
@@ -32,7 +35,7 @@ export let dateTimeSerializer:DateTimeSerializer = new DateTimeSerializer();
 
 export class TimeSerializer implements Serializer {
 	serialize( value:any ):string {
-		if( ! Utils.isDate( value ) ) throw new Errors.IllegalArgumentError( "The value is not a Date object." );
+		if( ! Utils.isDate( value ) ) throw new IllegalArgumentError( "The value is not a Date object." );
 
 		return pad( value.getUTCHours() )
 			+ ":" + pad( value.getUTCMinutes() )
@@ -47,7 +50,7 @@ export let timeSerializer:TimeSerializer = new TimeSerializer();
 
 export class IntegerSerializer implements Serializer {
 	serialize( value:any ):string {
-		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( notNumberError );
+		if( ! Utils.isNumber( value ) ) throw new IllegalArgumentError( notNumberError );
 
 		// Negative truncate
 		return ( ~ ~ value ).toString();
@@ -58,7 +61,7 @@ export let integerSerializer:IntegerSerializer = new IntegerSerializer();
 
 export class LongSerializer implements Serializer {
 	serialize( value:any ):string {
-		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( notNumberError );
+		if( ! Utils.isNumber( value ) ) throw new IllegalArgumentError( notNumberError );
 		return Math.trunc( value ).toString();
 	}
 }
@@ -79,7 +82,7 @@ export let unsignedIntegerSerializer:UnsignedIntegerSerializer = new UnsignedInt
 
 export class UnsignedLongSerializer implements Serializer {
 	serialize( value:any ):string {
-		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( notNumberError );
+		if( ! Utils.isNumber( value ) ) throw new IllegalArgumentError( notNumberError );
 		return Math.trunc( Math.abs( value ) ).toString();
 	}
 }
@@ -90,7 +93,7 @@ export class FloatSerializer implements Serializer {
 	serialize( value:any ):string {
 		if( value === Number.POSITIVE_INFINITY ) return "INF";
 		if( value === Number.NEGATIVE_INFINITY ) return "-INF";
-		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( notNumberError );
+		if( ! Utils.isNumber( value ) ) throw new IllegalArgumentError( notNumberError );
 
 		return value.toString();
 	}

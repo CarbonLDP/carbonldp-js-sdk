@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = require("../../Document");
+var Document_1 = require("../../Document/Document");
 var TransientDirectContainer_1 = require("./TransientDirectContainer");
 exports.DirectContainer = {
     TYPE: TransientDirectContainer_1.TransientDirectContainer.TYPE,

@@ -1,29 +1,14 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC,
-} from "../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
+
 import * as Utils from "../Utils";
 
 import * as SPARQL from "./";
-
-import {
-	FinishSPARQLSelect,
-	SPARQLBuilder,
-} from "./Builder";
-import * as QueryDocument from "./QueryDocument";
-import {
-	SPARQLRawBindingObject,
-	SPARQLRawBindingProperty,
-	SPARQLRawResults,
-} from "./RawResults";
+import { SPARQLRawBindingObject, SPARQLRawBindingProperty, SPARQLRawResults } from "./RawResults";
 import { SPARQLRawResultsParser } from "./RawResultsParser";
-import {
-	SPARQLBindingObject,
-	SPARQLSelectResults,
-} from "./SelectResults";
-import { SPARQLService } from "./Service";
+import { SPARQLBindingObject, SPARQLSelectResults } from "./SelectResults";
+import { FinishSPARQLSelect, SPARQLBuilder } from "./SPARQLBuilder";
+import { SPARQLService } from "./SPARQLService";
+
 
 describe( module( "carbonldp/SPARQL" ), ():void => {
 
@@ -48,15 +33,6 @@ describe( module( "carbonldp/SPARQL" ), ():void => {
 	), ():void => {
 		const target:SPARQL.FinishSPARQLSelect = {} as FinishSPARQLSelect;
 		expect( target ).toBeDefined();
-	} );
-
-	it( reexports(
-		STATIC,
-		"QueryDocument",
-		"carbonldp/SPARQL/QueryDocument"
-	), ():void => {
-		expect( SPARQL.QueryDocument ).toBeDefined();
-		expect( SPARQL.QueryDocument ).toBe( QueryDocument );
 	} );
 
 	it( reexports(

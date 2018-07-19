@@ -6,6 +6,7 @@ import {
 	hasSignature,
 	INSTANCE,
 	isDefined,
+	method,
 	module,
 	STATIC,
 } from "../test/JasmineExtender";
@@ -27,35 +28,84 @@ describe( module( "carbonldp/HTTP/Header" ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Header ).toBeDefined();
-			expect( Utils.isFunction( Header ) ).toBe( true );
+			expect( Header ).toEqual( jasmine.any( Function ) );
 		} );
 
 		describe( constructor(), ():void => {
 
-			// TODO: Test empty constructor
-			it( hasSignature(), ():void => {} );
-
 			it( hasSignature( [
-				{ name: "values", type: "string[]" },
-			] ), ():void => {
-				let header:Header = new Header( valuesArray );
+				{ name: "values", type: "string | string[]", optional: true },
+			] ), ():void => {} );
 
-				expect( header ).toBeTruthy();
-				expect( header instanceof Header ).toBe( true );
+			it( "should accept empty params", () => {
+				const instance:Header = new Header();
+				expect( instance ).toEqual( jasmine.any( Header ) );
 			} );
 
-			it( hasSignature( [
-				{ name: "value", type: "string" },
-			] ), ():void => {
-				let header:Header = new Header( valuesString );
+			it( "should initialize empty values", () => {
+				const instance:Header = new Header();
+				expect( instance.values ).toEqual( [] );
+			} );
 
-				expect( header ).toBeTruthy();
-				expect( header instanceof Header ).toBe( true );
+
+			it( "should accept values string", () => {
+				const instance:Header = new Header( "a_value, another_value, last_value" );
+				expect( instance ).toEqual( jasmine.any( Header ) );
+			} );
+
+			it( "should initialize values from string", () => {
+				const instance:Header = new Header( "a_value, another_value, last_value" );
+				expect( instance.values ).toEqual( [
+					"a_value",
+					"another_value",
+					"last_value",
+				] );
+			} );
+
+
+			it( "should accept values array", () => {
+				const instance:Header = new Header( [ "a_value", "another_value" ] );
+				expect( instance ).toEqual( jasmine.any( Header ) );
+			} );
+
+			it( "should initialize values from array", () => {
+				const instance:Header = new Header( [ "a_value", "another_value" ] );
+				expect( instance.values ).toEqual( [ "a_value", "another_value" ] );
 			} );
 
 		} );
 
-		// TODO: Test `Header.hasValue`
+		describe( method( INSTANCE, "hasValue" ), () => {
+
+			it( hasSignature(
+				"Returns true if the values array contains the provided value.",
+				[
+					{ name: "value", type: "string" },
+				],
+				{ type: "boolean" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( Header.prototype.hasValue ).toBeDefined();
+				expect( Header.prototype.hasValue ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return true if has the value", () => {
+				const header:Header = new Header( [ "a_value", "another_value", "last_value" ] );
+
+				const returned:boolean = header.hasValue( "another_value" );
+				expect( returned ).toBe( true );
+			} );
+
+			it( "should return false if has NOT the value", () => {
+				const header:Header = new Header( [ "a_value", "another_value", "last_value" ] );
+
+				const returned:boolean = header.hasValue( "no_has_value" );
+				expect( returned ).toBe( false );
+			} );
+
+		} );
 
 		// TODO: Separate in different tests
 		it( hasMethod(
@@ -98,12 +148,8 @@ describe( module( "carbonldp/HTTP/Header" ), ():void => {
 			"string[]",
 			"Array that contains each value of the header."
 		), ():void => {
-			let header:Header = new Header( valuesArray );
-
-			expect( header.values ).toBeDefined();
-			expect( Utils.isArray( header.values ) ).toBe( true );
-
-			expect( header.values ).toEqual( valuesArray );
+			const target:Header[ "values" ] = [] as string[];
+			expect( target ).toBeDefined();
 		} );
 
 		// TODO: Separate in different tests

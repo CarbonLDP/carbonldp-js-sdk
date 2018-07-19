@@ -1,41 +1,16 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC,
-} from "../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
+
 import * as Utils from "../Utils";
 
 import * as RDF from "./";
 
-import {
-	RDFDocument,
-	RDFDocumentFactory,
-	RDFDocumentParser,
-} from "./Document";
-import {
-	RDFList,
-	RDFListFactory,
-} from "./List";
-import {
-	RDFLiteral,
-	RDFLiteralFactory,
-	Serializer,
-	Serializers,
-} from "./Literal";
-import {
-	RDFNode,
-	RDFNodeFactory,
-	RDFNodePropertyValue,
-} from "./Node";
-import {
-	URI,
-	URIFactory,
-} from "./URI";
-import {
-	RDFValue,
-	RDFValueFactory,
-} from "./Value";
+import { RDFDocument, RDFDocumentFactory } from "./Document";
+import { RDFList, RDFListFactory } from "./List";
+import { RDFLiteral, RDFLiteralFactory, Serializer, Serializers } from "./Literal";
+import { RDFNode, RDFNodeFactory, RDFNodePropertyValue } from "./Node";
+import { URI, URIFactory } from "./URI";
+import { RDFValue, RDFValueFactory } from "./Value";
+
 
 describe( module( "carbonldp/RDF" ), ():void => {
 
@@ -96,15 +71,6 @@ describe( module( "carbonldp/RDF" ), ():void => {
 	), ():void => {
 		const target:RDF.RDFDocumentFactory = {} as RDFDocumentFactory;
 		expect( target ).toBeDefined();
-	} );
-
-	it( reexports(
-		STATIC,
-		"RDFDocumentParser",
-		"CarbonLDP.RDF.RDFDocumentParser"
-	), ():void => {
-		expect( RDF.RDFDocumentParser ).toBeDefined();
-		expect( RDF.RDFDocumentParser ).toBe( RDFDocumentParser );
 	} );
 
 	it( reexports(

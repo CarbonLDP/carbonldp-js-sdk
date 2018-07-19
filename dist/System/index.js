@@ -4,5 +4,6 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./PlatformMetadata"));
+__export(require("./PlatformInstance"));
 
 //# sourceMappingURL=index.js.map

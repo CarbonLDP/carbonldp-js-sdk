@@ -1,5 +1,5 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Document } from "../Document";
+import { Document } from "../Document/Document";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { PlatformInstance } from "./PlatformInstance";
 export interface PlatformMetadata extends Document {
     instance: PlatformInstance;

@@ -1,4 +1,4 @@
-import { ObjectSchema } from "../ObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
 import { EventMessage } from "./EventMessage";
 export interface DocumentCreated extends EventMessage {

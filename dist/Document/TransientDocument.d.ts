@@ -1,39 +1,32 @@
-import { ModelDecorator } from "../core/ModelDecorator";
-import { ModelFactory } from "../core/ModelFactory";
-import { TransientFragment } from "../Fragment";
-import { JSONLDConverter } from "../JSONLD";
-import { TransientNamedFragment } from "../NamedFragment";
-import { ObjectSchemaResolver } from "../ObjectSchema";
-import { Pointer, PointerLibrary, PointerValidator } from "../Pointer";
-import { RDFDocument } from "../RDF";
-import { TransientResource } from "../Resource";
-import { C } from "../Vocabularies";
+import { Context } from "../Context/Context";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
+import { TransientFragment } from "../Fragment/TransientFragment";
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+import { Pointer } from "../Pointer/Pointer";
+import { RDFDocument } from "../RDF/Document";
+import { Registry } from "../Registry/Registry";
+import { Resource } from "../Resource/Resource";
 import { BaseDocument } from "./BaseDocument";
-export interface TransientDocument extends TransientResource, PointerLibrary, PointerValidator {
-    defaultInteractionModel?: Pointer;
-    isMemberOfRelation?: Pointer;
+export interface TransientDocument extends Resource, Registry<TransientFragment> {
+    $registry: DocumentsRegistry | undefined;
     hasMemberRelation?: Pointer;
-    _fragmentsIndex: Map<string, TransientFragment>;
-    _normalize(): void;
-    _removeFragment(slugOrFragment: string | TransientFragment): void;
-    hasFragment(slug: string): boolean;
-    getFragment<T>(slug: string): T & TransientFragment;
-    getNamedFragment<T>(slug: string): T & TransientNamedFragment;
+    isMemberOfRelation?: Pointer;
+    insertedContentRelation?: Pointer;
+    defaultInteractionModel?: Pointer;
+    hasFragment(id: string): boolean;
+    getFragment<T extends object>(id: string): (T & TransientFragment) | null;
     getFragments(): TransientFragment[];
-    createFragment<T>(object: T, slug?: string): T & TransientFragment;
-    createFragment(slug?: string): TransientFragment;
-    createNamedFragment<T>(object: T, slug: string): T & TransientNamedFragment;
-    createNamedFragment(slug: string): TransientNamedFragment;
-    removeNamedFragment(slugOrFragment: string | TransientNamedFragment): void;
-    toJSON(objectSchemaResolver?: ObjectSchemaResolver, jsonldConverter?: JSONLDConverter): RDFDocument;
+    createFragment<T extends object>(object: T, id?: string): T & TransientFragment;
+    createFragment(id?: string): TransientFragment;
+    removeFragment(slugOrFragment: string | TransientFragment): boolean;
+    _normalize(): void;
+    _getLocalID(id: string): string;
+    toJSON(contextOrKey?: Context | string): RDFDocument;
 }
-export interface TransientDocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
-    TYPE: C["Document"];
-    is(value: any): value is TransientDocument;
-    isDecorated(object: object): object is TransientDocument;
-    create<T extends object>(data?: T & BaseDocument): T & TransientDocument;
-    createFrom<T extends object>(object: T & BaseDocument): T & TransientDocument;
-    decorate<T extends object>(object: T): T & TransientDocument;
-    _convertNestedObjects(parent: TransientDocument, actual: any, fragmentsTracker?: Set<string>): void;
-}
+declare type OverriddenMembers = "$registry" | "_getLocalID" | "getPointer" | "toJSON";
+export declare type TransientDocumentFactory = ModelPrototype<TransientDocument, Resource & Registry<TransientFragment>, OverriddenMembers> & ModelDecorator<TransientDocument, BaseDocument> & ModelFactoryOptional<TransientDocument, BaseDocument> & ModelTypeGuard<TransientDocument>;
 export declare const TransientDocument: TransientDocumentFactory;
+export {};

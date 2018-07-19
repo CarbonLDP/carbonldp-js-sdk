@@ -1,11 +1,5 @@
-import {
-	extendsClass,
-	hasMethod,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-} from "../../test/JasmineExtender";
+import { extendsClass, hasMethod, interfaze, isDefined, module, OBLIGATORY } from "../../test/JasmineExtender";
+
 import * as Utils from "./../../Utils";
 
 import * as Serializer from "./Serializer";

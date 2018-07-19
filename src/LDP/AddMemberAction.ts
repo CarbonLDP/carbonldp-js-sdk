@@ -1,11 +1,13 @@
-import { ModelFactory } from "../core/ModelFactory";
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import {
-	BaseResource,
-	TransientResource
-} from "../Resource";
-import { C } from "../Vocabularies";
+import { ModelFactory } from "../Model/ModelFactory";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { BaseResource } from "../Resource/BaseResource";
+import { Resource } from "../Resource/Resource";
+
+import { C } from "../Vocabularies/C";
 
 
 export interface BaseAddMemberAction extends BaseResource {
@@ -13,7 +15,7 @@ export interface BaseAddMemberAction extends BaseResource {
 }
 
 
-export interface AddMemberAction extends TransientResource {
+export interface AddMemberAction extends Resource {
 	targetMembers:Pointer[];
 }
 
@@ -43,8 +45,8 @@ export const AddMemberAction:AddMemberActionFactory = {
 	SCHEMA,
 
 	is( value:any ):value is AddMemberAction {
-		return TransientResource.is( value )
-			&& value.hasOwnProperty( "targetMembers" )
+		return Resource.is( value )
+			&& value.hasType( AddMemberAction.TYPE )
 			;
 	},
 
@@ -55,7 +57,7 @@ export const AddMemberAction:AddMemberActionFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseAddMemberAction ):T & AddMemberAction {
-		const resource:T & AddMemberAction = TransientResource.createFrom( object );
+		const resource:T & AddMemberAction = Resource.createFrom( object );
 
 		resource.addType( AddMemberAction.TYPE );
 

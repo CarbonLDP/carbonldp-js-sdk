@@ -1,98 +1,92 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Utils = __importStar(require("../Utils"));
-var TransientResource_1 = require("./TransientResource");
-function syncSnapshot() {
-    this._snapshot = Utils.ObjectUtils.clone(this, { arrays: true });
-    this._snapshot.id = this.id;
-    this._snapshot.types = this.types.slice();
+var JSONLDConverter_1 = require("../JSONLD/JSONLDConverter");
+var ModelDecorator_1 = require("../Model/ModelDecorator");
+var DigestedObjectSchema_1 = require("../ObjectSchema/DigestedObjectSchema");
+var Pointer_1 = require("../Pointer/Pointer");
+var URI_1 = require("../RDF/URI");
+var RegisteredPointer_1 = require("../Registry/RegisteredPointer");
+var Utils_1 = require("../Utils");
+function __getContext(registry) {
+    if (!registry)
+        return;
+    if ("$context" in registry && registry.$context)
+        return registry.$context;
+    return __getContext(registry.$registry);
 }
-function isDirty() {
-    if (!Utils.ObjectUtils.areEqual(this, this._snapshot, { arrays: true }))
-        return true;
-    var response = false;
-    if ("id" in this)
-        response = response || this._snapshot.id !== this.id;
-    if ("types" in this)
-        response = response || !Utils.ObjectUtils.areEqual(this._snapshot.types, this.types);
-    return response;
-}
-function revert() {
-    for (var _i = 0, _a = Object.keys(this); _i < _a.length; _i++) {
-        var key = _a[_i];
-        if (!(key in this._snapshot))
-            delete this[key];
-    }
-    Utils.ObjectUtils.extend(this, this._snapshot, { arrays: true });
-}
-function isPartial() {
-    return !!this._partialMetadata;
+function __resolveURI(resource, uri) {
+    if (URI_1.URI.isAbsolute(uri))
+        return uri;
+    var context = __getContext(resource.$registry);
+    if (!context)
+        return uri;
+    return context
+        .getObjectSchema()
+        .resolveURI(uri, { vocab: true });
 }
 exports.Resource = {
+    PROTOTYPE: {
+        get types() { return []; },
+        get $slug() {
+            if (URI_1.URI.isBNodeID(this.$id))
+                return this.$id;
+            return URI_1.URI.getSlug(this.$id);
+        },
+        set $slug(slug) { },
+        addType: function (type) {
+            type = __resolveURI(this, type);
+            if (this.types.indexOf(type) !== -1)
+                return;
+            this.types.push(type);
+        },
+        hasType: function (type) {
+            type = __resolveURI(this, type);
+            return this.types.indexOf(type) !== -1;
+        },
+        removeType: function (type) {
+            type = __resolveURI(this, type);
+            var index = this.types.indexOf(type);
+            if (index !== -1)
+                this.types.splice(index, 1);
+        },
+        toJSON: function (contextOrKey) {
+            var context = typeof contextOrKey === "object" ?
+                contextOrKey : __getContext(this.$registry);
+            var generalSchema = context ?
+                context.registry.getGeneralSchema() : new DigestedObjectSchema_1.DigestedObjectSchema();
+            var resourceSchema = context && context.registry ?
+                context.registry.getSchemaFor(this) : generalSchema;
+            var jsonldConverter = context ?
+                context.jsonldConverter : new JSONLDConverter_1.JSONLDConverter();
+            return jsonldConverter.expand(this, generalSchema, resourceSchema);
+        },
+    },
     isDecorated: function (object) {
-        return (Utils.hasPropertyDefined(object, "_snapshot")
-            && Utils.hasFunction(object, "_syncSnapshot")
-            && Utils.hasFunction(object, "isDirty")
-            && Utils.hasFunction(object, "isPartial")
-            && Utils.hasFunction(object, "revert"));
+        return Utils_1.isObject(object)
+            && ModelDecorator_1.ModelDecorator
+                .hasPropertiesFrom(exports.Resource.PROTOTYPE, object);
+    },
+    is: function (value) {
+        return Pointer_1.Pointer.is(value)
+            && exports.Resource.isDecorated(value);
+    },
+    create: function (data) {
+        var clone = Object.assign({}, data);
+        return exports.Resource.createFrom(clone);
+    },
+    createFrom: function (object) {
+        return exports.Resource.decorate(object);
     },
     decorate: function (object) {
         if (exports.Resource.isDecorated(object))
             return object;
-        TransientResource_1.TransientResource.decorate(object);
-        var persistedResource = object;
-        Object.defineProperties(persistedResource, {
-            "_snapshot": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: {},
-            },
-            "_syncSnapshot": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: syncSnapshot,
-            },
-            "_partialMetadata": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-            },
-            "isDirty": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: isDirty,
-            },
-            "revert": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: revert,
-            },
-            "isPartial": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: isPartial,
-            },
-        });
-        return persistedResource;
+        if (!object.hasOwnProperty("$registry"))
+            object.$registry = void 0;
+        var resource = ModelDecorator_1.ModelDecorator
+            .decorateMultiple(object, RegisteredPointer_1.RegisteredPointer);
+        return ModelDecorator_1.ModelDecorator
+            .definePropertiesFrom(exports.Resource.PROTOTYPE, resource);
     },
-    is: function (value) {
-        return TransientResource_1.TransientResource.is(value)
-            && exports.Resource.isDecorated(value);
-    },
-    create: TransientResource_1.TransientResource.create,
-    createFrom: TransientResource_1.TransientResource.createFrom,
 };
 
 //# sourceMappingURL=Resource.js.map

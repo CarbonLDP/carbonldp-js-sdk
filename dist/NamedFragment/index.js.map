@@ -1,1 +1,0 @@
-{"version":3,"sources":["NamedFragment/index.ts"],"names":[],"mappings":";;;;;AACA,qCAAgC;AAChC,8CAAyC","file":"index.js","sourcesContent":["export * from \"./BaseNamedFragment\";\nexport * from \"./NamedFragment\";\nexport * from \"./TransientNamedFragment\";\n"]}

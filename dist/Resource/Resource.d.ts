@@ -1,16 +1,20 @@
-import { PartialMetadata } from "../SPARQL/QueryDocument";
-import { TransientResource, TransientResourceFactory } from "./TransientResource";
-export interface Resource extends TransientResource {
-    _snapshot: TransientResource;
-    _partialMetadata?: PartialMetadata;
-    _syncSnapshot(): void;
-    isDirty(): boolean;
-    revert(): void;
-    isPartial(): boolean;
+import { Context } from "../Context/Context";
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+import { RDFNode } from "../RDF/Node";
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+import { Registry } from "../Registry/Registry";
+import { BaseResource } from "./BaseResource";
+export interface Resource extends RegisteredPointer {
+    types: string[];
+    $registry: Registry<RegisteredPointer> | undefined;
+    $slug: string;
+    addType(type: string): void;
+    hasType(type: string): boolean;
+    removeType(type: string): void;
+    toJSON(contextOrKey: Context | string): RDFNode;
 }
-export interface ResourceFactory extends TransientResourceFactory {
-    isDecorated(object: object): object is Resource;
-    decorate<T extends object>(object: T): T & Resource;
-    is(value: any): value is Resource;
-}
+export declare type ResourceFactory = ModelPrototype<Resource, RegisteredPointer> & ModelDecorator<Resource, BaseResource> & ModelFactoryOptional<Resource> & ModelTypeGuard<Resource>;
 export declare const Resource: ResourceFactory;

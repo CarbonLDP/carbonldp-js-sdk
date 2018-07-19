@@ -15,45 +15,44 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
-var AbstractContext_1 = require("./AbstractContext");
-var Auth = __importStar(require("./Auth"));
-var Document_1 = require("./Document");
-var Documents_1 = require("./Documents");
+var AccessPoint_1 = require("./AccessPoint/AccessPoint");
+var TransientAccessPoint_1 = require("./AccessPoint/TransientAccessPoint");
+var AbstractContext_1 = require("./Context/AbstractContext");
+var DocumentsContext_1 = require("./Context/DocumentsContext");
+var GlobalContext_1 = require("./Context/GlobalContext");
+var Document_1 = require("./Document/Document");
 var Errors = __importStar(require("./Errors"));
-var Fragment_1 = require("./Fragment");
-var FreeResources_1 = require("./FreeResources");
+var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
+var Fragment_1 = require("./Fragment/Fragment");
+var TransientFragment_1 = require("./Fragment/TransientFragment");
+var FreeResources_1 = require("./FreeResources/FreeResources");
 var HTTP = __importStar(require("./HTTP"));
 var JSONLD = __importStar(require("./JSONLD"));
 var LDP = __importStar(require("./LDP"));
 var LDPatch = __importStar(require("./LDPatch"));
 var Messaging = __importStar(require("./Messaging"));
-var NamedFragment_1 = require("./NamedFragment");
-var ObjectSchema_1 = require("./ObjectSchema");
-var Pointer_1 = require("./Pointer");
-var ProtectedDocument_1 = require("./ProtectedDocument");
+var ContainerType_1 = require("./ObjectSchema/ContainerType");
+var DigestedObjectSchema_1 = require("./ObjectSchema/DigestedObjectSchema");
+var DigestedObjectSchemaProperty_1 = require("./ObjectSchema/DigestedObjectSchemaProperty");
+var ObjectSchemaDigester_1 = require("./ObjectSchema/ObjectSchemaDigester");
+var ObjectSchemaUtils_1 = require("./ObjectSchema/ObjectSchemaUtils");
+var PointerType_1 = require("./ObjectSchema/PointerType");
+var Pointer_1 = require("./Pointer/Pointer");
 var RDF = __importStar(require("./RDF"));
-var Resource_1 = require("./Resource");
-var SDKContext_1 = require("./SDKContext");
-var ServiceAwareDocument_1 = require("./ServiceAwareDocument");
+var Resource_1 = require("./Resource/Resource");
 var SHACL = __importStar(require("./SHACL"));
 var SPARQL = __importStar(require("./SPARQL"));
 var System = __importStar(require("./System"));
-var AccessPoint_1 = require("./AccessPoint");
-var BlankNode_1 = require("./BlankNode");
-var Document_2 = require("./Document");
-var Fragment_2 = require("./Fragment");
-var NamedFragment_2 = require("./NamedFragment");
-var ProtectedDocument_2 = require("./ProtectedDocument");
 var Utils = __importStar(require("./Utils"));
 var Vocabularies = __importStar(require("./Vocabularies"));
 var CarbonLDP = (function (_super) {
     __extends(CarbonLDP, _super);
     function CarbonLDP(urlOrSettings) {
-        var _this = _super.call(this) || this;
-        _this.settings = {
+        var _this = _super.call(this, __getURLFrom(urlOrSettings)) || this;
+        _this._settings = {
             vocabulary: "vocabularies/main/#",
             paths: {
                 system: {
@@ -72,37 +71,12 @@ var CarbonLDP = (function (_super) {
                 },
             },
         };
-        if (Utils.isString(urlOrSettings)) {
-            if (!RDF.URI.hasProtocol(urlOrSettings))
-                throw new Errors.IllegalArgumentError("The URL must contain a valid protocol: \"http://\", \"https://\".");
-            _this._baseURI = urlOrSettings;
-        }
-        else {
-            if (!Utils.isString(urlOrSettings.host))
-                throw new Errors.IllegalArgumentError("The settings object must contains a valid host string.");
-            if (iri_1.hasProtocol(urlOrSettings.host))
-                throw new Errors.IllegalArgumentError("The host must not contain a protocol.");
-            if (urlOrSettings.host.includes(":"))
-                throw new Errors.IllegalArgumentError("The host must not contain a port.");
-            _this._baseURI = "" + (urlOrSettings.ssl === false ? "http://" : "https://") + urlOrSettings.host;
-            if (Utils.isNumber(urlOrSettings.port)) {
-                if (_this._baseURI.endsWith("/"))
-                    _this._baseURI = _this._baseURI.slice(0, -1);
-                _this._baseURI += ":" + urlOrSettings.port;
-            }
-            urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
-            var paths = mergePaths(_this.settings.paths, urlOrSettings.paths);
-            _this.settings = Utils.ObjectUtils.extend(_this.settings, urlOrSettings);
-            _this.settings.paths = paths;
-        }
-        if (!_this._baseURI.endsWith("/"))
-            _this._baseURI = _this._baseURI + "/";
-        _this.auth = new Auth.AuthService(_this);
-        _this.messaging = new Messaging.MessagingService(_this);
+        _this._extendsSettings(__getSettingsFrom(urlOrSettings));
+        _this.documents = _this.registry.getPointer(_this._baseURI, true);
         return _this;
     }
     Object.defineProperty(CarbonLDP, "version", {
-        get: function () { return "1.0.0-alpha.18"; },
+        get: function () { return "5.0.0-alpha.1"; },
         enumerable: true,
         configurable: true
     });
@@ -119,84 +93,66 @@ var CarbonLDP = (function (_super) {
         });
     };
     CarbonLDP.AbstractContext = AbstractContext_1.AbstractContext;
-    CarbonLDP.TransientAccessPoint = AccessPoint_1.TransientAccessPoint;
-    CarbonLDP.Auth = Auth;
-    CarbonLDP.TransientBlankNode = BlankNode_1.TransientBlankNode;
-    CarbonLDP.TransientDocument = Document_2.TransientDocument;
-    CarbonLDP.Documents = Documents_1.Documents;
+    CarbonLDP.AccessPoint = AccessPoint_1.AccessPoint;
+    CarbonLDP.TransientAccessPoint = TransientAccessPoint_1.TransientAccessPoint;
     CarbonLDP.Errors = Errors;
-    CarbonLDP.TransientFragment = Fragment_2.TransientFragment;
     CarbonLDP.FreeResources = FreeResources_1.FreeResources;
     CarbonLDP.HTTP = HTTP;
     CarbonLDP.JSONLD = JSONLD;
     CarbonLDP.LDP = LDP;
     CarbonLDP.LDPatch = LDPatch;
     CarbonLDP.Messaging = Messaging;
-    CarbonLDP.TransientNamedFragment = NamedFragment_2.TransientNamedFragment;
     CarbonLDP.Vocabularies = Vocabularies;
-    CarbonLDP.ObjectSchemaUtils = ObjectSchema_1.ObjectSchemaUtils;
-    CarbonLDP.ObjectSchemaDigester = ObjectSchema_1.ObjectSchemaDigester;
-    CarbonLDP.DigestedObjectSchemaProperty = ObjectSchema_1.DigestedObjectSchemaProperty;
-    CarbonLDP.PointerType = ObjectSchema_1.PointerType;
-    CarbonLDP.ContainerType = ObjectSchema_1.ContainerType;
-    CarbonLDP.DigestedObjectSchema = ObjectSchema_1.DigestedObjectSchema;
+    CarbonLDP.ObjectSchemaUtils = ObjectSchemaUtils_1.ObjectSchemaUtils;
+    CarbonLDP.ObjectSchemaDigester = ObjectSchemaDigester_1.ObjectSchemaDigester;
+    CarbonLDP.DigestedObjectSchemaProperty = DigestedObjectSchemaProperty_1.DigestedObjectSchemaProperty;
+    CarbonLDP.PointerType = PointerType_1.PointerType;
+    CarbonLDP.ContainerType = ContainerType_1.ContainerType;
+    CarbonLDP.DigestedObjectSchema = DigestedObjectSchema_1.DigestedObjectSchema;
     CarbonLDP.Document = Document_1.Document;
     CarbonLDP.Fragment = Fragment_1.Fragment;
-    CarbonLDP.NamedFragment = NamedFragment_1.NamedFragment;
-    CarbonLDP.ProtectedDocument = ProtectedDocument_1.ProtectedDocument;
-    CarbonLDP.Resource = Resource_1.Resource;
+    CarbonLDP.TransientFragment = TransientFragment_1.TransientFragment;
     CarbonLDP.Pointer = Pointer_1.Pointer;
-    CarbonLDP.TransientProtectedDocument = ProtectedDocument_2.TransientProtectedDocument;
     CarbonLDP.RDF = RDF;
-    CarbonLDP.TransientResource = Resource_1.TransientResource;
-    CarbonLDP.SDKContext = SDKContext_1.SDKContext;
-    CarbonLDP.globalContext = SDKContext_1.globalContext;
-    CarbonLDP.ServiceAwareDocument = ServiceAwareDocument_1.ServiceAwareDocument;
+    CarbonLDP.TransientResource = Resource_1.Resource;
+    CarbonLDP.GlobalContext = GlobalContext_1.GlobalContext;
     CarbonLDP.SHACL = SHACL;
     CarbonLDP.SPARQL = SPARQL;
     CarbonLDP.System = System;
     CarbonLDP.Utils = Utils;
     return CarbonLDP;
-}(AbstractContext_1.AbstractContext));
+}(DocumentsContext_1.DocumentsContext));
 exports.CarbonLDP = CarbonLDP;
-function mergePaths(target, source) {
-    if (!source)
-        return target;
-    if (!target)
-        return Utils.ObjectUtils.clone(source, { objects: true });
-    for (var _i = 0, _a = Object.keys(source); _i < _a.length; _i++) {
-        var key = _a[_i];
-        var sourcePath = source[key];
-        if (sourcePath === null) {
-            delete target[key];
-            continue;
-        }
-        var targetPath = target[key];
-        if (!targetPath) {
-            target[key] = Utils.isObject(sourcePath) ?
-                Utils.ObjectUtils.clone(sourcePath, { objects: true }) :
-                sourcePath;
-            continue;
-        }
-        if (Utils.isString(sourcePath)) {
-            if (Utils.isObject(targetPath)) {
-                targetPath.slug = sourcePath;
-            }
-            else {
-                target[key] = sourcePath;
-            }
-            continue;
-        }
-        if (sourcePath.slug === void 0 && sourcePath.paths === void 0)
-            continue;
-        var targetDocPaths = Utils.isString(targetPath) ?
-            target[key] = { slug: targetPath } : targetPath;
-        if (sourcePath.slug !== void 0)
-            targetDocPaths.slug = sourcePath.slug;
-        if (sourcePath.paths !== void 0)
-            targetDocPaths.paths = mergePaths(targetDocPaths.paths, sourcePath.paths);
-    }
-    return target;
+function __getURLFrom(urlOrSettings) {
+    return Utils.isString(urlOrSettings) ?
+        __getURLFromString(urlOrSettings) :
+        __getURLFromSettings(urlOrSettings);
+}
+function __getURLFromString(url) {
+    if (!RDF.URI.hasProtocol(url))
+        throw new IllegalArgumentError_1.IllegalArgumentError("The URL must contain a valid protocol: \"http://\", \"https://\".");
+    if (url.endsWith("/"))
+        return url;
+    return url + "/";
+}
+function __getURLFromSettings(settings) {
+    if (!Utils.isString(settings.host))
+        throw new IllegalArgumentError_1.IllegalArgumentError("The settings object must contains a valid host string.");
+    if (iri_1.hasProtocol(settings.host))
+        throw new IllegalArgumentError_1.IllegalArgumentError("The host must not contain a protocol.");
+    if (settings.host.includes(":"))
+        throw new IllegalArgumentError_1.IllegalArgumentError("The host must not contain a port.");
+    var protocol = settings.ssl === false ? "http://" : "https://";
+    var host = settings.host.endsWith("/") ? settings.host.slice(0, -1) : settings.host;
+    var url = "" + protocol + host + "/";
+    if (!Utils.isNumber(settings.port))
+        return url;
+    return url.slice(0, -1) + (":" + settings.port + "/");
+}
+function __getSettingsFrom(urlOrSettings) {
+    if (Utils.isString(urlOrSettings))
+        return {};
+    return Object.assign({}, urlOrSettings, { ssl: null, host: null, port: null });
 }
 
 //# sourceMappingURL=CarbonLDP.js.map

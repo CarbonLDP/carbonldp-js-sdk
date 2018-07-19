@@ -1,11 +1,11 @@
-export * from "./AddMemberAction";
+export { AddMemberAction } from "./AddMemberAction";
 export * from "./Error";
 export * from "./Map";
 export * from "./MapEntry";
 export * from "./DirectContainer";
 export * from "./DocumentMetadata";
 export * from "./ErrorResponse";
-export * from "./RemoveMemberAction";
+export { RemoveMemberAction } from "./RemoveMemberAction";
 export * from "./ResponseMetadata";
 export * from "./ValidationError";
 export * from "./VolatileResource";

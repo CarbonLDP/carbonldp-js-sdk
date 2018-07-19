@@ -1,17 +1,11 @@
-import {
-	clazz,
-	extendsClass,
-	hasConstructor,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-} from "./../test/JasmineExtender";
+import { clazz, extendsClass, hasConstructor, hasProperty, INSTANCE, isDefined, module } from "../test/JasmineExtender";
+
 import * as Utils from "./../Utils";
 
 import { AbstractError } from "./AbstractError";
 
 import * as NotImplementedError from "./NotImplementedError";
+
 
 // TODO: Refactor tests
 describe( module( "carbonldp/Errors/NotImplementedError" ), ():void => {

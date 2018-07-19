@@ -1,13 +1,9 @@
-import {
-	clazz,
-	hasMethod,
-	INSTANCE,
-	isDefined,
-	module,
-} from "../test/JasmineExtender";
+import { clazz, hasMethod, INSTANCE, isDefined, module } from "../test/JasmineExtender";
+
 import * as Utils from "./../Utils";
 
 import * as StringParser from "./StringParser";
+
 
 describe( module( "carbonldp/HTTP/StringParser" ), ():void => {
 

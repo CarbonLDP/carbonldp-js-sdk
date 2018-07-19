@@ -1,23 +1,17 @@
-import { AbstractContext } from "../AbstractContext";
-import { Documents } from "../Documents";
-import {
-	IDAlreadyInUseError,
-	IllegalArgumentError
-} from "../Errors";
-import {
-	Fragment,
-	TransientFragment,
-} from "../Fragment";
-import { RequestOptions } from "../HTTP";
-import {
-	NamedFragment,
-	TransientNamedFragment,
-} from "../NamedFragment";
-import { Pointer } from "../Pointer";
-import { URI } from "../RDF";
+import { createNonEnumerable } from "../../test/helpers/miscellaneous";
+
+import { DocumentsContext } from "../Context/DocumentsContext";
+
+import { Fragment } from "../Fragment/Fragment";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelSchema } from "../Model/ModelSchema";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
 import {
 	extendsClass,
-	hasMethod,
 	hasProperty,
 	hasSignature,
 	interfaze,
@@ -29,24 +23,79 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { BaseAccessPoint } from "../AccessPoint";
-import * as Utils from "../Utils";
+
+import { C } from "../Vocabularies/C";
+
 import { BaseDocument } from "./BaseDocument";
-import { Document } from "./Document";
+import { BaseResolvableDocument, Document, DocumentFactory } from "./Document";
+
+import { EventEmitterDocumentTrait } from "./Traits/EventEmitterDocumentTrait";
+import { QueryableDocumentTrait } from "./Traits/QueryableDocumentTrait";
+import { SPARQLDocumentTrait } from "./Traits/SPARQLDocumentTrait";
 import { TransientDocument } from "./TransientDocument";
 
 
 describe( module( "carbonldp/Document" ), ():void => {
 
+	let $context:DocumentsContext;
+	beforeEach( ():void => {
+		$context = new DocumentsContext( "https://example.com/" );
+	} );
+
+
 	describe( interfaze(
 		"CarbonLDP.Document",
-		"Interface that represents a persisted blank node of a persisted document."
+		"Interface that represents a c:Document of a Carbon LDP instance."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.ServiceAwareDocument" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.Messaging.MessagingDocument" ), ():void => {} );
+		function createMock<T extends object>( data?:T & Partial<Document> ):T & Document {
+			const mock:T & Document = Document.decorate( Object.assign<BaseResolvableDocument, typeof data>( {
+				$registry: $context.registry,
+				$repository: $context.repository,
+				$id: "https://example.com/",
+			}, data ) );
+
+			mock._normalize();
+
+			return mock;
+		}
+
+
+		it( extendsClass( "CarbonLDP.Document.Traits.QueryableDocumentTrait" ), ():void => {
+			const target:QueryableDocumentTrait = {} as Document;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Document.Traits.SPARQLDocumentTrait" ), ():void => {
+			const target:SPARQLDocumentTrait = {} as Document;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Document.Traits.EventEmitterDocumentTrait" ), ():void => {
+			const target:EventEmitterDocumentTrait = {} as Document;
+			expect( target ).toBeDefined();
+		} );
+
+
+		it( hasProperty(
+			OBLIGATORY,
+			"__modelDecorator",
+			"CarbonLDP.Model.ModelDecorator<CarbonLDP.Fragment>"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"__resourcesMap",
+			"Map<string, CarbonLDP.Fragment>"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"__savedFragments",
+			"CarbonLDP.Fragment[]",
+			"Array with a copy of every fragment that that is currently persisted in the server."
+		), ():void => {} );
+
 
 		it( hasProperty(
 			OPTIONAL,
@@ -83,541 +132,419 @@ describe( module( "carbonldp/Document" ), ():void => {
 			"A Pointer with the inverted relation the document."
 		), ():void => {} );
 
+
 		it( hasProperty(
 			OPTIONAL,
 			"accessPoints",
-			"CarbonLDP.Pointer[]",
+			"CarbonLDP.Document[]",
 			"Array with the access points of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"contains",
-			"CarbonLDP.Pointer",
+			"CarbonLDP.Document",
 			"Array with the children of the document."
 		), ():void => {} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"_eTag",
-			"string",
-			"The ETag (entity tag) of the persisted document."
-		), ():void => {} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"_fragmentsIndex",
-			"Map<string, CarbonLDP.Fragment>",
-			"Map that stores the persisted fragments (named fragments and blank nodes) of the document."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"_savedFragments",
-			"CarbonLDP.Fragment[]",
-			"Array with a copy of every fragment that that is currently persisted in the server."
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"_syncSavedFragments",
-			"Set all the current fragments in the document as fragments that are saved in the server."
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"isLocallyOutDated",
-			"Returns true when the document contains data of multiple requests with different versions of the resource."
-		), ():void => {} );
-
-		describe( method(
-			OBLIGATORY,
-			"createFragment"
-		), ():void => {
+		describe( method( OBLIGATORY, "getPointer" ), () => {
 
 			it( hasSignature(
-				[ "T extends object" ],
-				"Creates a Fragment from the object provided and the slug specified.", [
+				[
+					{ name: "id", type: "string", description: "ID to return its pointer representation." },
+				],
+				{ type: "CarbonLDP.RegisteredPointer" }
+			), () => {} );
+
+			it( hasSignature(
+				[
+					{ name: "id", type: "string", description: "ID to check its existence." },
+					{ name: "local", type: "true", description: "Flag to ignore hierarchy and only return pointers from the current registry." },
+				],
+				{ type: "CarbonLDP.Fragment" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				const registry:Document = createMock();
+
+				expect( registry.getPointer ).toBeDefined();
+				expect( registry.getPointer ).toEqual( jasmine.any( Function ) );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "getPointers" ), () => {
+
+			it( hasSignature(
+				"Returns all the pointers stored the registry hierarchy.",
+				{ type: "CarbonLDP.RegisteredPointer[]" }
+			), () => {} );
+
+			it( hasSignature(
+				"Returns all the pointers stored in the current registry.",
+				[
+					{ name: "local", type: "true", description: "Flag to ignore hierarchy and only return pointers from the current registry." },
+				],
+				{ type: "CarbonLDP.Fragment[]" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				const registry:Document = createMock();
+
+				expect( registry.getPointers ).toBeDefined();
+				expect( registry.getPointers ).toEqual( jasmine.any( Function ) );
+			} );
+
+		} );
+
+
+		describe( method( OBLIGATORY, "getFragment" ), () => {
+
+			it( hasSignature(
+				[ "T" ],
+				{ type: "T & CarbonLDP.Fragment" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				const document:Document = createMock();
+
+				expect( document.getFragment ).toBeDefined();
+				expect( document.getFragment ).toEqual( jasmine.any( Function ) );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "getFragments" ), () => {
+
+			it( hasSignature(
+				"Returns an array with all the fragments in the Document.",
+				{ type: "CarbonLDP.Fragment[]" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				const document:Document = createMock();
+
+				expect( document.getFragments ).toBeDefined();
+				expect( document.getFragments ).toEqual( jasmine.any( Function ) );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "createFragment" ), () => {
+
+			it( hasSignature(
+				[ "T" ],
+				"Creates a `CarbonLDP.Fragment` from the object provided and the id if specified.", [
 					{ name: "object", type: "T" },
-					{ name: "slug", type: "string" },
+					{ name: "id", type: "string", optional: true },
 				],
 				{ type: "T & CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
-				[ "T extends object" ],
-				"Creates a BlankNode from the object provided, sing no slug was specified.", [
-					{ name: "object", type: "T" },
-				],
-				{ type: "T & CarbonLDP.Fragment" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Creates a Fragment with the slug provided.", [
-					{ name: "slug", type: "string" },
+				"Creates an empty `CarbonLDP.Fragment` with the id specified.", [
+					{ name: "id", type: "string" },
 				],
 				{ type: "CarbonLDP.Fragment" }
 			), ():void => {} );
 
-			it( hasSignature(
-				"Creates a BlankNode, since no slug is provided",
-				{ type: "CarbonLDP.Fragment" }
-			), ():void => {} );
+			it( "should exists", ():void => {
+				const document:Document = createMock();
+
+				expect( document.createFragment ).toBeDefined();
+				expect( document.createFragment ).toEqual( jasmine.any( Function ) );
+			} );
 
 		} );
 
-		describe( method(
-			OBLIGATORY,
-			"createNamedFragment"
-		), ():void => {
+		describe( method( OBLIGATORY, "removeFragment" ), ():void => {
 
 			it( hasSignature(
-				"Creates a NamedFragment with the slug provided", [
+				"Remove the fragment referenced by the `CarbonLDP.Fragment` provided from the Document.", [
+					{ name: "fragment", type: "CarbonLDP.Fragment" },
+				],
+				{ type: "boolean" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Remove the fragment referenced by the Slug provided from the Document.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "CarbonLDP.NamedFragment" }
+				{ type: "boolean" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const document:Document = createMock();
+
+				expect( document.removeFragment ).toBeDefined();
+				expect( document.removeFragment ).toEqual( jasmine.any( Function ) );
+			} );
+
+		} );
+
+
+		describe( method( OBLIGATORY, "get" ), () => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Retrieves the specified properties and sub-properties of the document specified by the function provided.",
+				[
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+				],
+				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Creates a NamedFragment from the object provided and the slug specified.", [
-					{ name: "object", type: "T" },
-					{ name: "slug", type: "string" },
+				"Retrieves the entire current document or just the selected properties and sub-properties of a query builder function provided.",
+				[
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "T & CarbonLDP.NamedFragment" }
+				{ type: "Promise<T & CarbonLDP.Document>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Retrieves the specified properties and sub-properties of the URI specified by the function provided.",
+				[
+					{ name: "uri", type: "string", description: "The URI of the document to query." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+				],
+				{ type: "Promise<T & CarbonLDP.Document>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Retrieves the entire specified document or just the selected properties and sub-properties of a query builder function provided.",
+				[
+					{ name: "uri", type: "string", description: "The URI of the document to query." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+				],
+				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
 
 		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"refresh",
-			[ "T extends object" ],
-			"Sync the persisted document with the data in the server.",
-			{ type: "Promise<T & CarbonLDP.Document>" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"save",
-			[ "T extends object" ],
-			"Save the persisted document to the server.", [
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<T & CarbonLDP.Document>" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"saveAndRefresh",
-			[ "T extends object" ],
-			"Save and refresh the persisted document.",
-			{ type: "Promise<T & CarbonLDP.Document>" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"delete",
-			"Remove the data in the server referred by the id of the persisted document.",
-			{ type: "Promise<void>" }
-		), ():void => {} );
-
-		describe( method(
-			OBLIGATORY,
-			"addMember"
-		), ():void => {
-
-			it( hasSignature(
-				"Adds the specified resource Pointer as a member of the document.", [
-					{ name: "member", type: "CarbonLDP.Pointer", description: "Pointer object that references the resource to add as a member." },
-				],
-				{ type: "Promise<void>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Adds the specified resource URI as a member of the document.", [
-					{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
-				],
-				{ type: "Promise<void>" }
-			), ():void => {} );
-
-		} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"addMembers",
-			"Adds the specified resources as members of the document.", [
-				{ name: "members", type: "(CarbonLDP.Pointer | string)[]", description: "Array of URIs or Pointers to add as members." },
-			],
-			{ type: "Promise<void>" }
-		), ():void => {} );
-
-
-		describe( method(
-			OBLIGATORY,
-			"createChild"
-		), ():void => {
+		describe( method( OBLIGATORY, "resolve" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Persists a document with the slug specified as a child of the current document.", [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.TransientDocument` object, it's transformed into one." },
-					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				"Resolves the specified properties and sub-properties of the current document.",
+				[
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<T & CarbonLDP.ProtectedDocument>" }
+				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Persists a document as a child of the current document.", [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.TransientDocument` object, it's transformed into one." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				"Resolves the specified properties and sub-properties of the current document.",
+				[
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<T & CarbonLDP.ProtectedDocument>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Creates an persists an empty child for the current document with the slug provided.", [
-					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<CarbonLDP.ProtectedDocument>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Creates and persists an empty child fot he current document.", [
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<CarbonLDP.ProtectedDocument>" }
-			), ():void => {} );
-
-		} );
-
-		describe( method(
-			OBLIGATORY,
-			"createChildren"
-		), ():void => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists multiple JavaScript objects as children of the current document.", [
-					{ name: "objects", type: "T[]", description: "An array with the objects to be persisted as the new children." },
-					{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.ProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists multiple JavaScript objects as children of the current document.", [
-					{ name: "objects", type: "T[]", description: "An array with the objects to be persisted as the new children." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.ProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
-			), ():void => {} );
-
-		} );
-
-		describe( method(
-			OBLIGATORY,
-			"createChildAndRetrieve",
-			"Create a child for the document and retrieves the updated data from the server."
-		), ():void => {
-
-			it( hasSignature(
-				[ "T extends object" ], [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.TransientDocument` object, it is transformed into one." },
-					{ name: "slug", type: "string", description: "The slug name for the children URI." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.ProtectedDocument>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ], [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.TransientDocument` object, it is transformed into one." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.ProtectedDocument>" }
-			), ():void => {} );
-
-			it( hasSignature( [
-					{ name: "slug", type: "string", description: "The slug name for the children URI." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<CarbonLDP.ProtectedDocument>" }
-			), ():void => {} );
-
-			it( hasSignature( [
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<CarbonLDP.ProtectedDocument>" }
-			), ():void => {} );
-
-		} );
-
-		describe( method(
-			OBLIGATORY,
-			"createChildrenAndRetrieve"
-		), ():void => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists multiple JavaScript objects as children of the current document and retrieves tha updated data from the server.", [
-					{ name: "objects", type: "T[]", description: "An array with the objects to be persisted as the new children." },
-					{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.ProtectedDocument)[]>", description: "Promise that contains the new resolved persisted children." }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists multiple JavaScript objects as children of the current document and retrieves tha updated data from the server.", [
-					{ name: "objects", type: "T[]", description: "An array with the objects to be persisted as the new children." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.ProtectedDocument)[]>", description: "Promise that contains the new resolved persisted children." }
-			), ():void => {} );
-
-		} );
-
-		describe( method(
-			OBLIGATORY,
-			"createAccessPoint"
-		), ():void => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Create an AccessPoint for the document with the slug specified.", [
-					{ name: "accessPoint", type: "T & CarbonLDP.BaseAccessPoint", description: "AccessPoint Document to persist." },
-					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customisable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.AccessPoint>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Create an AccessPoint for the document.", [
-					{ name: "accessPoint", type: "T & CarbonLDP.BaseAccessPoint", description: "AccessPoint Document to persist." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.AccessPoint>" }
-			), ():void => {} );
-
-		} );
-
-		describe( method(
-			OBLIGATORY,
-			"createAccessPoints"
-		), ():void => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Create multiple access points for the current document with the slug specified.", [
-					{ name: "accessPoints", type: "(T & CarbonLDP.BaseAccessPoint)[]", description: "The access points to persist." },
-					{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customisable options for the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.AccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Create multiple access points for the current document.", [
-					{ name: "accessPoints", type: "(T & CarbonLDP.BaseAccessPoint)[]", description: "The access points to persist." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.AccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
-			), ():void => {} );
-
-		} );
-
-		describe( method( OBLIGATORY, "listChildren" ), ():void => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the empty children of the document.", [
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-		} );
-
-		describe( method( OBLIGATORY, "getChildren" ), ():void => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
+				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
 
 		} );
 
 
-		describe( method( OBLIGATORY, "listMembers" ), ():void => {
+		describe( method( OBLIGATORY, "refresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Retrieves the empty members of the document.", [
+				"Refresh the full or partial document.",
+				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
+				{ type: "Promise<T & this>" }
 			), ():void => {} );
 
 		} );
 
-		describe( method( OBLIGATORY, "getMembers" ), ():void => {
+		describe( method( OBLIGATORY, "save" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
+				"Save the full or partial changes of the document.",
+				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
+				{ type: "Promise<T & this>" }
 			), ():void => {} );
+
+		} );
+
+		describe( method( OBLIGATORY, "saveAndRefresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+				"Save the full or partial changes of the document and refreshes with the latest changes from the server of the full of partial data of the document.",
+				[
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
+				{ type: "Promise<T & this>" }
 			), ():void => {} );
 
 		} );
 
 
-		describe( method(
-			OBLIGATORY,
-			"removeMember"
-		), ():void => {
+		describe( method( OBLIGATORY, "_syncSavedFragments" ), () => {
 
 			it( hasSignature(
-				"Remove the specified resource Pointer as a member of the current document.", [
-					{ name: "member", type: "CarbonLDP.Pointer", description: "Pointer object that references the resource to remove as a member." },
-				],
-				{ type: "Promise<void>" }
+				"Set all the current fragments in the document as fragments that has been saved in the server."
 			), ():void => {} );
 
-			it( hasSignature(
-				"Remove the specified resource URI as a member of the current document.", [
-					{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
-				],
-				{ type: "Promise<void>" }
-			), ():void => {} );
+			it( "should exists", ():void => {
+				const resource:Document = createMock();
+
+				expect( resource._syncSavedFragments ).toBeDefined();
+				expect( resource._syncSavedFragments ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			// TODO: Test
 
 		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"removeMembers",
-			"Remove the specified resources URI or Pointers as members of the current document.", [
-				{ name: "members", type: "(CarbonLDP.Pointer | string)[]", description: "Array of URIs or Pointers to remove as members" },
-			],
-			{ type: "Promise<void>" }
-		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"removeAllMembers",
-			"Remove the specified resources URI or Pointers as members of the current document.",
-			{ type: "Promise<void>" }
-		), ():void => {} );
+		// TODO: Test ._syncSnapshot
 
-		it( hasMethod(
-			OBLIGATORY,
-			"executeRawASKQuery",
-			"Executes an ASK query in the document and returns a raw application/sparql-results+json object.", [
-				{ name: "askQuery", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<CarbonLDP.SPARQL.SPARQLRawResults>" }
-		), ():void => {} );
+		describe( "Document.isDirty", () => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"executeASKQuery",
-			"Executes an ASK query in the document and returns a boolean of the result.", [
-				{ name: "askQuery", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<boolean>" }
-		), ():void => {} );
+			it( "should exists", ():void => {
+				const resource:Document = createMock();
 
-		it( hasMethod(
-			OBLIGATORY,
-			"executeRawSELECTQuery",
-			"Executes a SELECT query in the document and returns a raw application/sparql-results+json object.", [
-				{ name: "selectQuery", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<CarbonLDP.SPARQL.SPARQLRawResults>" }
-		), ():void => {} );
+				expect( resource.isDirty ).toBeDefined();
+				expect( resource.isDirty ).toEqual( jasmine.any( Function ) );
+			} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"executeSELECTQuery",
-			[ "T extends object" ],
-			"Executes a SELECT query in the document and returns the results as a `CarbonLDP.SPARQL.SPARQLSelectResults` object.", [
-				{ name: "selectQuery", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<CarbonLDP.SPARQL.SPARQLSelectResults<T>>" }
-		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"executeRawCONSTRUCTQuery",
-			"Executes a CONSTRUCT query in the document and returns a string with the resulting model.", [
-				{ name: "constructQuery", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<string>" }
-		), ():void => {} );
+			it( "should return true if self is dirty", () => {
+				const resource:Document = createMock( { newData: true } );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"executeRawDESCRIBEQuery",
-			"Executes a DESCRIBE query in the document and returns a string with the resulting model.", [
-				{ name: "constructQuery", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<string>" }
-		), ():void => {} );
+				const returned:boolean = resource.isDirty();
+				expect( returned ).toBe( true );
+			} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"executeUPDATE",
-			"Executes an UPDATE query.", [
-				{ name: "updateQuery", type: "string", description: "UPDATE query to execute in the selected endpoint." },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<void>" }
-		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"sparql",
-			"Method that creates an instance of SPARQLER for the document end-point.",
-			{ type: "SPARQLER/Clauses/QueryClause" }
-		), ():void => {} );
+			it( "should return true when removed fragments", () => {
+				const resource:Document = createMock();
+				resource.createFragment( "_:1" );
+				resource._syncSavedFragments();
+
+				expect( resource.isDirty() ).toBe( false );
+
+				resource.removeFragment( "_:1" );
+				expect( resource.isDirty() ).toBe( true );
+			} );
+
+			it( "should return true when new fragments", () => {
+				const resource:Document = createMock();
+				resource.createFragment( "_:1" );
+
+				expect( resource.isDirty() ).toBe( true );
+			} );
+
+			it( "should return true when removed and new fragments", () => {
+				const resource:Document = createMock();
+				resource.createFragment( "_:1" );
+				resource._syncSavedFragments();
+
+				expect( resource.isDirty() ).toBe( false );
+
+				resource.removeFragment( "_:1" );
+				resource.createFragment( "_:2" );
+				expect( resource.isDirty() ).toBe( true );
+			} );
+
+
+			it( "should return true when any saved fragment is dirty", () => {
+				const resource:Document = createMock();
+
+				resource.createFragment( "_:1" );
+				resource.createFragment( "#fragment" );
+				const target:{ newData?:boolean } = resource.createFragment<{ newData?:boolean }>( {}, "_:2" );
+				resource._syncSavedFragments();
+
+				expect( resource.isDirty() ).toBe( false );
+
+				target.newData = true;
+				expect( resource.isDirty() ).toBe( true );
+			} );
+
+		} );
+
+		describe( "Document.revert", () => {
+
+			it( "should exists", ():void => {
+				const resource:Document = createMock( {} );
+
+				expect( resource.revert ).toBeDefined();
+				expect( resource.revert ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should revert self changes", () => {
+				const resource:Document = createMock( { newData: true } );
+
+				resource.revert();
+				expect( resource as {} ).toEqual( {} );
+			} );
+
+
+			it( "should add deleted fragment", () => {
+				const resource:Document = createMock();
+				resource.createFragment( { the: "fragment" }, "_:1" );
+				resource._syncSavedFragments();
+
+				resource.removeFragment( "_:1" );
+				resource.revert();
+
+				expect( resource.getFragment( "_:1" ) ).toEqual( { the: "fragment" } );
+			} );
+
+			it( "should remove new fragments", () => {
+				const resource:Document = createMock();
+
+				resource.createFragment( { the: "fragment" }, "_:1" );
+				resource.revert();
+
+				expect( resource.hasFragment( "_:1" ) ).toEqual( false );
+			} );
+
+			it( "should add deleted fragments and remove new ones", () => {
+				const resource:Document = createMock();
+				resource.createFragment( { the: "fragment" }, "_:1" );
+				resource._syncSavedFragments();
+
+				resource.removeFragment( "_:1" );
+				resource.createFragment( { the: "another-fragment" }, "_:2" );
+				resource.revert();
+
+				expect( resource.getFragment( "_:1" ) ).toEqual( { the: "fragment" } );
+				expect( resource.hasFragment( "_:2" ) ).toEqual( false );
+			} );
+
+
+			it( "should revert changes in fragments", () => {
+				const resource:Document = createMock();
+
+				resource.createFragment( "_:1" );
+				resource.createFragment( "#fragment" );
+				const target:{ newData?:boolean } = resource.createFragment<{ newData?:boolean }>( {}, "_:2" );
+				resource._syncSavedFragments();
+
+				target.newData = true;
+				resource.revert();
+
+				expect( target ).toEqual( {} );
+			} );
+
+		} );
 
 	} );
 
@@ -626,54 +553,31 @@ describe( module( "carbonldp/Document" ), ():void => {
 		"Interface with factory, decorate and utils methods for `CarbonLDP.Document` objects."
 	), ():void => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"isDecorated",
-			"Returns true if the Document provided has the properties and methods of a `CarbonLDP.Document` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "object is CarbonLDP.Document" }
-		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Returns true if the element provided is considered a `CarbonLDP.Document` object.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "value is CarbonLDP.Document" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelSchema<CarbonLDP.Vocabularies.C.Document>" ), () => {
+			const target:ModelSchema<C[ "Document" ]> = {} as DocumentFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"create",
-			[ "T extends object" ],
-			"Creates a `CarbonLDP.TransientDocument` object with the data provided.", [
-				{ name: "data", type: "T & CarbonLDP.BaseDocument", description: "Data to be used in the creation of the document." },
-			],
-			{ type: "T & CarbonLDP.TransientDocument" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Document, CarbonLDP.Document.Traits.SPARQLDocumentTrait & CarbonLDP.Document.Traits.EventEmitterDocumentTrait & CarbonLDP.Document.Traits.QueryableDocumentTrait, \"_syncSnapshot\" | \"isDirty\" | \"revert\">" ), () => {
+			const target:ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, "_syncSnapshot" | "isDirty" | "revert"> = {} as DocumentFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"createFrom",
-			[ "T extends object" ],
-			"Creates a Document object from the object provided.", [
-				{ name: "object", type: "T & CarbonLDP.BaseDocument", description: "The object to be transformed in a document." },
-			],
-			{ type: "T & CarbonLDP.TransientDocument" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Document, CarbonLDP.BaseResolvableDocument>" ), () => {
+			const target:ModelDecorator<Document, BaseResolvableDocument> = {} as DocumentFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"decorate",
-			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.Document` object.", [
-				{ name: "object", type: "T" },
-				{ name: "documents", type: "CarbonLDP.Documents", description: "The Documents instance to which the persisted document belongs." },
-			],
-			{ type: "T & CarbonLDP.Document" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelTypeGuard<CarbonLDP.Document>" ), () => {
+			const target:ModelTypeGuard<Document> = {} as DocumentFactory;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.TransientDocument, CarbonLDP.BaseDocument>" ), () => {
+			const target:ModelFactory<TransientDocument, BaseDocument> = {} as DocumentFactory;
+			expect( target ).toBeDefined();
+		} );
 
 	} );
 
@@ -684,1428 +588,278 @@ describe( module( "carbonldp/Document" ), ():void => {
 		"Constant that implements the `CarbonLDP.DocumentFactory` interface."
 	), ():void => {
 
-		let context:AbstractContext;
-		beforeEach( ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.settings = {
-						vocabulary: "vocab#",
-						paths: { system: ".system/" },
-					};
-				}
-			}
-
-			context = new MockedContext();
-		} );
-
 		it( isDefined(), ():void => {
 			expect( Document ).toBeDefined();
 			expect( Document ).toEqual( jasmine.any( Object ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( "Document.isDecorated", ():void => {
-			expect( Document.isDecorated ).toBeDefined();
-			expect( Utils.isFunction( Document.isDecorated ) ).toBe( true );
+		describe( "Document.isDecorated", ():void => {
 
-			let document:any = undefined;
-			expect( Document.isDecorated( document ) ).toBe( false );
-
-			document = {
-				created: null,
-				modified: null,
-				defaultInteractionModel: null,
-				accessPoints: null,
-
-				_eTag: null,
-				isLocallyOutDated: ():void => {},
-
-				refresh: ():void => {},
-				save: ():void => {},
-				saveAndRefresh: ():void => {},
-				delete: ():void => {},
-
-				addMember: ():void => {},
-				addMembers: ():void => {},
-
-				createAccessPoint: ():void => {},
-				createAccessPoints: ():void => {},
-				createChild: ():void => {},
-				createChildren: ():void => {},
-				createChildAndRetrieve: ():void => {},
-				createChildrenAndRetrieve: ():void => {},
-				listChildren: ():void => {},
-				getChildren: ():void => {},
-				listMembers: ():void => {},
-				getMembers: ():void => {},
-				removeMember: ():void => {},
-				removeMembers: ():void => {},
-				removeAllMembers: ():void => {},
-
-				executeRawASKQuery: ():void => {},
-				executeASKQuery: ():void => {},
-				executeRawSELECTQuery: ():void => {},
-				executeSELECTQuery: ():void => {},
-				executeRawDESCRIBEQuery: ():void => {},
-				executeRawCONSTRUCTQuery: ():void => {},
-				executeUPDATE: ():void => {},
-
-				sparql: ():void => {},
-			};
-			expect( Document.isDecorated( document ) ).toBe( true );
-
-			delete document.isLocallyOutDated;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.isLocallyOutDated = ():void => {};
-
-			delete document.accessPoints;
-			expect( Document.isDecorated( document ) ).toBe( true );
-			document.accessPoints = null;
-
-			delete document.created;
-			expect( Document.isDecorated( document ) ).toBe( true );
-			document.created = null;
-
-			delete document.modified;
-			expect( Document.isDecorated( document ) ).toBe( true );
-			document.modified = null;
-
-			delete document.defaultInteractionModel;
-			expect( Document.isDecorated( document ) ).toBe( true );
-			document.defaultInteractionModel = null;
-
-			delete document._eTag;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document._eTag = null;
-
-			delete document.refresh;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.refresh = ():void => {};
-
-			delete document.save;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.save = ():void => {};
-
-			delete document.saveAndRefresh;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.saveAndRefresh = ():void => {};
-
-			delete document.delete;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.delete = ():void => {};
-
-			delete document.addMember;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.addMember = ():void => {};
-
-			delete document.addMembers;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.addMembers = ():void => {};
-
-			delete document.createAccessPoint;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createAccessPoint = ():void => {};
-
-			delete document.createAccessPoints;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createAccessPoints = ():void => {};
-
-			delete document.createChild;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createChild = ():void => {};
-
-			delete document.createChildren;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createChildren = ():void => {};
-
-			delete document.createChildAndRetrieve;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createChildAndRetrieve = ():void => {};
-
-			delete document.createChildrenAndRetrieve;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createChildrenAndRetrieve = ():void => {};
-
-			delete document.listChildren;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.listChildren = ():void => {};
-
-			delete document.getChildren;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.getChildren = ():void => {};
-
-			delete document.listMembers;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.listMembers = ():void => {};
-
-			delete document.getMembers;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.getMembers = ():void => {};
-
-			delete document.removeMember;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.removeMember = ():void => {};
-
-			delete document.removeMembers;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.removeMembers = ():void => {};
-
-			delete document.removeAllMembers;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.removeAllMembers = ():void => {};
-
-			delete document.executeRawASKQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeRawASKQuery = ():void => {};
-
-			delete document.executeASKQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeASKQuery = ():void => {};
-
-			delete document.executeRawSELECTQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeRawSELECTQuery = ():void => {};
-
-			delete document.executeSELECTQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeSELECTQuery = ():void => {};
-
-			delete document.executeRawDESCRIBEQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeRawDESCRIBEQuery = ():void => {};
-
-			delete document.executeRawCONSTRUCTQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeRawCONSTRUCTQuery = ():void => {};
-
-			delete document.executeUPDATE;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeUPDATE = ():void => {};
-
-			delete document.sparql;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.sparql = ():void => {};
-		} );
-
-		// TODO: Separate in different tests
-		it( "Document.is", ():void => {
-			expect( Document.is ).toBeDefined();
-			expect( Utils.isFunction( Document.is ) ).toBe( true );
-
-			expect( Document.is( undefined ) ).toBe( false );
-			expect( Document.is( null ) ).toBe( false );
-			expect( Document.is( <any> "a string" ) ).toBe( false );
-			expect( Document.is( <any> 100 ) ).toBe( false );
-			expect( Document.is( {} ) ).toBe( false );
-
-			let object:any = TransientDocument.createFrom( {
-				id: "",
-				created: null,
-				modified: null,
-				defaultInteractionModel: null,
-				accessPoints: null,
-
-				_documents: null,
-				_eTag: void 0,
-				isLocallyOutDated: ():void => {},
-
-				refresh: ():void => {},
-				save: ():void => {},
-				saveAndRefresh: ():void => {},
-				delete: ():void => {},
-
-				addMember: ():void => {},
-				addMembers: ():void => {},
-
-				createAccessPoint: ():void => {},
-				createAccessPoints: ():void => {},
-				createChild: ():void => {},
-				createChildren: ():void => {},
-				createChildAndRetrieve: ():void => {},
-				createChildrenAndRetrieve: ():void => {},
-				listChildren: ():void => {},
-				getChildren: ():void => {},
-				listMembers: ():void => {},
-				getMembers: ():void => {},
-				removeMember: ():void => {},
-				removeMembers: ():void => {},
-				removeAllMembers: ():void => {},
-
-				executeRawASKQuery: ():void => {},
-				executeASKQuery: ():void => {},
-				executeRawSELECTQuery: ():void => {},
-				executeSELECTQuery: ():void => {},
-				executeRawDESCRIBEQuery: ():void => {},
-				executeRawCONSTRUCTQuery: ():void => {},
-				executeUPDATE: ():void => {},
-
-				sparql: ():void => {},
-
-				// Messaging methods
-				on: ():void => {},
-				off: ():void => {},
-				one: ():void => {},
-				onDocumentCreated: ():void => {},
-				onChildCreated: ():void => {},
-				onAccessPointCreated: ():void => {},
-				onDocumentModified: ():void => {},
-				onDocumentDeleted: ():void => {},
-				onMemberAdded: ():void => {},
-				onMemberRemoved: ():void => {},
+			it( "should exists", ():void => {
+				expect( Document.isDecorated ).toBeDefined();
+				expect( Document.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
-			expect( Document.is( object ) ).toBe( true );
-		} );
-
-		// TODO: Separate in different tests
-		it( "Document.decorate", ():void => {
-			expect( Document.decorate ).toBeDefined();
-			expect( Utils.isFunction( Document.decorate ) ).toBe( true );
-
-			interface MyObject {
-				myProperty?:string;
-			}
-
-			interface MyTransientDocument extends MyObject, TransientDocument {}
-
-			let document:MyTransientDocument;
 
 
-			interface MyDocument extends MyObject, Document {}
-
-			let persistedDocument:MyDocument;
-
-			document = TransientDocument.createFrom<MyObject & BaseDocument>( {} );
-			persistedDocument = Document.decorate<MyTransientDocument>( document, context.documents );
-			expect( Document.is( persistedDocument ) ).toBe( true );
-			expect( persistedDocument.myProperty ).toBeUndefined();
-			expect( persistedDocument._documents ).toBe( context.documents );
-
-			document = TransientDocument.createFrom<MyObject & BaseDocument>( { myProperty: "a property" } );
-			persistedDocument = Document.decorate<MyTransientDocument>( document, context.documents );
-			expect( Document.is( persistedDocument ) ).toBe( true );
-			expect( persistedDocument.myProperty ).toBeDefined();
-			expect( persistedDocument.myProperty ).toBe( "a property" );
-			expect( persistedDocument._documents ).toBe( context.documents );
-		} );
-
-		describe( "Document instance", ():void => {
-
-			let document:Document;
+			let object:typeof Document.PROTOTYPE;
 			beforeEach( ():void => {
-				context.extendObjectSchema( {
-					"exTypes": "http://example.com/types#",
-					"another": "http://example.com/another-url/ns#",
+				object = createNonEnumerable<typeof Document.PROTOTYPE>( {
+					created: null,
+					modified: null,
+					accessPoints: null,
+					contains: null,
+
+					__savedFragments: [],
+					_syncSavedFragments: ():any => {},
+
+					_syncSnapshot: ():any => {},
+					isDirty: ():any => {},
+					revert: ():any => {},
 				} );
-
-				context.documents.getPointer( "http://example.com/in/documents/" );
-
-				document = Document.decorate( {
-					id: "http://example.com/document/",
-				}, context.documents );
-				document.createNamedFragment( "fragment" );
-				document.createFragment( "_:BlankNode" );
 			} );
 
-			// TODO: Test in `Document.decorate`
-			it( "Document._eTag", ():void => {
-				// By default, the ETag is undefined.
-				expect( document._eTag ).toBeUndefined();
-				// But property is declared
-				expect( document.hasOwnProperty( "_eTag" ) ).toBe( true );
+
+			it( "should return false when `undefined`", ():void => {
+				expect( Document.isDecorated( void 0 ) ).toBe( false );
 			} );
 
-			// TODO: Test in `Document.decorate`
-			it( "Document._documents", ():void => {
-				expect( document._documents ).toBeDefined();
-				expect( Utils.isObject( document._documents ) ).toBe( true );
-				expect( document._documents instanceof Documents ).toBe( true );
+			it( "should return false when `null`", ():void => {
+				expect( Document.isDecorated( null ) ).toBe( false );
 			} );
 
-			// TODO: Separate in different tests
-			it( "Document.addType", ():void => {
-				expect( document.addType ).toBeDefined();
-				expect( Utils.isFunction( document.addType ) ).toBe( true );
-
-				expect( document.types.length ).toBe( 0 );
-
-				document.addType( "http://example.com/types#Type-1" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-
-				document.addType( "http://example.com/types#Type-2" );
-				expect( document.types.length ).toBe( 2 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-
-				document.addType( "exTypes:Type-3" );
-				expect( document.types.length ).toBe( 3 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				expect( document.types ).toContain( "http://example.com/types#Type-3" );
-
-				document.addType( "another:Type-0" );
-				expect( document.types.length ).toBe( 4 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				expect( document.types ).toContain( "http://example.com/types#Type-3" );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-0" );
-
-				document.addType( "Current-Type" );
-				expect( document.types.length ).toBe( 5 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				expect( document.types ).toContain( "http://example.com/types#Type-3" );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-0" );
-				expect( document.types ).toContain( "http://example.com/vocab#Current-Type" );
+			it( "should return true when prototype properties", ():void => {
+				expect( Document.isDecorated( object ) ).toBe( true );
 			} );
 
-			// TODO: Separate in different tests
-			it( "Document.hasType", ():void => {
-				expect( document.hasType ).toBeDefined();
-				expect( Utils.isFunction( document.hasType ) ).toBe( true );
 
-				document.types = [ "http://example.com/types#Type-1" ];
-				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
-				expect( document.hasType( "http://example.com/types#Type-2" ) ).toBe( false );
-
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
-				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
-				expect( document.hasType( "http://example.com/types#Type-2" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-2" ) ).toBe( true );
-				expect( document.hasType( "http://example.com/types#Type-3" ) ).toBe( false );
-				expect( document.hasType( "exTypes:#Type-3" ) ).toBe( false );
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/another-url/ns#Type-2" ];
-				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
-				expect( document.hasType( "another:Type-1" ) ).toBe( false );
-				expect( document.hasType( "http://example.com/another-url/ns#Type-2" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-2" ) ).toBe( false );
-				expect( document.hasType( "another:Type-2" ) ).toBe( true );
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/another-url/ns#Type-2", "http://example.com/vocab#Current-Type" ];
-				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
-				expect( document.hasType( "another:Type-1" ) ).toBe( false );
-				expect( document.hasType( "Type-1" ) ).toBe( false );
-				expect( document.hasType( "http://example.com/another-url/ns#Type-2" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-2" ) ).toBe( false );
-				expect( document.hasType( "another:Type-2" ) ).toBe( true );
-				expect( document.hasType( "Type-2" ) ).toBe( false );
-				expect( document.hasType( "http://example.com/vocab#Current-Type" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Current-Type" ) ).toBe( false );
-				expect( document.hasType( "another:Current-Type" ) ).toBe( false );
-				expect( document.hasType( "Current-Type" ) ).toBe( true );
+			it( "should return true when no accessPoints", ():void => {
+				delete object.accessPoints;
+				expect( Document.isDecorated( object ) ).toBe( true );
 			} );
 
-			// TODO: Separate in different tests
-			it( "Document.removeType", ():void => {
-				expect( document.removeType ).toBeDefined();
-				expect( Utils.isFunction( document.removeType ) ).toBe( true );
-
-				document.types = [ "http://example.com/types#Type-1" ];
-				document.removeType( "http://example.com/types#Type-2" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				document.removeType( "another:Type-1" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				document.removeType( "Type-1" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-
-				document.types = [ "http://example.com/types#Type-1" ];
-				document.removeType( "http://example.com/types#Type-1" );
-				expect( document.types.length ).toBe( 0 );
-				document.types = [ "http://example.com/types#Type-1" ];
-				document.removeType( "exTypes:Type-1" );
-				expect( document.types.length ).toBe( 0 );
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
-				document.removeType( "http://example.com/types#Type-1" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				document.removeType( "exTypes:Type-2" );
-				expect( document.types.length ).toBe( 0 );
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2", "http://example.com/another-url/ns#Type-3" ];
-				document.removeType( "http://example.com/types#Type-1" );
-				expect( document.types.length ).toBe( 2 );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
-				document.removeType( "exTypes:Type-2" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
-				document.removeType( "another:Type-3" );
-				expect( document.types.length ).toBe( 0 );
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2", "http://example.com/another-url/ns#Type-3", "http://example.com/vocab#Type-4" ];
-				document.removeType( "http://example.com/types#Type-1" );
-				expect( document.types.length ).toBe( 3 );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
-				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
-				document.removeType( "exTypes:Type-2" );
-				expect( document.types.length ).toBe( 2 );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
-				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
-				document.removeType( "another:Type-3" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
-				document.removeType( "Type-4" );
-				expect( document.types.length ).toBe( 0 );
+			it( "should return true when no contains", ():void => {
+				delete object.contains;
+				expect( Document.isDecorated( object ) ).toBe( true );
 			} );
 
-			// TODO: Separate in different tests
-			it( "Document.hasPointer", ():void => {
-
-				expect( document.hasPointer ).toBeDefined();
-				expect( Utils.isFunction( document.hasPointer ) ).toBe( true );
-
-				expect( document.hasPointer( "http://example.com/document/" ) ).toBe( true );
-				expect( document.hasPointer( "http://example.com/document/#fragment" ) ).toBe( true );
-				expect( document.hasPointer( "_:BlankNode" ) ).toBe( true );
-				expect( document.hasPointer( "http://example.com/in/documents/" ) ).toBe( true );
-
-				expect( document.hasPointer( "this-uri-is-resolved-relative/" ) ).toBe( false );
-				expect( document.hasPointer( "http://example.com/document/#another-fragment" ) ).toBe( false );
-				expect( document.hasPointer( "_:AnotherBlankNode" ) ).toBe( false );
-				expect( document.hasPointer( "http://example.com/another-document/" ) ).toBe( false );
+			it( "should return true when no created", ():void => {
+				delete object.created;
+				expect( Document.isDecorated( object ) ).toBe( true );
 			} );
 
-			// TODO: Separate in different tests
-			it( "Document.getPointer", ():void => {
-				expect( document.getPointer ).toBeDefined();
-				expect( Utils.isFunction( document.getPointer ) ).toBe( true );
-
-				let pointer:Pointer;
-
-				pointer = document.getPointer( "http://example.com/document/" );
-				expect( pointer ).toBe( document );
-				pointer = document.getPointer( "http://example.com/document/#fragment" );
-				expect( pointer.id ).toBe( "http://example.com/document/#fragment" );
-				pointer = document.getPointer( "_:BlankNode" );
-				expect( pointer.id ).toBe( "_:BlankNode" );
-				pointer = document.getPointer( "#fragment" );
-				expect( pointer.id ).toBe( "http://example.com/document/#fragment" );
-
-				pointer = document.getPointer( "http://example.com/document/#another-fragment" );
-				expect( pointer.id ).toBe( "http://example.com/document/#another-fragment" );
-				pointer = document.getPointer( "_:AnotherBlankNode" );
-				expect( pointer.id ).toBe( "_:AnotherBlankNode" );
-
-				// Ask to the Documents document.
-				pointer = document.getPointer( "this-uri-is-resolved-relative/" );
-				expect( pointer.id ).toBe( "http://example.com/this-uri-is-resolved-relative/" );
-				pointer = document.getPointer( "http://example.com/in/documents/" );
-				expect( pointer.id ).toBe( "http://example.com/in/documents/" );
-				pointer = document.getPointer( "http://example.com/another-document/" );
-				expect( pointer.id ).toBe( "http://example.com/another-document/" );
+			it( "should return true when no modified", ():void => {
+				delete object.modified;
+				expect( Document.isDecorated( object ) ).toBe( true );
 			} );
 
-			describe( "Document.inScope", ():void => {
 
-				// TODO: Separate in different tests
-				it( "should test when pointer", ():void => {
-					expect( document.inScope ).toBeDefined();
-					expect( Utils.isFunction( document.inScope ) ).toBe( true );
-
-					let pointer:Pointer;
-
-					expect( document.inScope.bind( document, undefined ) ).toThrowError();
-					expect( document.inScope.bind( document, null ) ).toThrowError();
-
-					expect( document.inScope( document ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/document/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/document/#fragment" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/document/#another-fragment" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "_:BlankNode" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "#fragment" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-
-					// In Documents
-					pointer = Pointer.create( { id: "this-uri-is-resolved-relative/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/in/documents/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/document/child/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/another-document/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.org/document/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when id", ():void => {
-					expect( document.inScope ).toBeDefined();
-					expect( Utils.isFunction( document.inScope ) ).toBe( true );
-
-					expect( document.inScope( document.id ) ).toBe( true );
-					expect( document.inScope( "http://example.com/document/" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/document/#fragment" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/document/#another-fragment" ) ).toBe( true );
-					expect( document.inScope( "_:BlankNode" ) ).toBe( true );
-					expect( document.inScope( "#fragment" ) ).toBe( true );
-
-					// In Documents
-					expect( document.inScope( "this-uri-is-resolved-relative/" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/in/documents/" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/document/child/" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/another-document/" ) ).toBe( true );
-					expect( document.inScope( "http://example.org/document/" ) ).toBe( true );
-				} );
-
+			it( "should return false when no __savedFragments", ():void => {
+				delete object.__savedFragments;
+				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
-			describe( "Document.createFragment", ():void => {
-
-				// TODO: Separate in different tests
-				it( "should test when object and slug", ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					interface MyInterface {
-						myProperty?:string;
-						myPointer?:MyInterface;
-					}
-
-					let object:MyInterface;
-					let fragment:Fragment & MyInterface;
-
-					object = {};
-					fragment = document.createFragment<MyInterface>( object, "my-fragment" );
-					expect( object ).toBe( fragment );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
-					expect( fragment.myProperty ).toBeUndefined();
-
-					object = { myProperty: "The property" };
-					fragment = document.createFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-					expect( fragment.myProperty ).toBe( "The property" );
-
-					object = { myProperty: "The BlankNode property" };
-					fragment = document.createFragment<MyInterface>( object, "_:My-BlankNode" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "_:My-BlankNode" );
-					expect( fragment.myProperty ).toBe( "The BlankNode property" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createFragment<MyInterface>( object, "#another-another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( TransientFragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.isBNodeID( (<TransientFragment> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createFragment<MyInterface>( object, "_:AnotherBlankNode" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "_:AnotherBlankNode" );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( TransientFragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.isBNodeID( (<TransientFragment> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-
-					expect( () => document.createFragment( {}, "http://example.com/another-document/#fragment" ) ).toThrowError( IllegalArgumentError );
-					expect( () => document.createFragment( {}, "fragment" ) ).toThrowError( IDAlreadyInUseError );
-					expect( () => document.createFragment( {}, "_:BlankNode" ) ).toThrowError( IDAlreadyInUseError );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object", ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					interface MyInterface {
-						myProperty?:string;
-						myPointer?:MyInterface;
-					}
-
-					let object:MyInterface;
-					let fragment:Fragment & MyInterface;
-
-					object = {};
-					fragment = document.createFragment<MyInterface>( object );
-					expect( object ).toBe( fragment );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
-					expect( fragment.myProperty ).toBeUndefined();
-
-					object = { myProperty: "The property" };
-					fragment = document.createFragment<MyInterface>( object );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
-					expect( fragment.myProperty ).toBe( "The property" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createFragment<MyInterface>( object );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( TransientFragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.isBNodeID( (<TransientFragment> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when slug", ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					let fragment:Fragment;
-
-					fragment = document.createFragment( "my-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
-
-					fragment = document.createFragment( "http://example.com/document/#another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-
-					fragment = document.createFragment( "_:My-BlankNode" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "_:My-BlankNode" );
-
-					expect( () => document.createFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( IllegalArgumentError );
-					expect( () => document.createFragment( "fragment" ) ).toThrowError( IDAlreadyInUseError );
-					expect( () => document.createFragment( "_:BlankNode" ) ).toThrowError( IDAlreadyInUseError );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when empty", ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					let fragment1:Fragment;
-					let fragment2:Fragment;
-
-					fragment1 = document.createFragment();
-					expect( TransientFragment.isDecorated( fragment1 ) ).toBe( true );
-					expect( Utils.isString( fragment1.id ) ).toBe( true );
-					expect( URI.isBNodeID( fragment1.id ) ).toBe( true );
-
-					fragment2 = document.createFragment();
-					expect( TransientFragment.isDecorated( fragment2 ) ).toBe( true );
-					expect( Utils.isString( fragment2.id ) ).toBe( true );
-					expect( URI.isBNodeID( fragment2.id ) ).toBe( true );
-
-					expect( fragment1.id ).not.toBe( fragment2.id );
-				} );
-
+			it( "should return false when no _syncSavedFragments", ():void => {
+				delete object._syncSavedFragments;
+				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
-			describe( "Document.createNamedFragment", ():void => {
 
-				// TODO: Separate in different tests
-				it( "should test when slug", ():void => {
-					expect( document.createNamedFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
-
-					let fragment:NamedFragment;
-
-					fragment = document.createNamedFragment( "my-fragment" );
-					expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.slug ).toBe( "my-fragment" );
-					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
-
-					fragment = document.createNamedFragment( "http://example.com/document/#another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.slug ).toBe( "another-fragment" );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-
-					expect( () => document.createNamedFragment( "_:BlankNode" ) ).toThrowError( IllegalArgumentError );
-					expect( () => document.createNamedFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( IllegalArgumentError );
-					expect( () => document.createNamedFragment( "fragment" ) ).toThrowError( IDAlreadyInUseError );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object and slug", ():void => {
-
-					expect( document.createNamedFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
-
-					interface MyInterface {
-						myProperty?:string;
-						myPointer?:MyInterface;
-					}
-
-					let object:MyInterface;
-					let fragment:Fragment & MyInterface;
-
-					object = {};
-					fragment = document.createNamedFragment<MyInterface>( object, "my-fragment" );
-					expect( object ).toBe( fragment );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
-					expect( fragment.myProperty ).toBeUndefined();
-
-					object = { myProperty: "The property" };
-					fragment = document.createNamedFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-					expect( fragment.myProperty ).toBe( "The property" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createNamedFragment<MyInterface>( object, "#another-another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( TransientFragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.isBNodeID( (<TransientFragment> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-				} );
-
+			it( "should return false when no _syncSnapshot", ():void => {
+				delete object._syncSnapshot;
+				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
-			// TODO: Separate in different tests
-			it( "Document.refresh", ():void => {
-				expect( document.refresh ).toBeDefined();
-				expect( Utils.isFunction( document.refresh ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "refresh" );
-				document.refresh();
-				expect( spy ).toHaveBeenCalledWith( document, void 0 );
+			it( "should return false when no isDirty", ():void => {
+				delete object.isDirty;
+				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
-			// TODO: Separate in different tests
-			it( "Document.save", ():void => {
-				expect( document.save ).toBeDefined();
-				expect( Utils.isFunction( document.save ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "save" );
-				document.save();
-				expect( spy ).toHaveBeenCalledWith( document, void 0 );
-
-				const requestOptions:RequestOptions = { timeout: 5555 };
-				document.save( requestOptions );
-				expect( spy ).toHaveBeenCalledWith( document, requestOptions );
+			it( "should return false when no revert", ():void => {
+				delete object.revert;
+				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
-			// TODO: Separate in different tests
-			it( "Document.saveAndRefresh", ():void => {
-				expect( document.saveAndRefresh ).toBeDefined();
-				expect( Utils.isFunction( document.saveAndRefresh ) ).toBe( true );
+		} );
 
-				let spy:jasmine.Spy = spyOn( context.documents, "saveAndRefresh" );
-				document.saveAndRefresh();
-				expect( spy ).toHaveBeenCalledWith( document, void 0 );
+		describe( "Document.is", ():void => {
+
+			it( "should exists", ():void => {
+				expect( Document.is ).toBeDefined();
+				expect( Document.is ).toEqual( jasmine.any( Function ) );
 			} );
 
-			// TODO: Separate in different tests
-			it( "Document.delete", ():void => {
-				expect( document.delete ).toBeDefined();
-				expect( Utils.isFunction( document.delete ) ).toBe( true );
 
-				let spy:jasmine.Spy = spyOn( context.documents, "delete" );
-				document.delete();
-				expect( spy ).toHaveBeenCalledWith( document.id, void 0 );
+			let isTransientDocument:jasmine.Spy;
+			let isQueryableDocumentTrait:jasmine.Spy;
+			let isSPARQLDocumentTrait:jasmine.Spy;
+			let isEventEmitterDocumentTrait:jasmine.Spy;
+			let isSelfDecorated:jasmine.Spy;
+			beforeEach( ():void => {
+				isTransientDocument = spyOn( TransientDocument, "is" )
+					.and.returnValue( true );
+				isQueryableDocumentTrait = spyOn( QueryableDocumentTrait, "isDecorated" )
+					.and.returnValue( true );
+				isSPARQLDocumentTrait = spyOn( SPARQLDocumentTrait, "isDecorated" )
+					.and.returnValue( true );
+				isEventEmitterDocumentTrait = spyOn( EventEmitterDocumentTrait, "isDecorated" )
+					.and.returnValue( true );
+
+				isSelfDecorated = spyOn( Document, "isDecorated" )
+					.and.returnValue( true );
 			} );
 
-			describe( "Document.addMember", ():void => {
-
-				// TODO: Separate in different tests
-				it( "should test when pointer", ():void => {
-					expect( document.addMember ).toBeDefined();
-					expect( Utils.isFunction( document.addMember ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "addMember" );
-
-					let pointer:Pointer = context.documents.getPointer( "new-member/" );
-					document.addMember( pointer );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer, void 0 );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when uri", ():void => {
-					expect( document.addMember ).toBeDefined();
-					expect( Utils.isFunction( document.addMember ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "addMember" );
-
-					document.addMember( "new-member/" );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "new-member/", void 0 );
-				} );
-
+			it( "should assert that is a TransientDocument", ():void => {
+				Document.is( { the: "document" } );
+				expect( isTransientDocument ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
-			// TODO: Separate in different tests
-			it( "Document.addMembers", ():void => {
-				expect( document.addMembers ).toBeDefined();
-				expect( Utils.isFunction( document.addMembers ) ).toBeDefined();
-
-				let spy:jasmine.Spy = spyOn( document._documents, "addMembers" );
-
-				let pointers:Pointer[] = [];
-				pointers.push( context.documents.getPointer( "new-member/" ) );
-				document.addMembers( pointers );
-
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers, void 0 );
+			it( "should assert that is a QueryableDocumentTrait", ():void => {
+				Document.is( { the: "document" } );
+				expect( isQueryableDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
-			describe( "Document.createChild", ():void => {
-
-				// TODO: Separate in different tests
-				it( "should test when object, slug and options", ():void => {
-					expect( document.createChild ).toBeDefined();
-					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
-
-					let childDocument:TransientDocument = TransientDocument.create();
-					document.createChild( childDocument, "child" );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", void 0 );
-					spy.calls.reset();
-
-					let object:Object;
-					let options:RequestOptions;
-
-					object = { my: "object" };
-					options = { timeout: 5050 };
-					document.createChild( object, "child", options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", options );
-					spy.calls.reset();
-
-					object = { my: "object" };
-					document.createChild( object, "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", void 0 );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object and options", ():void => {
-					expect( document.createChild ).toBeDefined();
-					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
-
-					let childDocument:TransientDocument = TransientDocument.create();
-					document.createChild( childDocument );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, void 0 );
-					spy.calls.reset();
-
-					let object:Object = { my: "object" };
-					document.createChild( object );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, void 0 );
-					spy.calls.reset();
-
-					object = { my: "object" };
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChild( object, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, options );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when slug and options", ():void => {
-					expect( document.createChild ).toBeDefined();
-					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
-
-					document.createChild( "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", void 0 );
-					spy.calls.reset();
-
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChild( "child", options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", options );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when options", ():void => {
-					expect( document.createChild ).toBeDefined();
-					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
-
-					document.createChild();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, void 0 );
-					spy.calls.reset();
-
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChild( options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, options );
-				} );
-
+			it( "should assert that is a SPARQLDocumentTrait", ():void => {
+				Document.is( { the: "document" } );
+				expect( isSPARQLDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
-			describe( "Document.createChildren", ():void => {
-
-				it( isDefined(), ():void => {
-					expect( document.createChildren ).toBeDefined();
-					expect( Utils.isFunction( document.createChildren ) ).toBeDefined();
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when objects slug and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildren" );
-
-					let objects:Object[];
-					let slugs:string[];
-					let options:RequestOptions;
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					slugs = [ "first", "second", "third" ];
-					options = { timeout: 5050 };
-					document.createChildren( objects, slugs, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, slugs, options );
-					spy.calls.reset();
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					slugs = [ "first", "second", "third" ];
-					document.createChildren( objects, slugs );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, slugs, undefined );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildren" );
-
-					let objects:Object[];
-					let options:RequestOptions;
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					options = { timeout: 5050 };
-					document.createChildren( objects, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, options, undefined );
-					spy.calls.reset();
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					document.createChildren( objects );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, undefined, undefined );
-				} );
-
+			it( "should assert that is a EventEmitterDocumentTrait", ():void => {
+				Document.is( { the: "document" } );
+				expect( isEventEmitterDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
-			describe( "Document.createChildAndRetrieve", ():void => {
-
-				it( isDefined(), ():void => {
-					expect( document.createChildAndRetrieve ).toBeDefined();
-					expect( Utils.isFunction( document.createChildAndRetrieve ) ).toBeDefined();
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object, slug and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
-
-					let childDocument:TransientDocument = TransientDocument.create();
-					document.createChildAndRetrieve( childDocument, "child" );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", void 0 );
-					spy.calls.reset();
-
-					let object:Object;
-					let options:RequestOptions;
-
-					object = { my: "object" };
-					options = { timeout: 5050 };
-					document.createChildAndRetrieve( object, "child", options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", options );
-					spy.calls.reset();
-
-					object = { my: "object" };
-					document.createChildAndRetrieve( object, "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", void 0 );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
-
-					let childDocument:TransientDocument = TransientDocument.create();
-					document.createChildAndRetrieve( childDocument );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, void 0 );
-					spy.calls.reset();
-
-					let object:Object = { my: "object" };
-					document.createChildAndRetrieve( object );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, void 0 );
-					spy.calls.reset();
-
-					object = { my: "object" };
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChildAndRetrieve( object, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, options );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when slug and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
-
-					document.createChildAndRetrieve( "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", void 0 );
-					spy.calls.reset();
-
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChildAndRetrieve( "child", options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", options );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
-
-					document.createChildAndRetrieve();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, void 0 );
-					spy.calls.reset();
-
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChildAndRetrieve( options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, options );
-				} );
-
+			it( "should assert is decorated", ():void => {
+				Document.is( { the: "document" } );
+				expect( isSelfDecorated ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
-			describe( "Document.createChildrenAndRetrieve", ():void => {
 
-				it( isDefined(), ():void => {
-					expect( document.createChildrenAndRetrieve ).toBeDefined();
-					expect( Utils.isFunction( document.createChildrenAndRetrieve ) ).toBeDefined();
+			it( "should return true when all assertions", ():void => {
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( true );
+			} );
+
+			it( "should return false if not a TransientDocument", ():void => {
+				isTransientDocument.and.returnValue( false );
+
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( false );
+			} );
+
+			it( "should return false if not a QueryableDocumentTrait", ():void => {
+				isQueryableDocumentTrait.and.returnValue( false );
+
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( false );
+			} );
+
+			it( "should return false if not a SPARQLDocumentTrait", ():void => {
+				isSPARQLDocumentTrait.and.returnValue( false );
+
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( false );
+			} );
+
+			it( "should return false if not a EventEmitterDocumentTrait", ():void => {
+				isEventEmitterDocumentTrait.and.returnValue( false );
+
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( false );
+			} );
+
+			it( "should return false if not decorated", ():void => {
+				isSelfDecorated.and.returnValue( false );
+
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( false );
+			} );
+
+		} );
+
+		describe( "Document.decorate", ():void => {
+
+			it( "should exists", ():void => {
+				expect( Document.decorate ).toBeDefined();
+				expect( Document.decorate ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should call ModelDecorator.definePropertiesFrom with PROTOTYPE", () => {
+				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" )
+					.and.callThrough();
+
+				Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
+					the: "object",
 				} );
 
-				// TODO: Separate in different tests
-				it( "test when objects, slugs and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildrenAndRetrieve" );
+				expect( spy ).toHaveBeenCalledWith( Document.PROTOTYPE, { the: "object" } );
+			} );
 
-					let objects:Object[];
-					let slugs:string[];
-					let options:RequestOptions;
+			it( "should no call ModelDecorator.definePropertiesFrom when already decorated", () => {
+				spyOn( Document, "isDecorated" )
+					.and.returnValue( true );
 
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					slugs = [ "first", "second", "third" ];
-					options = { timeout: 5050 };
-					document.createChildrenAndRetrieve( objects, slugs, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, slugs, options );
-					spy.calls.reset();
+				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
 
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					slugs = [ "first", "second", "third" ];
-					document.createChildrenAndRetrieve( objects, slugs );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, slugs, undefined );
+				Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
 				} );
 
-				// TODO: Separate in different tests
-				it( "test when objects and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildrenAndRetrieve" );
+				expect( spy ).not.toHaveBeenCalled();
+			} );
 
-					let objects:Object[];
-					let options:RequestOptions;
 
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					options = { timeout: 5050 };
-					document.createChildrenAndRetrieve( objects, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, options, undefined );
-					spy.calls.reset();
+			it( "should decorate with QueryableDocumentTrait", () => {
+				const spy:jasmine.Spy = spyOn( QueryableDocumentTrait, "decorate" )
+					.and.callThrough();
 
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					document.createChildrenAndRetrieve( objects );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, undefined, undefined );
+				Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
+					the: "object",
 				} );
 
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
-			describe( "Document.createAccessPoint", ():void => {
+			it( "should decorate with SPARQLDocumentTrait", () => {
+				const spy:jasmine.Spy = spyOn( SPARQLDocumentTrait, "decorate" )
+					.and.callThrough();
 
-				// TODO: Separate in different tests
-				it( "should test when objects, slug and options", ():void => {
-					expect( document.createAccessPoint ).toBeDefined();
-					expect( Utils.isFunction( document.createAccessPoint ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoint" );
-
-					document.createAccessPoint( { hasMemberRelation: "http://example.com/ns#member-relation" }, "my-new-access-point" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { hasMemberRelation: "http://example.com/ns#member-relation" }, "my-new-access-point", undefined );
+				Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
+					the: "object",
 				} );
 
-				// TODO: Separate in different tests
-				it( "should test when object and options", ():void => {
-					expect( document.createAccessPoint ).toBeDefined();
-					expect( Utils.isFunction( document.createAccessPoint ) ).toBeDefined();
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
+			} );
 
-					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoint" );
+			it( "should decorate with EventEmitterDocumentTrait", () => {
+				const spy:jasmine.Spy = spyOn( EventEmitterDocumentTrait, "decorate" )
+					.and.callThrough();
 
-					document.createAccessPoint( { hasMemberRelation: "http://example.com/ns#member-relation" } );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { hasMemberRelation: "http://example.com/ns#member-relation" }, undefined, undefined );
+				Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
+					the: "object",
 				} );
 
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
-			describe( "Document.createAccessPoints", ():void => {
 
-				it( isDefined(), ():void => {
-					expect( document.createAccessPoints ).toBeDefined();
-					expect( Utils.isFunction( document.createAccessPoints ) ).toBeDefined();
+			it( "should add __modelDecorator as FragmentFactory", () => {
+				const document:Document = Document.decorate( {
+					$repository: $context.repository,
+					$registry: $context.registry,
+					the: "object",
 				} );
 
-				// TODO: Separate in different tests
-				it( "should test when objects, slugs and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoints" );
-
-					let accessPoints:BaseAccessPoint[] = [
-						{
-							hasMemberRelation: "http://example.com/ns#member-relation",
-						},
-						{
-							hasMemberRelation: "http://example.com/ns#some-relation",
-							isMemberOfRelation: "http://example.com/ns#some-inverted-relation",
-						},
-					];
-					let slugs:string[] = [ null, "second" ];
-
-					document.createAccessPoints( accessPoints, slugs );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", accessPoints, slugs, undefined );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when objects and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoints" );
-
-					let accessPoints:BaseAccessPoint[] = [
-						{
-							hasMemberRelation: "http://example.com/ns#member-relation",
-						},
-						{
-							hasMemberRelation: "http://example.com/ns#some-relation",
-							isMemberOfRelation: "http://example.com/ns#some-inverted-relation",
-						},
-					];
-
-					document.createAccessPoints( accessPoints );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", accessPoints, undefined, undefined );
-				} );
-
-			} );
-
-			describe( "Document.getChildren", ():void => {
-
-				// TODO: Separate in different tests
-				it( "Should pass parameters to documents instance", ():void => {
-					expect( document.getChildren ).toBeDefined();
-					expect( Utils.isFunction( document.getChildren ) ).toBeDefined();
-
-					const spy:jasmine.Spy = spyOn( document._documents, "getChildren" );
-
-					// noinspection JSIgnoredPromiseFromCall
-					document.getChildren();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", void 0, void 0 );
-					spy.calls.reset();
-
-					// noinspection JSIgnoredPromiseFromCall
-					document.getChildren( { timeout: 5000 } );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, void 0 );
-					spy.calls.reset();
-
-					let query:( queryBuilder:any ) => any;
-
-					query = _ => _;
-					// noinspection JSIgnoredPromiseFromCall
-					document.getChildren( { timeout: 5000 }, query );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, query );
-					spy.calls.reset();
-
-					query = _ => _;
-					// noinspection JSIgnoredPromiseFromCall
-					document.getChildren( query );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", query, void 0 );
-				} );
-
-			} );
-
-			describe( "Document.getMembers", ():void => {
-
-				// TODO: Separate in different tests
-				it( "Should pass parameters to documents instance", ():void => {
-					expect( document.getMembers ).toBeDefined();
-					expect( Utils.isFunction( document.getMembers ) ).toBeDefined();
-
-					const spy:jasmine.Spy = spyOn( document._documents, "getMembers" );
-
-					// noinspection JSIgnoredPromiseFromCall
-					document.getMembers();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", void 0, void 0 );
-					spy.calls.reset();
-
-					// noinspection JSIgnoredPromiseFromCall
-					document.getMembers( { timeout: 5000 } );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, void 0 );
-					spy.calls.reset();
-
-					let query:( queryBuilder:any ) => any;
-
-					query = _ => _;
-					// noinspection JSIgnoredPromiseFromCall
-					document.getMembers( { timeout: 5000 }, query );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, query );
-					spy.calls.reset();
-
-					query = _ => _;
-					// noinspection JSIgnoredPromiseFromCall
-					document.getMembers( query );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", query, void 0 );
-				} );
-
-			} );
-
-			describe( "Document.removeMember", ():void => {
-
-				// TODO: Separate in different tests
-				it( "should test when pointer", ():void => {
-					expect( document.removeMember ).toBeDefined();
-					expect( Utils.isFunction( document.removeMember ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "removeMember" );
-
-					let pointer:Pointer = context.documents.getPointer( "remove-member/" );
-					document.removeMember( pointer );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer, void 0 );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when uri", ():void => {
-					expect( document.removeMember ).toBeDefined();
-					expect( Utils.isFunction( document.removeMember ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "removeMember" );
-
-					document.removeMember( "remove-member/" );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "remove-member/", void 0 );
-				} );
-
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.removeMembers", ():void => {
-				expect( document.removeMembers ).toBeDefined();
-				expect( Utils.isFunction( document.removeMembers ) ).toBeDefined();
-
-				let spy:jasmine.Spy = spyOn( document._documents, "removeMembers" );
-
-				let pointers:Pointer[] = [];
-				pointers.push( context.documents.getPointer( "remove-member/" ) );
-				document.removeMembers( pointers );
-
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers, void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.removeAllMembers", ():void => {
-				expect( document.removeAllMembers ).toBeDefined();
-				expect( Utils.isFunction( document.removeAllMembers ) ).toBeDefined();
-
-				let spy:jasmine.Spy = spyOn( document._documents, "removeAllMembers" );
-
-				document.removeAllMembers();
-
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeRawASKQuery", ():void => {
-				expect( document.executeRawASKQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeRawASKQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeRawASKQuery" );
-				document.executeRawASKQuery( "ASK { ?subject, ?predicate, ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeASKQuery", ():void => {
-				expect( document.executeASKQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeASKQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeASKQuery" );
-				document.executeASKQuery( "ASK { ?subject, ?predicate, ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeRawSELECTQuery", ():void => {
-				expect( document.executeRawSELECTQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeRawSELECTQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeRawSELECTQuery" );
-				document.executeRawSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeSELECTQuery", ():void => {
-				expect( document.executeSELECTQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeSELECTQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeSELECTQuery" );
-				document.executeSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeRawCONSTRUCTQuery", ():void => {
-				expect( document.executeRawCONSTRUCTQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeRawCONSTRUCTQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeRawCONSTRUCTQuery" );
-				document.executeRawCONSTRUCTQuery( "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeRawDESCRIBEQuery", ():void => {
-				expect( document.executeRawDESCRIBEQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeRawDESCRIBEQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeRawDESCRIBEQuery" );
-				document.executeRawDESCRIBEQuery( "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeUPDATE", ():void => {
-				expect( document.executeUPDATE ).toBeDefined();
-				expect( Utils.isFunction( document.executeUPDATE ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeUPDATE" );
-				document.executeUPDATE( `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
-				expect( spy ).toHaveBeenCalledWith( document.id, `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.sparql", ():void => {
-				expect( document.sparql ).toBeDefined();
-				expect( Utils.isFunction( document.sparql ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "sparql" );
-
-				document.sparql();
-				expect( spy ).toHaveBeenCalledWith( document.id );
+				expect( document.__modelDecorator ).toBe( Fragment );
 			} );
 
 		} );

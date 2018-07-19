@@ -1,9 +1,6 @@
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./Resource"));
-__export(require("./TransientResource"));
+var Resource_1 = require("./Resource");
+exports.Resource = Resource_1.Resource;
 
 //# sourceMappingURL=index.js.map

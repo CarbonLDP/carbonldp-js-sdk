@@ -1,8 +1,8 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
-export interface EventMessage extends TransientResource {
-    target: Pointer;
+import { Document } from "../Document/Document";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { Resource } from "../Resource/Resource";
+export interface EventMessage extends Resource {
+    target: Document;
 }
 export interface EventMessageFactory {
     SCHEMA: ObjectSchema;

@@ -1,6 +1,8 @@
-import { Pointer } from "../Pointer";
-import { BaseResource } from "../Resource";
+import { Pointer } from "../Pointer/Pointer";
+import { BaseResource } from "../Resource/BaseResource";
 export interface BaseDocument extends BaseResource {
-    hasMemberRelation?: Pointer | string;
-    isMemberOfRelation?: Pointer | string;
+    hasMemberRelation?: string | Pointer;
+    isMemberOfRelation?: string | Pointer;
+    insertedContentRelation?: string | Pointer;
+    defaultInteractionModel?: string | Pointer;
 }

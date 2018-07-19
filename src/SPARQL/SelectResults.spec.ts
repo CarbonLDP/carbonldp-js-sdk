@@ -1,10 +1,4 @@
-import {
-	hasProperty,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-} from "./../test/JasmineExtender";
+import { hasProperty, interfaze, isDefined, module, OBLIGATORY } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as SELECTResults from "./SelectResults";

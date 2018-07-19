@@ -1,0 +1,6 @@
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+export interface ModelSchema<TYPE extends string = string> {
+	TYPE:TYPE;
+	SCHEMA:ObjectSchema;
+}

@@ -1,6 +1,4 @@
-export * from "./AccessPointCreated";
 export * from "./ChildCreated";
-export * from "./Document";
 export * from "./DocumentCreated";
 export * from "./DocumentCreatedDetails";
 export * from "./DocumentDeleted";
@@ -12,6 +10,6 @@ export * from "./MemberAddedDetails";
 export * from "./MemberDetails";
 export * from "./MemberRemoved";
 export * from "./MemberRemovedDetails";
-export * from "./Options";
-export * from "./Service";
+export * from "./MessagingOptions";
+export * from "./MessagingService";
 export * from "./Utils";

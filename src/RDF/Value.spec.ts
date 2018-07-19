@@ -1,9 +1,6 @@
-import { AbstractContext } from "../AbstractContext";
-import { Document } from "../Document";
-import {
-	Pointer,
-	PointerLibrary,
-} from "../Pointer";
+import { Pointer } from "../Pointer/Pointer";
+import { PointerLibrary } from "../Pointer/PointerLibrary";
+
 import {
 	hasMethod,
 	hasProperty,
@@ -15,10 +12,12 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { RDFDocument } from "./Document";
+
 import * as Utils from "./../Utils";
 
+import { RDFDocument } from "./Document";
 import { RDFValue } from "./Value";
+
 
 describe( module( "carbonldp/RDF/Value" ), ():void => {
 
@@ -75,13 +74,11 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 		"Class with useful functions to manage `CarbonLDP.RDF.RDFValue` objects."
 	), ():void => {
 
-		let expandedObject:any;
 		let documentResource:any;
 		let pointerLibrary:PointerLibrary;
 		let result:any;
-		let context:AbstractContext;
 		beforeEach( ():void => {
-			expandedObject = [ {
+			let expandedObject:any = [ {
 				"@id": "http://example.com/resource/",
 				"@graph": [
 					{
@@ -160,20 +157,11 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 				],
 			} ];
 
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.settings = { vocabulary: "http://example.com/vocab#" };
-				}
-			}
-
-			context = new MockedContext();
-
 			documentResource = RDFDocument.getDocumentResources( expandedObject )[ 0 ];
-			pointerLibrary = Document.decorate( { id: expandedObject[ "@id" ] }, context.documents );
+			pointerLibrary = {
+				hasPointer: () => { throw new Error( "Not implemented." ); },
+				getPointer: id => Pointer.create( { $id: id } ),
+			};
 		} );
 
 		it( isDefined(), ():void => {
@@ -201,7 +189,7 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 			value = documentResource[ "http://example.com/ns#pointer" ][ 0 ];
 			result = RDFValue.parse( pointerLibrary, value  );
 			expect( Pointer.is( result ) ).toBe( true );
-			expect( result.id ).toBe( "http://example.com/pointer/1" );
+			expect( result.$id ).toBe( "http://example.com/pointer/1" );
 
 			value = documentResource[ "http://example.com/ns#list" ][ 0 ];
 			result = RDFValue.parse( pointerLibrary, value  );
@@ -210,7 +198,7 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 			expect( result[ 0 ] ).toBe( 100 );
 			expect( result[ 1 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
 			expect( Pointer.is( result[ 2 ] ) ).toBe( true );
-			expect( result[ 2 ].id ).toBe( "http://example.com/pointer/1" );
+			expect( result[ 2 ].$id ).toBe( "http://example.com/pointer/1" );
 
 			value = documentResource[ "http://example.com/ns#empty-property" ][ 0 ];
 			result = RDFValue.parse( pointerLibrary, value  );

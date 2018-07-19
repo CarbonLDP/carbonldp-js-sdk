@@ -1,13 +1,9 @@
-import {
-	hasMethod,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-} from "./../test/JasmineExtender";
+import { hasMethod, interfaze, isDefined, module, OBLIGATORY } from "../test/JasmineExtender";
+
 import * as Utils from "./../Utils";
 
 import * as Parser from "./Parser";
+
 
 describe( module( "carbonldp/HTTP/Parser" ), ():void => {
 

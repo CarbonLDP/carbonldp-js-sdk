@@ -1,21 +1,20 @@
-import { JSONLDConverter } from "../JSONLD/Converter";
-import { DigestedObjectSchema } from "../ObjectSchema";
-import { TransientResource } from "../Resource";
+import { Context } from "../Context/Context";
 export declare class DeltaCreator {
     private prefixesMap;
-    private jsonldConverter;
-    private addToken;
-    private deleteToken;
-    private updateLists;
-    constructor(jsonldConverter: JSONLDConverter);
+    private context;
+    private readonly addToken;
+    private readonly deleteToken;
+    private readonly updateLists;
+    constructor(context: Context);
     getPatch(): string;
-    addResource(schema: DigestedObjectSchema, oldResource: TransientResource, newResource: TransientResource): void;
-    private getPropertyIRI(schema, propertyName);
-    private getObjects(value, schema, definition?);
-    private expandValues(values, schema, definition?);
-    private expandLanguageMap(values, schema);
-    private expandPointer(value, schema);
-    private expandLiteral(value, schema, definition?);
-    private compactIRI(schema, iri);
-    private addPrefixFrom(object, schema);
+    addResource(id: string, previousResource: object, currentResource: object): void;
+    private __getSchema;
+    private _getPropertyIRI;
+    private __getObjects;
+    private __expandValues;
+    private __expandLanguageMap;
+    private __expandPointer;
+    private __expandLiteral;
+    private __compactIRI;
+    private __addPrefixFrom;
 }

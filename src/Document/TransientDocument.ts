@@ -1,213 +1,246 @@
-import {
-	BaseBlankNode,
-	TransientBlankNode,
-} from "../BlankNode";
-import { ModelDecorator } from "../core/ModelDecorator";
-import { ModelFactory } from "../core/ModelFactory";
-import {
-	IDAlreadyInUseError,
-	IllegalArgumentError,
-} from "../Errors";
-import { TransientFragment } from "../Fragment";
-import { JSONLDConverter } from "../JSONLD";
-import {
-	BaseNamedFragment,
-	TransientNamedFragment,
-} from "../NamedFragment";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaResolver,
-} from "../ObjectSchema";
-import {
-	Pointer,
-	PointerLibrary,
-	PointerValidator,
-} from "../Pointer";
-import {
-	RDFDocument,
-	RDFNode,
-	URI,
-} from "../RDF";
-import { TransientResource } from "../Resource";
-import {
-	hasFunction,
-	hasPropertyDefined,
-	isObject,
-	isPlainObject,
-	isString,
-} from "../Utils";
-import { C } from "../Vocabularies";
+import { isRelative } from "sparqler/iri";
+
+import { Context } from "../Context/Context";
+
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { TransientFragment } from "../Fragment/TransientFragment";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { RDFDocument } from "../RDF/Document";
+import { RDFNode } from "../RDF/Node";
+import { URI } from "../RDF/URI";
+
+import { BaseRegistry } from "../Registry/BaseRegistry";
+import { Registry } from "../Registry/Registry";
+
+import { Resource } from "../Resource/Resource";
+
+import { isObject, isPlainObject, isString } from "../Utils";
+
 import { BaseDocument } from "./BaseDocument";
 
 
-export interface TransientDocument extends TransientResource, PointerLibrary, PointerValidator {
-	defaultInteractionModel?:Pointer;
-	isMemberOfRelation?:Pointer;
-	hasMemberRelation?:Pointer;
+export interface TransientDocument extends Resource, Registry<TransientFragment> {
+	$registry:DocumentsRegistry | undefined;
 
-	_fragmentsIndex:Map<string, TransientFragment>;
+	hasMemberRelation?:Pointer;
+	isMemberOfRelation?:Pointer;
+	insertedContentRelation?:Pointer;
+	defaultInteractionModel?:Pointer;
+
+
+	hasFragment( id:string ):boolean;
+
+	getFragment<T extends object>( id:string ):(T & TransientFragment) | null;
+
+	getFragments():TransientFragment[];
+
+	createFragment<T extends object>( object:T, id?:string ):T & TransientFragment;
+	createFragment( id?:string ):TransientFragment;
+
+	removeFragment( slugOrFragment:string | TransientFragment ):boolean;
+
 
 	_normalize():void;
 
 
-	_removeFragment( slugOrFragment:string | TransientFragment ):void;
+	_getLocalID( id:string ):string;
 
 
-	hasFragment( slug:string ):boolean;
-
-
-	getFragment<T>( slug:string ):T & TransientFragment;
-
-	getNamedFragment<T>( slug:string ):T & TransientNamedFragment;
-
-
-	getFragments():TransientFragment[];
-
-
-	createFragment<T>( object:T, slug?:string ):T & TransientFragment;
-
-	createFragment( slug?:string ):TransientFragment;
-
-
-	createNamedFragment<T>( object:T, slug:string ):T & TransientNamedFragment;
-
-	createNamedFragment( slug:string ):TransientNamedFragment;
-
-
-	removeNamedFragment( slugOrFragment:string | TransientNamedFragment ):void;
-
-
-	toJSON( objectSchemaResolver?:ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ):RDFDocument;
+	toJSON( contextOrKey?:Context | string ):RDFDocument;
 }
 
 
-export interface TransientDocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
-	TYPE:C[ "Document" ];
-
-
-	is( value:any ):value is TransientDocument;
-
-	isDecorated( object:object ):object is TransientDocument;
-
-
-	create<T extends object>( data?:T & BaseDocument ):T & TransientDocument;
-
-	createFrom<T extends object>( object:T & BaseDocument ):T & TransientDocument;
-
-	decorate<T extends object>( object:T ):T & TransientDocument;
-
-
-	_convertNestedObjects( parent:TransientDocument, actual:any, fragmentsTracker?:Set<string> ):void;
+function __getLabelFrom( slug:string ):string {
+	if( ! isRelative( slug ) || slug.startsWith( "#" ) ) return slug;
+	return "#" + slug;
 }
+
+function __getObjectId( object:{ $id?:string, $slug?:string } ):string {
+	if( "$id" in object ) return object.$id;
+
+	if( "$slug" in object ) return URI.hasFragment( object.$slug ) ?
+		object.$slug : __getLabelFrom( object.$slug );
+
+	return URI.generateBNodeID();
+}
+
+function __convertNested( resource:TransientDocument, target:object, tracker:Set<string> = new Set() ):void {
+	Object
+		.keys( target )
+		.map( key => target[ key ] )
+		.forEach( next => {
+			if( Array.isArray( next ) )
+				return __convertNested( resource, next, tracker );
+
+
+			if( ! isPlainObject( next ) ) return;
+			if( TransientDocument.is( next ) ) return;
+			if( next._registry && next._registry !== resource ) return;
+
+
+			const idOrSlug:string = __getObjectId( next );
+			if( tracker.has( idOrSlug ) ) return;
+			if( ! resource.inScope( idOrSlug, true ) ) return;
+
+
+			const fragment:TransientFragment = resource.hasPointer( idOrSlug, true ) ?
+				resource.getPointer( idOrSlug, true ) :
+				resource.createFragment( next, idOrSlug )
+			;
+
+			tracker.add( fragment.$id );
+			__convertNested( resource, fragment, tracker );
+		} )
+	;
+}
+
+type OverriddenMembers =
+	| "$registry"
+	| "_getLocalID"
+	| "getPointer"
+	| "toJSON"
+	;
+
+export type TransientDocumentFactory =
+	& ModelPrototype<TransientDocument, Resource & Registry<TransientFragment>, OverriddenMembers>
+	& ModelDecorator<TransientDocument, BaseDocument>
+	& ModelFactoryOptional<TransientDocument, BaseDocument>
+	& ModelTypeGuard<TransientDocument>
+	;
 
 export const TransientDocument:TransientDocumentFactory = {
-	TYPE: C.Document,
+	PROTOTYPE: {
+		$registry: void 0,
 
-	isDecorated: ( object ):object is TransientDocument =>
-		isObject( object ) &&
-		hasPropertyDefined( object, "_fragmentsIndex" ) &&
+		_normalize( this:TransientDocument ):void {
+			const usedFragments:Set<string> = new Set();
+			__convertNested( this, this, usedFragments );
 
-		hasFunction( object, "_normalize" ) &&
-		hasFunction( object, "_removeFragment" ) &&
-
-		hasFunction( object, "hasPointer" ) &&
-		hasFunction( object, "getPointer" ) &&
-
-		hasFunction( object, "inScope" ) &&
-
-		hasFunction( object, "hasFragment" ) &&
-		hasFunction( object, "getFragment" ) &&
-		hasFunction( object, "getNamedFragment" ) &&
-		hasFunction( object, "getFragments" ) &&
-		hasFunction( object, "createFragment" ) &&
-		hasFunction( object, "createNamedFragment" ) &&
-		hasFunction( object, "removeNamedFragment" ) &&
-
-		hasFunction( object, "toJSON" )
-	,
-
-	is: ( value ):value is TransientDocument =>
-		TransientResource.is( value ) &&
-		TransientDocument.isDecorated( value )
-	,
+			this.getPointers( true )
+				.map( Pointer.getID )
+				.filter( URI.isBNodeID )
+				.filter( id => ! usedFragments.has( id ) )
+				.forEach( this.removePointer, this )
+			;
+		},
 
 
-	decorate: <T extends object>( object:T ) => {
+		_getLocalID( this:TransientDocument, id:string ):string {
+			if( URI.isBNodeID( id ) ) return id;
+
+			if( URI.isFragmentOf( id, this.$id ) ) return URI.getFragment( id );
+
+			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
+		},
+
+		getPointer( this:TransientDocument, id:string, local?:true ):TransientFragment {
+			id = URI.resolve( this.$id, id );
+			return Registry.PROTOTYPE.getPointer.call( this, id, local );
+		},
+
+
+		hasFragment( this:TransientDocument, id:string ):boolean {
+			id = __getLabelFrom( id );
+			if( ! this.inScope( id, true ) ) return false;
+
+			const localID:string = this._getLocalID( id );
+			return this.__resourcesMap.has( localID );
+		},
+
+		getFragment<T extends object>( this:TransientDocument, id:string ):(T & TransientFragment) | null {
+			id = __getLabelFrom( id );
+			const localID:string = this._getLocalID( id );
+
+			const resource:TransientFragment = this.__resourcesMap.get( localID );
+			if( ! resource ) return null;
+
+			return resource as T & TransientFragment;
+		},
+
+		getFragments( this:TransientDocument ):TransientFragment[] {
+			return this.getPointers( true );
+		},
+
+		createFragment<T extends object>( this:TransientDocument, isOrObject?:string | T, id?:string ):T & TransientFragment {
+			const object:T = isObject( isOrObject ) ? isOrObject : {} as T;
+			if( isString( isOrObject ) ) id = isOrObject;
+
+			const $id:string = id ? __getLabelFrom( id ) : __getObjectId( object );
+			const fragment:T & TransientFragment = this._addPointer( Object
+				.assign<T, Pointer>( object, { $id } )
+			);
+
+			__convertNested( this, fragment );
+			return fragment;
+		},
+
+		removeFragment( this:TransientDocument, fragmentOrSlug:string | TransientFragment ):boolean {
+			const id:string = __getLabelFrom( Pointer.getID( fragmentOrSlug ) );
+			if( ! this.inScope( id, true ) ) return false;
+
+			return this.removePointer( id );
+		},
+
+
+		toJSON( this:TransientDocument, contextOrKey:Context | string ):RDFDocument {
+			const nodes:RDFNode[] = [
+				Resource.PROTOTYPE.toJSON.call( this, contextOrKey ),
+				...this
+					.getFragments()
+					.map( resource => resource.toJSON( contextOrKey ) ),
+			];
+
+			return {
+				"@id": this.$id,
+				"@graph": nodes,
+			};
+		},
+	},
+
+	isDecorated( object:object ):object is TransientDocument {
+		return ModelDecorator
+			.hasPropertiesFrom( TransientDocument.PROTOTYPE, object );
+	},
+
+	decorate<T extends BaseDocument>( object:T ):T & TransientDocument {
 		if( TransientDocument.isDecorated( object ) ) return object;
 
-		TransientResource.decorate( object );
+		type Base = T & BaseRegistry;
+		const base:Base = ModelDecorator.definePropertiesFrom( {
+			__modelDecorator: TransientFragment,
+		}, object );
 
-		Object.defineProperties( object, {
-			"_fragmentsIndex": {
-				configurable: true,
-				value: new Map<string, TransientFragment>(),
-			},
+		const resource:Base & Resource & Registry<TransientFragment> = ModelDecorator
+			.decorateMultiple( base, Resource, Registry );
 
-			"_normalize": {
-				configurable: true,
-				value: normalize,
-			},
-			"_removeFragment": {
-				configurable: true,
-				value: removeFragment,
-			},
-
-			"hasPointer": {
-				configurable: true,
-				value: hasPointer,
-			},
-			"getPointer": {
-				configurable: true,
-				value: getPointer,
-			},
-			"inScope": {
-				configurable: true,
-				value: inScope,
-			},
-
-			"hasFragment": {
-				configurable: true,
-				value: hasFragment,
-			},
-			"getFragment": {
-				configurable: true,
-				value: getFragment,
-			},
-			"getNamedFragment": {
-				configurable: true,
-				value: getNamedFragment,
-			},
-			"getFragments": {
-				configurable: true,
-				value: getFragments,
-			},
-			"createFragment": {
-				configurable: true,
-				value: createFragment,
-			},
-			"createNamedFragment": {
-				configurable: true,
-				value: createNamedFragment,
-			},
-			"removeNamedFragment": {
-				configurable: true,
-				value: removeNamedFragment,
-			},
-			"toJSON": {
-				configurable: true,
-				value: toJSON,
-			},
-		} );
-
-		return object as any;
+		return ModelDecorator
+			.definePropertiesFrom( TransientDocument.PROTOTYPE, resource )
+			;
 	},
+
+
+	is: ( value ):value is TransientDocument =>
+		Resource.is( value ) &&
+		Registry.isDecorated( value ) &&
+		TransientDocument.isDecorated( value )
+	,
 
 	createFrom: <T extends object>( object:T & BaseDocument ) => {
 		if( TransientDocument.is( object ) ) throw new IllegalArgumentError( "The object provided is already a Document." );
 
 		const document:T & TransientDocument = TransientDocument.decorate<T>( object );
-		TransientDocument._convertNestedObjects( document, document );
 
+		__convertNested( document, document );
 		return document;
 	},
 
@@ -215,204 +248,4 @@ export const TransientDocument:TransientDocumentFactory = {
 		const copy:T = Object.assign( {}, data );
 		return TransientDocument.createFrom( copy );
 	},
-
-
-	_convertNestedObjects( parent:TransientDocument, actual:any, fragmentsTracker:Set<string> = new Set() ):void {
-		for( let key of Object.keys( actual ) ) {
-			const next:any = actual[ key ];
-
-			if( Array.isArray( next ) ) {
-				TransientDocument._convertNestedObjects( parent, next, fragmentsTracker );
-				continue;
-			}
-
-			if( ! isPlainObject( next ) ) continue;
-			if( TransientDocument.is( next ) ) continue;
-
-			const idOrSlug:string = getNestedObjectId( next );
-			if( ! ! idOrSlug && ! inScope.call( parent, idOrSlug ) ) continue;
-
-			const parentFragment:TransientFragment = parent.getFragment( idOrSlug );
-			if( ! parentFragment ) {
-				const fragment:TransientFragment = parent.createFragment( <Object> next, idOrSlug );
-				TransientDocument._convertNestedObjects( parent, fragment, fragmentsTracker );
-
-			} else if( parentFragment !== next ) {
-				const fragment:TransientFragment = actual[ key ] = Object.assign( parentFragment, next );
-				TransientDocument._convertNestedObjects( parent, fragment, fragmentsTracker );
-
-			} else if( ! fragmentsTracker.has( next.id ) ) {
-				fragmentsTracker.add( next.id );
-				TransientDocument._convertNestedObjects( parent, next, fragmentsTracker );
-			}
-
-		}
-
-	},
-
 };
-
-function getNestedObjectId( object:any ):string {
-	if( "id" in object ) return object.id;
-
-	if( "slug" in object ) return URI.hasFragment( object.slug ) ?
-		object.slug : "#" + object.slug;
-
-	return "";
-}
-
-
-function hasPointer( this:TransientDocument, id:string ):boolean {
-	if( id === this.id ) return true;
-	if( ! this.inScope( id ) ) return false;
-
-	return this.hasFragment( id );
-}
-
-function getPointer( this:TransientDocument, id:string ):Pointer {
-	if( ! this.inScope( id ) ) return null;
-	if( id === this.id ) return this;
-
-	return this.hasFragment( id ) ?
-		this.getFragment( id ) :
-		this.createFragment( id );
-}
-
-function inScope( this:TransientDocument, idOrPointer:string | Pointer ):boolean {
-	const id:string = isString( idOrPointer ) ? idOrPointer : idOrPointer.id;
-
-	if( id === this.id ) return true;
-	if( URI.isBNodeID( id ) ) return true;
-	if( URI.isFragmentOf( id, this.id ) ) return true;
-	return id.startsWith( "#" );
-}
-
-function hasFragment( this:TransientDocument, id:string ):boolean {
-	if( URI.isAbsolute( id ) ) {
-		if( ! URI.isFragmentOf( id, this.id ) ) return false;
-		id = URI.hasFragment( id ) ? URI.getFragment( id ) : id;
-	} else if( id.startsWith( "#" ) ) {
-		id = id.substring( 1 );
-	}
-
-	return this._fragmentsIndex.has( id );
-}
-
-function getFragment( this:TransientDocument, id:string ):TransientFragment {
-	if( ! URI.isBNodeID( id ) ) return this.getNamedFragment( id );
-	return this._fragmentsIndex.get( id ) || null;
-}
-
-function getNamedFragment( this:TransientDocument, id:string ):TransientNamedFragment {
-	if( URI.isBNodeID( id ) ) throw new IllegalArgumentError( "Named fragments can't have a id that starts with '_:'." );
-	if( URI.isAbsolute( id ) ) {
-		if( ! URI.isFragmentOf( id, this.id ) ) throw new IllegalArgumentError( "The id is out of scope." );
-		id = URI.hasFragment( id ) ? URI.getFragment( id ) : id;
-	} else if( id.startsWith( "#" ) ) {
-		id = id.substring( 1 );
-	}
-
-	return <TransientNamedFragment> this._fragmentsIndex.get( id ) || null;
-}
-
-function getFragments( this:TransientDocument ):TransientFragment[] {
-	return Array.from( this._fragmentsIndex.values() );
-}
-
-function createFragment<T extends object>( object:T, slug?:string ):T & TransientFragment;
-function createFragment( slug?:string ):TransientFragment;
-function createFragment<T extends object>( this:TransientDocument, slugOrObject?:any, slug?:string ):T & TransientFragment {
-	slug = isString( slugOrObject ) ? slugOrObject : slug;
-	const object:T = ! isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
-
-	if( slug ) {
-		if( ! URI.isBNodeID( slug ) ) return this.createNamedFragment<T>( object, slug );
-		if( this._fragmentsIndex.has( slug ) ) throw new IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
-	}
-
-	const baseBNode:T & BaseBlankNode = Object.assign( object, {
-		_document: this,
-		id: slug,
-	} );
-	const fragment:T & TransientBlankNode = TransientBlankNode.createFrom( baseBNode );
-	this._fragmentsIndex.set( fragment.id, fragment );
-
-	TransientDocument._convertNestedObjects( this, fragment );
-	return fragment;
-}
-
-function createNamedFragment<T extends Object>( object:T, slug:string ):TransientNamedFragment & T;
-function createNamedFragment( slug:string ):TransientNamedFragment;
-function createNamedFragment<T extends Object>( this:TransientDocument, slugOrObject:any, slug?:string ):T & TransientNamedFragment {
-	slug = isString( slugOrObject ) ? slugOrObject : slug;
-	const object:T = ! isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
-
-	if( URI.isBNodeID( slug ) ) throw new IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
-
-	if( URI.isAbsolute( slug ) ) {
-		if( ! URI.isFragmentOf( slug, this.id ) ) throw new IllegalArgumentError( "The slug is out of scope." );
-		slug = URI.hasFragment( slug ) ? URI.getFragment( slug ) : slug;
-	} else if( slug.startsWith( "#" ) ) slug = slug.substring( 1 );
-
-	if( this._fragmentsIndex.has( slug ) ) throw new IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
-
-	const baseFragment:T & BaseNamedFragment = Object.assign( object, {
-		_document: this,
-		slug,
-	} );
-	const fragment:T & TransientNamedFragment = TransientNamedFragment.createFrom( baseFragment );
-	this._fragmentsIndex.set( slug, fragment );
-
-	TransientDocument._convertNestedObjects( this, fragment );
-	return fragment;
-}
-
-function removeFragment( this:TransientDocument, fragmentOrSlug:string | TransientFragment ):void {
-	let id:string = isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
-
-	if( URI.isAbsolute( id ) ) {
-		if( ! URI.isFragmentOf( id, this.id ) ) return;
-		id = URI.hasFragment( id ) ? URI.getFragment( id ) : id;
-	} else if( id.startsWith( "#" ) ) {
-		id = id.substring( 1 );
-	}
-
-	this._fragmentsIndex.delete( id );
-}
-
-function removeNamedFragment( this:TransientDocument, fragmentOrSlug:TransientNamedFragment | string ):void {
-	const id:string = isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
-
-	if( URI.isBNodeID( id ) ) throw new IllegalArgumentError( "You can only remove NamedFragments." );
-	this._removeFragment( id );
-}
-
-function toJSON( this:TransientDocument, keyOrObjectSchemaResolver?:string | ObjectSchemaResolver, jsonldConverter:JSONLDConverter = new JSONLDConverter() ):RDFDocument {
-	const objectSchemaResolver:ObjectSchemaResolver = isObject( keyOrObjectSchemaResolver ) ?
-		keyOrObjectSchemaResolver : null;
-	const generalSchema:DigestedObjectSchema = objectSchemaResolver ?
-		objectSchemaResolver.getGeneralSchema() : new DigestedObjectSchema();
-
-	const resources:object[] = [ this, ...this.getFragments() ];
-	const expandedResources:RDFNode[] = resources.map( resource => {
-		const resourceSchema:DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new DigestedObjectSchema();
-		return jsonldConverter.expand( resource, generalSchema, resourceSchema );
-	} );
-
-	return {
-		"@id": this.id,
-		"@graph": expandedResources,
-	};
-}
-
-function normalize( this:TransientDocument ):void {
-	const currentFragments:TransientFragment[] = this.getFragments()
-		.filter( fragment => URI.isBNodeID( fragment.id ) );
-	const usedFragmentsIDs:Set<string> = new Set();
-
-	TransientDocument._convertNestedObjects( this, this, usedFragmentsIDs );
-	currentFragments.forEach( fragment => {
-		if( usedFragmentsIDs.has( fragment.id ) ) return;
-		this._fragmentsIndex.delete( fragment.id );
-	} );
-}

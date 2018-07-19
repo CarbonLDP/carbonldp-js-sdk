@@ -1,136 +1,150 @@
-import { PartialMetadata } from "../SPARQL/QueryDocument";
-import * as Utils from "../Utils";
-import {
-	TransientResource,
-	TransientResourceFactory,
-} from "./TransientResource";
+import { Context } from "../Context/Context";
+
+import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
+
+import { JSONLDConverter } from "../JSONLD/JSONLDConverter";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { RDFNode } from "../RDF/Node";
+import { URI } from "../RDF/URI";
+
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+import { Registry } from "../Registry/Registry";
+
+import { isObject } from "../Utils";
+
+import { BaseResource } from "./BaseResource";
 
 
-export interface Resource extends TransientResource {
-	_snapshot:TransientResource;
+export interface Resource extends RegisteredPointer {
+	types:string[];
 
-	_partialMetadata?:PartialMetadata;
-
-
-	_syncSnapshot():void;
+	$registry:Registry<RegisteredPointer> | undefined;
+	$slug:string;
 
 
-	isDirty():boolean;
+	addType( type:string ):void;
 
-	revert():void;
+	hasType( type:string ):boolean;
+
+	removeType( type:string ):void;
 
 
-	isPartial():boolean;
+	toJSON( contextOrKey:Context | string ):RDFNode;
 }
 
 
-export interface ResourceFactory extends TransientResourceFactory {
-	isDecorated( object:object ):object is Resource;
+function __getContext( registry:Registry<any> | GeneralRegistry<any> | undefined ):Context | undefined {
+	if( ! registry ) return;
+	if( "$context" in registry && registry.$context ) return registry.$context;
 
-	decorate<T extends object>( object:T ):T & Resource;
-
-
-	is( value:any ):value is Resource;
+	return __getContext( registry.$registry );
 }
 
+function __resolveURI( resource:Resource, uri:string ):string {
+	if( URI.isAbsolute( uri ) ) return uri;
 
-function syncSnapshot( this:Resource ):void {
-	this._snapshot = Utils.ObjectUtils.clone( this, { arrays: true } );
+	const context:Context | undefined = __getContext( resource.$registry );
+	if( ! context ) return uri;
 
-	this._snapshot.id = this.id;
-	this._snapshot.types = this.types.slice();
+	return context
+		.getObjectSchema()
+		.resolveURI( uri, { vocab: true } );
 }
 
-function isDirty( this:Resource ):boolean {
-	if( ! Utils.ObjectUtils.areEqual( this, this._snapshot, { arrays: true } ) ) return true;
-
-	let response:boolean = false;
-	if( "id" in this ) response = response || (this._snapshot as TransientResource).id !== this.id;
-	if( "types" in this ) response = response || ! Utils.ObjectUtils.areEqual( (this._snapshot as TransientResource).types, this.types );
-
-	return response;
-}
-
-function revert( this:Resource ):void {
-	for( let key of Object.keys( this ) ) {
-		if( ! (key in this._snapshot) ) delete this[ key ];
-	}
-
-	Utils.ObjectUtils.extend( this, this._snapshot, { arrays: true } );
-}
-
-function isPartial( this:Resource ):boolean {
-	return ! ! this._partialMetadata;
-}
+export type ResourceFactory =
+	& ModelPrototype<Resource, RegisteredPointer>
+	& ModelDecorator<Resource, BaseResource>
+	& ModelFactoryOptional<Resource>
+	& ModelTypeGuard<Resource>
+	;
 
 export const Resource:ResourceFactory = {
+	PROTOTYPE: {
+		get types():string[] { return []; },
+
+		get $slug( this:Resource ):string {
+			if( URI.isBNodeID( this.$id ) ) return this.$id;
+			return URI.getSlug( this.$id );
+		},
+		set $slug( this:Resource, slug:string ) {},
+
+
+		addType( this:Resource, type:string ):void {
+			type = __resolveURI( this, type );
+
+			if( this.types.indexOf( type ) !== - 1 ) return;
+
+			this.types.push( type );
+		},
+
+		hasType( this:Resource, type:string ):boolean {
+			type = __resolveURI( this, type );
+			return this.types.indexOf( type ) !== - 1;
+		},
+
+		removeType( this:Resource, type:string ):void {
+			type = __resolveURI( this, type );
+
+			const index:number = this.types.indexOf( type );
+			if( index !== - 1 ) this.types.splice( index, 1 );
+		},
+
+
+		toJSON( this:Resource, contextOrKey?:Context | string ):RDFNode {
+			const context:Context | undefined = typeof contextOrKey === "object" ?
+				contextOrKey : __getContext( this.$registry );
+
+			const generalSchema:DigestedObjectSchema = context ?
+				context.registry.getGeneralSchema() : new DigestedObjectSchema();
+
+			const resourceSchema:DigestedObjectSchema = context && context.registry ?
+				context.registry.getSchemaFor( this ) : generalSchema;
+
+			const jsonldConverter:JSONLDConverter = context ?
+				context.jsonldConverter : new JSONLDConverter();
+
+			return jsonldConverter.expand( this, generalSchema, resourceSchema );
+		},
+	},
+
 	isDecorated( object:object ):object is Resource {
-		return (
-			Utils.hasPropertyDefined( object, "_snapshot" )
-			&& Utils.hasFunction( object, "_syncSnapshot" )
-			&& Utils.hasFunction( object, "isDirty" )
-			&& Utils.hasFunction( object, "isPartial" )
-			&& Utils.hasFunction( object, "revert" )
-		);
+		return isObject( object )
+			&& ModelDecorator
+				.hasPropertiesFrom( Resource.PROTOTYPE, object );
 	},
-
-	decorate<T extends object>( object:T ):T & Resource {
-		if( Resource.isDecorated( object ) ) return object;
-
-		TransientResource.decorate( object );
-
-		const persistedResource:T & Resource = object as T & Resource;
-		Object.defineProperties( persistedResource, {
-			"_snapshot": {
-				writable: true,
-				enumerable: false,
-				configurable: true,
-				value: {},
-			},
-			"_syncSnapshot": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: syncSnapshot,
-			},
-
-			"_partialMetadata": {
-				writable: true,
-				enumerable: false,
-				configurable: true,
-			},
-
-			"isDirty": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: isDirty,
-			},
-			"revert": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: revert,
-			},
-
-			"isPartial": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: isPartial,
-			},
-		} );
-
-		return persistedResource;
-	},
-
 
 	is( value:any ):value is Resource {
-		return TransientResource.is( value )
-			&& Resource.isDecorated( value )
-			;
+		return Pointer.is( value )
+			&& Resource.isDecorated( value );
 	},
 
-	create: TransientResource.create,
-	createFrom: TransientResource.createFrom,
+	create<T extends object>( data?:T & BaseResource ):T & Resource {
+		const clone:T = Object.assign( {}, data );
+		return Resource.createFrom<T>( clone );
+	},
+
+	createFrom<T extends object>( object:T & BaseResource ):T & Resource {
+		return Resource.decorate<T>( object );
+	},
+
+	decorate<T extends BaseResource>( object:T ):T & Resource {
+		if( Resource.isDecorated( object ) ) return object;
+
+		if( ! object.hasOwnProperty( "$registry" ) ) object.$registry = void 0;
+
+		const resource:T & RegisteredPointer = ModelDecorator
+			.decorateMultiple( object as Required<T>, RegisteredPointer );
+
+		return ModelDecorator
+			.definePropertiesFrom( Resource.PROTOTYPE, resource );
+	},
 };

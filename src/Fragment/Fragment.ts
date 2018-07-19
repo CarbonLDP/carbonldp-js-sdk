@@ -1,110 +1,104 @@
-import { Document } from "../Document";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaUtils,
-} from "../ObjectSchema";
-import { URI } from "../RDF";
-import {
-	addTypeInResource,
-	hasTypeInResource,
-	removeTypeInResource,
-	Resource
-} from "../Resource";
-import { isObject } from "../Utils";
-import {
-	TransientFragment,
-	TransientFragmentFactory
-} from "./TransientFragment";
+import { Document } from "../Document/Document";
 
-export interface Fragment extends Resource, TransientFragment {
-	_document:Document;
+import { GETOptions, RequestOptions } from "../HTTP/Request";
 
-	addType( type:string ):void;
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
 
-	hasType( type:string ):boolean;
+import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
+import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
 
-	removeType( type:string ):void;
+import { BaseResolvablePointer } from "../Repository/BaseResolvablePointer";
+
+import { BaseResolvableFragment } from "./BaseResolvableFragment";
+import { BaseTransientFragment } from "./BaseTransientFragment";
+import { TransientFragment } from "./TransientFragment";
+
+
+export interface Fragment extends TransientFragment, QueryablePointer {
+	$document:Document;
+	$registry:Document;
+	$repository:Document;
+
+
+	get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+
+	resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	resolve<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+
+
+	exists( requestOptions?:RequestOptions ):Promise<boolean>;
+	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
+
+
+	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+
+	save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+
+	saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+
+
+	delete( requestOptions?:RequestOptions ):Promise<void>;
+	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 }
 
 
-export interface FragmentFactory extends TransientFragmentFactory {
-	isDecorated( object:object ):object is Fragment;
+export type OverriddenMembers =
+	| "$repository"
+	| "_resolved"
+	;
 
-	is( value:any ):value is Fragment;
-
-
-	decorate<T extends object>( object:T ):T & Fragment;
-}
-
-
-function resolveURI( fragment:Fragment, uri:string ):string {
-	if( URI.isAbsolute( uri ) ) return uri;
-
-	const schema:DigestedObjectSchema = fragment._document._documents.getGeneralSchema();
-	return ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
-}
-
-function addTypeInPersistedFragment( this:Fragment, type:string ):void {
-	type = resolveURI( this, type );
-	return addTypeInResource.call( this, type );
-}
-
-function hasTypeInPersistedFragment( this:Fragment, type:string ):void {
-	type = resolveURI( this, type );
-	return hasTypeInResource.call( this, type );
-}
-
-function removeTypeInPersistedFragment( this:Fragment, type:string ):void {
-	type = resolveURI( this, type );
-	return removeTypeInResource.call( this, type );
-}
+export type FragmentFactory =
+	& ModelPrototype<Fragment, TransientFragment & QueryablePointer, OverriddenMembers>
+	& ModelDecorator<Fragment, BaseResolvableFragment>
+	& ModelFactory<TransientFragment, BaseTransientFragment>
+	;
 
 export const Fragment:FragmentFactory = {
+	PROTOTYPE: {
+		get $repository( this:Fragment ):Document {
+			return this.$registry;
+		},
+		set $repository( this:Fragment, document:Document ) {
+			this.$registry = document;
+		},
+
+		get _resolved( this:Fragment ):boolean {
+			return this.$document._resolved;
+		},
+		set _resolved( this:Fragment, _value:boolean ) {},
+	},
+
+
 	isDecorated( object:object ):object is Fragment {
-		return isObject( object ) &&
-			object[ "addType" ] === addTypeInPersistedFragment &&
-			object[ "hasType" ] === hasTypeInPersistedFragment &&
-			object[ "removeType" ] === removeTypeInPersistedFragment
+		return ModelDecorator
+			.hasPropertiesFrom( Fragment.PROTOTYPE, object )
 			;
 	},
 
-	is( value:any ):value is Fragment {
-		return TransientFragment.is( value ) &&
-			Resource.isDecorated( value ) &&
-			Fragment.isDecorated( value )
-			;
-	},
-
-
-	decorate<T extends object>( object:T ):T & Fragment {
+	decorate<T extends BaseResolvableFragment>( object:T ):T & Fragment {
 		if( Fragment.isDecorated( object ) ) return object;
 
-		TransientFragment.decorate( object );
-		Resource.decorate( object );
-
-		const fragment:T & Fragment = object as T & Fragment;
-		Object.defineProperties( object, {
-			"addType": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: addTypeInPersistedFragment,
-			},
-			"hasType": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: hasTypeInPersistedFragment,
-			},
-			"removeType": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: removeTypeInPersistedFragment,
-			},
+		type ForcedT = T & { $document:Document } & BaseResolvablePointer;
+		const forced:ForcedT = Object.assign( object, {
+			$document: object.$registry,
+			$repository: object.$registry,
 		} );
 
-		return fragment;
+		const target:ForcedT & TransientFragment & QueryablePointer = ModelDecorator
+			.decorateMultiple( forced, TransientFragment, QueryablePointer );
+
+		return ModelDecorator
+			.definePropertiesFrom( Fragment.PROTOTYPE, target );
 	},
 
 	create: TransientFragment.create,

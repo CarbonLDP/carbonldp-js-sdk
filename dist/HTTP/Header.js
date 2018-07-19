@@ -3,29 +3,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Header = (function () {
     function Header(values) {
         this.values = Array.isArray(values) ?
-            values : Header._parseValues(values);
+            values : Header.__parseValues(values);
     }
     Header.parseHeaders = function (headersString) {
         var headers = new Map();
         headersString.split(/\r?\n/).forEach(function (strHeader) {
+            var _a;
             if (!strHeader.trim())
                 return;
             var parts = strHeader.split(":");
             if (parts.length < 2)
                 throw new Error("ParseError: The header couldn't be parsed.");
             var name = parts[0].trim().toLowerCase();
-            var values = Header._parseValues(parts.slice(1).join(":"));
+            var values = Header.__parseValues(parts.slice(1).join(":"));
             if (headers.has(name)) {
                 (_a = headers.get(name).values).push.apply(_a, values);
             }
             else {
                 headers.set(name, new Header(values));
             }
-            var _a;
         });
         return headers;
     };
-    Header._parseValues = function (strValues) {
+    Header.__parseValues = function (strValues) {
         if (!strValues)
             return [];
         return strValues

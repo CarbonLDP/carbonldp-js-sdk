@@ -1,4 +1,4 @@
-import { ObjectSchema } from "../ObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { MemberDetails } from "./MemberDetails";
 export interface MemberAddedDetails extends MemberDetails {
 }

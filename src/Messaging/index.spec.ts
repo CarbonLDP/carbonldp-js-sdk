@@ -1,73 +1,22 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC
-} from "../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
 
 import * as Messaging from "./";
 
-import {
-	AccessPointCreated,
-	AccessPointCreatedFactory,
-} from "./AccessPointCreated";
-import {
-	ChildCreated,
-	ChildCreatedFactory,
-} from "./ChildCreated";
-import {
-	MessagingDocument,
-	MessagingDocumentFactory,
-} from "./Document";
-import {
-	DocumentCreated,
-	DocumentCreatedFactory,
-} from "./DocumentCreated";
-import {
-	DocumentCreatedDetails,
-	DocumentCreatedDetailsFactory,
-} from "./DocumentCreatedDetails";
-import {
-	DocumentDeleted,
-	DocumentDeletedFactory,
-} from "./DocumentDeleted";
-import {
-	DocumentModified,
-	DocumentModifiedFactory,
-} from "./DocumentModified";
+import { ChildCreated, ChildCreatedFactory } from "./ChildCreated";
+import { DocumentCreated, DocumentCreatedFactory } from "./DocumentCreated";
+import { DocumentCreatedDetails, DocumentCreatedDetailsFactory } from "./DocumentCreatedDetails";
+import { DocumentDeleted, DocumentDeletedFactory } from "./DocumentDeleted";
+import { DocumentModified, DocumentModifiedFactory } from "./DocumentModified";
 import { Event } from "./Event";
-import {
-	EventMessage,
-	EventMessageFactory,
-} from "./EventMessage";
-import {
-	MemberAdded,
-	MemberAddedFactory,
-} from "./MemberAdded";
-import {
-	MemberAddedDetails,
-	MemberAddedDetailsFactory,
-} from "./MemberAddedDetails";
-import {
-	MemberDetails,
-	MemberDetailsFactory,
-} from "./MemberDetails";
-import {
-	MemberRemoved,
-	MemberRemovedFactory,
-} from "./MemberRemoved";
-import {
-	MemberRemovedDetails,
-	MemberRemovedDetailsFactory,
-} from "./MemberRemovedDetails";
-import { MessagingOptions } from "./Options";
-import { MessagingService } from "./Service";
-import {
-	createDestination,
-	parseURIPattern,
-	validateEventContext,
-	validateEventType,
-} from "./Utils";
+import { EventMessage, EventMessageFactory } from "./EventMessage";
+import { MemberAdded, MemberAddedFactory } from "./MemberAdded";
+import { MemberAddedDetails, MemberAddedDetailsFactory } from "./MemberAddedDetails";
+import { MemberDetails, MemberDetailsFactory } from "./MemberDetails";
+import { MemberRemoved, MemberRemovedFactory } from "./MemberRemoved";
+import { MemberRemovedDetails, MemberRemovedDetailsFactory } from "./MemberRemovedDetails";
+import { MessagingOptions } from "./MessagingOptions";
+import { MessagingService } from "./MessagingService";
+import { _createDestination, _parseURIPattern, _validateEventType } from "./Utils";
 
 
 describe( module( "carbonldp/Messaging" ), ():void => {
@@ -75,24 +24,6 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Messaging ).toBeDefined();
 		expect( Messaging ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( reexports(
-		STATIC,
-		"AccessPointCreated",
-		"CarbonLDP.Messaging.AccessPointCreated"
-	), ():void => {
-		expect( Messaging.AccessPointCreated ).toBeDefined();
-		expect( Messaging.AccessPointCreated ).toBe( AccessPointCreated );
-	} );
-
-	it( reexports(
-		STATIC,
-		"AccessPointCreatedFactory",
-		"CarbonLDP.Messaging.AccessPointCreatedFactory"
-	), ():void => {
-		const target:Messaging.AccessPointCreatedFactory = {} as AccessPointCreatedFactory;
-		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
@@ -110,24 +41,6 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 		"CarbonLDP.Messaging.ChildCreatedFactory"
 	), ():void => {
 		const target:Messaging.ChildCreatedFactory = {} as ChildCreatedFactory;
-		expect( target ).toBeDefined();
-	} );
-
-	it( reexports(
-		STATIC,
-		"MessagingDocument",
-		"CarbonLDP.Messaging.MessagingDocument"
-	), ():void => {
-		expect( Messaging.MessagingDocument ).toBeDefined();
-		expect( Messaging.MessagingDocument ).toBe( MessagingDocument );
-	} );
-
-	it( reexports(
-		STATIC,
-		"MessagingDocumentFactory",
-		"CarbonLDP.Messaging.MessagingDocumentFactory"
-	), ():void => {
-		const target:Messaging.MessagingDocumentFactory = {} as MessagingDocumentFactory;
 		expect( target ).toBeDefined();
 	} );
 
@@ -341,37 +254,28 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"validateEventType",
-		"CarbonLDP.Messaging#validateEventType"
+		"carbonldp/Messaging/Utils#validateEventType"
 	), ():void => {
-		expect( Messaging.validateEventType ).toBeDefined();
-		expect( Messaging.validateEventType ).toBe( validateEventType );
-	} );
-
-	it( reexports(
-		STATIC,
-		"validateEventContext",
-		"CarbonLDP.Messaging#validateEventContext"
-	), ():void => {
-		expect( Messaging.validateEventContext ).toBeDefined();
-		expect( Messaging.validateEventContext ).toBe( validateEventContext );
+		expect( Messaging._validateEventType ).toBeDefined();
+		expect( Messaging._validateEventType ).toBe( _validateEventType );
 	} );
 
 	it( reexports(
 		STATIC,
 		"parseURIPattern",
-		"CarbonLDP.Messaging#parseURIPattern"
+		"carbonldp/Messaging/Utils#parseURIPattern"
 	), ():void => {
-		expect( Messaging.parseURIPattern ).toBeDefined();
-		expect( Messaging.parseURIPattern ).toBe( parseURIPattern );
+		expect( Messaging._parseURIPattern ).toBeDefined();
+		expect( Messaging._parseURIPattern ).toBe( _parseURIPattern );
 	} );
 
 	it( reexports(
 		STATIC,
 		"createDestination",
-		"CarbonLDP.Messaging#createDestination"
+		"carbonldp/Messaging/Utils#createDestination"
 	), ():void => {
-		expect( Messaging.createDestination ).toBeDefined();
-		expect( Messaging.createDestination ).toBe( createDestination );
+		expect( Messaging._createDestination ).toBeDefined();
+		expect( Messaging._createDestination ).toBe( _createDestination );
 	} );
 
 } );

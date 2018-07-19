@@ -1,7 +1,7 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
-export interface ValidationResult extends TransientResource {
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { Pointer } from "../Pointer/Pointer";
+import { Resource } from "../Resource/Resource";
+export interface ValidationResult extends Resource {
     focusNode: Pointer;
     resultPath?: Pointer;
     value?: any;

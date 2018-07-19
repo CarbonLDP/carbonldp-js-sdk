@@ -11,7 +11,7 @@ export class Header {
 			if( parts.length < 2 ) throw new Error( "ParseError: The header couldn't be parsed." );
 
 			const name:string = parts[ 0 ].trim().toLowerCase();
-			const values:string[] = Header._parseValues( parts.slice( 1 ).join( ":" ) );
+			const values:string[] = Header.__parseValues( parts.slice( 1 ).join( ":" ) );
 
 			if( headers.has( name ) ) {
 				headers.get( name ).values.push( ...values );
@@ -23,7 +23,7 @@ export class Header {
 		return headers;
 	}
 
-	private static _parseValues( strValues:string | undefined ):string[] {
+	private static __parseValues( strValues:string | undefined ):string[] {
 		if( ! strValues ) return [];
 
 		return strValues
@@ -36,7 +36,7 @@ export class Header {
 
 	constructor( values?:(string | string[]) ) {
 		this.values = Array.isArray( values ) ?
-			values : Header._parseValues( values );
+			values : Header.__parseValues( values );
 	}
 
 	hasValue( value:string ):boolean {

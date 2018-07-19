@@ -1,67 +1,36 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var ObjectSchema_1 = require("../ObjectSchema");
-var RDF_1 = require("../RDF");
-var Resource_1 = require("../Resource");
-var Utils_1 = require("../Utils");
+var ModelDecorator_1 = require("../Model/ModelDecorator");
+var QueryablePointer_1 = require("../QueryDocuments/QueryablePointer");
 var TransientFragment_1 = require("./TransientFragment");
-function resolveURI(fragment, uri) {
-    if (RDF_1.URI.isAbsolute(uri))
-        return uri;
-    var schema = fragment._document._documents.getGeneralSchema();
-    return ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });
-}
-function addTypeInPersistedFragment(type) {
-    type = resolveURI(this, type);
-    return Resource_1.addTypeInResource.call(this, type);
-}
-function hasTypeInPersistedFragment(type) {
-    type = resolveURI(this, type);
-    return Resource_1.hasTypeInResource.call(this, type);
-}
-function removeTypeInPersistedFragment(type) {
-    type = resolveURI(this, type);
-    return Resource_1.removeTypeInResource.call(this, type);
-}
 exports.Fragment = {
-    isDecorated: function (object) {
-        return Utils_1.isObject(object) &&
-            object["addType"] === addTypeInPersistedFragment &&
-            object["hasType"] === hasTypeInPersistedFragment &&
-            object["removeType"] === removeTypeInPersistedFragment;
+    PROTOTYPE: {
+        get $repository() {
+            return this.$registry;
+        },
+        set $repository(document) {
+            this.$registry = document;
+        },
+        get _resolved() {
+            return this.$document._resolved;
+        },
+        set _resolved(_value) { },
     },
-    is: function (value) {
-        return TransientFragment_1.TransientFragment.is(value) &&
-            Resource_1.Resource.isDecorated(value) &&
-            exports.Fragment.isDecorated(value);
+    isDecorated: function (object) {
+        return ModelDecorator_1.ModelDecorator
+            .hasPropertiesFrom(exports.Fragment.PROTOTYPE, object);
     },
     decorate: function (object) {
         if (exports.Fragment.isDecorated(object))
             return object;
-        TransientFragment_1.TransientFragment.decorate(object);
-        Resource_1.Resource.decorate(object);
-        var fragment = object;
-        Object.defineProperties(object, {
-            "addType": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: addTypeInPersistedFragment,
-            },
-            "hasType": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: hasTypeInPersistedFragment,
-            },
-            "removeType": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: removeTypeInPersistedFragment,
-            },
+        var forced = Object.assign(object, {
+            $document: object.$registry,
+            $repository: object.$registry,
         });
-        return fragment;
+        var target = ModelDecorator_1.ModelDecorator
+            .decorateMultiple(forced, TransientFragment_1.TransientFragment, QueryablePointer_1.QueryablePointer);
+        return ModelDecorator_1.ModelDecorator
+            .definePropertiesFrom(exports.Fragment.PROTOTYPE, target);
     },
     create: TransientFragment_1.TransientFragment.create,
     createFrom: TransientFragment_1.TransientFragment.createFrom,

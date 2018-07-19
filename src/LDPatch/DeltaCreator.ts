@@ -1,7 +1,4 @@
-import {
-	isBNodeLabel,
-	isRelative,
-} from "sparqler/iri";
+import { isBNodeLabel } from "sparqler/iri";
 import {
 	BlankNodeToken,
 	CollectionToken,
@@ -14,27 +11,27 @@ import {
 	VariableOrIRI,
 } from "sparqler/tokens";
 
-import { JSONLDConverter } from "../JSONLD/Converter";
-import { guessXSDType } from "../JSONLD/Utils";
-import {
-	ContainerType,
-	DigestedObjectSchema,
-	DigestedObjectSchemaProperty,
-	PointerType,
-} from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Context } from "../Context/Context";
+
+import { _guessXSDType } from "../JSONLD/Utils";
+
+import { ContainerType } from "../ObjectSchema/ContainerType";
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
+import { PointerType } from "../ObjectSchema/PointerType";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
+
+import { Resource } from "../Resource/Resource";
+
 import { isString } from "../Utils";
+
 import { XSD } from "../Vocabularies/XSD";
 
-import {
-	AddToken,
-	DeleteToken,
-	LDPatchToken,
-	PrefixToken,
-	SliceToken,
-	UpdateListToken,
-} from "./Tokens";
+import { AddToken, DeleteToken, LDPatchToken, PrefixToken, SliceToken, UpdateListToken } from "./Tokens";
+
 
 interface ArrayDelta {
 	toAdd:ObjectToken[];
@@ -51,18 +48,22 @@ typesDefinition.literal = false;
 typesDefinition.pointerType = PointerType.ID;
 typesDefinition.containerType = ContainerType.SET;
 
+
+type TargetResource = Partial<Pick<Resource, "types"> & Pick<QueryablePointer, "_queryableMetadata">>;
+
+
 export class DeltaCreator {
 
 	private prefixesMap:Map<string, PrefixToken>;
-	private jsonldConverter:JSONLDConverter;
+	private context:Context;
 
-	private addToken:AddToken;
-	private deleteToken:DeleteToken;
-	private updateLists:UpdateListToken[];
+	private readonly addToken:AddToken;
+	private readonly deleteToken:DeleteToken;
+	private readonly updateLists:UpdateListToken[];
 
-	constructor( jsonldConverter:JSONLDConverter ) {
+	constructor( context:Context ) {
 		this.prefixesMap = new Map();
-		this.jsonldConverter = jsonldConverter;
+		this.context = context;
 
 		this.addToken = new AddToken();
 		this.deleteToken = new DeleteToken();
@@ -81,10 +82,11 @@ export class DeltaCreator {
 		return `${ patch }`;
 	}
 
-	addResource( schema:DigestedObjectSchema, oldResource:TransientResource, newResource:TransientResource ):void {
-		const id:string = newResource.id;
+	addResource( id:string, previousResource:object, currentResource:object ):void {
+		const schema:DigestedObjectSchema = this.__getSchema( id, previousResource, currentResource );
+
 		const resource:IRIToken | PrefixedNameToken | BlankNodeToken = isBNodeLabel( id ) ?
-			new BlankNodeToken( id ) : this.compactIRI( schema, id );
+			new BlankNodeToken( id ) : this.__compactIRI( schema, id );
 
 		const updateLists:UpdateListToken[] = [];
 		const addTriples:SubjectToken = new SubjectToken( resource );
@@ -92,45 +94,45 @@ export class DeltaCreator {
 
 		new Set( [
 			"types",
-			...Object.keys( oldResource ),
-			...Object.keys( newResource ),
+			...Object.keys( previousResource ),
+			...Object.keys( currentResource ),
 		] ).forEach( propertyName => {
-			if( propertyName === "id" ) return;
+			if( propertyName === "$id" ) return;
 
 			const predicateURI:IRIToken | PrefixedNameToken | "a" = propertyName === "types" ?
-				"a" : this.getPropertyIRI( schema, propertyName );
+				"a" : this._getPropertyIRI( schema, propertyName );
 
 			const definition:DigestedObjectSchemaProperty = predicateURI === "a" ?
-				typesDefinition : schema.properties.get( propertyName );
+				typesDefinition : schema.getProperty( propertyName );
 
-			const oldValue:any = oldResource[ propertyName ];
-			const newValue:any = newResource[ propertyName ];
+			const oldValue:any = previousResource[ propertyName ];
+			const newValue:any = currentResource[ propertyName ];
 
-			if( definition && definition.containerType === ContainerType.LIST && isValidValue( oldValue ) ) {
+			if( definition && definition.containerType === ContainerType.LIST && __isValidValue( oldValue ) ) {
 				const listUpdates:UpdateDelta[] = [];
 
-				if( ! isValidValue( newValue ) ) {
+				if( ! __isValidValue( newValue ) ) {
 					deleteTriples.addPredicate( new PredicateToken( predicateURI ).addObject( new CollectionToken() ) );
 					listUpdates.push( { slice: [ 0, void 0 ], objects: [] } );
 
 				} else {
-					const tempDefinition:DigestedObjectSchemaProperty = { ...definition, containerType: ContainerType.SET };
+					definition.containerType = ContainerType.SET;
 
-					listUpdates.push( ...getListDelta(
-						this.getObjects( oldValue, schema, tempDefinition ),
-						this.getObjects( newValue, schema, tempDefinition )
+					listUpdates.push( ...__getListDelta(
+						this.__getObjects( oldValue, schema, definition ),
+						this.__getObjects( newValue, schema, definition )
 					) );
 				}
 
 				if( ! listUpdates.length ) return;
 
-				this.addPrefixFrom( predicateURI, schema );
+				this.__addPrefixFrom( predicateURI, schema );
 				listUpdates.forEach( updateDelta => {
 					const collection:CollectionToken = new CollectionToken();
 
 					updateDelta.objects.forEach( object => {
 						collection.addObject( object );
-						this.addPrefixFrom( object, schema );
+						this.__addPrefixFrom( object, schema );
 					} );
 
 					updateLists.push( new UpdateListToken(
@@ -144,10 +146,10 @@ export class DeltaCreator {
 				} );
 
 			} else {
-				const oldObjects:ObjectToken[] = this.getObjects( oldValue, schema, definition );
-				const newObjects:ObjectToken[] = this.getObjects( newValue, schema, definition );
+				const oldObjects:ObjectToken[] = this.__getObjects( oldValue, schema, definition );
+				const newObjects:ObjectToken[] = this.__getObjects( newValue, schema, definition );
 
-				const setDelta:ArrayDelta = getArrayDelta( oldObjects, newObjects );
+				const setDelta:ArrayDelta = __getArrayDelta( oldObjects, newObjects );
 
 				const addValues:( objects:ObjectToken[], triple:SubjectToken ) => void = ( objects, triple ) => {
 					if( ! objects.length ) return;
@@ -155,7 +157,7 @@ export class DeltaCreator {
 					const predicate:PredicateToken = new PredicateToken( predicateURI );
 					objects.forEach( object => {
 						predicate.addObject( object );
-						this.addPrefixFrom( object, schema );
+						this.__addPrefixFrom( object, schema );
 					} );
 
 					triple.addPredicate( predicate );
@@ -177,52 +179,71 @@ export class DeltaCreator {
 		];
 		if( ! predicates.length ) return;
 
-		this.addPrefixFrom( resource, schema );
-		predicates.forEach( x => this.addPrefixFrom( x.predicate, schema ) );
+		this.__addPrefixFrom( resource, schema );
+		predicates.forEach( x => this.__addPrefixFrom( x.predicate, schema ) );
 	}
 
-	private getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
+	private __getSchema( id:string, previousResource:TargetResource, currentResource:TargetResource ):DigestedObjectSchema {
+		const types:Set<string> = new Set();
+
+		if( "types" in previousResource ) previousResource
+			.types.forEach( types.add, types );
+		if( "types" in currentResource ) currentResource
+			.types.forEach( types.add, types );
+
+
+		const mergeResource:Pointer & Required<TargetResource> = {
+			$id: id,
+			types: Array.from( types ),
+			_queryableMetadata: currentResource._queryableMetadata || previousResource._queryableMetadata,
+		};
+
+		return this.context
+			.registry.getSchemaFor( mergeResource );
+	}
+
+	private _getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
 		const propertyDefinition:DigestedObjectSchemaProperty = schema.properties.get( propertyName );
 		const uri:string = propertyDefinition && propertyDefinition.uri ?
 			propertyDefinition.uri :
 			propertyName;
 
-		return this.compactIRI( schema, uri );
+		return this.__compactIRI( schema, uri );
 	}
 
-	private getObjects( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
+	private __getObjects( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
 		const values:any[] = (Array.isArray( value ) ?
 				! definition || definition.containerType !== null ? value : value.slice( 0, 1 ) :
 				[ value ]
-		).filter( isValidValue );
+		).filter( __isValidValue );
 
 		if( definition && definition.containerType === ContainerType.LIST ) {
-			if( ! isValidValue( value ) ) return [];
+			if( ! __isValidValue( value ) ) return [];
 
 			const collection:CollectionToken = new CollectionToken();
-			collection.objects.push( ...this.expandValues( values, schema, definition ) );
+			collection.objects.push( ...this.__expandValues( values, schema, definition ) );
 
 			return [ collection ];
 		}
 
 		if( definition && definition.containerType === ContainerType.LANGUAGE ) {
-			return this.expandLanguageMap( values, schema );
+			return this.__expandLanguageMap( values, schema );
 		}
 
-		return this.expandValues( values, schema, definition );
+		return this.__expandValues( values, schema, definition );
 	}
 
-	private expandValues( values:any[], schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
+	private __expandValues( values:any[], schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
 		const areDefinedLiteral:boolean = definition && definition.literal !== null ? definition.literal : null;
 		return values.map( value => {
 			const isLiteral:boolean = areDefinedLiteral !== null ? areDefinedLiteral : ! Pointer.is( value );
 
-			if( isLiteral ) return this.expandLiteral( value, schema, definition );
-			return this.expandPointer( value, schema );
-		} ).filter( isValidValue );
+			if( isLiteral ) return this.__expandLiteral( value, schema, definition );
+			return this.__expandPointer( value, schema );
+		} ).filter( __isValidValue );
 	}
 
-	private expandLanguageMap( values:any[], schema:DigestedObjectSchema ):ObjectToken[] {
+	private __expandLanguageMap( values:any[], schema:DigestedObjectSchema ):ObjectToken[] {
 		if( ! values.length ) return [];
 		const languageMap:object = values[ 0 ];
 
@@ -233,37 +254,37 @@ export class DeltaCreator {
 			tempDefinition.language = key;
 			tempDefinition.literalType = XSD.string;
 
-			return this.expandLiteral( value, schema, tempDefinition );
-		} ).filter( isValidValue );
+			return this.__expandLiteral( value, schema, tempDefinition );
+		} ).filter( __isValidValue );
 	}
 
-	private expandPointer( value:any, schema:DigestedObjectSchema ):IRIToken | PrefixedNameToken | BlankNodeToken {
-		let id:string = Pointer.is( value ) ? value.id : value;
+	private __expandPointer( value:any, schema:DigestedObjectSchema ):IRIToken | PrefixedNameToken | BlankNodeToken {
+		let id:string = Pointer.is( value ) ? value.$id : value;
 		if( ! isString( id ) ) return null;
 
 		return isBNodeLabel( id ) ?
 			new BlankNodeToken( id ) :
-			this.compactIRI( schema, id );
+			this.__compactIRI( schema, id );
 	}
 
-	private expandLiteral( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):LiteralToken {
+	private __expandLiteral( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):LiteralToken {
 		const type:string = definition && definition.literalType ?
 			definition.literalType :
-			guessXSDType( value );
+			_guessXSDType( value );
 
-		if( ! this.jsonldConverter.literalSerializers.has( type ) ) return null;
+		if( ! this.context.jsonldConverter.literalSerializers.has( type ) ) return null;
 
-		value = this.jsonldConverter.literalSerializers.get( type ).serialize( value );
+		value = this.context.jsonldConverter.literalSerializers.get( type ).serialize( value );
 		const literal:LiteralToken = new LiteralToken( value );
 
-		if( type !== XSD.string ) literal.setType( this.compactIRI( schema, type ) );
+		if( type !== XSD.string ) literal.setType( this.__compactIRI( schema, type ) );
 		if( definition && definition.language !== void 0 ) literal.setLanguage( definition.language );
 
 		return literal;
 	}
 
-	private compactIRI( schema:DigestedObjectSchema, iri:string ):IRIToken | PrefixedNameToken {
-		if( isRelative( iri ) && schema.vocab ) iri = schema.vocab + iri;
+	private __compactIRI( schema:DigestedObjectSchema, iri:string ):IRIToken | PrefixedNameToken {
+		iri = schema.resolveURI( iri, { vocab: true } );
 
 		const matchPrefix:[ string, string ] = Array.from( schema.prefixes.entries() )
 			.find( ( [ , prefixURI ] ) => iri.startsWith( prefixURI ) );
@@ -273,14 +294,14 @@ export class DeltaCreator {
 		return new PrefixedNameToken( matchPrefix[ 0 ], iri.substr( matchPrefix[ 1 ].length ) );
 	}
 
-	private addPrefixFrom( object:ObjectToken | "a", schema:DigestedObjectSchema ):void {
+	private __addPrefixFrom( object:ObjectToken | "a", schema:DigestedObjectSchema ):void {
 		if( object instanceof CollectionToken )
 			return object.objects.forEach( collectionObject => {
-				this.addPrefixFrom( collectionObject, schema );
+				this.__addPrefixFrom( collectionObject, schema );
 			} );
 
 		if( object instanceof LiteralToken )
-			return this.addPrefixFrom( object.type, schema );
+			return this.__addPrefixFrom( object.type, schema );
 
 		if( ! (object instanceof PrefixedNameToken) ) return;
 
@@ -293,7 +314,7 @@ export class DeltaCreator {
 
 }
 
-function getArrayDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):ArrayDelta {
+function __getArrayDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):ArrayDelta {
 	const objectMapper:( object:ObjectToken ) => [ string, ObjectToken ] = object => [ `${ object }`, object ];
 	const toAdd:Map<string, ObjectToken> = new Map( newValues.map( objectMapper ) );
 	const toDelete:Map<string, ObjectToken> = new Map( oldValues.map( objectMapper ) );
@@ -311,7 +332,7 @@ function getArrayDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):Array
 	};
 }
 
-function getListDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):UpdateDelta[] {
+function __getListDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):UpdateDelta[] {
 	interface Node {
 		identifier:string;
 		object:ObjectToken;
@@ -376,7 +397,7 @@ function getListDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):Update
 	return updates;
 }
 
-function isValidValue( value:any ):boolean {
+function __isValidValue( value:any ):boolean {
 	return value !== null && value !== void 0;
 }
 

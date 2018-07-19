@@ -1,17 +1,15 @@
-import { TokenCredentials } from "../Auth";
-import { ModelSchema } from "../core/ModelSchema";
-import { ObjectSchema } from "../ObjectSchema";
-import {
-	C,
-	CS,
-} from "../Vocabularies";
+import { ModelSchema } from "../Model/ModelSchema";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { C } from "../Vocabularies/C";
+
 import { DocumentMetadata } from "./DocumentMetadata";
 import { VolatileResource } from "./VolatileResource";
 
 
 export interface ResponseMetadata extends VolatileResource {
 	documentsMetadata?:DocumentMetadata[];
-	authToken?:TokenCredentials;
 }
 
 
@@ -27,10 +25,6 @@ const SCHEMA:ObjectSchema = {
 		"@id": C.documentMetadata,
 		"@type": "@id",
 		"@container": "@set",
-	},
-	"authToken": {
-		"@id": CS.authToken,
-		"@type": "@id",
 	},
 };
 

@@ -9,53 +9,41 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
-}
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var http_1 = __importDefault(require("http"));
 var https_1 = __importDefault(require("https"));
 var url_1 = __importDefault(require("url"));
-var Utils = __importStar(require("./../Utils"));
-var Errors_1 = require("./Errors");
+var Utils_1 = require("../Utils");
+var index_1 = require("./Errors/index");
+var BadResponseError_1 = require("./Errors/ServerErrors/BadResponseError");
+var UnknownError_1 = require("./Errors/UnknownError");
 var Header_1 = require("./Header");
 var HTTPMethod_1 = require("./HTTPMethod");
 var Response_1 = require("./Response");
-function forEachHeaders(headers, setHeader) {
-    var namesIterator = headers.keys();
-    var next = namesIterator.next();
-    while (!next.done) {
-        var name_1 = next.value;
-        var value = headers.get(name_1);
-        setHeader(name_1, value.toString());
-        next = namesIterator.next();
-    }
-}
-function onResolve(resolve, reject, response) {
+function __onResolve(resolve, reject, response) {
     if (response.status >= 200 && response.status <= 299) {
         resolve(response);
     }
     else {
-        reject(response);
+        if (!index_1.statusCodeMap.has(response.status))
+            return reject(new UnknownError_1.UnknownError(response.data, response));
+        reject(new (index_1.statusCodeMap.get(response.status))(response.data, response));
     }
 }
-function sendWithBrowser(method, url, body, options) {
+function __sendWithBrowser(method, url, body, options) {
     return new Promise(function (resolve, reject) {
         var request = options.request ? options.request : new XMLHttpRequest();
         request.open(method, url, true);
         if (options.headers)
-            forEachHeaders(options.headers, function (name, value) { return request.setRequestHeader(name, value); });
+            options.headers
+                .forEach(function (header, name) { return request.setRequestHeader(name, header.toString()); });
         request.withCredentials = options.sendCredentialsOnCORS;
         if (options.timeout)
             request.timeout = options.timeout;
         request.onload = request.onerror = function () {
             var response = new Response_1.Response(request);
-            onResolve(resolve, reject, response);
+            __onResolve(resolve, reject, response);
         };
         if (body) {
             request.send(body);
@@ -65,7 +53,7 @@ function sendWithBrowser(method, url, body, options) {
         }
     });
 }
-function sendWithNode(method, url, body, options) {
+function __sendWithNode(method, url, body, options) {
     return new Promise(function (resolve, reject) {
         function returnResponse(request, res) {
             var rawData = [];
@@ -76,7 +64,7 @@ function sendWithNode(method, url, body, options) {
             }).on("end", function () {
                 var data = Buffer.concat(rawData).toString("utf8");
                 var response = new Response_1.Response(request, data, res);
-                onResolve(resolve, reject, response);
+                __onResolve(resolve, reject, response);
             });
         }
         var numberOfRedirects = 0;
@@ -92,7 +80,8 @@ function sendWithNode(method, url, body, options) {
                 headers: {},
             };
             if (options.headers)
-                forEachHeaders(options.headers, function (name, value) { return requestOptions.headers[name] = value; });
+                options.headers
+                    .forEach(function (header, name) { return requestOptions.headers[name] = header.toString(); });
             var request = Adapter.request(requestOptions);
             if (options.timeout)
                 request.setTimeout(options.timeout);
@@ -105,20 +94,20 @@ function sendWithNode(method, url, body, options) {
             });
             request.on("error", function (error) {
                 var response = new Response_1.Response(request, error.message);
-                onResolve(resolve, reject, response);
+                __onResolve(resolve, reject, response);
             });
             request.end(body);
         }
         sendRequestWithRedirect(url);
     });
 }
-function sendRequest(method, url, body, options) {
+function __sendRequest(method, url, body, options) {
     return typeof XMLHttpRequest !== "undefined" ?
-        sendWithBrowser(method, url, body, options) :
-        sendWithNode(method, url, body, options);
+        __sendWithBrowser(method, url, body, options) :
+        __sendWithNode(method, url, body, options);
 }
-function isBody(data) {
-    return Utils.isString(data)
+function __isBody(data) {
+    return Utils_1.isString(data)
         || typeof Blob !== "undefined" && data instanceof Blob
         || typeof Buffer !== "undefined" && data instanceof Buffer;
 }
@@ -131,21 +120,21 @@ var RequestService = (function () {
         if (optionsOrParser === void 0) { optionsOrParser = RequestService.defaultOptions; }
         if (parser === void 0) { parser = null; }
         var body = null;
-        var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
-        parser = Utils.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
-        if (isBody(bodyOrOptions)) {
+        var options = Utils_1.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
+        parser = Utils_1.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
+        if (__isBody(bodyOrOptions)) {
             body = bodyOrOptions;
         }
         else {
             options = bodyOrOptions ? bodyOrOptions : options;
         }
         options = Object.assign({}, RequestService.defaultOptions, options);
-        if (Utils.isNumber(method))
+        if (Utils_1.isNumber(method))
             method = HTTPMethod_1.HTTPMethod[method];
-        var requestPromise = sendRequest(method, url, body, options)
+        var requestPromise = __sendRequest(method, url, body, options)
             .then(function (response) {
             if (method === "GET" && options.headers)
-                return _this._handleGETResponse(url, options, response);
+                return _this.__handleGETResponse(url, options, response);
             else
                 return response;
         });
@@ -194,25 +183,25 @@ var RequestService = (function () {
         if (parser === void 0) { parser = null; }
         return RequestService.send(HTTPMethod_1.HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser);
     };
-    RequestService._handleGETResponse = function (url, requestOptions, response) {
+    RequestService.__handleGETResponse = function (url, requestOptions, response) {
         var _this = this;
         return Promise.resolve()
             .then(function () {
-            if (_this._contentTypeIsAccepted(requestOptions, response))
+            if (_this.__contentTypeIsAccepted(requestOptions, response))
                 return response;
-            _this._setNoCacheHeaders(requestOptions);
-            if (!_this._isChromiumAgent())
-                _this._setFalseETag(requestOptions);
-            return sendRequest("GET", url, null, requestOptions)
+            _this.__setNoCacheHeaders(requestOptions);
+            if (!_this.__isChromiumAgent())
+                _this.__setFalseETag(requestOptions);
+            return __sendRequest("GET", url, null, requestOptions)
                 .then(function (noCachedResponse) {
-                if (!_this._contentTypeIsAccepted(requestOptions, response)) {
-                    throw new Errors_1.BadResponseError("The server responded with an unacceptable Content-Type", response);
+                if (!_this.__contentTypeIsAccepted(requestOptions, response)) {
+                    throw new BadResponseError_1.BadResponseError("The server responded with an unacceptable Content-Type", response);
                 }
                 return noCachedResponse;
             });
         });
     };
-    RequestService._contentTypeIsAccepted = function (requestOptions, response) {
+    RequestService.__contentTypeIsAccepted = function (requestOptions, response) {
         var accepts = requestOptions.headers.has("accept") ?
             requestOptions.headers.get("accept").values :
             [];
@@ -221,15 +210,15 @@ var RequestService = (function () {
             null;
         return !contentType || accepts.some(contentType.hasValue, contentType);
     };
-    RequestService._setNoCacheHeaders = function (requestOptions) {
+    RequestService.__setNoCacheHeaders = function (requestOptions) {
         requestOptions.headers
             .set("pragma", new Header_1.Header("no-cache"))
             .set("cache-control", new Header_1.Header("no-cache, max-age=0"));
     };
-    RequestService._isChromiumAgent = function () {
-        return typeof window !== "undefined" && !window["chrome"];
+    RequestService.__isChromiumAgent = function () {
+        return typeof window !== "undefined" && !!window["chrome"];
     };
-    RequestService._setFalseETag = function (requestOptions) {
+    RequestService.__setFalseETag = function (requestOptions) {
         requestOptions.headers.set("if-none-match", new Header_1.Header());
     };
     RequestService.defaultOptions = {
@@ -304,10 +293,10 @@ var RequestUtils = (function () {
         return requestOptions;
     };
     RequestUtils.isOptions = function (object) {
-        return Utils.hasPropertyDefined(object, "headers")
-            || Utils.hasPropertyDefined(object, "sendCredentialsOnCORS")
-            || Utils.hasPropertyDefined(object, "timeout")
-            || Utils.hasPropertyDefined(object, "request");
+        return Utils_1.hasPropertyDefined(object, "headers")
+            || Utils_1.hasPropertyDefined(object, "sendCredentialsOnCORS")
+            || Utils_1.hasPropertyDefined(object, "timeout")
+            || Utils_1.hasPropertyDefined(object, "request");
     };
     RequestUtils.cloneOptions = function (options) {
         var clone = __assign({}, options, { headers: new Map() });

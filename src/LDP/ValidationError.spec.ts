@@ -1,16 +1,11 @@
-import { TransientResource } from "../Resource";
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
+import { Resource } from "../Resource/Resource";
+
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
 
 import { ValidationError } from "./ValidationError";
+
 
 describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 
@@ -25,7 +20,7 @@ describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:TransientResource = {} as ValidationError;
+			const target:Resource = {} as ValidationError;
 			expect( target ).toBeDefined();
 		} );
 

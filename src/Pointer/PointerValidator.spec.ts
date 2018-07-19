@@ -1,12 +1,6 @@
-import {
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY
-} from "../test/JasmineExtender";
-import { Pointer } from "./Pointer";
+import { hasSignature, interfaze, method, module, OBLIGATORY } from "../test/JasmineExtender";
 
+import { Pointer } from "./Pointer";
 import { PointerValidator } from "./PointerValidator";
 
 

@@ -1,3 +1,18 @@
+import { createNonEnumerable } from "../../test/helpers/miscellaneous";
+import { createMockContext } from "../../test/helpers/mocks/core";
+
+import { AbstractContext } from "../Context/AbstractContext";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
+import { Pointer } from "../Pointer/Pointer";
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+
+import { Registry } from "../Registry/Registry";
+
 import {
 	extendsClass,
 	hasMethod,
@@ -9,326 +24,659 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import * as Utils from "../Utils";
 
-import { Resource } from "./Resource";
+import { LDP } from "../Vocabularies/LDP";
 
-import { TransientResource } from "./TransientResource";
+import { BaseResource } from "./BaseResource";
+import { Resource, ResourceFactory } from "./Resource";
 
 
 describe( module( "carbonldp/Resource" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Resource",
-		"Interface that represents any persisted resource in the SDK."
+		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:TransientResource = {} as Resource;
+		it( extendsClass( "CarbonLDP.RegisteredPointer" ), ():void => {} );
+
+
+		it( hasProperty(
+			OBLIGATORY,
+			"$registry",
+			"CarbonLDP.Registry<CarbonLDP.RegisteredPointer> | undefined",
+			"Associated registry where the current resource may be stored."
+		), ():void => {
+			const target:Resource[ "$registry" ] = {} as Registry<RegisteredPointer> | undefined;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"_snapshot",
-			"Object",
-			"The shallow copy of the resource, which is used to track the changes on the resource."
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"_syncSnapshot",
-			"Updates the snapshot with the data of the resource."
-		), ():void => {} );
+			"$slug",
+			"string",
+			"Slug if the URI of the resource. Depending of the URI type would be returned:\n" +
+			"1. For blank nodes the same $id of the resource would be returned\n" +
+			"2. For named fragments, the content after the `#` symbol would be returned\n" +
+			"3. For documents, it's the last part URI e.g. `https://example.com/resource-1/` => `resource-1`"
+		), ():void => {
+			const target:Resource[ "$slug" ] = {} as "";
+			expect( target ).toBeDefined();
+		} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"_partialMetadata",
-			"CarbonLDP.SPARQL.QueryDocument.PartialMetadata",
-			"Metadata for documents that are partial documents."
+			"types",
+			"string",
+			"An array with the types of the resource."
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
-			"isDirty",
-			"Returns true if the resource presents differences from its snapshot."
+			"addType",
+			"Adds a type to the current resource.", [
+				{ name: "type", type: "string", description: "The type to be added." },
+			]
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
-			"revert",
-			"Revert the changes made to the resource into the state of the snapshot."
+			"hasType",
+			"Returns true if the current resource contains the type specified.", [
+				{ name: "type", type: "string", description: "The type to look for." },
+			]
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
-			"isPartial",
-			"Returns true if the resource is a partial representation of the one stored in Carbon LDP."
+			"removeType",
+			"Remove the type specified from the current resource.", [
+				{ name: "type", type: "string", description: "The type to be removed." },
+			]
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
 		"CarbonLDP.ResourceFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Resource` object"
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Resource` object."
 	), ():void => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `CarbonLDP.Resource` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "object is CarbonLDP.Resource" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Resource, CarbonLDP.Pointer>" ), () => {
+			const target:ModelPrototype<Resource, Pointer> = {} as ResourceFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"decorate",
-			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.Resource` object.", [
-				{ name: "object", type: "T", description: "The object to convert into a persisted resource one." },
-			]
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Resource, CarbonLDP.BaseResource>" ), () => {
+			const target:ModelDecorator<Resource, BaseResource> = {} as ResourceFactory;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Model.ModelTypeGuard<CarbonLDP.Resource>" ), () => {
+			const target:ModelTypeGuard<Resource> = {} as ResourceFactory;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Model.ModelFactoryOptional<CarbonLDP.Resource, CarbonLDP.BaseResource>" ), () => {
+			const target:ModelFactoryOptional<Resource, BaseResource> = {} as ResourceFactory;
+			expect( target ).toBeDefined();
+		} );
 
 	} );
 
-	describe( property( STATIC, "Resource", "CarbonLDP.ResourceFactory", "Constant that implements the `CarbonLDP.ResourceFactory` interface." ), ():void => {
+	describe( property(
+		STATIC,
+		"Resource",
+		"CarbonLDP.ResourceFactory",
+		"Constant that implements the `CarbonLDP.ResourceFactory` interface."
+	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Resource ).toBeDefined();
 			expect( Resource ).toEqual( jasmine.any( Object ) );
 		} );
 
+		describe( "Resource.isDecorated", ():void => {
+
+			it( "should exists", ():void => {
+				expect( Resource.isDecorated ).toBeDefined();
+				expect( Resource.isDecorated ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let object:ResourceFactory[ "PROTOTYPE" ];
+			beforeEach( ():void => {
+				object = createNonEnumerable( {
+					types: [],
+
+					$slug: "",
+
+					addType: ():any => {},
+					hasType: ():any => {},
+					removeType: ():any => {},
+					toJSON: ():any => {},
+				} );
+			} );
+
+			it( "should return true when all in prototype", () => {
+				expect( Resource.isDecorated( object ) ).toBe( true );
+			} );
+
+			it( "should return false if no types", () => {
+				delete object.types;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false if no $slug", () => {
+				delete object.$slug;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false if no addType", () => {
+				delete object.addType;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false if no hasType", () => {
+				delete object.hasType;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false if no removeType", () => {
+				delete object.removeType;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false if no toJSON", () => {
+				delete object.toJSON;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+		} );
+
+		describe( "Resource.is", ():void => {
+
+			it( "should return false when undefined", () => {
+				expect( Resource.is( void 0 ) ).toBe( false );
+			} );
+
+
+			let object:ResourceFactory[ "PROTOTYPE" ];
+			beforeEach( ():void => {
+				object = createNonEnumerable( {
+					types: [],
+
+					$registry: void 0,
+					$slug: "",
+
+					addType: ():any => {},
+					hasType: ():any => {},
+					removeType: ():any => {},
+					toJSON: ():any => {},
+				} );
+			} );
+
+			it( "should return false when only prototype", () => {
+				expect( Resource.is( object ) ).toBe( false );
+			} );
+
+			it( "should return true when prototype & Pointer", () => {
+				const resource:Pointer = Pointer.decorate( object );
+				expect( Resource.is( resource ) ).toBe( true );
+			} );
+
+		} );
+
 		// TODO: Separate in different tests
-		it( "Resource.isDecorated", ():void => {
-			expect( Resource.isDecorated ).toBeDefined();
-			expect( Utils.isFunction( Resource.isDecorated ) ).toBe( true );
+		it( "Resource.create", ():void => {
+			expect( Resource.create ).toBeDefined();
+			expect( Resource.create ).toEqual( jasmine.any( Function ) );
 
-			let object:any = undefined;
-			expect( Resource.isDecorated( object ) ).toBe( false );
+			let resource:Resource;
 
-			object = {
-				_snapshot: null,
-				_syncSnapshot: ():void => {},
-				isDirty: ():void => {},
-				revert: ():void => {},
-				isPartial: ():void => {},
-			};
-			expect( Resource.isDecorated( object ) ).toBe( true );
+			resource = Resource.create();
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.$id ).toBe( "" );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 0 );
 
-			delete object._snapshot;
-			expect( Resource.isDecorated( object ) ).toBe( false );
-			object._snapshot = null;
+			resource = Resource.create( { $id: "http://example.com/resource/" } );
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.$id ).toBe( "http://example.com/resource/" );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 0 );
 
-			delete object._syncSnapshot;
-			expect( Resource.isDecorated( object ) ).toBe( false );
-			object._syncSnapshot = () => {};
+			resource = Resource.create( { $id: "http://example.com/resource/", types: [ LDP.RDFSource ] } );
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.$id ).toBe( "http://example.com/resource/" );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 1 );
+			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 
-			delete object.isDirty;
-			expect( Resource.isDecorated( object ) ).toBe( false );
-			object.isDirty = () => {};
+			resource = Resource.create( { $id: null, types: [ LDP.RDFSource, LDP.Container ] } );
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.$id ).toBeNull();
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 2 );
+			expect( resource.types ).toEqual( [ LDP.RDFSource, LDP.Container ] );
+		} );
 
-			delete object.revert;
-			expect( Resource.isDecorated( object ) ).toBe( false );
-			object.revert = () => {};
+		// TODO: Separate in different tests
+		it( "Resource.createFrom", ():void => {
+			expect( Resource.createFrom ).toBeDefined();
+			expect( Resource.createFrom ).toEqual( jasmine.any( Function ) );
 
-			delete object.isPartial;
-			expect( Resource.isDecorated( object ) ).toBe( false );
-			object.isPartial = () => {};
+			let simpleResource:Resource = Resource.createFrom( { $id: "http://example.com/simple-resource/" } );
+			expect( simpleResource ).toBeTruthy();
+			expect( Resource.isDecorated( simpleResource ) ).toBe( true );
+			expect( simpleResource.$id ).toBe( "http://example.com/simple-resource/" );
+			expect( simpleResource.types ).toEqual( jasmine.any( Array ) );
+			expect( simpleResource.types.length ).toBe( 0 );
+
+			interface MyResource extends BaseResource {
+				myProperty:string;
+			}
+
+			let resource:Resource & MyResource;
+
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property" } );
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.$id ).toBe( "" );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 0 );
+			expect( resource.myProperty ).toBeDefined();
+			expect( resource.myProperty ).toBe( "a property" );
+
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property", $id: "http://example.com/resource/" } );
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.$id ).toBe( "http://example.com/resource/" );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 0 );
+			expect( resource.myProperty ).toBeDefined();
+			expect( resource.myProperty ).toBe( "a property" );
+
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property", $id: "http://example.com/resource/", types: [ LDP.RDFSource ] } );
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.$id ).toBe( "http://example.com/resource/" );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 1 );
+			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
+			expect( resource.myProperty ).toBeDefined();
+			expect( resource.myProperty ).toBe( "a property" );
+
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property", $id: null, types: [ LDP.RDFSource, LDP.Container ] } );
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.$id ).toBeNull();
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 2 );
+			expect( resource.types ).toEqual( [ LDP.RDFSource, LDP.Container ] );
+			expect( resource.myProperty ).toBeDefined();
+			expect( resource.myProperty ).toBe( "a property" );
 		} );
 
 		// TODO: Separate in different tests
 		it( "Resource.decorate", ():void => {
 			expect( Resource.decorate ).toBeDefined();
-			expect( Utils.isFunction( Resource.decorate ) ).toBe( true );
+			expect( Resource.decorate ).toEqual( jasmine.any( Function ) );
 
-			let fn:Function = ():void => {};
-			let object:any = {
-				_snapshot: null,
-				_syncSnapshot: fn,
-				isDirty: fn,
-				revert: fn,
-				isPartial: fn,
-			};
-			let persistedResource:Resource;
 
-			persistedResource = Resource.decorate( object );
-			expect( persistedResource._snapshot ).toEqual( jasmine.any( Object ) );
-			expect( persistedResource._syncSnapshot ).toBe( fn );
-			expect( persistedResource.isDirty ).toBe( fn );
+			interface MyResource {
+				myProperty?:string;
+			}
 
-			persistedResource = Resource.decorate( {} as TransientResource );
-			expect( persistedResource._snapshot ).toEqual( jasmine.any( Object ) );
-			expect( persistedResource._syncSnapshot ).not.toBe( fn );
-			expect( persistedResource.isDirty ).not.toBe( fn );
+			let resource:Resource & MyResource;
+
+			resource = Resource.decorate<MyResource>( {} );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.types ).toEqual( [] );
+
+			resource = Resource.decorate<MyResource>( { myProperty: "a property" } );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.myProperty ).toBeDefined();
+			expect( resource.myProperty ).toBe( "a property" );
+			expect( resource.types ).toEqual( [] );
+
+
+			resource.types = [ LDP.RDFSource ];
+			resource = Resource.decorate<MyResource>( resource );
+			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 		} );
 
-		// TODO: Test Resource.is
-		// TODO: Test Resource.create
-		// TODO: Test Resource.createFrom
+		describe( "Decorated `Resource`", ():void => {
 
-		describe( "Resource instance", ():void => {
+			let resource:Resource;
+			beforeEach( ():void => {
+				resource = Resource.create();
 
-			// TODO: Mode to `Resource.decorate`
-			it( "Resource._snapshot", ():void => {
-				let persistedResource:Resource;
+				const context:AbstractContext<any, any> = createMockContext();
+				context.extendObjectSchema( {
+					"@vocab": "http://example.com/ns#",
+					"exTypes": "http://example.com/types#",
+				} );
 
-				persistedResource = Resource.decorate( TransientResource.decorate( { some: "some" } ) );
-				expect( persistedResource._snapshot ).toBeDefined();
-				expect( Utils.isObject( persistedResource._snapshot ) ).toBe( true );
-				expect( persistedResource._snapshot ).toEqual( jasmine.any( Object ) );
+				resource.$registry = context.registry;
 			} );
 
-			// TODO: Separate in different tests
-			it( "Resource._syncSnapshot", ():void => {
-				let persistedResource:Resource;
-				let snapshot:Object;
+			describe( "Resource.addType", ():void => {
 
-				persistedResource = Resource.decorate( TransientResource.decorate( { some: "some" } ) );
-				expect( persistedResource._syncSnapshot ).toBeDefined();
-				expect( Utils.isFunction( persistedResource._syncSnapshot ) ).toBe( true );
+				it( "should exists", ():void => {
+					expect( resource.addType ).toBeDefined();
+					expect( resource.addType ).toEqual( jasmine.any( Function ) );
+				} );
 
-				snapshot = persistedResource._snapshot;
-				expect( snapshot ).toEqual( {} );
+				it( "should add type", ():void => {
+					resource.addType( "http://example.com/types#Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
 
-				expect( () => persistedResource._syncSnapshot() ).not.toThrow();
+				it( "should append type", ():void => {
+					resource.types = [ "http://example.com/types#Type-1" ];
 
-				expect( snapshot ).not.toBe( persistedResource._snapshot );
-				snapshot = persistedResource._snapshot;
-				expect( snapshot ).toEqual( { id: "", types: [], some: "some" } );
+					resource.addType( "http://example.com/types#Type-2" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					] );
+				} );
 
-				persistedResource[ "another" ] = "another";
-				expect( () => persistedResource._syncSnapshot() ).not.toThrow();
+				it( "should not add if type already exists", ():void => {
+					resource.types = [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					];
 
-				expect( snapshot ).not.toBe( persistedResource._snapshot );
-				snapshot = persistedResource._snapshot;
-				expect( snapshot ).toEqual( { id: "", types: [], some: "some", another: "another" } );
+					resource.addType( "http://example.com/types#Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					] );
+				} );
 
-				delete persistedResource[ "some" ];
-				expect( () => persistedResource._syncSnapshot() ).not.toThrow();
+				it( "should add resolved type from prefixed provided", ():void => {
+					resource.addType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
 
-				expect( snapshot ).not.toBe( persistedResource._snapshot );
-				snapshot = persistedResource._snapshot;
-				expect( snapshot ).toEqual( { id: "", types: [], another: "another" } );
+				it( "should add un-resolved type from prefixed provided when no registry", ():void => {
+					delete resource.$registry;
 
-				let resource:TransientResource = TransientResource.createFrom( { another: "another", id: "http://example.com/resource/", types: [ "http://example.com/ns#Type" ] } );
-				persistedResource = Resource.decorate( resource );
-				expect( () => persistedResource._syncSnapshot() ).not.toThrow();
+					resource.addType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"exTypes:Type-1",
+					] );
+				} );
 
-				expect( persistedResource._snapshot ).not.toEqual( resource );
-				let resourceSnapshot:TransientResource = persistedResource._snapshot as TransientResource;
-				expect( Utils.ObjectUtils.areEqual( resource, resourceSnapshot, { arrays: true } ) ).toBe( true );
-				expect( resourceSnapshot.id ).toEqual( resource.id );
-				expect( resourceSnapshot.types ).toEqual( resource.types );
+				it( "should add un-resolved type from prefixed provided when no registry's context", ():void => {
+					resource.$registry = Registry.create( { __modelDecorator: Resource } );
+
+					resource.addType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"exTypes:Type-1",
+					] );
+				} );
+
+				it( "should add resolved type from prefixed provided when parent from registry has a context", ():void => {
+					resource.$registry = Registry.create( { $registry: resource.$registry, __modelDecorator: Resource } );
+
+					resource.addType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
+
+				it( "should not add if already exists type when prefixed provided", ():void => {
+					resource.types = [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					];
+
+					resource.addType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					] );
+				} );
+
+				it( "should add resolved type with @vocab from relative provided", ():void => {
+					resource.addType( "Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/ns#Type-1",
+					] );
+				} );
+
+				it( "should add un-resolved type from relative provided when no registry", ():void => {
+					resource.$registry = void 0;
+
+					resource.addType( "Type-1" );
+					expect( resource.types ).toEqual( [
+						"Type-1",
+					] );
+				} );
+
+				it( "should add un-resolved type from relative provided when no registry's context", ():void => {
+					resource.$registry = Registry.create( { __modelDecorator: Resource } );
+
+					resource.addType( "Type-1" );
+					expect( resource.types ).toEqual( [
+						"Type-1",
+					] );
+				} );
+
 			} );
 
-			// TODO: Separate in different tests
-			it( "Resource.isDirty", ():void => {
-				let persistedResource:Resource;
+			describe( "Resource.hasType", ():void => {
 
-				persistedResource = Resource.decorate( TransientResource.decorate( { some: "some" } ) );
-				persistedResource._snapshot = TransientResource.decorate( { some: "some" } );
+				it( "should exists", ():void => {
+					expect( resource.hasType ).toBeDefined();
+					expect( resource.hasType ).toEqual( jasmine.any( Function ) );
+				} );
 
-				expect( persistedResource.isDirty ).toBeDefined();
-				expect( Utils.isFunction( persistedResource.isDirty ) ).toBe( true );
+				it( "should return false when non-existent type", ():void => {
+					const returned:boolean = resource.hasType( "http://example.com/types#Type-1" );
+					expect( returned ).toEqual( false );
+				} );
 
-				expect( persistedResource.isDirty() ).toBe( false );
+				it( "should return true when exists type", ():void => {
+					resource.types = [ "http://example.com/types#Type-1" ];
 
-				persistedResource[ "another" ] = "another";
-				expect( persistedResource.isDirty() ).toBe( true );
+					const returned:boolean = resource.hasType( "http://example.com/types#Type-1" );
+					expect( returned ).toEqual( true );
+				} );
 
-				persistedResource._syncSnapshot();
-				expect( persistedResource.isDirty() ).toBe( false );
-				persistedResource[ "another" ] = "another";
-				expect( persistedResource.isDirty() ).toBe( false );
+				it( "should return true when exists type with more", ():void => {
+					resource.types = [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					];
 
-				delete persistedResource[ "another" ];
-				persistedResource[ "array" ] = [ 1, 2, 3, 4 ];
-				expect( persistedResource.isDirty() ).toBe( true );
+					const returned:boolean = resource.hasType( "http://example.com/types#Type-1" );
+					expect( returned ).toEqual( true );
+				} );
 
-				persistedResource._syncSnapshot();
-				expect( persistedResource.isDirty() ).toBe( false );
-				persistedResource[ "array" ] = [ 1, 2, 3, 4 ];
-				expect( persistedResource.isDirty() ).toBe( false );
+				it( "should return false when non-existent type from a prefixed one", ():void => {
+					const returned:boolean = resource.hasType( "exTypes:Type-1" );
+					expect( returned ).toEqual( false );
+				} );
 
-				persistedResource[ "array" ].splice( 1, 2 );
-				expect( persistedResource.isDirty() ).toBe( true );
+				it( "should return true when type exists from a prefixed one", ():void => {
+					resource.types = [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					];
 
-				persistedResource._syncSnapshot();
-				expect( persistedResource.isDirty() ).toBe( false );
+					const returned:boolean = resource.hasType( "exTypes:Type-1" );
+					expect( returned ).toEqual( true );
+				} );
 
-				persistedResource[ "object" ] = { some: "some" };
-				expect( persistedResource.isDirty() ).toBe( true );
+				it( "should return true when type exists from relative one", ():void => {
+					resource.types = [
+						"http://example.com/ns#Type-1",
+						"http://example.com/ns#Type-2",
+					];
 
-				persistedResource._syncSnapshot();
-				expect( persistedResource.isDirty() ).toBe( false );
-				persistedResource[ "object" ] = { some: "some" };
-				expect( persistedResource.isDirty() ).toBe( true );
+					const returned:boolean = resource.hasType( "Type-1" );
+					expect( returned ).toEqual( true );
+				} );
 
-				let resource:TransientResource = TransientResource.createFrom( { another: "another", id: "http://example.com/resource/", types: [ "http://example.com/ns#Type" ] } );
-				persistedResource = Resource.decorate( resource );
-
-				persistedResource._syncSnapshot();
-				expect( persistedResource.isDirty() ).toBe( false );
-
-				resource.id = "http://example.com/another/";
-				expect( persistedResource.isDirty() ).toBe( true );
-				resource.id = "http://example.com/resource/";
-				expect( persistedResource.isDirty() ).toBe( false );
-
-				resource.types = [ "http://example.com/ns#Another-Type" ];
-				expect( persistedResource.isDirty() ).toBe( true );
-				resource.types = [ "http://example.com/ns#Type" ];
-				expect( persistedResource.isDirty() ).toBe( false );
 			} );
 
-			// TODO: Separate in different tests
-			it( "Resource.revert", ():void => {
-				let resource:TransientResource & { another:string, toDelete?:boolean } = TransientResource.createFrom( { another: "another", id: "http://example.com/resource/", types: [ "http://example.com/ns#Type" ] } );
-				let persistedResource:Resource = Resource.decorate( resource );
-				persistedResource._syncSnapshot();
+			describe( "Resource.removeType", ():void => {
 
-				resource.id = "http://example.com/another/";
-				expect( persistedResource.isDirty() ).toBe( true );
-				expect( () => persistedResource.revert() ).not.toThrow();
-				expect( persistedResource.isDirty() ).toBe( false );
-				expect( resource.id ).toBe( "http://example.com/resource/" );
+				it( "should exists", ():void => {
+					expect( resource.removeType ).toBeDefined();
+					expect( resource.removeType ).toEqual( jasmine.any( Function ) );
+				} );
 
-				resource.types = [ "http://example.com/ns#Another-Type" ];
-				expect( persistedResource.isDirty() ).toBe( true );
-				expect( () => persistedResource.revert() ).not.toThrow();
-				expect( persistedResource.isDirty() ).toBe( false );
-				expect( resource.types ).toEqual( [ "http://example.com/ns#Type" ] );
+				it( "should remove type when exists", ():void => {
+					resource.types = [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					];
 
-				resource.another = "A change";
-				expect( persistedResource.isDirty() ).toBe( true );
-				expect( () => persistedResource.revert() ).not.toThrow();
-				expect( persistedResource.isDirty() ).toBe( false );
-				expect( resource.another ).toBe( "another" );
+					resource.removeType( "http://example.com/types#Type-2" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
 
-				resource.toDelete = true;
-				expect( persistedResource.isDirty() ).toBe( true );
-				expect( () => persistedResource.revert() ).not.toThrow();
-				expect( persistedResource.isDirty() ).toBe( false );
+				it( "should not remove type when non-existent", ():void => {
+					resource.types = [
+						"http://example.com/types#Type-1",
+					];
 
-				resource.id = "http://example.com/another/";
-				resource.types = [ "http://example.com/ns#Another-Type" ];
-				resource.another = "A change";
-				resource.toDelete = true;
-				expect( persistedResource.isDirty() ).toBe( true );
-				expect( () => persistedResource.revert() ).not.toThrow();
-				expect( persistedResource.isDirty() ).toBe( false );
-				expect( resource.id ).toBe( "http://example.com/resource/" );
-				expect( resource.types ).toEqual( [ "http://example.com/ns#Type" ] );
-				expect( resource.another ).toBe( "another" );
-				expect( resource.toDelete ).toBeUndefined();
+					resource.removeType( "http://example.com/types#Type-2" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
+
+				it( "should remove resolved prefixed type when exists", ():void => {
+					resource.types = [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					];
+
+					resource.removeType( "exTypes:Type-2" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
+
+				it( "should not remove resolved prefixed type when non-existent", ():void => {
+					resource.types = [
+						"http://example.com/types#Type-1",
+					];
+
+					resource.removeType( "exTypes:Type-2" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
+
+				it( "should not remove prefixed type when no registry", ():void => {
+					resource.$registry = void 0;
+					resource.types = [
+						"http://example.com/types#Type-1",
+					];
+
+					resource.removeType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
+
+				it( "should not remove prefixed type when no registry's context", ():void => {
+					resource.$registry = Registry.create( { __modelDecorator: Resource } );
+
+					resource.types = [
+						"http://example.com/types#Type-1",
+					];
+
+					resource.removeType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
+
+				it( "should remove resolved prefixed type when exists & registry parent has a context", ():void => {
+					resource.$registry = Registry.create( { $registry: resource.$registry, __modelDecorator: Resource } );
+
+					resource.types = [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					];
+
+					resource.removeType( "exTypes:Type-2" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
+
+				it( "should remove resolved relative type when exists", ():void => {
+					resource.types = [
+						"http://example.com/ns#Type-1",
+						"http://example.com/ns#Type-2",
+					];
+
+					resource.removeType( "Type-2" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/ns#Type-1",
+					] );
+				} );
+
+				it( "should not remove resolved relative type when non-existent", ():void => {
+					resource.types = [
+						"http://example.com/ns#Type-1",
+					];
+
+					resource.removeType( "Type-2" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/ns#Type-1",
+					] );
+				} );
+
+				it( "should not remove relative type when no registry", ():void => {
+					resource.$registry = void 0;
+					resource.types = [
+						"http://example.com/ns#Type-1",
+					];
+
+					resource.removeType( "Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/ns#Type-1",
+					] );
+				} );
+
+				it( "should not remove relative type when no registry's context", ():void => {
+					resource.$registry = Registry.create( { __modelDecorator: Resource } );
+
+					resource.types = [
+						"http://example.com/ns#Type-1",
+					];
+
+					resource.removeType( "Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/ns#Type-1",
+					] );
+				} );
+
 			} );
-
-			// TODO: Test `Resource.isPartial`
 
 		} );
 
 	} );
 
-} );
+} )
+;

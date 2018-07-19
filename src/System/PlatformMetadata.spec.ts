@@ -1,16 +1,11 @@
-import { Document } from "../Document";
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
+import { Document } from "../Document/Document";
+
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
 
 import { PlatformMetadata } from "./PlatformMetadata";
+
 
 describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 

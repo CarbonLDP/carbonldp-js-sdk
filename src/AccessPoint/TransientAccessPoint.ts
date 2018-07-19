@@ -1,7 +1,11 @@
-import { ModelFactory } from "../core/ModelFactory";
-import { TransientDirectContainer } from "../LDP";
-import { Pointer } from "../Pointer";
-import { C } from "../Vocabularies";
+import { TransientDirectContainer } from "../LDP/DirectContainer/TransientDirectContainer";
+
+import { ModelFactory } from "../Model/ModelFactory";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { C } from "../Vocabularies/C";
+
 import { BaseAccessPoint } from "./BaseAccessPoint";
 
 
@@ -36,6 +40,12 @@ export const TransientAccessPoint:TransientAccessPointFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseAccessPoint ):T & TransientAccessPoint {
-		return TransientDirectContainer.createFrom<T>( object );
+		const accessPoint:T & TransientAccessPoint = TransientDirectContainer
+			.createFrom<T>( object );
+
+		accessPoint
+			.addType( TransientAccessPoint.TYPE );
+
+		return accessPoint;
 	},
 };

@@ -1,4 +1,4 @@
-import { ObjectSchema } from "../ObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { ValidationResult } from "./ValidationResult";
 export interface ValidationReport {
     conforms: boolean;

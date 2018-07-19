@@ -1,4 +1,5 @@
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
 	hasMethod,
@@ -10,10 +11,13 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
+
 import * as Utils from "./../Utils";
 
 import { Map } from "./Map";
+
 
 describe( module( "carbonldp/LDP/Map" ), ():void => {
 
@@ -108,7 +112,7 @@ describe( module( "carbonldp/LDP/Map" ), ():void => {
 			object = null;
 			expect( Map.is( object ) ).toBe( false );
 
-			object = TransientResource.decorate( {
+			object = Resource.decorate( {
 				types: [ C.Map ],
 				entries: null,
 			} );

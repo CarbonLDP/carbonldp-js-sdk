@@ -1,5 +1,7 @@
-import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Document } from "../Document/Document";
+
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
 	hasProperty,
@@ -12,11 +14,13 @@ import {
 	property,
 	STATIC
 } from "../test/JasmineExtender";
-import { C } from "../Vocabularies";
+
+import { C } from "../Vocabularies/C";
 
 import { EventMessage } from "./EventMessage";
 
-describe( module( "carbonldp/Messaging/Message" ), ():void => {
+
+describe( module( "carbonldp/Messaging/EventMessage" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.EventMessage",
@@ -29,16 +33,16 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 		} );
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:TransientResource = {} as EventMessage;
+			const target:Resource = {} as EventMessage;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer"
+			"CarbonLDP.Document"
 		), ():void => {
-			const target:EventMessage[ "target" ] = {} as Pointer;
+			const target:EventMessage[ "target" ] = {} as Document;
 			expect( target ).toBeDefined();
 		} );
 
@@ -112,7 +116,7 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 			} );
 
 			it( "should return false if has a missing model properties", ():void => {
-				const object:EventMessage = TransientResource.create( {
+				const object:EventMessage = Resource.create( {
 					target: null,
 				} );
 

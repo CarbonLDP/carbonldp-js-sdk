@@ -1,11 +1,14 @@
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
-import { C } from "../Vocabularies";
+import { Document } from "../Document/Document";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Resource } from "../Resource/Resource";
+
+import { C } from "../Vocabularies/C";
 
 
-export interface EventMessage extends TransientResource {
-	target:Pointer;
+export interface EventMessage extends Resource {
+	target:Document;
 }
 
 
@@ -26,7 +29,7 @@ export const EventMessage:EventMessageFactory = {
 	SCHEMA,
 
 	is( value:any ):value is EventMessage {
-		return TransientResource.is( value )
+		return Resource.is( value )
 			&& value.hasOwnProperty( "target" )
 			;
 	},

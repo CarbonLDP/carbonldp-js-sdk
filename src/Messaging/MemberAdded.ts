@@ -1,5 +1,7 @@
-import { ObjectSchema } from "../ObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
 import { C } from "../Vocabularies/C";
+
 import { EventMessage } from "./EventMessage";
 import { MemberAddedDetails } from "./MemberAddedDetails";
 

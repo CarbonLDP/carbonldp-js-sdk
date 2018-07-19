@@ -1,8 +1,11 @@
-import { ModelFactory } from "../core/ModelFactory";
-import { TransientResource } from "../Resource";
+import { ModelFactory } from "../Model/ModelFactory";
+
+import { Resource } from "../Resource/Resource";
+
 import { C } from "../Vocabularies/C";
 
-export interface VolatileResource extends TransientResource {
+
+export interface VolatileResource extends Resource {
 }
 
 
@@ -20,7 +23,7 @@ export const VolatileResource:VolatileResourceFactory = {
 	TYPE: C.VolatileResource,
 
 	is( value:any ):value is VolatileResource {
-		return TransientResource.is( value )
+		return Resource.is( value )
 			&& value.hasType( VolatileResource.TYPE );
 	},
 
@@ -30,7 +33,7 @@ export const VolatileResource:VolatileResourceFactory = {
 	},
 
 	createFrom<T extends object>( object:T ):T & VolatileResource {
-		const resource:T & TransientResource = TransientResource.createFrom( object );
+		const resource:T & Resource = Resource.createFrom( object );
 		resource.addType( VolatileResource.TYPE );
 
 		return resource;

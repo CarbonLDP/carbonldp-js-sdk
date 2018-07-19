@@ -1,4 +1,4 @@
-import { ObjectSchema } from "../ObjectSchema";
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { EventMessage } from "./EventMessage";
 export interface DocumentDeleted extends EventMessage {
 }

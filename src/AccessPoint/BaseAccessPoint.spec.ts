@@ -1,10 +1,4 @@
-import {
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	OPTIONAL
-} from "../test/JasmineExtender";
+import { hasProperty, interfaze, module, OBLIGATORY, OPTIONAL } from "../test/JasmineExtender";
 
 
 describe( module( "carbonldp/AccessPoint" ), ():void => {

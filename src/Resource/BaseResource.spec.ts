@@ -1,11 +1,6 @@
-import { BasePointer } from "../Pointer";
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY
-} from "../test/JasmineExtender";
+import { BasePointer } from "../Pointer/BasePointer";
+
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY } from "../test/JasmineExtender";
 
 import { BaseResource } from "./BaseResource";
 

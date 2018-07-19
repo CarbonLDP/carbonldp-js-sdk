@@ -1,12 +1,7 @@
-import {
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property
-} from "../test/JasmineExtender";
+import { hasProperty, interfaze, module, OBLIGATORY, property } from "../test/JasmineExtender";
 
 import { SHACL } from "./SHACL";
+
 
 describe( module( "carbonldp/Vocabularies/SHACL" ), ():void => {
 

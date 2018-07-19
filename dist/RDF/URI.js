@@ -32,7 +32,8 @@ exports.URI = {
     isFragmentOf: function (fragmentURI, uri) {
         if (!exports.URI.hasFragment(fragmentURI))
             return false;
-        return exports.URI.getDocumentURI(fragmentURI) === uri;
+        var documentURI = exports.URI.getDocumentURI(fragmentURI);
+        return documentURI === "" || documentURI === uri;
     },
     isBaseOf: function (baseURI, uri) {
         if (baseURI === uri)
@@ -79,10 +80,10 @@ exports.URI = {
         if (uri === "")
             return uri;
         if (uri === "/")
-            return uri;
+            return "";
         var parts = uri.split("/");
         if (parts[parts.length - 1] === "") {
-            return parts[parts.length - 2] + "/";
+            return parts[parts.length - 2];
         }
         else {
             return parts[parts.length - 1];

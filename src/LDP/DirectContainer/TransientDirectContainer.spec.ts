@@ -1,6 +1,9 @@
-import { TransientDocument } from "../../Document";
-import { IllegalArgumentError } from "../../Errors";
-import { Pointer } from "../../Pointer";
+import { TransientDocument } from "../../Document/TransientDocument";
+
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+
+import { Pointer } from "../../Pointer/Pointer";
+
 import {
 	extendsClass,
 	hasMethod,
@@ -13,7 +16,9 @@ import {
 	property,
 	STATIC,
 } from "../../test/JasmineExtender";
-import { LDP } from "../../Vocabularies";
+
+import { LDP } from "../../Vocabularies/LDP";
+
 import { BaseDirectContainer } from "./BaseDirectContainer";
 import { TransientDirectContainer } from "./TransientDirectContainer";
 
@@ -172,7 +177,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 			it( "should return same reference", ():void => {
 				const base:BaseDirectContainer = {
-					membershipResource: Pointer.create( { id: "http://example.com/theResource/" } ),
+					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
 				};
 				const returned:TransientDirectContainer = TransientDirectContainer.createFrom( base );
@@ -182,7 +187,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 			it( "should return a TransientDirectContainer", ():void => {
 				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( {
-					membershipResource: Pointer.create( { id: "http://example.com/theResource/" } ),
+					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
 				} );
 
@@ -191,7 +196,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 			it( "should return maintain hasMemberRelation", ():void => {
 				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( {
-					membershipResource: Pointer.create( { id: "http://example.com/theResource/" } ),
+					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
 				} );
 
@@ -200,7 +205,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 			it( "should return maintain isMemberOfRelation", ():void => {
 				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( {
-					membershipResource: Pointer.create( { id: "http://example.com/theResource/" } ),
+					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
 					isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
 				} );
@@ -210,7 +215,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 			it( "should return add type ldp:DirectContainer", ():void => {
 				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( {
-					membershipResource: Pointer.create( { id: "http://example.com/theResource/" } ),
+					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
 				} );
 
@@ -219,7 +224,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 			it( "should throw error if already a direct container", ():void => {
 				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( {
-					membershipResource: Pointer.create( { id: "http://example.com/theResource/" } ),
+					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
 				} );
 
