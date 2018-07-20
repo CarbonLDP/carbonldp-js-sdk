@@ -22,7 +22,7 @@ import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 
 
 export interface EventEmitterDocumentsRepositoryTrait extends GeneralRepository<Document> {
-	$context:DocumentsContext;
+	context:DocumentsContext;
 
 	on( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
 	on( event:Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
@@ -66,8 +66,8 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 	PROTOTYPE: {
 		on<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
 			try {
-				const destination:string = _createDestination( event, uriPattern, this.$context.baseURI );
-				this.$context.messaging.subscribe( destination, onEvent, onError );
+				const destination:string = _createDestination( event, uriPattern, this.context.baseURI );
+				this.context.messaging.subscribe( destination, onEvent, onError );
 
 			} catch( error ) {
 				if( ! onError ) throw error;
@@ -77,8 +77,8 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 
 		off<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
 			try {
-				const destination:string = _createDestination( event, uriPattern, this.$context.baseURI );
-				this.$context.messaging.unsubscribe( destination, onEvent );
+				const destination:string = _createDestination( event, uriPattern, this.context.baseURI );
+				this.context.messaging.unsubscribe( destination, onEvent );
 
 			} catch( error ) {
 				if( ! onError ) throw error;
@@ -88,14 +88,14 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 
 		one<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
 			try {
-				const destination:string = _createDestination( event, uriPattern, this.$context.baseURI );
+				const destination:string = _createDestination( event, uriPattern, this.context.baseURI );
 
 				const onEventWrapper:OnEvent<T> = message => {
 					onEvent( message );
-					this.$context.messaging.unsubscribe( destination, onEventWrapper );
+					this.context.messaging.unsubscribe( destination, onEventWrapper );
 				};
 
-				this.$context.messaging.subscribe( destination, onEventWrapper, onError );
+				this.context.messaging.subscribe( destination, onEventWrapper, onError );
 
 			} catch( error ) {
 				if( ! onError ) throw error;

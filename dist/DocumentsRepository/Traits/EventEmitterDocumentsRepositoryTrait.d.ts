@@ -12,7 +12,7 @@ import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 export interface EventEmitterDocumentsRepositoryTrait extends GeneralRepository<Document> {
-    $context: DocumentsContext;
+    context: DocumentsContext;
     on(event: Event.CHILD_CREATED, uriPattern: string, onEvent: (message: ChildCreated) => void, onError?: (error: Error) => void): void;
     on(event: Event.DOCUMENT_MODIFIED, uriPattern: string, onEvent: (message: DocumentModified) => void, onError?: (error: Error) => void): void;
     on(event: Event.DOCUMENT_DELETED, uriPattern: string, onEvent: (message: DocumentDeleted) => void, onError?: (error: Error) => void): void;

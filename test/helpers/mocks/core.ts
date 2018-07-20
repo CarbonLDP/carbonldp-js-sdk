@@ -77,7 +77,7 @@ export function createMockContext<PARENT extends AbstractContext<any, any, any> 
 
 			this.repository = data && "repository" in data ?
 				data.repository :
-				GeneralRepository.create( { $context: this } );
+				GeneralRepository.create( { context: this } );
 
 			this._baseURI = data && data.uri !== void 0 ? data.uri : "https://example.com/";
 			if( data && data.settings ) this._settings = data.settings;

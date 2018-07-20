@@ -46,11 +46,11 @@ import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
 
 
 export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Document> {
-	$context:DocumentsContext;
+	context:DocumentsContext;
 
-	$get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
+	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
 
-	$resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
 
 
 	create<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
@@ -64,14 +64,14 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 	createAndRetrieve<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
-	$refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
-	$save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+	save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
-	$saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+	saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
-	$delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
+	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 
 
 	addMember( uri:string, member:(string | Pointer), requestOptions?:RequestOptions ):Promise<void>;
@@ -108,7 +108,7 @@ function __getTargetID( id:string, response:Response ):string {
 }
 
 function __getErrorResponseParserFnFrom( repository:LDPDocumentsRepositoryTrait ):ReturnType<typeof _getErrorResponseParserFn> {
-	return _getErrorResponseParserFn( repository.$context.registry );
+	return _getErrorResponseParserFn( repository.context.registry );
 }
 
 
@@ -129,7 +129,7 @@ function __changeNodesID( resource:$Registry, map:Map<Pointer, Pointer> ):void {
 
 function __applyResponseMetadata( repository:LDPDocumentsRepositoryTrait, freeNodes:RDFNode[] ):void {
 	if( ! freeNodes.length ) return;
-	const freeResources:FreeResources = FreeResources.parseFreeNodes( repository.$context.registry, freeNodes );
+	const freeResources:FreeResources = FreeResources.parseFreeNodes( repository.context.registry, freeNodes );
 
 	const responseMetadata:ResponseMetadata = freeResources
 		.getPointers( true )
@@ -176,7 +176,7 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 
 	transient.$_normalize();
 
-	transient.$registry = repository.$context.registry;
+	transient.$registry = repository.context.registry;
 	const body:string = JSON.stringify( transient );
 
 	if( ! ! slug ) RequestUtils.setSlug( slug, requestOptions );
@@ -192,7 +192,7 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 			if( locationHeader.values.length !== 1 ) throw new BadResponseError( "The response contains more than one Location header.", response );
 			transient.$id = locationHeader.values[ 0 ].toString();
 
-			const document:T & Document = repository.$context.registry._addPointer( transient );
+			const document:T & Document = repository.context.registry._addPointer( transient );
 			document
 				.$getFragments()
 				.forEach( document.$__modelDecorator.decorate );
@@ -206,8 +206,8 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 }
 
 function __createChildren<T extends object>( this:void, retrievalType:"minimal" | "representation", repository:LDPDocumentsRepositoryTrait, uri:string, children:T | T[], slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
-	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
-	const url:string = repository.$context.getObjectSchema().resolveURI( uri, { base: true } );
+	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	requestOptions = RequestUtils.isOptions( slugsOrOptions ) ?
 		slugsOrOptions :
@@ -252,8 +252,8 @@ function __createChildren<T extends object>( this:void, retrievalType:"minimal" 
 function __sendPatch<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions ):Promise<T & Document> {
 	if( ! ResolvablePointer.is( document ) ) return Promise.reject( new IllegalArgumentError( "The document isn't a resolvable pointer." ) );
 
-	if( ! repository.$context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( `"${ document.$id }" is out of scope.` ) );
-	const url:string = repository.$context.getObjectSchema().resolveURI( document.$id, { base: true } );
+	if( ! repository.context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( `"${ document.$id }" is out of scope.` ) );
+	const url:string = repository.context.getObjectSchema().resolveURI( document.$id, { base: true } );
 
 	if( ! document.$isDirty() ) return Promise.resolve( document as T & Document );
 
@@ -264,7 +264,7 @@ function __sendPatch<T extends object>( this:void, repository:LDPDocumentsReposi
 	RequestUtils.setIfMatchHeader( document.$eTag, requestOptions );
 
 
-	const deltaCreator:DeltaCreator = new DeltaCreator( repository.$context );
+	const deltaCreator:DeltaCreator = new DeltaCreator( repository.context );
 
 	// Document resource
 	deltaCreator.addResource( document.$id, document.$_snapshot, document );
@@ -309,15 +309,15 @@ function __parseMembers( registry:Registry, pointers:(string | Pointer)[] ):Poin
 }
 
 function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
-	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
-	const url:string = repository.$context.getObjectSchema().resolveURI( uri, { base: true } );
+	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
-	const freeResources:FreeResources = FreeResources.createFrom( { registry: repository.$context.registry } );
+	const freeResources:FreeResources = FreeResources.createFrom( { registry: repository.context.registry } );
 
-	const targetMembers:Pointer[] = __parseMembers( repository.$context.registry, members );
+	const targetMembers:Pointer[] = __parseMembers( repository.context.registry, members );
 	freeResources._addPointer( AddMemberAction.createFrom( { targetMembers } ) );
 
 	const body:string = JSON.stringify( freeResources );
@@ -330,8 +330,8 @@ function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri
 }
 
 function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
-	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
-	const url:string = repository.$context.getObjectSchema().resolveURI( uri, { base: true } );
+	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
@@ -340,9 +340,9 @@ function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, 
 		omit: [ C.PreferMembershipTriples ],
 	}, requestOptions );
 
-	const freeResources:FreeResources = FreeResources.createFrom( { registry: repository.$context.registry } );
+	const freeResources:FreeResources = FreeResources.createFrom( { registry: repository.context.registry } );
 
-	const targetMembers:Pointer[] = __parseMembers( repository.$context.registry, members );
+	const targetMembers:Pointer[] = __parseMembers( repository.context.registry, members );
 	freeResources._addPointer( RemoveMemberAction.createFrom( { targetMembers } ) );
 
 	const body:string = JSON.stringify( freeResources );
@@ -355,8 +355,8 @@ function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, 
 }
 
 function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<void> {
-	if( ! repository.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
-	const url:string = repository.$context.getObjectSchema().resolveURI( uri, { base: true } );
+	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
 	RequestUtils.setRetrievalPreferences( {
@@ -379,12 +379,12 @@ function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri
 }
 
 export type OverriddenMembers =
-	| "$get"
-	| "$refresh"
-	| "$exists"
-	| "$save"
-	| "$saveAndRefresh"
-	| "$delete"
+	| "get"
+	| "refresh"
+	| "exists"
+	| "save"
+	| "saveAndRefresh"
+	| "delete"
 	| "_parseResponseData"
 	;
 
@@ -395,19 +395,19 @@ export type LDPDocumentsRepositoryTraitFactory =
 
 export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 	PROTOTYPE: {
-		$get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+		get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.$get.call( this, uri, requestOptions )
+				.get.call( this, uri, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
-		$exists( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<boolean> {
+		exists( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<boolean> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.$exists.call( this, uri, requestOptions )
+				.exists.call( this, uri, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
@@ -421,32 +421,32 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 		},
 
 
-		$refresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+		refresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 			RequestUtils.setIfNoneMatchHeader( document.$eTag, requestOptions );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.$refresh.call( this, document, requestOptions )
+				.refresh.call( this, document, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) )
 				;
 		},
 
-		$save<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+		save<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
 			return __sendPatch<T>( this, document, requestOptions );
 		},
 
-		$saveAndRefresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+		saveAndRefresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			RequestUtils.setPreferredRetrieval( "representation", requestOptions );
 			return __sendPatch<T>( this, document, requestOptions );
 		},
 
 
-		$delete( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<void> {
+		delete( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<void> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.$delete.call( this, uri, requestOptions )
+				.delete.call( this, uri, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) )
 				;
 		},
@@ -478,7 +478,7 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 					const rdfDocuments:RDFDocument[] = RDFDocument
 						.getDocuments( rdfNodes );
 
-					const documents:(T & Document)[] = new JSONLDCompacter( this.$context.registry )
+					const documents:(T & Document)[] = new JSONLDCompacter( this.context.registry )
 						.compactDocuments( rdfDocuments );
 
 					id = __getTargetID( id, response );

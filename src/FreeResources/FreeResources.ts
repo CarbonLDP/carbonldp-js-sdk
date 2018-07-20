@@ -106,7 +106,7 @@ export const FreeResources:FreeResourcesFactory = {
 		} );
 
 		const resource:T & Registry<Resource> = ModelDecorator
-			.decorateMultiple( base, Registry as ModelDecorator<Registry<Resource>, BaseRegistry> );
+			.decorateMultiple( base, Registry );
 
 		return ModelDecorator
 			.definePropertiesFrom( FreeResources.PROTOTYPE, resource );

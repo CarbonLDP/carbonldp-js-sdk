@@ -13,8 +13,8 @@ var ModelDecorator_1 = require("../Model/ModelDecorator");
 var Repository_1 = require("../Repository/Repository");
 exports.GeneralRepository = {
     PROTOTYPE: {
-        get $context() {
-            throw new IllegalArgumentError_1.IllegalArgumentError("Property $context is required.");
+        get context() {
+            throw new IllegalArgumentError_1.IllegalArgumentError("Property \"context\" is required.");
         },
     },
     isDecorated: function (object) {

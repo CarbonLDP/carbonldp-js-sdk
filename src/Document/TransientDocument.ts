@@ -221,7 +221,7 @@ export const TransientDocument:TransientDocumentFactory = {
 		}, object );
 
 		const resource:Base & Resource & $Registry<TransientFragment> = ModelDecorator
-			.decorateMultiple( base, Resource, Registry );
+			.decorateMultiple( base, Resource, Registry as ModelDecorator<$Registry<TransientFragment>, $BaseRegistry> );
 
 		return ModelDecorator
 			.definePropertiesFrom( TransientDocument.PROTOTYPE, resource )

@@ -31,9 +31,9 @@ import {
 
 describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRepositoryTrait" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
+		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 
@@ -50,16 +50,16 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 		it( hasProperty(
 			OBLIGATORY,
-			"$context",
+			"context",
 			"CarbonLDP.DocumentsContext"
 		), ():void => {
-			const target:EventEmitterDocumentsRepositoryTrait[ "$context" ] = {} as DocumentsContext;
+			const target:EventEmitterDocumentsRepositoryTrait[ "context" ] = {} as DocumentsContext;
 			expect( target ).toBeDefined();
 		} );
 
 
 		function createMock():EventEmitterDocumentsRepositoryTrait {
-			return EventEmitterDocumentsRepositoryTrait.decorate( { $context } );
+			return EventEmitterDocumentsRepositoryTrait.decorate( { context } );
 		}
 
 		describe( method( OBLIGATORY, "on" ), ():void => {
@@ -143,7 +143,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 
 			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
-				const subscribeSpy:jasmine.Spy = spyOn( $context.messaging, "subscribe" );
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
@@ -156,7 +156,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			} );
 
 			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
-				const subscribeSpy:jasmine.Spy = spyOn( $context.messaging, "subscribe" );
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
@@ -251,7 +251,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 
 			it( "should unsubscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
-				const unsubscribeSpy:jasmine.Spy = spyOn( $context.messaging, "unsubscribe" );
+				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
@@ -264,7 +264,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			} );
 
 			it( "should unsubscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
-				const unsubscribeSpy:jasmine.Spy = spyOn( $context.messaging, "unsubscribe" );
+				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
@@ -359,7 +359,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 
 			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
-				const subscribeSpy:jasmine.Spy = spyOn( $context.messaging, "subscribe" );
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
@@ -375,7 +375,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			} );
 
 			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
-				const subscribeSpy:jasmine.Spy = spyOn( $context.messaging, "subscribe" );
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
@@ -392,7 +392,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 
 			it( "should call user onEvent after message", ( done:DoneFn ):void => {
-				const subscribeSpy:jasmine.Spy = spyOn( $context.messaging, "subscribe" );
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 
 				const onEvent:jasmine.Spy = jasmine.createSpy( "onEvent" );
@@ -412,8 +412,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 
 			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
-				const subscribeSpy:jasmine.Spy = spyOn( $context.messaging, "subscribe" );
-				const unsubscribeSpy:jasmine.Spy = spyOn( $context.messaging, "unsubscribe" );
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
 
 				const onEvent:( data:any ) => void = () => {};
 				const onError:( error:Error ) => void = done.fail;
@@ -430,8 +430,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			} );
 
 			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
-				const subscribeSpy:jasmine.Spy = spyOn( $context.messaging, "subscribe" );
-				const unsubscribeSpy:jasmine.Spy = spyOn( $context.messaging, "unsubscribe" );
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
 
 				const onEvent:( data:any ) => void = () => {};
 				const onError:( error:Error ) => void = done.fail;
@@ -660,7 +660,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" )
 					.and.callThrough();
 
-				EventEmitterDocumentsRepositoryTrait.decorate( { $context, the: "object" } );
+				EventEmitterDocumentsRepositoryTrait.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( EventEmitterDocumentsRepositoryTrait.PROTOTYPE, { the: "object" } );
 			} );
@@ -670,7 +670,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 					.and.returnValue( true );
 
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
-				EventEmitterDocumentsRepositoryTrait.decorate( { $context } );
+				EventEmitterDocumentsRepositoryTrait.decorate( { context } );
 
 				expect( spy ).not.toHaveBeenCalled();
 			} );
@@ -680,7 +680,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 				const spy:jasmine.Spy = spyOn( GeneralRepository, "decorate" )
 					.and.callThrough();
 
-				EventEmitterDocumentsRepositoryTrait.decorate( { $context, the: "object" } );
+				EventEmitterDocumentsRepositoryTrait.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );

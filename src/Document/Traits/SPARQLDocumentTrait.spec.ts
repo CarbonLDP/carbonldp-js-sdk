@@ -28,11 +28,11 @@ import { BaseSPARQLDocumentTrait, SPARQLDocumentTrait, SPARQLDocumentTraitFactor
 
 describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	let $repository:SPARQLDocumentsRepositoryTrait;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
-		$repository = SPARQLDocumentsRepositoryTrait.decorate( { $context } );
+		context = new DocumentsContext( "https://example.com/" );
+		$repository = SPARQLDocumentsRepositoryTrait.decorate( { context } );
 	} );
 
 

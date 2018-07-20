@@ -29,11 +29,11 @@ import { BaseQueryableDocumentTrait, QueryableDocumentTrait, QueryableDocumentTr
 
 describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	let $repository:QueryableDocumentsRepositoryTrait;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
-		$repository = QueryableDocumentsRepositoryTrait.decorate( { $context } );
+		context = new DocumentsContext( "https://example.com/" );
+		$repository = QueryableDocumentsRepositoryTrait.decorate( { context } );
 	} );
 
 

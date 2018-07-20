@@ -66,7 +66,7 @@ describe( module( "carbonldp/SPARQL/SPARQLBuilder", "Module that reexports the c
 			), ():void => {} );
 
 			it( "should be instantiable", () => {
-				const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { $context: new DocumentsContext( "https://example.com/" ) } );
+				const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { context: new DocumentsContext( "https://example.com/" ) } );
 				const entryPoint:string = "https://example.com/";
 
 				const builder:SPARQLBuilder = new SPARQLBuilder( repository, entryPoint );
@@ -75,7 +75,7 @@ describe( module( "carbonldp/SPARQL/SPARQLBuilder", "Module that reexports the c
 
 
 			it( "should extend FinishClause with the FinishSPARQLSelect", () => {
-				const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { $context: new DocumentsContext( "https://example.com/" ) } );
+				const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { context: new DocumentsContext( "https://example.com/" ) } );
 				const entryPoint:string = "https://example.com/";
 
 				const builder:SPARQLBuilder = new SPARQLBuilder( repository, entryPoint );
@@ -90,7 +90,7 @@ describe( module( "carbonldp/SPARQL/SPARQLBuilder", "Module that reexports the c
 			} );
 
 			it( "should call executeSELECTQuery when execute", async () => {
-				const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { $context: new DocumentsContext( "https://example.com/" ) } );
+				const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { context: new DocumentsContext( "https://example.com/" ) } );
 				const entryPoint:string = "https://example.com/entry-point/";
 
 				const builder:SPARQLBuilder = new SPARQLBuilder( repository, entryPoint );

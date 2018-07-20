@@ -34,11 +34,11 @@ import {
 
 describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrait" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	let $repository:EventEmitterDocumentsRepositoryTrait;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
-		$repository = EventEmitterDocumentsRepositoryTrait.decorate( { $context } );
+		context = new DocumentsContext( "https://example.com/" );
+		$repository = EventEmitterDocumentsRepositoryTrait.decorate( { context } );
 	} );
 
 

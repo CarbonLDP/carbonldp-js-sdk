@@ -3,9 +3,9 @@ import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 import { Pointer } from "../Pointer/Pointer";
 import { BaseResolvablePointer } from "./BaseResolvablePointer";
-import { Repository } from "./Repository";
-export interface ResolvablePointer extends Pointer, Repository {
-    $repository: Repository;
+import { $Repository, Repository } from "./Repository";
+export interface ResolvablePointer extends Pointer, $Repository {
+    $repository: Repository | $Repository;
     $eTag: string | undefined;
     $_resolved: boolean;
     $_snapshot: object;

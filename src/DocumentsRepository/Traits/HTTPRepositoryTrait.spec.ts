@@ -22,7 +22,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/HTTPRepositoryTrait" ), 
 			"$context",
 			"CarbonLDP.Context<MODEL & RegisteredPointer, MODEL>"
 		), ():void => {
-			const target:HTTPRepositoryTrait[ "$context" ] = {} as Context<ResolvablePointer & RegisteredPointer, ResolvablePointer>;
+			const target:HTTPRepositoryTrait[ "context" ] = {} as Context<ResolvablePointer & RegisteredPointer, ResolvablePointer>;
 			expect( target ).toBeDefined();
 		} );
 

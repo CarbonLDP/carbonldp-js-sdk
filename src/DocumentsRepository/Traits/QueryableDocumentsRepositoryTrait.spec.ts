@@ -76,9 +76,9 @@ import {
 
 describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsRepositoryTrait" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
+		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 
@@ -95,10 +95,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		it( hasProperty(
 			OBLIGATORY,
-			"$context",
+			"context",
 			"CarbonLDP.DocumentsContext"
 		), ():void => {
-			const target:QueryableDocumentsRepositoryTrait[ "$context" ] = {} as DocumentsContext;
+			const target:QueryableDocumentsRepositoryTrait[ "context" ] = {} as DocumentsContext;
 			expect( target ).toBeDefined();
 		} );
 
@@ -189,20 +189,20 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		let repository:QueryableDocumentsRepositoryTrait;
 		let document:Document;
 		beforeEach( () => {
-			repository = QueryableDocumentsRepositoryTrait.decorate( { $context } );
+			repository = QueryableDocumentsRepositoryTrait.decorate( { context } );
 
 			document = Document.decorate( {
 				$id: "https://example.com/",
-				$repository: $context.repository,
-				$registry: $context.registry,
+				$repository: context.repository,
+				$registry: context.registry,
 				$_queryableMetadata: createMockQueryableMetadata(),
 			} );
 		} );
 
 		function createMockDocument<T extends {}>( data:T & Partial<Document> ):T & Document {
 			const mockDocument:T & Document = Document.decorate( Object.assign( {
-				$registry: $context.registry,
-				$repository: $context.repository,
+				$registry: context.registry,
+				$repository: context.repository,
 			}, data ) );
 
 			mockDocument.$_normalize();
@@ -252,8 +252,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( repository.$get ).toBeDefined();
-				expect( repository.$get ).toEqual( jasmine.any( Function ) );
+				expect( repository.get ).toBeDefined();
+				expect( repository.get ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -283,7 +283,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request the URI provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				await repository.$get( "https://example.com/resource/", _ => _ );
+				await repository.get( "https://example.com/resource/", _ => _ );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.url ).toBe( "https://example.com/resource/" );
@@ -293,7 +293,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request relative URI provided", async () => {
 				stubRequest( "https://example.com/relative/" );
 
-				await repository.$get( "relative/", _ => _ );
+				await repository.get( "relative/", _ => _ );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.url ).toBe( "https://example.com/relative/" );
@@ -303,9 +303,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
-				await repository.$get( "ex:resource/", _ => _ );
+				await repository.get( "ex:resource/", _ => _ );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.url ).toBe( "https://example.com/resource/" );
@@ -314,7 +314,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 			it( "should throw error when from URI outside context scope", async () => {
 				await repository
-					.$get( "https://example.org/resource/", _ => _ )
+					.get( "https://example.org/resource/", _ => _ )
 					.catch( error => {
 						expect( () => { throw error; } )
 							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
@@ -324,7 +324,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 			it( "should throw error when from URI is BNode label", async () => {
 				await repository
-					.$get( "_:1", _ => _ )
+					.get( "_:1", _ => _ )
 					.catch( error => {
 						expect( () => { throw error; } )
 							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
@@ -334,7 +334,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 			it( "should throw error when from URI is Named Fragment label", async () => {
 				await repository
-					.$get( "#fragment", _ => _ )
+					.get( "#fragment", _ => _ )
 					.catch( error => {
 						expect( () => { throw error; } )
 							.toThrowError( IllegalArgumentError, `"#fragment" is out of scope.` );
@@ -344,7 +344,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 			it( "should throw error when unresolved prefixed name", async () => {
 				await repository
-					.$get( "ex:resource/", _ => _ )
+					.get( "ex:resource/", _ => _ )
 					.catch( error => {
 						expect( () => { throw error; } )
 							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
@@ -356,7 +356,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send basic request headers", async () => {
 				stubRequest( "https://example.com/" );
 
-				await repository.$get( "/", _ => _ );
+				await repository.get( "/", _ => _ );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
@@ -372,7 +372,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should add custom headers", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				await repository.$get( "resource/", {
+				await repository.get( "resource/", {
 					headers: new Map()
 						.set( "custom", new Header( "custom value" ) )
 					,
@@ -388,7 +388,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -410,7 +410,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 
-				await repository.$get( "https://example.com/resource/", _ => _
+				await repository.get( "https://example.com/resource/", _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -519,7 +519,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -541,7 +541,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 				type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
-				const returned:MyDocument = await repository.$get<MyDocument>( "resource/", _ => _
+				const returned:MyDocument = await repository.get<MyDocument>( "resource/", _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -614,7 +614,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -636,7 +636,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 				type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
-				const returned:MyDocument = await repository.$get<MyDocument>( "/", _ => _
+				const returned:MyDocument = await repository.get<MyDocument>( "/", _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -714,7 +714,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				const returned:Document = await repository.$get( "/", _ => _
+				const returned:Document = await repository.get( "/", _ => _
 					.properties( {} )
 				);
 
@@ -811,7 +811,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -833,7 +833,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 				type MyDocument = { property1:string, property2:Document };
-				const returned:MyDocument = await repository.$get<MyDocument>( "/", _ => _
+				const returned:MyDocument = await repository.get<MyDocument>( "/", _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -900,7 +900,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -921,7 +921,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 				type MyResource = Document & { property2:QueryablePointer };
-				const returned:MyResource = await repository.$get<{ property2:QueryablePointer }>( "/", _ => _
+				const returned:MyResource = await repository.get<{ property2:QueryablePointer }>( "/", _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -1010,7 +1010,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1032,7 +1032,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 				type MyResource = Document & { property2:QueryablePointer };
-				const returned:MyResource = await repository.$get<{ property2:QueryablePointer }>( "/", _ => _
+				const returned:MyResource = await repository.get<{ property2:QueryablePointer }>( "/", _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -1171,9 +1171,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				$context.registry
+				context.registry
 					.__resourcesMap.set( "", document );
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1201,7 +1201,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				;
 
-				const returned:Document & MyDocument = await repository.$get<MyDocument>( "/", _ => _
+				const returned:Document & MyDocument = await repository.get<MyDocument>( "/", _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property4": _.inherit,
@@ -1258,8 +1258,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				$context.registry._addPointer( document );
-				$context
+				context.registry._addPointer( document );
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1324,7 +1324,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				const returned:Document & { property2:QueryablePointer } = await repository.$get<{ property2:QueryablePointer }>( "/", _ => _
+				const returned:Document & { property2:QueryablePointer } = await repository.get<{ property2:QueryablePointer }>( "/", _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property4": _.inherit,
@@ -1374,10 +1374,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 			it( "should call LDPDocumentsRepositoryTrait when URI", async () => {
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$get" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
 
-				await repository.$get( "resource/" )
+				await repository.get( "resource/" )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -1388,10 +1388,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 			it( "should call LDPDocumentsRepositoryTrait when URI and options", async () => {
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$get" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
 
-				await repository.$get( "resource/", { timeout: 5050 } )
+				await repository.get( "resource/", { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -1403,16 +1403,16 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 			it( "should ensure latest when is partial and no builder function", async () => {
-				$context.registry._addPointer( createMockDocument( {
+				context.registry._addPointer( createMockDocument( {
 					$id: "resource/",
 					$_queryableMetadata: createMockQueryableMetadata( {} ),
 				} ) );
 
 
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$get" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
 
-				await repository.$get( "resource/" )
+				await repository.get( "resource/" )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -1423,16 +1423,16 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 			it( "should ensure latest when URI is partial and no builder function, with options", async () => {
-				$context.registry._addPointer( createMockDocument( {
+				context.registry._addPointer( createMockDocument( {
 					$id: "resource/",
 					$_queryableMetadata: createMockQueryableMetadata( {} ),
 				} ) );
 
 
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$get" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
 
-				await repository.$get( "resource/", { timeout: 5050 } )
+				await repository.get( "resource/", { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -1445,7 +1445,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 			it( "should parse ErrorResponse into error", async () => {
 				await repository
-					.$get( "500/", _ => _ )
+					.get( "500/", _ => _ )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( ( error:HTTPError & ErrorResponse ) => {
 						expect( error ).toBeDefined();
@@ -1514,8 +1514,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( repository.$resolve ).toBeDefined();
-				expect( repository.$resolve ).toEqual( jasmine.any( Function ) );
+				expect( repository.resolve ).toBeDefined();
+				expect( repository.resolve ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -1545,7 +1545,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send basic request headers", async () => {
 				stubRequest( "https://example.com/" );
 
-				await repository.$resolve( document, _ => _ );
+				await repository.resolve( document, _ => _ );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
@@ -1561,7 +1561,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should add custom headers", async () => {
 				stubRequest( "https://example.com/" );
 
-				await repository.$resolve( document, {
+				await repository.resolve( document, {
 					headers: new Map()
 						.set( "custom", new Header( "custom value" ) )
 					,
@@ -1577,7 +1577,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -1599,7 +1599,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 
-				await repository.$resolve( document, _ => _
+				await repository.resolve( document, _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -1664,10 +1664,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should add TYPES at CONSTRUCT when available", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context.registry._addPointer( document );
+				context.registry._addPointer( document );
 				document.types = [ "https://example.com/ns#A-Type", "https://example.com/ns#Another-Type" ];
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -1689,7 +1689,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 
-				await repository.$resolve( document, _ => _
+				await repository.resolve( document, _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -1801,7 +1801,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1823,7 +1823,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 				type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
-				const returned:MyDocument = await repository.$resolve<MyDocument>( document, _ => _
+				const returned:MyDocument = await repository.resolve<MyDocument>( document, _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -1896,7 +1896,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1918,7 +1918,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 				type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
-				const returned:MyDocument = await repository.$resolve<MyDocument>( document, _ => _
+				const returned:MyDocument = await repository.resolve<MyDocument>( document, _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -1996,7 +1996,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				const returned:Document = await repository.$resolve( document, _ => _
+				const returned:Document = await repository.resolve( document, _ => _
 					.properties( {} )
 				);
 
@@ -2093,7 +2093,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -2115,7 +2115,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 				type MyDocument = { property1:string, property2:Document };
-				const returned:MyDocument = await repository.$resolve<MyDocument>( document, _ => _
+				const returned:MyDocument = await repository.resolve<MyDocument>( document, _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -2182,7 +2182,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -2203,7 +2203,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 				type MyResource = Document & { property2:QueryablePointer };
-				const returned:MyResource = await repository.$resolve<{ property2:QueryablePointer }>( document, _ => _
+				const returned:MyResource = await repository.resolve<{ property2:QueryablePointer }>( document, _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -2292,7 +2292,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -2314,7 +2314,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 				type MyResource = Document & { property2:QueryablePointer };
-				const returned:MyResource = await repository.$resolve<{ property2:QueryablePointer }>( document, _ => _
+				const returned:MyResource = await repository.resolve<{ property2:QueryablePointer }>( document, _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property1": _.inherit,
@@ -2453,8 +2453,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				$context.registry._addPointer( document );
-				$context
+				context.registry._addPointer( document );
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -2482,7 +2482,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				;
 
-				const returned:Document & MyDocument = await repository.$resolve<MyDocument>( document, _ => _
+				const returned:Document & MyDocument = await repository.resolve<MyDocument>( document, _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property4": _.inherit,
@@ -2539,8 +2539,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				$context.registry._addPointer( document );
-				$context
+				context.registry._addPointer( document );
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -2605,7 +2605,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				const returned:Document & { property2:QueryablePointer } = await repository.$resolve<{ property2:QueryablePointer }>( document, _ => _
+				const returned:Document & { property2:QueryablePointer } = await repository.resolve<{ property2:QueryablePointer }>( document, _ => _
 					.withType( "Resource" )
 					.properties( {
 						"property4": _.inherit,
@@ -2655,11 +2655,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 			it( "should call LDPDocumentsRepositoryTrait when nothing", async () => {
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$get" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
 
 				document.$_queryableMetadata = void 0;
-				await repository.$resolve( document )
+				await repository.resolve( document )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -2670,11 +2670,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 			it( "should call LDPDocumentsRepositoryTrait when options", async () => {
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$get" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
 
 				document.$_queryableMetadata = void 0;
-				await repository.$resolve( document, { timeout: 5050 } )
+				await repository.resolve( document, { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -2686,12 +2686,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 			it( "should ensure latest when current is partial and no builder function", async () => {
-				$context.registry._addPointer( document );
+				context.registry._addPointer( document );
 
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$get" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
 
-				await repository.$resolve( document )
+				await repository.resolve( document )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -2702,12 +2702,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 			it( "should ensure latest when current is partial and no builder function, with options", async () => {
-				$context.registry._addPointer( document );
+				context.registry._addPointer( document );
 
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$get" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
 
-				await repository.$resolve( document, { timeout: 5050 } )
+				await repository.resolve( document, { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -2722,7 +2722,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				document.$id = "500/";
 
 				await repository
-					.$resolve( document, _ => _ )
+					.resolve( document, _ => _ )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( ( error:HTTPError & ErrorResponse ) => {
 						expect( error ).toBeDefined();
@@ -2771,8 +2771,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			), () => {} );
 
 			it( "should exists", ():void => {
-				expect( repository.$saveAndRefresh ).toBeDefined();
-				expect( repository.$saveAndRefresh ).toEqual( jasmine.any( Function ) );
+				expect( repository.saveAndRefresh ).toBeDefined();
+				expect( repository.saveAndRefresh ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -2812,7 +2812,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				document.$id = "https://example.org/resource/";
 
 				await repository
-					.$saveAndRefresh( document )
+					.saveAndRefresh( document )
 					.catch( error => {
 						expect( () => { throw error; } )
 							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
@@ -2824,7 +2824,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				document.$id = "_:1";
 
 				await repository
-					.$saveAndRefresh( document )
+					.saveAndRefresh( document )
 					.catch( error => {
 						expect( () => { throw error; } )
 							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
@@ -2836,7 +2836,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				document.$id = "https://example.com/#fragment";
 
 				await repository
-					.$saveAndRefresh( document )
+					.saveAndRefresh( document )
 					.catch( error => {
 						expect( () => { throw error; } )
 							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
@@ -2848,7 +2848,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				document.$id = "ex:resource/";
 
 				await repository
-					.$saveAndRefresh( document )
+					.saveAndRefresh( document )
 					.catch( error => {
 						expect( () => { throw error; } )
 							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
@@ -2863,7 +2863,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( false );
 
-				await repository.$saveAndRefresh( document );
+				await repository.saveAndRefresh( document );
 
 				expect( jasmine.Ajax.requests.count() ).toBe( 1 );
 
@@ -2878,7 +2878,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
-				await repository.$saveAndRefresh( document );
+				await repository.saveAndRefresh( document );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.first();
 				expect( request.url ).toBe( "https://example.com/" );
@@ -2893,7 +2893,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				document.$eTag = null;
 
 				await repository
-					.$saveAndRefresh( document )
+					.saveAndRefresh( document )
 					.then( () => fail( "should not resolve" ) )
 					.catch( error => {
 						expect( () => { throw error; } )
@@ -2910,7 +2910,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
-				await repository.$saveAndRefresh( document );
+				await repository.saveAndRefresh( document );
 
 				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 				expect( request1.requestHeaders ).toEqual( {
@@ -2938,7 +2938,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.and.returnValue( true );
 
 
-				await repository.$saveAndRefresh( document, {
+				await repository.saveAndRefresh( document, {
 					headers: new Map()
 						.set( "custom", new Header( "custom value" ) )
 					,
@@ -2994,7 +2994,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				document.$_normalize();
 				document.$_syncSnapshot();
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"xsd": XSD.namespace,
@@ -3030,7 +3030,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				object.pointer.pointers[ 0 ].number = 100.001;
 				object.pointer.pointers.splice( 1, 1 );
 
-				await repository.$saveAndRefresh( document );
+				await repository.saveAndRefresh( document );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.first();
 				expect( request.params ).toBe( "" +
@@ -3096,7 +3096,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 				document.$_syncSavedFragments();
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -3104,7 +3104,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 
-				await repository.$saveAndRefresh( document );
+				await repository.saveAndRefresh( document );
 
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -3220,7 +3220,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 				document.$eTag = "\"0-12345\"";
 
-				const returned:Document = await repository.$saveAndRefresh( document );
+				const returned:Document = await repository.saveAndRefresh( document );
 				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
 					$_resolved: true,
@@ -3229,11 +3229,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 			it( "should call LDPDocumentsRepositoryTrait when full", async () => {
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$saveAndRefresh" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "saveAndRefresh" )
 					.and.returnValue( Promise.reject( null ) );
 
 				document.$_queryableMetadata = void 0;
-				await repository.$saveAndRefresh( document )
+				await repository.saveAndRefresh( document )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -3244,11 +3244,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 			it( "should call LDPDocumentsRepositoryTrait when full and options", async () => {
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$saveAndRefresh" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "saveAndRefresh" )
 					.and.returnValue( Promise.reject( null ) );
 
 				document.$_queryableMetadata = void 0;
-				await repository.$saveAndRefresh( document, { timeout: 5050 } )
+				await repository.saveAndRefresh( document, { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -3265,7 +3265,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				document.$id = "500/";
 
 				await repository
-					.$saveAndRefresh( document )
+					.saveAndRefresh( document )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( ( error:HTTPError & ErrorResponse ) => {
 						expect( error ).toBeDefined();
@@ -3313,8 +3313,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			), () => {} );
 
 			it( "should exists", ():void => {
-				expect( repository.$refresh ).toBeDefined();
-				expect( repository.$refresh ).toEqual( jasmine.any( Function ) );
+				expect( repository.refresh ).toBeDefined();
+				expect( repository.refresh ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -3343,7 +3343,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request document ID", async () => {
 				stubRequest( "https://example.com/" );
 
-				await repository.$refresh( document );
+				await repository.refresh( document );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.url ).toBe( "https://example.com/" );
@@ -3353,7 +3353,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send basic request headers", async () => {
 				stubRequest( "https://example.com/" );
 
-				await repository.$refresh( document );
+				await repository.refresh( document );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
@@ -3369,7 +3369,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should add custom headers", async () => {
 				stubRequest( "https://example.com/" );
 
-				await repository.$refresh( document, {
+				await repository.refresh( document, {
 					headers: new Map()
 						.set( "custom", new Header( "custom value" ) )
 					,
@@ -3424,7 +3424,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 				document.$_syncSavedFragments();
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -3432,7 +3432,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 
-				await repository.$refresh( document );
+				await repository.refresh( document );
 
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -3521,7 +3521,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 				document.$_syncSavedFragments();
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -3529,7 +3529,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 
-				await repository.$refresh( document );
+				await repository.refresh( document );
 
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -3670,9 +3670,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 				document.$_syncSavedFragments();
-				$context.registry._addPointer( document );
+				context.registry._addPointer( document );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -3704,7 +3704,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					property4:boolean;
 				}
 
-				const returned:MyDocument = await repository.$refresh<MyDocument>( document );
+				const returned:MyDocument = await repository.refresh<MyDocument>( document );
 
 				// Data updates
 				expect( returned ).toEqual( jasmine.objectContaining( {
@@ -3782,7 +3782,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 				document.$eTag = "\"0-12345\"";
-				const returned:Document = await repository.$refresh( document );
+				const returned:Document = await repository.refresh( document );
 
 				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
@@ -3846,7 +3846,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				document = $context.registry._addPointer( {
+				document = context.registry._addPointer( {
 					$eTag: "\"1-12345\"",
 					$id: "https://example.com/",
 
@@ -3854,7 +3854,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$_queryableMetadata: createMockQueryableMetadata(),
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -3875,7 +3875,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 				type MyResource = Document & { property1:string };
-				const returned:MyResource = await repository.$refresh<{ property1:string }>( document );
+				const returned:MyResource = await repository.refresh<{ property1:string }>( document );
 
 				expect( returned ).toEqual( jasmine.objectContaining( {
 					property1: "value",
@@ -3936,9 +3936,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 				document.$eTag = null;
-				$context.registry._addPointer( document );
+				context.registry._addPointer( document );
 
-				const returned:Document = await repository.$refresh( document );
+				const returned:Document = await repository.refresh( document );
 
 				expect( returned ).toEqual( jasmine.objectContaining( {
 					$eTag: "\"1-12345\"",
@@ -3947,11 +3947,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 			it( "should call LDPDocumentsRepositoryTrait when full", async () => {
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$refresh" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "refresh" )
 					.and.returnValue( Promise.reject( null ) );
 
 				document.$_queryableMetadata = void 0;
-				await repository.$refresh( document )
+				await repository.refresh( document )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -3962,11 +3962,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 			it( "should call LDPDocumentsRepositoryTrait when full and options", async () => {
-				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$refresh" )
+				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "refresh" )
 					.and.returnValue( Promise.reject( null ) );
 
 				document.$_queryableMetadata = void 0;
-				await repository.$refresh( document, { timeout: 5050 } )
+				await repository.refresh( document, { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						if( error ) fail( error );
@@ -3981,7 +3981,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				document.$id = "500/";
 
 				await repository
-					.$refresh( document )
+					.refresh( document )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( ( error:HTTPError & ErrorResponse ) => {
 						expect( error ).toBeDefined();
@@ -4088,7 +4088,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.getChildren( "ex:resource/" );
 
@@ -4172,7 +4172,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send partial CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -4271,7 +4271,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send full CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -4334,7 +4334,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send filtered .ALL CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -4397,7 +4397,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send filtered without optional CONSTRUCT", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -4681,7 +4681,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						} ]`,
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -4858,7 +4858,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						} ]`,
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5019,7 +5019,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5202,7 +5202,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5416,7 +5416,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5600,7 +5600,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.getMembers( "ex:resource/" );
 
@@ -5684,7 +5684,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send partial CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5785,7 +5785,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send full CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5840,7 +5840,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send filtered .ALL CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5905,7 +5905,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send filtered without optional CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -6197,7 +6197,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						} ]`,
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -6374,7 +6374,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						} ]`,
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -6532,7 +6532,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -6714,7 +6714,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -6927,7 +6927,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -7099,7 +7099,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.listChildren( "ex:resource/" );
 
@@ -7182,7 +7182,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send partial CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -7473,7 +7473,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.listMembers( "ex:resource/" );
 
@@ -7556,7 +7556,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send partial CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -7796,7 +7796,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 	), () => {
 
 		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.DocumentsRepository.Traits.QueryableDocumentsRepositoryTrait, CarbonLDP.DocumentsRepository.Traits.LDPDocumentsRepositoryTrait, \"get\" | \"resolve\" | \"refresh\" | \"saveAndRefresh\">" ), () => {
-			const target:ModelPrototype<QueryableDocumentsRepositoryTrait, LDPDocumentsRepositoryTrait, "$get" | "$resolve" | "$refresh" | "$saveAndRefresh"> = {} as QueryableDocumentsRepositoryTraitFactory;
+			const target:ModelPrototype<QueryableDocumentsRepositoryTrait, LDPDocumentsRepositoryTrait, "get" | "resolve" | "refresh" | "saveAndRefresh"> = {} as QueryableDocumentsRepositoryTraitFactory;
 			expect( target ).toBeDefined();
 		} );
 
@@ -7836,7 +7836,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" )
 					.and.callThrough();
 
-				QueryableDocumentsRepositoryTrait.decorate( { $context, the: "object" } );
+				QueryableDocumentsRepositoryTrait.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( QueryableDocumentsRepositoryTrait.PROTOTYPE, { the: "object" } );
 			} );
@@ -7846,7 +7846,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.and.returnValue( true );
 
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
-				QueryableDocumentsRepositoryTrait.decorate( { $context } );
+				QueryableDocumentsRepositoryTrait.decorate( { context } );
 
 				expect( spy ).not.toHaveBeenCalled();
 			} );
@@ -7856,7 +7856,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const spy:jasmine.Spy = spyOn( GeneralRepository, "decorate" )
 					.and.callThrough();
 
-				QueryableDocumentsRepositoryTrait.decorate( { $context, the: "object" } );
+				QueryableDocumentsRepositoryTrait.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );

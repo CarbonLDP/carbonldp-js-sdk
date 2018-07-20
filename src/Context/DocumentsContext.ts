@@ -75,7 +75,7 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 
 
 		this.registry = DocumentsRegistry.createFrom( { context: this } );
-		this.repository = DocumentsRepository.createFrom( { $context: this } );
+		this.repository = DocumentsRepository.createFrom( { context: this } );
 
 		this.messaging = new MessagingService( this );
 	}

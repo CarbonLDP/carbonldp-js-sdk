@@ -22,7 +22,7 @@ import {
 } from "../test/JasmineExtender";
 
 import { BaseResolvablePointer } from "./BaseResolvablePointer";
-import { Repository } from "./Repository";
+import { $Repository, Repository } from "./Repository";
 import { ResolvablePointer, ResolvablePointerFactory } from "./ResolvablePointer";
 
 
@@ -34,7 +34,7 @@ describe( module( "carbonldp/Repository" ), () => {
 	), () => {
 
 
-		let $repository:Repository;
+		let $repository:Repository | $Repository;
 		beforeEach( ():void => {
 			$repository = Repository.decorate( {} );
 		} );
@@ -428,60 +428,134 @@ describe( module( "carbonldp/Repository" ), () => {
 		describe( method( OBLIGATORY, "$get" ), () => {
 			// TODO: Document
 
-			it( "should send to $id when no provided", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+			describe( "when Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$get" )
-					.and.returnValue( Promise.resolve() );
+				let repository:Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( {} );
+				} );
 
-				await resource.$get();
+				it( "should send to $id when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "get" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$get();
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
+				} );
+
+				it( "should resolve relative with $id when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "get" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$get( "relative/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
+				} );
+
+				it( "should pass absolute when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "get" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$get( "https://example.com/another-resource/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
+				} );
+
+
+				it( "should pass params when no URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "get" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$get( { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
+				} );
+
+				it( "should pass params when URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "get" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$get( "relative/", { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
-			it( "should resolve relative with $id when provided", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+			describe( "when $Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$get" )
-					.and.returnValue( Promise.resolve() );
+				let repository:$Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( { $id: "" } );
+				} );
 
-				await resource.$get( "relative/" );
+				it( "should send to $id when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
-			} );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$get" )
+						.and.returnValue( Promise.resolve() );
 
-			it( "should pass absolute when provided", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+					await resource.$get();
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$get" )
-					.and.returnValue( Promise.resolve() );
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
+				} );
 
-				await resource.$get( "https://example.com/another-resource/" );
+				it( "should resolve relative with $id when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
-			} );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$get" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$get( "relative/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
+				} );
+
+				it( "should pass absolute when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$get" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$get( "https://example.com/another-resource/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
+				} );
 
 
-			it( "should pass params when no URI", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+				it( "should pass params when no URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$get" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$get" )
+						.and.returnValue( Promise.resolve() );
 
-				await resource.$get( { object: "1" }, { object: "2" } );
+					await resource.$get( { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
-			} );
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
+				} );
 
-			it( "should pass params when URI", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+				it( "should pass params when URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$get" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$get" )
+						.and.returnValue( Promise.resolve() );
 
-				await resource.$get( "relative/", { object: "1" }, { object: "2" } );
+					await resource.$get( "relative/", { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
 		} );
@@ -489,51 +563,116 @@ describe( module( "carbonldp/Repository" ), () => {
 		describe( method( OBLIGATORY, "$resolve" ), () => {
 			// TODO: Document
 
-			it( "should send to self when no provided", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+			describe( "when Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$resolve" )
-					.and.returnValue( Promise.resolve() );
+				let repository:Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( {} );
+				} );
 
-				await resource.$resolve();
+				it( "should send to self when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				expect( spy ).toHaveBeenCalledWith( resource );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "resolve" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$resolve();
+
+					expect( spy ).toHaveBeenCalledWith( resource );
+				} );
+
+				it( "should pass resource when provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "resolve" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$resolve( target );
+
+					expect( spy ).toHaveBeenCalledWith( target );
+				} );
+
+
+				it( "should pass params when no resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "resolve" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$resolve( { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
+				} );
+
+				it( "should pass params when resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "resolve" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$resolve( target, { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
-			it( "should pass resource when provided", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+			describe( "when $Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$resolve" )
-					.and.returnValue( Promise.resolve() );
+				let repository:$Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( { $id: "" } );
+				} );
 
-				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$resolve( target );
+				it( "should send to self when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				expect( spy ).toHaveBeenCalledWith( target );
-			} );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$resolve" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$resolve();
+
+					expect( spy ).toHaveBeenCalledWith( resource );
+				} );
+
+				it( "should pass resource when provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$resolve" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$resolve( target );
+
+					expect( spy ).toHaveBeenCalledWith( target );
+				} );
 
 
-			it( "should pass params when no resource", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+				it( "should pass params when no resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$resolve" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$resolve" )
+						.and.returnValue( Promise.resolve() );
 
-				await resource.$resolve( { object: "1" }, { object: "2" } );
+					await resource.$resolve( { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
-			} );
+					expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
+				} );
 
-			it( "should pass params when resource", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+				it( "should pass params when resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$resolve" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$resolve" )
+						.and.returnValue( Promise.resolve() );
 
-				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$resolve( target, { object: "1" }, { object: "2" } );
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$resolve( target, { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+					expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
 		} );
@@ -541,60 +680,134 @@ describe( module( "carbonldp/Repository" ), () => {
 		describe( method( OBLIGATORY, "$exists" ), () => {
 			// TODO: Document
 
-			it( "should send to $id when no provided", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+			describe( "when Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$exists" )
-					.and.returnValue( Promise.resolve() );
+				let repository:Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( {} );
+				} );
 
-				await resource.$exists();
+				it( "should send to $id when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "exists" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$exists();
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
+				} );
+
+				it( "should resolve relative with $id when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "exists" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$exists( "relative/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
+				} );
+
+				it( "should pass absolute when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "exists" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$exists( "https://example.com/another-resource/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
+				} );
+
+
+				it( "should pass params when no URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "exists" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$exists( { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
+				} );
+
+				it( "should pass params when URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "exists" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$exists( "relative/", { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
-			it( "should resolve relative with $id when provided", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+			describe( "when $Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$exists" )
-					.and.returnValue( Promise.resolve() );
+				let repository:$Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( { $id: "" } );
+				} );
 
-				await resource.$exists( "relative/" );
+				it( "should send to $id when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
-			} );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$exists" )
+						.and.returnValue( Promise.resolve() );
 
-			it( "should pass absolute when provided", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+					await resource.$exists();
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$exists" )
-					.and.returnValue( Promise.resolve() );
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
+				} );
 
-				await resource.$exists( "https://example.com/another-resource/" );
+				it( "should resolve relative with $id when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
-			} );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$exists" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$exists( "relative/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
+				} );
+
+				it( "should pass absolute when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$exists" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$exists( "https://example.com/another-resource/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
+				} );
 
 
-			it( "should pass params when no URI", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+				it( "should pass params when no URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$exists" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$exists" )
+						.and.returnValue( Promise.resolve() );
 
-				await resource.$exists( { object: "1" }, { object: "2" } );
+					await resource.$exists( { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
-			} );
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
+				} );
 
-			it( "should pass params when URI", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+				it( "should pass params when URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$exists" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$exists" )
+						.and.returnValue( Promise.resolve() );
 
-				await resource.$exists( "relative/", { object: "1" }, { object: "2" } );
+					await resource.$exists( "relative/", { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
 		} );
@@ -603,51 +816,117 @@ describe( module( "carbonldp/Repository" ), () => {
 		describe( method( OBLIGATORY, "$refresh" ), () => {
 			// TODO: Document
 
-			it( "should send to self when no provided", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+			describe( "when Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$refresh" )
-					.and.returnValue( Promise.resolve() );
+				let repository:Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( {} );
+				} );
 
-				await resource.$refresh();
+				it( "should send to self when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				expect( spy ).toHaveBeenCalledWith( resource );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "refresh" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$refresh();
+
+					expect( spy ).toHaveBeenCalledWith( resource );
+				} );
+
+				it( "should pass resource when provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "refresh" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$refresh( target );
+
+					expect( spy ).toHaveBeenCalledWith( target );
+				} );
+
+
+				it( "should pass params when no resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "refresh" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$refresh( { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
+				} );
+
+				it( "should pass params when resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "refresh" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$refresh( target, { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+				} );
+
 			} );
+			// TODO: Document
 
-			it( "should pass resource when provided", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+			describe( "when $Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$refresh" )
-					.and.returnValue( Promise.resolve() );
+				let repository:$Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( { $id: "" } );
+				} );
 
-				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$refresh( target );
+				it( "should send to self when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				expect( spy ).toHaveBeenCalledWith( target );
-			} );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$refresh" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$refresh();
+
+					expect( spy ).toHaveBeenCalledWith( resource );
+				} );
+
+				it( "should pass resource when provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$refresh" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$refresh( target );
+
+					expect( spy ).toHaveBeenCalledWith( target );
+				} );
 
 
-			it( "should pass params when no resource", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+				it( "should pass params when no resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$refresh" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$refresh" )
+						.and.returnValue( Promise.resolve() );
 
-				await resource.$refresh( { object: "1" }, { object: "2" } );
+					await resource.$refresh( { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
-			} );
+					expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
+				} );
 
-			it( "should pass params when resource", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+				it( "should pass params when resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$refresh" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$refresh" )
+						.and.returnValue( Promise.resolve() );
 
-				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$refresh( target, { object: "1" }, { object: "2" } );
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$refresh( target, { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+					expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
 		} );
@@ -655,51 +934,116 @@ describe( module( "carbonldp/Repository" ), () => {
 		describe( method( OBLIGATORY, "$save" ), () => {
 			// TODO: Document
 
-			it( "should send to self when no provided", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+			describe( "when Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$save" )
-					.and.returnValue( Promise.resolve() );
+				let repository:Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( {} );
+				} );
 
-				await resource.$save();
+				it( "should send to self when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				expect( spy ).toHaveBeenCalledWith( resource );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "save" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$save();
+
+					expect( spy ).toHaveBeenCalledWith( resource );
+				} );
+
+				it( "should pass resource when provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "save" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$save( target );
+
+					expect( spy ).toHaveBeenCalledWith( target );
+				} );
+
+
+				it( "should pass params when no resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "save" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$save( { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
+				} );
+
+				it( "should pass params when resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "save" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$save( target, { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
-			it( "should pass resource when provided", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+			describe( "when $Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$save" )
-					.and.returnValue( Promise.resolve() );
+				let repository:$Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( { $id: "" } );
+				} );
 
-				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$save( target );
+				it( "should send to self when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				expect( spy ).toHaveBeenCalledWith( target );
-			} );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$save" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$save();
+
+					expect( spy ).toHaveBeenCalledWith( resource );
+				} );
+
+				it( "should pass resource when provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$save" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$save( target );
+
+					expect( spy ).toHaveBeenCalledWith( target );
+				} );
 
 
-			it( "should pass params when no resource", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+				it( "should pass params when no resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$save" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$save" )
+						.and.returnValue( Promise.resolve() );
 
-				await resource.$save( { object: "1" }, { object: "2" } );
+					await resource.$save( { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
-			} );
+					expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
+				} );
 
-			it( "should pass params when resource", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+				it( "should pass params when resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$save" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$save" )
+						.and.returnValue( Promise.resolve() );
 
-				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$save( target, { object: "1" }, { object: "2" } );
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$save( target, { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+					expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
 		} );
@@ -707,51 +1051,116 @@ describe( module( "carbonldp/Repository" ), () => {
 		describe( method( OBLIGATORY, "$saveAndRefresh" ), () => {
 			// TODO: Document
 
-			it( "should send to self when no provided", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+			describe( "when Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$saveAndRefresh" )
-					.and.returnValue( Promise.resolve() );
+				let repository:Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( {} );
+				} );
 
-				await resource.$saveAndRefresh();
+				it( "should send to self when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				expect( spy ).toHaveBeenCalledWith( resource );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "saveAndRefresh" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$saveAndRefresh();
+
+					expect( spy ).toHaveBeenCalledWith( resource );
+				} );
+
+				it( "should pass resource when provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "saveAndRefresh" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$saveAndRefresh( target );
+
+					expect( spy ).toHaveBeenCalledWith( target );
+				} );
+
+
+				it( "should pass params when no resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "saveAndRefresh" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$saveAndRefresh( { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
+				} );
+
+				it( "should pass params when resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "saveAndRefresh" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$saveAndRefresh( target, { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
-			it( "should pass resource when provided", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+			describe( "when $Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$saveAndRefresh" )
-					.and.returnValue( Promise.resolve() );
+				let repository:$Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( { $id: "" } );
+				} );
 
-				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$saveAndRefresh( target );
+				it( "should send to self when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				expect( spy ).toHaveBeenCalledWith( target );
-			} );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$saveAndRefresh" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$saveAndRefresh();
+
+					expect( spy ).toHaveBeenCalledWith( resource );
+				} );
+
+				it( "should pass resource when provided", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$saveAndRefresh" )
+						.and.returnValue( Promise.resolve() );
+
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$saveAndRefresh( target );
+
+					expect( spy ).toHaveBeenCalledWith( target );
+				} );
 
 
-			it( "should pass params when no resource", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+				it( "should pass params when no resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$saveAndRefresh" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$saveAndRefresh" )
+						.and.returnValue( Promise.resolve() );
 
-				await resource.$saveAndRefresh( { object: "1" }, { object: "2" } );
+					await resource.$saveAndRefresh( { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
-			} );
+					expect( spy ).toHaveBeenCalledWith( resource, { object: "1" }, { object: "2" } );
+				} );
 
-			it( "should pass params when resource", async () => {
-				const resource:ResolvablePointer = createMock( { the: "object" } );
+				it( "should pass params when resource", async () => {
+					const resource:ResolvablePointer = createMock( { the: "object" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$saveAndRefresh" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$saveAndRefresh" )
+						.and.returnValue( Promise.resolve() );
 
-				const target:ResolvablePointer = createMock( { another: "object" } );
-				await resource.$saveAndRefresh( target, { object: "1" }, { object: "2" } );
+					const target:ResolvablePointer = createMock( { another: "object" } );
+					await resource.$saveAndRefresh( target, { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+					expect( spy ).toHaveBeenCalledWith( target, { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
 		} );
@@ -760,60 +1169,134 @@ describe( module( "carbonldp/Repository" ), () => {
 		describe( method( OBLIGATORY, "$delete" ), () => {
 			// TODO: Document
 
-			it( "should send to $id when no provided", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+			describe( "when Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$delete" )
-					.and.returnValue( Promise.resolve() );
+				let repository:Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( {} );
+				} );
 
-				await resource.$delete();
+				it( "should send to $id when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "delete" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$delete();
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
+				} );
+
+				it( "should resolve relative with $id when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "delete" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$delete( "relative/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
+				} );
+
+				it( "should pass absolute when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "delete" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$delete( "https://example.com/another-resource/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
+				} );
+
+
+				it( "should pass params when no URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "delete" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$delete( { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
+				} );
+
+				it( "should pass params when URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "delete" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$delete( "relative/", { object: "1" }, { object: "2" } );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
-			it( "should resolve relative with $id when provided", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+			describe( "when $Repository", () => {
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$delete" )
-					.and.returnValue( Promise.resolve() );
+				let repository:$Repository;
+				beforeEach( ():void => {
+					$repository = repository = Repository.decorate( { $id: "" } );
+				} );
 
-				await resource.$delete( "relative/" );
+				it( "should send to $id when no provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
-			} );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$delete" )
+						.and.returnValue( Promise.resolve() );
 
-			it( "should pass absolute when provided", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+					await resource.$delete();
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$delete" )
-					.and.returnValue( Promise.resolve() );
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
+				} );
 
-				await resource.$delete( "https://example.com/another-resource/" );
+				it( "should resolve relative with $id when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
-			} );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$delete" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$delete( "relative/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
+				} );
+
+				it( "should pass absolute when provided", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$delete" )
+						.and.returnValue( Promise.resolve() );
+
+					await resource.$delete( "https://example.com/another-resource/" );
+
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
+				} );
 
 
-			it( "should pass params when no URI", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+				it( "should pass params when no URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$delete" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$delete" )
+						.and.returnValue( Promise.resolve() );
 
-				await resource.$delete( { object: "1" }, { object: "2" } );
+					await resource.$delete( { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
-			} );
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { object: "1" }, { object: "2" } );
+				} );
 
-			it( "should pass params when URI", async () => {
-				const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
+				it( "should pass params when URI", async () => {
+					const resource:ResolvablePointer = createMock( { $id: "https://example.com/resource/" } );
 
-				const spy:jasmine.Spy = spyOnDecorated( $repository, "$delete" )
-					.and.returnValue( Promise.resolve() );
+					const spy:jasmine.Spy = spyOnDecorated( repository, "$delete" )
+						.and.returnValue( Promise.resolve() );
 
-				await resource.$delete( "relative/", { object: "1" }, { object: "2" } );
+					await resource.$delete( "relative/", { object: "1" }, { object: "2" } );
 
-				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
+					expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { object: "1" }, { object: "2" } );
+				} );
+
 			} );
 
 		} );

@@ -28,11 +28,11 @@ import { BaseLDPDocumentTrait, LDPDocumentTrait, LDPDocumentTraitFactory } from 
 
 describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	let $repository:LDPDocumentsRepositoryTrait;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
-		$repository = LDPDocumentsRepositoryTrait.decorate( { $context } );
+		context = new DocumentsContext( "https://example.com/" );
+		$repository = LDPDocumentsRepositoryTrait.decorate( { context } );
 	} );
 
 

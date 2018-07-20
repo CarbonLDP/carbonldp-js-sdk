@@ -9,8 +9,8 @@ exports.EventEmitterDocumentsRepositoryTrait = {
     PROTOTYPE: {
         on: function (event, uriPattern, onEvent, onError) {
             try {
-                var destination = Utils_1._createDestination(event, uriPattern, this.$context.baseURI);
-                this.$context.messaging.subscribe(destination, onEvent, onError);
+                var destination = Utils_1._createDestination(event, uriPattern, this.context.baseURI);
+                this.context.messaging.subscribe(destination, onEvent, onError);
             }
             catch (error) {
                 if (!onError)
@@ -20,8 +20,8 @@ exports.EventEmitterDocumentsRepositoryTrait = {
         },
         off: function (event, uriPattern, onEvent, onError) {
             try {
-                var destination = Utils_1._createDestination(event, uriPattern, this.$context.baseURI);
-                this.$context.messaging.unsubscribe(destination, onEvent);
+                var destination = Utils_1._createDestination(event, uriPattern, this.context.baseURI);
+                this.context.messaging.unsubscribe(destination, onEvent);
             }
             catch (error) {
                 if (!onError)
@@ -32,12 +32,12 @@ exports.EventEmitterDocumentsRepositoryTrait = {
         one: function (event, uriPattern, onEvent, onError) {
             var _this = this;
             try {
-                var destination_1 = Utils_1._createDestination(event, uriPattern, this.$context.baseURI);
+                var destination_1 = Utils_1._createDestination(event, uriPattern, this.context.baseURI);
                 var onEventWrapper_1 = function (message) {
                     onEvent(message);
-                    _this.$context.messaging.unsubscribe(destination_1, onEventWrapper_1);
+                    _this.context.messaging.unsubscribe(destination_1, onEventWrapper_1);
                 };
-                this.$context.messaging.subscribe(destination_1, onEventWrapper_1, onError);
+                this.context.messaging.subscribe(destination_1, onEventWrapper_1, onError);
             }
             catch (error) {
                 if (!onError)

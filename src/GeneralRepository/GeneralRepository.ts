@@ -15,7 +15,7 @@ import { BaseGeneralRepository } from "./BaseGeneralRepository";
 
 
 export interface GeneralRepository<MODEL extends ResolvablePointer = ResolvablePointer> extends Repository<MODEL> {
-	$context:Context<MODEL & RegisteredPointer, MODEL>;
+	context:Context<MODEL & RegisteredPointer, MODEL>;
 }
 
 
@@ -27,8 +27,8 @@ export type GeneralRepositoryFactory =
 
 export const GeneralRepository:GeneralRepositoryFactory = {
 	PROTOTYPE: {
-		get $context():Context<ResolvablePointer & RegisteredPointer, ResolvablePointer> {
-			throw new IllegalArgumentError( "Property $context is required." );
+		get context():Context<ResolvablePointer & RegisteredPointer, ResolvablePointer> {
+			throw new IllegalArgumentError( `Property "context" is required.` );
 		},
 	},
 

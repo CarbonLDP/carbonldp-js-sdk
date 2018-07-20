@@ -56,7 +56,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
         var freeNodes = Document_1.RDFDocument.getFreeNodes(rdfNodes);
         var freeResources;
         try {
-            freeResources = FreeResources_1.FreeResources.parseFreeNodes(repository.$context.registry, freeNodes);
+            freeResources = FreeResources_1.FreeResources.parseFreeNodes(repository.context.registry, freeNodes);
         }
         catch (e) {
             throw e;
@@ -94,10 +94,10 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
             .filter(Document_1.RDFDocument.is);
         var targetDocuments = rdfDocuments
             .filter(function (x) { return targetSet.has(x["@id"]); });
-        return new JSONLDCompacter_1.JSONLDCompacter(repository.$context.registry, targetName, queryContext)
+        return new JSONLDCompacter_1.JSONLDCompacter(repository.context.registry, targetName, queryContext)
             .compactDocuments(rdfDocuments, targetDocuments);
     })
-        .catch(Utils_3._getErrorResponseParserFn(repository.$context.registry));
+        .catch(Utils_3._getErrorResponseParserFn(repository.context.registry));
 }
 function __executeBuilder(repository, url, requestOptions, queryContext, targetProperty, queryBuilderFn, target) {
     var Builder = targetProperty.name === "document" ?
@@ -168,10 +168,10 @@ function __executeBuilder(repository, url, requestOptions, queryContext, targetP
     });
 }
 function __getQueryable(repository, uri, requestOptions, queryBuilderFn, target) {
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
-    var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
-    var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
+    var url = repository.context.getObjectSchema().resolveURI(uri, { base: true });
+    var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.context);
     var documentProperty = queryContext
         .addProperty("document")
         .setOptional(false);
@@ -203,10 +203,10 @@ function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
 }
 function __refreshQueryable(repository, document, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.inScope(document.$id, true))
+    if (!repository.context.registry.inScope(document.$id, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + document.$id + "\" is out of scope."));
-    var url = repository.$context.getObjectSchema().resolveURI(document.$id, { base: true });
-    var queryContext = new QueryContextPartial_1.QueryContextPartial(document, repository.$context);
+    var url = repository.context.getObjectSchema().resolveURI(document.$id, { base: true });
+    var queryContext = new QueryContextPartial_1.QueryContextPartial(document, repository.context);
     var targetName = "document";
     var constructPatterns = new tokens_1.OptionalToken()
         .addPattern(new tokens_1.ValuesToken()
@@ -217,10 +217,10 @@ function __refreshQueryable(repository, document, requestOptions) {
         .then(function (documents) { return documents[0]; });
 }
 function __executeChildrenBuilder(repository, uri, requestOptions, queryBuilderFn) {
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
-    var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
-    var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
+    var url = repository.context.getObjectSchema().resolveURI(uri, { base: true });
+    var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.context);
     var childrenProperty = queryContext
         .addProperty("child")
         .setOptional(false);
@@ -233,10 +233,10 @@ function __executeChildrenBuilder(repository, uri, requestOptions, queryBuilderF
     return __executeBuilder(repository, url, requestOptions, queryContext, childrenProperty, queryBuilderFn);
 }
 function __executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn) {
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
-    var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
-    var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
+    var url = repository.context.getObjectSchema().resolveURI(uri, { base: true });
+    var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.context);
     var membersProperty = queryContext
         .addProperty("member")
         .setOptional(false);
@@ -257,13 +257,13 @@ function __executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn
 }
 exports.QueryableDocumentsRepositoryTrait = {
     PROTOTYPE: {
-        $get: function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+        get: function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
             var requestOptions = Utils_2.isObject(requestOptionsOrQueryBuilderFn) ?
                 requestOptionsOrQueryBuilderFn : {};
             queryBuilderFn = Utils_2.isFunction(requestOptionsOrQueryBuilderFn) ?
                 requestOptionsOrQueryBuilderFn : queryBuilderFn;
-            var target = this.$context.registry.hasPointer(uri) ?
-                this.$context.registry.getPointer(uri, true) :
+            var target = this.context.registry.hasPointer(uri) ?
+                this.context.registry.getPointer(uri, true) :
                 void 0;
             if (queryBuilderFn) {
                 var types_1 = target ? target.types : [];
@@ -275,26 +275,26 @@ exports.QueryableDocumentsRepositoryTrait = {
             if (target && target.$isQueried())
                 requestOptions.ensureLatest = true;
             return LDPDocumentsRepositoryTrait_1.LDPDocumentsRepositoryTrait.PROTOTYPE
-                .$get.call(this, uri, requestOptions);
+                .get.call(this, uri, requestOptions);
         },
-        $resolve: function (document, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
-            return this.$get(document.$id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
+        resolve: function (document, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+            return this.get(document.$id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
         },
-        $refresh: function (document, requestOptions) {
+        refresh: function (document, requestOptions) {
             if (!document.$isQueried())
                 return LDPDocumentsRepositoryTrait_1.LDPDocumentsRepositoryTrait.PROTOTYPE
-                    .$refresh.call(this, document, requestOptions);
+                    .refresh.call(this, document, requestOptions);
             return __refreshQueryable(this, document, requestOptions);
         },
-        $saveAndRefresh: function (document, requestOptions) {
+        saveAndRefresh: function (document, requestOptions) {
             var _this = this;
             if (!document.$_queryableMetadata)
                 return LDPDocumentsRepositoryTrait_1.LDPDocumentsRepositoryTrait.PROTOTYPE
-                    .$saveAndRefresh.call(this, document, requestOptions);
+                    .saveAndRefresh.call(this, document, requestOptions);
             if (document.$eTag === null)
                 return Promise.reject(new IllegalStateError_1.IllegalStateError("The document \"" + document.$id + "\" is locally outdated and cannot be saved."));
             var cloneOptions = Request_1.RequestUtils.cloneOptions(requestOptions || {});
-            return this.$save(document, cloneOptions)
+            return this.save(document, cloneOptions)
                 .then(function (doc) {
                 return __refreshQueryable(_this, doc, requestOptions);
             });

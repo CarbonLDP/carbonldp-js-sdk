@@ -10,7 +10,7 @@ import { FinishSPARQLSelect } from "../../SPARQL/SPARQLBuilder";
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
 export interface SPARQLDocumentsRepositoryTrait extends GeneralRepository<Document> {
-    $context: DocumentsContext;
+    context: DocumentsContext;
     executeASKQuery(uri: string, askQuery: string, requestOptions?: RequestOptions): Promise<boolean>;
     executeSELECTQuery<T extends object>(uri: string, selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLSelectResults<T>>;
     executeUPDATE(uri: string, update: string, requestOptions?: RequestOptions): Promise<void>;

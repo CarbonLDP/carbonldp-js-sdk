@@ -1,5 +1,5 @@
 import { BasePointer } from "../Pointer/BasePointer";
-import { Repository } from "./Repository";
+import { $Repository, Repository } from "./Repository";
 export interface BaseResolvablePointer extends BasePointer {
-    $repository: Repository;
+    $repository: Repository | $Repository;
 }

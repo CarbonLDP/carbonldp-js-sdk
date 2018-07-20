@@ -121,7 +121,7 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 		if( GeneralRegistry.isDecorated( object ) ) return object;
 
 		const target:T & Registry & ObjectSchemaResolver = ModelDecorator
-			.decorateMultiple( object, Registry as ModelDecorator<Registry, BaseRegistry>, ObjectSchemaResolver );
+			.decorateMultiple( object, Registry, ObjectSchemaResolver );
 
 		if( ! target.context ) delete target.context;
 

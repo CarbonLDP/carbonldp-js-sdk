@@ -38,7 +38,7 @@ function __getTargetID(id, response) {
     return locationString;
 }
 function __getErrorResponseParserFnFrom(repository) {
-    return Utils_2._getErrorResponseParserFn(repository.$context.registry);
+    return Utils_2._getErrorResponseParserFn(repository.context.registry);
 }
 function __changeNodesID(resource, map) {
     map
@@ -55,7 +55,7 @@ function __changeNodesID(resource, map) {
 function __applyResponseMetadata(repository, freeNodes) {
     if (!freeNodes.length)
         return;
-    var freeResources = FreeResources_1.FreeResources.parseFreeNodes(repository.$context.registry, freeNodes);
+    var freeResources = FreeResources_1.FreeResources.parseFreeNodes(repository.context.registry, freeNodes);
     var responseMetadata = freeResources
         .getPointers(true)
         .find(ResponseMetadata_1.ResponseMetadata.is);
@@ -89,7 +89,7 @@ function __createChild(repository, parentURI, requestOptions, child, slug) {
     var transient = TransientDocument_1.TransientDocument.is(child) ?
         child : TransientDocument_1.TransientDocument.decorate(child);
     transient.$_normalize();
-    transient.$registry = repository.$context.registry;
+    transient.$registry = repository.context.registry;
     var body = JSON.stringify(transient);
     if (!!slug)
         Request_1.RequestUtils.setSlug(slug, requestOptions);
@@ -104,7 +104,7 @@ function __createChild(repository, parentURI, requestOptions, child, slug) {
         if (locationHeader.values.length !== 1)
             throw new BadResponseError_1.BadResponseError("The response contains more than one Location header.", response);
         transient.$id = locationHeader.values[0].toString();
-        var document = repository.$context.registry._addPointer(transient);
+        var document = repository.context.registry._addPointer(transient);
         document
             .$getFragments()
             .forEach(document.$__modelDecorator.decorate);
@@ -116,9 +116,9 @@ function __createChild(repository, parentURI, requestOptions, child, slug) {
     });
 }
 function __createChildren(retrievalType, repository, uri, children, slugsOrOptions, requestOptions) {
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
-    var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
+    var url = repository.context.getObjectSchema().resolveURI(uri, { base: true });
     requestOptions = Request_1.RequestUtils.isOptions(slugsOrOptions) ?
         slugsOrOptions :
         requestOptions ? requestOptions : {};
@@ -152,16 +152,16 @@ function __createChildren(retrievalType, repository, uri, children, slugsOrOptio
 function __sendPatch(repository, document, requestOptions) {
     if (!ResolvablePointer_1.ResolvablePointer.is(document))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The document isn't a resolvable pointer."));
-    if (!repository.$context.registry.inScope(document.$id))
+    if (!repository.context.registry.inScope(document.$id))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + document.$id + "\" is out of scope."));
-    var url = repository.$context.getObjectSchema().resolveURI(document.$id, { base: true });
+    var url = repository.context.getObjectSchema().resolveURI(document.$id, { base: true });
     if (!document.$isDirty())
         return Promise.resolve(document);
     document.$_normalize();
     __setDefaultRequestOptions(requestOptions);
     Request_1.RequestUtils.setContentTypeHeader("text/ldpatch", requestOptions);
     Request_1.RequestUtils.setIfMatchHeader(document.$eTag, requestOptions);
-    var deltaCreator = new DeltaCreator_1.DeltaCreator(repository.$context);
+    var deltaCreator = new DeltaCreator_1.DeltaCreator(repository.context);
     deltaCreator.addResource(document.$id, document.$_snapshot, document);
     document
         .$getPointers(true)
@@ -193,13 +193,13 @@ function __parseMembers(registry, pointers) {
 }
 function __sendAddAction(repository, uri, members, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
-    var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
+    var url = repository.context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
     Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
-    var freeResources = FreeResources_1.FreeResources.createFrom({ registry: repository.$context.registry });
-    var targetMembers = __parseMembers(repository.$context.registry, members);
+    var freeResources = FreeResources_1.FreeResources.createFrom({ registry: repository.context.registry });
+    var targetMembers = __parseMembers(repository.context.registry, members);
     freeResources._addPointer(AddMemberAction_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
     var body = JSON.stringify(freeResources);
     return Request_1.RequestService
@@ -209,17 +209,17 @@ function __sendAddAction(repository, uri, members, requestOptions) {
 }
 function __sendRemoveAction(repository, uri, members, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
-    var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
+    var url = repository.context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
     Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
     Request_1.RequestUtils.setRetrievalPreferences({
         include: [C_1.C.PreferSelectedMembershipTriples],
         omit: [C_1.C.PreferMembershipTriples],
     }, requestOptions);
-    var freeResources = FreeResources_1.FreeResources.createFrom({ registry: repository.$context.registry });
-    var targetMembers = __parseMembers(repository.$context.registry, members);
+    var freeResources = FreeResources_1.FreeResources.createFrom({ registry: repository.context.registry });
+    var targetMembers = __parseMembers(repository.context.registry, members);
     freeResources._addPointer(RemoveMemberAction_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
     var body = JSON.stringify(freeResources);
     return Request_1.RequestService
@@ -229,9 +229,9 @@ function __sendRemoveAction(repository, uri, members, requestOptions) {
 }
 function __sendRemoveAll(repository, uri, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.inScope(uri, true))
+    if (!repository.context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
-    var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
+    var url = repository.context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
     Request_1.RequestUtils.setRetrievalPreferences({
         include: [
@@ -251,18 +251,18 @@ function __sendRemoveAll(repository, uri, requestOptions) {
 }
 exports.LDPDocumentsRepositoryTrait = {
     PROTOTYPE: {
-        $get: function (uri, requestOptions) {
+        get: function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .$get.call(this, uri, requestOptions)
+                .get.call(this, uri, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
-        $exists: function (uri, requestOptions) {
+        exists: function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .$exists.call(this, uri, requestOptions)
+                .exists.call(this, uri, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
         create: function (uri, children, slugsOrOptions, requestOptions) {
@@ -271,29 +271,29 @@ exports.LDPDocumentsRepositoryTrait = {
         createAndRetrieve: function (uri, children, slugsOrOptions, requestOptions) {
             return __createChildren("representation", this, uri, children, slugsOrOptions, requestOptions);
         },
-        $refresh: function (document, requestOptions) {
+        refresh: function (document, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             Request_1.RequestUtils.setIfNoneMatchHeader(document.$eTag, requestOptions);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .$refresh.call(this, document, requestOptions)
+                .refresh.call(this, document, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
-        $save: function (document, requestOptions) {
+        save: function (document, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             Request_1.RequestUtils.setPreferredRetrieval("minimal", requestOptions);
             return __sendPatch(this, document, requestOptions);
         },
-        $saveAndRefresh: function (document, requestOptions) {
+        saveAndRefresh: function (document, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             Request_1.RequestUtils.setPreferredRetrieval("representation", requestOptions);
             return __sendPatch(this, document, requestOptions);
         },
-        $delete: function (uri, requestOptions) {
+        delete: function (uri, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             __setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
             return HTTPRepositoryTrait_1.HTTPRepositoryTrait.PROTOTYPE
-                .$delete.call(this, uri, requestOptions)
+                .delete.call(this, uri, requestOptions)
                 .catch(__getErrorResponseParserFnFrom(this));
         },
         addMember: function (uri, member, requestOptions) {
@@ -317,7 +317,7 @@ exports.LDPDocumentsRepositoryTrait = {
                 .then(function (rdfNodes) {
                 var rdfDocuments = Document_1.RDFDocument
                     .getDocuments(rdfNodes);
-                var documents = new JSONLDCompacter_1.JSONLDCompacter(_this.$context.registry)
+                var documents = new JSONLDCompacter_1.JSONLDCompacter(_this.context.registry)
                     .compactDocuments(rdfDocuments);
                 id = __getTargetID(id, response);
                 var target = documents.find(function (doc) { return doc.$id === id; });
