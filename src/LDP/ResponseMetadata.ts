@@ -34,7 +34,7 @@ export const ResponseMetadata:ResponseMetadataFactory = {
 
 	is( object:object ):object is ResponseMetadata {
 		return VolatileResource.is( object )
-			&& object.hasType( ResponseMetadata.TYPE );
+			&& object.$hasType( ResponseMetadata.TYPE );
 	},
 
 };

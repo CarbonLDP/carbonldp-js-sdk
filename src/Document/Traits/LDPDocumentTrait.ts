@@ -24,39 +24,39 @@ export interface BaseLDPDocumentTrait {
 export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	$repository:LDPDocumentsRepositoryTrait;
 
-	create<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
-	create<T extends object>( children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
-	create<T extends object>( child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
-	create<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
-	create<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
+	$create<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	$create<T extends object>( children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	$create<T extends object>( child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
+	$create<T extends object>( child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
+	$create<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	$create<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	$create<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
+	$create<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 
-	createAndRetrieve<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
-	createAndRetrieve<T extends object>( children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
-	createAndRetrieve<T extends object>( child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
-	createAndRetrieve<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
-	createAndRetrieve<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
-
-
-	addMember( member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
-	addMember( uri:string, member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
-
-	addMembers( members:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
-	addMembers( uri:string, members:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	$createAndRetrieve<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	$createAndRetrieve<T extends object>( children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	$createAndRetrieve<T extends object>( child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
+	$createAndRetrieve<T extends object>( child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
+	$createAndRetrieve<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	$createAndRetrieve<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	$createAndRetrieve<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
+	$createAndRetrieve<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
-	removeMember( member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
-	removeMember( uri:string, member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
+	$addMember( member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
+	$addMember( uri:string, member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
 
-	removeMembers( members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
-	removeMembers( requestOptions?:RequestOptions ):Promise<void>;
-	removeMembers( uri:string, members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
-	removeMembers( uri:string, requestOptions?:RequestOptions ):Promise<void>;
+	$addMembers( members:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	$addMembers( uri:string, members:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+
+
+	$removeMember( member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
+	$removeMember( uri:string, member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
+
+	$removeMembers( members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	$removeMembers( requestOptions?:RequestOptions ):Promise<void>;
+	$removeMembers( uri:string, members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	$removeMembers( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 }
 
 
@@ -76,14 +76,14 @@ export type LDPDocumentTraitFactory =
 
 export const LDPDocumentTrait:LDPDocumentTraitFactory = {
 	PROTOTYPE: {
-		create<T extends object>( this:LDPDocumentTrait, uriOrChildren:string | T | T[], childrenOrSlugsOrRequestOptions?:T | T[] | string | string[] | RequestOptions, slugsOrRequestOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
+		$create<T extends object>( this:LDPDocumentTrait, uriOrChildren:string | T | T[], childrenOrSlugsOrRequestOptions?:T | T[] | string | string[] | RequestOptions, slugsOrRequestOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
 			const { _uri, _args } = _parseURIParams( this, uriOrChildren, arguments );
 			// FIXME
 			// @ts-ignore
 			return this.$repository.create( _uri, ..._args );
 		},
 
-		createAndRetrieve<T extends object>( this:LDPDocumentTrait, uriOrChildren?:string | T | T[], childrenOrSlugsOrRequestOptions?:T | T[] | string | string[] | RequestOptions, slugsOrRequestOptions?:string | string[] | RequestOptions, requestOptions:RequestOptions = {} ):Promise<(T & Document) | (T & Document)[]> {
+		$createAndRetrieve<T extends object>( this:LDPDocumentTrait, uriOrChildren?:string | T | T[], childrenOrSlugsOrRequestOptions?:T | T[] | string | string[] | RequestOptions, slugsOrRequestOptions?:string | string[] | RequestOptions, requestOptions:RequestOptions = {} ):Promise<(T & Document) | (T & Document)[]> {
 			const { _uri, _args } = _parseURIParams( this, uriOrChildren, arguments );
 			// FIXME
 			// @ts-ignore
@@ -91,14 +91,14 @@ export const LDPDocumentTrait:LDPDocumentTraitFactory = {
 		},
 
 
-		addMember( this:LDPDocumentTrait, uriOrMember:string | (Pointer | string), memberOrOptions?:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
+		$addMember( this:LDPDocumentTrait, uriOrMember:string | (Pointer | string), memberOrOptions?:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 			const { uri, params } = __parseMemberParams( this, arguments );
 			// FIXME
 			// @ts-ignore
 			return this.$repository.addMember( uri, ...params );
 		},
 
-		addMembers( this:LDPDocumentTrait, uriOrMembers:string | (Pointer | string)[], membersOrOptions:(Pointer | string)[] | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
+		$addMembers( this:LDPDocumentTrait, uriOrMembers:string | (Pointer | string)[], membersOrOptions:(Pointer | string)[] | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 			const { _uri, _args } = _parseURIParams( this, uriOrMembers, arguments );
 			// FIXME
 			// @ts-ignore
@@ -106,14 +106,14 @@ export const LDPDocumentTrait:LDPDocumentTraitFactory = {
 		},
 
 
-		removeMember( this:LDPDocumentTrait, uriOrMember:string | (Pointer | string), memberOrOptions:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
+		$removeMember( this:LDPDocumentTrait, uriOrMember:string | (Pointer | string), memberOrOptions:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 			const { uri, params } = __parseMemberParams( this, arguments );
 			// FIXME
 			// @ts-ignore
 			return this.$repository.removeMember( uri, ...params );
 		},
 
-		removeMembers( this:LDPDocumentTrait, uriOrMembersOrOptions?:string | (Pointer | string)[] | RequestOptions, membersOrOptions?:(Pointer | string)[] | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
+		$removeMembers( this:LDPDocumentTrait, uriOrMembersOrOptions?:string | (Pointer | string)[] | RequestOptions, membersOrOptions?:(Pointer | string)[] | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 			const { _uri, _args } = _parseURIParams( this, uriOrMembersOrOptions, arguments );
 			return this.$repository.removeMembers( _uri, ..._args );
 		},

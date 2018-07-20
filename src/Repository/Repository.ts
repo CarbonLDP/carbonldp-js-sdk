@@ -29,11 +29,11 @@ export interface $Repository<MODEL extends ResolvablePointer = ResolvablePointer
 	$resolve( resource:MODEL, ...params:any[] ):Promise<MODEL>;
 	$exists( uri:string, ...params:any[] ):Promise<boolean>;
 
-	refresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
-	save( resource:MODEL, ...params:any[] ):Promise<MODEL>;
-	saveAndRefresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	$refresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	$save( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	$saveAndRefresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
 
-	delete( uri:string, ...params:any[] ):Promise<void>;
+	$delete( uri:string, ...params:any[] ):Promise<void>;
 }
 
 

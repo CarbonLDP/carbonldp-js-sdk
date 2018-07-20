@@ -13,7 +13,7 @@ export interface BaseRegistry<MODEL extends RegisteredPointer = RegisteredPointe
 }
 
 export interface $BaseRegistry<MODEL extends RegisteredPointer = RegisteredPointer> extends Pointer {
-	registry?:Registry | $Registry;
+	$registry?:Registry | $Registry;
 
 	$__modelDecorator:ModelDecorator<MODEL>;
 }

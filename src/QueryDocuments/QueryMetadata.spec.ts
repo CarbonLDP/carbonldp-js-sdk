@@ -122,7 +122,7 @@ describe( module( "carbonldp/QueryDocuments/QueryMetadata" ), ():void => {
 
 				expect( QueryMetadata.is( target ) ).toBe( true );
 
-				target.removeType( QueryMetadata.TYPE );
+				target.$removeType( QueryMetadata.TYPE );
 				expect( QueryMetadata.is( target ) ).toBe( false );
 			} );
 

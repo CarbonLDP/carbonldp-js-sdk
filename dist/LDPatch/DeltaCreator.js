@@ -116,7 +116,7 @@ var DeltaCreator = (function () {
         var mergeResource = {
             $id: id,
             types: Array.from(types),
-            _queryableMetadata: currentResource._queryableMetadata || previousResource._queryableMetadata,
+            $_queryableMetadata: currentResource.$_queryableMetadata || previousResource.$_queryableMetadata,
         };
         return this.context
             .registry.getSchemaFor(mergeResource);
