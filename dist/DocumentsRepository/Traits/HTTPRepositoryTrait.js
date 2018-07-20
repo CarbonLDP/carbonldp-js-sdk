@@ -44,11 +44,11 @@ exports.HTTPRepositoryTrait = {
     PROTOTYPE: {
         $get: function (uri, requestOptions) {
             var _this = this;
-            if (!this.$context.registry.$inScope(uri, true))
+            if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
-            if (this.$context.registry.$hasPointer(url, true)) {
-                var resource = this.$context.registry.$getPointer(url, true);
+            if (this.$context.registry.hasPointer(url, true)) {
+                var resource = this.$context.registry.getPointer(url, true);
                 if (resource.$isResolved()) {
                     if (!requestOptions.ensureLatest)
                         return Promise.resolve(resource);
@@ -65,7 +65,7 @@ exports.HTTPRepositoryTrait = {
             return this.$get(resource.$id, requestOptions);
         },
         $exists: function (uri, requestOptions) {
-            if (!this.$context.registry.$inScope(uri, true))
+            if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return Request_1.RequestService
@@ -81,7 +81,7 @@ exports.HTTPRepositoryTrait = {
             var _this = this;
             if (!ResolvablePointer_1.ResolvablePointer.is(resource))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The resource isn't a resolvable pointer."));
-            if (!this.$context.registry.$inScope(resource.$id, true))
+            if (!this.$context.registry.inScope(resource.$id, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + resource.$id + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(resource.$id, { base: true });
             return Request_1.RequestService
@@ -98,7 +98,7 @@ exports.HTTPRepositoryTrait = {
         $save: function (resource, requestOptions) {
             if (!ResolvablePointer_1.ResolvablePointer.is(resource))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The resource isn't a resolvable pointer."));
-            if (!this.$context.registry.$inScope(resource.$id, true))
+            if (!this.$context.registry.inScope(resource.$id, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + resource.$id + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(resource.$id, { base: true });
             if (!resource.$isDirty())
@@ -116,13 +116,13 @@ exports.HTTPRepositoryTrait = {
         },
         $delete: function (uri, requestOptions) {
             var _this = this;
-            if (!this.$context.registry.$inScope(uri, true))
+            if (!this.$context.registry.inScope(uri, true))
                 return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
             var url = this.$context.getObjectSchema().resolveURI(uri, { base: true });
             return Request_1.RequestService
                 .delete(url, requestOptions)
                 .then(function () {
-                _this.$context.registry.$removePointer(url);
+                _this.$context.registry.removePointer(url);
             });
         },
         _parseResponseData: function (response, id) {
@@ -130,7 +130,7 @@ exports.HTTPRepositoryTrait = {
                 var resolvable;
                 return __generator(this, function (_a) {
                     resolvable = this.$context.registry
-                        .$getPointer(id, true);
+                        .getPointer(id, true);
                     resolvable.$eTag = response.getETag();
                     resolvable.$_resolved = true;
                     return [2, resolvable];

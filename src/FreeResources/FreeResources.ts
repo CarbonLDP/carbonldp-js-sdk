@@ -1,4 +1,5 @@
 import { Context } from "../Context/Context";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 
@@ -14,7 +15,7 @@ import { Pointer } from "../Pointer/Pointer";
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 
-import { $BaseRegistry } from "../Registry/BaseRegistry";
+import { BaseRegistry } from "../Registry/BaseRegistry";
 import { Registry } from "../Registry/Registry";
 
 import { Resource } from "../Resource/Resource";
@@ -23,11 +24,11 @@ import { BaseFreeResources } from "./BaseFreeResources";
 
 
 export interface FreeResources extends Registry<Resource> {
-	$registry:GeneralRegistry<any>;
+	registry:GeneralRegistry<any>;
 
-	$_getLocalID( id:string ):string;
+	_getLocalID( id:string ):string;
 
-	$_addPointer<T extends object>( base:T & Partial<Pointer> ):T & Resource;
+	_addPointer<T extends object>( base:T & Partial<Pointer> ):T & Resource;
 
 
 	toJSON( contextOrKey?:Context | string ):RDFNode[];
@@ -35,9 +36,9 @@ export interface FreeResources extends Registry<Resource> {
 
 
 export type OverriddenMembers =
-	| "$registry"
-	| "$_getLocalID"
-	| "$_addPointer"
+	| "registry"
+	| "_getLocalID"
+	| "_addPointer"
 	;
 
 export interface FreeResourcesUtils {
@@ -54,22 +55,22 @@ export type FreeResourcesFactory =
 
 export const FreeResources:FreeResourcesFactory = {
 	PROTOTYPE: {
-		$registry: void 0,
+		registry: void 0,
 
-		$_getLocalID( this:FreeResources, id:string ):string {
+		_getLocalID( this:FreeResources, id:string ):string {
 			if( URI.isBNodeID( id ) ) return id;
-			return Registry.PROTOTYPE.$_getLocalID.call( this, id );
+			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		},
 
-		$_addPointer<T extends object>( this:FreeResources, base:T & Partial<Pointer> ):T & Resource {
+		_addPointer<T extends object>( this:FreeResources, base:T & Partial<Pointer> ):T & Resource {
 			if( ! base.$id ) base.$id = URI.generateBNodeID();
-			return Registry.PROTOTYPE.$_addPointer.call( this, base );
+			return Registry.PROTOTYPE._addPointer.call( this, base );
 		},
 
 
 		toJSON( this:FreeResources, contextOrKey?:Context | string ):RDFNode[] {
 			return this
-				.$getPointers( true )
+				.getPointers( true )
 				.map( resource => resource.toJSON( contextOrKey ) )
 				;
 		},
@@ -100,12 +101,12 @@ export const FreeResources:FreeResourcesFactory = {
 	decorate<T extends BaseFreeResources>( object:T ):T & FreeResources {
 		if( FreeResources.isDecorated( object ) ) return object;
 
-		const base:T & $BaseRegistry<Resource> = Object.assign<T, Pick<FreeResources, "$__modelDecorator">>( object, {
-			$__modelDecorator: Resource,
+		const base:T & BaseRegistry<Resource> = Object.assign<T, Pick<FreeResources, "__modelDecorator">>( object, {
+			__modelDecorator: Resource,
 		} );
 
 		const resource:T & Registry<Resource> = ModelDecorator
-			.decorateMultiple( base, Registry );
+			.decorateMultiple( base, Registry as ModelDecorator<Registry<Resource>, BaseRegistry> );
 
 		return ModelDecorator
 			.definePropertiesFrom( FreeResources.PROTOTYPE, resource );
@@ -114,13 +115,13 @@ export const FreeResources:FreeResourcesFactory = {
 
 	parseFreeNodes( this:void, registry:GeneralRegistry<any>, freeNodes:RDFNode[] ):FreeResources {
 		const freeResources:FreeResources = FreeResources
-			.createFrom( { $registry: registry } );
+			.createFrom( { registry: registry } );
 
 		freeNodes
 			.forEach( node => {
 				const digestedSchema:DigestedObjectSchema = registry.getSchemaFor( node );
 
-				const target:object = freeResources.$getPointer( node[ "@id" ], true );
+				const target:object = freeResources.getPointer( node[ "@id" ], true );
 				registry.context.jsonldConverter.compact( node, target, digestedSchema, freeResources );
 			} );
 

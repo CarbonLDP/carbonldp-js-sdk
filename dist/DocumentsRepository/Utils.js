@@ -37,7 +37,7 @@ function _getErrorResponseParserFn(registry) {
             var freeNodes = Document_1.RDFDocument.getFreeNodes(rdfNodes);
             var freeResources = FreeResources_1.FreeResources.parseFreeNodes(registry, freeNodes);
             var errorResponses = freeResources
-                .$getPointers(true)
+                .getPointers(true)
                 .filter(ErrorResponse_1.ErrorResponse.is);
             if (errorResponses.length === 0)
                 return Promise.reject(error);

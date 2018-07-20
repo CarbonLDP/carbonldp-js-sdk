@@ -1,5 +1,5 @@
 import { BasePointer } from "../Pointer/BasePointer";
-import { Registry } from "./Registry";
+import { $Registry, Registry } from "./Registry";
 export interface BaseRegisteredPointer extends BasePointer {
-    $registry: Registry;
+    $registry: Registry | $Registry;
 }

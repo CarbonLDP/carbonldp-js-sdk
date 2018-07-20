@@ -3,7 +3,7 @@ import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelPrototype } from "../Model/ModelPrototype";
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
 export interface ObjectSchemaResolver {
-    $context?: Context;
+    context?: Context;
     getGeneralSchema(): DigestedObjectSchema;
     hasSchemaFor(object: object, path?: string): boolean;
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;

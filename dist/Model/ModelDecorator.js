@@ -3,20 +3,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Utils_1 = require("../Utils");
 exports.ModelDecorator = {
     hasPropertiesFrom: function (prototype, object) {
-        return Object
-            .keys(prototype)
+        var prototypeKeys = Object
+            .keys(prototype);
+        var shouldAddDollar = "$id" in object
+            && !prototypeKeys.some(function (key) { return key.startsWith("$"); });
+        return prototypeKeys
             .every(function (key) {
+            var targetKey = shouldAddDollar ?
+                "$" + key : key;
             var definition = Object
                 .getOwnPropertyDescriptor(prototype, key);
-            if (definition.value && Utils_1.isFunction(definition.value))
-                return Utils_1.hasFunction(object, key);
-            return object.hasOwnProperty(key) && !object.propertyIsEnumerable(key);
+            if (!definition)
+                return false;
+            var targetDefinition = Object
+                .getOwnPropertyDescriptor(object, targetKey);
+            if (!targetDefinition)
+                return false;
+            if (Utils_1.isFunction(definition.value))
+                return Utils_1.isFunction(targetDefinition.value);
+            return !targetDefinition.enumerable;
         });
     },
     definePropertiesFrom: function (prototype, object) {
-        Object
-            .keys(prototype)
+        var prototypeKeys = Object
+            .keys(prototype);
+        var shouldAddDollar = "$id" in object
+            && !prototypeKeys.some(function (key) { return key.startsWith("$"); });
+        prototypeKeys
             .forEach(function (key) {
+            var targetKey = shouldAddDollar ?
+                "$" + key : key;
             var definition = Object
                 .getOwnPropertyDescriptor(prototype, key);
             var descriptor = {
@@ -29,15 +45,15 @@ exports.ModelDecorator = {
             }
             else if (!definition.set) {
                 descriptor.writable = true;
-                descriptor.value = object.hasOwnProperty(key) ?
-                    object[key] : definition.get ?
+                descriptor.value = object.hasOwnProperty(targetKey) ?
+                    object[targetKey] : definition.get ?
                     definition.get() : definition.value;
             }
             else {
                 descriptor.get = definition.get;
                 descriptor.set = definition.set;
             }
-            Object.defineProperty(object, key, descriptor);
+            Object.defineProperty(object, targetKey, descriptor);
         });
         return object;
     },

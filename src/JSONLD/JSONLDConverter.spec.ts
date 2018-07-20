@@ -187,12 +187,11 @@ describe( module( "carbonldp/JSONLD/JSONLDConverter" ), ():void => {
 				};
 
 				let mockedPointerLibrary:PointerLibrary = {
-					$hasPointer: ( id:string ):boolean => {
+					hasPointer: ( id:string ):boolean => {
 						return true;
 					},
-					$getPointer: ( id:string ):Pointer => {
-						let pointer:Pointer = Pointer.createFrom( { $id: id } );
-						return pointer;
+					getPointer: ( id:string ):Pointer => {
+						return Pointer.createFrom( { $id: id } );
 					},
 				};
 

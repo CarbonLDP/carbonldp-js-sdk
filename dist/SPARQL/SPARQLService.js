@@ -4,6 +4,7 @@ var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var NotImplementedError_1 = require("../Errors/NotImplementedError");
 var Request_1 = require("../HTTP/Request");
 var StringParser_1 = require("../HTTP/StringParser");
+var PointerLibrary_1 = require("../Pointer/PointerLibrary");
 var Literal_1 = require("../RDF/Literal");
 var RawResultsParser_1 = require("./RawResultsParser");
 var SPARQLService = (function () {
@@ -85,7 +86,7 @@ var SPARQLService = (function () {
     SPARQLService.__parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
         switch (rawBindingProperty.type) {
             case "uri":
-                return pointerLibrary.$getPointer(rawBindingProperty.value);
+                return PointerLibrary_1._getPointer(pointerLibrary, rawBindingProperty.value);
             case "bnode":
                 throw new NotImplementedError_1.NotImplementedError("BNodes cannot be queried directly");
             case "literal":

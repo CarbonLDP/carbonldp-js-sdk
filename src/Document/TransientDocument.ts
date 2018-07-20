@@ -20,7 +20,7 @@ import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 
 import { $BaseRegistry } from "../Registry/BaseRegistry";
-import { Registry } from "../Registry/Registry";
+import { $Registry, Registry } from "../Registry/Registry";
 
 import { Resource } from "../Resource/Resource";
 
@@ -29,7 +29,7 @@ import { isObject, isPlainObject, isString } from "../Utils";
 import { BaseDocument } from "./BaseDocument";
 
 
-export interface TransientDocument extends Resource, Registry<TransientFragment> {
+export interface TransientDocument extends Resource, $Registry<TransientFragment> {
 	$registry:DocumentsRegistry | undefined;
 
 	hasMemberRelation?:Pointer;
@@ -112,7 +112,7 @@ type OverriddenMembers =
 	;
 
 export type TransientDocumentFactory =
-	& ModelPrototype<TransientDocument, Resource & Registry<TransientFragment>, OverriddenMembers>
+	& ModelPrototype<TransientDocument, Resource & $Registry<TransientFragment>, OverriddenMembers>
 	& ModelDecorator<TransientDocument, BaseDocument>
 	& ModelFactoryOptional<TransientDocument, BaseDocument>
 	& ModelTypeGuard<TransientDocument>
@@ -145,7 +145,7 @@ export const TransientDocument:TransientDocumentFactory = {
 
 		$getPointer( this:TransientDocument, id:string, local?:true ):TransientFragment {
 			id = URI.resolve( this.$id, id );
-			return Registry.PROTOTYPE.$getPointer.call( this, id, local );
+			return Registry.PROTOTYPE.getPointer.call( this, id, local );
 		},
 
 
@@ -215,12 +215,12 @@ export const TransientDocument:TransientDocumentFactory = {
 	decorate<T extends BaseDocument>( object:T ):T & TransientDocument {
 		if( TransientDocument.isDecorated( object ) ) return object;
 
-		type Base = T & $BaseRegistry;
-		const base:Base = ModelDecorator.definePropertiesFrom<$BaseRegistry, T>( {
+		type Base = T & Pick<$BaseRegistry<TransientFragment>, "$__modelDecorator">;
+		const base:Base = ModelDecorator.definePropertiesFrom<Pick<$BaseRegistry<TransientFragment>, "$__modelDecorator">, T>( {
 			$__modelDecorator: TransientFragment,
 		}, object );
 
-		const resource:Base & Resource & Registry<TransientFragment> = ModelDecorator
+		const resource:Base & Resource & $Registry<TransientFragment> = ModelDecorator
 			.decorateMultiple( base, Resource, Registry );
 
 		return ModelDecorator

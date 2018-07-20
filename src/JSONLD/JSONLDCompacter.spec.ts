@@ -25,8 +25,8 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 
 		let registry:GeneralRegistry<Document>;
 		beforeEach( ():void => {
-			const $context:Context = createMockContext();
-			registry = GeneralRegistry.create( { $__modelDecorator: Document, $context } );
+			const context:Context = createMockContext();
+			registry = GeneralRegistry.create( { __modelDecorator: Document, context: context } );
 		} );
 
 
@@ -108,8 +108,8 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 
 				spyOn( compacter, "compactDocuments" ).and
 					.returnValue( [
-						registry.$_addPointer( { $id: "the-data/", the: "document" } ),
-						registry.$_addPointer( { $id: "another/", another: "document" } ),
+						registry._addPointer( { $id: "the-data/", the: "document" } ),
+						registry._addPointer( { $id: "another/", another: "document" } ),
 					] );
 
 

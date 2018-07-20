@@ -17,7 +17,7 @@ import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
-import { Registry } from "../Registry/Registry";
+import { $Registry, Registry } from "../Registry/Registry";
 
 import { isObject } from "../Utils";
 
@@ -27,7 +27,7 @@ import { BaseResource } from "./BaseResource";
 export interface Resource extends RegisteredPointer {
 	types:string[];
 
-	$registry:Registry<RegisteredPointer> | undefined;
+	$registry:Registry<RegisteredPointer> | $Registry<RegisteredPointer> | undefined;
 	$slug:string;
 
 
@@ -42,11 +42,11 @@ export interface Resource extends RegisteredPointer {
 }
 
 
-function __getContext( registry:Registry<any> | GeneralRegistry<any> | undefined ):Context | undefined {
+function __getContext( registry:$Registry<any> | Registry<any> | GeneralRegistry<any> | undefined ):Context | undefined {
 	if( ! registry ) return;
-	if( "$context" in registry && registry.context ) return registry.context;
+	if( "context" in registry && registry.context ) return registry.context;
 
-	return __getContext( registry.$registry );
+	return __getContext( "$id" in registry ? registry.$registry : registry.registry );
 }
 
 function __resolveURI( resource:Resource, uri:string ):string {

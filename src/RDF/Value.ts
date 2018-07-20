@@ -1,4 +1,4 @@
-import { PointerLibrary } from "../Pointer/PointerLibrary";
+import { $PointerLibrary, _getPointer, PointerLibrary } from "../Pointer/PointerLibrary";
 
 import { isString } from "../Utils";
 
@@ -21,14 +21,14 @@ export interface RDFValueFactory {
 
 export const RDFValue:RDFValueFactory = {
 
-	parse( pointerLibrary:PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string ):any {
+	parse( pointerLibrary:PointerLibrary | $PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string ):any {
 		if( isString( value ) ) return value;
 
 		if( RDFLiteral.is( value ) )
 			return RDFLiteral.parse( value );
 
 		if( RDFNode.is( value ) )
-			return pointerLibrary.$getPointer( value[ "@id" ] );
+			return _getPointer( pointerLibrary, value[ "@id" ] );
 
 		if( RDFList.is( value ) )
 			return value[ "@list" ]

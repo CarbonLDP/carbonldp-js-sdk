@@ -9,16 +9,16 @@ import { Registry } from "../Registry/Registry";
 import { BaseGeneralRegistry } from "./BaseGeneralRegistry";
 import { TypedModelDecorator } from "./TypedModelDecorator";
 export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer> extends Registry<M>, ObjectSchemaResolver {
-    readonly $context: Context<M>;
-    readonly $registry: GeneralRegistry | undefined;
+    readonly context: Context<M>;
+    readonly registry: GeneralRegistry | undefined;
     __modelDecorators: Map<string, TypedModelDecorator>;
     addDecorator(decorator: TypedModelDecorator): this;
     decorate(object: {
         types?: string[];
     }): void;
-    $_addPointer<T extends object>(pointer: T & Pointer): T & M;
-    $_getLocalID(id: string): string;
+    _addPointer<T extends object>(pointer: T & Pointer): T & M;
+    _getLocalID(id: string): string;
 }
-export declare type OverloadedFns = "$context" | "$registry" | "$_addPointer" | "$_getLocalID";
+export declare type OverloadedFns = "context" | "registry" | "_addPointer" | "_getLocalID";
 export declare type GeneralRegistryFactory = ModelPrototype<GeneralRegistry, Registry & ObjectSchemaResolver, OverloadedFns> & ModelDecorator<GeneralRegistry<any>, BaseGeneralRegistry> & ModelFactory<GeneralRegistry<any>, BaseGeneralRegistry>;
 export declare const GeneralRegistry: GeneralRegistryFactory;

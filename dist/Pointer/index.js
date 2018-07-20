@@ -4,5 +4,6 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./Pointer"));
+__export(require("./PointerLibrary"));
 
 //# sourceMappingURL=index.js.map

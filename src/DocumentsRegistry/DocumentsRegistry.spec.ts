@@ -31,9 +31,9 @@ import { DocumentsRegistry, DocumentsRegistryFactory } from "./DocumentsRegistry
 
 describe( module( "carbonldp/DocumentsRegistry" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
+		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 	describe( interfaze(
@@ -42,7 +42,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 	), () => {
 
 		function createMock<T extends {}>( data?:T & Partial<DocumentsRegistry> ):DocumentsRegistry {
-			return DocumentsRegistry.decorate( Object.assign( { $context }, data ) );
+			return DocumentsRegistry.decorate( Object.assign( { context: context }, data ) );
 		}
 
 
@@ -54,7 +54,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"$context",
+			"context",
 			"CarbonLDP.DocumentsContext"
 		), ():void => {
 			const target:DocumentsRegistry[ "context" ] = {} as DocumentsContext;
@@ -82,7 +82,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 			it( "should call .getPointer with local", () => {
 				const registry:DocumentsRegistry = createMock();
 
-				const spy:jasmine.Spy = spyOnDecorated( registry, "$getPointer" );
+				const spy:jasmine.Spy = spyOnDecorated( registry, "getPointer" );
 
 				registry.register( "https://example.com/resource/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", true );
@@ -144,7 +144,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" )
 					.and.callThrough();
 
-				DocumentsRegistry.decorate( { $context, the: "object" } );
+				DocumentsRegistry.decorate( { context: context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( DocumentsRegistry.PROTOTYPE, { the: "object" } );
 			} );
@@ -154,7 +154,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 					.and.returnValue( true );
 
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
-				DocumentsRegistry.decorate( { $context } );
+				DocumentsRegistry.decorate( { context: context } );
 
 				expect( spy ).not.toHaveBeenCalled();
 			} );
@@ -164,21 +164,21 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 				const spy:jasmine.Spy = spyOn( GeneralRegistry, "decorate" )
 					.and.callThrough();
 
-				DocumentsRegistry.decorate( { $context, the: "object" } );
+				DocumentsRegistry.decorate( { context: context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
-			it( "should throw error if no $context", () => {
+			it( "should throw error if no context", () => {
 				expect( () => {
 					DocumentsRegistry.decorate( {} as any );
-				} ).toThrowError( IllegalArgumentError, "Property $context is required." );
+				} ).toThrowError( IllegalArgumentError, "Property context is required." );
 			} );
 
 
-			it( "should add $__modelDecorator as Document", () => {
-				const registry:DocumentsRegistry = DocumentsRegistry.decorate( { $context } );
-				expect( registry.$__modelDecorator ).toBe( Document );
+			it( "should add __modelDecorator as Document", () => {
+				const registry:DocumentsRegistry = DocumentsRegistry.decorate( { context: context } );
+				expect( registry.__modelDecorator ).toBe( Document );
 			} );
 
 		} );
@@ -196,13 +196,13 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 				const spy:jasmine.Spy = spyOn( DocumentsRegistry, "createFrom" )
 					.and.callThrough();
 
-				DocumentsRegistry.create( { $context, the: "object" } );
+				DocumentsRegistry.create( { context: context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
 			it( "should not return same object", () => {
-				const object:BaseDocumentsRegistry & { the:string } = { $context, the: "object" };
+				const object:BaseDocumentsRegistry & { the:string } = { context: context, the: "object" };
 				const returned:object = DocumentsRegistry.create( object );
 
 				expect( returned ).not.toBe( object );
@@ -222,7 +222,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 				const spy:jasmine.Spy = spyOn( DocumentsRegistry, "decorate" )
 					.and.callThrough();
 
-				DocumentsRegistry.createFrom( { $context, the: "object" } );
+				DocumentsRegistry.createFrom( { context: context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
@@ -231,14 +231,14 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 				const spy:jasmine.Spy = spyOn( GeneralRegistry, "createFrom" )
 					.and.callThrough();
 
-				DocumentsRegistry.createFrom( { $context, the: "object" } );
+				DocumentsRegistry.createFrom( { context: context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
 
 			it( "should return same object", () => {
-				const object:BaseDocumentsRegistry & { the:string } = { $context, the: "object" };
+				const object:BaseDocumentsRegistry & { the:string } = { context: context, the: "object" };
 				const returned:object = DocumentsRegistry.createFrom( object );
 
 				expect( returned ).toBe( object );
@@ -251,16 +251,16 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 					isDecorated: ( object ):object is any => ! ! object,
 					decorate: object => object,
 				};
-				$context.parentContext.registry.addDecorator( decorator );
+				context.parentContext.registry.addDecorator( decorator );
 
 				const registry:DocumentsRegistry = DocumentsRegistry
-					.createFrom( { $context } );
+					.createFrom( { context: context } );
 
 				expect( registry.__modelDecorators ).toEqual( new Map( [
 					[ "a-type", decorator ],
 				] ) );
 
-				$context.parentContext.registry.__modelDecorators.clear();
+				context.parentContext.registry.__modelDecorators.clear();
 			} );
 
 		} );

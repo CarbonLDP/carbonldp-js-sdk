@@ -421,7 +421,16 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add un-resolved type from prefixed provided when no registry's context", ():void => {
-					resource.$registry = Registry.create( { $__modelDecorator: Resource } );
+					resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
+
+					resource.$addType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"exTypes:Type-1",
+					] );
+				} );
+
+				it( "should add un-resolved type from prefixed provided when no $registry's context", ():void => {
+					resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
 
 					resource.$addType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
@@ -430,7 +439,16 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add resolved type from prefixed provided when parent from registry has a context", ():void => {
-					resource.$registry = Registry.create( { $registry: resource.$registry, $__modelDecorator: Resource } );
+					resource.$registry = Registry.decorate( { registry: resource.$registry, __modelDecorator: Resource } );
+
+					resource.$addType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
+
+				it( "should add resolved type from prefixed provided when parent from $registry has a context", ():void => {
+					resource.$registry = Registry.decorate( { $id: "", $registry: resource.$registry, $__modelDecorator: Resource } );
 
 					resource.$addType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
@@ -468,7 +486,16 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add un-resolved type from relative provided when no registry's context", ():void => {
-					resource.$registry = Registry.create( { $__modelDecorator: Resource } );
+					resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
+
+					resource.$addType( "Type-1" );
+					expect( resource.types ).toEqual( [
+						"Type-1",
+					] );
+				} );
+
+				it( "should add un-resolved type from relative provided when no $registry's context", ():void => {
+					resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
 
 					resource.$addType( "Type-1" );
 					expect( resource.types ).toEqual( [
@@ -600,7 +627,20 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove prefixed type when no registry's context", ():void => {
-					resource.$registry = Registry.create( { $__modelDecorator: Resource } );
+					resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
+
+					resource.types = [
+						"http://example.com/types#Type-1",
+					];
+
+					resource.$removeType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
+
+				it( "should not remove prefixed type when no $registry's context", ():void => {
+					resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
 
 					resource.types = [
 						"http://example.com/types#Type-1",
@@ -613,7 +653,21 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should remove resolved prefixed type when exists & registry parent has a context", ():void => {
-					resource.$registry = Registry.create( { $registry: resource.$registry, $__modelDecorator: Resource } );
+					resource.$registry = Registry.decorate( { registry: resource.$registry, __modelDecorator: Resource } );
+
+					resource.types = [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					];
+
+					resource.$removeType( "exTypes:Type-2" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
+
+				it( "should remove resolved prefixed type when exists & $registry parent has a context", ():void => {
+					resource.$registry = Registry.decorate( { $id: "", $registry: resource.$registry, $__modelDecorator: Resource } );
 
 					resource.types = [
 						"http://example.com/types#Type-1",
@@ -662,7 +716,20 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove relative type when no registry's context", ():void => {
-					resource.$registry = Registry.create( { $__modelDecorator: Resource } );
+					resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
+
+					resource.types = [
+						"http://example.com/ns#Type-1",
+					];
+
+					resource.$removeType( "Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/ns#Type-1",
+					] );
+				} );
+
+				it( "should not remove relative type when no $registry's context", ():void => {
+					resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
 
 					resource.types = [
 						"http://example.com/ns#Type-1",
@@ -680,5 +747,4 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 	} );
 
-} )
-;
+} );

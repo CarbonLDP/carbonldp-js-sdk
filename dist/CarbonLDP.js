@@ -72,7 +72,7 @@ var CarbonLDP = (function (_super) {
             },
         };
         _this._extendsSettings(__getSettingsFrom(urlOrSettings));
-        _this.documents = _this.registry.$getPointer(_this._baseURI, true);
+        _this.documents = _this.registry.getPointer(_this._baseURI, true);
         return _this;
     }
     Object.defineProperty(CarbonLDP, "version", {

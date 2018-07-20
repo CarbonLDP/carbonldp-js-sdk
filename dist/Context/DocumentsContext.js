@@ -23,7 +23,7 @@ var DocumentsContext = (function (_super) {
     function DocumentsContext(url) {
         var _this = _super.call(this, GlobalContext_1.GlobalContext.instance) || this;
         _this._baseURI = url;
-        _this.registry = DocumentsRegistry_1.DocumentsRegistry.createFrom({ $context: _this });
+        _this.registry = DocumentsRegistry_1.DocumentsRegistry.createFrom({ context: _this });
         _this.repository = DocumentsRepository_1.DocumentsRepository.createFrom({ $context: _this });
         _this.messaging = new MessagingService_1.MessagingService(_this);
         return _this;

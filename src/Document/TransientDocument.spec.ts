@@ -23,7 +23,7 @@ import { Pointer } from "../Pointer/Pointer";
 import { RDFDocument } from "../RDF/Document";
 import { URI } from "../RDF/URI";
 
-import { Registry } from "../Registry/Registry";
+import { $Registry, Registry } from "../Registry/Registry";
 
 import { Resource } from "../Resource/Resource";
 
@@ -64,8 +64,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Registry<CarbonLDP.TransientFragment>" ), () => {
-			const target:Registry<TransientFragment> = {} as TransientDocument;
+		it( extendsClass( "CarbonLDP.$Registry<CarbonLDP.TransientFragment>" ), () => {
+			const target:$Registry<TransientFragment> = {} as TransientDocument;
 			expect( target ).toBeDefined();
 		} );
 
@@ -220,11 +220,11 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return the document when IRI of the document and has $registry", ():void => {
 				const context:DocumentsContext = new DocumentsContext( "https://example.com/" );
-				const registry:DocumentsRegistry = DocumentsRegistry.create( { $context: context } );
+				const registry:DocumentsRegistry = DocumentsRegistry.create( { context: context } );
 
 				const document:TransientDocument = createMock( { $registry: registry } );
 
-				registry.$__resourcesMap.set( registry.$_getLocalID( document.$id ), document as any );
+				registry.__resourcesMap.set( registry._getLocalID( document.$id ), document as any );
 
 				const returned:Pointer = document.$getPointer( "https://example.com/document/" );
 				expect( returned ).toBe( document );
@@ -232,7 +232,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return document as child when relative IRI and has $registry", ():void => {
 				const context:DocumentsContext = new DocumentsContext( "https://example.com/" );
-				const registry:DocumentsRegistry = DocumentsRegistry.create( { $context: context } );
+				const registry:DocumentsRegistry = DocumentsRegistry.create( { context: context } );
 
 				const document:TransientDocument = createMock( { $registry: registry } );
 
@@ -243,7 +243,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return document when another absolute IRI and has $registry", ():void => {
 				const context:DocumentsContext = new DocumentsContext( "https://example.com/" );
-				const registry:DocumentsRegistry = DocumentsRegistry.create( { $context: context } );
+				const registry:DocumentsRegistry = DocumentsRegistry.create( { context: context } );
 
 				const document:TransientDocument = createMock( { $registry: registry } );
 
@@ -946,7 +946,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should expand with the provided context", ():void => {
 				const context:DocumentsContext = new DocumentsContext( "https://example.com/" );
-				const registry:DocumentsRegistry = DocumentsRegistry.create( { $context: context } );
+				const registry:DocumentsRegistry = DocumentsRegistry.create( { context: context } );
 
 				spyOnDecorated( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
@@ -1005,8 +1005,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 		"Interface with the factory, decorate and utils for `CarbonLDP.TransientDocument` objects."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.TransientDocument, CarbonLDP.Resource & CarbonLDP.Registry, \"$registry\" | \"_getLocalID\" | \"getPointer\" | \"toJSON\">" ), () => {
-			const target:ModelPrototype<TransientDocument, Resource & Registry, "$registry" | "$_getLocalID" | "$getPointer" | "toJSON"> = {} as TransientDocumentFactory;
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.TransientDocument, CarbonLDP.Resource & CarbonLDP.$Registry, \"$registry\" | \"_getLocalID\" | \"getPointer\" | \"toJSON\">" ), () => {
+			const target:ModelPrototype<TransientDocument, Resource & $Registry, "$registry" | "$_getLocalID" | "$getPointer" | "toJSON"> = {} as TransientDocumentFactory;
 			expect( target ).toBeDefined();
 		} );
 
@@ -1258,8 +1258,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( Resource.isDecorated( target ) ).toBe( true );
 			} );
 
-			it( "should add the `Registry` properties", ():void => {
-				const target:Registry<any> = TransientDocument.decorate( {} );
+			it( "should add the `$Registry` properties", ():void => {
+				const target:$Registry<any> = TransientDocument.decorate( {} );
 				expect( Registry.isDecorated( target ) ).toBe( true );
 			} );
 

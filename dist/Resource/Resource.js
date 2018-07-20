@@ -10,9 +10,9 @@ var Utils_1 = require("../Utils");
 function __getContext(registry) {
     if (!registry)
         return;
-    if ("$context" in registry && registry.$context)
-        return registry.$context;
-    return __getContext(registry.$registry);
+    if ("context" in registry && registry.context)
+        return registry.context;
+    return __getContext("$id" in registry ? registry.$registry : registry.registry);
 }
 function __resolveURI(resource, uri) {
     if (URI_1.URI.isAbsolute(uri))

@@ -69,7 +69,7 @@ exports.TransientDocument = {
         },
         $getPointer: function (id, local) {
             id = URI_1.URI.resolve(this.$id, id);
-            return Registry_1.Registry.PROTOTYPE.$getPointer.call(this, id, local);
+            return Registry_1.Registry.PROTOTYPE.getPointer.call(this, id, local);
         },
         $hasFragment: function (id) {
             id = __getLabelFrom(id);

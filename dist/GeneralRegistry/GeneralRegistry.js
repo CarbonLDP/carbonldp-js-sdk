@@ -16,15 +16,15 @@ var Registry_1 = require("../Registry/Registry");
 var Utils_1 = require("../Utils");
 exports.GeneralRegistry = {
     PROTOTYPE: {
-        get $context() {
-            throw new IllegalArgumentError_1.IllegalArgumentError("Property $context is required.");
+        get context() {
+            throw new IllegalArgumentError_1.IllegalArgumentError("Property context is required.");
         },
-        get $registry() {
-            if (!this.$context || !this.$context.parentContext)
+        get registry() {
+            if (!this.context || !this.context.parentContext)
                 return;
-            return this.$context.parentContext.registry;
+            return this.context.parentContext.registry;
         },
-        set $registry(value) { },
+        set registry(value) { },
         get __modelDecorators() { return new Map(); },
         addDecorator: function (decorator) {
             if (!decorator.TYPE)
@@ -41,18 +41,18 @@ exports.GeneralRegistry = {
                 .map(function (type) { return _this.__modelDecorators.get(type); })
                 .forEach(function (decorator) { return decorator.decorate(object); });
         },
-        $_addPointer: function (pointer) {
-            if (this.$context.repository)
-                Object.assign(pointer, { $repository: this.$context.repository });
-            var resource = Registry_1.Registry.PROTOTYPE.$_addPointer.call(this, pointer);
-            resource.$id = this.$context.getObjectSchema().resolveURI(resource.$id, { base: true });
+        _addPointer: function (pointer) {
+            if (this.context.repository)
+                Object.assign(pointer, { $repository: this.context.repository });
+            var resource = Registry_1.Registry.PROTOTYPE._addPointer.call(this, pointer);
+            resource.$id = this.context.getObjectSchema().resolveURI(resource.$id, { base: true });
             return resource;
         },
-        $_getLocalID: function (id) {
-            var uri = this.$context.getObjectSchema().resolveURI(id, { base: true });
-            if (!URI_1.URI.isAbsolute(uri) || !URI_1.URI.isBaseOf(this.$context.baseURI, uri))
+        _getLocalID: function (id) {
+            var uri = this.context.getObjectSchema().resolveURI(id, { base: true });
+            if (!URI_1.URI.isAbsolute(uri) || !URI_1.URI.isBaseOf(this.context.baseURI, uri))
                 throw new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope.");
-            return URI_1.URI.getRelativeURI(uri, this.$context.baseURI);
+            return URI_1.URI.getRelativeURI(uri, this.context.baseURI);
         },
     },
     isDecorated: function (object) {
@@ -64,8 +64,8 @@ exports.GeneralRegistry = {
             return object;
         var target = ModelDecorator_1.ModelDecorator
             .decorateMultiple(object, Registry_1.Registry, ObjectSchemaResolver_1.ObjectSchemaResolver);
-        if (!target.$context)
-            delete target.$context;
+        if (!target.context)
+            delete target.context;
         return ModelDecorator_1.ModelDecorator
             .definePropertiesFrom(exports.GeneralRegistry.PROTOTYPE, target);
     },
@@ -74,8 +74,8 @@ exports.GeneralRegistry = {
     },
     createFrom: function (object) {
         var registry = exports.GeneralRegistry.decorate(object);
-        if (registry.$registry)
-            Utils_1.MapUtils.extend(registry.__modelDecorators, registry.$registry.__modelDecorators);
+        if (registry.registry)
+            Utils_1.MapUtils.extend(registry.__modelDecorators, registry.registry.__modelDecorators);
         return registry;
     },
 };

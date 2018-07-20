@@ -57,7 +57,7 @@ function __applyResponseMetadata(repository, freeNodes) {
         return;
     var freeResources = FreeResources_1.FreeResources.parseFreeNodes(repository.$context.registry, freeNodes);
     var responseMetadata = freeResources
-        .$getPointers(true)
+        .getPointers(true)
         .find(ResponseMetadata_1.ResponseMetadata.is);
     responseMetadata
         .documentsMetadata
@@ -104,11 +104,10 @@ function __createChild(repository, parentURI, requestOptions, child, slug) {
         if (locationHeader.values.length !== 1)
             throw new BadResponseError_1.BadResponseError("The response contains more than one Location header.", response);
         transient.$id = locationHeader.values[0].toString();
-        var document = repository.$context.registry.$_addPointer(transient);
+        var document = repository.$context.registry._addPointer(transient);
         document
             .$getFragments()
             .forEach(document.$__modelDecorator.decorate);
-        document.$_syncSnapshot();
         return __applyResponseRepresentation(repository, document, response);
     })
         .catch(function (error) {
@@ -117,7 +116,7 @@ function __createChild(repository, parentURI, requestOptions, child, slug) {
     });
 }
 function __createChildren(retrievalType, repository, uri, children, slugsOrOptions, requestOptions) {
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     requestOptions = Request_1.RequestUtils.isOptions(slugsOrOptions) ?
@@ -153,7 +152,7 @@ function __createChildren(retrievalType, repository, uri, children, slugsOrOptio
 function __sendPatch(repository, document, requestOptions) {
     if (!ResolvablePointer_1.ResolvablePointer.is(document))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("The document isn't a resolvable pointer."));
-    if (!repository.$context.registry.$inScope(document.$id))
+    if (!repository.$context.registry.inScope(document.$id))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + document.$id + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(document.$id, { base: true });
     if (!document.$isDirty())
@@ -186,7 +185,7 @@ function __parseMembers(registry, pointers) {
     return pointers
         .map(function (pointer) {
         if (Utils_1.isString(pointer))
-            return registry.$getPointer(pointer);
+            return registry.getPointer(pointer);
         if (Pointer_1.Pointer.is(pointer))
             return pointer;
     })
@@ -194,14 +193,14 @@ function __parseMembers(registry, pointers) {
 }
 function __sendAddAction(repository, uri, members, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
     Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
-    var freeResources = FreeResources_1.FreeResources.createFrom({ $registry: repository.$context.registry });
+    var freeResources = FreeResources_1.FreeResources.createFrom({ registry: repository.$context.registry });
     var targetMembers = __parseMembers(repository.$context.registry, members);
-    freeResources.$_addPointer(AddMemberAction_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
+    freeResources._addPointer(AddMemberAction_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
     var body = JSON.stringify(freeResources);
     return Request_1.RequestService
         .put(url, body, requestOptions)
@@ -210,7 +209,7 @@ function __sendAddAction(repository, uri, members, requestOptions) {
 }
 function __sendRemoveAction(repository, uri, members, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
@@ -219,9 +218,9 @@ function __sendRemoveAction(repository, uri, members, requestOptions) {
         include: [C_1.C.PreferSelectedMembershipTriples],
         omit: [C_1.C.PreferMembershipTriples],
     }, requestOptions);
-    var freeResources = FreeResources_1.FreeResources.createFrom({ $registry: repository.$context.registry });
+    var freeResources = FreeResources_1.FreeResources.createFrom({ registry: repository.$context.registry });
     var targetMembers = __parseMembers(repository.$context.registry, members);
-    freeResources.$_addPointer(RemoveMemberAction_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
+    freeResources._addPointer(RemoveMemberAction_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
     var body = JSON.stringify(freeResources);
     return Request_1.RequestService
         .delete(url, body, requestOptions)
@@ -230,7 +229,7 @@ function __sendRemoveAction(repository, uri, members, requestOptions) {
 }
 function __sendRemoveAll(repository, uri, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     __setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);

@@ -5,11 +5,11 @@ import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 import { RDFNode } from "../RDF/Node";
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
-import { Registry } from "../Registry/Registry";
+import { $Registry, Registry } from "../Registry/Registry";
 import { BaseResource } from "./BaseResource";
 export interface Resource extends RegisteredPointer {
     types: string[];
-    $registry: Registry<RegisteredPointer> | undefined;
+    $registry: Registry<RegisteredPointer> | $Registry<RegisteredPointer> | undefined;
     $slug: string;
     $addType(type: string): void;
     $hasType(type: string): boolean;

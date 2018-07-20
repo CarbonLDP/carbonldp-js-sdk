@@ -29,19 +29,19 @@ function __getSchema($context, objectTypes, objectID) {
 }
 exports.ObjectSchemaResolver = {
     PROTOTYPE: {
-        $context: undefined,
+        context: undefined,
         getGeneralSchema: function () {
-            if (!this.$context)
+            if (!this.context)
                 return new DigestedObjectSchema_1.DigestedObjectSchema();
-            return this.$context.getObjectSchema();
+            return this.context.getObjectSchema();
         },
         hasSchemaFor: function (object, path) {
             return !path;
         },
         getSchemaFor: function (object) {
             var schema = "types" in object || "$id" in object ?
-                __getSchemaForResource(this.$context, object) :
-                __getSchemaForNode(this.$context, object);
+                __getSchemaForResource(this.context, object) :
+                __getSchemaForNode(this.context, object);
             if (!("$_queryableMetadata" in object) || !object.$_queryableMetadata)
                 return schema;
             return ObjectSchemaDigester_1.ObjectSchemaDigester

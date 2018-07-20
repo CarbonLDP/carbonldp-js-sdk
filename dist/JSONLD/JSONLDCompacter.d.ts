@@ -14,6 +14,7 @@ export declare class JSONLDCompacter {
     compactDocuments<T extends object>(rdfDocuments: RDFDocument[], mainDocuments?: RDFDocument[]): (T & Document)[];
     private __compactNode;
     private __getResource;
+    private __processFragments;
     private __processCompactionQueue;
     private __setOrRemovePartial;
     private __willBePartial;

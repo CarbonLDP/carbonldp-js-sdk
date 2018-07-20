@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var PointerLibrary_1 = require("../Pointer/PointerLibrary");
 var Utils_1 = require("../Utils");
 var List_1 = require("./List");
 var Literal_1 = require("./Literal");
@@ -11,7 +12,7 @@ exports.RDFValue = {
         if (Literal_1.RDFLiteral.is(value))
             return Literal_1.RDFLiteral.parse(value);
         if (Node_1.RDFNode.is(value))
-            return pointerLibrary.$getPointer(value["@id"]);
+            return PointerLibrary_1._getPointer(pointerLibrary, value["@id"]);
         if (List_1.RDFList.is(value))
             return value["@list"]
                 .map(exports.RDFValue.parse.bind(null, pointerLibrary));

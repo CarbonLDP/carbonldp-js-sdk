@@ -5,7 +5,7 @@ import { RequestOptions, RequestService, RequestUtils } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { StringParser } from "../HTTP/StringParser";
 
-import { PointerLibrary } from "../Pointer/PointerLibrary";
+import { $PointerLibrary, _getPointer, PointerLibrary } from "../Pointer/PointerLibrary";
 
 import { RDFLiteral } from "../RDF/Literal";
 
@@ -98,10 +98,10 @@ export class SPARQLService {
 		return RequestService.post( url, updateQuery, options );
 	}
 
-	private static __parseRawBindingProperty( rawBindingProperty:SPARQLRawBindingProperty, pointerLibrary:PointerLibrary ):any {
+	private static __parseRawBindingProperty( rawBindingProperty:SPARQLRawBindingProperty, pointerLibrary:PointerLibrary | $PointerLibrary ):any {
 		switch( rawBindingProperty.type ) {
 			case "uri":
-				return pointerLibrary.$getPointer( rawBindingProperty.value );
+				return _getPointer( pointerLibrary, rawBindingProperty.value );
 			case "bnode":
 				throw new NotImplementedError( "BNodes cannot be queried directly" );
 			case "literal":

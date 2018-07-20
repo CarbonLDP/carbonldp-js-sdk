@@ -13,7 +13,7 @@ var JSONLDCompacter = (function () {
         this.registry = registry;
         this.root = root;
         this.resolver = schemaResolver || registry;
-        this.converter = jsonldConverter || registry.$context.jsonldConverter;
+        this.converter = jsonldConverter || registry.context.jsonldConverter;
         this.compactionMap = new Map();
     }
     JSONLDCompacter.prototype.compactDocument = function (rdfDocument) {
@@ -24,24 +24,15 @@ var JSONLDCompacter = (function () {
         var _this = this;
         if (!mainDocuments || !mainDocuments.length)
             mainDocuments = rdfDocuments;
-        rdfDocuments.forEach(function (rdfDocument) {
+        var documents = rdfDocuments.map(function (rdfDocument) {
             var _a = Document_1.RDFDocument.getNodes(rdfDocument), documentNodes = _a[0], fragmentNodes = _a[1];
             if (documentNodes.length === 0)
                 throw new IllegalArgumentError_1.IllegalArgumentError("The RDFDocument \"" + rdfDocument["@id"] + "\" does not contain a document resource.");
             if (documentNodes.length > 1)
                 throw new IllegalArgumentError_1.IllegalArgumentError("The RDFDocument \"" + rdfDocument["@id"] + "\" contains multiple document resources.");
-            var documentNode = documentNodes[0];
-            var targetDocument = _this.__getResource(documentNode, _this.registry);
-            var currentFragments = targetDocument
-                .$getPointers(true)
-                .map(function (pointer) { return pointer.$id; });
-            var newFragments = fragmentNodes
-                .map(function (fragmentNode) { return _this.__getResource(fragmentNode, targetDocument); })
-                .map(function (fragment) { return fragment.$id; });
-            var newFragmentsSet = new Set(newFragments);
-            currentFragments
-                .filter(function (id) { return !newFragmentsSet.has(id); })
-                .forEach(function (id) { return targetDocument.$removePointer(id); });
+            var document = _this.__getResource(documentNodes[0], _this.registry);
+            _this.__processFragments(document, fragmentNodes);
+            return document;
         });
         var compactionQueue = mainDocuments
             .map(function (rdfDocument) { return rdfDocument["@id"]; });
@@ -62,9 +53,7 @@ var JSONLDCompacter = (function () {
                 compactionQueue
                     .push(this.compactionMap.keys().next().value);
         }
-        rdfDocuments
-            .map(function (rdfDocument) { return rdfDocument["@id"]; })
-            .map(function (id) { return _this.registry.$getPointer(id, true); })
+        documents
             .forEach(function (persistedDocument) {
             persistedDocument.$_syncSnapshot();
             _this.registry.decorate(persistedDocument);
@@ -96,12 +85,25 @@ var JSONLDCompacter = (function () {
             .filter(function (x) { return schema.properties.has(x); });
     };
     JSONLDCompacter.prototype.__getResource = function (node, registry) {
-        var resource = registry.$getPointer(node["@id"], true);
+        var resource = Registry_1._getPointer(registry, node["@id"], true);
         if (Registry_1.Registry.isDecorated(resource))
             registry = resource;
         this.compactionMap
             .set(resource.$id, { paths: [], node: node, resource: resource, registry: registry });
         return resource;
+    };
+    JSONLDCompacter.prototype.__processFragments = function (document, fragmentNodes) {
+        var _this = this;
+        var currentFragments = document
+            .$getPointers(true)
+            .map(function (pointer) { return pointer.$id; });
+        var newFragments = fragmentNodes
+            .map(function (fragmentNode) { return _this.__getResource(fragmentNode, document); })
+            .map(function (fragment) { return fragment.$id; });
+        var newFragmentsSet = new Set(newFragments);
+        currentFragments
+            .filter(function (id) { return !newFragmentsSet.has(id); })
+            .forEach(function (id) { return document.$removePointer(id); });
     };
     JSONLDCompacter.prototype.__processCompactionQueue = function (compactionQueue) {
         while (compactionQueue.length) {

@@ -62,7 +62,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
             throw e;
         }
         var targetSet = new Set(freeResources
-            .$getPointers(true)
+            .getPointers(true)
             .filter(QueryMetadata_1.QueryMetadata.is)
             .map(function (x) { return x.target; })
             .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
@@ -71,7 +71,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
         if (target)
             target.$eTag = void 0;
         freeResources
-            .$getPointers(true)
+            .getPointers(true)
             .filter(ResponseMetadata_1.ResponseMetadata.is)
             .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[C_1.C.documentMetadata]; })
             .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
@@ -168,7 +168,7 @@ function __executeBuilder(repository, url, requestOptions, queryContext, targetP
     });
 }
 function __getQueryable(repository, uri, requestOptions, queryBuilderFn, target) {
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
@@ -203,7 +203,7 @@ function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
 }
 function __refreshQueryable(repository, document, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    if (!repository.$context.registry.$inScope(document.$id, true))
+    if (!repository.$context.registry.inScope(document.$id, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + document.$id + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(document.$id, { base: true });
     var queryContext = new QueryContextPartial_1.QueryContextPartial(document, repository.$context);
@@ -217,7 +217,7 @@ function __refreshQueryable(repository, document, requestOptions) {
         .then(function (documents) { return documents[0]; });
 }
 function __executeChildrenBuilder(repository, uri, requestOptions, queryBuilderFn) {
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
@@ -233,7 +233,7 @@ function __executeChildrenBuilder(repository, uri, requestOptions, queryBuilderF
     return __executeBuilder(repository, url, requestOptions, queryContext, childrenProperty, queryBuilderFn);
 }
 function __executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn) {
-    if (!repository.$context.registry.$inScope(uri, true))
+    if (!repository.$context.registry.inScope(uri, true))
         return Promise.reject(new IllegalArgumentError_1.IllegalArgumentError("\"" + uri + "\" is out of scope."));
     var url = repository.$context.getObjectSchema().resolveURI(uri, { base: true });
     var queryContext = new QueryContextBuilder_1.QueryContextBuilder(repository.$context);
@@ -262,8 +262,8 @@ exports.QueryableDocumentsRepositoryTrait = {
                 requestOptionsOrQueryBuilderFn : {};
             queryBuilderFn = Utils_2.isFunction(requestOptionsOrQueryBuilderFn) ?
                 requestOptionsOrQueryBuilderFn : queryBuilderFn;
-            var target = this.$context.registry.$hasPointer(uri) ?
-                this.$context.registry.$getPointer(uri, true) :
+            var target = this.$context.registry.hasPointer(uri) ?
+                this.$context.registry.getPointer(uri, true) :
                 void 0;
             if (queryBuilderFn) {
                 var types_1 = target ? target.types : [];

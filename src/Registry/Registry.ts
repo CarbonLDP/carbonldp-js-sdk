@@ -101,7 +101,7 @@ function __addPointer( this:void, registry:AnyRegistry, pointer:Pointer ):Regist
 }
 
 
-function _inScope( this:AnyRegistry | undefined, idOrPointer:string | Pointer, local?:true ):boolean {
+function __inScope( this:AnyRegistry | undefined, idOrPointer:string | Pointer, local?:true ):boolean {
 	if( ! this ) return false;
 
 	try {
@@ -113,14 +113,14 @@ function _inScope( this:AnyRegistry | undefined, idOrPointer:string | Pointer, l
 		if( local === true ) return false;
 
 		const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
-		return _inScope.call( parentRegistry, idOrPointer );
+		return __inScope.call( parentRegistry, idOrPointer );
 	}
 }
 
-function _hasPointer( this:AnyRegistry | undefined, id:string, local?:true ):boolean {
+function __hasPointer( this:AnyRegistry | undefined, id:string, local?:true ):boolean {
 	if( ! this ) return false;
 
-	if( _inScope.call( this, id, true ) ) {
+	if( __inScope.call( this, id, true ) ) {
 		const localID:string = __getLocalID( this, id );
 
 		const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
@@ -130,15 +130,15 @@ function _hasPointer( this:AnyRegistry | undefined, id:string, local?:true ):boo
 	if( local === true ) return false;
 
 	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
-	return _hasPointer.call( parentRegistry, id );
+	return __hasPointer.call( parentRegistry, id );
 }
 
-function _getPointer( this:AnyRegistry, id:string, local?:true ):RegisteredPointer {
+function __getPointer( this:AnyRegistry, id:string, local?:true ):RegisteredPointer {
 	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
 
-	if( ! _inScope.call( this, id, true ) ) {
+	if( ! __inScope.call( this, id, true ) ) {
 		if( local === true || ! parentRegistry ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
-		return _getPointer.call( parentRegistry, id );
+		return __getPointer.call( parentRegistry, id );
 	}
 
 	const localID:string = __getLocalID( this, id );
@@ -146,13 +146,13 @@ function _getPointer( this:AnyRegistry, id:string, local?:true ):RegisteredPoint
 	const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
 	if( resourcesMap.has( localID ) ) return resourcesMap.get( localID );
 
-	if( local !== true && _hasPointer.call( parentRegistry, id ) )
-		return _getPointer.call( parentRegistry, id );
+	if( local !== true && __hasPointer.call( parentRegistry, id ) )
+		return __getPointer.call( parentRegistry, id );
 
 	return __addPointer( this, { $id: id } );
 }
 
-function _getPointers( this:AnyRegistry, local?:true ):RegisteredPointer[] {
+function __getPointers( this:AnyRegistry, local?:true ):RegisteredPointer[] {
 	const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
 
 	const pointers:RegisteredPointer[] = Array.from( resourcesMap.values() );
@@ -161,16 +161,16 @@ function _getPointers( this:AnyRegistry, local?:true ):RegisteredPointer[] {
 	if( local === true || ! parentRegistry ) return pointers;
 
 	return [
-		..._getPointers.call( parentRegistry ),
+		...__getPointers.call( parentRegistry ),
 		...pointers,
 	];
 }
 
-function _removePointer( this:AnyRegistry | undefined, idOrPointer:string | RegisteredPointer, local?:true ):boolean {
+function __removePointer( this:AnyRegistry | undefined, idOrPointer:string | RegisteredPointer, local?:true ):boolean {
 	if( ! this ) return false;
 
 	const id:string = Pointer.getID( idOrPointer );
-	if( _inScope.call( this, id, true ) ) {
+	if( __inScope.call( this, id, true ) ) {
 		const localID:string = __getLocalID( this, id );
 
 		const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
@@ -180,37 +180,20 @@ function _removePointer( this:AnyRegistry | undefined, idOrPointer:string | Regi
 	if( local === true ) return false;
 
 	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
-	return _removePointer.call( parentRegistry, idOrPointer );
+	return __removePointer.call( parentRegistry, idOrPointer );
 }
 
 
-function _addPointer<T extends object>( this:AnyRegistry, pointer:T & Pointer ):T & RegisteredPointer {
-	if( ! pointer.$id ) throw new IllegalArgumentError( "The pointer $id cannot be empty." );
-
-	const localID:string = __getLocalID( this, pointer.$id );
-
-	const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
-	if( resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being used.` );
-
-	const resource:T & RegisteredPointer = __getDecorator( this )
-		.decorate( Object.assign<T, BaseRegisteredPointer>( pointer, {
-			$registry: this,
-		} ) );
-
-	resourcesMap.set( localID, resource );
-
-	return resource;
+export function _getPointer<T extends RegisteredPointer>( registry:Registry<T> | $Registry<T>, id:string, local?:true ):T {
+	return "$id" in registry ?
+		registry.$getPointer( id, local ) :
+		registry.getPointer( id, local );
 }
-
-function _getLocalID( this:AnyRegistry, id:string ):string {
-	return id;
-}
-
 
 // TODO: Use unknown
 export type RegistryFactory =
 	& ModelPrototype<Registry<any>>
-	& BiModelDecorator<Registry, $Registry, BaseRegistry, $BaseRegistry>
+	& BiModelDecorator<Registry<any>, $Registry<any>, BaseRegistry, $BaseRegistry>
 	;
 
 export const Registry:RegistryFactory = {
@@ -224,21 +207,39 @@ export const Registry:RegistryFactory = {
 		get __resourcesMap():Map<string, RegisteredPointer> { return new Map(); },
 
 
-		inScope: _inScope,
+		inScope: __inScope,
 
 
-		hasPointer: _hasPointer,
+		hasPointer: __hasPointer,
 
-		getPointer: _getPointer,
+		getPointer: __getPointer,
 
-		getPointers: _getPointers,
+		getPointers: __getPointers,
 
-		removePointer: _removePointer,
+		removePointer: __removePointer,
 
 
-		_addPointer: _addPointer,
+		_addPointer<T extends object>( this:AnyRegistry, pointer:T & Pointer ):T & RegisteredPointer {
+			if( ! pointer.$id ) throw new IllegalArgumentError( "The pointer $id cannot be empty." );
 
-		_getLocalID: _getLocalID,
+			const localID:string = __getLocalID( this, pointer.$id );
+
+			const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
+			if( resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being used.` );
+
+			const resource:T & RegisteredPointer = __getDecorator( this )
+				.decorate( Object.assign<T, BaseRegisteredPointer>( pointer, {
+					$registry: this,
+				} ) );
+
+			resourcesMap.set( localID, resource );
+
+			return resource;
+		},
+
+		_getLocalID( this:AnyRegistry, id:string ):string {
+			return id;
+		},
 	},
 
 

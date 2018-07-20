@@ -2,6 +2,8 @@ import { DocumentsContext } from "../Context/DocumentsContext";
 
 import { Document } from "../Document/Document";
 
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
 import { BaseGeneralRegistry } from "../GeneralRegistry/BaseGeneralRegistry";
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 
@@ -10,8 +12,6 @@ import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 
 import { URI } from "../RDF/URI";
-
-import { Registry } from "../Registry/Registry";
 
 import { BaseDocumentsRegistry } from "./BaseDocumentsRegistry";
 
@@ -32,12 +32,12 @@ export type DocumentsRegistryFactory =
 export const DocumentsRegistry:DocumentsRegistryFactory = {
 	PROTOTYPE: {
 		register( this:DocumentsRegistry, id:string ):Document {
-			return this.$getPointer( id, true );
+			return this.getPointer( id, true );
 		},
 
-		$_getLocalID( this:DocumentsRegistry, id:string ):string {
-			if( URI.hasFragment( id ) ) Registry.PROTOTYPE.$_getLocalID.call( this, id );
-			return GeneralRegistry.PROTOTYPE.$_getLocalID.call( this, id );
+		_getLocalID( this:DocumentsRegistry, id:string ):string {
+			if( URI.hasFragment( id ) ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
+			return GeneralRegistry.PROTOTYPE._getLocalID.call( this, id );
 		},
 	},
 
@@ -50,8 +50,8 @@ export const DocumentsRegistry:DocumentsRegistryFactory = {
 	decorate<T extends BaseDocumentsRegistry>( object:T ):T & DocumentsRegistry {
 		if( DocumentsRegistry.isDecorated( object ) ) return object;
 
-		const base:T & BaseGeneralRegistry = Object.assign<T, Pick<BaseGeneralRegistry, "$__modelDecorator">>( object, {
-			$__modelDecorator: Document,
+		const base:T & BaseGeneralRegistry = Object.assign<T, Pick<BaseGeneralRegistry, "__modelDecorator">>( object, {
+			__modelDecorator: Document,
 		} );
 
 		const target:T & GeneralRegistry<Document> = ModelDecorator

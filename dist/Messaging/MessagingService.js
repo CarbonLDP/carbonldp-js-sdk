@@ -140,7 +140,7 @@ var MessagingService = (function () {
                 var freeResources = FreeResources_1.FreeResources
                     .parseFreeNodes(_this.context.registry, data);
                 var eventMessage = freeResources
-                    .$getPointers(true)
+                    .getPointers(true)
                     .find(EventMessage_1.EventMessage.is);
                 if (!eventMessage)
                     throw new Error("No message was returned by the notification.");

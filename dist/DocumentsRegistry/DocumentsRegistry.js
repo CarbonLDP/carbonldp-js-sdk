@@ -9,19 +9,19 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = require("../Document/Document");
+var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var GeneralRegistry_1 = require("../GeneralRegistry/GeneralRegistry");
 var ModelDecorator_1 = require("../Model/ModelDecorator");
 var URI_1 = require("../RDF/URI");
-var Registry_1 = require("../Registry/Registry");
 exports.DocumentsRegistry = {
     PROTOTYPE: {
         register: function (id) {
-            return this.$getPointer(id, true);
+            return this.getPointer(id, true);
         },
-        $_getLocalID: function (id) {
+        _getLocalID: function (id) {
             if (URI_1.URI.hasFragment(id))
-                Registry_1.Registry.PROTOTYPE.$_getLocalID.call(this, id);
-            return GeneralRegistry_1.GeneralRegistry.PROTOTYPE.$_getLocalID.call(this, id);
+                throw new IllegalArgumentError_1.IllegalArgumentError("\"" + id + "\" is out of scope.");
+            return GeneralRegistry_1.GeneralRegistry.PROTOTYPE._getLocalID.call(this, id);
         },
     },
     isDecorated: function (object) {
@@ -32,7 +32,7 @@ exports.DocumentsRegistry = {
         if (exports.DocumentsRegistry.isDecorated(object))
             return object;
         var base = Object.assign(object, {
-            $__modelDecorator: Document_1.Document,
+            __modelDecorator: Document_1.Document,
         });
         var target = ModelDecorator_1.ModelDecorator
             .decorateMultiple(base, GeneralRegistry_1.GeneralRegistry);

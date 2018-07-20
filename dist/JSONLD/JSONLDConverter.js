@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var ContainerType_1 = require("../ObjectSchema/ContainerType");
 var Pointer_1 = require("../Pointer/Pointer");
+var PointerLibrary_1 = require("../Pointer/PointerLibrary");
 var List_1 = require("../RDF/List");
 var XSDSerializers = __importStar(require("../RDF/Literal/Serializers/XSD"));
 var Node_1 = require("../RDF/Node");
@@ -266,7 +267,7 @@ var JSONLDConverter = (function () {
         return propertyValues
             .filter(Node_1.RDFNode.is)
             .map(Node_1.RDFNode.getID)
-            .map(pointerLibrary.$getPointer, pointerLibrary)
+            .map(PointerLibrary_1._getPointer.bind(null, pointerLibrary))
             .filter(function (pointer) { return !Utils_1.isNull(pointer); });
     };
     return JSONLDConverter;

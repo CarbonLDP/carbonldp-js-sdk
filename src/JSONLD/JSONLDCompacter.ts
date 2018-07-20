@@ -8,7 +8,7 @@ import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
 
 import { Pointer } from "../Pointer/Pointer";
-import { PointerLibrary } from "../Pointer/PointerLibrary";
+import { $PointerLibrary, PointerLibrary } from "../Pointer/PointerLibrary";
 
 import { QueryableMetadata } from "../QueryDocuments/QueryableMetadata";
 import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
@@ -20,7 +20,7 @@ import { RDFDocument } from "../RDF/Document";
 import { RDFNode } from "../RDF/Node";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
-import { Registry } from "../Registry/Registry";
+import { $Registry, _getPointer, Registry } from "../Registry/Registry";
 
 import { JSONLDConverter } from "./JSONLDConverter";
 
@@ -29,7 +29,7 @@ interface CompactionNode {
 	paths:string[];
 	node:RDFNode;
 	resource:QueryablePointer;
-	registry:Registry<any>;
+	registry:Registry<any> | $Registry<any>;
 	processed?:boolean;
 }
 
@@ -58,30 +58,16 @@ export class JSONLDCompacter {
 	compactDocuments<T extends object>( rdfDocuments:RDFDocument[], mainDocuments?:RDFDocument[] ):(T & Document)[] {
 		if( ! mainDocuments || ! mainDocuments.length ) mainDocuments = rdfDocuments;
 
-		rdfDocuments.forEach( rdfDocument => {
+		const documents:Document[] = rdfDocuments.map( rdfDocument => {
 			const [ documentNodes, fragmentNodes ] = RDFDocument.getNodes( rdfDocument );
 
 			if( documentNodes.length === 0 ) throw new IllegalArgumentError( `The RDFDocument "${ rdfDocument[ "@id" ] }" does not contain a document resource.` );
 			if( documentNodes.length > 1 ) throw new IllegalArgumentError( `The RDFDocument "${ rdfDocument[ "@id" ] }" contains multiple document resources.` );
-			const documentNode:RDFNode = documentNodes[ 0 ];
 
-			const targetDocument:Document = this.__getResource( documentNode, this.registry );
+			const document:Document = this.__getResource( documentNodes[ 0 ], this.registry );
+			this.__processFragments( document, fragmentNodes );
 
-			const currentFragments:string[] = targetDocument
-				.$getPointers( true )
-				.map( pointer => pointer.$id )
-			;
-
-			const newFragments:string[] = fragmentNodes
-				.map( fragmentNode => this.__getResource( fragmentNode, targetDocument ) )
-				.map( fragment => fragment.$id )
-			;
-
-			const newFragmentsSet:Set<string> = new Set( newFragments );
-			currentFragments
-				.filter( id => ! newFragmentsSet.has( id ) )
-				.forEach( id => targetDocument.$removePointer( id ) )
-			;
+			return document;
 		} );
 
 		const compactionQueue:string[] = mainDocuments
@@ -107,9 +93,7 @@ export class JSONLDCompacter {
 		}
 
 
-		rdfDocuments
-			.map( rdfDocument => rdfDocument[ "@id" ] )
-			.map( id => this.registry.$getPointer( id, true ) )
+		documents
 			.forEach( persistedDocument => {
 				persistedDocument.$_syncSnapshot();
 				this.registry.decorate( persistedDocument );
@@ -119,7 +103,7 @@ export class JSONLDCompacter {
 	}
 
 
-	private __compactNode( node:RDFNode, resource:QueryablePointer, containerLibrary:PointerLibrary, path:string ):string[] {
+	private __compactNode( node:RDFNode, resource:QueryablePointer, containerLibrary:PointerLibrary | $PointerLibrary, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
 
 		const isPartial:boolean = this.__setOrRemovePartial( resource, schema, path );
@@ -153,8 +137,8 @@ export class JSONLDCompacter {
 			;
 	}
 
-	private __getResource<M extends QueryablePointer & RegisteredPointer>( node:RDFNode, registry:Registry<M> ):M {
-		const resource:M = registry.$getPointer( node[ "@id" ], true );
+	private __getResource<M extends QueryablePointer & RegisteredPointer>( node:RDFNode, registry:Registry<M> | $Registry<M> ):M {
+		const resource:M = _getPointer( registry, node[ "@id" ], true );
 
 		if( Registry.isDecorated( resource ) ) registry = resource;
 
@@ -163,6 +147,26 @@ export class JSONLDCompacter {
 
 		return resource;
 	}
+
+
+	private __processFragments( document:Document, fragmentNodes:RDFNode[] ):void {
+		const currentFragments:string[] = document
+			.$getPointers( true )
+			.map( pointer => pointer.$id )
+		;
+
+		const newFragments:string[] = fragmentNodes
+			.map( fragmentNode => this.__getResource( fragmentNode, document ) )
+			.map( fragment => fragment.$id )
+		;
+
+		const newFragmentsSet:Set<string> = new Set( newFragments );
+		currentFragments
+			.filter( id => ! newFragmentsSet.has( id ) )
+			.forEach( id => document.$removePointer( id ) )
+		;
+	}
+
 
 	private __processCompactionQueue( compactionQueue:string[] ):void {
 		while( compactionQueue.length ) {

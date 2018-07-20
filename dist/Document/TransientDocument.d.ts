@@ -7,10 +7,10 @@ import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 import { Pointer } from "../Pointer/Pointer";
 import { RDFDocument } from "../RDF/Document";
-import { Registry } from "../Registry/Registry";
+import { $Registry } from "../Registry/Registry";
 import { Resource } from "../Resource/Resource";
 import { BaseDocument } from "./BaseDocument";
-export interface TransientDocument extends Resource, Registry<TransientFragment> {
+export interface TransientDocument extends Resource, $Registry<TransientFragment> {
     $registry: DocumentsRegistry | undefined;
     hasMemberRelation?: Pointer;
     isMemberOfRelation?: Pointer;
@@ -27,6 +27,6 @@ export interface TransientDocument extends Resource, Registry<TransientFragment>
     toJSON(contextOrKey?: Context | string): RDFDocument;
 }
 declare type OverriddenMembers = "$registry" | "$_getLocalID" | "$getPointer" | "toJSON";
-export declare type TransientDocumentFactory = ModelPrototype<TransientDocument, Resource & Registry<TransientFragment>, OverriddenMembers> & ModelDecorator<TransientDocument, BaseDocument> & ModelFactoryOptional<TransientDocument, BaseDocument> & ModelTypeGuard<TransientDocument>;
+export declare type TransientDocumentFactory = ModelPrototype<TransientDocument, Resource & $Registry<TransientFragment>, OverriddenMembers> & ModelDecorator<TransientDocument, BaseDocument> & ModelFactoryOptional<TransientDocument, BaseDocument> & ModelTypeGuard<TransientDocument>;
 export declare const TransientDocument: TransientDocumentFactory;
 export {};

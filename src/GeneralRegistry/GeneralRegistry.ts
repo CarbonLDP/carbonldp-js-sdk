@@ -11,9 +11,10 @@ import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
 import { Pointer } from "../Pointer/Pointer";
 
 import { URI } from "../RDF/URI";
+import { BaseRegistry } from "../Registry/BaseRegistry";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
-import { Registry, Registry } from "../Registry/Registry";
+import { Registry } from "../Registry/Registry";
 
 import { BaseResolvablePointer } from "../Repository/BaseResolvablePointer";
 
@@ -57,7 +58,7 @@ export type GeneralRegistryFactory =
 export const GeneralRegistry:GeneralRegistryFactory = {
 	PROTOTYPE: {
 		get context():Context {
-			throw new IllegalArgumentError( "Property $context is required." );
+			throw new IllegalArgumentError( "Property context is required." );
 		},
 
 		get registry( this:GeneralRegistry ):GeneralRegistry<any> | undefined {
@@ -120,7 +121,7 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 		if( GeneralRegistry.isDecorated( object ) ) return object;
 
 		const target:T & Registry & ObjectSchemaResolver = ModelDecorator
-			.decorateMultiple( object, Registry, ObjectSchemaResolver );
+			.decorateMultiple( object, Registry as ModelDecorator<Registry, BaseRegistry>, ObjectSchemaResolver );
 
 		if( ! target.context ) delete target.context;
 

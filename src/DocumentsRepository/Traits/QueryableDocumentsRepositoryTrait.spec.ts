@@ -1172,7 +1172,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 				$context.registry
-					.$__resourcesMap.set( "", document );
+					.__resourcesMap.set( "", document );
 				$context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
@@ -1258,7 +1258,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				$context.registry.$_addPointer( document );
+				$context.registry._addPointer( document );
 				$context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
@@ -1403,7 +1403,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 			it( "should ensure latest when is partial and no builder function", async () => {
-				$context.registry.$_addPointer( createMockDocument( {
+				$context.registry._addPointer( createMockDocument( {
 					$id: "resource/",
 					$_queryableMetadata: createMockQueryableMetadata( {} ),
 				} ) );
@@ -1423,7 +1423,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 			it( "should ensure latest when URI is partial and no builder function, with options", async () => {
-				$context.registry.$_addPointer( createMockDocument( {
+				$context.registry._addPointer( createMockDocument( {
 					$id: "resource/",
 					$_queryableMetadata: createMockQueryableMetadata( {} ),
 				} ) );
@@ -1664,7 +1664,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should add TYPES at CONSTRUCT when available", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context.registry.$_addPointer( document );
+				$context.registry._addPointer( document );
 				document.types = [ "https://example.com/ns#A-Type", "https://example.com/ns#Another-Type" ];
 
 				$context
@@ -2453,7 +2453,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				$context.registry.$_addPointer( document );
+				$context.registry._addPointer( document );
 				$context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
@@ -2539,7 +2539,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				$context.registry.$_addPointer( document );
+				$context.registry._addPointer( document );
 				$context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
@@ -2686,7 +2686,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 			it( "should ensure latest when current is partial and no builder function", async () => {
-				$context.registry.$_addPointer( document );
+				$context.registry._addPointer( document );
 
 				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$get" )
 					.and.returnValue( Promise.reject( null ) );
@@ -2702,7 +2702,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 			it( "should ensure latest when current is partial and no builder function, with options", async () => {
-				$context.registry.$_addPointer( document );
+				$context.registry._addPointer( document );
 
 				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "$get" )
 					.and.returnValue( Promise.reject( null ) );
@@ -3670,7 +3670,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 				document.$_syncSavedFragments();
-				$context.registry.$_addPointer( document );
+				$context.registry._addPointer( document );
 
 				$context
 					.extendObjectSchema( {
@@ -3846,7 +3846,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				document = $context.registry.$_addPointer( {
+				document = $context.registry._addPointer( {
 					$eTag: "\"1-12345\"",
 					$id: "https://example.com/",
 
@@ -3936,7 +3936,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 				document.$eTag = null;
-				$context.registry.$_addPointer( document );
+				$context.registry._addPointer( document );
 
 				const returned:Document = await repository.$refresh( document );
 
