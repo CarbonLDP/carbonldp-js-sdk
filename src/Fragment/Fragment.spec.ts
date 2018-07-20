@@ -84,16 +84,16 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		} );
 
 
-		describe( "Fragment.$_resolved", () => {
+		describe( "Fragment._resolved", () => {
 
 			it( "should return false when parent is not resolved", () => {
-				$registry.$_resolved = false;
-				expect( fragment.$_resolved ).toBe( false, "Not passing resolution to parent" );
+				$registry._resolved = false;
+				expect( fragment._resolved ).toBe( false, "Not passing resolution to parent" );
 			} );
 
 			it( "should return true when parent is not resolved", () => {
-				$registry.$_resolved = true;
-				expect( fragment.$_resolved ).toBe( true, "Not passing resolution to parent" );
+				$registry._resolved = true;
+				expect( fragment._resolved ).toBe( true, "Not passing resolution to parent" );
 			} );
 
 		} );

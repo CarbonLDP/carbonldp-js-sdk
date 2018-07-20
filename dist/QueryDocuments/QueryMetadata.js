@@ -14,7 +14,7 @@ exports.QueryMetadata = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return VolatileResource_1.VolatileResource.is(value)
-            && value.$hasType(exports.QueryMetadata.TYPE);
+            && value.hasType(exports.QueryMetadata.TYPE);
     },
 };
 

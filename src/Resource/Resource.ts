@@ -31,11 +31,11 @@ export interface Resource extends RegisteredPointer {
 	$slug:string;
 
 
-	$addType( type:string ):void;
+	addType( type:string ):void;
 
-	$hasType( type:string ):boolean;
+	hasType( type:string ):boolean;
 
-	$removeType( type:string ):void;
+	removeType( type:string ):void;
 
 
 	toJSON( contextOrKey:Context | string ):RDFNode;
@@ -78,7 +78,7 @@ export const Resource:ResourceFactory = {
 		set $slug( this:Resource, slug:string ) {},
 
 
-		$addType( this:Resource, type:string ):void {
+		addType( this:Resource, type:string ):void {
 			type = __resolveURI( this, type );
 
 			if( this.types.indexOf( type ) !== - 1 ) return;
@@ -86,12 +86,12 @@ export const Resource:ResourceFactory = {
 			this.types.push( type );
 		},
 
-		$hasType( this:Resource, type:string ):boolean {
+		hasType( this:Resource, type:string ):boolean {
 			type = __resolveURI( this, type );
 			return this.types.indexOf( type ) !== - 1;
 		},
 
-		$removeType( this:Resource, type:string ):void {
+		removeType( this:Resource, type:string ):void {
 			type = __resolveURI( this, type );
 
 			const index:number = this.types.indexOf( type );

@@ -134,13 +134,13 @@ describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 			} );
 			expect( ResponseMetadata.is( object ) ).toBe( true );
 
-			object.$removeType( C.VolatileResource );
+			object.removeType( C.VolatileResource );
 			expect( ResponseMetadata.is( object ) ).toBe( false );
-			object.$addType( C.VolatileResource );
+			object.addType( C.VolatileResource );
 
-			object.$removeType( C.ResponseMetadata );
+			object.removeType( C.ResponseMetadata );
 			expect( ResponseMetadata.is( object ) ).toBe( false );
-			object.$addType( C.ResponseMetadata );
+			object.addType( C.ResponseMetadata );
 
 			delete object.documentsMetadata;
 			expect( ResponseMetadata.is( object ) ).toBe( true );

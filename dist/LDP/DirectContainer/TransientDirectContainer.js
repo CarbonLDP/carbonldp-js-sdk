@@ -7,7 +7,7 @@ exports.TransientDirectContainer = {
     TYPE: LDP_1.LDP.DirectContainer,
     is: function (value) {
         return TransientDocument_1.TransientDocument.is(value)
-            && value.$hasType(exports.TransientDirectContainer.TYPE)
+            && value.hasType(exports.TransientDirectContainer.TYPE)
             && value.hasOwnProperty("membershipResource");
     },
     create: function (data) {
@@ -21,7 +21,7 @@ exports.TransientDirectContainer = {
             throw new IllegalArgumentError_1.IllegalArgumentError("The property hasMemberRelation is required.");
         var container = TransientDocument_1.TransientDocument.is(object) ?
             object : TransientDocument_1.TransientDocument.createFrom(object);
-        container.$addType(exports.TransientDirectContainer.TYPE);
+        container.addType(exports.TransientDirectContainer.TYPE);
         return container;
     },
 };

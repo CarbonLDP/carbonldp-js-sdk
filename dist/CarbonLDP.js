@@ -89,7 +89,7 @@ var CarbonLDP = (function (_super) {
         var _this = this;
         return Utils.promiseMethod(function () {
             var uri = _this._resolvePath("system.platform");
-            return _this.documents.$get(uri);
+            return _this.documents.get(uri);
         });
     };
     CarbonLDP.AbstractContext = AbstractContext_1.AbstractContext;

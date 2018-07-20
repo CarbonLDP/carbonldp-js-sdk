@@ -62,7 +62,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "register" ), () => {
+		describe( method( OBLIGATORY, "registry" ), () => {
 
 			it( hasSignature(
 				[
@@ -177,7 +177,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 
 
 			it( "should add __modelDecorator as Document", () => {
-				const registry:DocumentsRegistry = DocumentsRegistry.decorate( { context: context } );
+				const registry:DocumentsRegistry = DocumentsRegistry.decorate( { context } );
 				expect( registry.__modelDecorator ).toBe( Document );
 			} );
 

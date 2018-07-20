@@ -1515,17 +1515,17 @@ exports.Resource = {
             return URI_1.URI.getSlug(this.$id);
         },
         set $slug(slug) { },
-        $addType: function (type) {
+        addType: function (type) {
             type = __resolveURI(this, type);
             if (this.types.indexOf(type) !== -1)
                 return;
             this.types.push(type);
         },
-        $hasType: function (type) {
+        hasType: function (type) {
             type = __resolveURI(this, type);
             return this.types.indexOf(type) !== -1;
         },
-        $removeType: function (type) {
+        removeType: function (type) {
             type = __resolveURI(this, type);
             var index = this.types.indexOf(type);
             if (index !== -1)
@@ -3871,44 +3871,44 @@ exports.Document = {
         },
     },
     PROTOTYPE: {
-        get $__savedFragments() { return []; },
-        $_syncSavedFragments: function () {
-            this.$__savedFragments = Array
-                .from(this.$__resourcesMap.values());
-            this.$__savedFragments
-                .forEach(function (fragment) { return fragment.$_syncSnapshot(); });
+        get __savedFragments() { return []; },
+        _syncSavedFragments: function () {
+            this.__savedFragments = Array
+                .from(this.__resourcesMap.values());
+            this.__savedFragments
+                .forEach(function (fragment) { return fragment._syncSnapshot(); });
         },
-        $_syncSnapshot: function () {
-            ResolvablePointer_1.ResolvablePointer.PROTOTYPE.$_syncSnapshot.call(this);
-            this.$_syncSavedFragments();
+        _syncSnapshot: function () {
+            ResolvablePointer_1.ResolvablePointer.PROTOTYPE._syncSnapshot.call(this);
+            this._syncSavedFragments();
         },
-        $isDirty: function () {
+        isDirty: function () {
             var _this = this;
-            var isSelfDirty = ResolvablePointer_1.ResolvablePointer.PROTOTYPE.$isDirty.call(this);
+            var isSelfDirty = ResolvablePointer_1.ResolvablePointer.PROTOTYPE.isDirty.call(this);
             if (isSelfDirty)
                 return true;
             var hasRemovedFragments = this
-                .$__savedFragments
-                .some(function (fragment) { return !_this.$hasFragment(fragment.$id); });
+                .__savedFragments
+                .some(function (fragment) { return !_this.hasFragment(fragment.$id); });
             if (hasRemovedFragments)
                 return true;
             var hasNewFragments = this
-                .$__savedFragments.length !== this.$__resourcesMap.size;
+                .__savedFragments.length !== this.__resourcesMap.size;
             if (hasNewFragments)
                 return true;
             return this
-                .$__savedFragments
-                .some(function (fragment) { return fragment.$isDirty(); });
+                .__savedFragments
+                .some(function (fragment) { return fragment.isDirty(); });
         },
-        $revert: function () {
+        revert: function () {
             var _this = this;
-            ResolvablePointer_1.ResolvablePointer.PROTOTYPE.$revert.call(this);
-            this.$__resourcesMap.clear();
+            ResolvablePointer_1.ResolvablePointer.PROTOTYPE.revert.call(this);
+            this.__resourcesMap.clear();
             this
-                .$__savedFragments
+                .__savedFragments
                 .forEach(function (fragment) {
-                fragment.$revert();
-                _this.$__resourcesMap.set(fragment.$slug, fragment);
+                fragment.revert();
+                _this.__resourcesMap.set(fragment.$slug, fragment);
             });
         },
     },
@@ -3928,7 +3928,7 @@ exports.Document = {
         if (exports.Document.isDecorated(object))
             return object;
         var base = Object.assign(object, {
-            $__modelDecorator: Fragment_1.Fragment,
+            __modelDecorator: Fragment_1.Fragment,
         });
         var target = ModelDecorator_1.ModelDecorator
             .decorateMultiple(base, SPARQLDocumentTrait_1.SPARQLDocumentTrait, EventEmitterDocumentTrait_1.EventEmitterDocumentTrait, QueryableDocumentTrait_1.QueryableDocumentTrait);
@@ -4755,9 +4755,9 @@ var ModelDecorator_1 = __webpack_require__(4);
 var ResolvablePointer_1 = __webpack_require__(24);
 exports.QueryablePointer = {
     PROTOTYPE: {
-        $_queryableMetadata: void 0,
-        $isQueried: function () {
-            return !!this.$_queryableMetadata;
+        _queryableMetadata: void 0,
+        isQueried: function () {
+            return !!this._queryableMetadata;
         },
     },
     isDecorated: function (object) {
@@ -5330,7 +5330,7 @@ exports.ResponseMetadata = {
     SCHEMA: SCHEMA,
     is: function (object) {
         return VolatileResource_1.VolatileResource.is(object)
-            && object.$hasType(exports.ResponseMetadata.TYPE);
+            && object.hasType(exports.ResponseMetadata.TYPE);
     },
 };
 
@@ -6136,7 +6136,7 @@ exports.ErrorResponse = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return Resource_1.Resource.is(value)
-            && value.$hasType(exports.ErrorResponse.TYPE);
+            && value.hasType(exports.ErrorResponse.TYPE);
     },
     getMessage: function (errorResponse) {
         var errors = getErrors(errorResponse);
@@ -6257,7 +6257,7 @@ exports.TransientDirectContainer = {
     TYPE: LDP_1.LDP.DirectContainer,
     is: function (value) {
         return TransientDocument_1.TransientDocument.is(value)
-            && value.$hasType(exports.TransientDirectContainer.TYPE)
+            && value.hasType(exports.TransientDirectContainer.TYPE)
             && value.hasOwnProperty("membershipResource");
     },
     create: function (data) {
@@ -6271,7 +6271,7 @@ exports.TransientDirectContainer = {
             throw new IllegalArgumentError_1.IllegalArgumentError("The property hasMemberRelation is required.");
         var container = TransientDocument_1.TransientDocument.is(object) ?
             object : TransientDocument_1.TransientDocument.createFrom(object);
-        container.$addType(exports.TransientDirectContainer.TYPE);
+        container.addType(exports.TransientDirectContainer.TYPE);
         return container;
     },
 };
@@ -6644,7 +6644,7 @@ exports.VolatileResource = {
     TYPE: C_1.C.VolatileResource,
     is: function (value) {
         return Resource_1.Resource.is(value)
-            && value.$hasType(exports.VolatileResource.TYPE);
+            && value.hasType(exports.VolatileResource.TYPE);
     },
     create: function (data) {
         var copy = Object.assign({}, data);
@@ -6652,7 +6652,7 @@ exports.VolatileResource = {
     },
     createFrom: function (object) {
         var resource = Resource_1.Resource.createFrom(object);
-        resource.$addType(exports.VolatileResource.TYPE);
+        resource.addType(exports.VolatileResource.TYPE);
         return resource;
     },
 };
@@ -6794,7 +6794,7 @@ exports.AddMemberAction = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return Resource_1.Resource.is(value)
-            && value.$hasType(exports.AddMemberAction.TYPE);
+            && value.hasType(exports.AddMemberAction.TYPE);
     },
     create: function (data) {
         var copy = Object.assign({}, data);
@@ -6802,7 +6802,7 @@ exports.AddMemberAction = {
     },
     createFrom: function (object) {
         var resource = Resource_1.Resource.createFrom(object);
-        resource.$addType(exports.AddMemberAction.TYPE);
+        resource.addType(exports.AddMemberAction.TYPE);
         return resource;
     },
 };
@@ -6829,7 +6829,7 @@ exports.RemoveMemberAction = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return Resource_1.Resource.is(value)
-            && value.$hasType(exports.RemoveMemberAction.TYPE);
+            && value.hasType(exports.RemoveMemberAction.TYPE);
     },
     create: function (data) {
         var copy = Object.assign({}, data);
@@ -6837,7 +6837,7 @@ exports.RemoveMemberAction = {
     },
     createFrom: function (object) {
         var resource = Resource_1.Resource.createFrom(object);
-        resource.$addType(exports.RemoveMemberAction.TYPE);
+        resource.addType(exports.RemoveMemberAction.TYPE);
         return resource;
     },
 };
@@ -7317,10 +7317,10 @@ exports.Fragment = {
         set $repository(document) {
             this.$registry = document;
         },
-        get $_resolved() {
-            return this.$document.$_resolved;
+        get _resolved() {
+            return this.$document._resolved;
         },
-        set $_resolved(_value) { },
+        set _resolved(_value) { },
     },
     isDecorated: function (object) {
         return ModelDecorator_1.ModelDecorator
@@ -8274,7 +8274,7 @@ exports.TransientAccessPoint = {
         var accessPoint = TransientDirectContainer_1.TransientDirectContainer
             .createFrom(object);
         accessPoint
-            .$addType(exports.TransientAccessPoint.TYPE);
+            .addType(exports.TransientAccessPoint.TYPE);
         return accessPoint;
     },
 };
@@ -8689,7 +8689,7 @@ var QueryContextPartial = (function (_super) {
             if (!schemaLibrary)
                 return _super.prototype.getSchemaFor.call(this, object);
         }
-        return schemaLibrary.$_queryableMetadata.schema;
+        return schemaLibrary._queryableMetadata.schema;
     };
     return QueryContextPartial;
 }(QueryContext_1.QueryContext));
@@ -8870,7 +8870,7 @@ exports.QueryMetadata = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return VolatileResource_1.VolatileResource.is(value)
-            && value.$hasType(exports.QueryMetadata.TYPE);
+            && value.hasType(exports.QueryMetadata.TYPE);
     },
 };
 
@@ -9047,7 +9047,7 @@ var DeltaCreator = (function () {
         var mergeResource = {
             $id: id,
             types: Array.from(types),
-            $_queryableMetadata: currentResource.$_queryableMetadata || previousResource.$_queryableMetadata,
+            _queryableMetadata: currentResource._queryableMetadata || previousResource._queryableMetadata,
         };
         return this.context
             .registry.getSchemaFor(mergeResource);
@@ -11569,7 +11569,7 @@ exports.Map = {
     SCHEMA: SCHEMA,
     is: function (object) {
         return Resource_1.Resource.is(object)
-            && object.$hasType(exports.Map.TYPE)
+            && object.hasType(exports.Map.TYPE)
             && object.hasOwnProperty("entries");
     },
 };
@@ -12033,7 +12033,7 @@ var CarbonLDP = (function (_super) {
         var _this = this;
         return Utils.promiseMethod(function () {
             var uri = _this._resolvePath("system.platform");
-            return _this.documents.$get(uri);
+            return _this.documents.get(uri);
         });
     };
     CarbonLDP.AbstractContext = AbstractContext_1.AbstractContext;
@@ -13656,32 +13656,32 @@ function __parseParams(resource, uriPatternOROnEvent, onEventOrOnError, onError)
 }
 exports.EventEmitterDocumentTrait = {
     PROTOTYPE: {
-        $on: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
+        on: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
             var _a = __parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, $onError = _a.onError;
             return this.$repository.on(event, uriPattern, onEvent, $onError);
         },
-        $off: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
+        off: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
             var _a = __parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, $onError = _a.onError;
             return this.$repository.off(event, uriPattern, onEvent, $onError);
         },
-        $one: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
+        one: function (event, uriPatternOROnEvent, onEventOrOnError, onError) {
             var _a = __parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, $onError = _a.onError;
             return this.$repository.one(event, uriPattern, onEvent, $onError);
         },
-        $onChildCreated: function (uriPatternOROnEvent, onEventOrOnError, onError) {
-            return this.$on(Event_1.Event.CHILD_CREATED, uriPatternOROnEvent, onEventOrOnError, onError);
+        onChildCreated: function (uriPatternOROnEvent, onEventOrOnError, onError) {
+            return this.on(Event_1.Event.CHILD_CREATED, uriPatternOROnEvent, onEventOrOnError, onError);
         },
-        $onDocumentModified: function (uriPatternOROnEvent, onEventOrOnError, onError) {
-            return this.$on(Event_1.Event.DOCUMENT_MODIFIED, uriPatternOROnEvent, onEventOrOnError, onError);
+        onDocumentModified: function (uriPatternOROnEvent, onEventOrOnError, onError) {
+            return this.on(Event_1.Event.DOCUMENT_MODIFIED, uriPatternOROnEvent, onEventOrOnError, onError);
         },
-        $onDocumentDeleted: function (uriPatternOROnEvent, onEventOrOnError, onError) {
-            return this.$on(Event_1.Event.DOCUMENT_DELETED, uriPatternOROnEvent, onEventOrOnError, onError);
+        onDocumentDeleted: function (uriPatternOROnEvent, onEventOrOnError, onError) {
+            return this.on(Event_1.Event.DOCUMENT_DELETED, uriPatternOROnEvent, onEventOrOnError, onError);
         },
-        $onMemberAdded: function (uriPatternOROnEvent, onEventOrOnError, onError) {
-            return this.$on(Event_1.Event.MEMBER_ADDED, uriPatternOROnEvent, onEventOrOnError, onError);
+        onMemberAdded: function (uriPatternOROnEvent, onEventOrOnError, onError) {
+            return this.on(Event_1.Event.MEMBER_ADDED, uriPatternOROnEvent, onEventOrOnError, onError);
         },
-        $onMemberRemoved: function (uriPatternOROnEvent, onEventOrOnError, onError) {
-            return this.$on(Event_1.Event.MEMBER_REMOVED, uriPatternOROnEvent, onEventOrOnError, onError);
+        onMemberRemoved: function (uriPatternOROnEvent, onEventOrOnError, onError) {
+            return this.on(Event_1.Event.MEMBER_REMOVED, uriPatternOROnEvent, onEventOrOnError, onError);
         },
     },
     isDecorated: function (object) {
@@ -13713,22 +13713,22 @@ var QueryablePointer_1 = __webpack_require__(51);
 var LDPDocumentTrait_1 = __webpack_require__(220);
 exports.QueryableDocumentTrait = {
     PROTOTYPE: {
-        $getChildren: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
+        getChildren: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrQueryBuilderFnOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).getChildren.apply(_a, [_uri].concat(_args));
         },
-        $getMembers: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
+        getMembers: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrQueryBuilderFnOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).getMembers.apply(_a, [_uri].concat(_args));
         },
-        $listChildren: function (uriOrOptions, requestOptions) {
+        listChildren: function (uriOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).listChildren.apply(_a, [_uri].concat(_args));
         },
-        $listMembers: function (uriOrOptions, requestOptions) {
+        listMembers: function (uriOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).listMembers.apply(_a, [_uri].concat(_args));
@@ -13772,33 +13772,33 @@ function __parseMemberParams(resource, args) {
 }
 exports.LDPDocumentTrait = {
     PROTOTYPE: {
-        $create: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
+        create: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).create.apply(_a, [_uri].concat(_args));
         },
-        $createAndRetrieve: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
+        createAndRetrieve: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).createAndRetrieve.apply(_a, [_uri].concat(_args));
         },
-        $addMember: function (uriOrMember, memberOrOptions, requestOptions) {
+        addMember: function (uriOrMember, memberOrOptions, requestOptions) {
             var _a;
             var _b = __parseMemberParams(this, arguments), uri = _b.uri, params = _b.params;
             return (_a = this.$repository).addMember.apply(_a, [uri].concat(params));
         },
-        $addMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
+        addMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrMembers, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).addMembers.apply(_a, [_uri].concat(_args));
         },
-        $removeMember: function (uriOrMember, memberOrOptions, requestOptions) {
+        removeMember: function (uriOrMember, memberOrOptions, requestOptions) {
             var _a;
             var _b = __parseMemberParams(this, arguments), uri = _b.uri, params = _b.params;
             return (_a = this.$repository).removeMember.apply(_a, [uri].concat(params));
         },
-        $removeMembers: function (uriOrMembersOrOptions, membersOrOptions, requestOptions) {
+        removeMembers: function (uriOrMembersOrOptions, membersOrOptions, requestOptions) {
             var _a;
             var _b = Utils_1._parseURIParams(this, uriOrMembersOrOptions, arguments), _uri = _b._uri, _args = _b._args;
             return (_a = this.$repository).removeMembers.apply(_a, [_uri].concat(_args));
@@ -13846,19 +13846,19 @@ function __parseParams(resource, uriOrQuery, queryOrOptions, options) {
 }
 exports.SPARQLDocumentTrait = {
     PROTOTYPE: {
-        $executeASKQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
+        executeASKQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
             var _a = __parseParams(this, uriOrQuery, queryOrOptions, requestOptions), uri = _a.uri, query = _a.query, options = _a.options;
             return this.$repository.executeASKQuery(uri, query, options);
         },
-        $executeSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
+        executeSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
             var _a = __parseParams(this, uriOrQuery, queryOrOptions, requestOptions), uri = _a.uri, query = _a.query, options = _a.options;
             return this.$repository.executeSELECTQuery(uri, query, options);
         },
-        $executeUPDATE: function (uriOrQuery, updateOrOptions, requestOptions) {
+        executeUPDATE: function (uriOrQuery, updateOrOptions, requestOptions) {
             var _a = __parseParams(this, uriOrQuery, updateOrOptions, requestOptions), uri = _a.uri, query = _a.query, options = _a.options;
             return this.$repository.executeUPDATE(uri, query, options);
         },
-        $sparql: function (uri) {
+        sparql: function (uri) {
             var $uri = uri ? URI_1.URI.resolve(this.$id, uri) : this.$id;
             return this.$repository.sparql($uri);
         },
@@ -14090,12 +14090,12 @@ exports.ObjectSchemaResolver = {
             var schema = "types" in object || "$id" in object ?
                 __getSchemaForResource(this.context, object) :
                 __getSchemaForNode(this.context, object);
-            if (!("$_queryableMetadata" in object) || !object.$_queryableMetadata)
+            if (!("_queryableMetadata" in object) || !object._queryableMetadata)
                 return schema;
             return ObjectSchemaDigester_1.ObjectSchemaDigester
                 ._combineSchemas([
                 schema,
-                object.$_queryableMetadata.schema,
+                object._queryableMetadata.schema,
             ]);
         },
     },

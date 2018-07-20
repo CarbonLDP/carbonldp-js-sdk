@@ -118,9 +118,9 @@ describe( module( "carbonldp/LDP/Map" ), ():void => {
 			} );
 			expect( Map.is( object ) ).toBe( true );
 
-			object.$removeType( C.Map );
+			object.removeType( C.Map );
 			expect( Map.is( object ) ).toBe( false );
-			object.$addType( C.Map );
+			object.addType( C.Map );
 
 			delete object.entries;
 			expect( Map.is( object ) ).toBe( false );

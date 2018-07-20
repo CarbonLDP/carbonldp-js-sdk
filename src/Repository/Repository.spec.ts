@@ -355,7 +355,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				const repository:$Repository = createMock();
 
 				await repository
-					.$exists( "uri" )
+					.exists( "uri" )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
 						expect( () => {throw error; } ).toThrowError( NotImplementedError, "Must be implemented for a specific repository implementation." );

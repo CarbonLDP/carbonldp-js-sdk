@@ -122,7 +122,7 @@ export class CarbonLDP extends DocumentsContext {
 	getPlatformMetadata():Promise<System.PlatformMetadata> {
 		return Utils.promiseMethod( () => {
 			const uri:string = this._resolvePath( "system.platform" );
-			return this.documents.$get<System.PlatformMetadata>( uri );
+			return this.documents.get<System.PlatformMetadata>( uri );
 		} );
 	}
 

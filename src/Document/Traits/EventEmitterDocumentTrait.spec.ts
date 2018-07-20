@@ -76,7 +76,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			} );
 		} );
 
-		describe( method( OBLIGATORY, "$on" ), ():void => {
+		describe( method( OBLIGATORY, "on" ), ():void => {
 
 			it( hasSignature(
 				"Subscribe to the specified document event notifications.",
@@ -212,8 +212,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$on ).toBeDefined();
-				expect( resource.$on ).toEqual( jasmine.any( Function ) );
+				expect( resource.on ).toBeDefined();
+				expect( resource.on ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -227,7 +227,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$on( Event.CHILD_CREATED, onEvent, onError );
+				resource.on( Event.CHILD_CREATED, onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/resource/", onEvent, onError );
 			} );
 
@@ -235,7 +235,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$on( Event.CHILD_CREATED, "https://example.com/another-resource/", onEvent, onError );
+				resource.on( Event.CHILD_CREATED, "https://example.com/another-resource/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/another-resource/", onEvent, onError );
 			} );
 
@@ -243,13 +243,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$on( Event.CHILD_CREATED, "relative/", onEvent, onError );
+				resource.on( Event.CHILD_CREATED, "relative/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/resource/relative/", onEvent, onError );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$off" ), ():void => {
+		describe( method( OBLIGATORY, "off" ), ():void => {
 
 			it( hasSignature(
 				"Remove a subscription that contains the document event and onEvent callback provided.",
@@ -385,8 +385,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$off ).toBeDefined();
-				expect( resource.$off ).toEqual( jasmine.any( Function ) );
+				expect( resource.off ).toBeDefined();
+				expect( resource.off ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -400,7 +400,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$off( Event.CHILD_CREATED, onEvent, onError );
+				resource.off( Event.CHILD_CREATED, onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/resource/", onEvent, onError );
 			} );
 
@@ -408,7 +408,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$off( Event.CHILD_CREATED, "https://example.com/another-resource/", onEvent, onError );
+				resource.off( Event.CHILD_CREATED, "https://example.com/another-resource/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/another-resource/", onEvent, onError );
 			} );
 
@@ -416,14 +416,14 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$off( Event.CHILD_CREATED, "relative/", onEvent, onError );
+				resource.off( Event.CHILD_CREATED, "relative/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/resource/relative/", onEvent, onError );
 			} );
 
 
 		} );
 
-		describe( method( OBLIGATORY, "$one" ), ():void => {
+		describe( method( OBLIGATORY, "one" ), ():void => {
 
 			it( hasSignature(
 				"Subscribe to only one notification to the document event provided",
@@ -559,8 +559,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$one ).toBeDefined();
-				expect( resource.$one ).toEqual( jasmine.any( Function ) );
+				expect( resource.one ).toBeDefined();
+				expect( resource.one ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -574,7 +574,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$one( Event.CHILD_CREATED, onEvent, onError );
+				resource.one( Event.CHILD_CREATED, onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/resource/", onEvent, onError );
 			} );
 
@@ -582,7 +582,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$one( Event.CHILD_CREATED, "https://example.com/another-resource/", onEvent, onError );
+				resource.one( Event.CHILD_CREATED, "https://example.com/another-resource/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/another-resource/", onEvent, onError );
 			} );
 
@@ -590,7 +590,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$one( Event.CHILD_CREATED, "relative/", onEvent, onError );
+				resource.one( Event.CHILD_CREATED, "relative/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/resource/relative/", onEvent, onError );
 			} );
 
@@ -598,7 +598,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 		} );
 
 
-		describe( method( OBLIGATORY, "$onChildCreated" ), ():void => {
+		describe( method( OBLIGATORY, "onChildCreated" ), ():void => {
 
 			it( hasSignature(
 				"Subscribe to the `CarbonLDP.Messaging.Event.CHILD_CREATED` event notifications for the document.",
@@ -618,8 +618,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$onChildCreated ).toBeDefined();
-				expect( resource.$onChildCreated ).toEqual( jasmine.any( Function ) );
+				expect( resource.onChildCreated ).toBeDefined();
+				expect( resource.onChildCreated ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -633,7 +633,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onChildCreated( onEvent, onError );
+				resource.onChildCreated( onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/resource/", onEvent, onError );
 			} );
 
@@ -641,7 +641,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onChildCreated( "https://example.com/another-resource/", onEvent, onError );
+				resource.onChildCreated( "https://example.com/another-resource/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/another-resource/", onEvent, onError );
 			} );
 
@@ -649,13 +649,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onChildCreated( "relative/", onEvent, onError );
+				resource.onChildCreated( "relative/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "https://example.com/resource/relative/", onEvent, onError );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$onDocumentModified" ), ():void => {
+		describe( method( OBLIGATORY, "onDocumentModified" ), ():void => {
 
 			it( hasSignature(
 				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the document.",
@@ -675,8 +675,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$onDocumentModified ).toBeDefined();
-				expect( resource.$onDocumentModified ).toEqual( jasmine.any( Function ) );
+				expect( resource.onDocumentModified ).toBeDefined();
+				expect( resource.onDocumentModified ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -690,7 +690,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onDocumentModified( onEvent, onError );
+				resource.onDocumentModified( onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_MODIFIED, "https://example.com/resource/", onEvent, onError );
 			} );
 
@@ -698,7 +698,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onDocumentModified( "https://example.com/another-resource/", onEvent, onError );
+				resource.onDocumentModified( "https://example.com/another-resource/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_MODIFIED, "https://example.com/another-resource/", onEvent, onError );
 			} );
 
@@ -706,13 +706,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onDocumentModified( "relative/", onEvent, onError );
+				resource.onDocumentModified( "relative/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_MODIFIED, "https://example.com/resource/relative/", onEvent, onError );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$onDocumentDeleted" ), ():void => {
+		describe( method( OBLIGATORY, "onDocumentDeleted" ), ():void => {
 
 			it( hasSignature(
 				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_DELETED` event notifications for the document.",
@@ -732,8 +732,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$onDocumentDeleted ).toBeDefined();
-				expect( resource.$onDocumentDeleted ).toEqual( jasmine.any( Function ) );
+				expect( resource.onDocumentDeleted ).toBeDefined();
+				expect( resource.onDocumentDeleted ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -747,7 +747,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onDocumentDeleted( onEvent, onError );
+				resource.onDocumentDeleted( onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_DELETED, "https://example.com/resource/", onEvent, onError );
 			} );
 
@@ -755,7 +755,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onDocumentDeleted( "https://example.com/another-resource/", onEvent, onError );
+				resource.onDocumentDeleted( "https://example.com/another-resource/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_DELETED, "https://example.com/another-resource/", onEvent, onError );
 			} );
 
@@ -763,13 +763,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onDocumentDeleted( "relative/", onEvent, onError );
+				resource.onDocumentDeleted( "relative/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_DELETED, "https://example.com/resource/relative/", onEvent, onError );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$onMemberAdded" ), ():void => {
+		describe( method( OBLIGATORY, "onMemberAdded" ), ():void => {
 
 			it( hasSignature(
 				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_ADDED` event notifications for the document.",
@@ -789,8 +789,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$onMemberAdded ).toBeDefined();
-				expect( resource.$onMemberAdded ).toEqual( jasmine.any( Function ) );
+				expect( resource.onMemberAdded ).toBeDefined();
+				expect( resource.onMemberAdded ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -804,7 +804,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onMemberAdded( onEvent, onError );
+				resource.onMemberAdded( onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.MEMBER_ADDED, "https://example.com/resource/", onEvent, onError );
 			} );
 
@@ -812,7 +812,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onMemberAdded( "https://example.com/another-resource/", onEvent, onError );
+				resource.onMemberAdded( "https://example.com/another-resource/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.MEMBER_ADDED, "https://example.com/another-resource/", onEvent, onError );
 			} );
 
@@ -820,13 +820,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onMemberAdded( "relative/", onEvent, onError );
+				resource.onMemberAdded( "relative/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.MEMBER_ADDED, "https://example.com/resource/relative/", onEvent, onError );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$onMemberRemoved" ), ():void => {
+		describe( method( OBLIGATORY, "onMemberRemoved" ), ():void => {
 
 			it( hasSignature(
 				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_REMOVED` event notifications for the document.",
@@ -846,8 +846,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$onMemberRemoved ).toBeDefined();
-				expect( resource.$onMemberRemoved ).toEqual( jasmine.any( Function ) );
+				expect( resource.onMemberRemoved ).toBeDefined();
+				expect( resource.onMemberRemoved ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -861,7 +861,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onMemberRemoved( onEvent, onError );
+				resource.onMemberRemoved( onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.MEMBER_REMOVED, "https://example.com/resource/", onEvent, onError );
 			} );
 
@@ -869,7 +869,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onMemberRemoved( "https://example.com/another-resource/", onEvent, onError );
+				resource.onMemberRemoved( "https://example.com/another-resource/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.MEMBER_REMOVED, "https://example.com/another-resource/", onEvent, onError );
 			} );
 
@@ -877,7 +877,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
 				const onError:( error:Error ) => void = fail;
 
-				resource.$onMemberRemoved( "relative/", onEvent, onError );
+				resource.onMemberRemoved( "relative/", onEvent, onError );
 				expect( spy ).toHaveBeenCalledWith( Event.MEMBER_REMOVED, "https://example.com/resource/relative/", onEvent, onError );
 			} );
 

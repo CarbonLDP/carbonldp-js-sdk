@@ -71,7 +71,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 		} );
 
 
-		describe( method( OBLIGATORY, "$create" ), () => {
+		describe( method( OBLIGATORY, "create" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -154,8 +154,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$create ).toBeDefined();
-				expect( resource.$create ).toEqual( jasmine.any( Function ) );
+				expect( resource.create ).toBeDefined();
+				expect( resource.create ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -167,130 +167,130 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 
 
 			it( "should call repository with $id when multiple child", async () => {
-				await resource.$create( [ { a: "child" } ] );
+				await resource.create( [ { a: "child" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { a: "child" } ] );
 			} );
 
 			it( "should call repository with $id when multiple child and options", async () => {
-				await resource.$create( [ { a: "child" } ], { timeout: 5050 } );
+				await resource.create( [ { a: "child" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { a: "child" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when multiple child and slugs", async () => {
-				await resource.$create( [ { a: "child" } ], [ "child-slug" ] );
+				await resource.create( [ { a: "child" } ], [ "child-slug" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { a: "child" } ], [ "child-slug" ] );
 			} );
 
 			it( "should call repository with $id when multiple child, slugs and options", async () => {
-				await resource.$create( [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
+				await resource.create( [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when single child", async () => {
-				await resource.$create( { a: "child" } );
+				await resource.create( { a: "child" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { a: "child" } );
 			} );
 
 			it( "should call repository with $id when single child and options", async () => {
-				await resource.$create( { a: "child" }, { timeout: 5050 } );
+				await resource.create( { a: "child" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { a: "child" }, { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when single child and slug", async () => {
-				await resource.$create( { a: "child" }, "slug" );
+				await resource.create( { a: "child" }, "slug" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { a: "child" }, "slug" );
 			} );
 
 			it( "should call repository with $id when single child, slug and options", async () => {
-				await resource.$create( { a: "child" }, "slug", { timeout: 5050 } );
+				await resource.create( { a: "child" }, "slug", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { a: "child" }, "slug", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository absolute URI when multiple child", async () => {
-				await resource.$create( "https://example.com/another-resource/", [ { a: "child" } ] );
+				await resource.create( "https://example.com/another-resource/", [ { a: "child" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { a: "child" } ] );
 			} );
 
 			it( "should call repository absolute URI when multiple child and options", async () => {
-				await resource.$create( "https://example.com/another-resource/", [ { a: "child" } ], { timeout: 5050 } );
+				await resource.create( "https://example.com/another-resource/", [ { a: "child" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { a: "child" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository absolute URI when multiple child and slugs", async () => {
-				await resource.$create( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ] );
+				await resource.create( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ] );
 			} );
 
 			it( "should call repository absolute URI when multiple child, slugs and options", async () => {
-				await resource.$create( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
+				await resource.create( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository absolute URI when single child", async () => {
-				await resource.$create( "https://example.com/another-resource/", { a: "child" } );
+				await resource.create( "https://example.com/another-resource/", { a: "child" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { a: "child" } );
 			} );
 
 			it( "should call repository absolute URI when single child and options", async () => {
-				await resource.$create( "https://example.com/another-resource/", { a: "child" }, { timeout: 5050 } );
+				await resource.create( "https://example.com/another-resource/", { a: "child" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { a: "child" }, { timeout: 5050 } );
 			} );
 
 			it( "should call repository absolute URI when single child and slug", async () => {
-				await resource.$create( "https://example.com/another-resource/", { a: "child" }, "slug" );
+				await resource.create( "https://example.com/another-resource/", { a: "child" }, "slug" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { a: "child" }, "slug" );
 			} );
 
 			it( "should call repository absolute URI when single child, slug and options", async () => {
-				await resource.$create( "https://example.com/another-resource/", { a: "child" }, "slug", { timeout: 5050 } );
+				await resource.create( "https://example.com/another-resource/", { a: "child" }, "slug", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { a: "child" }, "slug", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository resolved relative URI when multiple child", async () => {
-				await resource.$create( "relative/", [ { a: "child" } ] );
+				await resource.create( "relative/", [ { a: "child" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { a: "child" } ] );
 			} );
 
 			it( "should call repository resolved relative URI when multiple child and options", async () => {
-				await resource.$create( "relative/", [ { a: "child" } ], { timeout: 5050 } );
+				await resource.create( "relative/", [ { a: "child" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { a: "child" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository resolved relative URI when multiple child and slugs", async () => {
-				await resource.$create( "relative/", [ { a: "child" } ], [ "child-slug" ] );
+				await resource.create( "relative/", [ { a: "child" } ], [ "child-slug" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { a: "child" } ], [ "child-slug" ] );
 			} );
 
 			it( "should call repository resolved relative URI when multiple child, slugs and options", async () => {
-				await resource.$create( "relative/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
+				await resource.create( "relative/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository resolved relative URI when single child", async () => {
-				await resource.$create( "relative/", { a: "child" } );
+				await resource.create( "relative/", { a: "child" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { a: "child" } );
 			} );
 
 			it( "should call repository resolved relative URI when single child and options", async () => {
-				await resource.$create( "relative/", { a: "child" }, { timeout: 5050 } );
+				await resource.create( "relative/", { a: "child" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { a: "child" }, { timeout: 5050 } );
 			} );
 
 			it( "should call repository resolved relative URI when single child and slug", async () => {
-				await resource.$create( "relative/", { a: "child" }, "slug" );
+				await resource.create( "relative/", { a: "child" }, "slug" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { a: "child" }, "slug" );
 			} );
 
 			it( "should call repository resolved relative URI when single child, slug and options", async () => {
-				await resource.$create( "relative/", { a: "child" }, "slug", { timeout: 5050 } );
+				await resource.create( "relative/", { a: "child" }, "slug", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { a: "child" }, "slug", { timeout: 5050 } );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$createAndRetrieve" ), () => {
+		describe( method( OBLIGATORY, "createAndRetrieve" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -373,8 +373,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$createAndRetrieve ).toBeDefined();
-				expect( resource.$createAndRetrieve ).toEqual( jasmine.any( Function ) );
+				expect( resource.createAndRetrieve ).toBeDefined();
+				expect( resource.createAndRetrieve ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -386,131 +386,131 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 
 
 			it( "should call repository with $id when multiple child", async () => {
-				await resource.$createAndRetrieve( [ { a: "child" } ] );
+				await resource.createAndRetrieve( [ { a: "child" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { a: "child" } ] );
 			} );
 
 			it( "should call repository with $id when multiple child and options", async () => {
-				await resource.$createAndRetrieve( [ { a: "child" } ], { timeout: 5050 } );
+				await resource.createAndRetrieve( [ { a: "child" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { a: "child" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when multiple child and slugs", async () => {
-				await resource.$createAndRetrieve( [ { a: "child" } ], [ "child-slug" ] );
+				await resource.createAndRetrieve( [ { a: "child" } ], [ "child-slug" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { a: "child" } ], [ "child-slug" ] );
 			} );
 
 			it( "should call repository with $id when multiple child, slugs and options", async () => {
-				await resource.$createAndRetrieve( [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
+				await resource.createAndRetrieve( [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when single child", async () => {
-				await resource.$createAndRetrieve( { a: "child" } );
+				await resource.createAndRetrieve( { a: "child" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { a: "child" } );
 			} );
 
 			it( "should call repository with $id when single child and options", async () => {
-				await resource.$createAndRetrieve( { a: "child" }, { timeout: 5050 } );
+				await resource.createAndRetrieve( { a: "child" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { a: "child" }, { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when single child and slug", async () => {
-				await resource.$createAndRetrieve( { a: "child" }, "slug" );
+				await resource.createAndRetrieve( { a: "child" }, "slug" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { a: "child" }, "slug" );
 			} );
 
 			it( "should call repository with $id when single child, slug and options", async () => {
-				await resource.$createAndRetrieve( { a: "child" }, "slug", { timeout: 5050 } );
+				await resource.createAndRetrieve( { a: "child" }, "slug", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { a: "child" }, "slug", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository absolute URI when multiple child", async () => {
-				await resource.$createAndRetrieve( "https://example.com/another-resource/", [ { a: "child" } ] );
+				await resource.createAndRetrieve( "https://example.com/another-resource/", [ { a: "child" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { a: "child" } ] );
 			} );
 
 			it( "should call repository absolute URI when multiple child and options", async () => {
-				await resource.$createAndRetrieve( "https://example.com/another-resource/", [ { a: "child" } ], { timeout: 5050 } );
+				await resource.createAndRetrieve( "https://example.com/another-resource/", [ { a: "child" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { a: "child" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository absolute URI when multiple child and slugs", async () => {
-				await resource.$createAndRetrieve( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ] );
+				await resource.createAndRetrieve( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ] );
 			} );
 
 			it( "should call repository absolute URI when multiple child, slugs and options", async () => {
-				await resource.$createAndRetrieve( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
+				await resource.createAndRetrieve( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository absolute URI when single child", async () => {
-				await resource.$createAndRetrieve( "https://example.com/another-resource/", { a: "child" } );
+				await resource.createAndRetrieve( "https://example.com/another-resource/", { a: "child" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { a: "child" } );
 			} );
 
 			it( "should call repository absolute URI when single child and options", async () => {
-				await resource.$createAndRetrieve( "https://example.com/another-resource/", { a: "child" }, { timeout: 5050 } );
+				await resource.createAndRetrieve( "https://example.com/another-resource/", { a: "child" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { a: "child" }, { timeout: 5050 } );
 			} );
 
 			it( "should call repository absolute URI when single child and slug", async () => {
-				await resource.$createAndRetrieve( "https://example.com/another-resource/", { a: "child" }, "slug" );
+				await resource.createAndRetrieve( "https://example.com/another-resource/", { a: "child" }, "slug" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { a: "child" }, "slug" );
 			} );
 
 			it( "should call repository absolute URI when single child, slug and options", async () => {
-				await resource.$createAndRetrieve( "https://example.com/another-resource/", { a: "child" }, "slug", { timeout: 5050 } );
+				await resource.createAndRetrieve( "https://example.com/another-resource/", { a: "child" }, "slug", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { a: "child" }, "slug", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository resolved relative URI when multiple child", async () => {
-				await resource.$createAndRetrieve( "relative/", [ { a: "child" } ] );
+				await resource.createAndRetrieve( "relative/", [ { a: "child" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { a: "child" } ] );
 			} );
 
 			it( "should call repository resolved relative URI when multiple child and options", async () => {
-				await resource.$createAndRetrieve( "relative/", [ { a: "child" } ], { timeout: 5050 } );
+				await resource.createAndRetrieve( "relative/", [ { a: "child" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { a: "child" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository resolved relative URI when multiple child and slugs", async () => {
-				await resource.$createAndRetrieve( "relative/", [ { a: "child" } ], [ "child-slug" ] );
+				await resource.createAndRetrieve( "relative/", [ { a: "child" } ], [ "child-slug" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { a: "child" } ], [ "child-slug" ] );
 			} );
 
 			it( "should call repository resolved relative URI when multiple child, slugs and options", async () => {
-				await resource.$createAndRetrieve( "relative/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
+				await resource.createAndRetrieve( "relative/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { a: "child" } ], [ "child-slug" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository resolved relative URI when single child", async () => {
-				await resource.$createAndRetrieve( "relative/", { a: "child" } );
+				await resource.createAndRetrieve( "relative/", { a: "child" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { a: "child" } );
 			} );
 
 			it( "should call repository resolved relative URI when single child and options", async () => {
-				await resource.$createAndRetrieve( "relative/", { a: "child" }, { timeout: 5050 } );
+				await resource.createAndRetrieve( "relative/", { a: "child" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { a: "child" }, { timeout: 5050 } );
 			} );
 
 			it( "should call repository resolved relative URI when single child and slug", async () => {
-				await resource.$createAndRetrieve( "relative/", { a: "child" }, "slug" );
+				await resource.createAndRetrieve( "relative/", { a: "child" }, "slug" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { a: "child" }, "slug" );
 			} );
 
 			it( "should call repository resolved relative URI when single child, slug and options", async () => {
-				await resource.$createAndRetrieve( "relative/", { a: "child" }, "slug", { timeout: 5050 } );
+				await resource.createAndRetrieve( "relative/", { a: "child" }, "slug", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { a: "child" }, "slug", { timeout: 5050 } );
 			} );
 
 		} );
 
 
-		describe( method( OBLIGATORY, "$addMember" ), () => {
+		describe( method( OBLIGATORY, "addMember" ), () => {
 
 			it( hasSignature(
 				"Adds the provided resource as member of the current document.", [
@@ -530,8 +530,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$addMember ).toBeDefined();
-				expect( resource.$addMember ).toEqual( jasmine.any( Function ) );
+				expect( resource.addMember ).toBeDefined();
+				expect( resource.addMember ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -543,70 +543,70 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 
 
 			it( "should call repository with $id when string member", async () => {
-				await resource.$addMember( "member/" );
+				await resource.addMember( "member/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", "member/" );
 			} );
 
 			it( "should call repository with $id when pointer member", async () => {
-				await resource.$addMember( { $id: "member/" } );
+				await resource.addMember( { $id: "member/" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { $id: "member/" } );
 			} );
 
 			it( "should call repository with $id when string member and options", async () => {
-				await resource.$addMember( "member/", { timeout: 5050 } );
+				await resource.addMember( "member/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", "member/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when pointer member and options", async () => {
-				await resource.$addMember( { $id: "member/" }, { timeout: 5050 } );
+				await resource.addMember( { $id: "member/" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { $id: "member/" }, { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with absolute URI when string member", async () => {
-				await resource.$addMember( "https://example.com/another-resource/", "member/" );
+				await resource.addMember( "https://example.com/another-resource/", "member/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", "member/" );
 			} );
 
 			it( "should call repository with absolute URI when pointer member", async () => {
-				await resource.$addMember( "https://example.com/another-resource/", { $id: "member/" } );
+				await resource.addMember( "https://example.com/another-resource/", { $id: "member/" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { $id: "member/" } );
 			} );
 
 			it( "should call repository with absolute URI when string member and options", async () => {
-				await resource.$addMember( "https://example.com/another-resource/", "member/", { timeout: 5050 } );
+				await resource.addMember( "https://example.com/another-resource/", "member/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", "member/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with absolute URI when pointer member and options", async () => {
-				await resource.$addMember( "https://example.com/another-resource/", { $id: "member/" }, { timeout: 5050 } );
+				await resource.addMember( "https://example.com/another-resource/", { $id: "member/" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { $id: "member/" }, { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with resolved relative URI when string member", async () => {
-				await resource.$addMember( "relative/", "member/" );
+				await resource.addMember( "relative/", "member/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", "member/" );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member", async () => {
-				await resource.$addMember( "relative/", { $id: "member/" } );
+				await resource.addMember( "relative/", { $id: "member/" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { $id: "member/" } );
 			} );
 
 			it( "should call repository with resolved relative URI when string member and options", async () => {
-				await resource.$addMember( "relative/", "member/", { timeout: 5050 } );
+				await resource.addMember( "relative/", "member/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", "member/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member and options", async () => {
-				await resource.$addMember( "relative/", { $id: "member/" }, { timeout: 5050 } );
+				await resource.addMember( "relative/", { $id: "member/" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { $id: "member/" }, { timeout: 5050 } );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$addMembers" ), () => {
+		describe( method( OBLIGATORY, "addMembers" ), () => {
 
 			it( hasSignature(
 				"Adds the provided resources as members of the current document.", [
@@ -626,8 +626,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$addMembers ).toBeDefined();
-				expect( resource.$addMembers ).toEqual( jasmine.any( Function ) );
+				expect( resource.addMembers ).toBeDefined();
+				expect( resource.addMembers ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -639,101 +639,101 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 
 
 			it( "should call repository with $id when string member", async () => {
-				await resource.$addMembers( [ "member/" ] );
+				await resource.addMembers( [ "member/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ "member/" ] );
 			} );
 
 			it( "should call repository with $id when pointer member", async () => {
-				await resource.$addMembers( [ { $id: "member/" } ] );
+				await resource.addMembers( [ { $id: "member/" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { $id: "member/" } ] );
 			} );
 
 			it( "should call repository with $id when pointer & string member", async () => {
-				await resource.$addMembers( [ { $id: "member1/" }, "member2/" ] );
+				await resource.addMembers( [ { $id: "member1/" }, "member2/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { $id: "member1/" }, "member2/" ] );
 			} );
 
 			it( "should call repository with $id when string member and options", async () => {
-				await resource.$addMembers( [ "member/" ], { timeout: 5050 } );
+				await resource.addMembers( [ "member/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ "member/" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when pointer member and options", async () => {
-				await resource.$addMembers( [ { $id: "member/" } ], { timeout: 5050 } );
+				await resource.addMembers( [ { $id: "member/" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { $id: "member/" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when pointer & string member and options", async () => {
-				await resource.$addMembers( [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
+				await resource.addMembers( [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with absolute URI when string member", async () => {
-				await resource.$addMembers( "https://example.com/another-resource/", [ "member/" ] );
+				await resource.addMembers( "https://example.com/another-resource/", [ "member/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ "member/" ] );
 			} );
 
 			it( "should call repository with absolute URI when pointer member", async () => {
-				await resource.$addMembers( "https://example.com/another-resource/", [ { $id: "member/" } ] );
+				await resource.addMembers( "https://example.com/another-resource/", [ { $id: "member/" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { $id: "member/" } ] );
 			} );
 
 			it( "should call repository with absolute URI when pointer & string member", async () => {
-				await resource.$addMembers( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ] );
+				await resource.addMembers( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ] );
 			} );
 
 			it( "should call repository with absolute URI when string member and options", async () => {
-				await resource.$addMembers( "https://example.com/another-resource/", [ "member/" ], { timeout: 5050 } );
+				await resource.addMembers( "https://example.com/another-resource/", [ "member/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ "member/" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with absolute URI when pointer member and options", async () => {
-				await resource.$addMembers( "https://example.com/another-resource/", [ { $id: "member/" } ], { timeout: 5050 } );
+				await resource.addMembers( "https://example.com/another-resource/", [ { $id: "member/" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { $id: "member/" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with absolute URI when pointer member and options", async () => {
-				await resource.$addMembers( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
+				await resource.addMembers( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with resolved relative URI when string member", async () => {
-				await resource.$addMembers( "relative/", [ "member/" ] );
+				await resource.addMembers( "relative/", [ "member/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ "member/" ] );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member", async () => {
-				await resource.$addMembers( "relative/", [ { $id: "member/" } ] );
+				await resource.addMembers( "relative/", [ { $id: "member/" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { $id: "member/" } ] );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member", async () => {
-				await resource.$addMembers( "relative/", [ { $id: "member1/" }, "member2/" ] );
+				await resource.addMembers( "relative/", [ { $id: "member1/" }, "member2/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { $id: "member1/" }, "member2/" ] );
 			} );
 
 			it( "should call repository with resolved relative URI when string member and options", async () => {
-				await resource.$addMembers( "relative/", [ "member/" ], { timeout: 5050 } );
+				await resource.addMembers( "relative/", [ "member/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ "member/" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member and options", async () => {
-				await resource.$addMembers( "relative/", [ { $id: "member/" } ], { timeout: 5050 } );
+				await resource.addMembers( "relative/", [ { $id: "member/" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { $id: "member/" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member and options", async () => {
-				await resource.$addMembers( "relative/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
+				await resource.addMembers( "relative/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 			} );
 
 		} );
 
 
-		describe( method( OBLIGATORY, "$removeMember" ), () => {
+		describe( method( OBLIGATORY, "removeMember" ), () => {
 
 			it( hasSignature(
 				"Removes the provided resource as member of the current document.", [
@@ -753,8 +753,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$removeMember ).toBeDefined();
-				expect( resource.$removeMember ).toEqual( jasmine.any( Function ) );
+				expect( resource.removeMember ).toBeDefined();
+				expect( resource.removeMember ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -766,70 +766,70 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 
 
 			it( "should call repository with $id when string member", async () => {
-				await resource.$removeMember( "member/" );
+				await resource.removeMember( "member/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", "member/" );
 			} );
 
 			it( "should call repository with $id when pointer member", async () => {
-				await resource.$removeMember( { $id: "member/" } );
+				await resource.removeMember( { $id: "member/" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { $id: "member/" } );
 			} );
 
 			it( "should call repository with $id when string member and options", async () => {
-				await resource.$removeMember( "member/", { timeout: 5050 } );
+				await resource.removeMember( "member/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", "member/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when pointer member and options", async () => {
-				await resource.$removeMember( { $id: "member/" }, { timeout: 5050 } );
+				await resource.removeMember( { $id: "member/" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { $id: "member/" }, { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with absolute URI when string member", async () => {
-				await resource.$removeMember( "https://example.com/another-resource/", "member/" );
+				await resource.removeMember( "https://example.com/another-resource/", "member/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", "member/" );
 			} );
 
 			it( "should call repository with absolute URI when pointer member", async () => {
-				await resource.$removeMember( "https://example.com/another-resource/", { $id: "member/" } );
+				await resource.removeMember( "https://example.com/another-resource/", { $id: "member/" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { $id: "member/" } );
 			} );
 
 			it( "should call repository with absolute URI when string member and options", async () => {
-				await resource.$removeMember( "https://example.com/another-resource/", "member/", { timeout: 5050 } );
+				await resource.removeMember( "https://example.com/another-resource/", "member/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", "member/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with absolute URI when pointer member and options", async () => {
-				await resource.$removeMember( "https://example.com/another-resource/", { $id: "member/" }, { timeout: 5050 } );
+				await resource.removeMember( "https://example.com/another-resource/", { $id: "member/" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { $id: "member/" }, { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with resolved relative URI when string member", async () => {
-				await resource.$removeMember( "relative/", "member/" );
+				await resource.removeMember( "relative/", "member/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", "member/" );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member", async () => {
-				await resource.$removeMember( "relative/", { $id: "member/" } );
+				await resource.removeMember( "relative/", { $id: "member/" } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { $id: "member/" } );
 			} );
 
 			it( "should call repository with resolved relative URI when string member and options", async () => {
-				await resource.$removeMember( "relative/", "member/", { timeout: 5050 } );
+				await resource.removeMember( "relative/", "member/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", "member/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member and options", async () => {
-				await resource.$removeMember( "relative/", { $id: "member/" }, { timeout: 5050 } );
+				await resource.removeMember( "relative/", { $id: "member/" }, { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { $id: "member/" }, { timeout: 5050 } );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "$removeMembers" ), () => {
+		describe( method( OBLIGATORY, "removeMembers" ), () => {
 
 			it( hasSignature(
 				"Removes the provided resources as members of the current document.", [
@@ -849,8 +849,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.$removeMembers ).toBeDefined();
-				expect( resource.$removeMembers ).toEqual( jasmine.any( Function ) );
+				expect( resource.removeMembers ).toBeDefined();
+				expect( resource.removeMembers ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -862,124 +862,124 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 
 
 			it( "should call repository with $id when string member", async () => {
-				await resource.$removeMembers( [ "member/" ] );
+				await resource.removeMembers( [ "member/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ "member/" ] );
 			} );
 
 			it( "should call repository with $id when pointer member", async () => {
-				await resource.$removeMembers( [ { $id: "member/" } ] );
+				await resource.removeMembers( [ { $id: "member/" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { $id: "member/" } ] );
 			} );
 
 			it( "should call repository with $id when pointer & string member", async () => {
-				await resource.$removeMembers( [ { $id: "member1/" }, "member2/" ] );
+				await resource.removeMembers( [ { $id: "member1/" }, "member2/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { $id: "member1/" }, "member2/" ] );
 			} );
 
 			it( "should call repository with $id when string member and options", async () => {
-				await resource.$removeMembers( [ "member/" ], { timeout: 5050 } );
+				await resource.removeMembers( [ "member/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ "member/" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when pointer member and options", async () => {
-				await resource.$removeMembers( [ { $id: "member/" } ], { timeout: 5050 } );
+				await resource.removeMembers( [ { $id: "member/" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { $id: "member/" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when pointer & string member and options", async () => {
-				await resource.$removeMembers( [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
+				await resource.removeMembers( [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when no member", async () => {
-				await resource.$removeMembers();
+				await resource.removeMembers();
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
 			} );
 
 			it( "should call repository with $id when options", async () => {
-				await resource.$removeMembers( { timeout: 5050 } );
+				await resource.removeMembers( { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with absolute URI when string member", async () => {
-				await resource.$removeMembers( "https://example.com/another-resource/", [ "member/" ] );
+				await resource.removeMembers( "https://example.com/another-resource/", [ "member/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ "member/" ] );
 			} );
 
 			it( "should call repository with absolute URI when pointer member", async () => {
-				await resource.$removeMembers( "https://example.com/another-resource/", [ { $id: "member/" } ] );
+				await resource.removeMembers( "https://example.com/another-resource/", [ { $id: "member/" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { $id: "member/" } ] );
 			} );
 
 			it( "should call repository with absolute URI when pointer & string member", async () => {
-				await resource.$removeMembers( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ] );
+				await resource.removeMembers( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ] );
 			} );
 
 			it( "should call repository with absolute URI when string member and options", async () => {
-				await resource.$removeMembers( "https://example.com/another-resource/", [ "member/" ], { timeout: 5050 } );
+				await resource.removeMembers( "https://example.com/another-resource/", [ "member/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ "member/" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with absolute URI when pointer member and options", async () => {
-				await resource.$removeMembers( "https://example.com/another-resource/", [ { $id: "member/" } ], { timeout: 5050 } );
+				await resource.removeMembers( "https://example.com/another-resource/", [ { $id: "member/" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { $id: "member/" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with absolute URI when pointer member and options", async () => {
-				await resource.$removeMembers( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
+				await resource.removeMembers( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with absolute URI when no member", async () => {
-				await resource.$removeMembers( "https://example.com/another-resource/" );
+				await resource.removeMembers( "https://example.com/another-resource/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
 			} );
 
 			it( "should call repository with absolute URI when options", async () => {
-				await resource.$removeMembers( "https://example.com/another-resource/", { timeout: 5050 } );
+				await resource.removeMembers( "https://example.com/another-resource/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with resolved relative URI when string member", async () => {
-				await resource.$removeMembers( "relative/", [ "member/" ] );
+				await resource.removeMembers( "relative/", [ "member/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ "member/" ] );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member", async () => {
-				await resource.$removeMembers( "relative/", [ { $id: "member/" } ] );
+				await resource.removeMembers( "relative/", [ { $id: "member/" } ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { $id: "member/" } ] );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member", async () => {
-				await resource.$removeMembers( "relative/", [ { $id: "member1/" }, "member2/" ] );
+				await resource.removeMembers( "relative/", [ { $id: "member1/" }, "member2/" ] );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { $id: "member1/" }, "member2/" ] );
 			} );
 
 			it( "should call repository with resolved relative URI when string member and options", async () => {
-				await resource.$removeMembers( "relative/", [ "member/" ], { timeout: 5050 } );
+				await resource.removeMembers( "relative/", [ "member/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ "member/" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member and options", async () => {
-				await resource.$removeMembers( "relative/", [ { $id: "member/" } ], { timeout: 5050 } );
+				await resource.removeMembers( "relative/", [ { $id: "member/" } ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { $id: "member/" } ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with resolved relative URI when pointer member and options", async () => {
-				await resource.$removeMembers( "relative/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
+				await resource.removeMembers( "relative/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", [ { $id: "member1/" }, "member2/" ], { timeout: 5050 } );
 			} );
 
 			it( "should call repository with resolved relative URI when no member", async () => {
-				await resource.$removeMembers( "relative/" );
+				await resource.removeMembers( "relative/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
 			} );
 
 			it( "should call repository with resolved relative URI when options", async () => {
-				await resource.$removeMembers( "relative/", { timeout: 5050 } );
+				await resource.removeMembers( "relative/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { timeout: 5050 } );
 			} );
 

@@ -9,10 +9,10 @@ import { QueryableMetadata } from "./QueryableMetadata";
 
 
 export interface QueryablePointer extends ResolvablePointer {
-	$_queryableMetadata:QueryableMetadata | undefined;
+	_queryableMetadata:QueryableMetadata | undefined;
 
 
-	$isQueried():boolean;
+	isQueried():boolean;
 }
 
 
@@ -24,10 +24,10 @@ export type QueryablePointerFactory =
 
 export const QueryablePointer:QueryablePointerFactory = {
 	PROTOTYPE: {
-		$_queryableMetadata: void 0,
+		_queryableMetadata: void 0,
 
-		$isQueried( this:QueryablePointer ):boolean {
-			return ! ! this.$_queryableMetadata;
+		isQueried( this:QueryablePointer ):boolean {
+			return ! ! this._queryableMetadata;
 		},
 	},
 

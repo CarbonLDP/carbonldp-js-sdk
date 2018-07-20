@@ -4,9 +4,9 @@ var ModelDecorator_1 = require("../Model/ModelDecorator");
 var ResolvablePointer_1 = require("../Repository/ResolvablePointer");
 exports.QueryablePointer = {
     PROTOTYPE: {
-        $_queryableMetadata: void 0,
-        $isQueried: function () {
-            return !!this.$_queryableMetadata;
+        _queryableMetadata: void 0,
+        isQueried: function () {
+            return !!this._queryableMetadata;
         },
     },
     isDecorated: function (object) {

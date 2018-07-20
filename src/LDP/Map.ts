@@ -35,7 +35,7 @@ export const Map:MapFactory = {
 
 	is( object:object ):object is Map<any, any> {
 		return Resource.is( object )
-			&& object.$hasType( Map.TYPE )
+			&& object.hasType( Map.TYPE )
 			&& object.hasOwnProperty( "entries" );
 	},
 

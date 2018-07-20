@@ -301,7 +301,7 @@ carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
 	appContext = _appContext;
 
 	console.log( "Getting root container..." );
-	return appContext.documents.$get( "/" );
+	return appContext.documents.get( "/" );
 }).then( function( result ) {
 	console.log( "Root container received" );
 	console.log( result[0].id );
