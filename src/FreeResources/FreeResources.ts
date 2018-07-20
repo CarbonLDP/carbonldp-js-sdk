@@ -14,7 +14,7 @@ import { Pointer } from "../Pointer/Pointer";
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 
-import { BaseRegistry } from "../Registry/BaseRegistry";
+import { $BaseRegistry } from "../Registry/BaseRegistry";
 import { Registry } from "../Registry/Registry";
 
 import { Resource } from "../Resource/Resource";
@@ -100,7 +100,7 @@ export const FreeResources:FreeResourcesFactory = {
 	decorate<T extends BaseFreeResources>( object:T ):T & FreeResources {
 		if( FreeResources.isDecorated( object ) ) return object;
 
-		const base:T & BaseRegistry<Resource> = Object.assign<T, Pick<FreeResources, "$__modelDecorator">>( object, {
+		const base:T & $BaseRegistry<Resource> = Object.assign<T, Pick<FreeResources, "$__modelDecorator">>( object, {
 			$__modelDecorator: Resource,
 		} );
 
@@ -121,7 +121,7 @@ export const FreeResources:FreeResourcesFactory = {
 				const digestedSchema:DigestedObjectSchema = registry.getSchemaFor( node );
 
 				const target:object = freeResources.$getPointer( node[ "@id" ], true );
-				registry.$context.jsonldConverter.compact( node, target, digestedSchema, freeResources );
+				registry.context.jsonldConverter.compact( node, target, digestedSchema, freeResources );
 			} );
 
 		return freeResources;

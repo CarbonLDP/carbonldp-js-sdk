@@ -19,7 +19,7 @@ import { RDFDocument } from "../RDF/Document";
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 
-import { BaseRegistry } from "../Registry/BaseRegistry";
+import { $BaseRegistry } from "../Registry/BaseRegistry";
 import { Registry } from "../Registry/Registry";
 
 import { Resource } from "../Resource/Resource";
@@ -215,8 +215,8 @@ export const TransientDocument:TransientDocumentFactory = {
 	decorate<T extends BaseDocument>( object:T ):T & TransientDocument {
 		if( TransientDocument.isDecorated( object ) ) return object;
 
-		type Base = T & BaseRegistry;
-		const base:Base = ModelDecorator.definePropertiesFrom<BaseRegistry, T>( {
+		type Base = T & $BaseRegistry;
+		const base:Base = ModelDecorator.definePropertiesFrom<$BaseRegistry, T>( {
 			$__modelDecorator: TransientFragment,
 		}, object );
 

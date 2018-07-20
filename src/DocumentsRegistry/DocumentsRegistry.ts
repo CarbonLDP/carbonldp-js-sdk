@@ -17,14 +17,14 @@ import { BaseDocumentsRegistry } from "./BaseDocumentsRegistry";
 
 
 export interface DocumentsRegistry extends GeneralRegistry<Document> {
-	readonly $context:DocumentsContext;
+	readonly context:DocumentsContext;
 
 	register( id:string ):Document;
 }
 
 
 export type DocumentsRegistryFactory =
-	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>, "$_getLocalID">
+	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>, "_getLocalID">
 	& ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry>
 	& ModelFactory<DocumentsRegistry, BaseDocumentsRegistry>
 	;

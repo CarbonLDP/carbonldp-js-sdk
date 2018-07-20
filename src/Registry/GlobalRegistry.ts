@@ -14,8 +14,8 @@ export interface BaseGlobalRegistry {
 
 
 export interface GlobalRegistry extends GeneralRegistry<RegisteredPointer> {
-	$context:GlobalContext;
-	$registry:undefined;
+	context:GlobalContext;
+	registry:undefined;
 }
 
 

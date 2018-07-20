@@ -1,27 +1,55 @@
 import { IDAlreadyInUseError } from "../Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
+import { BiModelDecorator } from "../Model/BiModelDecorator";
 import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 
 import { Pointer } from "../Pointer/Pointer";
-import { PointerLibrary } from "../Pointer/PointerLibrary";
-import { PointerValidator } from "../Pointer/PointerValidator";
-
-import { isObject } from "../Utils";
+import { $PointerLibrary, PointerLibrary } from "../Pointer/PointerLibrary";
+import { $PointerValidator, PointerValidator } from "../Pointer/PointerValidator";
 
 import { BaseRegisteredPointer } from "./BaseRegisteredPointer";
-import { BaseRegistry } from "./BaseRegistry";
+import { $BaseRegistry, BaseRegistry } from "./BaseRegistry";
 import { RegisteredPointer } from "./RegisteredPointer";
 
 
-export interface Registry<M extends RegisteredPointer = RegisteredPointer> extends PointerLibrary, PointerValidator {
+export interface Registry<MODEL extends RegisteredPointer = RegisteredPointer> extends PointerLibrary, PointerValidator {
 	// TODO: Change to unknown
-	readonly $registry:Registry<any> | undefined;
+	readonly registry:Registry<any> | $Registry<any> | undefined;
 
-	readonly $__modelDecorator:ModelDecorator<M, BaseRegisteredPointer>;
-	readonly $__resourcesMap:Map<string, M>;
+	readonly __modelDecorator:ModelDecorator<MODEL, BaseRegisteredPointer>;
+	readonly __resourcesMap:Map<string, MODEL>;
+
+
+	inScope( idOrPointer:string | Pointer ):boolean;
+	inScope( idOrPointer:string | Pointer, local:true ):boolean;
+
+
+	hasPointer( id:string ):boolean;
+	hasPointer( id:string, local:true ):boolean;
+
+	getPointer( id:string ):RegisteredPointer;
+	getPointer( id:string, local:true ):MODEL;
+
+	getPointers():RegisteredPointer[];
+	getPointers( local:true ):MODEL[];
+
+	removePointer( idOrPointer:string | RegisteredPointer ):boolean;
+	removePointer( idOrPointer:string | RegisteredPointer, local:true ):boolean;
+
+
+	_addPointer<T extends object>( pointer:T & Pointer ):T & MODEL;
+
+	_getLocalID( id:string ):string;
+}
+
+export interface $Registry<MODEL extends RegisteredPointer = RegisteredPointer> extends Pointer, $PointerLibrary, $PointerValidator {
+	// TODO: Change to unknown
+	readonly $registry:Registry<any> | $Registry<any> | undefined;
+
+	readonly $__modelDecorator:ModelDecorator<MODEL, BaseRegisteredPointer>;
+	readonly $__resourcesMap:Map<string, MODEL>;
 
 
 	$inScope( idOrPointer:string | Pointer ):boolean;
@@ -32,10 +60,10 @@ export interface Registry<M extends RegisteredPointer = RegisteredPointer> exten
 	$hasPointer( id:string, local:true ):boolean;
 
 	$getPointer( id:string ):RegisteredPointer;
-	$getPointer( id:string, local:true ):M;
+	$getPointer( id:string, local:true ):MODEL;
 
 	$getPointers():RegisteredPointer[];
-	$getPointers( local:true ):M[];
+	$getPointers( local:true ):MODEL[];
 
 	$removePointer( idOrPointer:string | RegisteredPointer ):boolean;
 	$removePointer( idOrPointer:string | RegisteredPointer, local:true ):boolean;
@@ -43,130 +71,186 @@ export interface Registry<M extends RegisteredPointer = RegisteredPointer> exten
 
 	$_getLocalID( id:string ):string;
 
-	$_addPointer<T extends object>( pointer:T & Pointer ):T & M;
+	$_addPointer<T extends object>( pointer:T & Pointer ):T & MODEL;
+}
+
+
+type AnyRegistry<MODEL extends RegisteredPointer = RegisteredPointer> = $Registry<MODEL> | Registry<MODEL>;
+
+function __getResourcesMaps( this:void, registry:AnyRegistry ):Map<string, RegisteredPointer> {
+	return "$id" in registry ? registry.$__resourcesMap : registry.__resourcesMap;
+}
+
+function __getParentResource( this:void, registry:AnyRegistry ):AnyRegistry | undefined {
+	return "$id" in registry ? registry.$registry : registry.registry;
+}
+
+function __getDecorator( this:void, registry:AnyRegistry ):ModelDecorator<RegisteredPointer, BaseRegisteredPointer> {
+	return "$id" in registry ?
+		registry.$__modelDecorator : registry.__modelDecorator;
+}
+
+function __getLocalID( this:void, registry:AnyRegistry, id:string ):string {
+	return "$id" in registry ?
+		registry.$_getLocalID( id ) : registry._getLocalID( id );
+}
+
+function __addPointer( this:void, registry:AnyRegistry, pointer:Pointer ):RegisteredPointer {
+	return "$id" in registry ?
+		registry.$_addPointer( pointer ) : registry._addPointer( pointer );
+}
+
+
+function _inScope( this:AnyRegistry | undefined, idOrPointer:string | Pointer, local?:true ):boolean {
+	if( ! this ) return false;
+
+	try {
+		const id:string = Pointer.getID( idOrPointer );
+		__getLocalID( this, id );
+
+		return true;
+	} catch {
+		if( local === true ) return false;
+
+		const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
+		return _inScope.call( parentRegistry, idOrPointer );
+	}
+}
+
+function _hasPointer( this:AnyRegistry | undefined, id:string, local?:true ):boolean {
+	if( ! this ) return false;
+
+	if( _inScope.call( this, id, true ) ) {
+		const localID:string = __getLocalID( this, id );
+
+		const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
+		if( resourcesMap.has( localID ) ) return true;
+	}
+
+	if( local === true ) return false;
+
+	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
+	return _hasPointer.call( parentRegistry, id );
+}
+
+function _getPointer( this:AnyRegistry, id:string, local?:true ):RegisteredPointer {
+	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
+
+	if( ! _inScope.call( this, id, true ) ) {
+		if( local === true || ! parentRegistry ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
+		return _getPointer.call( parentRegistry, id );
+	}
+
+	const localID:string = __getLocalID( this, id );
+
+	const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
+	if( resourcesMap.has( localID ) ) return resourcesMap.get( localID );
+
+	if( local !== true && _hasPointer.call( parentRegistry, id ) )
+		return _getPointer.call( parentRegistry, id );
+
+	return __addPointer( this, { $id: id } );
+}
+
+function _getPointers( this:AnyRegistry, local?:true ):RegisteredPointer[] {
+	const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
+
+	const pointers:RegisteredPointer[] = Array.from( resourcesMap.values() );
+
+	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
+	if( local === true || ! parentRegistry ) return pointers;
+
+	return [
+		..._getPointers.call( parentRegistry ),
+		...pointers,
+	];
+}
+
+function _removePointer( this:AnyRegistry | undefined, idOrPointer:string | RegisteredPointer, local?:true ):boolean {
+	if( ! this ) return false;
+
+	const id:string = Pointer.getID( idOrPointer );
+	if( _inScope.call( this, id, true ) ) {
+		const localID:string = __getLocalID( this, id );
+
+		const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
+		if( resourcesMap.delete( localID ) ) return true;
+	}
+
+	if( local === true ) return false;
+
+	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
+	return _removePointer.call( parentRegistry, idOrPointer );
+}
+
+
+function _addPointer<T extends object>( this:AnyRegistry, pointer:T & Pointer ):T & RegisteredPointer {
+	if( ! pointer.$id ) throw new IllegalArgumentError( "The pointer $id cannot be empty." );
+
+	const localID:string = __getLocalID( this, pointer.$id );
+
+	const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
+	if( resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being used.` );
+
+	const resource:T & RegisteredPointer = __getDecorator( this )
+		.decorate( Object.assign<T, BaseRegisteredPointer>( pointer, {
+			$registry: this,
+		} ) );
+
+	resourcesMap.set( localID, resource );
+
+	return resource;
+}
+
+function _getLocalID( this:AnyRegistry, id:string ):string {
+	return id;
 }
 
 
 // TODO: Use unknown
 export type RegistryFactory =
-	& ModelPrototype<Registry>
-	& ModelDecorator<Registry<any>, BaseRegistry>
-	& ModelFactory<Registry, BaseRegistry>
+	& ModelPrototype<Registry<any>>
+	& BiModelDecorator<Registry, $Registry, BaseRegistry, $BaseRegistry>
 	;
 
 export const Registry:RegistryFactory = {
 	PROTOTYPE: {
-		$registry: void 0,
+		registry: void 0,
 
-		get $__modelDecorator():ModelDecorator<RegisteredPointer> {
-			throw new IllegalArgumentError( `Property "$__modelDecorator" is required` );
+		get __modelDecorator():ModelDecorator<RegisteredPointer> {
+			throw new IllegalArgumentError( `Property "__modelDecorator" is required` );
 		},
 
-		get $__resourcesMap():Map<string, RegisteredPointer> { return new Map(); },
+		get __resourcesMap():Map<string, RegisteredPointer> { return new Map(); },
 
 
-		$inScope( this:Registry, idOrPointer:string | Pointer, local?:true ):boolean {
-			try {
-				const id:string = Pointer.getID( idOrPointer );
-				this.$_getLocalID( id );
-				return true;
-			} catch {
-				if( local === true || ! this.$registry ) return false;
-				return this.$registry.$inScope( idOrPointer );
-			}
-		},
+		inScope: _inScope,
 
 
-		$hasPointer( this:Registry, id:string, local?:true ):boolean {
-			if( this.$inScope( id, true ) ) {
-				const localID:string = this.$_getLocalID( id );
-				if( this.$__resourcesMap.has( localID ) ) return true;
-			}
+		hasPointer: _hasPointer,
 
-			if( local === true || ! this.$registry ) return false;
-			return this.$registry.$hasPointer( id );
-		},
+		getPointer: _getPointer,
 
-		$getPointer( this:Registry, id:string, local?:true ):RegisteredPointer {
-			if( ! this.$inScope( id, true ) ) {
-				if( local === true || ! this.$registry ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
-				return this.$registry.$getPointer( id );
-			}
+		getPointers: _getPointers,
 
-			const localID:string = this.$_getLocalID( id );
-			if( this.$__resourcesMap.has( localID ) ) return this.$__resourcesMap.get( localID );
-
-			if( local !== true && this.$registry && this.$registry.$hasPointer( id ) )
-				return this.$registry.$getPointer( id );
-
-			return this.$_addPointer( { $id: id } );
-		},
-
-		$getPointers( this:Registry, local?:true ):RegisteredPointer[] {
-			const pointers:RegisteredPointer[] = Array.from( this.$__resourcesMap.values() );
-			if( local === true || ! this.$registry ) return pointers;
-
-			return [
-				...this.$registry.$getPointers(),
-				...pointers,
-			];
-		},
-
-		$removePointer( this:Registry, idOrPointer:string | RegisteredPointer, local?:true ):boolean {
-			const id:string = Pointer.getID( idOrPointer );
-
-			if( this.$inScope( id, true ) ) {
-				const localID:string = this.$_getLocalID( id );
-				if( this.$__resourcesMap.delete( localID ) ) return true;
-			}
-
-			if( local === true || ! this.$registry ) return false;
-			return this.$registry.$removePointer( idOrPointer );
-		},
+		removePointer: _removePointer,
 
 
-		$_addPointer<T extends object>( this:Registry, pointer:T & Pointer ):T & RegisteredPointer {
-			if( ! pointer.$id ) throw new IllegalArgumentError( "The pointer $id cannot be empty." );
+		_addPointer: _addPointer,
 
-			const localID:string = this.$_getLocalID( pointer.$id );
-			if( this.$__resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being used.` );
-
-			const resource:T & RegisteredPointer = this.$__modelDecorator
-				.decorate( Object.assign( pointer, {
-					$registry: this,
-				} ) );
-
-			this.$__resourcesMap.set( localID, resource );
-			return resource;
-		},
-
-		$_getLocalID( this:Registry, id:string ):never {
-			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
-		},
+		_getLocalID: _getLocalID,
 	},
 
 
-	isDecorated( object:object ):object is Registry {
-		return isObject( object )
-			&& ModelDecorator
-				.hasPropertiesFrom( Registry.PROTOTYPE, object )
-			;
+	isDecorated<T extends object>( object:object ):object is any {
+		return BiModelDecorator
+			.hasPropertiesFrom( Registry.PROTOTYPE, object );
 	},
 
-	decorate<T extends BaseRegistry>( object:T ):T & Registry {
+	decorate<T extends object>( object:T ):T & any {
 		if( Registry.isDecorated( object ) ) return object;
 
-		return ModelDecorator
+		return BiModelDecorator
 			.definePropertiesFrom( Registry.PROTOTYPE, object );
-	},
-
-
-	create<T extends object>( data:T & BaseRegistry ):T & Registry {
-		const copy:T & BaseRegistry = Object.assign( {}, data );
-		return Registry.createFrom( copy );
-	},
-
-	createFrom<T extends object>( object:T & BaseRegistry ):T & Registry {
-		return Registry.decorate( object );
 	},
 };

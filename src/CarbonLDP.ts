@@ -113,7 +113,7 @@ export class CarbonLDP extends DocumentsContext {
 		this._extendsSettings( __getSettingsFrom( urlOrSettings ) );
 
 		// Root document
-		this.documents = this.registry.$getPointer( this._baseURI, true );
+		this.documents = this.registry.getPointer( this._baseURI, true );
 	}
 
 	/**

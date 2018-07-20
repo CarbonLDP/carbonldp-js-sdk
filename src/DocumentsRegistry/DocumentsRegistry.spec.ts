@@ -57,7 +57,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 			"$context",
 			"CarbonLDP.DocumentsContext"
 		), ():void => {
-			const target:DocumentsRegistry[ "$context" ] = {} as DocumentsContext;
+			const target:DocumentsRegistry[ "context" ] = {} as DocumentsContext;
 			expect( target ).toBeDefined();
 		} );
 

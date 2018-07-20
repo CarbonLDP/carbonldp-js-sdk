@@ -44,7 +44,7 @@ export interface Resource extends RegisteredPointer {
 
 function __getContext( registry:Registry<any> | GeneralRegistry<any> | undefined ):Context | undefined {
 	if( ! registry ) return;
-	if( "$context" in registry && registry.$context ) return registry.$context;
+	if( "$context" in registry && registry.context ) return registry.context;
 
 	return __getContext( registry.$registry );
 }

@@ -8,11 +8,11 @@ import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 import { Pointer } from "../Pointer/Pointer";
 
 import { BaseRegisteredPointer } from "./BaseRegisteredPointer";
-import { Registry } from "./Registry";
+import { $Registry, Registry } from "./Registry";
 
 
 export interface RegisteredPointer extends Pointer {
-	$registry:Registry<RegisteredPointer>;
+	$registry:Registry<RegisteredPointer> | $Registry<RegisteredPointer>;
 }
 
 

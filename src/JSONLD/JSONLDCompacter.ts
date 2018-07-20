@@ -46,7 +46,7 @@ export class JSONLDCompacter {
 
 		this.root = root;
 		this.resolver = schemaResolver || registry;
-		this.converter = jsonldConverter || registry.$context.jsonldConverter;
+		this.converter = jsonldConverter || registry.context.jsonldConverter;
 		this.compactionMap = new Map();
 	}
 

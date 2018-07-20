@@ -64,7 +64,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 			"$context",
 			"CarbonLDP.Context"
 		), ():void => {
-			const target:GeneralRegistry[ "$context" ] = {} as Context;
+			const target:GeneralRegistry[ "context" ] = {} as Context;
 			expect( target ).toBeDefined();
 		} );
 
@@ -78,7 +78,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 				$context = createMockContext( { parentContext: $context as any } );
 
 				const registry:GeneralRegistry = createMock();
-				expect( registry.$registry ).toBe( $context.parentContext.registry );
+				expect( registry.registry ).toBe( $context.parentContext.registry );
 			} );
 
 			it( "should return undefined when parent has no registry", () => {
@@ -86,14 +86,14 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 				$context = createMockContext( { parentContext: $context as any } );
 
 				const registry:GeneralRegistry = createMock();
-				expect( registry.$registry ).toBeUndefined();
+				expect( registry.registry ).toBeUndefined();
 			} );
 
 			it( "should return undefined when no paren context", () => {
 				$context = createMockContext( { parentContext: void 0 } );
 
 				const registry:GeneralRegistry = createMock();
-				expect( registry.$registry ).toBeUndefined();
+				expect( registry.registry ).toBeUndefined();
 			} );
 
 		} );
@@ -445,7 +445,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 			} );
 
 			it( "should not return same object", () => {
-				const object:BaseGeneralRegistry & { the:string } = { $context, $__modelDecorator: RegisteredPointer, the: "object" };
+				const object:BaseGeneralRegistry & { the:string } = { context: $context, $__modelDecorator: RegisteredPointer, the: "object" };
 				const returned:object = GeneralRegistry.create( object );
 
 				expect( returned ).not.toBe( object );
@@ -471,7 +471,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 			} );
 
 			it( "should return same object", () => {
-				const object:BaseGeneralRegistry & { the:string } = { $context, $__modelDecorator: RegisteredPointer, the: "object" };
+				const object:BaseGeneralRegistry & { the:string } = { context: $context, $__modelDecorator: RegisteredPointer, the: "object" };
 				const returned:object = GeneralRegistry.createFrom( object );
 
 				expect( returned ).toBe( object );

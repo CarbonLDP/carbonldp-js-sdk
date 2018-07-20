@@ -63,7 +63,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should get general schema from context", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				const schema:DigestedObjectSchema = new DigestedObjectSchema();
 				const spy:jasmine.Spy = spyOn( $context, "getObjectSchema" )
@@ -131,7 +131,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should return get schemas from @type", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				$context.extendObjectSchema( "Type-1", {} );
 				$context.extendObjectSchema( "Type-2", {} );
@@ -146,7 +146,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should return get schemas from types", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				$context.extendObjectSchema( "Type-1", {} );
 				$context.extendObjectSchema( "Type-2", {} );
@@ -162,7 +162,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should return c:Document schema when document URI in @id", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				$context.extendObjectSchema( C.Document, {} );
 				const spy:jasmine.Spy = spyOn( $context, "getObjectSchema" )
@@ -175,7 +175,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should return c:Document schema when document URI in id", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				$context.extendObjectSchema( C.Document, {} );
 				const spy:jasmine.Spy = spyOn( $context, "getObjectSchema" )
@@ -188,7 +188,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should not return c:Document schema when fragment in @id", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				$context.extendObjectSchema( C.Document, {} );
 				const spy:jasmine.Spy = spyOn( $context, "getObjectSchema" )
@@ -201,7 +201,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should not return c:Document schema when fragment in id", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				$context.extendObjectSchema( C.Document, {} );
 				const spy:jasmine.Spy = spyOn( $context, "getObjectSchema" )
@@ -214,7 +214,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should not return c:Document schema when bNode label in @id", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				$context.extendObjectSchema( C.Document, {} );
 				const spy:jasmine.Spy = spyOn( $context, "getObjectSchema" )
@@ -227,7 +227,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should not return c:Document schema when bNode label in id", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				$context.extendObjectSchema( C.Document, {} );
 				const spy:jasmine.Spy = spyOn( $context, "getObjectSchema" )
@@ -241,7 +241,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should return combined schemas with the general when Node", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				$context
 					.extendObjectSchema( { "inGeneral": {} } )
@@ -258,7 +258,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should return combined schemas with the general when Resource", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				$context
 					.extendObjectSchema( { "inGeneral": {} } )
@@ -275,7 +275,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 			it( "should return combined with partial schema when queryable resource", () => {
 				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { $context } );
+				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
 
 				$context
 					.extendObjectSchema( { "inGeneral": {} } )
