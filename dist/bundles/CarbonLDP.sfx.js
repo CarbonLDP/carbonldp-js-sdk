@@ -14909,7 +14909,7 @@ function __applyResponseRepresentation(repository, resource, response) {
         var freeNodes = Document_1.RDFDocument.getFreeNodes(expandedResult);
         __applyResponseMetadata(repository, freeNodes);
         var preferenceHeader = response.getHeader("Preference-Applied");
-        if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
+        if (preferenceHeader === null || !preferenceHeader.hasValue("return=representation"))
             return resource;
         return repository._parseResponseData(response, resource.$id);
     });

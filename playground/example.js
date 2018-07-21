@@ -94,7 +94,7 @@
 
 		afterAll( async function() {
 			if( ! parent ) return;
-			await parent.delete();
+			await parent.$delete();
 		} );
 
 
@@ -106,7 +106,7 @@
 			for( let i = 0; i < childrenToCreate; i ++ ) {
 				let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
 
-				await parent.create( {
+				await parent.$create( {
 					types: [ "ex:Child", type ],
 					index: i + 1,
 				} );
@@ -115,7 +115,7 @@
 		} );
 
 		it( "can refresh the parent", async function() {
-			await parent.refresh();
+			await parent.$refresh();
 
 			expect( parent.contains.length ).toEqual( childrenToCreate );
 		} );
@@ -182,7 +182,7 @@
 			for( let i = 0; i < childrenToCreate; i ++ ) {
 				let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
 
-				await child.create( {
+				await child.$create( {
 					types: [ "ex:NestedChild", type ],
 					index: i + 1,
 				} );
@@ -244,35 +244,35 @@
 		} );
 
 
-		fdescribe( "Creations >", function() {
+		describe( "Creations >", function() {
 
 			let doc;
 			afterEach( async function() {
 				if( ! doc ) return;
-				await doc.delete();
+				await doc.$delete();
 			} );
 
 
 			it( "should create object", async function() {
-				doc = await parent.create( {} );
+				doc = await parent.$create( {} );
 
 				expect( doc.$slug ).toMatch( /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i );
 			} );
 
 			it( "should create object with options", async function() {
-				doc = await parent.create( { the: "document" }, {} );
+				doc = await parent.$create( { the: "document" }, {} );
 
 				expect( doc.$slug ).toMatch( /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i );
 			} );
 
 			it( "should create object with slug", async function() {
-				doc = await parent.create( {}, "the-slug" );
+				doc = await parent.$create( {}, "the-slug" );
 
 				expect( doc.$slug ).toBe( "the-slug" );
 			} );
 
 			it( "should create object with slug and options", async function() {
-				doc = await parent.create( {}, "the-slug", {} );
+				doc = await parent.$create( {}, "the-slug", {} );
 
 				expect( doc.$slug ).toBe( "the-slug" );
 			} );
@@ -314,20 +314,20 @@
 
 
 			it( "should create object with @id", async function() {
-				doc = await parent.create( { $id: "the-slug/" } );
+				doc = await parent.$create( { $id: "the-slug/" } );
 
 				expect( doc.$slug ).toBe( "the-slug" );
 			} );
 
 			it( "should create object with @id and slug", async function() {
-				doc = await parent.create( { $id: "the-slug/" }, "ignored-slug" );
+				doc = await parent.$create( { $id: "the-slug/" }, "ignored-slug" );
 
 				expect( doc.$slug ).toBe( "the-slug" );
 			} );
 
 
 			it( "should create access point", async function() {
-				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+				doc = await parent.$create( CarbonLDP.AccessPoint.create( {
 					$id: "the-slug/",
 					hasMemberRelation: "member",
 					isMemberOfRelation: "isMemberOf",
@@ -335,12 +335,12 @@
 
 				expect( doc.$slug ).toBe( "the-slug" );
 
-				await parent.refresh();
+				await parent.$refresh();
 				expect( parent.accessPoints ).toContain( doc );
 			} );
 
 			it( "should create access point with options", async function() {
-				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+				doc = await parent.$create( CarbonLDP.AccessPoint.create( {
 					$id: "the-slug/",
 					hasMemberRelation: "member",
 					isMemberOfRelation: "isMemberOf",
@@ -348,37 +348,37 @@
 
 				expect( doc.$slug ).toBe( "the-slug" );
 
-				await parent.refresh();
+				await parent.$refresh();
 				expect( parent.accessPoints ).toContain( doc );
 			} );
 
 			it( "should create access point with slug", async function() {
-				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+				doc = await parent.$create( CarbonLDP.AccessPoint.create( {
 					hasMemberRelation: "member",
 					isMemberOfRelation: "isMemberOf",
 				} ), "the-slug" );
 
 				expect( doc.$slug ).toBe( "the-slug" );
 
-				await parent.refresh();
+				await parent.$refresh();
 				expect( parent.accessPoints ).toContain( doc );
 			} );
 
 			it( "should create access point with slug and options", async function() {
-				doc = await parent.create( CarbonLDP.AccessPoint.create( {
+				doc = await parent.$create( CarbonLDP.AccessPoint.create( {
 					hasMemberRelation: "member",
 					isMemberOfRelation: "isMemberOf",
 				} ), "the-slug", {} );
 
 				expect( doc.$slug ).toBe( "the-slug" );
 
-				await parent.refresh();
+				await parent.$refresh();
 				expect( parent.accessPoints ).toContain( doc );
 			} );
 
 
 			it( "should create object with nested objects", async function() {
-				doc = await parent.create( {
+				doc = await parent.$create( {
 					nested1: { index: 1 },
 					nested2: [ { index: 2 }, { index: 3 } ],
 				} );
@@ -411,14 +411,14 @@
 
 			it( "should updated nested when refreshed", async function() {
 				const nested = { the: "nested one" };
-				doc = await parent.create( { nested: nested } );
+				doc = await parent.$create( { nested: nested } );
 
 				const copy = await carbon2.documents.$get( doc.$id );
 				copy.nested.the = "updated nested one";
 
 				await copy.$save();
 
-				await doc.refresh();
+				await doc.$refresh();
 				expect( nested ).toEqual( { the: "updated nested one" } );
 			} );
 
@@ -430,7 +430,7 @@
 			let accessPoint;
 
 			it( `can create an access point`, async function() {
-				accessPoint = await child.create( CarbonLDP.AccessPoint.create( {
+				accessPoint = await child.$create( CarbonLDP.AccessPoint.create( {
 					hasMemberRelation: "ex:my-relation",
 					isMemberOfRelation: "ex:my-inverse-relation",
 				} ) );
@@ -440,15 +440,15 @@
 
 
 			it( `should add a member from access point`, async function() {
-				const member = await parent.create( {
+				const member = await parent.$create( {
 					types: [ "ex:Child" ],
 					the: "member",
 				} );
 
 				await accessPoint.$addMember( member );
 
-				await child.get();
-				await member.resolve();
+				await child.$get();
+				await member.$resolve();
 
 				expect( child.myRelation ).toEqual( [
 					member,
@@ -464,14 +464,14 @@
 					the: "member " + (i + 1),
 					index: i + 1,
 				}) );
-				await parent.create( members );
+				await parent.$create( members );
 
 				await accessPoint.$addMembers( members );
 
-				await child.get( { ensureLatest: true } );
+				await child.$get( { ensureLatest: true } );
 
 				await Promise.all( members
-					.map( async member => await member.resolve() )
+					.map( async member => await member.$resolve() )
 				);
 
 				expect( child.myRelation ).toEqual( jasmine.arrayContaining( members ) );
@@ -488,7 +488,7 @@
 
 				await accessPoint.$removeMember( members[ 0 ] );
 
-				await child.refresh();
+				await child.$refresh();
 				expect( child.myRelation.length ).toEqual( members.length - 1 );
 				expect( child.myRelation ).not.toContain( members[ 0 ] );
 
@@ -501,13 +501,13 @@
 
 				await accessPoint.$removeMembers( [ members[ 0 ], members[ 1 ] ] );
 
-				await child.refresh();
+				await child.$refresh();
 				expect( child.myRelation.length ).toEqual( members.length - 2 );
 				expect( child.myRelation.length ).not.toContain( members[ 0 ] );
 				expect( child.myRelation.length ).not.toContain( members[ 1 ] );
 
 				await Promise.all( members
-					.map( async member => await member.refresh() )
+					.map( async member => await member.$refresh() )
 				);
 
 				expect( members[ 0 ].myInverseRelation ).not.toBeDefined();
@@ -520,7 +520,7 @@
 
 				await accessPoint.$removeMembers();
 
-				await child.refresh();
+				await child.$refresh();
 				expect( child.myRelation ).not.toBeDefined();
 
 				for( let member of members ) {
