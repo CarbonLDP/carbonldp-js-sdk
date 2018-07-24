@@ -381,23 +381,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				} );
 			} );
 
-			it( "should add if-none-match header when resolved and ensureLatest", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				$context.registry._addPointer( {
-					_resolved: true,
-					$eTag: "\"0-12345\"",
-					$id: "https://example.com/resource/",
-				} );
-
-				await repository.get( "resource/", { ensureLatest: true } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"if-none-match": "\"0-12345\"",
-				} ) );
-			} );
-
 			it( "should return resource from content-location header", async () => {
 				stubRequest( "https://example.com/", {
 					headers: {
@@ -675,23 +658,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				expect( retrieved ).toEqual( {
 					string: "value from request",
 				} );
-			} );
-
-			it( "should add if-none-match header when resolved and ensureLatest", async () => {
-				stubRequest( "https://example.com/" );
-
-				const registered:Document = $context.registry
-					.getPointer( "https://example.com/", true );
-				registered._resolved = true;
-				registered.$eTag = "\"0-12345\"";
-
-
-				await repository.resolve( document, { ensureLatest: true } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"if-none-match": "\"0-12345\"",
-				} ) );
 			} );
 
 
