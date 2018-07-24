@@ -23,7 +23,6 @@ var DeltaCreator = (function () {
         this.updateLists = [];
     }
     DeltaCreator.prototype.getPatch = function () {
-        var _a;
         var patch = new Tokens_1.LDPatchToken();
         this.prefixesMap.forEach(function (prefix) { return patch.prologues.push(prefix); });
         (_a = patch.statements).push.apply(_a, this.updateLists);
@@ -32,10 +31,10 @@ var DeltaCreator = (function () {
         if (this.deleteToken.triples.length)
             patch.statements.push(this.deleteToken);
         return "" + patch;
+        var _a;
     };
     DeltaCreator.prototype.addResource = function (id, previousResource, currentResource) {
         var _this = this;
-        var _a;
         var schema = this.__getSchema(id, previousResource, currentResource);
         var resource = iri_1.isBNodeLabel(id) ?
             new tokens_1.BlankNodeToken(id) : this.__compactIRI(schema, id);
@@ -104,6 +103,7 @@ var DeltaCreator = (function () {
             return;
         this.__addPrefixFrom(resource, schema);
         predicates.forEach(function (x) { return _this.__addPrefixFrom(x.predicate, schema); });
+        var _a;
     };
     DeltaCreator.prototype.__getSchema = function (id, previousResource, currentResource) {
         var types = new Set();
@@ -129,7 +129,6 @@ var DeltaCreator = (function () {
         return this.__compactIRI(schema, uri);
     };
     DeltaCreator.prototype.__getObjects = function (value, schema, definition) {
-        var _a;
         var values = (Array.isArray(value) ?
             !definition || definition.containerType !== null ? value : value.slice(0, 1) :
             [value]).filter(__isValidValue);
@@ -144,6 +143,7 @@ var DeltaCreator = (function () {
             return this.__expandLanguageMap(values, schema);
         }
         return this.__expandValues(values, schema, definition);
+        var _a;
     };
     DeltaCreator.prototype.__expandValues = function (values, schema, definition) {
         var _this = this;

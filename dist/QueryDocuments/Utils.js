@@ -68,7 +68,6 @@ function __isFullTriple(triple) {
 }
 function __internalTripleAdder(subjectsMap, patterns) {
     patterns.forEach(function (pattern) {
-        var _a;
         if (pattern.token === "optional" || pattern.token === "graph")
             return __internalTripleAdder(subjectsMap, pattern.patterns);
         if (pattern.token !== "subject")
@@ -84,6 +83,7 @@ function __internalTripleAdder(subjectsMap, patterns) {
         if (__isFullTriple(pattern))
             subject.predicates.length = 0;
         (_a = subject.predicates).push.apply(_a, pattern.predicates);
+        var _a;
     });
 }
 function __getSubject(subjectsMap, original) {

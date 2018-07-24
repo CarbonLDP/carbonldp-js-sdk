@@ -1,17 +1,17 @@
 export declare class JSONLDProcessor {
     static expand(input: object): Promise<object[]>;
-    private static __getTargetFromLinkHeader;
-    private static __findContextURLs;
-    private static __retrieveContexts;
-    private static __isKeyword;
-    private static __isValidType;
-    private static __expandURI;
-    private static __expandLanguageMap;
-    private static __getContainer;
-    private static __expandValue;
-    private static __process;
-    private static __addValue;
-    private static __hasProperty;
-    private static __compareValues;
-    private static __hasValue;
+    private static __getTargetFromLinkHeader(header);
+    private static __findContextURLs(input, contexts, base, replace?);
+    private static __retrieveContexts(input, contextsRequested, base);
+    private static __isKeyword(value);
+    private static __isValidType(value);
+    private static __expandURI(schema, uri, relativeTo?);
+    private static __expandLanguageMap(languageMap);
+    private static __getContainer(context, property);
+    private static __expandValue(context, value, propertyName);
+    private static __process(context, element, activeProperty?, insideList?);
+    private static __addValue(element, propertyName, value, options);
+    private static __hasProperty(element, propertyName);
+    private static __compareValues(value1, value2);
+    private static __hasValue(element, propertyName, value);
 }

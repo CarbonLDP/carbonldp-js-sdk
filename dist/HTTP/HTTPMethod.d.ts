@@ -5,5 +5,5 @@ export declare enum HTTPMethod {
     POST = 3,
     PUT = 4,
     PATCH = 5,
-    DELETE = 6
+    DELETE = 6,
 }

@@ -14,7 +14,7 @@ export declare class MessagingService {
     reconnect(onConnect?: () => void, onError?: (error: Error) => void): void;
     subscribe(destination: string, onEvent: (data: EventMessage) => void, onError: (error: Error) => void): void;
     unsubscribe(destination: string, onEvent: (data: EventMessage) => void): void;
-    private __broadcastError;
-    private __makeSubscription;
-    private __saveSubscriptions;
+    private __broadcastError(error);
+    private __makeSubscription(id, destination, eventCallback, errorCallback);
+    private __saveSubscriptions();
 }

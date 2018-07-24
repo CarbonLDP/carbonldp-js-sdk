@@ -23,12 +23,11 @@ var QueryProperty = (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             patterns[_i] = arguments[_i];
         }
-        var _a;
         (_a = this._patterns).push.apply(_a, patterns);
         return this;
+        var _a;
     };
     QueryProperty.prototype.getPatterns = function () {
-        var _a;
         var patterns = this._patterns.slice();
         var fn = getFunctionPattern(this.getType());
         if (fn) {
@@ -38,6 +37,7 @@ var QueryProperty = (function () {
         if (!this._optional)
             return patterns;
         return [(_a = new tokens_1.OptionalToken()).addPattern.apply(_a, patterns),];
+        var _a;
     };
     QueryProperty.prototype.getSchema = function () {
         if (this._schema)

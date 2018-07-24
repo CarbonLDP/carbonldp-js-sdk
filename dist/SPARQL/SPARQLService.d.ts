@@ -14,5 +14,5 @@ export declare class SPARQLService {
     static executeRawCONSTRUCTQuery(url: string, constructQuery: string, options?: RequestOptions): Promise<[string, Response]>;
     static executeRawDESCRIBEQuery(url: string, describeQuery: string, options?: RequestOptions): Promise<[string, Response]>;
     static executeUPDATE(url: string, updateQuery: string, options?: RequestOptions): Promise<Response>;
-    private static __parseRawBindingProperty;
+    private static __parseRawBindingProperty(rawBindingProperty, pointerLibrary);
 }

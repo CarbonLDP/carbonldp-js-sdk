@@ -46,55 +46,55 @@ exports.ResolvablePointer = {
                 this.types = [];
         },
         get: function (uri) {
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uri, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).get.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uri, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).get.apply(_b, [_uri].concat(_args));
+            var _b;
         },
         resolve: function (resource) {
-            var _a;
-            var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).resolve.apply(_a, [_resource].concat(_args));
+            var _a = Utils_1._parseResourceParams(this, resource, arguments), _resource = _a._resource, _args = _a._args;
+            return (_b = this.$repository).resolve.apply(_b, [_resource].concat(_args));
+            var _b;
         },
         exists: function (uri) {
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uri, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).exists.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uri, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).exists.apply(_b, [_uri].concat(_args));
+            var _b;
         },
         refresh: function (resource) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            var _a;
-            var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).refresh.apply(_a, [_resource].concat(_args));
+            var _a = Utils_1._parseResourceParams(this, resource, arguments), _resource = _a._resource, _args = _a._args;
+            return (_b = this.$repository).refresh.apply(_b, [_resource].concat(_args));
+            var _b;
         },
         save: function (resource) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            var _a;
-            var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).save.apply(_a, [_resource].concat(_args));
+            var _a = Utils_1._parseResourceParams(this, resource, arguments), _resource = _a._resource, _args = _a._args;
+            return (_b = this.$repository).save.apply(_b, [_resource].concat(_args));
+            var _b;
         },
         saveAndRefresh: function (resource) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            var _a;
-            var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).saveAndRefresh.apply(_a, [_resource].concat(_args));
+            var _a = Utils_1._parseResourceParams(this, resource, arguments), _resource = _a._resource, _args = _a._args;
+            return (_b = this.$repository).saveAndRefresh.apply(_b, [_resource].concat(_args));
+            var _b;
         },
         delete: function (uri) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uri, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).delete.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uri, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).delete.apply(_b, [_uri].concat(_args));
+            var _b;
         },
     },
     isDecorated: function (object) {

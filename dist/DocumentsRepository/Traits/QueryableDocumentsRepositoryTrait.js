@@ -29,7 +29,6 @@ var Utils_3 = require("../Utils");
 var LDPDocumentsRepositoryTrait_1 = require("./LDPDocumentsRepositoryTrait");
 var emptyQueryBuildFn = function (_) { return _; };
 function __executePatterns(repository, url, requestOptions, queryContext, targetName, constructPatterns, target) {
-    var _a, _b;
     var metadataVar = queryContext.getVariable("metadata");
     var construct = (_a = new tokens_1.ConstructToken()
         .addTriple(new tokens_1.SubjectToken(metadataVar)
@@ -98,6 +97,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
             .compactDocuments(rdfDocuments, targetDocuments);
     })
         .catch(Utils_3._getErrorResponseParserFn(repository.$context.registry));
+    var _a, _b;
 }
 function __executeBuilder(repository, url, requestOptions, queryContext, targetProperty, queryBuilderFn, target) {
     var Builder = targetProperty.name === "document" ?
@@ -188,7 +188,6 @@ function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
     }
     parentAdder.addPattern(Utils_1._createTypesPattern(queryContext, parentName));
     resource._queryableMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
-        var _a;
         var path = parentName + "." + propertyName;
         var propertyPattern = (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, Utils_1._createPropertyPatterns(queryContext, parentName, path, digestedProperty));
         parentAdder.addPattern(propertyPattern);
@@ -199,6 +198,7 @@ function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
         if (!propertyFragment)
             return;
         __addRefreshPatterns(queryContext, propertyPattern, propertyFragment, path);
+        var _a;
     });
 }
 function __refreshQueryable(repository, document, requestOptions) {

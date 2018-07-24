@@ -2719,55 +2719,55 @@ exports.ResolvablePointer = {
                 this.types = [];
         },
         get: function (uri) {
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uri, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).get.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uri, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).get.apply(_b, [_uri].concat(_args));
+            var _b;
         },
         resolve: function (resource) {
-            var _a;
-            var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).resolve.apply(_a, [_resource].concat(_args));
+            var _a = Utils_1._parseResourceParams(this, resource, arguments), _resource = _a._resource, _args = _a._args;
+            return (_b = this.$repository).resolve.apply(_b, [_resource].concat(_args));
+            var _b;
         },
         exists: function (uri) {
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uri, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).exists.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uri, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).exists.apply(_b, [_uri].concat(_args));
+            var _b;
         },
         refresh: function (resource) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            var _a;
-            var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).refresh.apply(_a, [_resource].concat(_args));
+            var _a = Utils_1._parseResourceParams(this, resource, arguments), _resource = _a._resource, _args = _a._args;
+            return (_b = this.$repository).refresh.apply(_b, [_resource].concat(_args));
+            var _b;
         },
         save: function (resource) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            var _a;
-            var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).save.apply(_a, [_resource].concat(_args));
+            var _a = Utils_1._parseResourceParams(this, resource, arguments), _resource = _a._resource, _args = _a._args;
+            return (_b = this.$repository).save.apply(_b, [_resource].concat(_args));
+            var _b;
         },
         saveAndRefresh: function (resource) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            var _a;
-            var _b = Utils_1._parseResourceParams(this, resource, arguments), _resource = _b._resource, _args = _b._args;
-            return (_a = this.$repository).saveAndRefresh.apply(_a, [_resource].concat(_args));
+            var _a = Utils_1._parseResourceParams(this, resource, arguments), _resource = _a._resource, _args = _a._args;
+            return (_b = this.$repository).saveAndRefresh.apply(_b, [_resource].concat(_args));
+            var _b;
         },
         delete: function (uri) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uri, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).delete.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uri, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).delete.apply(_b, [_uri].concat(_args));
+            var _b;
         },
     },
     isDecorated: function (object) {
@@ -2932,7 +2932,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var http_1 = __importDefault(__webpack_require__(193));
 var https_1 = __importDefault(__webpack_require__(194));
@@ -3245,7 +3245,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = __webpack_require__(3);
 var InvalidJSONLDSyntaxError_1 = __webpack_require__(70);
@@ -4130,7 +4130,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __importStar(__webpack_require__(0));
 exports.RDFList = {
@@ -4152,7 +4152,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __importStar(__webpack_require__(0));
 var XSD_1 = __webpack_require__(11);
@@ -4269,7 +4269,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __importStar(__webpack_require__(0));
 var Node_1 = __webpack_require__(42);
@@ -4462,7 +4462,6 @@ function __isFullTriple(triple) {
 }
 function __internalTripleAdder(subjectsMap, patterns) {
     patterns.forEach(function (pattern) {
-        var _a;
         if (pattern.token === "optional" || pattern.token === "graph")
             return __internalTripleAdder(subjectsMap, pattern.patterns);
         if (pattern.token !== "subject")
@@ -4478,6 +4477,7 @@ function __internalTripleAdder(subjectsMap, patterns) {
         if (__isFullTriple(pattern))
             subject.predicates.length = 0;
         (_a = subject.predicates).push.apply(_a, pattern.predicates);
+        var _a;
     });
 }
 function __getSubject(subjectsMap, original) {
@@ -4883,7 +4883,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = __webpack_require__(3);
 var Utils = __importStar(__webpack_require__(0));
@@ -5194,12 +5194,11 @@ var QueryProperty = (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             patterns[_i] = arguments[_i];
         }
-        var _a;
         (_a = this._patterns).push.apply(_a, patterns);
         return this;
+        var _a;
     };
     QueryProperty.prototype.getPatterns = function () {
-        var _a;
         var patterns = this._patterns.slice();
         var fn = getFunctionPattern(this.getType());
         if (fn) {
@@ -5209,6 +5208,7 @@ var QueryProperty = (function () {
         if (!this._optional)
             return patterns;
         return [(_a = new tokens_1.OptionalToken()).addPattern.apply(_a, patterns),];
+        var _a;
     };
     QueryProperty.prototype.getSchema = function () {
         if (this._schema)
@@ -5683,7 +5683,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = __webpack_require__(3);
 var ContainerType_1 = __webpack_require__(40);
@@ -6000,7 +6000,6 @@ var Header = (function () {
     Header.parseHeaders = function (headersString) {
         var headers = new Map();
         headersString.split(/\r?\n/).forEach(function (strHeader) {
-            var _a;
             if (!strHeader.trim())
                 return;
             var parts = strHeader.split(":");
@@ -6014,6 +6013,7 @@ var Header = (function () {
             else {
                 headers.set(name, new Header(values));
             }
+            var _a;
         });
         return headers;
     };
@@ -6478,7 +6478,6 @@ var JSONLDCompacter = (function () {
         var compactedData = this.converter.compact(node, {}, schema, containerLibrary, isPartial);
         var addedProperties = [];
         new Set(Object.keys(resource).concat(Object.keys(compactedData))).forEach(function (key) {
-            var _a;
             if (!compactedData.hasOwnProperty(key)) {
                 if (!isPartial || schema.properties.has(key))
                     delete resource[key];
@@ -6492,6 +6491,7 @@ var JSONLDCompacter = (function () {
             var values = Array.isArray(compactedData[key]) ? compactedData[key] : [compactedData[key]];
             resource[key].length = 0;
             (_a = resource[key]).push.apply(_a, values);
+            var _a;
         });
         return addedProperties
             .filter(function (x) { return schema.properties.has(x); });
@@ -7326,7 +7326,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = __webpack_require__(3);
 var Utils = __importStar(__webpack_require__(0));
@@ -7571,7 +7571,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var InvalidJSONLDSyntaxError_1 = __webpack_require__(70);
 var NotImplementedError_1 = __webpack_require__(56);
@@ -8020,7 +8020,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var ClientErrors = __importStar(__webpack_require__(104));
 var ServerErrors = __importStar(__webpack_require__(105));
@@ -8718,7 +8718,6 @@ var QueryDocumentBuilder = (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             values[_i] = arguments[_i];
         }
-        var _a;
         var termTokens = values.map(function (value) {
             var token = value.getToken();
             if (token.token === "blankNode")
@@ -8735,9 +8734,9 @@ var QueryDocumentBuilder = (function () {
             property = this._context.getProperty(parentPath);
         }
         return this;
+        var _a;
     };
     QueryDocumentBuilder.prototype._addProperty = function (propertyName, propertyDefinition) {
-        var _a, _b;
         var digestedDefinition = this.__addPropertyDefinition(propertyName, propertyDefinition);
         var name = this._document.name + "." + propertyName;
         var property = (_a = this._context
@@ -8752,6 +8751,7 @@ var QueryDocumentBuilder = (function () {
         }
         (_b = this._document).addPattern.apply(_b, property.getPatterns());
         return property;
+        var _a, _b;
     };
     QueryDocumentBuilder.prototype.__addPropertyDefinition = function (propertyName, propertyDefinition) {
         var digestedDefinition = ObjectSchemaDigester_1.ObjectSchemaDigester.digestProperty(propertyName, propertyDefinition, this._schema);
@@ -8881,7 +8881,6 @@ var DeltaCreator = (function () {
         this.updateLists = [];
     }
     DeltaCreator.prototype.getPatch = function () {
-        var _a;
         var patch = new Tokens_1.LDPatchToken();
         this.prefixesMap.forEach(function (prefix) { return patch.prologues.push(prefix); });
         (_a = patch.statements).push.apply(_a, this.updateLists);
@@ -8890,10 +8889,10 @@ var DeltaCreator = (function () {
         if (this.deleteToken.triples.length)
             patch.statements.push(this.deleteToken);
         return "" + patch;
+        var _a;
     };
     DeltaCreator.prototype.addResource = function (id, previousResource, currentResource) {
         var _this = this;
-        var _a;
         var schema = this.__getSchema(id, previousResource, currentResource);
         var resource = iri_1.isBNodeLabel(id) ?
             new tokens_1.BlankNodeToken(id) : this.__compactIRI(schema, id);
@@ -8962,6 +8961,7 @@ var DeltaCreator = (function () {
             return;
         this.__addPrefixFrom(resource, schema);
         predicates.forEach(function (x) { return _this.__addPrefixFrom(x.predicate, schema); });
+        var _a;
     };
     DeltaCreator.prototype.__getSchema = function (id, previousResource, currentResource) {
         var types = new Set();
@@ -8987,7 +8987,6 @@ var DeltaCreator = (function () {
         return this.__compactIRI(schema, uri);
     };
     DeltaCreator.prototype.__getObjects = function (value, schema, definition) {
-        var _a;
         var values = (Array.isArray(value) ?
             !definition || definition.containerType !== null ? value : value.slice(0, 1) :
             [value]).filter(__isValidValue);
@@ -9002,6 +9001,7 @@ var DeltaCreator = (function () {
             return this.__expandLanguageMap(values, schema);
         }
         return this.__expandValues(values, schema, definition);
+        var _a;
     };
     DeltaCreator.prototype.__expandValues = function (values, schema, definition) {
         var _this = this;
@@ -10009,14 +10009,14 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var sockjs_client_1 = __importDefault(__webpack_require__(247));
 var webstomp = __importStar(__webpack_require__(280));
@@ -11886,7 +11886,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(23);
 var AccessPoint_1 = __webpack_require__(191);
@@ -13617,24 +13617,24 @@ var LDPDocumentTrait_1 = __webpack_require__(218);
 exports.QueryableDocumentTrait = {
     PROTOTYPE: {
         getChildren: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uriOrQueryBuilderFnOrOptions, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).getChildren.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uriOrQueryBuilderFnOrOptions, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).getChildren.apply(_b, [_uri].concat(_args));
+            var _b;
         },
         getMembers: function (uriOrQueryBuilderFnOrOptions, queryBuilderFnOrOptions, queryBuilderFn) {
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uriOrQueryBuilderFnOrOptions, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).getMembers.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uriOrQueryBuilderFnOrOptions, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).getMembers.apply(_b, [_uri].concat(_args));
+            var _b;
         },
         listChildren: function (uriOrOptions, requestOptions) {
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uriOrOptions, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).listChildren.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uriOrOptions, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).listChildren.apply(_b, [_uri].concat(_args));
+            var _b;
         },
         listMembers: function (uriOrOptions, requestOptions) {
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uriOrOptions, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).listMembers.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uriOrOptions, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).listMembers.apply(_b, [_uri].concat(_args));
+            var _b;
         },
     },
     isDecorated: function (object) {
@@ -13676,35 +13676,35 @@ function __parseMemberParams(resource, args) {
 exports.LDPDocumentTrait = {
     PROTOTYPE: {
         create: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).create.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).create.apply(_b, [_uri].concat(_args));
+            var _b;
         },
         createAndRetrieve: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).createAndRetrieve.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).createAndRetrieve.apply(_b, [_uri].concat(_args));
+            var _b;
         },
         addMember: function (uriOrMember, memberOrOptions, requestOptions) {
-            var _a;
-            var _b = __parseMemberParams(this, arguments), uri = _b.uri, params = _b.params;
-            return (_a = this.$repository).addMember.apply(_a, [uri].concat(params));
+            var _a = __parseMemberParams(this, arguments), uri = _a.uri, params = _a.params;
+            return (_b = this.$repository).addMember.apply(_b, [uri].concat(params));
+            var _b;
         },
         addMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uriOrMembers, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).addMembers.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uriOrMembers, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).addMembers.apply(_b, [_uri].concat(_args));
+            var _b;
         },
         removeMember: function (uriOrMember, memberOrOptions, requestOptions) {
-            var _a;
-            var _b = __parseMemberParams(this, arguments), uri = _b.uri, params = _b.params;
-            return (_a = this.$repository).removeMember.apply(_a, [uri].concat(params));
+            var _a = __parseMemberParams(this, arguments), uri = _a.uri, params = _a.params;
+            return (_b = this.$repository).removeMember.apply(_b, [uri].concat(params));
+            var _b;
         },
         removeMembers: function (uriOrMembersOrOptions, membersOrOptions, requestOptions) {
-            var _a;
-            var _b = Utils_1._parseURIParams(this, uriOrMembersOrOptions, arguments), _uri = _b._uri, _args = _b._args;
-            return (_a = this.$repository).removeMembers.apply(_a, [_uri].concat(_args));
+            var _a = Utils_1._parseURIParams(this, uriOrMembersOrOptions, arguments), _uri = _a._uri, _args = _a._args;
+            return (_b = this.$repository).removeMembers.apply(_b, [_uri].concat(_args));
+            var _b;
         },
     },
     isDecorated: function (object) {
@@ -14203,7 +14203,6 @@ var Utils_3 = __webpack_require__(27);
 var LDPDocumentsRepositoryTrait_1 = __webpack_require__(231);
 var emptyQueryBuildFn = function (_) { return _; };
 function __executePatterns(repository, url, requestOptions, queryContext, targetName, constructPatterns, target) {
-    var _a, _b;
     var metadataVar = queryContext.getVariable("metadata");
     var construct = (_a = new tokens_1.ConstructToken()
         .addTriple(new tokens_1.SubjectToken(metadataVar)
@@ -14272,6 +14271,7 @@ function __executePatterns(repository, url, requestOptions, queryContext, target
             .compactDocuments(rdfDocuments, targetDocuments);
     })
         .catch(Utils_3._getErrorResponseParserFn(repository.$context.registry));
+    var _a, _b;
 }
 function __executeBuilder(repository, url, requestOptions, queryContext, targetProperty, queryBuilderFn, target) {
     var Builder = targetProperty.name === "document" ?
@@ -14362,7 +14362,6 @@ function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
     }
     parentAdder.addPattern(Utils_1._createTypesPattern(queryContext, parentName));
     resource._queryableMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
-        var _a;
         var path = parentName + "." + propertyName;
         var propertyPattern = (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, Utils_1._createPropertyPatterns(queryContext, parentName, path, digestedProperty));
         parentAdder.addPattern(propertyPattern);
@@ -14373,6 +14372,7 @@ function __addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
         if (!propertyFragment)
             return;
         __addRefreshPatterns(queryContext, propertyPattern, propertyFragment, path);
+        var _a;
     });
 }
 function __refreshQueryable(repository, document, requestOptions) {
@@ -15105,8 +15105,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -19808,7 +19808,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(__webpack_require__(103));
 exports.Errors = Errors;

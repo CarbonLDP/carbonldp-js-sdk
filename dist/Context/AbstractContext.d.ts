@@ -8,8 +8,8 @@ import { ResolvablePointer } from "../Repository/ResolvablePointer";
 import { Context } from "./Context";
 import { ContextSettings } from "./ContextSettings";
 export declare abstract class AbstractContext<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer, PARENT extends AbstractContext = undefined> implements Context {
-    abstract readonly registry: GeneralRegistry<REGISTRY> | undefined;
-    abstract readonly repository: GeneralRepository<REPOSITORY> | undefined;
+    readonly abstract registry: GeneralRegistry<REGISTRY> | undefined;
+    readonly abstract repository: GeneralRepository<REPOSITORY> | undefined;
     readonly jsonldConverter: JSONLDConverter;
     protected abstract _baseURI: string;
     readonly baseURI: string;
@@ -29,5 +29,5 @@ export declare abstract class AbstractContext<REGISTRY extends RegisteredPointer
     protected __getObjectSchemasTypes(): string[];
     protected __extendGeneralSchema(digestedSchema: DigestedObjectSchema): void;
     protected __extendTypeSchema(digestedSchema: DigestedObjectSchema, type: string): void;
-    private __resolveTypeURI;
+    private __resolveTypeURI(uri);
 }
