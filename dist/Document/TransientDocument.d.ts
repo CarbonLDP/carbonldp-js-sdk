@@ -26,7 +26,6 @@ export interface TransientDocument extends Resource, Registry<TransientFragment>
     _getLocalID(id: string): string;
     toJSON(contextOrKey?: Context | string): RDFDocument;
 }
-declare type OverriddenMembers = "$registry" | "_getLocalID" | "getPointer" | "toJSON";
+export declare type OverriddenMembers = "$registry" | "_getLocalID" | "getPointer" | "toJSON";
 export declare type TransientDocumentFactory = ModelPrototype<TransientDocument, Resource & Registry<TransientFragment>, OverriddenMembers> & ModelDecorator<TransientDocument, BaseDocument> & ModelFactoryOptional<TransientDocument, BaseDocument> & ModelTypeGuard<TransientDocument>;
 export declare const TransientDocument: TransientDocumentFactory;
-export {};

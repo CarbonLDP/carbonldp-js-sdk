@@ -54,4 +54,3 @@ export declare class UUIDUtils {
     static is(uuid: string): boolean;
     static generate(): string;
 }
-export declare type PickSelfProps<B extends object, A extends object, O extends keyof B = never> = Pick<B, Exclude<keyof B, keyof A> | O>;
