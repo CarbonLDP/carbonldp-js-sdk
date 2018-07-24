@@ -244,7 +244,7 @@
 		} );
 
 
-		fdescribe( "Creations >", function() {
+		describe( "Creations >", function() {
 
 			let doc;
 			afterEach( async function() {
@@ -527,6 +527,37 @@
 					await member.refresh();
 					expect( member.myInverseRelation ).not.toBeDefined();
 				}
+			} );
+
+		} );
+
+
+		describe( "Gets >", function() {
+
+			it( "get full after partial", async function() {
+				const child = await parent.create( {
+					property1: "property 1",
+					property2: "property 2",
+					property3: "property 3",
+				} );
+				const doc = carbon2.registry.register( child.$id );
+
+
+				await doc.get( _ => _.properties( {
+					property1: _.inherit,
+					property2: _.inherit,
+				} ) );
+				expect( doc.property1 ).toBe( "property 1" );
+				expect( doc.property2 ).toBe( "property 2" );
+				expect( doc.property3 ).toBeUndefined();
+				expect( doc.isQueried() ).toBe( true );
+
+
+				await doc.get();
+				expect( doc.property1 ).toBe( "property 1" );
+				expect( doc.property2 ).toBe( "property 2" );
+				expect( doc.property3 ).toBe( "property 3" );
+				expect( doc.isQueried() ).toBe( false );
 			} );
 
 		} );
