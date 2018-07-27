@@ -77,6 +77,7 @@ var JSONLDCompacter = (function () {
         var compactedData = this.converter.compact(node, {}, schema, containerLibrary, isPartial);
         var addedProperties = [];
         new Set(Object.keys(resource).concat(Object.keys(compactedData))).forEach(function (key) {
+            var _a;
             if (!compactedData.hasOwnProperty(key)) {
                 if (!isPartial || schema.properties.has(key))
                     delete resource[key];
@@ -90,7 +91,6 @@ var JSONLDCompacter = (function () {
             var values = Array.isArray(compactedData[key]) ? compactedData[key] : [compactedData[key]];
             resource[key].length = 0;
             (_a = resource[key]).push.apply(_a, values);
-            var _a;
         });
         return addedProperties
             .filter(function (x) { return schema.properties.has(x); });

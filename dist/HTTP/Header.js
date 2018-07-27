@@ -8,6 +8,7 @@ var Header = (function () {
     Header.parseHeaders = function (headersString) {
         var headers = new Map();
         headersString.split(/\r?\n/).forEach(function (strHeader) {
+            var _a;
             if (!strHeader.trim())
                 return;
             var parts = strHeader.split(":");
@@ -21,7 +22,6 @@ var Header = (function () {
             else {
                 headers.set(name, new Header(values));
             }
-            var _a;
         });
         return headers;
     };

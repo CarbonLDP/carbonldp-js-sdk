@@ -11,7 +11,7 @@ export declare class DocumentsContext extends AbstractContext<Document, Document
     readonly repository: DocumentsRepository;
     readonly messaging: MessagingService;
     protected _settings?: DocumentsContextSettings;
-    private static __mergePaths(this, target, source);
+    private static __mergePaths;
     constructor(url: string);
     _resolvePath(path: string): string;
     protected _extendPaths(paths: Paths): void;

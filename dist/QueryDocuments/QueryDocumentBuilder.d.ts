@@ -23,5 +23,5 @@ export declare class QueryDocumentBuilder {
     filter(constraint: string): this;
     values(...values: (QueryValue | QueryObject)[]): this;
     _addProperty(propertyName: string, propertyDefinition: QuerySchemaProperty): QueryProperty;
-    private __addPropertyDefinition(propertyName, propertyDefinition);
+    private __addPropertyDefinition;
 }

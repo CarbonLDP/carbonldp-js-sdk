@@ -7,7 +7,7 @@ export declare enum QueryPropertyType {
     FULL = 0,
     PARTIAL = 1,
     ALL = 2,
-    EMPTY = 3,
+    EMPTY = 3
 }
 export declare class QueryProperty {
     readonly name: string;

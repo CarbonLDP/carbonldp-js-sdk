@@ -16,35 +16,35 @@ function __parseMemberParams(resource, args) {
 exports.LDPDocumentTrait = {
     PROTOTYPE: {
         create: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
-            var _a = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _a._uri, _args = _a._args;
-            return (_b = this.$repository).create.apply(_b, [_uri].concat(_args));
-            var _b;
+            var _a;
+            var _b = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _b._uri, _args = _b._args;
+            return (_a = this.$repository).create.apply(_a, [_uri].concat(_args));
         },
         createAndRetrieve: function (uriOrChildren, childrenOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
             if (requestOptions === void 0) { requestOptions = {}; }
-            var _a = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _a._uri, _args = _a._args;
-            return (_b = this.$repository).createAndRetrieve.apply(_b, [_uri].concat(_args));
-            var _b;
+            var _a;
+            var _b = Utils_1._parseURIParams(this, uriOrChildren, arguments), _uri = _b._uri, _args = _b._args;
+            return (_a = this.$repository).createAndRetrieve.apply(_a, [_uri].concat(_args));
         },
         addMember: function (uriOrMember, memberOrOptions, requestOptions) {
-            var _a = __parseMemberParams(this, arguments), uri = _a.uri, params = _a.params;
-            return (_b = this.$repository).addMember.apply(_b, [uri].concat(params));
-            var _b;
+            var _a;
+            var _b = __parseMemberParams(this, arguments), uri = _b.uri, params = _b.params;
+            return (_a = this.$repository).addMember.apply(_a, [uri].concat(params));
         },
         addMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
-            var _a = Utils_1._parseURIParams(this, uriOrMembers, arguments), _uri = _a._uri, _args = _a._args;
-            return (_b = this.$repository).addMembers.apply(_b, [_uri].concat(_args));
-            var _b;
+            var _a;
+            var _b = Utils_1._parseURIParams(this, uriOrMembers, arguments), _uri = _b._uri, _args = _b._args;
+            return (_a = this.$repository).addMembers.apply(_a, [_uri].concat(_args));
         },
         removeMember: function (uriOrMember, memberOrOptions, requestOptions) {
-            var _a = __parseMemberParams(this, arguments), uri = _a.uri, params = _a.params;
-            return (_b = this.$repository).removeMember.apply(_b, [uri].concat(params));
-            var _b;
+            var _a;
+            var _b = __parseMemberParams(this, arguments), uri = _b.uri, params = _b.params;
+            return (_a = this.$repository).removeMember.apply(_a, [uri].concat(params));
         },
         removeMembers: function (uriOrMembersOrOptions, membersOrOptions, requestOptions) {
-            var _a = Utils_1._parseURIParams(this, uriOrMembersOrOptions, arguments), _uri = _a._uri, _args = _a._args;
-            return (_b = this.$repository).removeMembers.apply(_b, [_uri].concat(_args));
-            var _b;
+            var _a;
+            var _b = Utils_1._parseURIParams(this, uriOrMembersOrOptions, arguments), _uri = _b._uri, _args = _b._args;
+            return (_a = this.$repository).removeMembers.apply(_a, [_uri].concat(_args));
         },
     },
     isDecorated: function (object) {

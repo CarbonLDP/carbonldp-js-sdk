@@ -88,6 +88,7 @@ var QueryDocumentBuilder = (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             values[_i] = arguments[_i];
         }
+        var _a;
         var termTokens = values.map(function (value) {
             var token = value.getToken();
             if (token.token === "blankNode")
@@ -104,9 +105,9 @@ var QueryDocumentBuilder = (function () {
             property = this._context.getProperty(parentPath);
         }
         return this;
-        var _a;
     };
     QueryDocumentBuilder.prototype._addProperty = function (propertyName, propertyDefinition) {
+        var _a, _b;
         var digestedDefinition = this.__addPropertyDefinition(propertyName, propertyDefinition);
         var name = this._document.name + "." + propertyName;
         var property = (_a = this._context
@@ -121,7 +122,6 @@ var QueryDocumentBuilder = (function () {
         }
         (_b = this._document).addPattern.apply(_b, property.getPatterns());
         return property;
-        var _a, _b;
     };
     QueryDocumentBuilder.prototype.__addPropertyDefinition = function (propertyName, propertyDefinition) {
         var digestedDefinition = ObjectSchemaDigester_1.ObjectSchemaDigester.digestProperty(propertyName, propertyDefinition, this._schema);

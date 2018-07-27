@@ -3,5 +3,5 @@ export declare enum Event {
     DOCUMENT_MODIFIED = "document.modified",
     DOCUMENT_DELETED = "document.deleted",
     MEMBER_ADDED = "member.added",
-    MEMBER_REMOVED = "member.removed",
+    MEMBER_REMOVED = "member.removed"
 }

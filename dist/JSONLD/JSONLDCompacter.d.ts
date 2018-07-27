@@ -12,9 +12,9 @@ export declare class JSONLDCompacter {
     constructor(registry: GeneralRegistry<Document>, root?: string, schemaResolver?: ObjectSchemaResolver, jsonldConverter?: JSONLDConverter);
     compactDocument<T extends object>(rdfDocument: RDFDocument): T & Document;
     compactDocuments<T extends object>(rdfDocuments: RDFDocument[], mainDocuments?: RDFDocument[]): (T & Document)[];
-    private __compactNode(node, resource, containerLibrary, path);
-    private __getResource<M>(node, registry);
-    private __processCompactionQueue(compactionQueue);
-    private __setOrRemovePartial(resource, schema, path);
-    private __willBePartial(resource, schema, path);
+    private __compactNode;
+    private __getResource;
+    private __processCompactionQueue;
+    private __setOrRemovePartial;
+    private __willBePartial;
 }

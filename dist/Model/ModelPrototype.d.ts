@@ -1,10 +1,10 @@
-export declare type Diff<T extends string, U extends string> = ({
-    [P in T]: P;
+export declare type DiffKeys<T, U> = ({
+    [P in keyof T]: P;
 } & {
-    [P in U]: never;
+    [P in keyof U]: never;
 } & {
     [x: string]: never;
-})[T];
+})[keyof T];
 export interface ModelPrototype<MODEL extends object, EXTENDED extends object = {}, OVERRIDDEN extends keyof MODEL = never> {
-    PROTOTYPE: Pick<MODEL, Diff<keyof MODEL, keyof EXTENDED> | OVERRIDDEN>;
+    PROTOTYPE: Pick<MODEL, DiffKeys<MODEL, EXTENDED> | OVERRIDDEN>;
 }
