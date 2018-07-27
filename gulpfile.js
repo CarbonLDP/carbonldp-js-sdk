@@ -379,7 +379,7 @@ gulp.task( "test:node", () => {
 	process.env.NODE_ENV = "test";
 
 	moduleAlias.addAliases( {
-		"sockjs-client": path.resolve( __dirname, "test/mock-sockjs" ),
+		"sockjs-client": path.resolve( __dirname, config.dist.temp, "test/mock-sockjs" ),
 	} );
 
 	require( "source-map-support/register" );
