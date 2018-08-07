@@ -21,7 +21,6 @@ import {
 
 import { spyOnDecorated } from "../../../test/helpers/jasmine/spies";
 import { createMockQueryableMetadata } from "../../../test/helpers/mocks/core";
-import { AnyJasmineValue } from "../../../test/helpers/types";
 
 import { DocumentsContext } from "../../Context/DocumentsContext";
 
@@ -36,14 +35,11 @@ import { HTTPError } from "../../HTTP/Errors/HTTPError";
 import { Header } from "../../HTTP/Header";
 
 import { ErrorResponse } from "../../LDP/ErrorResponse";
-import { MapEntry } from "../../LDP/MapEntry";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { ObjectSchemaDigester } from "../../ObjectSchema/ObjectSchemaDigester";
-
-import { Pointer } from "../../Pointer/Pointer";
 
 import { QueryableMetadata } from "../../QueryDocuments/QueryableMetadata";
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
@@ -1459,7 +1455,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 0 ].errorCode ).toBe( `code-01` );
 						expect( error.errors[ 0 ].errorMessage ).toBe( `Message 01` );
-						expect( error.errors[ 0 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 0 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -1468,7 +1464,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 1 ].errorCode ).toBe( `code-02` );
 						expect( error.errors[ 1 ].errorMessage ).toBe( `Message 02` );
-						expect( error.errors[ 1 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 1 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -2736,7 +2732,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 0 ].errorCode ).toBe( `code-01` );
 						expect( error.errors[ 0 ].errorMessage ).toBe( `Message 01` );
-						expect( error.errors[ 0 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 0 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -2745,7 +2741,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 1 ].errorCode ).toBe( `code-02` );
 						expect( error.errors[ 1 ].errorMessage ).toBe( `Message 02` );
-						expect( error.errors[ 1 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 1 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -3279,7 +3275,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 0 ].errorCode ).toBe( `code-01` );
 						expect( error.errors[ 0 ].errorMessage ).toBe( `Message 01` );
-						expect( error.errors[ 0 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 0 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -3288,7 +3284,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 1 ].errorCode ).toBe( `code-02` );
 						expect( error.errors[ 1 ].errorMessage ).toBe( `Message 02` );
-						expect( error.errors[ 1 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 1 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -3995,7 +3991,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 0 ].errorCode ).toBe( `code-01` );
 						expect( error.errors[ 0 ].errorMessage ).toBe( `Message 01` );
-						expect( error.errors[ 0 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 0 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -4004,7 +4000,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 1 ].errorCode ).toBe( `code-02` );
 						expect( error.errors[ 1 ].errorMessage ).toBe( `Message 02` );
-						expect( error.errors[ 1 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 1 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -5506,7 +5502,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 0 ].errorCode ).toBe( `code-01` );
 						expect( error.errors[ 0 ].errorMessage ).toBe( `Message 01` );
-						expect( error.errors[ 0 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 0 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -5515,7 +5511,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 1 ].errorCode ).toBe( `code-02` );
 						expect( error.errors[ 1 ].errorMessage ).toBe( `Message 02` );
-						expect( error.errors[ 1 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 1 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -7015,7 +7011,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 0 ].errorCode ).toBe( `code-01` );
 						expect( error.errors[ 0 ].errorMessage ).toBe( `Message 01` );
-						expect( error.errors[ 0 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 0 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -7024,7 +7020,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 1 ].errorCode ).toBe( `code-02` );
 						expect( error.errors[ 1 ].errorMessage ).toBe( `Message 02` );
-						expect( error.errors[ 1 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 1 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -7390,7 +7386,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 0 ].errorCode ).toBe( `code-01` );
 						expect( error.errors[ 0 ].errorMessage ).toBe( `Message 01` );
-						expect( error.errors[ 0 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 0 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -7399,7 +7395,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 1 ].errorCode ).toBe( `code-02` );
 						expect( error.errors[ 1 ].errorMessage ).toBe( `Message 02` );
-						expect( error.errors[ 1 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 1 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -7766,7 +7762,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 0 ].errorCode ).toBe( `code-01` );
 						expect( error.errors[ 0 ].errorMessage ).toBe( `Message 01` );
-						expect( error.errors[ 0 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 0 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -7775,7 +7771,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 						expect( error.errors[ 1 ].errorCode ).toBe( `code-02` );
 						expect( error.errors[ 1 ].errorMessage ).toBe( `Message 02` );
-						expect( error.errors[ 1 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 1 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",

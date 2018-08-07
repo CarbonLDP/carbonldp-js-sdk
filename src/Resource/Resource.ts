@@ -142,7 +142,7 @@ export const Resource:ResourceFactory = {
 		if( ! object.hasOwnProperty( "$registry" ) ) object.$registry = void 0;
 
 		const resource:T & RegisteredPointer = ModelDecorator
-			.decorateMultiple( object as Required<T>, RegisteredPointer );
+			.decorateMultiple( object as T & { $registry:undefined }, RegisteredPointer );
 
 		return ModelDecorator
 			.definePropertiesFrom( Resource.PROTOTYPE, resource );

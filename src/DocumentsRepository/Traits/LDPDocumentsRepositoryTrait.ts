@@ -7,6 +7,7 @@ import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 
 import { FreeResources } from "../../FreeResources/FreeResources";
 
+import { HTTPError } from "../../HTTP/Errors/HTTPError";
 import { BadResponseError } from "../../HTTP/Errors/ServerErrors/BadResponseError";
 
 import { Header } from "../../HTTP/Header";
@@ -107,7 +108,7 @@ function __getTargetID( id:string, response:Response ):string {
 	return locationString;
 }
 
-function __getErrorResponseParserFnFrom( repository:LDPDocumentsRepositoryTrait ):ReturnType<typeof _getErrorResponseParserFn> {
+function __getErrorResponseParserFnFrom( repository:LDPDocumentsRepositoryTrait ):( error:HTTPError | Error ) => Promise<never> {
 	return _getErrorResponseParserFn( repository.$context.registry );
 }
 
