@@ -1,7 +1,7 @@
 # [CarbonLDP JavaScript SDK](http://carbonldp.com/)
 
 <div align="center">
-  <a href="http://carbonldp.com/" style="text-decoration: none;">
+  <a href="https://carbonldp.com/" style="text-decoration: none;">
     <img width="500" src="https://carbonldp.com/assets/images/carbon-logo-header.svg">
   </a>
   <br>
