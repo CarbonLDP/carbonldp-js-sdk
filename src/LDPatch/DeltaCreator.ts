@@ -192,7 +192,7 @@ export class DeltaCreator {
 			.types.forEach( types.add, types );
 
 
-		const mergeResource:Pointer & Required<TargetResource> = {
+		const mergeResource:Pointer & TargetResource = {
 			$id: id,
 			types: Array.from( types ),
 			_queryableMetadata: currentResource._queryableMetadata || previousResource._queryableMetadata,

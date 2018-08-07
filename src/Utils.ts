@@ -335,6 +335,3 @@ export class UUIDUtils {
 		} );
 	}
 }
-
-
-export type PickSelfProps<B extends object, A extends object, O extends keyof B = never> = Pick<B, Exclude<keyof B, keyof A> | O>;
