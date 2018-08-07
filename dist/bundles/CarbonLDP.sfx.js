@@ -15237,11 +15237,8 @@ exports.HTTPRepositoryTrait = {
             var url = this.context.getObjectSchema().resolveURI(uri, { base: true });
             if (this.context.registry.hasPointer(url, true)) {
                 var resource = this.context.registry.getPointer(url, true);
-                if (resource.$isResolved()) {
-                    if (!requestOptions.ensureLatest)
-                        return Promise.resolve(resource);
-                    Request_1.RequestUtils.setIfNoneMatchHeader(resource.$eTag, requestOptions);
-                }
+                if (resource.$isResolved() && !requestOptions.ensureLatest)
+                    return Promise.resolve(resource);
             }
             return Request_1.RequestService
                 .get(url, requestOptions)

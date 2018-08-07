@@ -57,10 +57,8 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 
 			if( this.context.registry.hasPointer( url, true ) ) {
 				const resource:ResolvablePointer = this.context.registry.getPointer( url, true );
-				if( resource.$isResolved() ) {
-					if( ! requestOptions.ensureLatest ) return Promise.resolve( resource as T & ResolvablePointer );
-					RequestUtils.setIfNoneMatchHeader( resource.$eTag, requestOptions );
-				}
+				if( resource.$isResolved() && ! requestOptions.ensureLatest )
+					return Promise.resolve( resource as T & ResolvablePointer );
 			}
 
 			return RequestService
