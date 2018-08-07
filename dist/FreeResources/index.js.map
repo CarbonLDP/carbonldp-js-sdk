@@ -1,1 +1,0 @@
-{"version":3,"sources":["FreeResources/index.ts"],"names":[],"mappings":";;AACA,iDAAgD;AAAvC,wCAAA,aAAa,CAAA","file":"index.js","sourcesContent":["export { BaseFreeResources } from \"./BaseFreeResources\";\nexport { FreeResources } from \"./FreeResources\";\n"]}
