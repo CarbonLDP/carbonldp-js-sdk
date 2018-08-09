@@ -1,1 +1,0 @@
-{"version":3,"sources":["SPARQL/index.ts"],"names":[],"mappings":";;;;;AAAA,qCAAgC;AAEhC,wCAAmC;AAEnC,iDAAgD;AAAvC,wCAAA,aAAa,CAAA","file":"index.js","sourcesContent":["export * from \"./SPARQLBuilder\";\nexport * from \"./RawResults\";\nexport * from \"./RawResultsParser\";\nexport * from \"./SelectResults\";\nexport { SPARQLService } from \"./SPARQLService\";\n"]}

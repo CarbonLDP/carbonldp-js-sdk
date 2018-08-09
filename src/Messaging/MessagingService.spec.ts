@@ -1,5 +1,5 @@
 import { Server } from "mock-socket";
-import Frame from "webstomp-client/src/frame.js";
+import { Frame } from "webstomp-client";
 
 import { DocumentsContext } from "../Context/DocumentsContext";
 
@@ -465,7 +465,7 @@ describe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
 							"subscription": frame.headers.id,
 							"destination": "/topic/*.*.some",
 							"id": frame.headers.id + "@session-1@@1",
-							"redelivered": false,
+							"redelivered": "false",
 							"content-type": "application/json+ld",
 						}, `[ {
 							"@id": "_:1",
@@ -515,7 +515,7 @@ describe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
 							"subscription": frame.headers.id,
 							"destination": frame.headers.destination,
 							"id": frame.headers.id + "@session-1@@1",
-							"redelivered": false,
+							"redelivered": "false",
 							"content-type": "application/json+ld",
 						}, `[ {
 							"@id": "_:1",
@@ -572,7 +572,7 @@ describe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
 						if( frame.command !== "SUBSCRIBE" ) return;
 						mockServer.send( Frame.marshall( "ERROR", {
 							"message": "Connection closed.",
-							"content-length": 0,
+							"content-length": "0",
 						} ) );
 					} );
 				} );
@@ -645,7 +645,7 @@ describe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
 							"subscription": frame.headers.id,
 							"destination": frame.headers.destination,
 							"id": frame.headers.id + "@session-1@@1",
-							"redelivered": false,
+							"redelivered": "false",
 							"content-type": "application/json+ld",
 						}, `[ {
 							"@id": "_:1",

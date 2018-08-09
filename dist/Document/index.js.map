@@ -1,1 +1,0 @@
-{"version":3,"sources":["Document/index.ts"],"names":[],"mappings":";;AACA,uCAAsC;AAA7B,8BAAA,QAAQ,CAAA;AACjB,yDAAwD;AAA/C,gDAAA,iBAAiB,CAAA","file":"index.js","sourcesContent":["export { BaseDocument } from \"./BaseDocument\";\nexport { Document } from \"./Document\";\nexport { TransientDocument } from \"./TransientDocument\";\n"]}

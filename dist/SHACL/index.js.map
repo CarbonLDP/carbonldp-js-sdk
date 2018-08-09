@@ -1,1 +1,0 @@
-{"version":3,"sources":["SHACL/index.ts"],"names":[],"mappings":";;;;;AAAA,wCAAmC;AACnC,wCAAmC","file":"index.js","sourcesContent":["export * from \"./ValidationReport\";\nexport * from \"./ValidationResult\";\n"]}

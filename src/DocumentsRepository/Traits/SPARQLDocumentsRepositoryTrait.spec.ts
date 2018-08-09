@@ -1,7 +1,5 @@
 import { FinishClause, QueryClause } from "sparqler/clauses";
 
-import { AnyJasmineValue } from "../../../test/helpers/types";
-
 import { DocumentsContext } from "../../Context/DocumentsContext";
 
 import { Document } from "../../Document/Document";
@@ -14,12 +12,9 @@ import { HTTPError } from "../../HTTP/Errors/HTTPError";
 import { RequestOptions } from "../../HTTP/Request";
 
 import { ErrorResponse } from "../../LDP/ErrorResponse";
-import { MapEntry } from "../../LDP/MapEntry";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
-
-import { Pointer } from "../../Pointer/Pointer";
 
 import { FinishSPARQLSelect } from "../../SPARQL/SPARQLBuilder";
 import { SPARQLService } from "../../SPARQL/SPARQLService";
@@ -288,7 +283,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 						expect( error.errors[ 0 ].errorCode ).toBe( `code-01` );
 						expect( error.errors[ 0 ].errorMessage ).toBe( `Message 01` );
-						expect( error.errors[ 0 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 0 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -297,7 +292,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 						expect( error.errors[ 1 ].errorCode ).toBe( `code-02` );
 						expect( error.errors[ 1 ].errorMessage ).toBe( `Message 02` );
-						expect( error.errors[ 1 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 1 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -435,7 +430,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 						expect( error.errors[ 0 ].errorCode ).toBe( `code-01` );
 						expect( error.errors[ 0 ].errorMessage ).toBe( `Message 01` );
-						expect( error.errors[ 0 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 0 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -444,7 +439,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 						expect( error.errors[ 1 ].errorCode ).toBe( `code-02` );
 						expect( error.errors[ 1 ].errorMessage ).toBe( `Message 02` );
-						expect( error.errors[ 1 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 1 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -581,7 +576,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 						expect( error.errors[ 0 ].errorCode ).toBe( `code-01` );
 						expect( error.errors[ 0 ].errorMessage ).toBe( `Message 01` );
-						expect( error.errors[ 0 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 0 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",
@@ -590,7 +585,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 						expect( error.errors[ 1 ].errorCode ).toBe( `code-02` );
 						expect( error.errors[ 1 ].errorMessage ).toBe( `Message 02` );
-						expect( error.errors[ 1 ].errorParameters.entries as AnyJasmineValue<MapEntry<string, Pointer>[]> ).toEqual( [ {
+						expect( error.errors[ 1 ].errorParameters.entries as any[] ).toEqual( [ {
 							entryKey: "document",
 							entryValue: jasmine.objectContaining( {
 								$id: "https://example.com/target-document/",

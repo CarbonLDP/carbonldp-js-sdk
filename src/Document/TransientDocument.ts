@@ -104,7 +104,7 @@ function __convertNested( resource:TransientDocument, target:object, tracker:Set
 	;
 }
 
-type OverriddenMembers =
+export type OverriddenMembers =
 	| "$registry"
 	| "$_getLocalID"
 	| "$getPointer"
