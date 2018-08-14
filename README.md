@@ -4,7 +4,7 @@
 [![Downloads][npm-downloads]][npm-url]
 [![Join the chat at https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK][gitter-image]][gitter-url]
 
-[![Build Status][travis-image]][travis-url]
+[![Build status](https://circleci.com/gh/CarbonLDP/carbonldp-js-sdk/tree/version%2F5.x.x.svg?style=svg)](https://circleci.com/gh/CarbonLDP/carbonldp-js-sdk/tree/version%2F5.x.x)
 
 Official JavaScript SDK for Carbon LDP applications. Simplifies the use of Carbon LDP's REST API.
 
@@ -33,40 +33,40 @@ npm install carbonldp
 
 ## File structure
 
-    ├── .idea                               # WebStorm shared configuration files (like code style)
-    ├── build                               # Build related scripts
-    │   ├── license.js                      # Contains the license to append to the build
-    │   ├── sfx.ts                          # Main file that feeds the SFX building process
-    │   └── docs                            # Templates for build the different types of API documentation
-    │       ├── html                        # Templates for html documentation (used for github pages)
-    │       └── markdown                    # Templates for markdown documentation
-    ├── config                              # Configuration files used while bundling the application
-    │   ├── karma.conf.js                   # Actual Karma test runner configuration file
-    │   ├── webpack.common.js               # Webpack's settings used by every mode
-    │   ├── webpack.prod.js                 # Webpack bundling settings for PRODUCTION mode
-    │   └── webpack.test.js                 # Webpack bundling settings for TESTING mode
-    ├── dist                                # Distribution related files
-    │   └── bundles                         # Contains the bundled versions of the entire SDK
-    ├── docs                                # JS SDK's API docucmentation files
-    ├── node_modules                        # npm dependencies (don't touch them)
-    ├── playground                          # Informal testing ground (TODO: Clean directory)
-    ├── scripts                             # Scripts that aid in the workflow
-    │   ├── copy-hooks.js                   # Copies `pre-commit` to .git when `npm install` is called 
-    │   └── pre_commit                      # SHELL script that builds Carbon and adds the dist folder to the commit
-    ├── src                                 # All source files
-    ├── test                                # Test framework related files (not the real tests)
-    ├── .gitignore                          # Ignore file for git
-    ├── .travis.yml                         # Travis configuration file
-    ├── CHANGELOG.md                        # File to track package changes
-    ├── gulpfile.js                         # Gulp's configuration file
-    ├── karma.conf.js                       # Karma configuration file used for the Browser tests
-    ├── LICENSE                             # Self explanatory
-    ├── package.json                        # npm's configuration file
-    ├── package-lock.json                   # npm's with the exact desired dependency tree
-    ├── README.md                           # this
-    ├── tsconfig.json                       # Typescript compiler configuration file
-    ├── tslint.json                         # TSLint configuration file
-    └── webpack.config.js                   # Webpack configuration used to bundle the SDK
+```
+├── .circleci                           # CircleCI's configuration files (automated build and deploy system)
+├── .idea                               # WebStorm shared configuration files (like code style)
+├── build                               # Build related scripts
+│   ├── license.js                      # Contains the license to append to the build
+│   ├── sfx.ts                          # Main file that feeds the SFX building process
+│   └── docs                            # Templates for build the different types of API documentation
+│       ├── html                        # Templates for html documentation (used for github pages)
+│       └── markdown                    # Templates for markdown documentation
+├── config                              # Configuration files used while bundling the application
+│   ├── karma.conf.js                   # Actual Karma test runner configuration file
+│   ├── webpack.common.js               # Webpack's settings used by every mode
+│   ├── webpack.prod.js                 # Webpack bundling settings for PRODUCTION mode
+│   └── webpack.test.js                 # Webpack bundling settings for TESTING mode
+├── dist                                # Distribution related files
+│   └── bundles                         # Contains the bundled versions of the entire SDK
+├── docs                                # JS SDK's API docucmentation files
+├── node_modules                        # npm dependencies (don't touch them)
+├── playground                          # Informal testing ground (TODO: Clean directory)
+├── src                                 # All source files
+├── test                                # Test framework related files (not the real tests)
+├── .gitignore                          # Ignore file for git
+├── .nvmrc                              # nvm configuration file that specifies supported Node.js version (for development)
+├── CHANGELOG.md                        # File to track package changes
+├── gulpfile.js                         # Gulp's configuration file
+├── karma.conf.js                       # Karma configuration file used for the Browser tests
+├── LICENSE                             # Self explanatory
+├── package.json                        # npm's configuration file
+├── package-lock.json                   # npm's with the exact desired dependency tree
+├── README.md                           # this
+├── tsconfig.json                       # Typescript compiler configuration file
+├── tslint.json                         # TSLint configuration file
+└── webpack.config.js                   # Webpack configuration used to bundle the SDK
+```
 
 ## License
 
