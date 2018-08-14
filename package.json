@@ -72,7 +72,6 @@
   "scripts": {
     "start": "./node_modules/.bin/gulp build",
     "lint": "./node_modules/.bin/gulp lint",
-    "prepare": "node scripts/copy-hooks.js",
     "test": "./node_modules/.bin/gulp test"
   },
   "private": true
