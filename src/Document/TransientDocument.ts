@@ -19,8 +19,8 @@ import { RDFDocument } from "../RDF/Document";
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 
-import { BaseRegistry } from "../Registry/BaseRegistry";
-import { Registry } from "../Registry/Registry";
+import { $BaseRegistry } from "../Registry/BaseRegistry";
+import { $Registry, Registry } from "../Registry/Registry";
 
 import { Resource } from "../Resource/Resource";
 
@@ -29,7 +29,7 @@ import { isObject, isPlainObject, isString } from "../Utils";
 import { BaseDocument } from "./BaseDocument";
 
 
-export interface TransientDocument extends Resource, Registry<TransientFragment> {
+export interface TransientDocument extends Resource, $Registry<TransientFragment> {
 	$registry:DocumentsRegistry | undefined;
 
 	hasMemberRelation?:Pointer;
@@ -38,22 +38,22 @@ export interface TransientDocument extends Resource, Registry<TransientFragment>
 	defaultInteractionModel?:Pointer;
 
 
-	hasFragment( id:string ):boolean;
+	$hasFragment( id:string ):boolean;
 
-	getFragment<T extends object>( id:string ):(T & TransientFragment) | null;
+	$getFragment<T extends object>( id:string ):(T & TransientFragment) | null;
 
-	getFragments():TransientFragment[];
+	$getFragments():TransientFragment[];
 
-	createFragment<T extends object>( object:T, id?:string ):T & TransientFragment;
-	createFragment( id?:string ):TransientFragment;
+	$createFragment<T extends object>( object:T, id?:string ):T & TransientFragment;
+	$createFragment( id?:string ):TransientFragment;
 
-	removeFragment( slugOrFragment:string | TransientFragment ):boolean;
-
-
-	_normalize():void;
+	$removeFragment( slugOrFragment:string | TransientFragment ):boolean;
 
 
-	_getLocalID( id:string ):string;
+	$_normalize():void;
+
+
+	$_getLocalID( id:string ):string;
 
 
 	toJSON( contextOrKey?:Context | string ):RDFDocument;
@@ -90,12 +90,12 @@ function __convertNested( resource:TransientDocument, target:object, tracker:Set
 
 			const idOrSlug:string = __getObjectId( next );
 			if( tracker.has( idOrSlug ) ) return;
-			if( ! resource.inScope( idOrSlug, true ) ) return;
+			if( ! resource.$inScope( idOrSlug, true ) ) return;
 
 
-			const fragment:TransientFragment = resource.hasPointer( idOrSlug, true ) ?
-				resource.getPointer( idOrSlug, true ) :
-				resource.createFragment( next, idOrSlug )
+			const fragment:TransientFragment = resource.$hasPointer( idOrSlug, true ) ?
+				resource.$getPointer( idOrSlug, true ) :
+				resource.$createFragment( next, idOrSlug )
 			;
 
 			tracker.add( fragment.$id );
@@ -106,13 +106,13 @@ function __convertNested( resource:TransientDocument, target:object, tracker:Set
 
 export type OverriddenMembers =
 	| "$registry"
-	| "_getLocalID"
-	| "getPointer"
+	| "$_getLocalID"
+	| "$getPointer"
 	| "toJSON"
 	;
 
 export type TransientDocumentFactory =
-	& ModelPrototype<TransientDocument, Resource & Registry<TransientFragment>, OverriddenMembers>
+	& ModelPrototype<TransientDocument, Resource & $Registry<TransientFragment>, OverriddenMembers>
 	& ModelDecorator<TransientDocument, BaseDocument>
 	& ModelFactoryOptional<TransientDocument, BaseDocument>
 	& ModelTypeGuard<TransientDocument>
@@ -122,20 +122,20 @@ export const TransientDocument:TransientDocumentFactory = {
 	PROTOTYPE: {
 		$registry: void 0,
 
-		_normalize( this:TransientDocument ):void {
+		$_normalize( this:TransientDocument ):void {
 			const usedFragments:Set<string> = new Set();
 			__convertNested( this, this, usedFragments );
 
-			this.getPointers( true )
+			this.$getPointers( true )
 				.map( Pointer.getID )
 				.filter( URI.isBNodeID )
 				.filter( id => ! usedFragments.has( id ) )
-				.forEach( this.removePointer, this )
+				.forEach( this.$removePointer, this )
 			;
 		},
 
 
-		_getLocalID( this:TransientDocument, id:string ):string {
+		$_getLocalID( this:TransientDocument, id:string ):string {
 			if( URI.isBNodeID( id ) ) return id;
 
 			if( URI.isFragmentOf( id, this.$id ) ) return URI.getFragment( id );
@@ -143,40 +143,40 @@ export const TransientDocument:TransientDocumentFactory = {
 			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		},
 
-		getPointer( this:TransientDocument, id:string, local?:true ):TransientFragment {
+		$getPointer( this:TransientDocument, id:string, local?:true ):TransientFragment {
 			id = URI.resolve( this.$id, id );
 			return Registry.PROTOTYPE.getPointer.call( this, id, local );
 		},
 
 
-		hasFragment( this:TransientDocument, id:string ):boolean {
+		$hasFragment( this:TransientDocument, id:string ):boolean {
 			id = __getLabelFrom( id );
-			if( ! this.inScope( id, true ) ) return false;
+			if( ! this.$inScope( id, true ) ) return false;
 
-			const localID:string = this._getLocalID( id );
-			return this.__resourcesMap.has( localID );
+			const localID:string = this.$_getLocalID( id );
+			return this.$__resourcesMap.has( localID );
 		},
 
-		getFragment<T extends object>( this:TransientDocument, id:string ):(T & TransientFragment) | null {
+		$getFragment<T extends object>( this:TransientDocument, id:string ):(T & TransientFragment) | null {
 			id = __getLabelFrom( id );
-			const localID:string = this._getLocalID( id );
+			const localID:string = this.$_getLocalID( id );
 
-			const resource:TransientFragment = this.__resourcesMap.get( localID );
+			const resource:TransientFragment = this.$__resourcesMap.get( localID );
 			if( ! resource ) return null;
 
 			return resource as T & TransientFragment;
 		},
 
-		getFragments( this:TransientDocument ):TransientFragment[] {
-			return this.getPointers( true );
+		$getFragments( this:TransientDocument ):TransientFragment[] {
+			return this.$getPointers( true );
 		},
 
-		createFragment<T extends object>( this:TransientDocument, isOrObject?:string | T, id?:string ):T & TransientFragment {
+		$createFragment<T extends object>( this:TransientDocument, isOrObject?:string | T, id?:string ):T & TransientFragment {
 			const object:T = isObject( isOrObject ) ? isOrObject : {} as T;
 			if( isString( isOrObject ) ) id = isOrObject;
 
 			const $id:string = id ? __getLabelFrom( id ) : __getObjectId( object );
-			const fragment:T & TransientFragment = this._addPointer( Object
+			const fragment:T & TransientFragment = this.$_addPointer( Object
 				.assign<T, Pointer>( object, { $id } )
 			);
 
@@ -184,11 +184,11 @@ export const TransientDocument:TransientDocumentFactory = {
 			return fragment;
 		},
 
-		removeFragment( this:TransientDocument, fragmentOrSlug:string | TransientFragment ):boolean {
+		$removeFragment( this:TransientDocument, fragmentOrSlug:string | TransientFragment ):boolean {
 			const id:string = __getLabelFrom( Pointer.getID( fragmentOrSlug ) );
-			if( ! this.inScope( id, true ) ) return false;
+			if( ! this.$inScope( id, true ) ) return false;
 
-			return this.removePointer( id );
+			return this.$removePointer( id );
 		},
 
 
@@ -196,7 +196,7 @@ export const TransientDocument:TransientDocumentFactory = {
 			const nodes:RDFNode[] = [
 				Resource.PROTOTYPE.toJSON.call( this, contextOrKey ),
 				...this
-					.getFragments()
+					.$getFragments()
 					.map( resource => resource.toJSON( contextOrKey ) ),
 			];
 
@@ -215,13 +215,13 @@ export const TransientDocument:TransientDocumentFactory = {
 	decorate<T extends BaseDocument>( object:T ):T & TransientDocument {
 		if( TransientDocument.isDecorated( object ) ) return object;
 
-		type Base = T & BaseRegistry;
-		const base:Base = ModelDecorator.definePropertiesFrom( {
-			__modelDecorator: TransientFragment,
+		type Base = T & Pick<$BaseRegistry<TransientFragment>, "$__modelDecorator">;
+		const base:Base = ModelDecorator.definePropertiesFrom<Pick<$BaseRegistry<TransientFragment>, "$__modelDecorator">, T>( {
+			$__modelDecorator: TransientFragment,
 		}, object );
 
-		const resource:Base & Resource & Registry<TransientFragment> = ModelDecorator
-			.decorateMultiple( base, Resource, Registry );
+		const resource:Base & Resource & $Registry<TransientFragment> = ModelDecorator
+			.decorateMultiple( base, Resource, Registry as ModelDecorator<$Registry<TransientFragment>, $BaseRegistry> );
 
 		return ModelDecorator
 			.definePropertiesFrom( TransientDocument.PROTOTYPE, resource )

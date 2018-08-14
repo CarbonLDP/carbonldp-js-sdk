@@ -15,7 +15,7 @@ import { ObjectSchemaDigester } from "./ObjectSchemaDigester";
 
 
 export interface ObjectSchemaResolver {
-	$context?:Context;
+	context?:Context;
 
 
 	getGeneralSchema():DigestedObjectSchema;
@@ -62,11 +62,11 @@ export type ObjectSchemaResolverFactory =
 
 export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
 	PROTOTYPE: {
-		$context: undefined,
+		context: undefined,
 
 		getGeneralSchema( this:ObjectSchemaResolver ):DigestedObjectSchema {
-			if( ! this.$context ) return new DigestedObjectSchema();
-			return this.$context.getObjectSchema();
+			if( ! this.context ) return new DigestedObjectSchema();
+			return this.context.getObjectSchema();
 		},
 
 
@@ -76,16 +76,16 @@ export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
 
 		getSchemaFor( this:ObjectSchemaResolver, object:object | QueryablePointer ):DigestedObjectSchema {
 			const schema:DigestedObjectSchema = "types" in object || "$id" in object ?
-				__getSchemaForResource( this.$context, object ) :
-				__getSchemaForNode( this.$context, object );
+				__getSchemaForResource( this.context, object ) :
+				__getSchemaForNode( this.context, object );
 
-			if( ! ("_queryableMetadata" in object) || ! object._queryableMetadata )
+			if( ! ("$_queryableMetadata" in object) || ! object.$_queryableMetadata )
 				return schema;
 
 			return ObjectSchemaDigester
 				._combineSchemas( [
 					schema,
-					object._queryableMetadata.schema,
+					object.$_queryableMetadata.schema,
 				] );
 		},
 	},

@@ -33,7 +33,7 @@ export const TransientDirectContainer:TransientDirectContainerFactory = {
 
 	is( value:any ):value is TransientDirectContainer {
 		return TransientDocument.is( value )
-			&& value.hasType( TransientDirectContainer.TYPE )
+			&& value.$hasType( TransientDirectContainer.TYPE )
 			&& value.hasOwnProperty( "membershipResource" )
 			;
 	},
@@ -51,7 +51,7 @@ export const TransientDirectContainer:TransientDirectContainerFactory = {
 		const container:T & TransientDirectContainer = TransientDocument.is( object ) ?
 			object : TransientDocument.createFrom( object );
 
-		container.addType( TransientDirectContainer.TYPE );
+		container.$addType( TransientDirectContainer.TYPE );
 		// TODO: Handle properties correctly and validate them (hasMemberRelation, isMemberOfRelation)
 
 		return container;

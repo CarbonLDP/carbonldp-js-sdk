@@ -17,7 +17,7 @@ import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
-import { Registry } from "../Registry/Registry";
+import { $Registry, Registry } from "../Registry/Registry";
 
 import { isObject } from "../Utils";
 
@@ -27,26 +27,26 @@ import { BaseResource } from "./BaseResource";
 export interface Resource extends RegisteredPointer {
 	types:string[];
 
-	$registry:Registry<RegisteredPointer> | undefined;
+	$registry:Registry<RegisteredPointer> | $Registry<RegisteredPointer> | undefined;
 	$slug:string;
 
 
-	addType( type:string ):void;
+	$addType( type:string ):void;
 
-	hasType( type:string ):boolean;
+	$hasType( type:string ):boolean;
 
-	removeType( type:string ):void;
+	$removeType( type:string ):void;
 
 
 	toJSON( contextOrKey:Context | string ):RDFNode;
 }
 
 
-function __getContext( registry:Registry<any> | GeneralRegistry<any> | undefined ):Context | undefined {
+function __getContext( registry:$Registry<any> | Registry<any> | GeneralRegistry<any> | undefined ):Context | undefined {
 	if( ! registry ) return;
-	if( "$context" in registry && registry.$context ) return registry.$context;
+	if( "context" in registry && registry.context ) return registry.context;
 
-	return __getContext( registry.$registry );
+	return __getContext( "$id" in registry ? registry.$registry : registry.registry );
 }
 
 function __resolveURI( resource:Resource, uri:string ):string {
@@ -78,7 +78,7 @@ export const Resource:ResourceFactory = {
 		set $slug( this:Resource, slug:string ) {},
 
 
-		addType( this:Resource, type:string ):void {
+		$addType( this:Resource, type:string ):void {
 			type = __resolveURI( this, type );
 
 			if( this.types.indexOf( type ) !== - 1 ) return;
@@ -86,12 +86,12 @@ export const Resource:ResourceFactory = {
 			this.types.push( type );
 		},
 
-		hasType( this:Resource, type:string ):boolean {
+		$hasType( this:Resource, type:string ):boolean {
 			type = __resolveURI( this, type );
 			return this.types.indexOf( type ) !== - 1;
 		},
 
-		removeType( this:Resource, type:string ):void {
+		$removeType( this:Resource, type:string ):void {
 			type = __resolveURI( this, type );
 
 			const index:number = this.types.indexOf( type );

@@ -46,9 +46,9 @@ import { LDPDocumentsRepositoryTrait, LDPDocumentsRepositoryTraitFactory } from 
 
 describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTrait" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
+		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 
@@ -68,7 +68,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			"$context",
 			"CarbonLDP.DocumentsContext"
 		), ():void => {
-			const target:LDPDocumentsRepositoryTrait[ "$context" ] = {} as DocumentsContext;
+			const target:LDPDocumentsRepositoryTrait[ "context" ] = {} as DocumentsContext;
 			expect( target ).toBeDefined();
 		} );
 
@@ -159,17 +159,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		let repository:LDPDocumentsRepositoryTrait;
 		let document:Document;
 		beforeEach( () => {
-			repository = LDPDocumentsRepositoryTrait.decorate( { $context } );
+			repository = LDPDocumentsRepositoryTrait.decorate( { context } );
 
 			document = Document.decorate( {
 				$id: "https://example.com/",
-				$repository: $context.repository,
-				$registry: $context.registry,
+				$repository: context.repository,
+				$registry: context.registry,
 			} );
 		} );
 
 
-		describe( method( OBLIGATORY, "get" ), ():void => {
+		describe( method( OBLIGATORY, "$get" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -248,7 +248,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.get( "ex:resource/" );
 
@@ -337,7 +337,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should return resource requested when in registry but not resolved", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.registry._addPointer( { $id: "https://example.com/resource/" } );
+				context.registry._addPointer( { $id: "https://example.com/resource/" } );
 
 				const retrieved:Document = await repository.get( "resource/" );
 				expect( retrieved ).toEqual( jasmine.objectContaining( {
@@ -346,8 +346,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			} );
 
 			it( "should return registered when already resolved", async () => {
-				const registered:Document = $context.registry._addPointer( {
-					_resolved: true,
+				const registered:Document = context.registry._addPointer<Partial<Document>>( {
+					$_resolved: true,
 					$id: "https://example.com/resource/",
 				} );
 
@@ -362,12 +362,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					},
 				} );
 
-				$context.extendObjectSchema( {
+				context.extendObjectSchema( {
 					"@vocab": "https://example.com/ns#",
 				} );
 
-				$context.registry._addPointer( {
-					_resolved: true,
+				context.registry._addPointer<Partial<Document>>( {
+					$_resolved: true,
 					$id: "https://example.com/resource/",
 				} );
 
@@ -427,7 +427,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					pointerSet?:MyResource[]
 				};
 
-				$context.extendObjectSchema( {
+				context.extendObjectSchema( {
 					"ex": "https://example.com/ns#",
 					"string": {
 						"@id": "ex:string",
@@ -466,8 +466,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				const retrieved:Document = await repository.get( "/" );
 
-				expect( $context.registry.hasPointer( retrieved.$id ) ).toBe( true );
-				expect( $context.registry.getPointer( retrieved.$id ) ).toBe( retrieved );
+				expect( context.registry.hasPointer( retrieved.$id ) ).toBe( true );
+				expect( context.registry.getPointer( retrieved.$id ) ).toBe( retrieved );
 			} );
 
 			it( "should add resolved values", async () => {
@@ -475,9 +475,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				const retrieved:Document = await repository.get( "/" );
 
-				expect( retrieved ).toEqual( jasmine.objectContaining( {
+				expect( retrieved ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
-					_resolved: true,
+					$_resolved: true,
 				} ) );
 			} );
 
@@ -519,7 +519,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "resolve" ), () => {
+		describe( method( OBLIGATORY, "$resolve" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -616,7 +616,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 			it( "should return resource requested", async () => {
 				stubRequest( "https://example.com/" );
-				$context.registry._addPointer( document );
+				context.registry._addPointer( document );
 
 				const retrieved:Document = await repository.resolve( document );
 				expect( retrieved ).toEqual( jasmine.objectContaining( {
@@ -626,9 +626,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			} );
 
 			it( "should return registered when already resolved", async () => {
-				const registered:Document = $context.registry
+				const registered:Document = context.registry
 					.getPointer( "https://example.com/", true );
-				registered._resolved = true;
+				registered.$_resolved = true;
 
 				const retrieved:Document = await repository.resolve( document );
 				expect( retrieved ).toBe( registered );
@@ -641,13 +641,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					},
 				} );
 
-				$context.extendObjectSchema( {
+				context.extendObjectSchema( {
 					"@vocab": "https://example.com/ns#",
 				} );
 
-				const registered:Document = $context.registry
+				const registered:Document = context.registry
 					.getPointer( "https://example.com/", true );
-				registered._resolved = true;
+				registered.$_resolved = true;
 
 
 				const retrieved:{ string:string } = await repository
@@ -689,7 +689,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					pointerSet?:MyResource[]
 				};
 
-				$context.extendObjectSchema( {
+				context.extendObjectSchema( {
 					"ex": "https://example.com/ns#",
 					"string": {
 						"@id": "ex:string",
@@ -727,7 +727,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				const retrieved:Document = await repository.resolve( document );
 
-				const registry:DocumentsRegistry = $context.registry;
+				const registry:DocumentsRegistry = context.registry;
 				expect( registry.hasPointer( retrieved.$id ) ).toBe( true );
 				expect( registry.getPointer( retrieved.$id ) ).toBe( retrieved );
 			} );
@@ -737,9 +737,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				const retrieved:Document = await repository.resolve( document );
 
-				expect( retrieved ).toEqual( jasmine.objectContaining( {
+				expect( retrieved ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
-					_resolved: true,
+					$_resolved: true,
 				} ) );
 			} );
 
@@ -783,7 +783,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "exists" ), () => {
+		describe( method( OBLIGATORY, "$exists" ), () => {
 
 			it( hasSignature(
 				[
@@ -840,7 +840,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.exists( "ex:resource/" );
 
@@ -1076,7 +1076,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should request from resolved prefixed name", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.create( "ex:resource/", {} );
 
@@ -1271,7 +1271,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should send converted JSONLD when single child", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1318,7 +1318,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should send converted JSONLD when multiple children", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( {
+				context.extendObjectSchema( {
 					"@vocab": "https://example.com/ns#",
 				} );
 
@@ -1380,8 +1380,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				const returned:Document = await repository.create( "/", {} );
 
-				expect( $context.registry.hasPointer( returned.$id ) ).toBe( true );
-				expect( $context.registry.getPointer( returned.$id ) ).toBe( returned );
+				expect( context.registry.hasPointer( returned.$id ) ).toBe( true );
+				expect( context.registry.getPointer( returned.$id ) ).toBe( returned );
 			} );
 
 			it( "should have stored the children in the registry", async () => {
@@ -1389,19 +1389,19 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				const [ returned1, returned2 ]:Document[] = await repository.create( "/", [ {}, {} ] );
 
-				expect( $context.registry.hasPointer( returned1.$id ) ).toBe( true );
-				expect( $context.registry.getPointer( returned1.$id ) ).toBe( returned1 );
+				expect( context.registry.hasPointer( returned1.$id ) ).toBe( true );
+				expect( context.registry.getPointer( returned1.$id ) ).toBe( returned1 );
 
-				expect( $context.registry.hasPointer( returned2.$id ) ).toBe( true );
-				expect( $context.registry.getPointer( returned2.$id ) ).toBe( returned2 );
+				expect( context.registry.hasPointer( returned2.$id ) ).toBe( true );
+				expect( context.registry.getPointer( returned2.$id ) ).toBe( returned2 );
 			} );
 
 
 			it( "should throw error if child is already persisted", async () => {
 				const child:Document = Document.decorate( {
 					$id: "",
-					$registry: $context.registry,
-					$repository: $context.repository,
+					$registry: context.registry,
+					$repository: context.repository,
 				} );
 
 				await repository
@@ -1416,8 +1416,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should throw error if any children is already persisted", async () => {
 				const child:Document = Document.decorate( {
 					$id: "",
-					$registry: $context.registry,
-					$repository: $context.repository,
+					$registry: context.registry,
+					$repository: context.repository,
 				} );
 
 				await repository
@@ -1466,8 +1466,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				const returned:Document = await repository.create( "/", {} );
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_resolved: false,
+				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
+					$_resolved: false,
 					$id: "https://example.com/child-1/",
 				} ) );
 			} );
@@ -1478,12 +1478,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				const [ returned1, returned2 ]:Document[] = await repository
 					.create( "/", [ {}, {} ] );
 
-				expect( returned1 ).toEqual( jasmine.objectContaining( {
-					_resolved: false,
+				expect( returned1 ).toEqual( jasmine.objectContaining<Document>( {
+					$_resolved: false,
 					$id: "https://example.com/child-1/",
 				} ) );
-				expect( returned2 ).toEqual( jasmine.objectContaining( {
-					_resolved: false,
+				expect( returned2 ).toEqual( jasmine.objectContaining<Document>( {
+					$_resolved: false,
 					$id: "https://example.com/child-2/",
 				} ) );
 			} );
@@ -1551,13 +1551,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					},
 				} );
 
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
+				expect( returned.$hasPointer( "_:1" ) ).toBe( false );
 				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
 					$id: "_:new-1",
 					string: "blank node 1",
 				} ) );
 
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
+				expect( returned.$hasPointer( "_:2" ) ).toBe( false );
 				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
 					$id: "_:new-2",
 					string: "blank node 2",
@@ -1769,7 +1769,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should request from resolved prefixed name", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.createAndRetrieve( "ex:resource/", {} );
 
@@ -1950,7 +1950,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should send converted JSONLD when single child", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1995,7 +1995,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			} );
 
 			it( "should send converted JSONLD when multiple children", async () => {
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -2070,8 +2070,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				const returned:Document = await repository.createAndRetrieve( "/", {} );
 
-				expect( $context.registry.hasPointer( returned.$id ) ).toBe( true );
-				expect( $context.registry.getPointer( returned.$id ) ).toBe( returned );
+				expect( context.registry.hasPointer( returned.$id ) ).toBe( true );
+				expect( context.registry.getPointer( returned.$id ) ).toBe( returned );
 			} );
 
 			it( "should have stored the children in the registry", async () => {
@@ -2087,18 +2087,18 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				const [ returned1, returned2 ]:Document[] = await promises;
 
-				expect( $context.registry.hasPointer( returned1.$id ) ).toBe( true );
-				expect( $context.registry.getPointer( returned1.$id ) ).toBe( returned1 );
+				expect( context.registry.hasPointer( returned1.$id ) ).toBe( true );
+				expect( context.registry.getPointer( returned1.$id ) ).toBe( returned1 );
 
-				expect( $context.registry.hasPointer( returned2.$id ) ).toBe( true );
-				expect( $context.registry.getPointer( returned2.$id ) ).toBe( returned2 );
+				expect( context.registry.hasPointer( returned2.$id ) ).toBe( true );
+				expect( context.registry.getPointer( returned2.$id ) ).toBe( returned2 );
 			} );
 
 			it( "should throw error if child is already persisted", async () => {
 				const child:Document = Document.decorate( {
 					$id: "",
-					$registry: $context.registry,
-					$repository: $context.repository,
+					$registry: context.registry,
+					$repository: context.repository,
 				} );
 
 				await repository
@@ -2113,8 +2113,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should throw error if any children is already persisted", async () => {
 				const child:Document = Document.decorate( {
 					$id: "",
-					$registry: $context.registry,
-					$repository: $context.repository,
+					$registry: context.registry,
+					$repository: context.repository,
 				} );
 
 				await repository
@@ -2161,8 +2161,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				const returned:Document = await repository.create( "/", {} );
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_resolved: true,
+				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
+					$_resolved: true,
 					$eTag: "\"1-12345\"",
 					$id: "https://example.com/child-1/",
 				} ) );
@@ -2180,20 +2180,20 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				;
 
 				const [ returned1, returned2 ]:Document[] = await promise;
-				expect( returned1 ).toEqual( jasmine.objectContaining( {
-					_resolved: true,
+				expect( returned1 ).toEqual( jasmine.objectContaining<Document>( {
+					$_resolved: true,
 					$eTag: "\"0-12345\"",
 					$id: "https://example.com/child-0/",
 				} ) );
-				expect( returned2 ).toEqual( jasmine.objectContaining( {
-					_resolved: true,
+				expect( returned2 ).toEqual( jasmine.objectContaining<Document>( {
+					$_resolved: true,
 					$eTag: "\"1-12345\"",
 					$id: "https://example.com/child-1/",
 				} ) );
 			} );
 
 			it( "should update the child data", async () => {
-				$context
+				context
 					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 				type MyResource = { string:string, pointerSet?:MyResource[] };
@@ -2265,11 +2265,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 						},
 					],
 				} );
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
+				expect( returned.$hasPointer( "_:2" ) ).toBe( false );
 			} );
 
 			it( "should update the children data", async () => {
-				$context
+				context
 					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 				type MyResource = { string:string, pointerSet?:MyResource[] };
@@ -2424,7 +2424,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 
@@ -2441,13 +2441,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					},
 				} );
 
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
+				expect( returned.$hasPointer( "_:1" ) ).toBe( false );
 				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
 					$id: "_:new-1",
 					string: "updated blank node 1",
 				} ) );
 
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
+				expect( returned.$hasPointer( "_:2" ) ).toBe( false );
 				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
 					$id: "_:new-2",
 					string: "updated blank node 2",
@@ -2528,7 +2528,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		} );
 
 
-		describe( method( OBLIGATORY, "save" ), () => {
+		describe( method( OBLIGATORY, "$save" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -2635,7 +2635,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should send PATCH when dirty", async () => {
 				stubRequest( "https://example.com/" );
 
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 				await repository.save( document );
@@ -2650,7 +2650,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				stubRequest( "https://example.com/" );
 
 				document.$eTag = "\"1-12345\"";
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 				await repository.save( document );
@@ -2667,7 +2667,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should add custom headers in single child", async () => {
 				stubRequest( "https://example.com/" );
 
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 
@@ -2722,10 +2722,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					},
 				} );
 
-				document._normalize();
-				document._syncSnapshot();
+				document.$_normalize();
+				document.$_syncSnapshot();
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"xsd": XSD.namespace,
@@ -2754,7 +2754,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					} );
 
 
-				document.addType( "NewType" );
+				document.$addType( "NewType" );
 				object.list = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
 				object.pointer.string = [ "string 2", "string 3" ];
 				object.pointer.pointers[ 0 ].string = [ "string 1", "string -1" ];
@@ -2844,20 +2844,20 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 						string: "blank node 2",
 					},
 				} );
-				$context.registry._addPointer( document );
+				context.registry._addPointer( document );
 
 				type BNode = { $id:string, string:string };
 				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
 
 				const returned:LDPDocumentTrait & MyDoc = await repository.save<MyDoc>( document );
 
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
+				expect( returned.$hasPointer( "_:1" ) ).toBe( false );
 				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
 					$id: "_:new-1",
 					string: "blank node 1",
 				} ) );
 
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
+				expect( returned.$hasPointer( "_:2" ) ).toBe( false );
 				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
 					$id: "_:new-2",
 					string: "blank node 2",
@@ -2867,7 +2867,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 			it( "should parse ErrorResponse into error", async () => {
 				document.$id = "500/";
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 				await repository
@@ -2906,7 +2906,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "saveAndRefresh" ), () => {
+		describe( method( OBLIGATORY, "$saveAndRefresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -3026,7 +3026,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should send PATCH to when dirty", async () => {
 				stubRequest( "https://example.com/" );
 
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 				await repository.saveAndRefresh( document );
@@ -3042,7 +3042,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 				document.$eTag = "\"1-12345\"";
 
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 				await repository.saveAndRefresh( document );
@@ -3059,7 +3059,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should add custom headers in single child", async () => {
 				stubRequest( "https://example.com/" );
 
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 
@@ -3115,10 +3115,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				} );
 
 
-				document._normalize();
-				document._syncSnapshot();
+				document.$_normalize();
+				document.$_syncSnapshot();
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"xsd": XSD.namespace,
@@ -3147,7 +3147,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					} );
 
 
-				document.addType( "NewType" );
+				document.$addType( "NewType" );
 				object.list = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
 				object.pointer.string = [ "string 2", "string 3" ];
 				object.pointer.pointers[ 0 ].string = [ "string 1", "string -1" ];
@@ -3195,7 +3195,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 
@@ -3215,9 +3215,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 
 				const returned:Document = await repository.saveAndRefresh( document );
-				expect( returned ).toEqual( jasmine.objectContaining( {
+				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
-					_resolved: true,
+					$_resolved: true,
 				} ) );
 			} );
 
@@ -3294,22 +3294,22 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 						string: "blank node 2",
 					},
 				} );
-				$context.registry.__resourcesMap.set( "", document );
+				context.registry.__resourcesMap.set( "", document );
 
-				$context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+				context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 				type BNode = { $id:string, string:string };
 				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
 
 				const returned:LDPDocumentTrait & MyDoc = await repository.saveAndRefresh<MyDoc>( document );
 
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
+				expect( returned.$hasPointer( "_:1" ) ).toBe( false );
 				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
 					$id: "_:new-1",
 					string: "updated blank node 1",
 				} ) );
 
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
+				expect( returned.$hasPointer( "_:2" ) ).toBe( false );
 				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
 					$id: "_:new-2",
 					string: "updated blank node 2",
@@ -3318,7 +3318,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 
 			it( "should parse ErrorResponse into error", async () => {
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 				document.$id = "500/";
 
@@ -3358,7 +3358,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "refresh" ), () => {
+		describe( method( OBLIGATORY, "$refresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -3481,7 +3481,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				stubRequest( "https://example.com/" );
 
 				document.$eTag = "\"1-12345\"";
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 				await repository.refresh( document );
@@ -3497,7 +3497,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should add custom headers in single child", async () => {
 				stubRequest( "https://example.com/" );
 
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 
@@ -3559,11 +3559,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					],
 				} );
 
-				document._normalize();
-				$context.registry.__resourcesMap.set( "", document );
+				document.$_normalize();
+				context.registry.__resourcesMap.set( "", document );
 
 
-				$context
+				context
 					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 
@@ -3596,9 +3596,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 
 				const returned:LDPDocumentTrait = await repository.refresh( document );
-				expect( returned ).toEqual( jasmine.objectContaining( {
+				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
-					_resolved: true,
+					$_resolved: true,
 				} ) );
 			} );
 
@@ -3675,22 +3675,22 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 						string: "blank node 2",
 					},
 				} );
-				$context.registry.__resourcesMap.set( "", document );
+				context.registry.__resourcesMap.set( "", document );
 
-				$context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+				context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 				type BNode = { $id:string, string:string };
 				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
 
 				const returned:LDPDocumentTrait & MyDoc = await repository.refresh<MyDoc>( document );
 
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
+				expect( returned.$hasPointer( "_:1" ) ).toBe( false );
 				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
 					$id: "_:new-1",
 					string: "updated blank node 1",
 				} ) );
 
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
+				expect( returned.$hasPointer( "_:2" ) ).toBe( false );
 				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
 					$id: "_:new-2",
 					string: "updated blank node 2",
@@ -3738,7 +3738,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		} );
 
 
-		describe( method( OBLIGATORY, "delete" ), () => {
+		describe( method( OBLIGATORY, "$delete" ), () => {
 
 			it( hasSignature(
 				"Delete the resource referred by the URI provided from the server.", [
@@ -3855,12 +3855,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should remove pointer whe URI provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				const target:Document = $context.registry
+				const target:Document = context.registry
 					._addPointer( { $id: "https://example.com/resource/" } );
 
 				await repository.delete( "resource/" );
 
-				expect( $context.registry.hasPointer( target.$id ) ).toBe( false );
+				expect( context.registry.hasPointer( target.$id ) ).toBe( false );
 			} );
 
 
@@ -3961,7 +3961,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository
 					.addMember( "ex:resource/", "member/" );
@@ -4193,7 +4193,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository
 					.addMembers( "ex:resource/", [ "member/" ] );
@@ -4463,7 +4463,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository
 					.removeMember( "ex:resource/", "member/" );
@@ -4700,7 +4700,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				it( "should request resolved prefixed name provided", async () => {
 					stubRequest( "https://example.com/resource/" );
 
-					$context.extendObjectSchema( { "ex": "https://example.com/" } );
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 					await repository
 						.removeMembers( "ex:resource/", [ "member/" ] );
@@ -4936,7 +4936,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				it( "should request resolved prefixed name provided", async () => {
 					stubRequest( "https://example.com/resource/" );
 
-					$context.extendObjectSchema( { "ex": "https://example.com/" } );
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 					await repository
 						.removeMembers( "ex:resource/" );
@@ -5122,7 +5122,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" )
 					.and.callThrough();
 
-				LDPDocumentsRepositoryTrait.decorate( { $context, the: "object" } );
+				LDPDocumentsRepositoryTrait.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( LDPDocumentsRepositoryTrait.PROTOTYPE, { the: "object" } );
 			} );
@@ -5132,7 +5132,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 					.and.returnValue( true );
 
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
-				LDPDocumentsRepositoryTrait.decorate( { $context } );
+				LDPDocumentsRepositoryTrait.decorate( { context } );
 
 				expect( spy ).not.toHaveBeenCalled();
 			} );
@@ -5142,7 +5142,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				const spy:jasmine.Spy = spyOn( GeneralRepository, "decorate" )
 					.and.callThrough();
 
-				LDPDocumentsRepositoryTrait.decorate( { $context, the: "object" } );
+				LDPDocumentsRepositoryTrait.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );

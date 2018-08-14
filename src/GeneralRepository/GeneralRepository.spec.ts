@@ -23,9 +23,9 @@ import { GeneralRepository, GeneralRepositoryFactory } from "./GeneralRepository
 
 describe( module( "carbonldp/GeneralRepository" ), () => {
 
-	let $context:Context<ResolvablePointer & RegisteredPointer>;
+	let context:Context<ResolvablePointer & RegisteredPointer>;
 	beforeEach( ():void => {
-		$context = createMockContext();
+		context = createMockContext();
 	} );
 
 
@@ -43,10 +43,10 @@ describe( module( "carbonldp/GeneralRepository" ), () => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"$context",
+			"context",
 			"CarbonLDP.Context<MODEL & CarbonLDP.RegisteredPointer, MODEL>"
 		), ():void => {
-			const target:GeneralRepository<ResolvablePointer>[ "$context" ] = {} as Context<ResolvablePointer & RegisteredPointer>;
+			const target:GeneralRepository<ResolvablePointer>[ "context" ] = {} as Context<ResolvablePointer & RegisteredPointer>;
 			expect( target ).toBeDefined();
 		} );
 
@@ -103,7 +103,7 @@ describe( module( "carbonldp/GeneralRepository" ), () => {
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" )
 					.and.callThrough();
 
-				GeneralRepository.decorate( { $context, the: "object" } );
+				GeneralRepository.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( GeneralRepository.PROTOTYPE, { the: "object" } );
 			} );
@@ -113,7 +113,7 @@ describe( module( "carbonldp/GeneralRepository" ), () => {
 					.and.returnValue( true );
 
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
-				GeneralRepository.decorate( { $context } );
+				GeneralRepository.decorate( { context } );
 
 				expect( spy ).not.toHaveBeenCalled();
 			} );
@@ -123,15 +123,15 @@ describe( module( "carbonldp/GeneralRepository" ), () => {
 				const spy:jasmine.Spy = spyOn( Repository, "decorate" )
 					.and.callThrough();
 
-				GeneralRepository.decorate( { $context, the: "object" } );
+				GeneralRepository.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
-			it( "should throw error if no $context", () => {
+			it( "should throw error if no context", () => {
 				expect( () => {
 					GeneralRepository.decorate( {} as any );
-				} ).toThrowError( IllegalArgumentError, "Property $context is required." );
+				} ).toThrowError( IllegalArgumentError, `Property "context" is required.` );
 			} );
 
 		} );
@@ -149,13 +149,13 @@ describe( module( "carbonldp/GeneralRepository" ), () => {
 				const spy:jasmine.Spy = spyOn( GeneralRepository, "createFrom" )
 					.and.callThrough();
 
-				GeneralRepository.create( { $context, the: "object" } );
+				GeneralRepository.create( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
 			it( "should not return same object", () => {
-				const object:BaseGeneralRepository & { the:string } = { $context, the: "object" };
+				const object:BaseGeneralRepository & { the:string } = { context: context, the: "object" };
 				const returned:object = GeneralRepository.create( object );
 
 				expect( returned ).not.toBe( object );
@@ -175,13 +175,13 @@ describe( module( "carbonldp/GeneralRepository" ), () => {
 				const spy:jasmine.Spy = spyOn( GeneralRepository, "decorate" )
 					.and.callThrough();
 
-				GeneralRepository.createFrom( { $context, the: "object" } );
+				GeneralRepository.createFrom( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
 			it( "should return same object", () => {
-				const object:BaseGeneralRepository & { the:string } = { $context, the: "object" };
+				const object:BaseGeneralRepository & { the:string } = { context: context, the: "object" };
 				const returned:object = GeneralRepository.createFrom( object );
 
 				expect( returned ).toBe( object );

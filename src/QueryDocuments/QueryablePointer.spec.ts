@@ -66,19 +66,19 @@ describe( module( "carbonldp/QueryDocuments" ), () => {
 			it( "should exists", ():void => {
 				const resource:QueryablePointer = createMock();
 
-				expect( resource.isQueried ).toBeDefined();
-				expect( resource.isQueried ).toEqual( jasmine.any( Function ) );
+				expect( resource.$isQueried ).toBeDefined();
+				expect( resource.$isQueried ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should return false when no _queryableMetadata", () => {
-				const resource:QueryablePointer = createMock( { _queryableMetadata: undefined } );
-				expect( resource.isQueried() ).toBe( false );
+				const resource:QueryablePointer = createMock( { $_queryableMetadata: undefined } );
+				expect( resource.$isQueried() ).toBe( false );
 			} );
 
 			it( "should return true when _queryableMetadata set", () => {
-				const resource:QueryablePointer = createMock( { _queryableMetadata: createMockQueryableMetadata() } );
-				expect( resource.isQueried() ).toBe( true );
+				const resource:QueryablePointer = createMock( { $_queryableMetadata: createMockQueryableMetadata() } );
+				expect( resource.$isQueried() ).toBe( true );
 			} );
 
 		} );
@@ -165,7 +165,7 @@ describe( module( "carbonldp/QueryDocuments" ), () => {
 
 			it( "should set _queryableMetadata to undefined by default", () => {
 				const pointer:QueryablePointer = QueryablePointer.decorate( { $repository } );
-				expect( pointer._queryableMetadata ).toBe( void 0 );
+				expect( pointer.$_queryableMetadata ).toBe( void 0 );
 			} );
 
 		} );

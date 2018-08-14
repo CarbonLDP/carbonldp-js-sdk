@@ -5,7 +5,7 @@ import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
 import { Pointer } from "../Pointer/Pointer";
-import { PointerLibrary } from "../Pointer/PointerLibrary";
+import { $PointerLibrary, _getPointer, PointerLibrary } from "../Pointer/PointerLibrary";
 
 import { RDFList } from "../RDF/List";
 
@@ -55,11 +55,11 @@ export class JSONLDConverter {
 		;
 	}
 
-	compact( expandedObjects:Object[], targetObjects:Object[], digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary ):Object[];
-	compact( expandedObject:Object, targetObject:Object, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary, strict?:boolean ):Object;
-	compact( expandedObjects:Object[], digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary ):Object[];
-	compact( expandedObject:Object, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary ):Object;
-	compact( expandedObjectOrObjects:any, targetObjectOrObjectsOrDigestedContext:any, digestedSchemaOrPointerLibrary:any, pointerLibrary:PointerLibrary = null, strict?:boolean ):any {
+	compact( expandedObjects:Object[], targetObjects:Object[], digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):Object[];
+	compact( expandedObject:Object, targetObject:Object, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary, strict?:boolean ):Object;
+	compact( expandedObjects:Object[], digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):Object[];
+	compact( expandedObject:Object, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):Object;
+	compact( expandedObjectOrObjects:any, targetObjectOrObjectsOrDigestedContext:any, digestedSchemaOrPointerLibrary:any, pointerLibrary:PointerLibrary | $PointerLibrary = null, strict?:boolean ):any {
 		let targetObjectOrObjects:any = ! pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
 		let digestedSchema:any = ! pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
 		pointerLibrary = ! pointerLibrary ? digestedSchemaOrPointerLibrary : pointerLibrary;
@@ -212,7 +212,7 @@ export class JSONLDConverter {
 		return { "@value": serializedValue, "@type": literalType };
 	}
 
-	private __compactSingle( expandedObject:any, targetObject:any, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary, strict?:boolean ):void {
+	private __compactSingle( expandedObject:any, targetObject:any, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary, strict?:boolean ):void {
 		if( ! expandedObject[ "@id" ] ) throw new IllegalArgumentError( "The expandedObject doesn't have an @id defined." );
 
 		targetObject[ "$id" ] = expandedObject[ "@id" ];
@@ -251,7 +251,7 @@ export class JSONLDConverter {
 		return null;
 	}
 
-	private __getPropertyValue( propertyName:string, propertyValues:any[], digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary ):any {
+	private __getPropertyValue( propertyName:string, propertyValues:any[], digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):any {
 		const definition:DigestedObjectSchemaProperty = digestedSchema.properties.get( propertyName );
 		const propertyContainer:ContainerType = definition ?
 			definition.containerType :
@@ -304,7 +304,7 @@ export class JSONLDConverter {
 		return RDFNode.getPropertyLiterals( propertyValues, literalType );
 	}
 
-	private __getProperties( propertyValues:any[], pointerLibrary:PointerLibrary ):any[] | undefined {
+	private __getProperties( propertyValues:any[], pointerLibrary:PointerLibrary | $PointerLibrary ):any[] | undefined {
 		if( ! Array.isArray( propertyValues ) ) return;
 
 		return propertyValues
@@ -313,13 +313,13 @@ export class JSONLDConverter {
 			;
 	}
 
-	private __getPropertyPointers( propertyValues:any[], pointerLibrary:PointerLibrary ):any[] | undefined {
+	private __getPropertyPointers( propertyValues:any[], pointerLibrary:PointerLibrary | $PointerLibrary ):any[] | undefined {
 		if( ! Array.isArray( propertyValues ) ) return;
 
 		return propertyValues
 			.filter( RDFNode.is )
 			.map( RDFNode.getID )
-			.map( pointerLibrary.getPointer, pointerLibrary )
+			.map( _getPointer.bind( null, pointerLibrary ) )
 			.filter( pointer => ! isNull( pointer ) )
 			;
 	}

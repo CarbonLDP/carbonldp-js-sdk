@@ -41,9 +41,9 @@ import { SPARQLDocumentsRepositoryTrait, SPARQLDocumentsRepositoryTraitFactory }
 
 describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositoryTrait" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
+		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 
@@ -60,10 +60,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 		it( hasProperty(
 			OBLIGATORY,
-			"$context",
+			"context",
 			"CarbonLDP.DocumentsContext"
 		), ():void => {
-			const target:SPARQLDocumentsRepositoryTrait[ "$context" ] = {} as DocumentsContext;
+			const target:SPARQLDocumentsRepositoryTrait[ "context" ] = {} as DocumentsContext;
 			expect( target ).toBeDefined();
 		} );
 
@@ -153,7 +153,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 		let repository:SPARQLDocumentsRepositoryTrait;
 		beforeEach( () => {
-			repository = SPARQLDocumentsRepositoryTrait.decorate( { $context } );
+			repository = SPARQLDocumentsRepositoryTrait.decorate( { context } );
 		} );
 
 
@@ -201,7 +201,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 			} );
 
 			it( "should resolve prefixed name", async () => {
-				$context
+				context
 					.extendObjectSchema( { ex: "https://example.com/" } );
 
 				const spy:jasmine.Spy = spyOn( SPARQLService, "executeASKQuery" )
@@ -348,7 +348,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 			} );
 
 			it( "should resolve prefixed name", async () => {
-				$context
+				context
 					.extendObjectSchema( { ex: "https://example.com/" } );
 
 				const spy:jasmine.Spy = spyOn( SPARQLService, "executeSELECTQuery" )
@@ -494,7 +494,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 			} );
 
 			it( "should resolve prefixed name", async () => {
-				$context
+				context
 					.extendObjectSchema( { ex: "https://example.com/" } );
 
 				const spy:jasmine.Spy = spyOn( SPARQLService, "executeUPDATE" )
@@ -640,7 +640,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 			} );
 
 			it( "should add used prefixes", async () => {
-				$context.extendObjectSchema( {
+				context.extendObjectSchema( {
 					"ex": "https://example.com/",
 				} );
 
@@ -722,7 +722,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" )
 					.and.callThrough();
 
-				SPARQLDocumentsRepositoryTrait.decorate( { $context, the: "object" } );
+				SPARQLDocumentsRepositoryTrait.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( SPARQLDocumentsRepositoryTrait.PROTOTYPE, { the: "object" } );
 			} );
@@ -732,7 +732,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 					.and.returnValue( true );
 
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
-				SPARQLDocumentsRepositoryTrait.decorate( { $context } );
+				SPARQLDocumentsRepositoryTrait.decorate( { context } );
 
 				expect( spy ).not.toHaveBeenCalled();
 			} );
@@ -742,7 +742,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 				const spy:jasmine.Spy = spyOn( GeneralRepository, "decorate" )
 					.and.callThrough();
 
-				SPARQLDocumentsRepositoryTrait.decorate( { $context, the: "object" } );
+				SPARQLDocumentsRepositoryTrait.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );

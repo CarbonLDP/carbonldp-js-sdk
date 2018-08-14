@@ -29,11 +29,11 @@ import { BaseQueryableDocumentTrait, QueryableDocumentTrait, QueryableDocumentTr
 
 describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	let $repository:QueryableDocumentsRepositoryTrait;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
-		$repository = QueryableDocumentsRepositoryTrait.decorate( { $context } );
+		context = new DocumentsContext( "https://example.com/" );
+		$repository = QueryableDocumentsRepositoryTrait.decorate( { context } );
 	} );
 
 
@@ -73,7 +73,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 		} );
 
 
-		describe( method( OBLIGATORY, "getChildren" ), () => {
+		describe( method( OBLIGATORY, "$getChildren" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -112,8 +112,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.getChildren ).toBeDefined();
-				expect( resource.getChildren ).toEqual( jasmine.any( Function ) );
+				expect( resource.$getChildren ).toBeDefined();
+				expect( resource.$getChildren ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -125,70 +125,70 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 
 
 			it( "should call repository with $id when empty", async () => {
-				await resource.getChildren();
+				await resource.$getChildren();
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
 			} );
 
 			it( "should call repository with $id when options", async () => {
-				await resource.getChildren( { timeout: 5050 } );
+				await resource.$getChildren( { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when query", async () => {
-				await resource.getChildren( queryBuilderFn );
+				await resource.$getChildren( queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", queryBuilderFn );
 			} );
 
 			it( "should call repository with $id when options and query", async () => {
-				await resource.getChildren( { timeout: 5050 }, queryBuilderFn );
+				await resource.$getChildren( { timeout: 5050 }, queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { timeout: 5050 }, queryBuilderFn );
 			} );
 
 
 			it( "should call repository with absolute URI when empty", async () => {
-				await resource.getChildren( "https://example.com/another-resource/" );
+				await resource.$getChildren( "https://example.com/another-resource/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
 			} );
 
 			it( "should call repository with absolute URI when options", async () => {
-				await resource.getChildren( "https://example.com/another-resource/", { timeout: 5050 } );
+				await resource.$getChildren( "https://example.com/another-resource/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with absolute URI when query", async () => {
-				await resource.getChildren( "https://example.com/another-resource/", queryBuilderFn );
+				await resource.$getChildren( "https://example.com/another-resource/", queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", queryBuilderFn );
 			} );
 
 			it( "should call repository with absolute URI when options and query", async () => {
-				await resource.getChildren( "https://example.com/another-resource/", { timeout: 5050 }, queryBuilderFn );
+				await resource.$getChildren( "https://example.com/another-resource/", { timeout: 5050 }, queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { timeout: 5050 }, queryBuilderFn );
 			} );
 
 
 			it( "should call repository with resoled relative URI when empty", async () => {
-				await resource.getChildren( "relative/" );
+				await resource.$getChildren( "relative/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
 			} );
 
 			it( "should call repository with resoled relative URI when options", async () => {
-				await resource.getChildren( "relative/", { timeout: 5050 } );
+				await resource.$getChildren( "relative/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with resoled relative URI when query", async () => {
-				await resource.getChildren( "relative/", queryBuilderFn );
+				await resource.$getChildren( "relative/", queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", queryBuilderFn );
 			} );
 
 			it( "should call repository with resoled relative URI when options and query", async () => {
-				await resource.getChildren( "relative/", { timeout: 5050 }, queryBuilderFn );
+				await resource.$getChildren( "relative/", { timeout: 5050 }, queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { timeout: 5050 }, queryBuilderFn );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "getMembers" ), () => {
+		describe( method( OBLIGATORY, "$getMembers" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -231,8 +231,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.getMembers ).toBeDefined();
-				expect( resource.getMembers ).toEqual( jasmine.any( Function ) );
+				expect( resource.$getMembers ).toBeDefined();
+				expect( resource.$getMembers ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -244,71 +244,71 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 
 
 			it( "should call repository with $id when empty", async () => {
-				await resource.getMembers();
+				await resource.$getMembers();
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
 			} );
 
 			it( "should call repository with $id when options", async () => {
-				await resource.getMembers( { timeout: 5050 } );
+				await resource.$getMembers( { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with $id when query", async () => {
-				await resource.getMembers( queryBuilderFn );
+				await resource.$getMembers( queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", queryBuilderFn );
 			} );
 
 			it( "should call repository with $id when options and query", async () => {
-				await resource.getMembers( { timeout: 5050 }, queryBuilderFn );
+				await resource.$getMembers( { timeout: 5050 }, queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { timeout: 5050 }, queryBuilderFn );
 			} );
 
 
 			it( "should call repository with absolute URI when empty", async () => {
-				await resource.getMembers( "https://example.com/another-resource/" );
+				await resource.$getMembers( "https://example.com/another-resource/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
 			} );
 
 			it( "should call repository with absolute URI when options", async () => {
-				await resource.getMembers( "https://example.com/another-resource/", { timeout: 5050 } );
+				await resource.$getMembers( "https://example.com/another-resource/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with absolute URI when query", async () => {
-				await resource.getMembers( "https://example.com/another-resource/", queryBuilderFn );
+				await resource.$getMembers( "https://example.com/another-resource/", queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", queryBuilderFn );
 			} );
 
 			it( "should call repository with absolute URI when options and query", async () => {
-				await resource.getMembers( "https://example.com/another-resource/", { timeout: 5050 }, queryBuilderFn );
+				await resource.$getMembers( "https://example.com/another-resource/", { timeout: 5050 }, queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { timeout: 5050 }, queryBuilderFn );
 			} );
 
 
 			it( "should call repository with resoled relative URI when empty", async () => {
-				await resource.getMembers( "relative/" );
+				await resource.$getMembers( "relative/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
 			} );
 
 			it( "should call repository with resoled relative URI when options", async () => {
-				await resource.getMembers( "relative/", { timeout: 5050 } );
+				await resource.$getMembers( "relative/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { timeout: 5050 } );
 			} );
 
 			it( "should call repository with resoled relative URI when query", async () => {
-				await resource.getMembers( "relative/", queryBuilderFn );
+				await resource.$getMembers( "relative/", queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", queryBuilderFn );
 			} );
 
 			it( "should call repository with resoled relative URI when options and query", async () => {
-				await resource.getMembers( "relative/", { timeout: 5050 }, queryBuilderFn );
+				await resource.$getMembers( "relative/", { timeout: 5050 }, queryBuilderFn );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { timeout: 5050 }, queryBuilderFn );
 			} );
 
 		} );
 
 
-		describe( method( OBLIGATORY, "listChildren" ), () => {
+		describe( method( OBLIGATORY, "$listChildren" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -330,8 +330,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.listChildren ).toBeDefined();
-				expect( resource.listChildren ).toEqual( jasmine.any( Function ) );
+				expect( resource.$listChildren ).toBeDefined();
+				expect( resource.$listChildren ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -343,40 +343,40 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 
 
 			it( "should call repository with $id when empty", async () => {
-				await resource.listChildren();
+				await resource.$listChildren();
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
 			} );
 
 			it( "should call repository with $id when options", async () => {
-				await resource.listChildren( { timeout: 5050 } );
+				await resource.$listChildren( { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with absolute URI when empty", async () => {
-				await resource.listChildren( "https://example.com/another-resource/" );
+				await resource.$listChildren( "https://example.com/another-resource/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
 			} );
 
 			it( "should call repository with absolute URI when options", async () => {
-				await resource.listChildren( "https://example.com/another-resource/", { timeout: 5050 } );
+				await resource.$listChildren( "https://example.com/another-resource/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with resoled relative URI when empty", async () => {
-				await resource.listChildren( "relative/" );
+				await resource.$listChildren( "relative/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
 			} );
 
 			it( "should call repository with resoled relative URI when options", async () => {
-				await resource.listChildren( "relative/", { timeout: 5050 } );
+				await resource.$listChildren( "relative/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { timeout: 5050 } );
 			} );
 
 		} );
 
-		describe( method( OBLIGATORY, "listMembers" ), () => {
+		describe( method( OBLIGATORY, "$listMembers" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -398,8 +398,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( resource.listMembers ).toBeDefined();
-				expect( resource.listMembers ).toEqual( jasmine.any( Function ) );
+				expect( resource.$listMembers ).toBeDefined();
+				expect( resource.$listMembers ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -411,34 +411,34 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 
 
 			it( "should call repository with $id when empty", async () => {
-				await resource.listMembers();
+				await resource.$listMembers();
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/" );
 			} );
 
 			it( "should call repository with $id when options", async () => {
-				await resource.listMembers( { timeout: 5050 } );
+				await resource.$listMembers( { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with absolute URI when empty", async () => {
-				await resource.listMembers( "https://example.com/another-resource/" );
+				await resource.$listMembers( "https://example.com/another-resource/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
 			} );
 
 			it( "should call repository with absolute URI when options", async () => {
-				await resource.listMembers( "https://example.com/another-resource/", { timeout: 5050 } );
+				await resource.$listMembers( "https://example.com/another-resource/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { timeout: 5050 } );
 			} );
 
 
 			it( "should call repository with resoled relative URI when empty", async () => {
-				await resource.listMembers( "relative/" );
+				await resource.$listMembers( "relative/" );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
 			} );
 
 			it( "should call repository with resoled relative URI when options", async () => {
-				await resource.listMembers( "relative/", { timeout: 5050 } );
+				await resource.$listMembers( "relative/", { timeout: 5050 } );
 				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { timeout: 5050 } );
 			} );
 

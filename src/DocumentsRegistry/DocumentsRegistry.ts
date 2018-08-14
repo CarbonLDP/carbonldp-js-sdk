@@ -2,6 +2,8 @@ import { DocumentsContext } from "../Context/DocumentsContext";
 
 import { Document } from "../Document/Document";
 
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
 import { BaseGeneralRegistry } from "../GeneralRegistry/BaseGeneralRegistry";
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 
@@ -11,13 +13,11 @@ import { ModelPrototype } from "../Model/ModelPrototype";
 
 import { URI } from "../RDF/URI";
 
-import { Registry } from "../Registry/Registry";
-
 import { BaseDocumentsRegistry } from "./BaseDocumentsRegistry";
 
 
 export interface DocumentsRegistry extends GeneralRegistry<Document> {
-	readonly $context:DocumentsContext;
+	readonly context:DocumentsContext;
 
 	register( id:string ):Document;
 }
@@ -36,7 +36,7 @@ export const DocumentsRegistry:DocumentsRegistryFactory = {
 		},
 
 		_getLocalID( this:DocumentsRegistry, id:string ):string {
-			if( URI.hasFragment( id ) ) Registry.PROTOTYPE._getLocalID.call( this, id );
+			if( URI.hasFragment( id ) ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 			return GeneralRegistry.PROTOTYPE._getLocalID.call( this, id );
 		},
 	},
@@ -50,7 +50,7 @@ export const DocumentsRegistry:DocumentsRegistryFactory = {
 	decorate<T extends BaseDocumentsRegistry>( object:T ):T & DocumentsRegistry {
 		if( DocumentsRegistry.isDecorated( object ) ) return object;
 
-		const base:T & BaseGeneralRegistry = Object.assign( object, {
+		const base:T & BaseGeneralRegistry = Object.assign<T, Pick<BaseGeneralRegistry, "__modelDecorator">>( object, {
 			__modelDecorator: Document,
 		} );
 

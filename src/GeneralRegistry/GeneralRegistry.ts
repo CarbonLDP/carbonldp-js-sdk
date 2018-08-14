@@ -11,6 +11,7 @@ import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
 import { Pointer } from "../Pointer/Pointer";
 
 import { URI } from "../RDF/URI";
+import { BaseRegistry } from "../Registry/BaseRegistry";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
 import { Registry } from "../Registry/Registry";
@@ -24,8 +25,8 @@ import { TypedModelDecorator } from "./TypedModelDecorator";
 
 
 export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer> extends Registry<M>, ObjectSchemaResolver {
-	readonly $context:Context<M>;
-	readonly $registry:GeneralRegistry | undefined;
+	readonly context:Context<M>;
+	readonly registry:GeneralRegistry | undefined;
 
 
 	__modelDecorators:Map<string, TypedModelDecorator>;
@@ -42,8 +43,8 @@ export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer
 
 
 export type OverloadedFns =
-	| "$context"
-	| "$registry"
+	| "context"
+	| "registry"
 	| "_addPointer"
 	| "_getLocalID"
 	;
@@ -56,15 +57,15 @@ export type GeneralRegistryFactory =
 
 export const GeneralRegistry:GeneralRegistryFactory = {
 	PROTOTYPE: {
-		get $context():Context {
-			throw new IllegalArgumentError( "Property $context is required." );
+		get context():Context {
+			throw new IllegalArgumentError( "Property context is required." );
 		},
 
-		get $registry( this:GeneralRegistry ):GeneralRegistry<any> | undefined {
-			if( ! this.$context || ! this.$context.parentContext ) return;
-			return this.$context.parentContext.registry;
+		get registry( this:GeneralRegistry ):GeneralRegistry<any> | undefined {
+			if( ! this.context || ! this.context.parentContext ) return;
+			return this.context.parentContext.registry;
 		},
-		set $registry( value:GeneralRegistry<any> ) {},
+		set registry( value:GeneralRegistry<any> ) {},
 
 
 		get __modelDecorators():Map<string, TypedModelDecorator> { return new Map(); },
@@ -89,23 +90,23 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 
 
 		_addPointer<T extends object>( this:GeneralRegistry, pointer:T & Pointer ):T & RegisteredPointer {
-			if( this.$context.repository )
-				Object.assign<T, BaseResolvablePointer>( pointer, { $repository: this.$context.repository } );
+			if( this.context.repository )
+				Object.assign<T, BaseResolvablePointer>( pointer, { $repository: this.context.repository } );
 
 			const resource:T & RegisteredPointer = Registry.PROTOTYPE._addPointer.call( this, pointer );
 
-			resource.$id = this.$context.getObjectSchema().resolveURI( resource.$id, { base: true } );
+			resource.$id = this.context.getObjectSchema().resolveURI( resource.$id, { base: true } );
 
 			return resource;
 		},
 
 		_getLocalID( this:GeneralRegistry, id:string ):string {
-			const uri:string = this.$context.getObjectSchema().resolveURI( id, { base: true } );
+			const uri:string = this.context.getObjectSchema().resolveURI( id, { base: true } );
 
-			if( ! URI.isAbsolute( uri ) || ! URI.isBaseOf( this.$context.baseURI, uri ) )
+			if( ! URI.isAbsolute( uri ) || ! URI.isBaseOf( this.context.baseURI, uri ) )
 				throw new IllegalArgumentError( `"${ uri }" is out of scope.` );
 
-			return URI.getRelativeURI( uri, this.$context.baseURI );
+			return URI.getRelativeURI( uri, this.context.baseURI );
 		},
 	},
 
@@ -122,7 +123,7 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 		const target:T & Registry & ObjectSchemaResolver = ModelDecorator
 			.decorateMultiple( object, Registry, ObjectSchemaResolver );
 
-		if( ! target.$context ) delete target.$context;
+		if( ! target.context ) delete target.context;
 
 		return ModelDecorator
 			.definePropertiesFrom( GeneralRegistry.PROTOTYPE, target );
@@ -137,8 +138,8 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 	createFrom<T extends object>( object:T & BaseGeneralRegistry ):T & GeneralRegistry {
 		const registry:T & GeneralRegistry = GeneralRegistry.decorate( object );
 
-		if( registry.$registry )
-			MapUtils.extend( registry.__modelDecorators, registry.$registry.__modelDecorators );
+		if( registry.registry )
+			MapUtils.extend( registry.__modelDecorators, registry.registry.__modelDecorators );
 
 		return registry;
 	},

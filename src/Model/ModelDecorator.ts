@@ -1,4 +1,4 @@
-import { hasFunction, isFunction } from "../Utils";
+import { isFunction } from "../Utils";
 
 
 export interface ModelDecorator<MODEL extends object, BASE extends object = object> {
@@ -14,7 +14,7 @@ export interface ModelDecoratorFactory {
 	definePropertiesFrom<P extends object, O extends object>( prototype:P, object:O ):O & P;
 
 	decorateMultiple<O extends B1, M1 extends object, B1 extends object>( object:O, model1:ModelDecorator<M1, B1> ):O & M1;
-	decorateMultiple<O extends B1 & B2, M1 extends object, B1 extends object, M2 extends object, B2 extends object>( object:O, model1:ModelDecorator<M1, B1>, model2:ModelDecorator<M2, B2> ):O & M1 & M2;
+	decorateMultiple<O extends B1 & Pick<B2, Exclude<keyof B2, keyof M1>>, M1 extends object, B1 extends object, M2 extends object, B2 extends object>( object:O, model1:ModelDecorator<M1, B1>, model2:ModelDecorator<M2, B2> ):O & M1 & M2;
 	decorateMultiple<O extends B1 & B2 & B3, M1 extends object, B1 extends object, M2 extends object, B2 extends object, M3 extends object, B3 extends object>( object:O, model1:ModelDecorator<M1, B1>, model2:ModelDecorator<M2, B2>, model3:ModelDecorator<M3, B3> ):O & M1 & M2 & M3;
 	decorateMultiple<O extends B1 & B2 & B3 & B4, M1 extends object, B1 extends object, M2 extends object, B2 extends object, M3 extends object, B3 extends object, M4 extends object, B4 extends object>( object:O, model1:ModelDecorator<M1, B1>, model2:ModelDecorator<M2, B2>, model3:ModelDecorator<M3, B3>, model4:ModelDecorator<M4, B4> ):O & M1 & M2 & M3 & M4;
 	decorateMultiple<O extends B1 & B2 & B3 & B4 & B5, M1 extends object, B1 extends object, M2 extends object, B2 extends object, M3 extends object, B3 extends object, M4 extends object, B4 extends object, M5 extends object, B5 extends object>( object:O, model1:ModelDecorator<M1, B1>, model2:ModelDecorator<M2, B2>, model3:ModelDecorator<M3, B3>, model4:ModelDecorator<M4, B4>, model5:ModelDecorator<M5, B5> ):O & M1 & M2 & M3 & M4 & M5;
@@ -23,24 +23,51 @@ export interface ModelDecoratorFactory {
 
 export const ModelDecorator:ModelDecoratorFactory = {
 	hasPropertiesFrom( prototype:object, object:object ):boolean {
-		return Object
-			.keys( prototype )
+		const prototypeKeys:string[] = Object
+			.keys( prototype );
+
+		const shouldAddDollar:boolean = "$id" in object
+			&& ! prototypeKeys.some( key => key.startsWith( "$" ) );
+
+		return prototypeKeys
 			.every( key => {
-				const definition:PropertyDescriptor = Object
+				const targetKey:string = shouldAddDollar ?
+					"$" + key : key;
+
+
+				const definition:PropertyDescriptor | undefined = Object
 					.getOwnPropertyDescriptor( prototype, key );
 
-				if( definition.value && isFunction( definition.value ) )
-					return hasFunction( object, key );
+				if( ! definition ) return false;
 
-				return object.hasOwnProperty( key ) && ! object.propertyIsEnumerable( key );
+
+				const targetDefinition:PropertyDescriptor | undefined = Object
+					.getOwnPropertyDescriptor( object, targetKey );
+
+				if( ! targetDefinition ) return false;
+
+
+				if( isFunction( definition.value ) )
+					return isFunction( targetDefinition.value );
+
+				return ! targetDefinition.enumerable;
 			} )
 			;
 	},
 
 	definePropertiesFrom<P extends object, O extends object>( prototype:P, object:O ):O & P {
-		Object
-			.keys( prototype )
+		const prototypeKeys:string[] = Object
+			.keys( prototype );
+
+		const shouldAddDollar:boolean = "$id" in object
+			&& ! prototypeKeys.some( key => key.startsWith( "$" ) );
+
+		prototypeKeys
 			.forEach( key => {
+				const targetKey:string = shouldAddDollar ?
+					"$" + key : key;
+
+
 				const definition:PropertyDescriptor = Object
 					.getOwnPropertyDescriptor( prototype, key );
 
@@ -52,17 +79,19 @@ export const ModelDecorator:ModelDecoratorFactory = {
 				if( isFunction( definition.value ) ) {
 					descriptor.writable = false;
 					descriptor.value = definition.value;
+
 				} else if( ! definition.set ) {
 					descriptor.writable = true;
-					descriptor.value = object.hasOwnProperty( key ) ?
-						object[ key ] : definition.get ?
+					descriptor.value = object.hasOwnProperty( targetKey ) ?
+						object[ targetKey ] : definition.get ?
 							definition.get() : definition.value;
+
 				} else {
 					descriptor.get = definition.get;
 					descriptor.set = definition.set;
 				}
 
-				Object.defineProperty( object, key, descriptor );
+				Object.defineProperty( object, targetKey, descriptor );
 			} )
 		;
 

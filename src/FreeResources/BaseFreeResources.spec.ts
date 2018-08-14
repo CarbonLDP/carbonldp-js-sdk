@@ -14,11 +14,11 @@ describe( module( "carbonldp/FreeResources" ), () => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"$registry",
+			"registry",
 			"CarbonLDP.GeneralRegistry<any>",
 			"The registry where the FreeResources scope is in."
 		), ():void => {
-			const target:BaseFreeResources[ "$registry" ] = {} as GeneralRegistry<any>;
+			const target:BaseFreeResources[ "registry" ] = {} as GeneralRegistry<any>;
 			expect( target ).toBeDefined();
 		} );
 

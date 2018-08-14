@@ -25,8 +25,8 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 
 		let registry:GeneralRegistry<Document>;
 		beforeEach( ():void => {
-			const $context:Context = createMockContext();
-			registry = GeneralRegistry.create( { __modelDecorator: Document, $context } );
+			const context:Context = createMockContext();
+			registry = GeneralRegistry.create( { __modelDecorator: Document, context: context } );
 		} );
 
 
@@ -959,7 +959,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 					},
 				] );
 
-				expect( compacted[ 0 ]._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( compacted[ 0 ].$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"pointer1": {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",
@@ -970,7 +970,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 					},
 				} ) );
 
-				expect( compacted[ 1 ]._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( compacted[ 1 ].$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"pointer1": {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",

@@ -72,9 +72,9 @@ import {
 
 describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsRepositoryTrait" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
+		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 
@@ -91,10 +91,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		it( hasProperty(
 			OBLIGATORY,
-			"$context",
+			"context",
 			"CarbonLDP.DocumentsContext"
 		), ():void => {
-			const target:QueryableDocumentsRepositoryTrait[ "$context" ] = {} as DocumentsContext;
+			const target:QueryableDocumentsRepositoryTrait[ "context" ] = {} as DocumentsContext;
 			expect( target ).toBeDefined();
 		} );
 
@@ -185,23 +185,23 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		let repository:QueryableDocumentsRepositoryTrait;
 		let document:Document;
 		beforeEach( () => {
-			repository = QueryableDocumentsRepositoryTrait.decorate( { $context } );
+			repository = QueryableDocumentsRepositoryTrait.decorate( { context } );
 
 			document = Document.decorate( {
 				$id: "https://example.com/",
-				$repository: $context.repository,
-				$registry: $context.registry,
-				_queryableMetadata: createMockQueryableMetadata(),
+				$repository: context.repository,
+				$registry: context.registry,
+				$_queryableMetadata: createMockQueryableMetadata(),
 			} );
 		} );
 
 		function createMockDocument<T extends {}>( data:T & Partial<Document> ):T & Document {
 			const mockDocument:T & Document = Document.decorate( Object.assign( {
-				$registry: $context.registry,
-				$repository: $context.repository,
+				$registry: context.registry,
+				$repository: context.repository,
 			}, data ) );
 
-			mockDocument._normalize();
+			mockDocument.$_normalize();
 
 			return mockDocument;
 		}
@@ -214,7 +214,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		};
 
 
-		describe( method( OBLIGATORY, "get" ), ():void => {
+		describe( method( OBLIGATORY, "$get" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -299,7 +299,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.get( "ex:resource/", _ => _ );
 
@@ -384,7 +384,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -515,7 +515,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -610,7 +610,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -714,9 +714,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.properties( {} )
 				);
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
+				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
-					_resolved: true,
+					$_resolved: true,
 				} ) );
 			} );
 
@@ -807,7 +807,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -844,9 +844,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned.property2 ).toEqual( jasmine.objectContaining( {
+				expect( returned.property2 ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"2-12345\"",
-					_resolved: true,
+					$_resolved: true,
 				} ) );
 			} );
 
@@ -896,7 +896,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -932,8 +932,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -944,8 +944,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property2": {
 						"@id": "https://example.com/ns#property-2",
 						"@type": XSD.integer,
@@ -1006,7 +1006,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1044,8 +1044,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				);
 
 
-				expect( returned._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -1056,8 +1056,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property2": {
 						"@id": "https://example.com/ns#property-2",
 						"@type": XSD.integer,
@@ -1124,7 +1124,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				}
 
 				document = createMockDocument( {
-					_queryableMetadata: createMockQueryableMetadata( {
+					$_queryableMetadata: createMockQueryableMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
@@ -1144,7 +1144,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					property4: true,
 					property1: "value",
 					property2: {
-						_queryableMetadata: createMockQueryableMetadata( {
+						$_queryableMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property3": {
 								"@id": "https://schema.org/property-3",
@@ -1167,9 +1167,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				$context.registry
+				context.registry
 					.__resourcesMap.set( "", document );
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1225,7 +1225,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 			it( "should merge partial metadata", async () => {
 				document = createMockDocument( {
-					_queryableMetadata: createMockQueryableMetadata( {
+					$_queryableMetadata: createMockQueryableMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -1239,7 +1239,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						_queryableMetadata: createMockQueryableMetadata( {
+						$_queryableMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property3": {
 								"@id": "https://schema.org/property-3",
@@ -1254,8 +1254,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				$context.registry._addPointer( document );
-				$context
+				context.registry._addPointer( document );
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1335,8 +1335,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property4": {
 						"@id": "https://example.com/ns#property-4",
 						"@type": XSD.boolean,
@@ -1351,8 +1351,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property3": {
 						"@id": "https://schema.org/property-3",
 						"@type": XSD.string,
@@ -1399,9 +1399,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 			it( "should ensure latest when is partial and no builder function", async () => {
-				$context.registry._addPointer( createMockDocument( {
+				context.registry._addPointer( createMockDocument( {
 					$id: "resource/",
-					_queryableMetadata: createMockQueryableMetadata( {} ),
+					$_queryableMetadata: createMockQueryableMetadata( {} ),
 				} ) );
 
 
@@ -1419,9 +1419,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 			it( "should ensure latest when URI is partial and no builder function, with options", async () => {
-				$context.registry._addPointer( createMockDocument( {
+				context.registry._addPointer( createMockDocument( {
 					$id: "resource/",
-					_queryableMetadata: createMockQueryableMetadata( {} ),
+					$_queryableMetadata: createMockQueryableMetadata( {} ),
 				} ) );
 
 
@@ -1476,7 +1476,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "resolve" ), () => {
+		describe( method( OBLIGATORY, "$resolve" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -1573,7 +1573,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -1660,10 +1660,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should add TYPES at CONSTRUCT when available", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context.registry._addPointer( document );
+				context.registry._addPointer( document );
 				document.types = [ "https://example.com/ns#A-Type", "https://example.com/ns#Another-Type" ];
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -1797,7 +1797,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1892,7 +1892,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -1996,9 +1996,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.properties( {} )
 				);
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
+				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
-					_resolved: true,
+					$_resolved: true,
 				} ) );
 			} );
 
@@ -2089,7 +2089,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -2126,9 +2126,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned.property2 ).toEqual( jasmine.objectContaining( {
+				expect( returned.property2 ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"2-12345\"",
-					_resolved: true,
+					$_resolved: true,
 				} ) );
 			} );
 
@@ -2178,7 +2178,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -2214,8 +2214,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -2226,8 +2226,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property2": {
 						"@id": "https://example.com/ns#property-2",
 						"@type": XSD.integer,
@@ -2288,7 +2288,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -2326,8 +2326,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				);
 
 
-				expect( returned._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -2338,8 +2338,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property2": {
 						"@id": "https://example.com/ns#property-2",
 						"@type": XSD.integer,
@@ -2406,7 +2406,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				}
 
 				document = createMockDocument( {
-					_queryableMetadata: createMockQueryableMetadata( {
+					$_queryableMetadata: createMockQueryableMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
@@ -2426,7 +2426,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					property4: true,
 					property1: "value",
 					property2: {
-						_queryableMetadata: createMockQueryableMetadata( {
+						$_queryableMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property3": {
 								"@id": "https://schema.org/property-3",
@@ -2449,8 +2449,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				$context.registry._addPointer( document );
-				$context
+				context.registry._addPointer( document );
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -2506,7 +2506,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 			it( "should merge partial metadata", async () => {
 				document = createMockDocument( {
-					_queryableMetadata: createMockQueryableMetadata( {
+					$_queryableMetadata: createMockQueryableMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -2520,7 +2520,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						_queryableMetadata: createMockQueryableMetadata( {
+						$_queryableMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property3": {
 								"@id": "https://schema.org/property-3",
@@ -2535,8 +2535,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				$context.registry._addPointer( document );
-				$context
+				context.registry._addPointer( document );
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -2616,8 +2616,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property4": {
 						"@id": "https://example.com/ns#property-4",
 						"@type": XSD.boolean,
@@ -2632,8 +2632,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2._queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
+				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"property3": {
 						"@id": "https://schema.org/property-3",
 						"@type": XSD.string,
@@ -2654,7 +2654,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
 
-				document._queryableMetadata = void 0;
+				document.$_queryableMetadata = void 0;
 				await repository.resolve( document )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -2669,7 +2669,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
 
-				document._queryableMetadata = void 0;
+				document.$_queryableMetadata = void 0;
 				await repository.resolve( document, { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -2682,7 +2682,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 			it( "should ensure latest when current is partial and no builder function", async () => {
-				$context.registry._addPointer( document );
+				context.registry._addPointer( document );
 
 				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
@@ -2698,7 +2698,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 			it( "should ensure latest when current is partial and no builder function, with options", async () => {
-				$context.registry._addPointer( document );
+				context.registry._addPointer( document );
 
 				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "get" )
 					.and.returnValue( Promise.reject( null ) );
@@ -2754,7 +2754,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		} );
 
 
-		describe( method( OBLIGATORY, "saveAndRefresh" ), () => {
+		describe( method( OBLIGATORY, "$saveAndRefresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -2856,7 +2856,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should only refresh when NO dirty", async () => {
 				stubRequest( "https://example.com/" );
 
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( false );
 
 				await repository.saveAndRefresh( document );
@@ -2871,7 +2871,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send PATCH to self when dirty", async () => {
 				stubRequest( "https://example.com/" );
 
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 				await repository.saveAndRefresh( document );
@@ -2884,7 +2884,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should throw error when locally outdated", async () => {
 				stubRequest( "https://example.com/" );
 
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 				document.$eTag = null;
 
@@ -2903,7 +2903,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/" );
 
 				document.$eTag = "\"1-12345\"";
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 				await repository.saveAndRefresh( document );
@@ -2930,7 +2930,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should add custom headers in single self child", async () => {
 				stubRequest( "https://example.com/" );
 
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 
 
@@ -2987,10 +2987,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				document._normalize();
-				document._syncSnapshot();
+				document.$_normalize();
+				document.$_syncSnapshot();
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"xsd": XSD.namespace,
@@ -3019,7 +3019,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} );
 
 
-				document.addType( "NewType" );
+				document.$addType( "NewType" );
 				object.list = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
 				object.pointer.string = [ "string 2", "string 3" ];
 				object.pointer.pointers[ 0 ].string = [ "string 1", "string -1" ];
@@ -3054,7 +3054,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/" );
 
 				document = createMockDocument( {
-					_queryableMetadata: createMockQueryableMetadata( {
+					$_queryableMetadata: createMockQueryableMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -3072,7 +3072,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						_queryableMetadata: createMockQueryableMetadata( {
+						$_queryableMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property3": {
 								"@id": "https://schema.org/property-3",
@@ -3090,9 +3090,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						$id: "_:1",
 					},
 				} );
-				document._syncSavedFragments();
+				document.$_syncSavedFragments();
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -3217,9 +3217,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				document.$eTag = "\"0-12345\"";
 
 				const returned:Document = await repository.saveAndRefresh( document );
-				expect( returned ).toEqual( jasmine.objectContaining( {
+				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
-					_resolved: true,
+					$_resolved: true,
 				} ) );
 			} );
 
@@ -3228,7 +3228,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "saveAndRefresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				document._queryableMetadata = void 0;
+				document.$_queryableMetadata = void 0;
 				await repository.saveAndRefresh( document )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -3243,7 +3243,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "saveAndRefresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				document._queryableMetadata = void 0;
+				document.$_queryableMetadata = void 0;
 				await repository.saveAndRefresh( document, { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -3256,7 +3256,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 			it( "should parse ErrorResponse into error", async () => {
-				spyOnDecorated( document, "isDirty" )
+				spyOnDecorated( document, "$isDirty" )
 					.and.returnValue( true );
 				document.$id = "500/";
 
@@ -3296,7 +3296,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "refresh" ), () => {
+		describe( method( OBLIGATORY, "$refresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -3382,7 +3382,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/" );
 
 				document = createMockDocument( {
-					_queryableMetadata: createMockQueryableMetadata( {
+					$_queryableMetadata: createMockQueryableMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -3400,7 +3400,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						_queryableMetadata: createMockQueryableMetadata( {
+						$_queryableMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property3": {
 								"@id": "https://schema.org/property-3",
@@ -3418,9 +3418,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						$id: "_:1",
 					},
 				} );
-				document._syncSavedFragments();
+				document.$_syncSavedFragments();
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -3493,7 +3493,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/" );
 
 				document = createMockDocument( {
-					_queryableMetadata: createMockQueryableMetadata( {
+					$_queryableMetadata: createMockQueryableMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -3511,13 +3511,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						_queryableMetadata: new QueryableMetadata( QueryableMetadata.ALL ),
+						$_queryableMetadata: new QueryableMetadata( QueryableMetadata.ALL ),
 						$id: "_:1",
 					},
 				} );
-				document._syncSavedFragments();
+				document.$_syncSavedFragments();
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -3620,7 +3620,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 				document = createMockDocument( {
-					_queryableMetadata: createMockQueryableMetadata( {
+					$_queryableMetadata: createMockQueryableMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
@@ -3643,7 +3643,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					property2: {
 						$id: "_:1",
-						_queryableMetadata: createMockQueryableMetadata( {
+						$_queryableMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property2": {
 								"@id": "https://example.com/ns#property-2",
@@ -3665,10 +3665,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} );
 
-				document._syncSavedFragments();
-				$context.registry._addPointer( document );
+				document.$_syncSavedFragments();
+				context.registry._addPointer( document );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -3780,9 +3780,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				document.$eTag = "\"0-12345\"";
 				const returned:Document = await repository.refresh( document );
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
+				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
-					_resolved: true,
+					$_resolved: true,
 				} ) );
 			} );
 
@@ -3842,15 +3842,15 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					],
 				} );
 
-				document = $context.registry._addPointer( {
+				document = context.registry._addPointer( {
 					$eTag: "\"1-12345\"",
 					$id: "https://example.com/",
 
 					property1: "value",
-					_queryableMetadata: createMockQueryableMetadata(),
+					$_queryableMetadata: createMockQueryableMetadata(),
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 					} )
@@ -3932,7 +3932,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 				document.$eTag = null;
-				$context.registry._addPointer( document );
+				context.registry._addPointer( document );
 
 				const returned:Document = await repository.refresh( document );
 
@@ -3946,7 +3946,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "refresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				document._queryableMetadata = void 0;
+				document.$_queryableMetadata = void 0;
 				await repository.refresh( document )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -3961,7 +3961,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const spy:jasmine.Spy = spyOn( LDPDocumentsRepositoryTrait.PROTOTYPE, "refresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				document._queryableMetadata = void 0;
+				document.$_queryableMetadata = void 0;
 				await repository.refresh( document, { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -4084,7 +4084,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.getChildren( "ex:resource/" );
 
@@ -4168,7 +4168,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send partial CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -4267,7 +4267,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send full CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -4330,7 +4330,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send filtered .ALL CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -4393,7 +4393,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send filtered without optional CONSTRUCT", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -4677,7 +4677,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						} ]`,
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -4854,7 +4854,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						} ]`,
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -4896,7 +4896,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-					expect( myDocuments[ 0 ].isQueried() ).toBe( false );
+					expect( myDocuments[ 0 ].$isQueried() ).toBe( false );
 					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 						"$eTag": "\"1-12345\"",
 						"property1": "value 1",
@@ -4907,7 +4907,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} ) );
 
 					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-					expect( myDocuments[ 1 ].isQueried() ).toBe( false );
+					expect( myDocuments[ 1 ].$isQueried() ).toBe( false );
 					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 						"$eTag": "\"2-12345\"",
 						"property1": "value 2",
@@ -5015,7 +5015,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5058,7 +5058,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 
 						expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-						expect( myDocuments[ 0 ].isQueried() ).toBe( true );
+						expect( myDocuments[ 0 ].$isQueried() ).toBe( true );
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 							"$eTag": "\"1-12345\"",
 							"property1": "value 1",
@@ -5070,7 +5070,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						} ) as any );
 
 						expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-						expect( myDocuments[ 1 ].isQueried() ).toBe( true );
+						expect( myDocuments[ 1 ].$isQueried() ).toBe( true );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 							"$eTag": "\"2-12345\"",
 							"property1": "value 2",
@@ -5198,7 +5198,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5412,7 +5412,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5596,7 +5596,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.getMembers( "ex:resource/" );
 
@@ -5680,7 +5680,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send partial CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5781,7 +5781,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send full CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5836,7 +5836,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send filtered .ALL CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -5901,7 +5901,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send filtered without optional CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -6193,7 +6193,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						} ]`,
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -6370,7 +6370,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						} ]`,
 				} );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -6411,7 +6411,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					expect( myDocuments.length ).toBe( 2 );
 					for( const doc of myDocuments ) {
 						expect( Document.is( doc ) ).toBe( true );
-						expect( doc.isQueried() ).toBe( false );
+						expect( doc.$isQueried() ).toBe( false );
 					}
 
 					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -6528,7 +6528,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -6570,7 +6570,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						expect( myDocuments.length ).toBe( 2 );
 						for( const doc of myDocuments ) {
 							expect( Document.is( doc ) ).toBe( true );
-							expect( doc.isQueried() ).toBe( true );
+							expect( doc.$isQueried() ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -6710,7 +6710,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -6923,7 +6923,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} );
 
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -7095,7 +7095,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.listChildren( "ex:resource/" );
 
@@ -7178,7 +7178,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send partial CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -7279,10 +7279,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					expect( myDocuments.length ).toBe( 2 );
 
 					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": void 0,
-						"_resolved": false,
-						"types": [
+					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document>( {
+						$eTag: void 0,
+						$_resolved: false,
+						types: [
 							`${ C.Document }`,
 							`https://example.com/ns#Resource`,
 							`${ LDP.BasicContainer }`,
@@ -7291,10 +7291,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} ) );
 
 					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": void 0,
-						"_resolved": false,
-						"types": [
+					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document>( {
+						$eTag: void 0,
+						$_resolved: false,
+						types: [
 							`${ C.Document }`,
 							`https://example.com/ns#Resource`,
 							`${ LDP.BasicContainer }`,
@@ -7358,10 +7358,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					expect( myDocuments.length ).toBe( 2 );
 
 					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-					expect( myDocuments[ 0 ].isQueried() ).toBe( false );
+					expect( myDocuments[ 0 ].$isQueried() ).toBe( false );
 
 					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-					expect( myDocuments[ 1 ].isQueried() ).toBe( false );
+					expect( myDocuments[ 1 ].$isQueried() ).toBe( false );
 
 					done();
 				} ).catch( done.fail );
@@ -7469,7 +7469,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should request resolved prefixed name provided", async () => {
 				stubRequest( "https://example.com/resource/" );
 
-				$context.extendObjectSchema( { "ex": "https://example.com/" } );
+				context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				await repository.listMembers( "ex:resource/" );
 
@@ -7552,7 +7552,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should send partial CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/" );
 
-				$context
+				context
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
@@ -7655,10 +7655,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					expect( myDocuments.length ).toBe( 2 );
 
 					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": void 0,
-						"_resolved": false,
-						"types": [
+					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document>( {
+						$eTag: void 0,
+						$_resolved: false,
+						types: [
 							`${ C.Document }`,
 							`https://example.com/ns#Resource`,
 							`${ LDP.BasicContainer }`,
@@ -7667,10 +7667,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} ) );
 
 					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": void 0,
-						"_resolved": false,
-						"types": [
+					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document>( {
+						$eTag: void 0,
+						$_resolved: false,
+						types: [
 							`${ C.Document }`,
 							`https://example.com/ns#Resource`,
 							`${ LDP.BasicContainer }`,
@@ -7734,10 +7734,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					expect( myDocuments.length ).toBe( 2 );
 
 					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-					expect( myDocuments[ 0 ].isQueried() ).toBe( false );
+					expect( myDocuments[ 0 ].$isQueried() ).toBe( false );
 
 					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-					expect( myDocuments[ 1 ].isQueried() ).toBe( false );
+					expect( myDocuments[ 1 ].$isQueried() ).toBe( false );
 
 					done();
 				} ).catch( done.fail );
@@ -7832,7 +7832,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" )
 					.and.callThrough();
 
-				QueryableDocumentsRepositoryTrait.decorate( { $context, the: "object" } );
+				QueryableDocumentsRepositoryTrait.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( QueryableDocumentsRepositoryTrait.PROTOTYPE, { the: "object" } );
 			} );
@@ -7842,7 +7842,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.and.returnValue( true );
 
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
-				QueryableDocumentsRepositoryTrait.decorate( { $context } );
+				QueryableDocumentsRepositoryTrait.decorate( { context } );
 
 				expect( spy ).not.toHaveBeenCalled();
 			} );
@@ -7852,7 +7852,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const spy:jasmine.Spy = spyOn( GeneralRepository, "decorate" )
 					.and.callThrough();
 
-				QueryableDocumentsRepositoryTrait.decorate( { $context, the: "object" } );
+				QueryableDocumentsRepositoryTrait.decorate( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );

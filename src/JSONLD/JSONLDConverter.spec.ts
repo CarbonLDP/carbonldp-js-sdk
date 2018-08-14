@@ -191,8 +191,7 @@ describe( module( "carbonldp/JSONLD/JSONLDConverter" ), ():void => {
 						return true;
 					},
 					getPointer: ( id:string ):Pointer => {
-						let pointer:Pointer = Pointer.createFrom( { $id: id } );
-						return pointer;
+						return Pointer.createFrom( { $id: id } );
 					},
 				};
 

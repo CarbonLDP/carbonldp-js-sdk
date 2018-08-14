@@ -1,4 +1,5 @@
 import { Context } from "../Context/Context";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 
@@ -23,7 +24,7 @@ import { BaseFreeResources } from "./BaseFreeResources";
 
 
 export interface FreeResources extends Registry<Resource> {
-	$registry:GeneralRegistry<any>;
+	registry:GeneralRegistry<any>;
 
 	_getLocalID( id:string ):string;
 
@@ -35,7 +36,7 @@ export interface FreeResources extends Registry<Resource> {
 
 
 export type OverriddenMembers =
-	| "$registry"
+	| "registry"
 	| "_getLocalID"
 	| "_addPointer"
 	;
@@ -54,11 +55,11 @@ export type FreeResourcesFactory =
 
 export const FreeResources:FreeResourcesFactory = {
 	PROTOTYPE: {
-		$registry: void 0,
+		registry: void 0,
 
 		_getLocalID( this:FreeResources, id:string ):string {
 			if( URI.isBNodeID( id ) ) return id;
-			return Registry.PROTOTYPE._getLocalID.call( this, id );
+			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		},
 
 		_addPointer<T extends object>( this:FreeResources, base:T & Partial<Pointer> ):T & Resource {
@@ -100,7 +101,7 @@ export const FreeResources:FreeResourcesFactory = {
 	decorate<T extends BaseFreeResources>( object:T ):T & FreeResources {
 		if( FreeResources.isDecorated( object ) ) return object;
 
-		const base:T & BaseRegistry<Resource> = Object.assign( object, {
+		const base:T & BaseRegistry<Resource> = Object.assign<T, Pick<FreeResources, "__modelDecorator">>( object, {
 			__modelDecorator: Resource,
 		} );
 
@@ -114,14 +115,14 @@ export const FreeResources:FreeResourcesFactory = {
 
 	parseFreeNodes( this:void, registry:GeneralRegistry<any>, freeNodes:RDFNode[] ):FreeResources {
 		const freeResources:FreeResources = FreeResources
-			.createFrom( { $registry: registry } );
+			.createFrom( { registry: registry } );
 
 		freeNodes
 			.forEach( node => {
 				const digestedSchema:DigestedObjectSchema = registry.getSchemaFor( node );
 
 				const target:object = freeResources.getPointer( node[ "@id" ], true );
-				registry.$context.jsonldConverter.compact( node, target, digestedSchema, freeResources );
+				registry.context.jsonldConverter.compact( node, target, digestedSchema, freeResources );
 			} );
 
 		return freeResources;

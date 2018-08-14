@@ -9,13 +9,13 @@ import { RegisteredPointer } from "./RegisteredPointer";
 
 
 export interface BaseGlobalRegistry {
-	$context:GlobalContext;
+	context:GlobalContext;
 }
 
 
 export interface GlobalRegistry extends GeneralRegistry<RegisteredPointer> {
-	$context:GlobalContext;
-	$registry:undefined;
+	context:GlobalContext;
+	registry:undefined;
 }
 
 

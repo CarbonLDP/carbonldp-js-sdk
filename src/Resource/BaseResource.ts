@@ -1,10 +1,9 @@
 import { BasePointer } from "../Pointer/BasePointer";
 
-import { RegisteredPointer } from "../Registry/RegisteredPointer";
-import { Registry } from "../Registry/Registry";
+import { $Registry, Registry } from "../Registry/Registry";
 
 
 export interface BaseResource extends BasePointer {
 	types?:string[];
-	$registry?:Registry<RegisteredPointer>;
+	$registry?:Registry | $Registry;
 }

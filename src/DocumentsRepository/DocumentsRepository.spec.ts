@@ -23,9 +23,9 @@ import { SPARQLDocumentsRepositoryTrait } from "./Traits/SPARQLDocumentsReposito
 
 describe( module( "carbonldp/DocumentsRepository" ), () => {
 
-	let $context:DocumentsContext;
+	let context:DocumentsContext;
 	beforeEach( ():void => {
-		$context = new DocumentsContext( "https://example.com/" );
+		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 
@@ -52,17 +52,17 @@ describe( module( "carbonldp/DocumentsRepository" ), () => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"$context",
+			"context",
 			"CarbonLDP.DocumentsContext"
 		), ():void => {
-			const target:DocumentsRepository[ "$context" ] = {} as DocumentsContext;
+			const target:DocumentsRepository[ "context" ] = {} as DocumentsContext;
 			expect( target ).toBeDefined();
 		} );
 
 
 		let repository:DocumentsRepository;
 		beforeEach( () => {
-			repository = DocumentsRepository.create( { $context } );
+			repository = DocumentsRepository.create( { context } );
 		} );
 
 
@@ -246,7 +246,7 @@ describe( module( "carbonldp/DocumentsRepository" ), () => {
 
 
 			it( "should return different object", () => {
-				const base:BaseDocumentsRepository = { $context };
+				const base:BaseDocumentsRepository = { context: context };
 				const returned:object = DocumentsRepository.create( base );
 
 				expect( returned ).not.toBe( base );
@@ -256,7 +256,7 @@ describe( module( "carbonldp/DocumentsRepository" ), () => {
 				const spy:jasmine.Spy = spyOn( DocumentsRepository, "createFrom" )
 					.and.callThrough();
 
-				DocumentsRepository.create( { $context, the: "object" } );
+				DocumentsRepository.create( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
@@ -272,7 +272,7 @@ describe( module( "carbonldp/DocumentsRepository" ), () => {
 
 
 			it( "should return same object", () => {
-				const base:BaseDocumentsRepository = { $context };
+				const base:BaseDocumentsRepository = { context: context };
 				const returned:object = DocumentsRepository.createFrom( base );
 
 				expect( returned ).toBe( base );
@@ -283,7 +283,7 @@ describe( module( "carbonldp/DocumentsRepository" ), () => {
 				const spy:jasmine.Spy = spyOn( QueryableDocumentsRepositoryTrait, "decorate" )
 					.and.callThrough();
 
-				DocumentsRepository.createFrom( { $context, the: "object" } );
+				DocumentsRepository.createFrom( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
@@ -292,7 +292,7 @@ describe( module( "carbonldp/DocumentsRepository" ), () => {
 				const spy:jasmine.Spy = spyOn( SPARQLDocumentsRepositoryTrait, "decorate" )
 					.and.callThrough();
 
-				DocumentsRepository.createFrom( { $context, the: "object" } );
+				DocumentsRepository.createFrom( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
@@ -301,7 +301,7 @@ describe( module( "carbonldp/DocumentsRepository" ), () => {
 				const spy:jasmine.Spy = spyOn( EventEmitterDocumentsRepositoryTrait, "decorate" )
 					.and.callThrough();
 
-				DocumentsRepository.createFrom( { $context, the: "object" } );
+				DocumentsRepository.createFrom( { context, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
