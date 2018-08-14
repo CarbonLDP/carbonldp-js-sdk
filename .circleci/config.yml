@@ -1,0 +1,54 @@
+workspace_root: &workspace_root /home/circleci
+workspace_path: &workspace_path workspace
+workspace: &workspace /home/circleci/workspace
+
+# Java Maven CircleCI 2.0 configuration file
+version: 2
+jobs:
+  build:
+    working_directory: *workspace
+
+    docker:
+    - image: circleci/node:9
+
+    steps:
+    - checkout
+
+    # Download and cache dependencies
+    - restore_cache:
+        keys:
+        - v1-dependencies-{{ checksum "package.json" }}
+        # fallback to using the latest cache if no exact match is found
+        - v1-dependencies-
+
+    - run:
+        name: Install npm dependencies
+        command: npm install
+
+    - save_cache:
+        paths:
+        - node_modules
+        key: v1-dependencies-{{ checksum "package.json" }}
+
+    - persist_to_workspace:
+        root: *workspace_root
+        paths:
+        - *workspace_path
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+    - build:
+        filters:
+          tags:
+            only: /.*/
+          branches:
+            only: /.*/
+    - deploy:
+        requires:
+        - build
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /v[0-9]+\.[0-9]+\.[0-9]+(-.+)?/
