@@ -5,13 +5,13 @@ workspace: &workspace /home/circleci/workspace
 defaults: &defaults
   working_directory: *workspace
   docker:
-    - image: circleci/node:9
+  - image: circleci/node:9
 
 # Java Maven CircleCI 2.0 configuration file
 version: 2
 jobs:
   build:
-   <<: *defaults
+    <<: *defaults
 
     steps:
     - checkout
