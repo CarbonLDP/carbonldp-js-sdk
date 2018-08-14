@@ -2,14 +2,16 @@ workspace_root: &workspace_root /home/circleci
 workspace_path: &workspace_path workspace
 workspace: &workspace /home/circleci/workspace
 
+defaults: &defaults
+  working_directory: *workspace
+  docker:
+    - image: circleci/node:9
+
 # Java Maven CircleCI 2.0 configuration file
 version: 2
 jobs:
   build:
-    working_directory: *workspace
-
-    docker:
-    - image: circleci/node:9
+   <<: *defaults
 
     steps:
     - checkout
@@ -30,10 +32,51 @@ jobs:
         - node_modules
         key: v1-dependencies-{{ checksum "package.json" }}
 
+    - run:
+        name: Build package
+        command: npm start
+
     - persist_to_workspace:
         root: *workspace_root
         paths:
         - *workspace_path
+
+  test:
+    <<: *defaults
+
+    steps:
+    - attach_workspace:
+        at: *workspace_root
+
+    - run:
+        name: Run tests
+        command: npm test
+
+  deploy:
+    <<: *defaults
+
+    steps:
+    - attach_workspace:
+        at: *workspace_root
+
+    - run:
+        name: Authenticate with registry
+        command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > "${CIRCLE_WORKING_DIRECTORY}/dist/.npmrc"
+
+    - run:
+        name: Publish package
+        command: |
+          cd dist
+          npm publish
+
+    - run:
+        name: Pack package
+        command: |
+          cd dist
+          npm pack | { read package; mv "${package}" "carbonldp.tgz"; }
+
+    - store_artifacts:
+        path: dist/carbonldp.tgz
 workflows:
   version: 2
   build_and_deploy:
@@ -44,9 +87,17 @@ workflows:
             only: /.*/
           branches:
             only: /.*/
-    - deploy:
+    - test:
         requires:
         - build
+        filters:
+          tags:
+            only: /.*/
+          branches:
+            only: /.*/
+    - deploy:
+        requires:
+        - test
         filters:
           branches:
             ignore: /.*/
