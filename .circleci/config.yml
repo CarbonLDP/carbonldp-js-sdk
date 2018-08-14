@@ -42,7 +42,10 @@ jobs:
         - *workspace_path
 
   test:
-    <<: *defaults
+    working_directory: *workspace
+
+    docker:
+    - image: circleci/node:9-browsers
 
     steps:
     - attach_workspace:
