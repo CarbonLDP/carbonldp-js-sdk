@@ -1,1 +1,0 @@
-{"version":3,"sources":["ObjectSchema/PointerType.ts"],"names":[],"mappings":";;AAAA,IAAY,WAGX;AAHD,WAAY,WAAW;IACtB,yCAAE,CAAA;IACF,+CAAK,CAAA;AACN,CAAC,EAHW,WAAW,GAAX,mBAAW,KAAX,mBAAW,QAGtB","file":"PointerType.js","sourcesContent":["export enum PointerType {\n\tID,\n\tVOCAB,\n}\n"]}

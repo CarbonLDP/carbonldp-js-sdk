@@ -1,1 +1,0 @@
-{"version":3,"sources":["Pointer/index.ts"],"names":[],"mappings":";;;;;AACA,+BAA0B","file":"index.js","sourcesContent":["export * from \"./BasePointer\";\nexport * from \"./Pointer\";\nexport * from \"./PointerLibrary\";\nexport * from \"./PointerValidator\";\n"]}

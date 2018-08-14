@@ -1,1 +1,0 @@
-{"version":3,"sources":["RDF/index.ts"],"names":[],"mappings":";;;;;AAAA,gCAA2B;AAC3B,4BAAuB;AACvB,+BAA0B;AAC1B,4BAAuB;AACvB,2BAAsB;AACtB,6BAAwB","file":"index.js","sourcesContent":["export * from \"./Document\";\nexport * from \"./List\";\nexport * from \"./Literal\";\nexport * from \"./Node\";\nexport * from \"./URI\";\nexport * from \"./Value\";\n"]}

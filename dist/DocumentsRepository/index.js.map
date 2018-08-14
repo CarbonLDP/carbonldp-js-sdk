@@ -1,1 +1,0 @@
-{"version":3,"sources":["DocumentsRepository/index.ts"],"names":[],"mappings":";;AACA,6DAA4D;AAAnD,oDAAA,mBAAmB,CAAA","file":"index.js","sourcesContent":["export { BaseDocumentsRepository } from \"./BaseDocumentsRepository\";\nexport { DocumentsRepository } from \"./DocumentsRepository\";\n"]}

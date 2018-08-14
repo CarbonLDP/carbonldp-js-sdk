@@ -1,1 +1,0 @@
-{"version":3,"sources":["Vocabularies/index.ts"],"names":[],"mappings":";;;;;AAAA,yBAAoB;AACpB,2BAAsB;AACtB,2BAAsB;AACtB,6BAAwB;AACxB,2BAAsB","file":"index.js","sourcesContent":["export * from \"./C\";\nexport * from \"./LDP\";\nexport * from \"./RDF\";\nexport * from \"./SHACL\";\nexport * from \"./XSD\";\n"]}
