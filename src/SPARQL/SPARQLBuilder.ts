@@ -1,6 +1,5 @@
-import { SPARQLER } from "sparqler";
-import { Container, FinishClause } from "sparqler/clauses";
-import { finishDecorator } from "sparqler/clauses/decorators";
+import { FinishFactory, SPARQLER } from "sparqler";
+import { FinishClause } from "sparqler/clauses";
 
 import { SPARQLDocumentsRepositoryTrait } from "../DocumentsRepository/Traits/SPARQLDocumentsRepositoryTrait";
 import { SPARQLSelectResults } from "./SelectResults";
@@ -10,14 +9,22 @@ export interface FinishSPARQLSelect extends FinishClause {
 	execute<T extends object>():Promise<SPARQLSelectResults<T>>;
 }
 
+
+function getFinishSelectFactory( resource:SPARQLDocumentsRepositoryTrait, entryPoint:string ):FinishFactory<FinishSPARQLSelect> {
+	return ( container, object ) => {
+		const finishClause:FinishClause & typeof object = FinishClause.createFrom( container, object );
+
+		return Object.assign( finishClause, {
+			execute: <T extends object>() => resource.executeSELECTQuery<T>( entryPoint, finishClause.toCompactString() ),
+		} );
+	};
+}
+
+
 export class SPARQLBuilder extends SPARQLER<FinishSPARQLSelect> {
 	constructor( resource:SPARQLDocumentsRepositoryTrait, entryPoint:string ) {
-		super( <W extends object>( container:Container<FinishSPARQLSelect>, object:W ):W & FinishSPARQLSelect => {
-			const finishObject:FinishClause & W = finishDecorator( container, object );
-			return Object.assign( finishObject, {
-				execute: <T extends object>():Promise<SPARQLSelectResults<T>> =>
-					resource.executeSELECTQuery<T>( entryPoint, finishObject.toCompactString() ),
-			} );
-		} );
+		const finishSelectFactory:FinishFactory<FinishSPARQLSelect> = getFinishSelectFactory( resource, entryPoint );
+
+		super( finishSelectFactory );
 	}
 }

@@ -1,9 +1,9 @@
 import {
 	GraphToken,
-	IRIToken,
+	IRIRefToken,
 	OptionalToken,
 	PatternToken,
-	PredicateToken,
+	PropertyToken,
 	SubjectToken,
 	VariableToken
 } from "sparqler/tokens";
@@ -108,10 +108,10 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 						token: "variable",
 						name: "resource",
 					} ),
-					predicates: [
+					properties: [
 						jasmine.objectContaining( {
-							token: "predicate",
-							predicate: jasmine.objectContaining( {
+							token: "property",
+							verb: jasmine.objectContaining( {
 								token: "iri",
 								value: "https://example.com/ns#property",
 							} ),
@@ -200,27 +200,30 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 			const pattern:PatternToken = Utils._createTypesPattern( context, "resource" );
 			expect<any>( pattern ).toEqual( jasmine.objectContaining( {
 				token: "optional" as "optional",
-				patterns: [
-					jasmine.objectContaining( {
-						token: "subject" as "subject",
-						subject: jasmine.objectContaining( {
-							token: "variable" as "variable",
-							name: "resource",
-						} ),
-						predicates: [
-							jasmine.objectContaining( {
-								token: "predicate" as "predicate",
-								predicate: "a",
-								objects: [
-									jasmine.objectContaining( {
-										token: "variable" as "variable",
-										name: "resource__types",
-									} ),
-								],
+				groupPattern: jasmine.objectContaining( {
+					token: "groupPattern" as "groupPattern",
+					patterns: [
+						jasmine.objectContaining( {
+							token: "subject" as "subject",
+							subject: jasmine.objectContaining( {
+								token: "variable" as "variable",
+								name: "resource",
 							} ),
-						],
-					} ),
-				],
+							properties: [
+								jasmine.objectContaining( {
+									token: "property" as "property",
+									verb: "a",
+									objects: [
+										jasmine.objectContaining( {
+											token: "variable" as "variable",
+											name: "resource__types",
+										} ),
+									],
+								} ),
+							],
+						} ),
+					],
+				} ),
 			} ) );
 		} );
 
@@ -257,30 +260,33 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					token: "variable" as "variable",
 					name: "resource",
 				} ),
-				patterns: [
-					jasmine.objectContaining( {
-						token: "subject" as "subject",
-						subject: jasmine.objectContaining( {
-							token: "variable" as "variable",
-							name: "resource___subject",
-						} ),
-						predicates: [
-							jasmine.objectContaining( {
-								token: "predicate" as "predicate",
-								predicate: jasmine.objectContaining( {
-									token: "variable" as "variable",
-									name: "resource___predicate",
-								} ),
-								objects: [
-									jasmine.objectContaining( {
-										token: "variable" as "variable",
-										name: "resource___object",
-									} ),
-								],
+				groupPattern: jasmine.objectContaining( {
+					token: "groupPattern" as "groupPattern",
+					patterns: [
+						jasmine.objectContaining( {
+							token: "subject" as "subject",
+							subject: jasmine.objectContaining( {
+								token: "variable" as "variable",
+								name: "resource___subject",
 							} ),
-						],
-					} ),
-				],
+							properties: [
+								jasmine.objectContaining( {
+									token: "property" as "property",
+									verb: jasmine.objectContaining( {
+										token: "variable" as "variable",
+										name: "resource___predicate",
+									} ),
+									objects: [
+										jasmine.objectContaining( {
+											token: "variable" as "variable",
+											name: "resource___object",
+										} ),
+									],
+								} ),
+							],
+						} ),
+					],
+				} ),
 			} ) );
 		} );
 
@@ -316,10 +322,10 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 					token: "variable" as "variable",
 					name: "resource",
 				} ),
-				predicates: [
+				properties: [
 					jasmine.objectContaining( {
-						token: "predicate" as "predicate",
-						predicate: jasmine.objectContaining( {
+						token: "property" as "property",
+						verb: jasmine.objectContaining( {
 							token: "variable" as "variable",
 							name: "resource___predicate",
 						} ),
@@ -389,9 +395,9 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should not return subject with no variable", () => {
 			const patterns:PatternToken[] = [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
-						.addObject( new IRIToken( "https://example.com/ns#Type" ) )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
+						.addObject( new IRIRefToken( "https://example.com/ns#Type" ) )
 					),
 			];
 
@@ -401,16 +407,16 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should return same subject when valid", () => {
 			const patterns:PatternToken[] = [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "types" ) )
 					),
 			];
 
 			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "types" ) )
 					),
 			] );
@@ -418,24 +424,24 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should return multiple valid triples", () => {
 			const patterns:PatternToken[] = [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "types" ) )
 					),
-				new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-					.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+				new SubjectToken( new IRIRefToken( "https://example.com/resource/" ) )
+					.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 						.addObject( new VariableToken( "property" ) )
 					),
 			];
 
 			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "types" ) )
 					),
-				new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-					.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+				new SubjectToken( new IRIRefToken( "https://example.com/resource/" ) )
+					.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 						.addObject( new VariableToken( "property" ) )
 					),
 			] );
@@ -445,8 +451,8 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		it( "should return subject from inside optional", () => {
 			const patterns:PatternToken[] = [
 				new OptionalToken()
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-						.addPredicate( new PredicateToken( "a" )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+						.addProperty( new PropertyToken( "a" )
 							.addObject( new VariableToken( "types" ) )
 						)
 					),
@@ -454,8 +460,8 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "types" ) )
 					),
 			] );
@@ -464,19 +470,19 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		it( "should multiple subjects from inside optionals", () => {
 			const patterns:PatternToken[] = [
 				new OptionalToken()
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-						.addPredicate( new PredicateToken( "a" )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+						.addProperty( new PropertyToken( "a" )
 							.addObject( new VariableToken( "types" ) )
 						)
 					),
 				new OptionalToken()
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 							.addObject( new VariableToken( "property" ) )
 						)
 					)
 					.addPattern( new SubjectToken( new VariableToken( "property" ) )
-						.addPredicate( new PredicateToken( "a" )
+						.addProperty( new PropertyToken( "a" )
 							.addObject( new VariableToken( "property_types" ) )
 						)
 					),
@@ -484,16 +490,16 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "types" ) )
 					),
-				new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-					.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+				new SubjectToken( new IRIRefToken( "https://example.com/resource/" ) )
+					.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 						.addObject( new VariableToken( "property" ) )
 					),
 				new SubjectToken( new VariableToken( "property" ) )
-					.addPredicate( new PredicateToken( "a" )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "property_types" ) )
 					),
 			] );
@@ -501,9 +507,9 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should return subject from inside graph", () => {
 			const patterns:PatternToken[] = [
-				new GraphToken( new IRIToken( "https://example.com/" ) )
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-						.addPredicate( new PredicateToken( "a" )
+				new GraphToken( new IRIRefToken( "https://example.com/" ) )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+						.addProperty( new PropertyToken( "a" )
 							.addObject( new VariableToken( "types" ) )
 						)
 					),
@@ -511,8 +517,8 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "types" ) )
 					),
 			] );
@@ -520,20 +526,20 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should multiple subjects from inside graphs", () => {
 			const patterns:PatternToken[] = [
-				new GraphToken( new IRIToken( "https://example.com/" ) )
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-						.addPredicate( new PredicateToken( "a" )
+				new GraphToken( new IRIRefToken( "https://example.com/" ) )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+						.addProperty( new PropertyToken( "a" )
 							.addObject( new VariableToken( "types" ) )
 						)
 					),
-				new GraphToken( new IRIToken( "https://example.com/resource/" ) )
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+				new GraphToken( new IRIRefToken( "https://example.com/resource/" ) )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 							.addObject( new VariableToken( "property" ) )
 						)
 					)
 					.addPattern( new SubjectToken( new VariableToken( "property" ) )
-						.addPredicate( new PredicateToken( "a" )
+						.addProperty( new PropertyToken( "a" )
 							.addObject( new VariableToken( "property_types" ) )
 						)
 					),
@@ -541,16 +547,16 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "types" ) )
 					),
-				new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-					.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+				new SubjectToken( new IRIRefToken( "https://example.com/resource/" ) )
+					.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 						.addObject( new VariableToken( "property" ) )
 					),
 				new SubjectToken( new VariableToken( "property" ) )
-					.addPredicate( new PredicateToken( "a" )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "property_types" ) )
 					),
 			] );
@@ -559,19 +565,19 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 		it( "should multiple subjects from inside a optional and graphs", () => {
 			const patterns:PatternToken[] = [
 				new OptionalToken()
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-						.addPredicate( new PredicateToken( "a" )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+						.addProperty( new PropertyToken( "a" )
 							.addObject( new VariableToken( "types" ) )
 						)
 					),
-				new GraphToken( new IRIToken( "https://example.com/resource/" ) )
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+				new GraphToken( new IRIRefToken( "https://example.com/resource/" ) )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 							.addObject( new VariableToken( "property" ) )
 						)
 					)
 					.addPattern( new SubjectToken( new VariableToken( "property" ) )
-						.addPredicate( new PredicateToken( "a" )
+						.addProperty( new PropertyToken( "a" )
 							.addObject( new VariableToken( "property_types" ) )
 						)
 					),
@@ -579,16 +585,16 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "types" ) )
 					),
-				new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-					.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+				new SubjectToken( new IRIRefToken( "https://example.com/resource/" ) )
+					.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 						.addObject( new VariableToken( "property" ) )
 					),
 				new SubjectToken( new VariableToken( "property" ) )
-					.addPredicate( new PredicateToken( "a" )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "property_types" ) )
 					),
 			] );
@@ -596,23 +602,23 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should multiple subjects from inside a inside graphs inside optionals", () => {
 			const patterns:PatternToken[] = [
-				new GraphToken( new IRIToken( "https://example.com/" ) )
+				new GraphToken( new IRIRefToken( "https://example.com/" ) )
 					.addPattern( new OptionalToken()
-						.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-							.addPredicate( new PredicateToken( "a" )
+						.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+							.addProperty( new PropertyToken( "a" )
 								.addObject( new VariableToken( "types" ) )
 							)
 						)
 					),
 				new OptionalToken()
-					.addPattern( new GraphToken( new IRIToken( "https://example.com/resource/" ) )
-						.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-							.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+					.addPattern( new GraphToken( new IRIRefToken( "https://example.com/resource/" ) )
+						.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/resource/" ) )
+							.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 								.addObject( new VariableToken( "property" ) )
 							)
 						)
 						.addPattern( new SubjectToken( new VariableToken( "property" ) )
-							.addPredicate( new PredicateToken( "a" )
+							.addProperty( new PropertyToken( "a" )
 								.addObject( new VariableToken( "property_types" ) )
 							)
 						)
@@ -621,16 +627,16 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "types" ) )
 					),
-				new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-					.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+				new SubjectToken( new IRIRefToken( "https://example.com/resource/" ) )
+					.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 						.addObject( new VariableToken( "property" ) )
 					),
 				new SubjectToken( new VariableToken( "property" ) )
-					.addPredicate( new PredicateToken( "a" )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "property_types" ) )
 					),
 			] );
@@ -639,15 +645,15 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should combine into same subject when in different sub-patterns", () => {
 			const patterns:PatternToken[] = [
-				new GraphToken( new IRIToken( "https://example.com/" ) )
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-						.addPredicate( new PredicateToken( "a" )
+				new GraphToken( new IRIRefToken( "https://example.com/" ) )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+						.addProperty( new PropertyToken( "a" )
 							.addObject( new VariableToken( "types" ) )
 						)
 					),
 				new OptionalToken()
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 							.addObject( new VariableToken( "property" ) )
 						)
 					),
@@ -655,11 +661,11 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
 						.addObject( new VariableToken( "types" ) )
 					)
-					.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+					.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 						.addObject( new VariableToken( "property" ) )
 					),
 			] );
@@ -667,13 +673,13 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should only return subject with predicate as variable when first subject", () => {
 			const patterns:PatternToken[] = [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( new VariableToken( "predicates" ) )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( new VariableToken( "predicates" ) )
 						.addObject( new VariableToken( "values" ) )
 					),
-				new GraphToken( new IRIToken( "https://example.com/" ) )
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-						.addPredicate( new PredicateToken( "a" )
+				new GraphToken( new IRIRefToken( "https://example.com/" ) )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+						.addProperty( new PropertyToken( "a" )
 							.addObject( new VariableToken( "types" ) )
 						)
 					),
@@ -681,8 +687,8 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( new VariableToken( "predicates" ) )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( new VariableToken( "predicates" ) )
 						.addObject( new VariableToken( "values" ) )
 					),
 			] );
@@ -690,25 +696,25 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 		it( "should only return subject with predicate as variable when not first", () => {
 			const patterns:PatternToken[] = [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( "a" )
-						.addObject( new IRIToken( "https://example.com/ns#Type" ) )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( "a" )
+						.addObject( new IRIRefToken( "https://example.com/ns#Type" ) )
 					),
-				new GraphToken( new IRIToken( "https://example.com/" ) )
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property" ) )
+				new GraphToken( new IRIRefToken( "https://example.com/" ) )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "https://example.com/ns#property" ) )
 							.addObject( new VariableToken( "property" ) )
 						)
 					),
 				new OptionalToken()
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-						.addPredicate( new PredicateToken( new VariableToken( "predicates" ) )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+						.addProperty( new PropertyToken( new VariableToken( "predicates" ) )
 							.addObject( new VariableToken( "values" ) )
 						)
 					),
 				new OptionalToken()
-					.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-						.addPredicate( new PredicateToken( "a" )
+					.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+						.addProperty( new PropertyToken( "a" )
 							.addObject( new VariableToken( "types" ) )
 						)
 					),
@@ -716,8 +722,8 @@ describe( module( "carbonldp/QueryDocuments/Utils" ), ():void => {
 
 			const returned:PatternToken[] = Utils._getAllTriples( patterns );
 			expect( returned ).toEqual( [
-				new SubjectToken( new IRIToken( "https://example.com/" ) )
-					.addPredicate( new PredicateToken( new VariableToken( "predicates" ) )
+				new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+					.addProperty( new PropertyToken( new VariableToken( "predicates" ) )
 						.addObject( new VariableToken( "values" ) )
 					),
 			] );

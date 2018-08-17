@@ -4,8 +4,7 @@ import {
 	IRIToken,
 	OptionalToken,
 	PatternToken,
-	PredicateToken,
-	PrefixedNameToken,
+	PropertyToken,
 	SubjectToken,
 	VariableToken
 } from "sparqler/tokens";
@@ -27,13 +26,13 @@ export function _getLevelRegExp( property:string ):RegExp {
 export function _createPropertyPatterns( context:QueryContext, resourcePath:string, propertyPath:string, propertyDefinition:DigestedObjectSchemaProperty ):PatternToken[] {
 	const { uri, literalType, pointerType } = propertyDefinition;
 
-	const propertyIRI:IRIToken | PrefixedNameToken = context.compactIRI( uri );
+	const propertyIRI:IRIToken = context.compactIRI( uri );
 
 	const resource:VariableToken = context.getVariable( resourcePath );
 	const propertyObject:VariableToken = context.getVariable( propertyPath );
 
 	const propertyPatterns:PatternToken[] = [ new SubjectToken( resource )
-		.addPredicate( new PredicateToken( propertyIRI )
+		.addProperty( new PropertyToken( propertyIRI )
 			.addObject( propertyObject ) ),
 	];
 
@@ -48,7 +47,7 @@ export function _createPropertyPatterns( context:QueryContext, resourcePath:stri
 export function _createTypesPattern( context:QueryContext, resourcePath:string ):PatternToken {
 	return new OptionalToken()
 		.addPattern( new SubjectToken( context.getVariable( resourcePath ) )
-			.addPredicate( new PredicateToken( "a" )
+			.addProperty( new PropertyToken( "a" )
 				.addObject( context.getVariable( `${ resourcePath }.types` ) )
 			)
 		);
@@ -57,7 +56,7 @@ export function _createTypesPattern( context:QueryContext, resourcePath:string )
 export function _createGraphPattern( context:QueryContext, resourcePath:string ):PatternToken {
 	return new GraphToken( context.getVariable( resourcePath ) )
 		.addPattern( new SubjectToken( context.getVariable( `${ resourcePath }._subject` ) )
-			.addPredicate( new PredicateToken( context.getVariable( `${ resourcePath }._predicate` ) )
+			.addProperty( new PropertyToken( context.getVariable( `${ resourcePath }._predicate` ) )
 				.addObject( context.getVariable( `${ resourcePath }._object` ) ) )
 		)
 		;
@@ -65,7 +64,7 @@ export function _createGraphPattern( context:QueryContext, resourcePath:string )
 
 export function _createAllPattern( context:QueryContext, resourcePath:string ):PatternToken {
 	return new SubjectToken( context.getVariable( resourcePath ) )
-		.addPredicate( new PredicateToken( context.getVariable( `${ resourcePath }._predicate` ) )
+		.addProperty( new PropertyToken( context.getVariable( `${ resourcePath }._predicate` ) )
 			.addObject( context.getVariable( `${ resourcePath }._object` ) )
 		)
 		;
@@ -90,29 +89,29 @@ export function _getAllTriples( patterns:PatternToken[] ):SubjectToken[] {
 
 function __isFullTriple( triple:SubjectToken ):boolean {
 	return triple
-		.predicates
-		.map( x => x.predicate )
+		.properties
+		.map( x => x.verb )
 		.some( x => isObject( x ) && x.token === "variable" )
 		;
 }
 
 function __internalTripleAdder( subjectsMap:Map<string, SubjectToken>, patterns:PatternToken[] ):void {
 	patterns.forEach( ( pattern:PatternToken ) => {
-		if( pattern.token === "optional" || pattern.token === "graph" )
-			return __internalTripleAdder( subjectsMap, pattern.patterns );
+		if( "groupPattern" in pattern )
+			return __internalTripleAdder( subjectsMap, pattern.groupPattern.patterns );
 
 		if( pattern.token !== "subject" ) return;
 
-		const valid:boolean = pattern.predicates
-			.map( predicate => predicate.objects )
+		const valid:boolean = pattern.properties
+			.map( property => property.objects )
 			.some( objects => objects.some( object => object.token === "variable" ) );
 		if( ! valid ) return;
 
 		const subject:SubjectToken = __getSubject( subjectsMap, pattern );
 		if( __isFullTriple( subject ) ) return;
 
-		if( __isFullTriple( pattern ) ) subject.predicates.length = 0;
-		subject.predicates.push( ...pattern.predicates );
+		if( __isFullTriple( pattern ) ) subject.properties.length = 0;
+		subject.properties.push( ...pattern.properties );
 	} );
 }
 

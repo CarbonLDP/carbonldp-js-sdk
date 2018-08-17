@@ -3,18 +3,18 @@ import {
 	BindToken,
 	ConstructToken,
 	FilterToken,
-	IRIToken,
+	IRIRefToken,
 	LimitToken,
-	LiteralToken,
 	OffsetToken,
 	OptionalToken,
 	OrderToken,
-	PredicateToken,
 	PrefixedNameToken,
 	PrefixToken,
+	PropertyToken,
 	QueryToken,
-	SelectToken,
+	RDFLiteralToken,
 	SubjectToken,
+	SubSelectToken,
 	ValuesToken,
 	VariableToken
 } from "sparqler/tokens";
@@ -437,27 +437,27 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/resource/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
+					" VALUES ?document { <https://example.com/resource/> }" +
+					" OPTIONAL { ?document a ?document__types }" +
 					" ?document a <https://example.com/ns#Resource>." +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
+					" }" +
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
+					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
+					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
+					"" + " }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
@@ -1626,27 +1626,27 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
+					" VALUES ?document { <https://example.com/> }" +
+					" OPTIONAL { ?document a ?document__types }" +
 					" ?document a <https://example.com/ns#Resource>." +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
+					" }" +
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
+					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
+					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
+					"" + " }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
@@ -1716,11 +1716,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
+					" VALUES ?document { <https://example.com/> }" +
+					" OPTIONAL { ?document a ?document__types }" +
 					" ?document a" +
 					"" + " <https://example.com/ns#A-Type>," +
 					"" + " <https://example.com/ns#Another-Type>," +
@@ -1729,17 +1729,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
+					" }" +
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
+					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
+					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
+					"" + " }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
@@ -3120,37 +3120,37 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " schema:property-5 ?document__property2__property5;" +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
+					" VALUES ?document { <https://example.com/> }" +
+					" OPTIONAL { ?document a ?document__types }" +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
 					"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
-					" }." +
+					" }" +
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
+					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
+					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }." +
+					"" + " }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 schema:property-5 ?document__property2__property5." +
 					"" + "" + " FILTER( datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime> )" +
-					"" + " }." +
+					"" + " }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
 					"" + " }" +
-					" }." +
+					" }" +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
@@ -3448,37 +3448,37 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " schema:property-5 ?document__property2__property5;" +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
+					" VALUES ?document { <https://example.com/> }" +
+					" OPTIONAL { ?document a ?document__types }" +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
 					"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
-					" }." +
+					" }" +
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
+					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
+					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }." +
+					"" + " }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 schema:property-5 ?document__property2__property5." +
 					"" + "" + " FILTER( datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime> )" +
-					"" + " }." +
+					"" + " }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
 					"" + " }" +
-					" }." +
+					" }" +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
@@ -3542,22 +3542,22 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" ?document__property2 ?document__property2___predicate ?document__property2___object " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
+					" VALUES ?document { <https://example.com/> }" +
+					" OPTIONAL { ?document a ?document__types }" +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
 					"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
-					" }." +
+					" }" +
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
+					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
 					"" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
-					" }." +
+					" }" +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
@@ -4224,36 +4224,36 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
 					"" + " schema:property-3 ?child__property2__property3 " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
 					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
+					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
 					"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
 					"" + " }" +
 					"" + " ORDER BY ?child__property2" +
 					"" + " LIMIT 10" +
 					"" + " OFFSET 5" +
-					" }." +
+					" }" +
 
-					" OPTIONAL { ?child a ?child__types }." +
+					" OPTIONAL { ?child a ?child__types }" +
 					" ?child a <https://example.com/ns#Resource>." +
 
 					" OPTIONAL {" +
 					"" + " ?child <https://example.com/ns#property-1> ?child__property1." +
 					"" + " FILTER( datatype( ?child__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
+					" }" +
 
 					" OPTIONAL {" +
 					"" + " ?child schema:property-2 ?child__property2." +
-					"" + " FILTER( ! isLiteral( ?child__property2 ) )." +
-					"" + " OPTIONAL { ?child__property2 a ?child__property2__types }." +
+					"" + " FILTER( ! isLiteral( ?child__property2 ) )" +
+					"" + " OPTIONAL { ?child__property2 a ?child__property2__types }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
 					"" + "" + " FILTER( datatype( ?child__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
+					"" + " }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?child__property2 schema:property-3 ?child__property2__property3." +
@@ -4302,18 +4302,18 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" ?child ?child___predicate ?child___object " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
 					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
+					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
 					"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
 					"" + " }" +
 					"" + " ORDER BY ?child__property2" +
 					"" + " LIMIT 10" +
 					"" + " OFFSET 5" +
-					" }." +
+					" }" +
 
 					" ?child ?child___predicate ?child___object." +
 
@@ -4365,18 +4365,18 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" ?child ?child___predicate ?child___object " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
 					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
+					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
 					"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
 					"" + " }" +
 					"" + " ORDER BY ?child__property2" +
 					"" + " LIMIT 10" +
 					"" + " OFFSET 5" +
-					" }." +
+					" }" +
 
 					" ?child ?child___predicate ?child___object." +
 
@@ -4451,48 +4451,48 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
 						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( new IRIToken( C.VolatileResource ) )
-								.addObject( new IRIToken( C.QueryMetadata ) )
+							.addProperty( new PropertyToken( "a" )
+								.addObject( new IRIRefToken( C.VolatileResource ) )
+								.addObject( new IRIRefToken( C.QueryMetadata ) )
 							)
-							.addPredicate( new PredicateToken( new IRIToken( C.target ) )
+							.addProperty( new PropertyToken( new IRIRefToken( C.target ) )
 								.addObject( variableHelper( "child" ) )
 							)
 						)
 						.addTriple( new SubjectToken( variableHelper( "child" ) )
-							.addPredicate( new PredicateToken( "a" )
+							.addProperty( new PropertyToken( "a" )
 								.addObject( variableHelper( "child__types" ) )
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-1" ) )
 								.addObject( variableHelper( "child__property1" ) )
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 								.addObject( variableHelper( "child__property2" ) )
 							)
 						)
 						.addTriple( new SubjectToken( variableHelper( "child__property2" ) )
-							.addPredicate( new PredicateToken( "a" )
+							.addProperty( new PropertyToken( "a" )
 								.addObject( variableHelper( "child__property2__types" ) )
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
 								.addObject( variableHelper( "child__property2__property2" ) )
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-3" ) )
 								.addObject( variableHelper( "child__property2__property3" ) )
 							)
 						)
 
 						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
-						.addPattern( new SelectToken( "DISTINCT" )
+						.addPattern( new SubSelectToken( "DISTINCT" )
 							.addVariable( variableHelper( "child" ) )
-							.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-								.addPredicate( new PredicateToken( new IRIToken( LDP.contains ) )
+							.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+								.addProperty( new PropertyToken( new IRIRefToken( LDP.contains ) )
 									.addObject( variableHelper( "child" ) )
 								)
 							)
 							.addPattern( new OptionalToken()
 								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 										.addObject( variableHelper( "child__property2" ) )
 									)
 								)
@@ -4504,20 +4504,20 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						.addPattern(
 							new OptionalToken()
 								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addPredicate( new PredicateToken( "a" )
+									.addProperty( new PropertyToken( "a" )
 										.addObject( variableHelper( "child__types" ) )
 									)
 								)
 						)
 						.addPattern( new SubjectToken( variableHelper( "child" ) )
-							.addPredicate( new PredicateToken( "a" )
+							.addProperty( new PropertyToken( "a" )
 								.addObject( new PrefixedNameToken( "ex:Resource" ) )
 							)
 						)
 						.addPattern(
 							new OptionalToken()
 								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+									.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-1" ) )
 										.addObject( variableHelper( "child__property1" ) )
 									)
 								)
@@ -4525,33 +4525,35 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						)
 						.addPattern( new FilterToken( `?child__property2__property2 = "12345"^^xsd:integer` ) )
 						.addPattern( new SubjectToken( variableHelper( "child" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 								.addObject( variableHelper( "child__property2" ) )
 							)
 						)
 						.addPattern( new FilterToken( "! isLiteral( ?child__property2 )" ) )
 						.addPattern( new OptionalToken()
 							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
-								.addPredicate( new PredicateToken( "a" )
+								.addProperty( new PropertyToken( "a" )
 									.addObject( variableHelper( "child__property2__types" ) )
 								)
 							)
 						)
 						.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
 								.addObject( variableHelper( "child__property2__property2" ) )
 							)
 						)
 						.addPattern( new FilterToken( "datatype( ?child__property2__property2 ) = xsd:integer" ) )
 						.addPattern( new ValuesToken()
+							.addVariables(
+								variableHelper( "child__property2__property2" )
+							)
 							.addValues(
-								variableHelper( "child__property2__property2" ),
-								new LiteralToken( 12345 ).setType( "xsd:integer" )
+								new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) )
 							)
 						)
 						.addPattern( new OptionalToken()
 							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
-								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-3" ) )
 									.addObject( variableHelper( "child__property2__property3" ) )
 								)
 							)
@@ -4559,9 +4561,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						)
 					)
 
-						.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
-						.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
-						.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
+						.addPrologues( new PrefixToken( "ex", new IRIRefToken( "https://example.com/ns#" ) ) )
+						.addPrologues( new PrefixToken( "xsd", new IRIRefToken( XSD.namespace ) ) )
+						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
 				);
 			} );
 
@@ -5736,11 +5738,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " <https://example.com/ns#property-2> ?member__property2__property2;" +
 					"" + " schema:property-3 ?member__property2__property3 " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
 					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
+					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
@@ -5749,25 +5751,25 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " ORDER BY ?member__property2" +
 					"" + " LIMIT 10" +
 					"" + " OFFSET 5" +
-					" }." +
+					" }" +
 
-					" OPTIONAL { ?member a ?member__types }." +
+					" OPTIONAL { ?member a ?member__types }" +
 					" ?member a <https://example.com/ns#Resource>." +
 
 					" OPTIONAL {" +
 					"" + " ?member <https://example.com/ns#property-1> ?member__property1." +
 					"" + " FILTER( datatype( ?member__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
+					" }" +
 
 					" OPTIONAL {" +
 					"" + " ?member schema:property-2 ?member__property2." +
-					"" + " FILTER( ! isLiteral( ?member__property2 ) )." +
-					"" + " OPTIONAL { ?member__property2 a ?member__property2__types }." +
+					"" + " FILTER( ! isLiteral( ?member__property2 ) )" +
+					"" + " OPTIONAL { ?member__property2 a ?member__property2__types }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
 					"" + "" + " FILTER( datatype( ?member__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
+					"" + " }" +
 
 					"" + " OPTIONAL {" +
 					"" + "" + " ?member__property2 schema:property-3 ?member__property2__property3." +
@@ -5814,16 +5816,16 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" ?member___subject ?member___predicate ?member___object " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
 					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
+					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
 					"" + " }" +
-					" }." +
+					" }" +
 
 					" GRAPH ?member {" +
 					"" + " ?member___subject ?member___predicate ?member___object" +
@@ -5871,11 +5873,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" ?member ?member___predicate ?member___object " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
 					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
+					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
@@ -5884,7 +5886,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " ORDER BY ?member__property2" +
 					"" + " LIMIT 10" +
 					"" + " OFFSET 5" +
-					" }." +
+					" }" +
 
 					" ?member ?member___predicate ?member___object." +
 
@@ -5959,56 +5961,56 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
 						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( new IRIToken( C.VolatileResource ) )
-								.addObject( new IRIToken( C.QueryMetadata ) )
+							.addProperty( new PropertyToken( "a" )
+								.addObject( new IRIRefToken( C.VolatileResource ) )
+								.addObject( new IRIRefToken( C.QueryMetadata ) )
 							)
-							.addPredicate( new PredicateToken( new IRIToken( C.target ) )
+							.addProperty( new PropertyToken( new IRIRefToken( C.target ) )
 								.addObject( variableHelper( "member" ) )
 							)
 						)
 						.addTriple( new SubjectToken( variableHelper( "member" ) )
-							.addPredicate( new PredicateToken( "a" )
+							.addProperty( new PropertyToken( "a" )
 								.addObject( variableHelper( "member__types" ) )
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-1" ) )
 								.addObject( variableHelper( "member__property1" ) )
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 								.addObject( variableHelper( "member__property2" ) )
 							)
 						)
 						.addTriple( new SubjectToken( variableHelper( "member__property2" ) )
-							.addPredicate( new PredicateToken( "a" )
+							.addProperty( new PropertyToken( "a" )
 								.addObject( variableHelper( "member__property2__types" ) )
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
 								.addObject( variableHelper( "member__property2__property2" ) )
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-3" ) )
 								.addObject( variableHelper( "member__property2__property3" ) )
 							)
 						)
 
 						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
-						.addPattern( new SelectToken( "DISTINCT" )
+						.addPattern( new SubSelectToken( "DISTINCT" )
 							.addVariable( variableHelper( "member" ) )
-							.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-								.addPredicate( new PredicateToken( new IRIToken( LDP.membershipResource ) )
+							.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+								.addProperty( new PropertyToken( new IRIRefToken( LDP.membershipResource ) )
 									.addObject( variableHelper( "membershipResource" ) )
 								)
-								.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
+								.addProperty( new PropertyToken( new IRIRefToken( LDP.hasMemberRelation ) )
 									.addObject( variableHelper( "hasMemberRelation" ) )
 								)
 							)
 							.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
-								.addPredicate( new PredicateToken( variableHelper( "hasMemberRelation" ) )
+								.addProperty( new PropertyToken( variableHelper( "hasMemberRelation" ) )
 									.addObject( variableHelper( "member" ) )
 								)
 							)
 							.addPattern( new OptionalToken()
 								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 										.addObject( variableHelper( "member__property2" ) )
 									)
 								)
@@ -6020,20 +6022,20 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						.addPattern(
 							new OptionalToken()
 								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addPredicate( new PredicateToken( "a" )
+									.addProperty( new PropertyToken( "a" )
 										.addObject( variableHelper( "member__types" ) )
 									)
 								)
 						)
 						.addPattern( new SubjectToken( variableHelper( "member" ) )
-							.addPredicate( new PredicateToken( "a" )
+							.addProperty( new PropertyToken( "a" )
 								.addObject( new PrefixedNameToken( "ex:Resource" ) )
 							)
 						)
 						.addPattern(
 							new OptionalToken()
 								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+									.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-1" ) )
 										.addObject( variableHelper( "member__property1" ) )
 									)
 								)
@@ -6041,33 +6043,35 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						)
 						.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
 						.addPattern( new SubjectToken( variableHelper( "member" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 								.addObject( variableHelper( "member__property2" ) )
 							)
 						)
 						.addPattern( new FilterToken( "! isLiteral( ?member__property2 )" ) )
 						.addPattern( new OptionalToken()
 							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
-								.addPredicate( new PredicateToken( "a" )
+								.addProperty( new PropertyToken( "a" )
 									.addObject( variableHelper( "member__property2__types" ) )
 								)
 							)
 						)
 						.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
 								.addObject( variableHelper( "member__property2__property2" ) )
 							)
 						)
 						.addPattern( new FilterToken( "datatype( ?member__property2__property2 ) = xsd:integer" ) )
 						.addPattern( new ValuesToken()
+							.addVariables(
+								variableHelper( "member__property2__property2" )
+							)
 							.addValues(
-								variableHelper( "member__property2__property2" ),
-								new LiteralToken( 12345 ).setType( "xsd:integer" )
+								new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) )
 							)
 						)
 						.addPattern( new OptionalToken()
 							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
-								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-3" ) )
 									.addObject( variableHelper( "member__property2__property3" ) )
 								)
 							)
@@ -6075,9 +6079,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						)
 					)
 
-						.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
-						.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
-						.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
+						.addPrologues( new PrefixToken( "ex", new IRIRefToken( "https://example.com/ns#" ) ) )
+						.addPrologues( new PrefixToken( "xsd", new IRIRefToken( XSD.namespace ) ) )
+						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
 				);
 			} );
 
@@ -7211,14 +7215,14 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" ?child a ?child__types " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
 					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
+					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + ` <https://example.com/> <${ LDP.contains }> ?child` +
 					"" + " }" +
-					" }." +
+					" }" +
 
 					" OPTIONAL { ?child a ?child__types } " +
 
@@ -7585,16 +7589,16 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" ?member a ?member__types " +
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
 
 					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
+					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
 					"" + " }" +
-					" }." +
+					" }" +
 
 					" OPTIONAL { ?member a ?member__types } " +
 
