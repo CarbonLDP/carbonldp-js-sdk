@@ -12,7 +12,7 @@ import { URI } from "../../RDF/URI";
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 
 import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
-import { FinishSPARQLSelect } from "../../SPARQL/SPARQLBuilder";
+import { FinishSPARQLAsk, FinishSPARQLSelect } from "../../SPARQL/SPARQLBuilder";
 
 import { isObject } from "../../Utils";
 
@@ -36,7 +36,7 @@ export interface SPARQLDocumentTrait extends TransientDocument, ResolvablePointe
 	$executeUPDATE( update:string, requestOptions?:RequestOptions ):Promise<void>;
 
 
-	$sparql( uri?:string ):QueryClause<FinishSPARQLSelect>;
+	$sparql( uri?:string ):QueryClause<FinishSPARQLSelect, FinishSPARQLAsk>;
 }
 
 
@@ -78,7 +78,7 @@ export const SPARQLDocumentTrait:SPARQLDocumentTraitFactory = {
 		},
 
 
-		$sparql( this:SPARQLDocumentTrait, uri?:string ):QueryClause<FinishSPARQLSelect> {
+		$sparql( this:SPARQLDocumentTrait, uri?:string ):QueryClause<FinishSPARQLSelect, FinishSPARQLAsk> {
 			const $uri:string = uri ? URI.resolve( this.$id, uri ) : this.$id;
 			return this.$repository.sparql( $uri );
 		},

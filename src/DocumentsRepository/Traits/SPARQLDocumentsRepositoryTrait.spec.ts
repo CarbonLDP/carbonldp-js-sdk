@@ -615,7 +615,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 
 			it( "should return a QueryClause", () => {
-				const queryClause:QueryClause<any> = repository
+				const queryClause:QueryClause<any, any> = repository
 					.sparql( "https://example.com/resource/" )
 				;
 
