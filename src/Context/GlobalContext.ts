@@ -56,35 +56,35 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined,
 
 	private __registerDefaultObjectSchemas():void {
 		this
-			.extendObjectSchema( Document.TYPE, Document.SCHEMA )
+			.extendObjectSchema( Document )
 
-			.extendObjectSchema( PlatformMetadata.TYPE, PlatformMetadata.SCHEMA )
-			.extendObjectSchema( PlatformInstance.TYPE, PlatformInstance.SCHEMA )
+			.extendObjectSchema( PlatformMetadata )
+			.extendObjectSchema( PlatformInstance )
 
-			.extendObjectSchema( AddMemberAction.TYPE, AddMemberAction.SCHEMA )
-			.extendObjectSchema( RemoveMemberAction.TYPE, RemoveMemberAction.SCHEMA )
+			.extendObjectSchema( AddMemberAction )
+			.extendObjectSchema( RemoveMemberAction )
 
-			.extendObjectSchema( Error.TYPE, Error.SCHEMA )
-			.extendObjectSchema( Map.TYPE, Map.SCHEMA )
+			.extendObjectSchema( Error )
+			.extendObjectSchema( Map )
 			.extendObjectSchema( MapEntry.SCHEMA )
-			.extendObjectSchema( DocumentMetadata.TYPE, DocumentMetadata.SCHEMA )
-			.extendObjectSchema( ErrorResponse.TYPE, ErrorResponse.SCHEMA )
-			.extendObjectSchema( ResponseMetadata.TYPE, ResponseMetadata.SCHEMA )
-			.extendObjectSchema( ValidationError.TYPE, ValidationError.SCHEMA )
+			.extendObjectSchema( DocumentMetadata )
+			.extendObjectSchema( ErrorResponse )
+			.extendObjectSchema( ResponseMetadata )
+			.extendObjectSchema( ValidationError )
 
-			.extendObjectSchema( ValidationReport.TYPE, ValidationReport.SCHEMA )
-			.extendObjectSchema( ValidationResult.TYPE, ValidationResult.SCHEMA )
+			.extendObjectSchema( ValidationReport )
+			.extendObjectSchema( ValidationResult )
 
-			.extendObjectSchema( QueryMetadata.TYPE, QueryMetadata.SCHEMA )
+			.extendObjectSchema( QueryMetadata )
 
-			.extendObjectSchema( ChildCreated.TYPE, ChildCreated.SCHEMA )
-			.extendObjectSchema( DocumentCreatedDetails.TYPE, DocumentCreatedDetails.SCHEMA )
-			.extendObjectSchema( DocumentDeleted.TYPE, DocumentDeleted.SCHEMA )
-			.extendObjectSchema( DocumentModified.TYPE, DocumentModified.SCHEMA )
-			.extendObjectSchema( MemberAdded.TYPE, MemberAdded.SCHEMA )
-			.extendObjectSchema( MemberAddedDetails.TYPE, MemberAddedDetails.SCHEMA )
-			.extendObjectSchema( MemberRemoved.TYPE, MemberRemoved.SCHEMA )
-			.extendObjectSchema( MemberRemovedDetails.TYPE, MemberRemovedDetails.SCHEMA )
+			.extendObjectSchema( ChildCreated )
+			.extendObjectSchema( DocumentCreatedDetails )
+			.extendObjectSchema( DocumentDeleted )
+			.extendObjectSchema( DocumentModified )
+			.extendObjectSchema( MemberAdded )
+			.extendObjectSchema( MemberAddedDetails )
+			.extendObjectSchema( MemberRemoved )
+			.extendObjectSchema( MemberRemovedDetails )
 		;
 	}
 
