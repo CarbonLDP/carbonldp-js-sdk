@@ -3,6 +3,8 @@ import { GeneralRepository } from "../GeneralRepository/GeneralRepository";
 
 import { JSONLDConverter } from "../JSONLD/JSONLDConverter";
 
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
@@ -22,17 +24,13 @@ export interface Context<REGISTRY extends RegisteredPointer = RegisteredPointer,
 
 	resolve( relativeURI:string ):string;
 
-
 	hasObjectSchema( type:string ):boolean;
-
 
 	getObjectSchema( type?:string ):DigestedObjectSchema;
 
-
-	extendObjectSchema( type:string, objectSchema:ObjectSchema ):this;
-
 	extendObjectSchema( objectSchema:ObjectSchema ):this;
-
+	extendObjectSchema( type:string, objectSchema:ObjectSchema ):this;
+	extendObjectSchema( modelSchema:ModelSchema ):this;
 
 	clearObjectSchema( type?:string ):void;
 }

@@ -435,6 +435,101 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 				] ] ) );
 			} );
 
+
+			it( "should add absolute model schema when does not exists", ():void => {
+				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
+				const context:AbstractContext<any, any> = createMock( { schemasMap } );
+
+				context.extendObjectSchema( {
+					TYPE: "https://example.com/ns#Type",
+					SCHEMA: {
+						"ex": "https://example.com/ns#",
+					},
+				} );
+
+				expect( schemasMap ).toEqual( new Map( [ [
+					"https://example.com/ns#Type",
+					createMockDigestedSchema( {
+						prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ),
+					} ),
+				] ] ) );
+			} );
+
+			it( "should add prefixed model schema when does not exists", ():void => {
+				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
+				const context:AbstractContext<any, any> = createMock( {
+					generalSchema: createMockDigestedSchema( {
+						prefixes: new Map( [
+							[ "ex", "https://example.com/ns#" ],
+						] ),
+					} ),
+					schemasMap,
+				} );
+
+				context.extendObjectSchema( {
+					TYPE: "ex:Type",
+					SCHEMA: {
+						"schema": "https://schema.org/",
+					},
+				} );
+
+				expect( schemasMap ).toEqual( new Map( [ [
+					"https://example.com/ns#Type",
+					createMockDigestedSchema( {
+						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+					} ),
+				] ] ) );
+			} );
+
+			it( "should add relative model schema when does not exists and vocab is set", ():void => {
+				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
+				const context:AbstractContext<any, any> = createMock( {
+					settings: { vocabulary: "https://example.com/ns#" },
+					schemasMap,
+				} );
+
+				context.extendObjectSchema( {
+					TYPE: "Type",
+					SCHEMA: {
+						"schema": "https://schema.org/",
+					},
+				} );
+
+				expect( schemasMap ).toEqual( new Map( [ [
+					"https://example.com/ns#Type",
+					createMockDigestedSchema( {
+						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+					} ),
+				] ] ) );
+			} );
+
+			it( "should merge when type schema exists", ():void => {
+				const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
+					[ "https://example.com/ns#Type", createMockDigestedSchema( {
+						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+					} ) ],
+				] );
+				const context:AbstractContext<any, any> = createMock( { schemasMap } );
+
+				context.extendObjectSchema( {
+					TYPE: "https://example.com/ns#Type",
+					SCHEMA: {
+						"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+					},
+				} );
+
+				expect( schemasMap ).toEqual( new Map( [ [
+					"https://example.com/ns#Type",
+					createMockDigestedSchema( {
+						prefixes: new Map( [
+							[ "schema", "https://schema.org/" ],
+							[ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" ],
+						] ),
+					} ),
+				] ] ) );
+			} );
+
+
 			it( "should merge with general schema", ():void => {
 				const generalSchema:DigestedObjectSchema = createMockDigestedSchema( {
 					prefixes: new Map( [
