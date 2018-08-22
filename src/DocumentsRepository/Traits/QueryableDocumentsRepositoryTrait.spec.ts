@@ -1,4 +1,3 @@
-import * as TokensModule from "sparqler/tokens";
 import {
 	BindToken,
 	ConstructToken,
@@ -4417,11 +4416,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 
-				const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
-				let query:QueryToken = void 0;
-				spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
-					return query = new queryTokenClass( ...args );
-				} );
+				const spy:jasmine.Spy = spyOn( QueryToken.prototype, "toString" )
+					.and.callThrough();
 
 				await repository.getChildren( "/", _ => _
 					.withType( "Resource" )
@@ -4448,6 +4444,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.offset( 5 )
 				);
 
+				const query:QueryToken = spy.calls.mostRecent().object;
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
 						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
@@ -5927,11 +5924,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 
-				const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
-				let query:QueryToken = void 0;
-				spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
-					return query = new queryTokenClass( ...args );
-				} );
+				const spy:jasmine.Spy = spyOn( QueryToken.prototype, "toString" )
+					.and.callThrough();
 
 				await repository.getMembers( "/", _ => _
 					.withType( "Resource" )
@@ -5958,6 +5952,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.offset( 5 )
 				);
 
+				const query:QueryToken = spy.calls.mostRecent().object;
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
 						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
