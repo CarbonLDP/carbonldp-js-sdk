@@ -1,5 +1,5 @@
 import { isPrefixed } from "sparqler/iri";
-import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
+import { IRIRefToken, IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
 import { AbstractContext } from "../Context/AbstractContext";
 
@@ -43,10 +43,10 @@ export class QueryContext implements ObjectSchemaResolver {
 		return this.context.jsonldConverter.literalSerializers.get( type ).serialize( value );
 	}
 
-	compactIRI( iri:string ):IRIToken | PrefixedNameToken {
+	compactIRI( iri:string ):IRIToken {
 		if( ! this.context ) {
 			if( isPrefixed( iri ) ) return new PrefixedNameToken( iri );
-			return new IRIToken( iri );
+			return new IRIRefToken( iri );
 		}
 
 		const schema:DigestedObjectSchema = this.context.getObjectSchema();
@@ -60,7 +60,7 @@ export class QueryContext implements ObjectSchemaResolver {
 				localName = iri.substr( prefixURI.length );
 				break;
 			}
-			if( namespace === void 0 ) return new IRIToken( iri );
+			if( namespace === void 0 ) return new IRIRefToken( iri );
 		}
 
 		const prefixedName:PrefixedNameToken = new PrefixedNameToken( namespace || iri, localName );
@@ -68,7 +68,7 @@ export class QueryContext implements ObjectSchemaResolver {
 		namespace = prefixedName.namespace;
 		if( ! this._prefixesMap.has( namespace ) ) {
 			if( ! schema.prefixes.has( namespace ) ) throw new IllegalArgumentError( `Prefix "${ namespace }" has not been declared.` );
-			const prefixIRI:IRIToken = new IRIToken( schema.prefixes.get( namespace ) );
+			const prefixIRI:IRIRefToken = new IRIRefToken( schema.prefixes.get( namespace ) );
 			this._prefixesMap.set( namespace, new PrefixToken( namespace, prefixIRI ) );
 		}
 

@@ -2,13 +2,15 @@ import { isBNodeLabel } from "sparqler/iri";
 import {
 	BlankNodeToken,
 	CollectionToken,
+	IRIRefToken,
 	IRIToken,
+	LanguageToken,
 	LiteralToken,
 	ObjectToken,
-	PredicateToken,
 	PrefixedNameToken,
+	PropertyToken,
+	RDFLiteralToken,
 	SubjectToken,
-	VariableOrIRI,
 } from "sparqler/tokens";
 
 import { Context } from "../Context/Context";
@@ -85,7 +87,7 @@ export class DeltaCreator {
 	addResource( id:string, previousResource:object, currentResource:object ):void {
 		const schema:DigestedObjectSchema = this.__getSchema( id, previousResource, currentResource );
 
-		const resource:IRIToken | PrefixedNameToken | BlankNodeToken = isBNodeLabel( id ) ?
+		const resource:IRIToken | BlankNodeToken = isBNodeLabel( id ) ?
 			new BlankNodeToken( id ) : this.__compactIRI( schema, id );
 
 		const updateLists:UpdateListToken[] = [];
@@ -99,7 +101,7 @@ export class DeltaCreator {
 		] ).forEach( propertyName => {
 			if( propertyName === "$id" ) return;
 
-			const predicateURI:IRIToken | PrefixedNameToken | "a" = propertyName === "types" ?
+			const predicateURI:IRIToken | "a" = propertyName === "types" ?
 				"a" : this._getPropertyIRI( schema, propertyName );
 
 			const definition:DigestedObjectSchemaProperty = predicateURI === "a" ?
@@ -112,7 +114,7 @@ export class DeltaCreator {
 				const listUpdates:UpdateDelta[] = [];
 
 				if( ! __isValidValue( newValue ) ) {
-					deleteTriples.addPredicate( new PredicateToken( predicateURI ).addObject( new CollectionToken() ) );
+					deleteTriples.addProperty( new PropertyToken( predicateURI ).addObject( new CollectionToken() ) );
 					listUpdates.push( { slice: [ 0, void 0 ], objects: [] } );
 
 				} else {
@@ -137,7 +139,7 @@ export class DeltaCreator {
 
 					updateLists.push( new UpdateListToken(
 						resource,
-						predicateURI as IRIToken | PrefixedNameToken,
+						predicateURI as IRIToken,
 						updateDelta.objects.length ?
 							new SliceToken( updateDelta.slice[ 0 ], updateDelta.slice[ 0 ] ) :
 							new SliceToken( ...updateDelta.slice ),
@@ -154,13 +156,13 @@ export class DeltaCreator {
 				const addValues:( objects:ObjectToken[], triple:SubjectToken ) => void = ( objects, triple ) => {
 					if( ! objects.length ) return;
 
-					const predicate:PredicateToken = new PredicateToken( predicateURI );
+					const property:PropertyToken = new PropertyToken( predicateURI );
 					objects.forEach( object => {
-						predicate.addObject( object );
+						property.addObject( object );
 						this.__addPrefixFrom( object, schema );
 					} );
 
-					triple.addPredicate( predicate );
+					triple.addProperty( property );
 				};
 
 				addValues( setDelta.toAdd, addTriples );
@@ -169,18 +171,15 @@ export class DeltaCreator {
 		} );
 
 		this.updateLists.push( ...updateLists );
-		if( addTriples.predicates.length ) this.addToken.triples.push( addTriples );
-		if( deleteTriples.predicates.length ) this.deleteToken.triples.push( deleteTriples );
+		updateLists.forEach( x => this.__addPrefixFrom( x.predicate, schema ) );
 
-		const predicates:{ predicate:VariableOrIRI | "a" }[] = [
-			...updateLists,
-			...addTriples.predicates,
-			...deleteTriples.predicates,
-		];
-		if( ! predicates.length ) return;
+		if( addTriples.properties.length ) this.addToken.triples.push( addTriples );
+		addTriples.properties.forEach( x => this.__addPrefixFrom( x.verb, schema ) );
+
+		if( deleteTriples.properties.length ) this.deleteToken.triples.push( deleteTriples );
+		deleteTriples.properties.forEach( x => this.__addPrefixFrom( x.verb, schema ) );
 
 		this.__addPrefixFrom( resource, schema );
-		predicates.forEach( x => this.__addPrefixFrom( x.predicate, schema ) );
 	}
 
 	private __getSchema( id:string, previousResource:TargetResource, currentResource:TargetResource ):DigestedObjectSchema {
@@ -202,7 +201,7 @@ export class DeltaCreator {
 			.registry.getSchemaFor( mergeResource );
 	}
 
-	private _getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
+	private _getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken {
 		const propertyDefinition:DigestedObjectSchemaProperty = schema.properties.get( propertyName );
 		const uri:string = propertyDefinition && propertyDefinition.uri ?
 			propertyDefinition.uri :
@@ -258,7 +257,7 @@ export class DeltaCreator {
 		} ).filter( __isValidValue );
 	}
 
-	private __expandPointer( value:any, schema:DigestedObjectSchema ):IRIToken | PrefixedNameToken | BlankNodeToken {
+	private __expandPointer( value:any, schema:DigestedObjectSchema ):IRIToken | BlankNodeToken {
 		let id:string = Pointer.is( value ) ? value.$id : value;
 		if( ! isString( id ) ) return null;
 
@@ -275,41 +274,44 @@ export class DeltaCreator {
 		if( ! this.context.jsonldConverter.literalSerializers.has( type ) ) return null;
 
 		value = this.context.jsonldConverter.literalSerializers.get( type ).serialize( value );
-		const literal:LiteralToken = new LiteralToken( value );
+		if( type !== XSD.string )
+			return new RDFLiteralToken( value, this.__compactIRI( schema, type ) );
 
-		if( type !== XSD.string ) literal.setType( this.__compactIRI( schema, type ) );
-		if( definition && definition.language !== void 0 ) literal.setLanguage( definition.language );
+		if( definition && definition.language !== void 0 )
+			return new RDFLiteralToken( value, new LanguageToken( definition.language ) );
 
-		return literal;
+		return new LiteralToken( value );
 	}
 
-	private __compactIRI( schema:DigestedObjectSchema, iri:string ):IRIToken | PrefixedNameToken {
+	private __compactIRI( schema:DigestedObjectSchema, iri:string ):IRIToken {
 		iri = schema.resolveURI( iri, { vocab: true } );
 
 		const matchPrefix:[ string, string ] = Array.from( schema.prefixes.entries() )
 			.find( ( [ , prefixURI ] ) => iri.startsWith( prefixURI ) );
 
-		if( ! matchPrefix ) return new IRIToken( iri );
+		if( ! matchPrefix ) return new IRIRefToken( iri );
 
 		return new PrefixedNameToken( matchPrefix[ 0 ], iri.substr( matchPrefix[ 1 ].length ) );
 	}
 
 	private __addPrefixFrom( object:ObjectToken | "a", schema:DigestedObjectSchema ):void {
-		if( object instanceof CollectionToken )
+		if( object === "a" ) return;
+
+		if( "objects" in object )
 			return object.objects.forEach( collectionObject => {
 				this.__addPrefixFrom( collectionObject, schema );
 			} );
 
-		if( object instanceof LiteralToken )
+		if( "type" in object )
 			return this.__addPrefixFrom( object.type, schema );
 
-		if( ! (object instanceof PrefixedNameToken) ) return;
+		if( object.token !== "prefixedName" ) return;
 
 		const namespace:string = object.namespace;
 		if( this.prefixesMap.has( namespace ) ) return;
 
 		const iri:string = schema.prefixes.get( namespace );
-		this.prefixesMap.set( namespace, new PrefixToken( namespace, new IRIToken( iri ) ) );
+		this.prefixesMap.set( namespace, new PrefixToken( namespace, new IRIRefToken( iri ) ) );
 	}
 
 }

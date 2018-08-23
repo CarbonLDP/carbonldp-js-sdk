@@ -3,10 +3,10 @@ import {
 	OffsetToken,
 	OptionalToken,
 	OrderToken,
-	PredicateToken,
 	PrefixedNameToken,
-	SelectToken,
+	PropertyToken,
 	SubjectToken,
+	SubSelectToken,
 	VariableToken
 } from "sparqler/tokens";
 
@@ -84,7 +84,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 		let context:AbstractContext<any, any>;
 		let queryContext:QueryContextBuilder;
 		let baseProperty:QueryProperty;
-		let selectToken:SelectToken;
+		let selectToken:SubSelectToken;
 		beforeEach( ():void => {
 			context = createMockContext( {
 				uri: "http://example.com",
@@ -102,10 +102,10 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
 			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
-			selectToken = new SelectToken()
+			selectToken = new SubSelectToken()
 				.addVariable( baseProperty.variable )
 				.addPattern( new SubjectToken( membershipResource )
-					.addPredicate( new PredicateToken( hasMemberRelation )
+					.addProperty( new PropertyToken( hasMemberRelation )
 						.addObject( baseProperty.variable )
 					)
 				)
@@ -182,7 +182,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 				queryContext
 					.getProperty( "member.property.sub-property" )
 					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 							.addObject( queryContext.getVariable( "member.property.sub-property" ) )
 						)
 					)
@@ -190,7 +190,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 				queryContext
 					.getProperty( "member.property.sub-property-2" )
 					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path-2" ) )
+						.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path-2" ) )
 							.addObject( queryContext.getVariable( "member.property.sub-property-2" ) )
 						)
 					)
@@ -204,7 +204,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 				const helper:( name:string ) => void = name => {
 					const property:QueryProperty = queryContext.addProperty( `${ baseProperty.name }.${ name }` );
 					property.addPattern( new SubjectToken( baseProperty.variable )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 							.addObject( property.variable )
 						)
 					);
@@ -222,7 +222,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const property:QueryProperty = queryContext.addProperty( "member.property" );
 				property.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( property.variable )
 					)
 				);
@@ -238,7 +238,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const property:QueryProperty = queryContext.addProperty( "member.property" );
 				property.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( property.variable )
 					)
 				);
@@ -254,7 +254,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const property:QueryProperty = queryContext.addProperty( "member.property" );
 				property.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( property.variable )
 					)
 				);
@@ -270,7 +270,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const property:QueryProperty = queryContext.addProperty( "member.property" );
 				property.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( property.variable )
 					)
 				);
@@ -286,7 +286,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const property:QueryProperty = queryContext.addProperty( "member.property" );
 				property.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( property.variable )
 					)
 				);
@@ -316,7 +316,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const oldProperty:QueryProperty = queryContext.addProperty( "member.property-1" );
 				oldProperty.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( oldProperty.variable )
 					)
 				);
@@ -324,7 +324,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const newProperty:QueryProperty = queryContext.addProperty( "member.property-2" );
 				newProperty.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( newProperty.variable )
 					)
 				);
@@ -342,7 +342,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const property:QueryProperty = queryContext.addProperty( "member.property" );
 				property.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( property.variable )
 					)
 				);
@@ -361,7 +361,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const property:QueryProperty = queryContext.addProperty( "member.property" );
 				property.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( property.variable )
 					)
 				);
@@ -378,16 +378,16 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const property:QueryProperty = queryContext.addProperty( "member.property" );
 				property.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( property.variable )
 					)
 				);
 
 				builder.orderBy( "property" );
-				expect( selectToken.patterns ).toEqual( jasmine.arrayContaining( [
+				expect( selectToken.where.groupPattern.patterns ).toEqual( jasmine.arrayContaining( [
 					new OptionalToken()
 						.addPattern( new SubjectToken( baseProperty.variable )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 								.addObject( property.variable )
 							)
 						)
@@ -400,30 +400,30 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const property:QueryProperty = queryContext.addProperty( "member.property" );
 				property.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( property.variable )
 					)
 				);
 
 				const subProperty:QueryProperty = queryContext.addProperty( "member.property.subProperty" );
 				subProperty.addPattern( new SubjectToken( property.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:sub-path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:sub-path" ) )
 						.addObject( subProperty.variable )
 					)
 				);
 
 				builder.orderBy( "property.subProperty" );
-				expect( selectToken.patterns ).toEqual( [
+				expect( selectToken.where.groupPattern.patterns ).toEqual( [
 					jasmine.any( SubjectToken ) as any,
 					new OptionalToken()
 						.addPattern( new SubjectToken( baseProperty.variable )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 								.addObject( property.variable )
 							)
 						)
 						.addPattern( new OptionalToken()
 							.addPattern( new SubjectToken( property.variable )
-								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:sub-path" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "ex:sub-path" ) )
 									.addObject( subProperty.variable )
 								)
 							)
@@ -437,7 +437,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const oldProperty:QueryProperty = queryContext.addProperty( "member.property-1" );
 				oldProperty.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( oldProperty.variable )
 					)
 				);
@@ -445,26 +445,26 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const newProperty:QueryProperty = queryContext.addProperty( "member.property-2" );
 				newProperty.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( newProperty.variable )
 					)
 				);
 				builder.orderBy( "property-2" );
 
-				expect( selectToken.patterns ).not.toEqual( jasmine.arrayContaining( [
+				expect( selectToken.where.groupPattern.patterns ).not.toEqual( jasmine.arrayContaining( [
 					new OptionalToken()
 						.addPattern( new SubjectToken( baseProperty.variable )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 								.addObject( oldProperty.variable )
 							)
 						)
 					,
 				] ) as any );
 
-				expect( selectToken.patterns ).toEqual( jasmine.arrayContaining( [
+				expect( selectToken.where.groupPattern.patterns ).toEqual( jasmine.arrayContaining( [
 					new OptionalToken()
 						.addPattern( new SubjectToken( baseProperty.variable )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 								.addObject( newProperty.variable )
 							)
 						)
@@ -477,7 +477,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const property:QueryProperty = queryContext.addProperty( "member.property" );
 				property.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( property.variable )
 					)
 				);
@@ -494,7 +494,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 
 				const property:QueryProperty = queryContext.addProperty( "member.property" );
 				property.addPattern( new SubjectToken( baseProperty.variable )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 						.addObject( property.variable )
 					)
 				);
@@ -527,7 +527,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 				queryContext
 					.getProperty( "member.property.sub-property" )
 					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path" ) )
 							.addObject( queryContext.getVariable( "member.property.sub-property" ) )
 						)
 					)
@@ -535,7 +535,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 				queryContext
 					.getProperty( "member.property.sub-property-2" )
 					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path-2" ) )
+						.addProperty( new PropertyToken( new PrefixedNameToken( "ex:path-2" ) )
 							.addObject( queryContext.getVariable( "member.property.sub-property-2" ) )
 						)
 					)

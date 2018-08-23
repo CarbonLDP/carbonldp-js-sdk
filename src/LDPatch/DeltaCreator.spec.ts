@@ -1,10 +1,12 @@
 import {
 	BlankNodeToken,
 	CollectionToken,
-	IRIToken,
+	IRIRefToken,
+	LanguageToken,
 	LiteralToken,
-	PredicateToken,
 	PrefixedNameToken,
+	PropertyToken,
+	RDFLiteralToken,
 	SubjectToken,
 } from "sparqler/tokens";
 
@@ -108,8 +110,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const currentResource:object = {};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -125,9 +127,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const currentResource:object = {};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "1", new IRIRefToken( XSD.float ) ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -142,9 +144,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const currentResource:object = {};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "true", new IRIRefToken( XSD.boolean ) ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -159,9 +161,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const currentResource:object = {};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "2000-01-01T00:00:00.000Z", new IRIRefToken( XSD.dateTime ) ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -176,9 +178,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const currentResource:object = {};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new IRIToken( "http://example.org/pointer/" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new IRIRefToken( "http://example.org/pointer/" ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -193,8 +195,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const currentResource:object = {};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new BlankNodeToken( "_:blank-node" ) )
 						),
 					] );
@@ -216,13 +218,13 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const currentResource:object = {};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
-							.addObject( new IRIToken( "http://example.org/pointer/" ) )
+							.addObject( new RDFLiteralToken( "1", new IRIRefToken( XSD.float ) ) )
+							.addObject( new RDFLiteralToken( "true", new IRIRefToken( XSD.boolean ) ) )
+							.addObject( new RDFLiteralToken( "2000-01-01T00:00:00.000Z", new IRIRefToken( XSD.dateTime ) ) )
+							.addObject( new IRIRefToken( "http://example.org/pointer/" ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -241,8 +243,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const currentResource:object = {};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "valid value" ) )
 						),
 					] );
@@ -265,8 +267,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const currentResource:object = {};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "valid value" ) )
 						),
 					] );
@@ -284,8 +286,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -301,9 +303,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "1", new IRIRefToken( XSD.float ) ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -318,9 +320,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "true", new IRIRefToken( XSD.boolean ) ) )
 						),
 					] );
 				} );
@@ -337,9 +339,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "2000-01-01T00:00:00.000Z", new IRIRefToken( XSD.dateTime ) ) )
 						),
 					] );
 				} );
@@ -353,9 +355,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new IRIToken( "http://example.org/pointer/" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new IRIRefToken( "http://example.org/pointer/" ) )
 						),
 					] );
 				} );
@@ -369,8 +371,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new BlankNodeToken( "_:blank-node" ) )
 						),
 					] );
@@ -391,13 +393,13 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
-							.addObject( new IRIToken( "http://example.org/pointer/" ) )
+							.addObject( new RDFLiteralToken( "1", new IRIRefToken( XSD.float ) ) )
+							.addObject( new RDFLiteralToken( "true", new IRIRefToken( XSD.boolean ) ) )
+							.addObject( new RDFLiteralToken( "2000-01-01T00:00:00.000Z", new IRIRefToken( XSD.dateTime ) ) )
+							.addObject( new IRIRefToken( "http://example.org/pointer/" ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -416,8 +418,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "valid value" ) )
 						),
 					] );
@@ -441,8 +443,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "valid value" ) )
 						),
 					] );
@@ -461,8 +463,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -480,8 +482,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -499,8 +501,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -518,8 +520,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -556,17 +558,17 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "delete string" ) )
-							.addObject( new LiteralToken( "false" ).setType( XSD.boolean ) )
+							.addObject( new RDFLiteralToken( "false", new IRIRefToken( XSD.boolean ) ) )
 							.addObject( new BlankNodeToken( "_:1" ) )
 						),
 					] );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "2010-10-10T00:00:00.000Z" ).setType( XSD.dateTime ) )
-							.addObject( new LiteralToken( "10.01" ).setType( XSD.float ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "2010-10-10T00:00:00.000Z", new IRIRefToken( XSD.dateTime ) ) )
+							.addObject( new RDFLiteralToken( "10.01", new IRIRefToken( XSD.float ) ) )
 							.addObject( new LiteralToken( "add string" ) )
 						),
 					] );
@@ -584,10 +586,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( "a" )
-							.addObject( new IRIToken( "http://example.org/vocab#Document" ) )
-							.addObject( new IRIToken( "http://example.org/vocab#Type-2" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( "a" )
+							.addObject( new IRIRefToken( "http://example.org/vocab#Document" ) )
+							.addObject( new IRIRefToken( "http://example.org/vocab#Type-2" ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -621,8 +623,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -649,9 +651,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "string" ).setLanguage( "en" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "string", new LanguageToken( "en" ) ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -676,9 +678,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.integer ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "1", new IRIRefToken( XSD.integer ) ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -703,9 +705,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "10.01" ).setType( XSD.float ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "10.01", new IRIRefToken( XSD.float ) ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -730,9 +732,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#the-property" ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#the-property" ) )
+							.addObject( new RDFLiteralToken( "true", new IRIRefToken( XSD.boolean ) ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -757,9 +759,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "2000-01-01" ).setType( XSD.date ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "2000-01-01", new IRIRefToken( XSD.date ) ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -784,9 +786,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new IRIToken( "http://example.org/pointer/" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new IRIRefToken( "http://example.org/pointer/" ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -811,8 +813,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new BlankNodeToken( "_:blank-node" ) )
 						),
 					] );
@@ -843,8 +845,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -876,13 +878,13 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
-							.addObject( new IRIToken( "http://example.org/pointer/" ) )
+							.addObject( new RDFLiteralToken( "1", new IRIRefToken( XSD.float ) ) )
+							.addObject( new RDFLiteralToken( "true", new IRIRefToken( XSD.boolean ) ) )
+							.addObject( new RDFLiteralToken( "2000-01-01T00:00:00.000Z", new IRIRefToken( XSD.dateTime ) ) )
+							.addObject( new IRIRefToken( "http://example.org/pointer/" ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -911,8 +913,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string 1" ) )
 							.addObject( new LiteralToken( "string 2" ) )
 							.addObject( new LiteralToken( "string 3" ) )
@@ -945,11 +947,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "string" ).setLanguage( "en" ) )
-							.addObject( new LiteralToken( "US string" ).setLanguage( "en-US" ) )
-							.addObject( new LiteralToken( "cadena" ).setLanguage( "es" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "string", new LanguageToken( "en" ) ) )
+							.addObject( new RDFLiteralToken( "US string", new LanguageToken( "en-US" ) ) )
+							.addObject( new RDFLiteralToken( "cadena", new LanguageToken( "es" ) ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -982,14 +984,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 0 ),
 							new CollectionToken()
 						),
 					] );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new CollectionToken() )
 						),
 					] );
@@ -1022,14 +1024,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 0 ),
 							new CollectionToken()
 						),
 					] );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new CollectionToken() )
 						),
 					] );
@@ -1056,8 +1058,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -1084,9 +1086,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "string" ).setLanguage( "en" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "string", new LanguageToken( "en" ) ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1111,9 +1113,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.integer ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "1", new IRIRefToken( XSD.integer ) ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1138,9 +1140,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "10.01" ).setType( XSD.float ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "10.01", new IRIRefToken( XSD.float ) ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1165,9 +1167,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#the-property" ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#the-property" ) )
+							.addObject( new RDFLiteralToken( "true", new IRIRefToken( XSD.boolean ) ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1192,9 +1194,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "2000-01-01" ).setType( XSD.date ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "2000-01-01", new IRIRefToken( XSD.date ) ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1219,9 +1221,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new IRIToken( "http://example.org/pointer/" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new IRIRefToken( "http://example.org/pointer/" ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1246,8 +1248,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new BlankNodeToken( "_:blank-node" ) )
 						),
 					] );
@@ -1278,8 +1280,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -1311,13 +1313,13 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
-							.addObject( new IRIToken( "http://example.org/pointer/" ) )
+							.addObject( new RDFLiteralToken( "1", new IRIRefToken( XSD.float ) ) )
+							.addObject( new RDFLiteralToken( "true", new IRIRefToken( XSD.boolean ) ) )
+							.addObject( new RDFLiteralToken( "2000-01-01T00:00:00.000Z", new IRIRefToken( XSD.dateTime ) ) )
+							.addObject( new IRIRefToken( "http://example.org/pointer/" ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1346,8 +1348,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string 1" ) )
 							.addObject( new LiteralToken( "string 2" ) )
 							.addObject( new LiteralToken( "string 3" ) )
@@ -1380,11 +1382,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "string" ).setLanguage( "en" ) )
-							.addObject( new LiteralToken( "US string" ).setLanguage( "en-US" ) )
-							.addObject( new LiteralToken( "cadena" ).setLanguage( "es" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "string", new LanguageToken( "en" ) ) )
+							.addObject( new RDFLiteralToken( "US string", new LanguageToken( "en-US" ) ) )
+							.addObject( new RDFLiteralToken( "cadena", new LanguageToken( "es" ) ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1415,14 +1417,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new CollectionToken()
 								.addObject( new LiteralToken( "string" ) )
-								.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
-								.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
-								.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
-								.addObject( new IRIToken( "http://example.org/pointer/" ) )
+								.addObject( new RDFLiteralToken( "1", new IRIRefToken( XSD.float ) ) )
+								.addObject( new RDFLiteralToken( "true", new IRIRefToken( XSD.boolean ) ) )
+								.addObject( new RDFLiteralToken( "2000-01-01T00:00:00.000Z", new IRIRefToken( XSD.dateTime ) ) )
+								.addObject( new IRIRefToken( "http://example.org/pointer/" ) )
 							)
 						),
 					] );
@@ -1453,8 +1455,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new CollectionToken()
 								.addObject( new LiteralToken( "string 1" ) )
 								.addObject( new LiteralToken( "string 2" ) )
@@ -1486,8 +1488,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -1513,8 +1515,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -1540,8 +1542,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -1568,8 +1570,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -1596,9 +1598,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new IRIToken( "http://example.org/vocab#pointer" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new IRIRefToken( "http://example.org/vocab#pointer" ) )
 						),
 					] );
 				} );
@@ -1622,9 +1624,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new IRIToken( "http://example.org/pointer" ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new IRIRefToken( "http://example.org/pointer" ) )
 						),
 					] );
 				} );
@@ -1696,14 +1698,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "12345" ).setType( XSD.integer ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "12345", new IRIRefToken( XSD.integer ) ) )
 						),
 					] );
-					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "67890" ).setType( XSD.integer ) )
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "67890", new IRIRefToken( XSD.integer ) ) )
 						),
 					] );
 				} );
@@ -1741,30 +1743,30 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 1, 2 ),
 							new CollectionToken()
 						),
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 2, 3 ),
 							new CollectionToken()
 						),
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 0, 0 ),
 							new CollectionToken()
-								.addObject( new LiteralToken( "10" ).setType( XSD.float ) )
+								.addObject( new RDFLiteralToken( "10", new IRIRefToken( XSD.float ) ) )
 						),
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 3, 3 ),
 							new CollectionToken()
-								.addObject( new LiteralToken( "67890" ).setType( XSD.float ) )
+								.addObject( new RDFLiteralToken( "67890", new IRIRefToken( XSD.float ) ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1804,24 +1806,24 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 2, 4 ),
 							new CollectionToken()
 						),
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 0, 0 ),
 							new CollectionToken()
-								.addObject( new LiteralToken( "10" ).setType( XSD.integer ) )
+								.addObject( new RDFLiteralToken( "10", new IRIRefToken( XSD.integer ) ) )
 						),
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 3, 3 ),
 							new CollectionToken()
-								.addObject( new LiteralToken( "67890" ).setType( XSD.integer ) )
+								.addObject( new RDFLiteralToken( "67890", new IRIRefToken( XSD.integer ) ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1850,26 +1852,26 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 3, 6 ),
 							new CollectionToken()
 						),
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 0, 0 ),
 							new CollectionToken()
-								.addObject( new LiteralToken( "4" ).setType( new IRIToken( XSD.float ) ) )
+								.addObject( new RDFLiteralToken( "4", new IRIRefToken( XSD.float ) ) )
 						),
 						new UpdateListToken(
-							new IRIToken( "http://example.org/resource/" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/resource/" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 3, 3 ),
 							new CollectionToken()
 								.addObject( new LiteralToken( "s-1" ) )
 								.addObject( new LiteralToken( "s-2" ) )
-								.addObject( new LiteralToken( "6" ).setType( new IRIToken( XSD.float ) ) )
+								.addObject( new RDFLiteralToken( "6", new IRIRefToken( XSD.float ) ) )
 								.addObject( new LiteralToken( "s-3" ) )
 						),
 					] );
@@ -1903,9 +1905,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( true ).setType( new PrefixedNameToken( "xsd", "boolean" ) ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "true", new PrefixedNameToken( "xsd", "boolean" ) ) )
 						),
 					] );
 				} );
@@ -1928,7 +1930,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
-						[ "xsd", new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) ],
+						[ "xsd", new PrefixToken( "xsd", new IRIRefToken( XSD.namespace ) ) ],
 					] ) );
 				} );
 
@@ -1949,9 +1951,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 
 					deltaCreator.addResource( id, previousResource, currentResource );
-					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex", "property" ) )
-							.addObject( new LiteralToken( true ).setType( new IRIToken( XSD.boolean ) ) )
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new PrefixedNameToken( "ex", "property" ) )
+							.addObject( new RDFLiteralToken( "true", new IRIRefToken( XSD.boolean ) ) )
 						),
 					] );
 				} );
@@ -1974,7 +1976,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
-						[ "ex", new PrefixToken( "ex", new IRIToken( "http://example.org/vocab#" ) ) ],
+						[ "ex", new PrefixToken( "ex", new IRIRefToken( "http://example.org/vocab#" ) ) ],
 					] ) );
 				} );
 
@@ -1996,7 +1998,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new PrefixedNameToken( "base", "resource/" ) )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "base", "vocab#property" ) )
+						.addProperty( new PropertyToken( new PrefixedNameToken( "base", "vocab#property" ) )
 							.addObject( new PrefixedNameToken( "base", "pointer/" ) )
 						),
 					] );
@@ -2021,7 +2023,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
-						[ "base", new PrefixToken( "base", new IRIToken( "http://example.org/" ) ) ],
+						[ "base", new PrefixToken( "base", new IRIRefToken( "http://example.org/" ) ) ],
 					] ) );
 				} );
 
@@ -2047,8 +2049,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
-						[ "xsd", new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) ],
-						[ "base", new PrefixToken( "base", new IRIToken( "http://example.org/" ) ) ],
+						[ "xsd", new PrefixToken( "xsd", new IRIRefToken( XSD.namespace ) ) ],
+						[ "base", new PrefixToken( "base", new IRIRefToken( "http://example.org/" ) ) ],
 					] ) );
 				} );
 
@@ -2073,7 +2075,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
-						[ "base", new PrefixToken( "base", new IRIToken( "http://example.org/" ) ) ],
+						[ "base", new PrefixToken( "base", new IRIRefToken( "http://example.org/" ) ) ],
 					] ) );
 				} );
 
@@ -2106,7 +2108,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -2133,7 +2135,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -2160,7 +2162,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					] );
@@ -2194,13 +2196,13 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					expect( deltaCreator[ "updateLists" ] ).toEqual( [
 						new UpdateListToken(
 							new BlankNodeToken( "_:blank-node" ),
-							new IRIToken( "http://example.org/vocab#property" ),
+							new IRIRefToken( "http://example.org/vocab#property" ),
 							new SliceToken( 0 ),
 							new CollectionToken()
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new CollectionToken() )
 						),
 					] );
@@ -2232,7 +2234,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					deltaCreator.addResource( id, previousResource, currentResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new CollectionToken()
 								.addObject( new LiteralToken( "string 1" ) )
 								.addObject( new LiteralToken( "string 2" ) )
@@ -2307,22 +2309,22 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 				expect( deltaCreator[ "updateLists" ] ).toEqual( [] );
 				expect( deltaCreator[ "addToken" ].triples ).toEqual( [
-					new SubjectToken( new IRIToken( "http://example.org/resource/#fragment" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "10" ).setType( new IRIToken( XSD.integer ) ) )
+					new SubjectToken( new IRIRefToken( "http://example.org/resource/#fragment" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
+							.addObject( new RDFLiteralToken( "10", new IRIRefToken( XSD.integer ) ) )
 						),
 					new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property2" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property2" ) )
 							.addObject( new LiteralToken( "add string" ) )
 						),
 				] );
 				expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [
-					new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
+					new SubjectToken( new IRIRefToken( "http://example.org/resource/" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
 						),
 					new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
-						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property1" ) )
+						.addProperty( new PropertyToken( new IRIRefToken( "http://example.org/vocab#property1" ) )
 							.addObject( new LiteralToken( "delete string" ) )
 						),
 				] );
