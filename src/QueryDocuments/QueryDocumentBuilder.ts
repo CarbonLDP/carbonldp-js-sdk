@@ -137,11 +137,11 @@ export class QueryDocumentBuilder {
 		} );
 
 		// Add values pattern when used
-		if( ! this._values.values[ 0 ].length ) {
+		if( ! this._values.values.length ) {
 			// Added in first for better performance
 			this._document._patterns.unshift( this._values );
 		}
-		this._values.values[ 0 ].push( ...termTokens );
+		termTokens.forEach( val => this._values.addValues( val ) );
 
 		let property:QueryProperty = this._document;
 		while( property.isOptional() ) {
