@@ -136,7 +136,11 @@ export class QueryDocumentBuilder {
 			return token;
 		} );
 
-		if( ! this._values.values.length ) this._document.addPattern( this._values );
+		// Add values pattern when used
+		if( ! this._values.values.length ) {
+			// Added in first for better performance
+			this._document._patterns.unshift( this._values );
+		}
 		termTokens.forEach( val => this._values.addValues( val ) );
 
 		let property:QueryProperty = this._document;

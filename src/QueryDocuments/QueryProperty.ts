@@ -19,14 +19,14 @@ export class QueryProperty {
 	readonly name:string;
 	readonly variable:QueryVariable;
 
+	readonly _patterns:PatternToken[];
 	_builder:QueryDocumentBuilder;
 
-	private _context:QueryContext;
+	private readonly _context:QueryContext;
 
 	private _optional:boolean;
 	private _type?:QueryPropertyType;
 
-	private _patterns:PatternToken[];
 	private _schema:DigestedObjectSchema;
 
 	constructor( context:QueryContext, name:string ) {
