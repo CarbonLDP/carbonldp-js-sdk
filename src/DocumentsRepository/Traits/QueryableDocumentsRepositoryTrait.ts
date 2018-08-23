@@ -1,13 +1,13 @@
 import {
 	BindToken,
 	ConstructToken,
-	IRIToken,
+	IRIRefToken,
 	OptionalToken,
 	PatternToken,
-	PredicateToken,
+	PropertyToken,
 	QueryToken,
-	SelectToken,
 	SubjectToken,
+	SubSelectToken,
 	ValuesToken,
 	VariableToken
 } from "sparqler/tokens";
@@ -100,11 +100,11 @@ function __executePatterns<T extends object>( this:void, repository:QueryableDoc
 	const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
 	const construct:ConstructToken = new ConstructToken()
 		.addTriple( new SubjectToken( metadataVar )
-			.addPredicate( new PredicateToken( "a" )
+			.addProperty( new PropertyToken( "a" )
 				.addObject( queryContext.compactIRI( C.VolatileResource ) )
 				.addObject( queryContext.compactIRI( C.QueryMetadata ) )
 			)
-			.addPredicate( new PredicateToken( queryContext.compactIRI( C.target ) )
+			.addProperty( new PropertyToken( queryContext.compactIRI( C.target ) )
 				.addObject( queryContext.getVariable( targetName ) )
 			)
 		)
@@ -259,8 +259,10 @@ function __getQueryable<T extends object>( repository:QueryableDocumentsReposito
 		.addProperty( "document" )
 		.setOptional( false );
 
-	const propertyValue:ValuesToken = new ValuesToken().addValues( documentProperty.variable, queryContext.compactIRI( uri ) );
-	documentProperty.addPattern( propertyValue );
+	documentProperty.addPattern( new ValuesToken()
+		.addVariables( documentProperty.variable )
+		.addValues( queryContext.compactIRI( uri ) )
+	);
 
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
 
@@ -308,7 +310,8 @@ function __refreshQueryable<T extends object>( this:void, repository:QueryableDo
 	const targetName:string = "document";
 	const constructPatterns:OptionalToken = new OptionalToken()
 		.addPattern( new ValuesToken()
-			.addValues( queryContext.getVariable( targetName ), new IRIToken( url ) )
+			.addVariables( queryContext.getVariable( targetName ) )
+			.addValues( new IRIRefToken( url ) )
 		)
 	;
 
@@ -316,7 +319,7 @@ function __refreshQueryable<T extends object>( this:void, repository:QueryableDo
 
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
 
-	return __executePatterns<T>( repository, url, requestOptions, queryContext, targetName, constructPatterns.patterns, document )
+	return __executePatterns<T>( repository, url, requestOptions, queryContext, targetName, constructPatterns.groupPattern.patterns, document )
 		.then( ( documents ) => documents[ 0 ] );
 }
 
@@ -330,10 +333,10 @@ function __executeChildrenBuilder<T extends object>( this:void, repository:Query
 		.addProperty( "child" )
 		.setOptional( false );
 
-	const selectChildren:SelectToken = new SelectToken( "DISTINCT" )
+	const selectChildren:SubSelectToken = new SubSelectToken( "DISTINCT" )
 		.addVariable( childrenProperty.variable )
 		.addPattern( new SubjectToken( queryContext.compactIRI( url ) )
-			.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
+			.addProperty( new PropertyToken( queryContext.compactIRI( LDP.contains ) )
 				.addObject( childrenProperty.variable )
 			)
 		)
@@ -354,18 +357,18 @@ function __executeMembersBuilder<T extends object>( this:void, repository:Querya
 
 	const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
 	const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
-	const selectMembers:SelectToken = new SelectToken( "DISTINCT" )
+	const selectMembers:SubSelectToken = new SubSelectToken( "DISTINCT" )
 		.addVariable( membersProperty.variable )
 		.addPattern( new SubjectToken( queryContext.compactIRI( url ) )
-			.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
+			.addProperty( new PropertyToken( queryContext.compactIRI( LDP.membershipResource ) )
 				.addObject( membershipResource )
 			)
-			.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.hasMemberRelation ) )
+			.addProperty( new PropertyToken( queryContext.compactIRI( LDP.hasMemberRelation ) )
 				.addObject( hasMemberRelation )
 			)
 		)
 		.addPattern( new SubjectToken( membershipResource )
-			.addPredicate( new PredicateToken( hasMemberRelation )
+			.addProperty( new PropertyToken( hasMemberRelation )
 				.addObject( membersProperty.variable )
 			)
 		)

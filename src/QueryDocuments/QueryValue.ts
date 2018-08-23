@@ -1,7 +1,4 @@
-import { isAbsolute } from "sparqler/iri";
-import { LiteralToken } from "sparqler/tokens";
-
-import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+import { IRIToken, LanguageToken, LiteralToken, RDFLiteralToken } from "sparqler/tokens";
 
 import { isDate } from "../Utils";
 
@@ -13,15 +10,14 @@ import { QueryContext } from "./QueryContext";
 export class QueryValue {
 	private readonly _value:string | number | boolean | Date;
 
-	private readonly _literal:LiteralToken;
 	private readonly _context:QueryContext;
+	private _literal:LiteralToken;
 
 	constructor( context:QueryContext, value:string | number | boolean | Date ) {
 		this._value = value;
 		this._context = context;
 
 		if( isDate( value ) ) {
-			this._literal = new LiteralToken();
 			this.withType( XSD.dateTime );
 		} else {
 			this._literal = new LiteralToken( value );
@@ -29,21 +25,19 @@ export class QueryValue {
 	}
 
 	withType( type:string ):this {
-		if( ! isAbsolute( type ) ) {
-			if( ! XSD.hasOwnProperty( type ) ) throw new IllegalArgumentError( "Invalid type provided." );
-			type = XSD[ type ];
-		}
+		if( XSD.hasOwnProperty( type ) ) type = XSD[ type ];
 
 		const value:string = this._context.serializeLiteral( type, this._value );
-		// TODO: sparqler LiteralToken error, not returning self with `setValue`
-		this._literal.setValue( value );
-		this._literal.setType( this._context.compactIRI( type ) );
+		const typeToken:IRIToken = this._context.compactIRI( type );
+		this._literal = new RDFLiteralToken( value, typeToken );
 
 		return this;
 	}
 
 	withLanguage( language:string ):this {
-		this._literal.setLanguage( language );
+		const value:string = this._context.serializeLiteral( XSD.string, this._value );
+		const languageToken:LanguageToken = new LanguageToken( language );
+		this._literal = new RDFLiteralToken( value, languageToken );
 
 		return this;
 	}

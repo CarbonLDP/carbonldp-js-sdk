@@ -1,10 +1,10 @@
 import {
 	FilterToken,
-	IRIToken,
+	IRIRefToken,
 	LiteralToken,
 	OptionalToken,
-	PredicateToken,
 	PrefixedNameToken,
+	PropertyToken,
 	SubjectToken,
 	ValuesToken,
 } from "sparqler/tokens";
@@ -348,12 +348,12 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					jasmine.objectContaining( {
 						token: "subject",
 						subject: baseProperty.variable,
-						predicates: jasmine.arrayContaining( [
+						properties: jasmine.arrayContaining( [
 							jasmine.objectContaining( {
-								token: "predicate",
-								predicate: "a",
+								token: "property",
+								verb: "a",
 								objects: jasmine.arrayContaining( [
-									new IRIToken( "http://example.com/vocab#Type-1" ),
+									new IRIRefToken( "http://example.com/vocab#Type-1" ),
 								] ),
 							} ),
 						] ),
@@ -365,10 +365,10 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					jasmine.objectContaining( {
 						token: "subject",
 						subject: baseProperty.variable,
-						predicates: jasmine.arrayContaining( [
+						properties: jasmine.arrayContaining( [
 							jasmine.objectContaining( {
-								token: "predicate",
-								predicate: "a",
+								token: "property",
+								verb: "a",
 								objects: jasmine.arrayContaining( [
 									new PrefixedNameToken( "ex:Type-2" ),
 								] ),
@@ -483,7 +483,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 				expect( defaultProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
 						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
-							.addPredicate( new PredicateToken( new IRIToken( "http://example.com/vocab#defaultProperty" ) )
+							.addProperty( new PropertyToken( new IRIRefToken( "http://example.com/vocab#defaultProperty" ) )
 								.addObject( new QueryVariable( "document.defaultProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
@@ -493,7 +493,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 				expect( inheritProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
 						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:inheritProperty" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:inheritProperty" ) )
 								.addObject( new QueryVariable( "document.inheritProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
@@ -503,7 +503,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 				expect( extendedProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
 						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:extendedProperty" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:extendedProperty" ) )
 								.addObject( new QueryVariable( "document.extendedProperty", jasmine.any( Number ) as any ) ) ) )
 						.addPattern( new FilterToken( "datatype( ?document__extendedProperty ) = xsd:string" ) )
 					,
@@ -514,7 +514,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 				expect( inlineProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
 						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:inlineProperty" ) )
+							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:inlineProperty" ) )
 								.addObject( new QueryVariable( "document.inlineProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
@@ -584,11 +584,9 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					builder.value( "world" )
 				);
 				expect( baseProperty.getPatterns() ).toContain( new ValuesToken()
-					.addValues(
-						baseProperty.variable,
-						new LiteralToken( "hello" ),
-						new LiteralToken( "world" )
-					)
+					.addVariables( baseProperty.variable )
+					.addValues( new LiteralToken( "hello" ) )
+					.addValues( new LiteralToken( "world" ) )
 				);
 
 				builder.values(
@@ -596,14 +594,11 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					builder.object( Pointer.create( { $id: "ex:pointer2" } ) )
 				);
 				expect( baseProperty.getPatterns() ).toContain( new ValuesToken()
-					.addValues(
-						baseProperty.variable,
-						new LiteralToken( "hello" ),
-						new LiteralToken( "world" ),
-
-						new IRIToken( "http://example.com/pointer-1" ),
-						new PrefixedNameToken( "ex:pointer2" )
-					)
+					.addVariables( baseProperty.variable )
+					.addValues( new LiteralToken( "hello" ) )
+					.addValues( new LiteralToken( "world" ) )
+					.addValues( new IRIRefToken( "http://example.com/pointer-1" ) )
+					.addValues( new PrefixedNameToken( "ex:pointer2" ) )
 				);
 			} );
 

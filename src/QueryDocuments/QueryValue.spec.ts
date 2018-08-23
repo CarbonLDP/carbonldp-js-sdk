@@ -1,10 +1,8 @@
-import { IRIToken, LiteralToken } from "sparqler/tokens";
+import { IRIRefToken, LanguageToken, LiteralToken, RDFLiteralToken } from "sparqler/tokens";
 
 import { createMockContext } from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
-
-import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
@@ -96,25 +94,17 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 			it( "should accept relative XSD type", ():void => {
 				const helper:( type:string, value:any ) => void = ( type, value ) => {
 					const queryValue:QueryValue = new QueryValue( queryContext, value );
-					const spy:jasmine.Spy = spyOn( queryValue[ "_literal" ], "setType" );
 
 					queryValue.withType( type );
-					expect( spy ).toHaveBeenCalledWith( new IRIToken( XSD[ type ] ) );
+					expect( queryValue[ "_literal" ] ).toEqual( jasmine.objectContaining<RDFLiteralToken>( {
+						type: new IRIRefToken( XSD[ type ] ),
+					} ) );
 				};
 
 				helper( "string", "value" );
 				helper( "dateTime", new Date() );
 				helper( "int", 1 );
 				helper( "integer", 10.01 );
-			} );
-
-			it( "should throw error if relative non-XSD type", ():void => {
-				const helper:( type:string ) => void = type => () => {
-					new QueryValue( queryContext, "" ).withType( type );
-				};
-
-				expect( helper( "no-string" ) ).toThrowError( IllegalArgumentError, "Invalid type provided." );
-				expect( helper( "invalid" ) ).toThrowError( IllegalArgumentError, "Invalid type provided." );
 			} );
 
 			it( "should create a serialize and add the type", ():void => {
@@ -124,14 +114,13 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 					serializeSpy.calls.reset();
 
 					const queryValue:QueryValue = new QueryValue( queryContext, value );
-					const valueSpy:jasmine.Spy = spyOn( queryValue[ "_literal" ], "setValue" ).and.callThrough();
-					const typeSpy:jasmine.Spy = spyOn( queryValue[ "_literal" ], "setType" ).and.callThrough();
-
 					queryValue.withType( type );
 
-					expect( valueSpy ).toHaveBeenCalled();
-					expect( typeSpy ).toHaveBeenCalled();
 					expect( serializeSpy ).toHaveBeenCalledWith( type, value );
+					expect( queryValue[ "_literal" ] ).toEqual( jasmine.objectContaining<RDFLiteralToken>( {
+						value: serializeSpy.calls.mostRecent().returnValue,
+						type: new IRIRefToken( type ),
+					} ) );
 				};
 
 				helper( new Date(), XSD.dateTime );
@@ -172,10 +161,11 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 			it( "should call the literal setLanguage", ():void => {
 				const helper:( language:string ) => void = language => {
 					const queryValue:QueryValue = new QueryValue( queryContext, "value" );
-					const spy:jasmine.Spy = spyOn( queryValue[ "_literal" ], "setLanguage" ).and.callThrough();
 
 					queryValue.withLanguage( language );
-					expect( spy ).toHaveBeenCalledWith( language );
+					expect( queryValue[ "_literal" ] ).toEqual( jasmine.objectContaining<RDFLiteralToken>( {
+						language: new LanguageToken( language ),
+					} ) );
 				};
 
 				helper( "en" );

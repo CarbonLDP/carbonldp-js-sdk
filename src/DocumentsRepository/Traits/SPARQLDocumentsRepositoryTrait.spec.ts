@@ -615,7 +615,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 
 			it( "should return a QueryClause", () => {
-				const queryClause:QueryClause = repository
+				const queryClause:QueryClause<any, any> = repository
 					.sparql( "https://example.com/resource/" )
 				;
 
@@ -653,10 +653,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 				expect( queryBuilder.toPrettyString() ).toBe( "" +
 					"BASE <https://example.com/>" + "\n" +
-					"PREFIX ex:<https://example.com/>\n" +
+					"PREFIX ex: <https://example.com/>\n" +
 					"SELECT ?o" + "\n" +
-					"WHERE {" +
-					"" + "ex:resource ?p ?o" +
+					"WHERE { " +
+					"" + "ex:resource ?p ?o " +
 					"}"
 				);
 			} );

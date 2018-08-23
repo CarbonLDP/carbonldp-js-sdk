@@ -1,4 +1,4 @@
-import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
+import { BlankNodeToken, IRIRefToken, PrefixedNameToken } from "sparqler/tokens";
 
 import { createMockContext } from "../../test/helpers/mocks";
 
@@ -55,7 +55,7 @@ describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
 
 			it( "should create an IRI token", ():void => {
 				const queryObject:QueryObject = new QueryObject( queryContext, "http://example.com/resource/" );
-				expect( queryObject[ "_resource" ] ).toEqual( jasmine.any( IRIToken ) );
+				expect( queryObject[ "_resource" ] ).toEqual( jasmine.any( IRIRefToken ) );
 			} );
 
 			it( "should create an PrefixedName token", ():void => {

@@ -1,4 +1,4 @@
-import { LimitToken, OffsetToken, OptionalToken, OrderToken, SelectToken, SubjectToken } from "sparqler/tokens";
+import { LimitToken, OffsetToken, OptionalToken, OrderToken, SubjectToken, SubSelectToken } from "sparqler/tokens";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
@@ -20,8 +20,7 @@ export class QueryDocumentsBuilder extends QueryDocumentBuilder {
 	orderBy( property:string, flow?:"ASC" | "DESC" | "ascending" | "descending" ):this {
 		let propertyObj:QueryProperty = this.property( property );
 
-		const select:SelectToken = this._document.getPatterns().find( pattern => pattern.token === "select" ) as SelectToken;
-		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );
+		const select:SubSelectToken = this.__getSubSelect();
 
 		this._orderData = void 0;
 		const orderIndex:number = select.modifiers.findIndex( pattern => pattern.token === "order" );
@@ -29,8 +28,8 @@ export class QueryDocumentsBuilder extends QueryDocumentBuilder {
 		if( orderIndex !== - 1 ) {
 			select.modifiers.splice( orderIndex, 1 );
 
-			const optionalIndex:number = select.patterns.findIndex( pattern => pattern.token === "optional" );
-			select.patterns.splice( optionalIndex, 1 );
+			const optionalIndex:number = select.where.groupPattern.patterns.findIndex( pattern => pattern.token === "optional" );
+			select.where.groupPattern.patterns.splice( optionalIndex, 1 );
 		}
 
 		const validatedFlow:"ASC" | "DESC" = parseFlowString( flow );
@@ -65,8 +64,7 @@ export class QueryDocumentsBuilder extends QueryDocumentBuilder {
 	}
 
 	limit( limit:number ):this {
-		const select:SelectToken = this._document.getPatterns().find( pattern => pattern.token === "select" ) as SelectToken;
-		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );
+		const select:SubSelectToken = this.__getSubSelect();
 
 		const limitIndex:number = select.modifiers.findIndex( pattern => pattern.token === "limit" );
 		if( limitIndex !== - 1 ) select.modifiers.splice( limitIndex, 1 );
@@ -77,14 +75,23 @@ export class QueryDocumentsBuilder extends QueryDocumentBuilder {
 	}
 
 	offset( offset:number ):this {
-		const select:SelectToken = this._document.getPatterns().find( pattern => pattern.token === "select" ) as SelectToken;
-		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );
+		const select:SubSelectToken = this.__getSubSelect();
 
 		const offsetIndex:number = select.modifiers.findIndex( pattern => pattern.token === "offset" );
 		if( offsetIndex !== - 1 ) select.modifiers.splice( offsetIndex, 1 );
 
 		select.modifiers.push( new OffsetToken( offset ) );
 		return this;
+	}
+
+
+	private __getSubSelect():SubSelectToken {
+		const select:SubSelectToken = this._document
+			.getPatterns()
+			.find( ( pattern ):pattern is SubSelectToken => pattern.token === "subSelect" );
+
+		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );
+		return select;
 	}
 
 }
