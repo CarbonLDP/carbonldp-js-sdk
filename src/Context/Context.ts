@@ -31,6 +31,7 @@ export interface Context<REGISTRY extends RegisteredPointer = RegisteredPointer,
 	extendObjectSchema( objectSchema:ObjectSchema ):this;
 	extendObjectSchema( type:string, objectSchema:ObjectSchema ):this;
 	extendObjectSchema( modelSchema:ModelSchema ):this;
+	extendObjectSchema( schemas:(ModelSchema | ObjectSchema)[] ):this;
 
 	clearObjectSchema( type?:string ):void;
 }

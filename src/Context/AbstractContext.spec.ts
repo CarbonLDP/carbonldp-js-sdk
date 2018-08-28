@@ -594,6 +594,43 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 				} ) );
 			} );
 
+
+			it( "should merge general schema and model schema", ():void => {
+				const generalSchema:DigestedObjectSchema = createMockDigestedSchema();
+				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
+
+				const context:AbstractContext<any, any> = createMock( { generalSchema, schemasMap } );
+
+
+				context.extendObjectSchema( [
+					{
+						"schema": "https://schema.org/",
+					},
+					{
+						TYPE: "https://example.com/ns#Type",
+						SCHEMA: {
+							"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+						},
+					},
+				] );
+
+
+				expect( generalSchema ).toEqual( createMockDigestedSchema( {
+					prefixes: new Map( [
+						[ "schema", "https://schema.org/" ],
+					] ),
+				} ) );
+
+				expect( schemasMap ).toEqual( new Map( [ [
+					"https://example.com/ns#Type",
+					createMockDigestedSchema( {
+						prefixes: new Map( [
+							[ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" ],
+						] ),
+					} ),
+				] ] ) );
+			} );
+
 		} );
 
 		describe( method( INSTANCE, "clearObjectSchema" ), ():void => {

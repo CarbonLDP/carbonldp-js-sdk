@@ -92,12 +92,18 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 	extendObjectSchema( type:string, objectSchema:ObjectSchema ):this;
 	extendObjectSchema( modelSchema:ModelSchema ):this;
 	extendObjectSchema( objectSchema:ObjectSchema ):this;
-	extendObjectSchema( objectSchemaOrTypeOrModelSchema:string | ModelSchema | ObjectSchema, objectSchema?:ObjectSchema ):this {
+	extendObjectSchema( schemas:(ModelSchema | ObjectSchema)[] ):this;
+	extendObjectSchema( objectSchemaOrTypeOrModelSchema:string | ModelSchema | (ModelSchema | ObjectSchema)[] | ObjectSchema, objectSchema?:ObjectSchema ):this {
 		if( isString( objectSchemaOrTypeOrModelSchema ) )
 			return this.__extendTypeSchema( objectSchema, objectSchemaOrTypeOrModelSchema );
 
 		if( ModelSchema.is( objectSchemaOrTypeOrModelSchema ) )
 			return this.__extendTypeSchema( objectSchemaOrTypeOrModelSchema.SCHEMA, objectSchemaOrTypeOrModelSchema.TYPE );
+
+		if( Array.isArray( objectSchemaOrTypeOrModelSchema ) ) {
+			objectSchemaOrTypeOrModelSchema.forEach( this.extendObjectSchema, this );
+			return this;
+		}
 
 		return this.__extendGeneralSchema( objectSchemaOrTypeOrModelSchema );
 	}
