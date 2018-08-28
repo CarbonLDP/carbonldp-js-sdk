@@ -19,7 +19,7 @@ import {
 } from "../test/JasmineExtender";
 
 import { SPARQLSelectResults } from "./SelectResults";
-import { FinishSPARQLSelect, SPARQLBuilder } from "./SPARQLBuilder";
+import { FinishSPARQLAsk, FinishSPARQLSelect, SPARQLBuilder } from "./SPARQLBuilder";
 
 
 describe( module( "carbonldp/SPARQL/SPARQLBuilder", "Module that reexports the customized SPARQLER class." ), ():void => {
@@ -44,6 +44,32 @@ describe( module( "carbonldp/SPARQL/SPARQLBuilder", "Module that reexports the c
 
 			it( "should exists", ():void => {
 				const target:FinishSPARQLSelect[ "execute" ] = ():any => {};
+				expect( target ).toBeDefined();
+			} );
+
+		} );
+
+	} );
+
+	describe( interfaze(
+		"CarbonLDP.SPARQL.FinishSPARQLAsk",
+		"Clause that extends the query builder allowing to execute the request for the built query."
+	), () => {
+
+		it( extendsClass( "SPARQL/clauses/FinishClause" ), () => {
+			const target:FinishClause = {} as FinishSPARQLAsk;
+			expect( target ).toBeDefined();
+		} );
+
+
+		describe( method( OBLIGATORY, "execute" ), () => {
+
+			it( hasSignature(
+				{ type: "Promise<boolean>" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const target:FinishSPARQLAsk[ "execute" ] = ():Promise<boolean> => Promise.resolve( true );
 				expect( target ).toBeDefined();
 			} );
 
@@ -106,6 +132,41 @@ describe( module( "carbonldp/SPARQL/SPARQLBuilder", "Module that reexports the c
 
 				expect( spy ).toHaveBeenCalledWith( entryPoint, finishClause.toCompactString() );
 				expect( returned ).toBeNull();
+			} );
+
+
+			it( "should extend FinishClause with the FinishSPARQLAsk", () => {
+				const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { context: new DocumentsContext( "https://example.com/" ) } );
+				const entryPoint:string = "https://example.com/";
+
+				const builder:SPARQLBuilder = new SPARQLBuilder( repository, entryPoint );
+
+				const finishClause:FinishSPARQLAsk = builder
+					.ask()
+					.where( () => [] );
+
+				expect( finishClause ).toEqual( jasmine.objectContaining( {
+					execute: jasmine.any( Function ),
+				} ) );
+			} );
+
+			it( "should call executeASKQuery when execute", async () => {
+				const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { context: new DocumentsContext( "https://example.com/" ) } );
+				const entryPoint:string = "https://example.com/entry-point/";
+
+				const builder:SPARQLBuilder = new SPARQLBuilder( repository, entryPoint );
+
+				const finishClause:FinishSPARQLAsk = builder
+					.ask()
+					.where( () => [] );
+
+				const spy:jasmine.Spy = spyOnDecorated( repository, "executeASKQuery" )
+					.and.returnValue( Promise.resolve( true ) );
+
+				const returned:boolean = await finishClause.execute();
+
+				expect( spy ).toHaveBeenCalledWith( entryPoint, finishClause.toCompactString() );
+				expect( returned ).toBe( true );
 			} );
 
 		} );

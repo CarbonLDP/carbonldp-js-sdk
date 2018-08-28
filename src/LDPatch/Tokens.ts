@@ -1,13 +1,4 @@
-import {
-	BlankNodeToken,
-	CollectionToken,
-	IRIToken,
-	PrefixedNameToken,
-	SubjectToken,
-	TokenNode,
-	VariableOrIRI,
-} from "sparqler/tokens";
-import { joinPatterns } from "sparqler/tokens/utils";
+import { BlankNodeToken, CollectionToken, IRIToken, SubjectToken, TokenNode, VariableOrIRIToken } from "sparqler/tokens";
 
 import { isNumber } from "../Utils";
 
@@ -60,7 +51,7 @@ export class AddToken implements TokenNode {
 	}
 
 	toString():string {
-		return `Add { ${ joinPatterns( this.triples ) }. }.`;
+		return `Add { ${ this.triples.join( ". " ) }. }.`;
 	}
 }
 
@@ -73,7 +64,7 @@ export class DeleteToken implements TokenNode {
 	}
 
 	toString():string {
-		return `Delete { ${ joinPatterns( this.triples ) }. }.`;
+		return `Delete { ${ this.triples.join( ". " ) }. }.`;
 	}
 }
 
@@ -81,12 +72,12 @@ export class UpdateListToken implements TokenNode {
 	readonly token:"updateList" = "updateList";
 
 	// Extend LD Patch grammar allowing blank-nodes
-	readonly subject:VariableOrIRI | BlankNodeToken;
-	readonly predicate:IRIToken | PrefixedNameToken;
+	readonly subject:VariableOrIRIToken | BlankNodeToken;
+	readonly predicate:IRIToken;
 	readonly slice:SliceToken;
 	readonly collection:CollectionToken;
 
-	constructor( subject:VariableOrIRI | BlankNodeToken, predicate:IRIToken | PrefixedNameToken, slice:SliceToken, collection:CollectionToken ) {
+	constructor( subject:VariableOrIRIToken | BlankNodeToken, predicate:IRIToken, slice:SliceToken, collection:CollectionToken ) {
 		this.subject = subject;
 		this.predicate = predicate;
 		this.slice = slice;

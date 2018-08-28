@@ -1,13 +1,4 @@
-import {
-	FilterToken,
-	IRIToken,
-	LiteralToken,
-	PredicateToken,
-	PrefixedNameToken,
-	SubjectToken,
-	TermToken,
-	ValuesToken,
-} from "sparqler/tokens";
+import { FilterToken, IRIToken, LiteralToken, PropertyToken, SubjectToken, TermToken, ValuesToken } from "sparqler/tokens";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
@@ -53,8 +44,8 @@ export class QueryDocumentBuilder {
 		property._builder = this;
 		this._document = property;
 
-		this._typesTriple = new SubjectToken( property.variable ).addPredicate( new PredicateToken( "a" ) );
-		this._values = new ValuesToken().addValues( property.variable );
+		this._typesTriple = new SubjectToken( property.variable ).addProperty( new PropertyToken( "a" ) );
+		this._values = new ValuesToken().addVariables( property.variable );
 
 		this._schema = this._context.getGeneralSchema();
 	}
@@ -96,10 +87,10 @@ export class QueryDocumentBuilder {
 		if( this._context.hasProperties( this._document.name ) ) throw new IllegalStateError( "Types must be specified before the properties." );
 
 		type = this._schema.resolveURI( type, { vocab: true } );
-		if( ! this._typesTriple.predicates[ 0 ].objects.length )
+		if( ! this._typesTriple.properties[ 0 ].objects.length )
 			this._document.addPattern( this._typesTriple );
 
-		this._typesTriple.predicates[ 0 ].addObject( this._context.compactIRI( type ) );
+		this._typesTriple.properties[ 0 ].addObject( this._context.compactIRI( type ) );
 
 		if( ! this._context.context ) return this;
 
@@ -138,15 +129,19 @@ export class QueryDocumentBuilder {
 	}
 
 	values( ...values:(QueryValue | QueryObject)[] ):this {
-		const termTokens:(LiteralToken | IRIToken | PrefixedNameToken)[] = values.map( value => {
+		const termTokens:(LiteralToken | IRIToken)[] = values.map( value => {
 			const token:TermToken = value.getToken();
 			if( token.token === "blankNode" ) throw new IllegalArgumentError( `Blank node "${ token.label }" is not a valid value.` );
 
 			return token;
 		} );
 
-		if( ! this._values.values[ 0 ].length ) this._document.addPattern( this._values );
-		this._values.values[ 0 ].push( ...termTokens );
+		// Add values pattern when used
+		if( ! this._values.values.length ) {
+			// Added in first for better performance
+			this._document._patterns.unshift( this._values );
+		}
+		termTokens.forEach( val => this._values.addValues( val ) );
 
 		let property:QueryProperty = this._document;
 		while( property.isOptional() ) {

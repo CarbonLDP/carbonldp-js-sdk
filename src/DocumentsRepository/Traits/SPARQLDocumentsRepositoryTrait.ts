@@ -16,7 +16,7 @@ import { ModelPrototype } from "../../Model/ModelPrototype";
 import { DigestedObjectSchema } from "../../ObjectSchema/DigestedObjectSchema";
 
 import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
-import { FinishSPARQLSelect, SPARQLBuilder } from "../../SPARQL/SPARQLBuilder";
+import { FinishSPARQLAsk, FinishSPARQLSelect, SPARQLBuilder } from "../../SPARQL/SPARQLBuilder";
 import { SPARQLService } from "../../SPARQL/SPARQLService";
 
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
@@ -36,7 +36,7 @@ export interface SPARQLDocumentsRepositoryTrait extends GeneralRepository<Docume
 	executeUPDATE( uri:string, update:string, requestOptions?:RequestOptions ):Promise<void>;
 
 
-	sparql( uri:string ):QueryClause<FinishSPARQLSelect>;
+	sparql( uri:string ):QueryClause<FinishSPARQLSelect, FinishSPARQLAsk>;
 }
 
 
@@ -78,12 +78,12 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 		},
 
 
-		sparql( this:SPARQLDocumentsRepositoryTrait, uri:string ):QueryClause<FinishSPARQLSelect> {
+		sparql( this:SPARQLDocumentsRepositoryTrait, uri:string ):QueryClause<FinishSPARQLSelect, FinishSPARQLAsk> {
 			if( ! this.context.registry.inScope( uri, true ) ) throw new IllegalArgumentError( `"${ uri }" is out of scope.` );
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			const schema:DigestedObjectSchema = this.context.registry.getGeneralSchema();
-			let builder:QueryClause<FinishSPARQLSelect> = new SPARQLBuilder( this, url )
+			let builder:QueryClause<FinishSPARQLSelect, FinishSPARQLAsk> = new SPARQLBuilder( this, url )
 				.base( schema.base )
 				.vocab( schema.vocab );
 

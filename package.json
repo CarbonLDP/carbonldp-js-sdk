@@ -1,6 +1,6 @@
 {
   "name": "carbonldp",
-  "version": "5.0.0-alpha.2",
+  "version": "5.0.0-alpha.3",
   "description": "JavaScript/TypeScript SDK for Carbon LDP",
   "homepage": "https://github.com/CarbonLDP/carbonldp-js-sdk",
   "contributors": [
@@ -24,7 +24,7 @@
     "@types/node": ">=6",
     "file-type": "^6.1.0",
     "sockjs-client": "^1.1.0",
-    "sparqler": "0.4.0",
+    "sparqler": "0.5.0",
     "webstomp-client": "^1.2.1"
   },
   "devDependencies": {

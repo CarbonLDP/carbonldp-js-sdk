@@ -1,4 +1,4 @@
-import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
+import { IRIRefToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
 import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
 import { createMockContext } from "../../test/helpers/mocks";
@@ -141,7 +141,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContext" ), ():void => {
 				[
 					{ name: "iri", type: "string", description: "The iri to be compacted and tokenized" },
 				],
-				{ type: "sparqler/tokens/IRIToken | sparqler/tokens/PrefixedNameToken" }
+				{ type: "sparqler/tokens/IRIToken" }
 			), ():void => {
 			} );
 
@@ -164,14 +164,14 @@ describe( module( "carbonldp/QueryDocuments/QueryContext" ), ():void => {
 				} );
 				const queryContext:QueryContext = new QueryContext( context );
 
-				const iri1:IRIToken = <IRIToken> queryContext.compactIRI( "https://schema.org/resource" );
-				expect( iri1 ).toEqual( jasmine.any( IRIToken ) );
+				const iri1:IRIRefToken = <IRIRefToken> queryContext.compactIRI( "https://schema.org/resource" );
+				expect( iri1 ).toEqual( jasmine.any( IRIRefToken ) );
 				expect( iri1 ).toEqual( jasmine.objectContaining( {
 					value: "https://schema.org/resource",
 				} ) );
 
-				const iri2:IRIToken = <IRIToken> queryContext.compactIRI( "http://example.org/ns#resource" );
-				expect( iri2 ).toEqual( jasmine.any( IRIToken ) );
+				const iri2:IRIRefToken = <IRIRefToken> queryContext.compactIRI( "http://example.org/ns#resource" );
+				expect( iri2 ).toEqual( jasmine.any( IRIRefToken ) );
 				expect( iri2 ).toEqual( jasmine.objectContaining( {
 					value: "http://example.org/ns#resource",
 				} ) );
@@ -232,14 +232,14 @@ describe( module( "carbonldp/QueryDocuments/QueryContext" ), ():void => {
 				expect( queryContext[ "_prefixesMap" ].size ).toBe( 1 );
 				expect( queryContext[ "_prefixesMap" ].get( "ex" ) ).toEqual( new PrefixToken(
 					"ex",
-					new IRIToken( "http://example.com/ns#" )
+					new IRIRefToken( "http://example.com/ns#" )
 				) );
 
 				queryContext.compactIRI( "schema:resource" );
 				expect( queryContext[ "_prefixesMap" ].size ).toBe( 2 );
 				expect( queryContext[ "_prefixesMap" ].get( "schema" ) ).toEqual( new PrefixToken(
 					"schema",
-					new IRIToken( "https://schema.org/" )
+					new IRIRefToken( "https://schema.org/" )
 				) );
 			} );
 
@@ -254,7 +254,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContext" ), ():void => {
 				expect( queryContext[ "_prefixesMap" ].size ).toBe( 1 );
 				expect( queryContext[ "_prefixesMap" ].get( "ex" ) ).toEqual( new PrefixToken(
 					"ex",
-					new IRIToken( "http://example.com/ns#" )
+					new IRIRefToken( "http://example.com/ns#" )
 				) );
 
 				queryContext.compactIRI( "ex:another_resource" );
