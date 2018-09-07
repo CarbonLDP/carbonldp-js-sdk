@@ -9,7 +9,10 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
+import { ObjectSchemaUtils } from "../ObjectSchema/ObjectSchemaUtils";
+
 import { isObject } from "../Utils";
 
 import { QueryContext } from "./QueryContext";
@@ -70,6 +73,14 @@ export function _createAllPattern( context:QueryContext, resourcePath:string ):P
 		;
 }
 
+
+export function _getRootPath( path:string ):string {
+	const [ root ]:string[] = path
+		.split( "." )
+		.slice( 0, 1 );
+
+	return root;
+}
 
 export function _getParentPath( path:string ):string {
 	return path
@@ -142,4 +153,15 @@ export function _areDifferentType( a:any, b:any ):boolean {
 	if( typeof a === "object" ) return a instanceof Date !== b instanceof Date;
 
 	return false;
+}
+
+
+export function _getMatchDefinition( schema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
+	if( ! schema.properties.has( propertyName ) ) return;
+
+	const definition:DigestedObjectSchemaProperty = ObjectSchemaUtils
+		._resolveProperty( schema, schema.properties.get( propertyName ) );
+
+	if( propertyURI !== void 0 || propertyURI === definition.uri )
+		return definition;
 }
