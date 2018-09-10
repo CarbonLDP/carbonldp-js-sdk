@@ -21,11 +21,11 @@ import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSche
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 
 import { QueryContainer } from "./QueryContainer";
+import { SubQueryDocumentsBuilder } from "./QueryDocumentBuilder2";
 import { QueryPropertyData } from "./QueryPropertyData";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { QueryRootProperty } from "./QueryRootProperty";
 import { QueryVariable } from "./QueryVariable";
-import { SubQueryBuilder } from "./SubQueryBuilder";
 import { SubQueryPropertyDefinition } from "./SubQueryPropertyDefinition";
 import { _getMatchDefinition, _getRootPath } from "./Utils";
 
@@ -292,7 +292,7 @@ export class QueryProperty2 {
 	}
 
 
-	addProperty( propertyName:string, propertyDefinition:SubQueryPropertyDefinition = SubQueryBuilder.INHERIT ):QueryProperty2 {
+	addProperty( propertyName:string, propertyDefinition:SubQueryPropertyDefinition = SubQueryDocumentsBuilder.INHERIT ):QueryProperty2 {
 		const definition:DigestedObjectSchemaProperty = this
 			.__getDefinition( propertyName, propertyDefinition );
 
