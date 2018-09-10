@@ -4012,7 +4012,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		} );
 
 
-		xdescribe( method( OBLIGATORY, "getChildren" ), () => {
+		describe( method( OBLIGATORY, "getChildren" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -5522,7 +5522,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		xdescribe( method( OBLIGATORY, "getMembers" ), () => {
+		describe( method( OBLIGATORY, "getMembers" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -7032,7 +7032,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		} );
 
 
-		xdescribe( method( OBLIGATORY, "listChildren" ), () => {
+		describe( method( OBLIGATORY, "listChildren" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -7406,7 +7406,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		xdescribe( method( OBLIGATORY, "listMembers" ), () => {
+		describe( method( OBLIGATORY, "listMembers" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],

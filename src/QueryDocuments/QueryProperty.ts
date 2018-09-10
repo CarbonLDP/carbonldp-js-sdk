@@ -9,10 +9,10 @@ import { _createAllPattern, _createGraphPattern, _createTypesPattern } from "./U
 
 
 export enum QueryPropertyType {
-	FULL,
+	EMPTY,
 	PARTIAL,
 	ALL,
-	EMPTY,
+	FULL,
 }
 
 export class QueryProperty {
