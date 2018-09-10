@@ -1,7 +1,7 @@
 import { QueryContainer } from "./QueryContainer";
 
 
-export interface QueryRootData {
+export interface QueryRootPropertyData {
 	queryContainer:QueryContainer;
 
 	name:string;

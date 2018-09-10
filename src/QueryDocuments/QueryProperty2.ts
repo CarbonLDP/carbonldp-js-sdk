@@ -47,11 +47,11 @@ export class QueryProperty2 {
 	protected _type:QueryPropertyType;
 	protected _optional:boolean;
 
-	private readonly _types:IRIToken[];
-	private readonly _values:(LiteralToken | IRIToken)[];
+	protected readonly _types:IRIToken[];
+	protected readonly _values:(LiteralToken | IRIToken)[];
 
-	private _searchSchema:DigestedObjectSchema | undefined;
-	private readonly _subProperties:Map<string, QueryProperty2>;
+	protected _searchSchema:DigestedObjectSchema | undefined;
+	protected readonly _subProperties:Map<string, QueryProperty2>;
 
 
 	constructor( data:QueryPropertyData ) {
@@ -90,6 +90,14 @@ export class QueryProperty2 {
 
 	isComplete():boolean {
 		return this._type > QueryPropertyType.PARTIAL;
+	}
+
+	isAll():boolean {
+		return this._type === QueryPropertyType.ALL;
+	}
+
+	isFully():boolean {
+		return this._type === QueryPropertyType.FULL;
 	}
 
 
@@ -146,14 +154,6 @@ export class QueryProperty2 {
 		}
 
 
-		if( this._types.length ) patterns
-			.push( new SubjectToken( this.variable )
-				.addProperty( new PropertyToken( "a" )
-					.addObject( ...this._types )
-				)
-			);
-
-
 		if( ! this._optional ) return patterns;
 		return [ new OptionalToken()
 			.addPattern( ...patterns ),
@@ -188,6 +188,14 @@ export class QueryProperty2 {
 			.addPattern( this.__createTypesPattern() )
 		);
 
+		if( this._types.length ) patterns
+			.push( new SubjectToken( this.variable )
+				.addProperty( new PropertyToken( "a" )
+					.addObject( ...this._types )
+				)
+			);
+
+
 		this._subProperties.forEach( subProperty => {
 			patterns.push( ...subProperty.getSearchPatterns() );
 		} );
@@ -196,7 +204,24 @@ export class QueryProperty2 {
 	}
 
 
-	getConstructPattern():PatternToken | undefined {
+	getConstructPatterns():SubjectToken[] {
+		const patterns:SubjectToken[] = [];
+
+		const selfPattern:SubjectToken | undefined = this
+			.__createSelfConstructPattern();
+		if( selfPattern ) patterns.push( selfPattern );
+
+		this._subProperties.forEach( property => {
+			const subPatterns:SubjectToken[] = property
+				.getConstructPatterns();
+
+			patterns.push( ...subPatterns );
+		} );
+
+		return patterns;
+	}
+
+	protected __createSelfConstructPattern():SubjectToken | undefined {
 		switch( this._type ) {
 			case QueryPropertyType.PARTIAL:
 				return this.__createPartialConstructPattern();
@@ -205,7 +230,7 @@ export class QueryProperty2 {
 				return this.__createAllPattern();
 
 			case QueryPropertyType.FULL:
-				return this.__createGraphPattern();
+				return this.__createGraphSubPattern();
 
 			default:
 				return;
@@ -241,9 +266,14 @@ export class QueryProperty2 {
 
 	protected __createGraphPattern():GraphToken {
 		return new GraphToken( this.variable )
-			.addPattern( new SubjectToken( this.__getVariable( "_subject" ) )
-				.addProperty( new PropertyToken( this.__getVariable( "_predicate" ) )
-					.addObject( this.__getVariable( "_object" ) ) )
+			.addPattern( this.__createGraphSubPattern() )
+			;
+	}
+
+	protected __createGraphSubPattern():SubjectToken {
+		return new SubjectToken( this.__getVariable( "_subject" ) )
+			.addProperty( new PropertyToken( this.__getVariable( "_predicate" ) )
+				.addObject( this.__getVariable( "_object" ) )
 			);
 	}
 
@@ -262,7 +292,6 @@ export class QueryProperty2 {
 
 	hasProperties():boolean {
 		return this._subProperties.size !== 0
-			|| this.isPartial()
 			|| this.isComplete()
 			;
 	}
@@ -333,13 +362,14 @@ export class QueryProperty2 {
 	}
 
 	protected __getInheritDefinition( propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
+		const searchSchema:DigestedObjectSchema = this._getSearchSchema();
 		const localDefinition:DigestedObjectSchemaProperty | undefined =
-			_getMatchDefinition( this._getSearchSchema(), propertyURI, propertyURI );
+			_getMatchDefinition( searchSchema, searchSchema, propertyName, propertyURI );
 
 		if( localDefinition ) return localDefinition;
 
 		return this.queryContainer
-			._getInheritDefinition( propertyName, propertyURI );
+			._getInheritDefinition( searchSchema, propertyName, propertyURI );
 	}
 
 
@@ -382,7 +412,7 @@ export class QueryProperty2 {
 
 	protected _getSearchSchema():DigestedObjectSchema {
 		if( this._searchSchema ) return this._searchSchema;
-		return this._searchSchema = this.queryContainer.getGeneralSchema();
+		return this._searchSchema = this.queryContainer.context.getObjectSchema();
 	}
 
 }

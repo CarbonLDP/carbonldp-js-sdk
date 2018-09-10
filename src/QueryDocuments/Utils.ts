@@ -156,12 +156,12 @@ export function _areDifferentType( a:any, b:any ):boolean {
 }
 
 
-export function _getMatchDefinition( schema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
-	if( ! schema.properties.has( propertyName ) ) return;
+export function _getMatchDefinition( generalSchema:DigestedObjectSchema, targetSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
+	if( ! targetSchema.properties.has( propertyName ) ) return;
 
 	const definition:DigestedObjectSchemaProperty = ObjectSchemaUtils
-		._resolveProperty( schema, schema.properties.get( propertyName ) );
+		._resolveProperty( generalSchema, targetSchema.properties.get( propertyName ) );
 
-	if( propertyURI !== void 0 || propertyURI === definition.uri )
+	if( propertyURI === void 0 || propertyURI === definition.uri )
 		return definition;
 }

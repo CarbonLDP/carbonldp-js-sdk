@@ -4,7 +4,9 @@ import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSche
 
 import { QueryProperty2 } from "./QueryProperty2";
 import { QueryPropertyData } from "./QueryPropertyData";
-import { QueryRootData } from "./QueryRootData";
+import { QueryPropertyType } from "./QueryPropertyType";
+import { QueryRootPropertyData } from "./QueryRootPropertyData";
+import { _getRootPath } from "./Utils";
 
 
 export class QueryRootProperty extends QueryProperty2 {
@@ -14,7 +16,7 @@ export class QueryRootProperty extends QueryProperty2 {
 	protected readonly _filters:string[];
 
 
-	constructor( data:QueryRootData ) {
+	constructor( data:QueryRootPropertyData ) {
 		const definition:DigestedObjectSchemaProperty = new DigestedObjectSchemaProperty();
 		definition.uri = data.uri;
 
@@ -24,6 +26,7 @@ export class QueryRootProperty extends QueryProperty2 {
 			parent: void 0,
 		} );
 
+		this._type = QueryPropertyType.PARTIAL;
 		this._optional = false;
 	}
 

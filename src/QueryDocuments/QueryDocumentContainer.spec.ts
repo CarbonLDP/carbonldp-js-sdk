@@ -48,6 +48,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentContainer" ), ():void =
 
 		} );
 
+
 		describe( method( INSTANCE, "serializeLiteral" ), ():void => {
 
 			it( hasSignature(
@@ -79,64 +80,6 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentContainer" ), ():void =
 
 				queryContainer.serializeLiteral( "http://www.w3.org/2001/XMLSchema#string", "value" );
 				expect( spy ).toHaveBeenCalledWith( "http://www.w3.org/2001/XMLSchema#string" );
-			} );
-
-		} );
-
-
-		describe( method( INSTANCE, "getGeneralSchema" ), ():void => {
-
-			it( hasSignature(
-				"Returns the general schema of the carbon context.\n" +
-				"If no carbon context provided at the constructor an empty schema will be returned.",
-				{ type: "CarbonLDP.DigestedObjectSchema" }
-			), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				expect( QueryDocumentContainer.prototype.getGeneralSchema ).toBeDefined();
-				expect( QueryDocumentContainer.prototype.getGeneralSchema ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should call to the registry `getGeneralSchema` method", ():void => {
-				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { name: "root", uri: "property/" } );
-				const spy:jasmine.Spy = spyOnDecorated( context.registry, "getGeneralSchema" ).and.returnValue( null );
-
-				const returnedValue:any = queryContainer.getGeneralSchema();
-				expect( spy ).toHaveBeenCalled();
-				expect( returnedValue ).toBeNull();
-			} );
-
-		} );
-
-		describe( method( INSTANCE, "getSchemaFor" ), ():void => {
-
-			it( hasSignature(
-				"Returns the schema specified by the object using the carbon context.\n" +
-				"If no carbon context provided at the constructor an empty schema will be returned.",
-				[
-					{ name: "object", type: "object", description: "The object to look for its corresponding schema." },
-					{ name: "path", type: "string", description: "An optional path that describes where the resource appears in the query.\nNOTE: Property is ignored but used in the extensions of this class." },
-				],
-				{ type: "CarbonLDP.DigestedObjectSchema" }
-			), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				expect( QueryDocumentContainer.prototype.getSchemaFor ).toBeDefined();
-				expect( QueryDocumentContainer.prototype.getSchemaFor ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should call to the registry `getSchemaFor` method", ():void => {
-				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { name: "root", uri: "property/" } );
-				const spy:jasmine.Spy = spyOnDecorated( context.registry, "getSchemaFor" ).and.returnValue( null );
-
-				const object:object = { id: "http://example.com/", types: [ "http://example.com/Type" ] };
-
-				const returnedValue:any = queryContainer.getSchemaFor( object );
-				expect( spy ).toHaveBeenCalledWith( object );
-				expect( returnedValue ).toBeNull();
 			} );
 
 		} );

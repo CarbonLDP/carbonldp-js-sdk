@@ -203,63 +203,6 @@ describe( module( "carbonldp/QueryDocuments/QueryContainer" ), ():void => {
 		// TODO: Test .getPrologues
 
 
-		describe( method( INSTANCE, "getGeneralSchema" ), ():void => {
-
-			it( hasSignature(
-				"Returns the general schema of the carbon context.\n" +
-				"If no carbon context provided at the constructor an empty schema will be returned.",
-				{ type: "CarbonLDP.DigestedObjectSchema" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
-				expect( QueryContainer.prototype.getGeneralSchema ).toBeDefined();
-				expect( QueryContainer.prototype.getGeneralSchema ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should call to the registry `getGeneralSchema` method", ():void => {
-				const queryContainer:QueryContainer = new MockQueryContainer( context );
-				const spy:jasmine.Spy = spyOnDecorated( context.registry, "getGeneralSchema" ).and.returnValue( null );
-
-				const returnedValue:any = queryContainer.getGeneralSchema();
-				expect( spy ).toHaveBeenCalled();
-				expect( returnedValue ).toBeNull();
-			} );
-
-		} );
-
-		describe( method( INSTANCE, "getSchemaFor" ), ():void => {
-
-			it( hasSignature(
-				"Returns the schema specified by the object using the carbon context.\n" +
-				"If no carbon context provided at the constructor an empty schema will be returned.",
-				[
-					{ name: "object", type: "object", description: "The object to look for its corresponding schema." },
-					{ name: "path", type: "string", description: "An optional path that describes where the resource appears in the query.\nNOTE: Property is ignored but used in the extensions of this class." },
-				],
-				{ type: "CarbonLDP.DigestedObjectSchema" }
-			), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				expect( QueryContainer.prototype.getSchemaFor ).toBeDefined();
-				expect( QueryContainer.prototype.getSchemaFor ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should call to the registry `getSchemaFor` method", ():void => {
-				const queryContainer:QueryContainer = new MockQueryContainer( context );
-				const spy:jasmine.Spy = spyOnDecorated( context.registry, "getSchemaFor" ).and.returnValue( null );
-
-				const object:object = { id: "http://example.com/", types: [ "http://example.com/Type" ] };
-
-				const returnedValue:any = queryContainer.getSchemaFor( object );
-				expect( spy ).toHaveBeenCalledWith( object );
-				expect( returnedValue ).toBeNull();
-			} );
-
-		} );
-
-
 		// TODO: Test ._getInheritDefinition
 
 	} );

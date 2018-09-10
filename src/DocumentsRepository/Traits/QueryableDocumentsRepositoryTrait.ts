@@ -38,9 +38,13 @@ import { QueryContext } from "../../QueryDocuments/QueryContext";
 import { QueryContextBuilder } from "../../QueryDocuments/QueryContextBuilder";
 import { QueryContextPartial } from "../../QueryDocuments/QueryContextPartial";
 import { QueryDocumentBuilder } from "../../QueryDocuments/QueryDocumentBuilder";
+import { QueryDocumentBuilder2 } from "../../QueryDocuments/QueryDocumentBuilder2";
+import { QueryDocumentContainer } from "../../QueryDocuments/QueryDocumentContainer";
 import { QueryDocumentsBuilder } from "../../QueryDocuments/QueryDocumentsBuilder";
 import { QueryMetadata } from "../../QueryDocuments/QueryMetadata";
-import { QueryProperty, QueryPropertyType } from "../../QueryDocuments/QueryProperty";
+import { QueryProperty } from "../../QueryDocuments/QueryProperty";
+import { QueryPropertyType } from "../../QueryDocuments/QueryPropertyType";
+import { QueryResultCompacter } from "../../QueryDocuments/QueryResultCompacter";
 import {
 	_areDifferentType,
 	_createAllPattern,
@@ -69,12 +73,12 @@ import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
 
 export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositoryTrait {
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
-	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
+	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
 
 	resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
-	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
 
 
 	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
@@ -249,6 +253,91 @@ function __executeBuilder<T extends object>( repository:QueryableDocumentsReposi
 		;
 }
 
+function __executeBuilder2<T extends object>( repository:QueryableDocumentsRepositoryTrait, url:string, requestOptions:RequestOptions, queryContainer:QueryDocumentContainer, queryBuilderFn?:QueryBuilderFn2, target?:Document ):Promise<(T & Document)[]> {
+	const queryBuilder:QueryDocumentBuilder2 = new QueryDocumentBuilder2( queryContainer, queryContainer._queryProperty );
+
+	if( queryBuilderFn && queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
+		throw new IllegalArgumentError( "The provided query builder was not returned" );
+
+	const metadataVar:VariableToken = queryContainer.getVariable( "metadata" );
+	const construct:ConstructToken = new ConstructToken()
+		.addTriple( new SubjectToken( metadataVar )
+			.addProperty( new PropertyToken( "a" )
+				.addObject( queryContainer.compactIRI( C.VolatileResource ) )
+				.addObject( queryContainer.compactIRI( C.QueryMetadata ) )
+			)
+			.addProperty( new PropertyToken( queryContainer.compactIRI( C.target ) )
+				.addObject( queryContainer._queryProperty.variable )
+			)
+		)
+		.addTriple( ...queryContainer._queryProperty.getConstructPatterns() )
+		.addPattern( new BindToken( "BNODE()", metadataVar ) )
+		.addPattern( ...queryContainer._queryProperty.getSearchPatterns() );
+
+	const query:QueryToken = new QueryToken( construct )
+		.addPrologues( ...queryContainer.getPrologues() );
+
+	RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions );
+
+	return SPARQLService
+		.executeRawCONSTRUCTQuery( url, query.toString(), requestOptions )
+		.then( ( [ strConstruct ] ) => strConstruct )
+		.then( ( jsonldString ) => {
+			return new JSONLDParser().parse( jsonldString );
+		} )
+		.then<(T & Document)[]>( ( rdfNodes:RDFNode[] ) => {
+			const freeNodes:RDFNode[] = RDFDocument.getFreeNodes( rdfNodes );
+
+			let freeResources:FreeResources;
+			try {
+				freeResources = FreeResources.parseFreeNodes( repository.context.registry, freeNodes );
+			} catch( e ) {
+				throw e;
+			}
+
+			const targetDocuments:string[] = freeResources
+				.getPointers( true )
+				.filter<QueryMetadata>( QueryMetadata.is )
+				.map<Pointer | Pointer[]>( x => x.target )
+				// Alternative to flatMap
+				.reduce<Pointer[]>( ( targets, currentTargets ) => targets.concat( currentTargets ), [] )
+				.map( x => x.$id )
+			;
+
+			const targetETag:string | undefined = target && target.$eTag;
+			if( target ) target.$eTag = void 0;
+
+			freeResources
+				.getPointers( true )
+				.filter( ResponseMetadata.is )
+				.map<DocumentMetadata[] | DocumentMetadata>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ C.documentMetadata ] )
+				.map<DocumentMetadata[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
+				.forEach( documentsMetadata => documentsMetadata.forEach( documentMetadata => {
+					if( ! documentMetadata ) return;
+
+					const relatedDocument:Document = documentMetadata.relatedDocument || documentMetadata[ C.relatedDocument ];
+					const eTag:string = documentMetadata.eTag || documentMetadata[ C.eTag ];
+
+					if( ! eTag ) return;
+					relatedDocument.$_resolved = true;
+
+					if( relatedDocument.$eTag === void 0 ) relatedDocument.$eTag = eTag;
+					if( relatedDocument.$eTag !== eTag ) relatedDocument.$eTag = null;
+				} ) );
+
+			if( targetETag && targetETag === target.$eTag )
+				return [ target as T & Document ];
+
+			const rdfDocuments:RDFDocument[] = rdfNodes
+				.filter<any>( RDFDocument.is );
+
+			return new QueryResultCompacter( repository.context.registry, queryContainer )
+				.compactDocuments<T & Document>( rdfDocuments, targetDocuments );
+		} )
+		.catch( _getErrorResponseParserFn( repository.context.registry ) )
+		;
+}
+
 function __getQueryable<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn, target?:Document ):Promise<T & Document> {
 	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
@@ -267,6 +356,20 @@ function __getQueryable<T extends object>( repository:QueryableDocumentsReposito
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
 
 	return __executeBuilder<T>( repository, url, requestOptions, queryContext, documentProperty, queryBuilderFn, target )
+		.then( ( documents ) => documents[ 0 ] );
+}
+
+function __getQueryable2<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn2, target?:Document ):Promise<T & Document> {
+	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
+
+	const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( repository.context, {
+		name: "document",
+		uri: url,
+	} );
+
+	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
+	return __executeBuilder2<T>( repository, url, requestOptions, queryContainer, queryBuilderFn, target )
 		.then( ( documents ) => documents[ 0 ] );
 }
 
@@ -392,10 +495,11 @@ export type QueryableDocumentsRepositoryTraitFactory =
 	;
 
 type QueryBuilderFn = Function & (( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder);
+type QueryBuilderFn2 = Function & (( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2);
 
 export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTraitFactory = {
 	PROTOTYPE: {
-		get<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
+		get<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn2, queryBuilderFn?:QueryBuilderFn2 ):Promise<T & Document> {
 			const requestOptions:GETOptions = isObject( requestOptionsOrQueryBuilderFn ) ?
 				requestOptionsOrQueryBuilderFn : {};
 
@@ -408,7 +512,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 
 			if( queryBuilderFn ) {
 				const types:string[] = target ? target.types : [];
-				return __getQueryable( this, uri, requestOptions, _ => {
+				return __getQueryable2( this, uri, requestOptions, _ => {
 					types.forEach( type => _.withType( type ) );
 					return queryBuilderFn.call( void 0, _ );
 				} );
@@ -419,7 +523,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 				.get.call( this, uri, requestOptions );
 		},
 
-		resolve<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptionsOrQueryBuilderFn?:RequestOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
+		resolve<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptionsOrQueryBuilderFn?:RequestOptions | QueryBuilderFn2, queryBuilderFn?:QueryBuilderFn2 ):Promise<T & Document> {
 			return this.get( document.$id, requestOptionsOrQueryBuilderFn, queryBuilderFn );
 		},
 

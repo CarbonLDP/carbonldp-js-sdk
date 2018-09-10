@@ -14,7 +14,7 @@ import { QueryVariable } from "./QueryVariable";
 import { _getMatchDefinition } from "./Utils";
 
 
-export abstract class QueryContainer extends FluentPathContainer<undefined> implements ObjectSchemaResolver {
+export abstract class QueryContainer extends FluentPathContainer<undefined> {
 	readonly context:AbstractContext<any, any, any>;
 	abstract readonly _queryProperty:QueryProperty2;
 
@@ -84,23 +84,10 @@ export abstract class QueryContainer extends FluentPathContainer<undefined> impl
 	}
 
 
-	getGeneralSchema():DigestedObjectSchema {
-		return this.context.registry.getGeneralSchema();
-	}
-
-	hasSchemaFor( object:object, path?:string ):boolean {
-		return this.context.registry.hasSchemaFor( object );
-	}
-
-	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
-		return this.context.registry.getSchemaFor( object );
-	}
-
-
-	_getInheritDefinition( propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty {
-		for( const schema of this.__getTypeSchemas() ) {
+	_getInheritDefinition( generalSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty {
+		for( const targetSchema of this.__getTypeSchemas() ) {
 			const definition:DigestedObjectSchemaProperty | undefined =
-				_getMatchDefinition( schema, propertyName, propertyURI );
+				_getMatchDefinition( generalSchema, targetSchema, propertyName, propertyURI );
 
 			if( definition ) return definition;
 		}
