@@ -4314,12 +4314,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" ?child ?child___predicate ?child___object." +
-
-					" OPTIONAL {" +
-					"" + " ?child schema:property-2 ?child__property2." +
-					"" + " FILTER( datatype( ?child__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					" }" +
+					" ?child ?child___predicate ?child___object" +
 
 					" " +
 					"}"
@@ -4377,12 +4372,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" ?child ?child___predicate ?child___object." +
-
-					" OPTIONAL {" +
-					"" + " ?child schema:property-2 ?child__property2." +
-					"" + " FILTER( datatype( ?child__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					" }" +
+					" ?child ?child___predicate ?child___object" +
 
 					" " +
 					"}"
@@ -4487,11 +4477,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									.addObject( variableHelper( "child" ) )
 								)
 							)
-							.addPattern( new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
-										.addObject( variableHelper( "child__property2" ) )
-									)
+							.addPattern( new SubjectToken( variableHelper( "child" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "child__property2" ) )
 								)
 							)
 							.addModifier( new OrderToken( variableHelper( "child__property2" ) ) )
@@ -4520,7 +4508,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								)
 								.addPattern( new FilterToken( "datatype( ?child__property1 ) = xsd:string" ) )
 						)
-						.addPattern( new FilterToken( `?child__property2__property2 = "12345"^^xsd:integer` ) )
 						.addPattern( new SubjectToken( variableHelper( "child" ) )
 							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 								.addObject( variableHelper( "child__property2" ) )
@@ -4556,11 +4543,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							)
 							.addPattern( new FilterToken( "datatype( ?child__property2__property3 ) = xsd:string" ) )
 						)
+						.addPattern( new FilterToken( `?child__property2__property2 = "12345"^^xsd:integer` ) )
 					)
 
+						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
 						.addPrologues( new PrefixToken( "ex", new IRIRefToken( "https://example.com/ns#" ) ) )
 						.addPrologues( new PrefixToken( "xsd", new IRIRefToken( XSD.namespace ) ) )
-						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
 				);
 			} );
 
@@ -5885,12 +5873,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" ?member ?member___predicate ?member___object." +
-
-					" OPTIONAL {" +
-					"" + " ?member schema:property-2 ?member__property2." +
-					"" + " FILTER( datatype( ?member__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					" }" +
+					" ?member ?member___predicate ?member___object" +
 
 					" " +
 					"}"
@@ -6003,11 +5986,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									.addObject( variableHelper( "member" ) )
 								)
 							)
-							.addPattern( new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
-										.addObject( variableHelper( "member__property2" ) )
-									)
+							.addPattern( new SubjectToken( variableHelper( "member" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "member__property2" ) )
 								)
 							)
 							.addModifier( new OrderToken( variableHelper( "member__property2" ) ) )
@@ -6036,7 +6017,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								)
 								.addPattern( new FilterToken( "datatype( ?member__property1 ) = xsd:string" ) )
 						)
-						.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
 						.addPattern( new SubjectToken( variableHelper( "member" ) )
 							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 								.addObject( variableHelper( "member__property2" ) )
@@ -6072,11 +6052,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							)
 							.addPattern( new FilterToken( "datatype( ?member__property2__property3 ) = xsd:string" ) )
 						)
+						.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
 					)
 
+						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
 						.addPrologues( new PrefixToken( "ex", new IRIRefToken( "https://example.com/ns#" ) ) )
 						.addPrologues( new PrefixToken( "xsd", new IRIRefToken( XSD.namespace ) ) )
-						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
 				);
 			} );
 
