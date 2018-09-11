@@ -244,7 +244,7 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
 					definition: new DigestedObjectSchemaProperty(),
 				} );
 
-				queryProperty.addProperty( "property1" );
+				queryProperty.addProperty( "property1", {} );
 				queryProperty.addProperty( "property2", { "@id": "https://example.com/property2" } );
 
 				const propertySchema:DigestedObjectSchema = queryProperty.getSchema();

@@ -104,7 +104,6 @@ export class SubQueryDocumentsBuilder extends QueryDocumentBuilder2 {
 
 	filter( constraint:string ):this {
 		this._queryProperty
-			.getRootProperty()
 			.addFilter( constraint );
 
 		return this;

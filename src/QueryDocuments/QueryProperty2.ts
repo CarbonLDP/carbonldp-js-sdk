@@ -14,17 +14,14 @@ import {
 import { IllegalActionError } from "../Errors/IllegalActionError";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
-import { IllegalStateError } from "../Errors/IllegalStateError";
 
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 
 import { QueryContainer } from "./QueryContainer";
-import { SubQueryDocumentsBuilder } from "./QueryDocumentBuilder2";
 import { QueryPropertyData } from "./QueryPropertyData";
 import { QueryPropertyType } from "./QueryPropertyType";
-import { QueryRootProperty } from "./QueryRootProperty";
 import { QueryVariable } from "./QueryVariable";
 import { SubQueryPropertyDefinition } from "./SubQueryPropertyDefinition";
 import { _getMatchDefinition, _getRootPath } from "./Utils";
@@ -49,6 +46,7 @@ export class QueryProperty2 {
 
 	protected readonly _types:IRIToken[];
 	protected readonly _values:(LiteralToken | IRIToken)[];
+	protected readonly _filters:string[];
 
 	protected _searchSchema:DigestedObjectSchema | undefined;
 	protected readonly _subProperties:Map<string, QueryProperty2>;
@@ -70,6 +68,7 @@ export class QueryProperty2 {
 
 		this._types = [];
 		this._values = [];
+		this._filters = [];
 
 		this._subProperties = new Map();
 	}
@@ -101,7 +100,15 @@ export class QueryProperty2 {
 	}
 
 
-	getTriple():PatternToken {
+	getSelfPattern():PatternToken {
+		const pattern:PatternToken = this.__getSimpleSelfPattern();
+
+		if( ! this._optional ) return pattern;
+		return new OptionalToken()
+			.addPattern( pattern );
+	}
+
+	protected __getSimpleSelfPattern():PatternToken {
 		if( ! this.parent )
 			throw new IllegalActionError( "Cannot create pattern without a parent." );
 
@@ -126,10 +133,17 @@ export class QueryProperty2 {
 	getSearchPatterns():PatternToken[] {
 		const patterns:PatternToken[] = [];
 
-		const values:PatternToken | undefined = this.__createValuesPattern();
-		if( values ) patterns.push( values );
+		if( this._values.length ) {
+			const values:ValuesToken = new ValuesToken()
+				.addVariables( this.variable );
 
-		const selfTriple:PatternToken = this.getTriple();
+			this._values
+				.forEach( value => values.addValues( value ) );
+
+			patterns.push( values );
+		}
+
+		const selfTriple:PatternToken = this.__getSimpleSelfPattern();
 		patterns.push( selfTriple );
 
 		const typeFilter:PatternToken | undefined = this.__createTypeFilter();
@@ -153,20 +167,17 @@ export class QueryProperty2 {
 				break;
 		}
 
+		if( this._filters.length ) {
+			const filters:FilterToken[] = this._filters
+				.map( constraint => new FilterToken( constraint ) );
+			patterns.push( ...filters );
+		}
+
 
 		if( ! this._optional ) return patterns;
 		return [ new OptionalToken()
 			.addPattern( ...patterns ),
 		];
-	}
-
-	protected __createValuesPattern():PatternToken | undefined {
-		if( ! this._values.length ) return;
-
-		const values:ValuesToken = new ValuesToken().addVariables( this.variable );
-		this._values.forEach( value => values.addValues( value ) );
-
-		return values;
 	}
 
 	protected __createTypeFilter():PatternToken | undefined {
@@ -297,7 +308,7 @@ export class QueryProperty2 {
 	}
 
 
-	getProperty( path?:string, flags?:{ create:true } ):QueryProperty2 | undefined {
+	getProperty( path?:string, flags?:{ create:true, inherit?:false } ):QueryProperty2 | undefined {
 		if( ! path ) return this;
 
 		const rootPath:string = _getRootPath( path );
@@ -305,8 +316,12 @@ export class QueryProperty2 {
 
 		if( ! property ) {
 			// If immediate child and can be created in valid property
-			if( rootPath === path && flags && flags.create && this.isComplete() )
-				return this.addProperty( rootPath );
+			if( rootPath === path && flags && flags.create && this.isComplete() ) {
+				const newProperty:QueryProperty2 = this.addProperty( rootPath, flags );
+				newProperty.setType( QueryPropertyType.ALL );
+
+				return newProperty;
+			}
 
 			return;
 		}
@@ -315,13 +330,8 @@ export class QueryProperty2 {
 		return property.getProperty( restPath );
 	}
 
-	getRootProperty():QueryRootProperty {
-		if( this.parent ) return this.parent.getRootProperty();
-		throw new IllegalStateError( `The builder has not a valid Root property.` );
-	}
 
-
-	addProperty( propertyName:string, propertyDefinition:SubQueryPropertyDefinition = SubQueryDocumentsBuilder.INHERIT ):QueryProperty2 {
+	addProperty( propertyName:string, propertyDefinition:SubQueryPropertyDefinition ):QueryProperty2 {
 		const definition:DigestedObjectSchemaProperty = this
 			.__getDefinition( propertyName, propertyDefinition );
 
@@ -388,6 +398,10 @@ export class QueryProperty2 {
 
 	addValues( values:(LiteralToken | IRIToken)[] ):void {
 		this._values.push( ...values );
+	}
+
+	addFilter( constraint:string ):void {
+		this._filters.push( constraint );
 	}
 
 	setObligatory( flags?:{ inheritParents:true } ):void {

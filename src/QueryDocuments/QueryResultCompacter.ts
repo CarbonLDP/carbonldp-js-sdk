@@ -85,27 +85,30 @@ export class QueryResultCompacter {
 
 
 	private __processNode( compactionNode:CompactionNode, path:string ):string[] {
-		const property:QueryProperty2 | undefined = this.queryContainer._queryProperty.getProperty( path );
+		const property:QueryProperty2 | undefined = this.queryContainer
+			._queryProperty.getProperty( path, { create: true, inherit: false } );
 
 		if( ! property || property.isEmpty() ) {
 			return [];
 		}
 
-		if( property.isPartial() ) {
-			const propertySchema:DigestedObjectSchema = property.getSchema();
+		const targetSchema:DigestedObjectSchema = property.isPartial()
+			? property.getSchema()
+			: this.queryContainer.context.registry.getSchemaFor( compactionNode.node );
 
-			compactionNode.resource.$_queryableMetadata = new QueryableMetadata( propertySchema, compactionNode.resource.$_queryableMetadata );
+		const partialSchema:DigestedObjectSchema | undefined = property.isPartial()
+			? targetSchema
+			: property.isAll()
+				? QueryableMetadata.ALL
+				: void 0;
 
-			return this.__compactNode( compactionNode.node, compactionNode.resource, compactionNode.registry, propertySchema, propertySchema );
-		}
-
-		const nodeSchema:DigestedObjectSchema = this.queryContainer.context.registry.getSchemaFor( compactionNode.node );
-		const partialSchema:DigestedObjectSchema | undefined = property.isAll() ? QueryableMetadata.ALL : void 0;
-		return this.__compactNode( compactionNode.node, compactionNode.resource, compactionNode.registry, nodeSchema, partialSchema );
+		return this.__compactNode( compactionNode.node, compactionNode.resource, compactionNode.registry, targetSchema, partialSchema );
 	}
 
 	private __compactNode( node:RDFNode, resource:QueryablePointer, containerLibrary:PointerLibrary | $PointerLibrary, targetSchema:DigestedObjectSchema, partialSchema?:DigestedObjectSchema ):string[] {
-		if( ! partialSchema ) {
+		if( partialSchema ) {
+			resource.$_queryableMetadata = new QueryableMetadata( partialSchema, resource.$_queryableMetadata );
+		} else {
 			resource.$_queryableMetadata = void 0;
 		}
 
