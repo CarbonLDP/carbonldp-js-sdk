@@ -1,36 +1,22 @@
-import {
-	LimitToken,
-	OffsetToken,
-	OrderToken,
-	PatternToken,
-	PropertyToken,
-	SubjectToken,
-	SubSelectToken,
-	ValuesToken,
-	VariableToken
-} from "sparqler/tokens";
+import { LimitToken, OffsetToken, OrderToken, PatternToken, SubSelectToken } from "sparqler/tokens";
+
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
 
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
-import { LDP } from "../Vocabularies/LDP";
-import { QueryDocumentsOrder } from "./QueryDocumentsOrder";
 
-import { QueryProperty2 } from "./QueryProperty2";
-import { QueryPropertyData } from "./QueryPropertyData";
+import { QueryBuilderProperty } from "./QueryBuilderProperty";
+import { QueryBuilderPropertyData } from "./QueryBuilderPropertyData";
+import { QueryContainerType } from "./QueryContainerType";
+import { QueryDocumentsOrder } from "./QueryDocumentsOrder";
 import { QueryPropertyType } from "./QueryPropertyType";
-import { QueryRootContainerType } from "./QueryRootContainerType";
 import { QueryRootPropertyData } from "./QueryRootPropertyData";
 
 
-export class QueryRootProperty extends QueryProperty2 {
+export class QueryRootProperty extends QueryBuilderProperty {
 	readonly parent:undefined;
 
-	protected _optional:false;
-
-	protected _containerType?:QueryRootContainerType;
-
-	_order?:QueryDocumentsOrder;
+	order?:QueryDocumentsOrder;
 	protected _limit?:number;
 	protected _offset?:number;
 
@@ -39,46 +25,46 @@ export class QueryRootProperty extends QueryProperty2 {
 		const definition:DigestedObjectSchemaProperty = new DigestedObjectSchemaProperty();
 		definition.uri = data.uri;
 
-		super( <QueryPropertyData> {
+		super( <QueryBuilderPropertyData> {
 			...data,
 			definition,
+			optional: false,
+			propertyType: QueryPropertyType.PARTIAL,
 		} );
-
-		this._type = QueryPropertyType.PARTIAL;
-
-		this._containerType = data.containerType;
-
-		this._optional = false;
 	}
 
 
-	isContainer():boolean {
-		return this._containerType !== void 0;
+	isMultipleContainer():boolean {
+		return this.containerType !== void 0
+			&& this.containerType !== QueryContainerType.DOCUMENT;
 	}
 
 
-	__getSimpleSelfPattern():PatternToken {
-		if( this._containerType === void 0 ) {
-			return new ValuesToken()
-				.addVariables( this.variable )
-				.addValues( this.__createIRIToken() )
-				;
+	protected __createSelfPattern():PatternToken {
+		switch( this.containerType ) {
+			case QueryContainerType.CHILDREN:
+			case QueryContainerType.MEMBERS:
+				return this.__createSubSelectPattern();
+
+			case QueryContainerType.DOCUMENT:
+				return super.__createSelfPattern();
+
+			default:
+				throw new IllegalStateError( `Invalid container root type "${ QueryContainerType[ this.containerType ] }".` );
 		}
-
-		return this.__createSubSelectPattern();
 	}
 
 	protected __createSubSelectPattern():SubSelectToken {
 		const subSelect:SubSelectToken = new SubSelectToken( "DISTINCT" )
 			.addVariable( this.variable )
-			.addPattern( ...this.__createContainmentPatterns() );
+			.addPattern( super.__createSelfPattern() );
 
-		if( this._order ) {
-			const targetProperty:QueryProperty2 | undefined = this.getProperty( this._order.path, { create: true } );
-			if( ! targetProperty ) throw new IllegalArgumentError( `Property "${ this._order.path }" hasn't been defined.` );
+		if( this.order ) {
+			const targetProperty:QueryBuilderProperty | undefined = this.getProperty( this.order.path, { create: true } );
+			if( ! targetProperty ) throw new IllegalArgumentError( `Property "${ this.order.path }" hasn't been defined.` );
 
 			// Add modifier
-			subSelect.addModifier( new OrderToken( targetProperty.variable, this._order.flow ) );
+			subSelect.addModifier( new OrderToken( targetProperty.variable, this.order.flow ) );
 
 			// Add patterns to the sub-select
 			subSelect.addPattern( ...this.__createPatternsFrom( targetProperty ) );
@@ -95,7 +81,7 @@ export class QueryRootProperty extends QueryProperty2 {
 		return subSelect;
 	}
 
-	protected __createPatternsFrom( targetProperty:QueryProperty2 ):PatternToken[] {
+	protected __createPatternsFrom( targetProperty:QueryBuilderProperty ):PatternToken[] {
 		let matchPatterns:PatternToken[] = [];
 
 		// While not been the root property
@@ -120,54 +106,9 @@ export class QueryRootProperty extends QueryProperty2 {
 		return matchPatterns;
 	}
 
-	protected __createContainmentPatterns():PatternToken[] {
-		switch( this._containerType ) {
-			case QueryRootContainerType.CHILDREN:
-				return this.__createChildPatterns();
-
-			case QueryRootContainerType.MEMBERS:
-				return this.__createMemberPatterns();
-
-			default:
-				throw new IllegalStateError( `Invalid container type "${ QueryRootContainerType[ this._containerType ] }".` );
-		}
-	}
-
-	protected __createChildPatterns():PatternToken[] {
-		const childSelection:PatternToken = new SubjectToken( this.__createIRIToken() )
-			.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.contains ) )
-				.addObject( this.variable )
-			);
-
-		return [ childSelection ];
-	}
-
-	protected __createMemberPatterns():PatternToken [] {
-		const membershipResource:VariableToken = this.queryContainer.getVariable( "membershipResource" );
-		const hasMemberRelation:VariableToken = this.queryContainer.getVariable( "hasMemberRelation" );
-
-		const memberRelations:PatternToken = new SubjectToken( this.__createIRIToken() )
-			.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.membershipResource ) )
-				.addObject( membershipResource )
-			)
-			.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.hasMemberRelation ) )
-				.addObject( hasMemberRelation )
-			);
-
-		const memberSelection:PatternToken = new SubjectToken( membershipResource )
-			.addProperty( new PropertyToken( hasMemberRelation )
-				.addObject( this.variable )
-			);
-
-		return [
-			memberRelations,
-			memberSelection,
-		];
-	}
-
 
 	setOrder( order:QueryDocumentsOrder ):void {
-		this._order = order;
+		this.order = order;
 	}
 
 	setLimit( limit:number ):void {

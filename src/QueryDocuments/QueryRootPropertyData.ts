@@ -1,5 +1,5 @@
 import { QueryContainer } from "./QueryContainer";
-import { QueryRootContainerType } from "./QueryRootContainerType";
+import { QueryContainerType } from "./QueryContainerType";
 
 
 export interface QueryRootPropertyData {
@@ -8,5 +8,5 @@ export interface QueryRootPropertyData {
 	name:string;
 
 	uri:string;
-	containerType?:QueryRootContainerType;
+	containerType:QueryContainerType;
 }

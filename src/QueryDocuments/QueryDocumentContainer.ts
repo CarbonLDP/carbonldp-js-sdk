@@ -3,7 +3,7 @@ import { AbstractContext } from "../Context/AbstractContext";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { QueryContainer } from "./QueryContainer";
-import { QueryRootContainerType } from "./QueryRootContainerType";
+import { QueryContainerType } from "./QueryContainerType";
 import { QueryRootProperty } from "./QueryRootProperty";
 
 
@@ -11,7 +11,7 @@ export class QueryDocumentContainer extends QueryContainer {
 	readonly _queryProperty:QueryRootProperty;
 
 
-	constructor( context:AbstractContext<any, any, any>, rootPropertyData:{ name:string, uri:string, containerType?:QueryRootContainerType } ) {
+	constructor( context:AbstractContext<any, any, any>, rootPropertyData:{ name:string, uri:string, containerType:QueryContainerType } ) {
 		super( context );
 
 		this._queryProperty = new QueryRootProperty( {

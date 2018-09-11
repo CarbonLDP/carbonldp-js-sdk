@@ -6,6 +6,7 @@ import { AbstractContext } from "../Context/AbstractContext";
 
 import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
+import { QueryContainerType } from "./QueryContainerType";
 import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import { QueryObject2 } from "./QueryObject2";
 
@@ -26,7 +27,7 @@ describe( module( "carbonldp/QueryDocuments/QueryObject2" ), ():void => {
 			context.extendObjectSchema( {
 				"ex": "http://example.com/ns#",
 			} );
-			queryContainer = new QueryDocumentContainer( context, { name: "root", uri: "root" } );
+			queryContainer = new QueryDocumentContainer( context, { name: "root", uri: "root", containerType: QueryContainerType.DOCUMENT } );
 		} );
 
 		describe( constructor(), ():void => {

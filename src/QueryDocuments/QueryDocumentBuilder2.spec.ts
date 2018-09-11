@@ -10,11 +10,13 @@ import { IllegalStateError } from "../Errors/IllegalStateError";
 import { Pointer } from "../Pointer/Pointer";
 
 import { clazz, constructor, extendsClass, hasSignature, INSTANCE, method, module, property } from "../test/JasmineExtender";
+
+import { QueryBuilderProperty } from "./QueryBuilderProperty";
+import { QueryContainerType } from "./QueryContainerType";
 import { QueryDocumentBuilder2, SubQueryDocumentsBuilder } from "./QueryDocumentBuilder2";
 import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import * as QueryObject2Module from "./QueryObject2";
 import { QueryObject2 } from "./QueryObject2";
-import { QueryProperty2 } from "./QueryProperty2";
 import { QueryRootProperty } from "./QueryRootProperty";
 import * as QueryValue2Module from "./QueryValue2";
 import { QueryValue2 } from "./QueryValue2";
@@ -32,7 +34,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 
 		let context:AbstractContext<any, any>;
 		let queryContainer:QueryDocumentContainer;
-		let baseProperty:QueryProperty2;
+		let baseProperty:QueryBuilderProperty;
 		beforeEach( ():void => {
 			context = createMockContext( { uri: "https://example.com" } );
 			context.extendObjectSchema( {
@@ -40,7 +42,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 				"ex": "https://example.com/ns#",
 			} );
 
-			queryContainer = new QueryDocumentContainer( context, { name: "root", uri: "https://example.com/#root" } );
+			queryContainer = new QueryDocumentContainer( context, { name: "root", uri: "https://example.com/#root", containerType: QueryContainerType.DOCUMENT } );
 			baseProperty = queryContainer._queryProperty;
 		} );
 
@@ -129,8 +131,8 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 				expect( QueryDocumentBuilder2.prototype.property ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call the `getProperty` of the QueryProperty", ():void => {
-				const spy:jasmine.Spy = spyOn( QueryProperty2.prototype, "getProperty" )
+			it( "should call the `getProperty` of the QueryBuilderProperty", ():void => {
+				const spy:jasmine.Spy = spyOn( QueryBuilderProperty.prototype, "getProperty" )
 					.and.returnValue( baseProperty );
 
 				const builder:QueryDocumentBuilder2 = new QueryDocumentBuilder2( queryContainer, baseProperty );
@@ -146,15 +148,15 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 				const spy0:jasmine.Spy = spyOn( baseProperty, "getProperty" )
 					.and.returnValue( undefined );
 
-				const path1:QueryProperty2 = baseProperty.addProperty( "path1", {} );
+				const path1:QueryBuilderProperty = baseProperty.addProperty( "path1", {} );
 				const spy1:jasmine.Spy = spyOn( path1, "getProperty" )
 					.and.returnValue( undefined );
 
-				const path2:QueryProperty2 = path1.addProperty( "path2", {} );
+				const path2:QueryBuilderProperty = path1.addProperty( "path2", {} );
 				const spy2:jasmine.Spy = spyOn( path2, "getProperty" )
 					.and.returnValue( undefined );
 
-				const path3:QueryProperty2 = path2.addProperty( "path3", {} );
+				const path3:QueryBuilderProperty = path2.addProperty( "path3", {} );
 				const spy3:jasmine.Spy = spyOn( path3, "getProperty" )
 					.and.returnValue( undefined );
 
@@ -202,7 +204,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 			it( "should return property's variable with one level path", ():void => {
 				const builder:QueryDocumentBuilder2 = new QueryDocumentBuilder2( queryContainer, baseProperty );
 
-				const targetProperty:QueryProperty2 = baseProperty.addProperty( "path1", {} );
+				const targetProperty:QueryBuilderProperty = baseProperty.addProperty( "path1", {} );
 
 				const variable:QueryVariable = builder.property( "path1" );
 				expect( variable ).toBe( targetProperty.variable );
@@ -211,7 +213,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 			it( "should return property's variable with three path", ():void => {
 				const builder:QueryDocumentBuilder2 = new QueryDocumentBuilder2( queryContainer, baseProperty );
 
-				const targetProperty:QueryProperty2 = baseProperty
+				const targetProperty:QueryBuilderProperty = baseProperty
 					.addProperty( "path1", {} )
 					.addProperty( "path2", {} )
 					.addProperty( "path3", {} )
@@ -223,7 +225,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 
 
 			it( "should return first property's variable from three path base property", ():void => {
-				const targetProperty:QueryProperty2 = baseProperty
+				const targetProperty:QueryBuilderProperty = baseProperty
 					.addProperty( "path1", {} )
 				;
 
@@ -239,7 +241,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 			} );
 
 			it( "should return second path property's variable from three path base property", ():void => {
-				const targetProperty:QueryProperty2 = baseProperty
+				const targetProperty:QueryBuilderProperty = baseProperty
 					.addProperty( "path1", {} )
 					.addProperty( "path2", {} )
 				;
@@ -255,7 +257,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 			} );
 
 			it( "should return second full path property's variable from three path base property", ():void => {
-				const targetProperty:QueryProperty2 = baseProperty
+				const targetProperty:QueryBuilderProperty = baseProperty
 					.addProperty( "path1", {} )
 					.addProperty( "path2", {} )
 				;
@@ -421,7 +423,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 			} );
 
 
-			it( "should create QueryProperty's", ():void => {
+			it( "should create QueryBuilderProperty's", ():void => {
 				context.extendObjectSchema( {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"ex": "https://example.com/ns#",
@@ -516,7 +518,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 				"ex": "https://example.com/ns#",
 			} );
 
-			queryContainer = new QueryDocumentContainer( context, { name: "root", uri: "https://example.com/#root" } );
+			queryContainer = new QueryDocumentContainer( context, { name: "root", uri: "https://example.com/#root", containerType: QueryContainerType.DOCUMENT } );
 			baseProperty = queryContainer._queryProperty;
 		} );
 
@@ -563,7 +565,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 			} );
 
 			it( "should add the filter to the property in one level builder", ():void => {
-				const subProperty:QueryProperty2 = baseProperty
+				const subProperty:QueryBuilderProperty = baseProperty
 					.addProperty( "subProperty", {} )
 				;
 
@@ -576,7 +578,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 			} );
 
 			it( "should add the filter to the property in level three builder", ():void => {
-				const subProperty:QueryProperty2 = baseProperty
+				const subProperty:QueryBuilderProperty = baseProperty
 					.addProperty( "subProperty1", {} )
 					.addProperty( "subProperty1.1", {} )
 					.addProperty( "subProperty1.1.1", {} )

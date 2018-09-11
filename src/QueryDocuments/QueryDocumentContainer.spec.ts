@@ -1,10 +1,10 @@
-import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
 import { createMockContext } from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
 
 import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
+import { QueryContainerType } from "./QueryContainerType";
 import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import { QueryRootProperty } from "./QueryRootProperty";
 
@@ -34,16 +34,17 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentContainer" ), ():void =
 			), ():void => {} );
 
 			it( "should be instantiable", ():void => {
-				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { name: "root", uri: "property/" } );
+				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { name: "root", uri: "property/", containerType: QueryContainerType.DOCUMENT } );
 				expect( queryContainer ).toBeDefined();
 				expect( queryContainer ).toEqual( jasmine.any( QueryDocumentContainer ) );
 			} );
 
 			it( "should init property", () => {
-				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { name: "root", uri: "property/" } );
+				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { name: "root", uri: "property/", containerType: QueryContainerType.DOCUMENT } );
 
 				expect( queryContainer._queryProperty ).toEqual( jasmine.any( QueryRootProperty ) );
 				expect( queryContainer._queryProperty.name ).toBe( "root" );
+				expect( queryContainer._queryProperty.containerType ).toBe( QueryContainerType.DOCUMENT );
 			} );
 
 		} );
@@ -67,7 +68,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentContainer" ), ():void =
 			} );
 
 			it( "should use the literal serializers of carbon", ():void => {
-				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { name: "root", uri: "property/" } );
+				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { name: "root", uri: "property/", containerType:QueryContainerType.DOCUMENT } );
 				const spy:jasmine.Spy = spyOnProperty( context.jsonldConverter, "literalSerializers", "get" ).and.callThrough();
 
 				queryContainer.serializeLiteral( "http://www.w3.org/2001/XMLSchema#string", "value" );
@@ -75,7 +76,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentContainer" ), ():void =
 			} );
 
 			it( "should get the correct literal serializer", ():void => {
-				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { name: "root", uri: "property/" } );
+				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { name: "root", uri: "property/", containerType:QueryContainerType.DOCUMENT } );
 				const spy:jasmine.Spy = spyOn( context.jsonldConverter.literalSerializers, "get" ).and.callThrough();
 
 				queryContainer.serializeLiteral( "http://www.w3.org/2001/XMLSchema#string", "value" );

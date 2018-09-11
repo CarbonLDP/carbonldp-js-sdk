@@ -13,8 +13,9 @@ import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
 import { clazz, constructor, hasProperty, hasSignature, INSTANCE, method, module, } from "../test/JasmineExtender";
+
+import { QueryBuilderProperty } from "./QueryBuilderProperty";
 import { QueryContainer } from "./QueryContainer";
-import { QueryProperty2 } from "./QueryProperty2";
 
 
 describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
@@ -25,8 +26,8 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
 	), ():void => {
 
 		it( "should exists", ():void => {
-			expect( QueryProperty2 ).toBeDefined();
-			expect( QueryProperty2 ).toEqual( jasmine.any( Function ) );
+			expect( QueryBuilderProperty ).toBeDefined();
+			expect( QueryBuilderProperty ).toEqual( jasmine.any( Function ) );
 		} );
 
 		it( hasProperty(
@@ -66,61 +67,68 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
 			} );
 
 			it( "should exists", ():void => {
-				const queryProperty:QueryProperty2 = new QueryProperty2( {
+				const queryProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 					queryContainer: queryContainer,
 					name: "name",
 					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
 				} );
-				expect( queryProperty ).toEqual( jasmine.any( QueryProperty2 ) );
+				expect( queryProperty ).toEqual( jasmine.any( QueryBuilderProperty ) );
 			} );
 
 
 			it( "should create full name with no parent", ():void => {
-				const queryProperty:QueryProperty2 = new QueryProperty2( {
+				const queryProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 					queryContainer: queryContainer,
 					name: "name",
 					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
 				} );
 
 				expect( queryProperty.fullName ).toEqual( "name" );
 			} );
 
 			it( "should create full name with parent", ():void => {
-				const parentProperty:QueryProperty2 = new QueryProperty2( {
+				const parentProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 					queryContainer: queryContainer,
 					name: "parent",
 					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
 				} );
 
-				const queryProperty:QueryProperty2 = new QueryProperty2( {
+				const queryProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 					queryContainer: queryContainer,
 					name: "name",
 					parent: parentProperty,
 					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
 				} );
 
 				expect( queryProperty.fullName ).toEqual( "parent.name" );
 			} );
 
 			it( "should create full name with parent with parent", ():void => {
-				const grandParentProperty:QueryProperty2 = new QueryProperty2( {
+				const grandParentProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 					queryContainer: queryContainer,
 					name: "grandParent",
 					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
 				} );
 
-				const parentProperty:QueryProperty2 = new QueryProperty2( {
+				const parentProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 					queryContainer: queryContainer,
 					name: "parent",
 					parent: grandParentProperty,
 					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
 				} );
 
-				const queryProperty:QueryProperty2 = new QueryProperty2( {
+				const queryProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 					queryContainer: queryContainer,
 					name: "name",
 					parent: parentProperty,
 					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
 				} );
 
 				expect( queryProperty.fullName ).toEqual( "grandParent.parent.name" );
@@ -128,10 +136,11 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
 
 
 			it( "should create an variable token", ():void => {
-				const queryProperty:QueryProperty2 = new QueryProperty2( {
+				const queryProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 					queryContainer: queryContainer,
 					name: "name",
 					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
 				} );
 
 				expect( queryProperty.variable ).toEqual( jasmine.any( VariableToken ) );
@@ -158,20 +167,22 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( QueryProperty2.prototype.getSearchPatterns ).toBeDefined();
-				expect( QueryProperty2.prototype.getSearchPatterns ).toEqual( jasmine.any( Function ) );
+				expect( QueryBuilderProperty.prototype.getSearchPatterns ).toBeDefined();
+				expect( QueryBuilderProperty.prototype.getSearchPatterns ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return the patterns as optional", ():void => {
-				const queryProperty:QueryProperty2 = new QueryProperty2( {
+				const queryProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 					queryContainer: queryContainer,
 					name: "name",
-					parent: new QueryProperty2( {
+					parent: new QueryBuilderProperty( {
 						queryContainer: queryContainer,
 						name: "parent",
 						definition: new DigestedObjectSchemaProperty(),
+						optional: true,
 					} ),
 					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
 				} );
 
 				expect( queryProperty.getSearchPatterns() ).toEqual( [
@@ -180,15 +191,17 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
 			} );
 
 			it( "should return the patterns when obligatory", ():void => {
-				const queryProperty:QueryProperty2 = new QueryProperty2( {
+				const queryProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 						queryContainer: queryContainer,
 						name: "name",
-						parent: new QueryProperty2( {
+						parent: new QueryBuilderProperty( {
 							queryContainer: queryContainer,
 							name: "parent",
 							definition: new DigestedObjectSchemaProperty(),
+							optional: true,
 						} ),
 						definition: new DigestedObjectSchemaProperty(),
+						optional: true,
 					} )
 				;
 
@@ -222,15 +235,16 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( QueryProperty2.prototype.getSchema ).toBeDefined();
-				expect( QueryProperty2.prototype.getSchema ).toEqual( jasmine.any( Function ) );
+				expect( QueryBuilderProperty.prototype.getSchema ).toBeDefined();
+				expect( QueryBuilderProperty.prototype.getSchema ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return empty schema when no properties", ():void => {
-				const queryProperty:QueryProperty2 = new QueryProperty2( {
+				const queryProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 					queryContainer: queryContainer,
 					name: "name",
 					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
 				} );
 
 				const propertySchema:DigestedObjectSchema = queryProperty.getSchema();
@@ -238,10 +252,11 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
 			} );
 
 			it( "should return schema from sub-properties", ():void => {
-				const queryProperty:QueryProperty2 = new QueryProperty2( {
+				const queryProperty:QueryBuilderProperty = new QueryBuilderProperty( {
 					queryContainer: queryContainer,
 					name: "name",
 					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
 				} );
 
 				queryProperty.addProperty( "property1", {} );

@@ -12,7 +12,7 @@ import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSche
 import { clazz, constructor, extendsClass, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
 import { QueryContainer } from "./QueryContainer";
-import { QueryProperty2 } from "./QueryProperty2";
+import { QueryBuilderProperty } from "./QueryBuilderProperty";
 import { QueryVariable } from "./QueryVariable";
 
 

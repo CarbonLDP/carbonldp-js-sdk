@@ -6,9 +6,9 @@ import { IllegalStateError } from "../Errors/IllegalStateError";
 import { Pointer } from "../Pointer/Pointer";
 import { isObject } from "../Utils";
 
+import { QueryBuilderProperty } from "./QueryBuilderProperty";
 import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import { QueryObject2 } from "./QueryObject2";
-import { QueryProperty2 } from "./QueryProperty2";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { QuerySchema2 } from "./QuerySchema2";
 import { QuerySchemaProperty2 } from "./QuerySchemaProperty2";
@@ -25,19 +25,19 @@ export class QueryDocumentBuilder2 {
 	readonly all:Readonly<{}> = QueryDocumentBuilder2.ALL;
 
 	readonly _queryContainer:QueryDocumentContainer;
-	readonly _queryProperty:QueryProperty2;
+	readonly _queryProperty:QueryBuilderProperty;
 
 
-	constructor( queryContainer:QueryDocumentContainer, queryProperty:QueryProperty2 ) {
+	constructor( queryContainer:QueryDocumentContainer, queryProperty:QueryBuilderProperty ) {
 		this._queryContainer = queryContainer;
 		this._queryProperty = queryProperty;
 	}
 
 
 	property( name?:string ):QueryVariable {
-		let parent:QueryProperty2 | undefined = this._queryProperty;
+		let parent:QueryBuilderProperty | undefined = this._queryProperty;
 		while( parent ) {
-			const property:QueryProperty2 | undefined = parent.getProperty( name, { create: true } );
+			const property:QueryBuilderProperty | undefined = parent.getProperty( name, { create: true } );
 			if( property ) return property.variable;
 
 			parent = parent.parent;
@@ -80,7 +80,7 @@ export class QueryDocumentBuilder2 {
 			const querySchemaProperty:QuerySchemaProperty2 = isObject( queryPropertySchema )
 				? queryPropertySchema : { "@id": queryPropertySchema };
 
-			const property:QueryProperty2 = this._queryProperty
+			const property:QueryBuilderProperty = this._queryProperty
 				.addProperty( propertyName, querySchemaProperty );
 
 			const subQuery:QuerySchemaProperty2[ "query" ] | undefined = querySchemaProperty.query;

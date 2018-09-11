@@ -17,8 +17,9 @@ import { $Registry, _getPointer, Registry } from "../Registry/Registry";
 
 import { QueryableMetadata } from "./QueryableMetadata";
 import { QueryablePointer } from "./QueryablePointer";
+import { QueryableProperty } from "./QueryableProperty";
 import { QueryContainer } from "./QueryContainer";
-import { QueryProperty2 } from "./QueryProperty2";
+import { QueryPropertyType } from "./QueryPropertyType";
 
 
 interface CompactionNode {
@@ -85,22 +86,36 @@ export class QueryResultCompacter {
 
 
 	private __processNode( compactionNode:CompactionNode, path:string ):string[] {
-		const property:QueryProperty2 | undefined = this.queryContainer
+		const property:QueryableProperty | undefined = this.queryContainer
 			._queryProperty.getProperty( path, { create: true, inherit: false } );
 
-		if( ! property || property.isVoid() ) return [];
+		if( ! property || property.propertyType === void 0 ) return [];
 
-		const targetSchema:DigestedObjectSchema = property.isEmpty() || property.isPartial()
-			? property.getSchema()
-			: this.queryContainer.context.registry.getSchemaFor( compactionNode.node );
-
-		const partialSchema:DigestedObjectSchema | undefined = property.isPartial()
-			? targetSchema
-			: property.isAll()
-				? QueryableMetadata.ALL
-				: void 0;
+		const targetSchema:DigestedObjectSchema = this.__getTargetSchema( property, compactionNode.node );
+		const partialSchema:DigestedObjectSchema | undefined = this.__getPartialSchema( property, targetSchema );
 
 		return this.__compactNode( compactionNode.node, compactionNode.resource, compactionNode.registry, targetSchema, partialSchema );
+	}
+
+	private __getTargetSchema( property:QueryableProperty, node:RDFNode ):DigestedObjectSchema {
+		switch( property.propertyType ) {
+			case QueryPropertyType.EMPTY:
+			case QueryPropertyType.PARTIAL:
+				return property.getSchema();
+			default:
+				return this.queryContainer.context.registry.getSchemaFor( node );
+		}
+	}
+
+	private __getPartialSchema( property:QueryableProperty, targetSchema:DigestedObjectSchema ):DigestedObjectSchema | undefined {
+		switch( property.propertyType ) {
+			case QueryPropertyType.PARTIAL:
+				return targetSchema;
+			case QueryPropertyType.ALL:
+				return QueryableMetadata.ALL;
+			default:
+				return;
+		}
 	}
 
 	private __compactNode( node:RDFNode, resource:QueryablePointer, containerLibrary:PointerLibrary | $PointerLibrary, targetSchema:DigestedObjectSchema, partialSchema?:DigestedObjectSchema ):string[] {

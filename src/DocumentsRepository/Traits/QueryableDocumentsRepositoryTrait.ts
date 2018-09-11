@@ -33,6 +33,7 @@ import { Pointer } from "../../Pointer/Pointer";
 
 import { QueryableMetadata } from "../../QueryDocuments/QueryableMetadata";
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
+import { QueryContainerType } from "../../QueryDocuments/QueryContainerType";
 import { QueryContext } from "../../QueryDocuments/QueryContext";
 import { QueryContextPartial } from "../../QueryDocuments/QueryContextPartial";
 import { QueryDocumentBuilder2 } from "../../QueryDocuments/QueryDocumentBuilder2";
@@ -41,7 +42,6 @@ import { QueryDocumentsBuilder2 } from "../../QueryDocuments/QueryDocumentsBuild
 import { QueryMetadata } from "../../QueryDocuments/QueryMetadata";
 import { QueryPropertyType } from "../../QueryDocuments/QueryPropertyType";
 import { QueryResultCompacter } from "../../QueryDocuments/QueryResultCompacter";
-import { QueryRootContainerType } from "../../QueryDocuments/QueryRootContainerType";
 import {
 	_areDifferentType,
 	_createAllPattern,
@@ -96,9 +96,9 @@ export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositor
 
 type QueryData = {
 	rootName:string;
+	containerType:QueryContainerType;
 	queryBuilderFn?:QueryBuilderFn;
 	rootType?:QueryPropertyType;
-	containerType?:QueryRootContainerType;
 	target?:Document;
 };
 
@@ -203,7 +203,7 @@ function __executeQuery<T extends object>( repository:QueryableDocumentsReposito
 		uri: url,
 	} );
 
-	const queryBuilder:QueryDocumentBuilder2 | QueryDocumentsBuilder2 = queryContainer._queryProperty.isContainer()
+	const queryBuilder:QueryDocumentBuilder2 | QueryDocumentsBuilder2 = queryContainer._queryProperty.isMultipleContainer()
 		? new QueryDocumentsBuilder2( queryContainer, queryContainer._queryProperty )
 		: new QueryDocumentBuilder2( queryContainer, queryContainer._queryProperty );
 
@@ -284,9 +284,8 @@ function __executeQuery<T extends object>( repository:QueryableDocumentsReposito
 			const documents:(T & Document)[] = new QueryResultCompacter( repository.context.registry, queryContainer )
 				.compactDocuments<T & Document>( rdfDocuments, targetDocuments );
 
-			if( ! queryContainer._queryProperty._order ) return documents;
-
-			const { path, flow } = queryContainer._queryProperty._order;
+			if( ! queryContainer._queryProperty.order ) return documents;
+			const { path, flow } = queryContainer._queryProperty.order;
 			const inverter:number = flow === "DESC" ? - 1 : 1;
 
 			return documents.sort( ( a:any, b:any ) => {
@@ -339,6 +338,7 @@ function __getQueryable2<T extends object>( repository:QueryableDocumentsReposit
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
 
 	const queryData:QueryData = {
+		containerType: QueryContainerType.DOCUMENT,
 		rootName: "document",
 		queryBuilderFn,
 		target,
@@ -479,7 +479,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 
 			return __executeQuery<T>( this, uri, requestOptions, {
 				rootType: queryBuilderFn ? void 0 : QueryPropertyType.FULL,
-				containerType: QueryRootContainerType.CHILDREN,
+				containerType: QueryContainerType.CHILDREN,
 				rootName: "child",
 				queryBuilderFn,
 			} );
@@ -496,7 +496,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 
 			return __executeQuery<T>( this, uri, requestOptions, {
 				rootType: queryBuilderFn ? void 0 : QueryPropertyType.FULL,
-				containerType: QueryRootContainerType.MEMBERS,
+				containerType: QueryContainerType.MEMBERS,
 				rootName: "member",
 				queryBuilderFn,
 			} );
@@ -504,7 +504,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 
 		listChildren<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<(T & Document)[]> {
 			return __executeQuery<T>( this, uri, requestOptions, {
-				containerType: QueryRootContainerType.CHILDREN,
+				containerType: QueryContainerType.CHILDREN,
 				rootType: QueryPropertyType.EMPTY,
 				rootName: "child",
 			} );
@@ -513,7 +513,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 		listMembers<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<(T & Document)[]> {
 			return __executeQuery<T>( this, uri, requestOptions, {
 				rootType: QueryPropertyType.EMPTY,
-				containerType: QueryRootContainerType.MEMBERS,
+				containerType: QueryContainerType.MEMBERS,
 				rootName: "member",
 			} );
 		},

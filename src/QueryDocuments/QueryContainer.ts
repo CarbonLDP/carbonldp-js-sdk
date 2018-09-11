@@ -7,16 +7,15 @@ import { AbstractContext } from "../Context/AbstractContext";
 
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
-import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
 
-import { QueryProperty2 } from "./QueryProperty2";
+import { QueryBuilderProperty } from "./QueryBuilderProperty";
 import { QueryVariable } from "./QueryVariable";
 import { _getMatchDefinition } from "./Utils";
 
 
 export abstract class QueryContainer extends FluentPathContainer<undefined> {
 	readonly context:AbstractContext<any, any, any>;
-	abstract readonly _queryProperty:QueryProperty2;
+	abstract readonly _queryProperty:QueryBuilderProperty;
 
 	private readonly _prefixesTuples:[ string, string ][];
 

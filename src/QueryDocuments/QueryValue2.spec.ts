@@ -3,12 +3,14 @@ import { IRIRefToken, LanguageToken, LiteralToken, RDFLiteralToken } from "sparq
 import { createMockContext } from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
+
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
 import { XSD } from "../Vocabularies/XSD";
 
+import { QueryContainerType } from "./QueryContainerType";
 import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import { QueryValue2 } from "./QueryValue2";
 
@@ -26,7 +28,7 @@ describe( module( "carbonldp/QueryDocuments/QueryValue2" ), ():void => {
 		let queryContainer:QueryDocumentContainer;
 		beforeEach( ():void => {
 			context = createMockContext();
-			queryContainer = new QueryDocumentContainer( context, { name: "root", uri: "root" } );
+			queryContainer = new QueryDocumentContainer( context, { name: "root", uri: "root", containerType: QueryContainerType.DOCUMENT } );
 		} );
 
 		describe( constructor(), ():void => {
