@@ -1,6 +1,6 @@
 export enum QueryPropertyType {
-	EMPTY,
 	PARTIAL,
+	EMPTY,
 	ALL,
 	FULL,
 }

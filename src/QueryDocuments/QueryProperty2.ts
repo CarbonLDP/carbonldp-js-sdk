@@ -41,7 +41,7 @@ export class QueryProperty2 {
 	readonly definition:DigestedObjectSchemaProperty;
 	readonly pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
 
-	protected _type:QueryPropertyType;
+	protected _type?:QueryPropertyType;
 	protected _optional:boolean;
 
 	protected readonly _types:IRIToken[];
@@ -63,7 +63,6 @@ export class QueryProperty2 {
 
 		this.definition = data.definition;
 
-		this._type = QueryPropertyType.EMPTY;
 		this._optional = true;
 
 		this._types = [];
@@ -79,6 +78,10 @@ export class QueryProperty2 {
 		this._type = type;
 	}
 
+	isVoid():boolean {
+		return this._type === void 0;
+	}
+
 	isEmpty():boolean {
 		return this._type === QueryPropertyType.EMPTY;
 	}
@@ -88,7 +91,9 @@ export class QueryProperty2 {
 	}
 
 	isComplete():boolean {
-		return this._type > QueryPropertyType.PARTIAL;
+		return this.isAll()
+			|| this.isFully()
+			;
 	}
 
 	isAll():boolean {
@@ -151,6 +156,7 @@ export class QueryProperty2 {
 
 
 		switch( this._type ) {
+			case QueryPropertyType.EMPTY:
 			case QueryPropertyType.PARTIAL:
 				patterns.push( ...this.__createPartialSearchPatterns() );
 				break;
@@ -234,6 +240,7 @@ export class QueryProperty2 {
 
 	protected __createSelfConstructPattern():SubjectToken | undefined {
 		switch( this._type ) {
+			case QueryPropertyType.EMPTY:
 			case QueryPropertyType.PARTIAL:
 				return this.__createPartialConstructPattern();
 

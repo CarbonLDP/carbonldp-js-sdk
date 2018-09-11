@@ -88,11 +88,9 @@ export class QueryResultCompacter {
 		const property:QueryProperty2 | undefined = this.queryContainer
 			._queryProperty.getProperty( path, { create: true, inherit: false } );
 
-		if( ! property || property.isEmpty() ) {
-			return [];
-		}
+		if( ! property || property.isVoid() ) return [];
 
-		const targetSchema:DigestedObjectSchema = property.isPartial()
+		const targetSchema:DigestedObjectSchema = property.isEmpty() || property.isPartial()
 			? property.getSchema()
 			: this.queryContainer.context.registry.getSchemaFor( compactionNode.node );
 
