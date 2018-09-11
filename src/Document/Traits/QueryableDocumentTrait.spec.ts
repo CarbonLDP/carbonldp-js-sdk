@@ -8,7 +8,7 @@ import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
-import { QueryDocumentsBuilder } from "../../QueryDocuments/QueryDocumentsBuilder";
+import { QueryDocumentsBuilder2 } from "../../QueryDocuments/QueryDocumentsBuilder2";
 
 import {
 	extendsClass,
@@ -63,7 +63,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 		} );
 
 
-		const queryBuilderFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder = _ => _;
+		const queryBuilderFn:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 = _ => _;
 		let resource:QueryableDocumentTrait;
 		beforeEach( ():void => {
 			resource = QueryableDocumentTrait.decorate( {
