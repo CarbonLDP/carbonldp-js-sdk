@@ -1,40 +1,29 @@
 import { AbstractContext } from "../Context/AbstractContext";
 
-import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
-
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
 import { QueryContainer } from "./QueryContainer";
 import { QueryContainerType } from "./QueryContainerType";
-import { QueryRootProperty } from "./QueryRootProperty";
+import { QueryProperty2 } from "./QueryProperty2";
 
 
-export class QueryDocumentContainer extends QueryContainer {
-	readonly _queryProperty:QueryRootProperty;
+export class QueryableMetadataContainer extends QueryContainer {
+	readonly _queryProperty:QueryProperty2;
 
 
 	constructor( context:AbstractContext<any, any, any>, rootPropertyData:{ name:string, uri:string, containerType:QueryContainerType } ) {
 		super( context );
 
-		this._queryProperty = new QueryRootProperty( {
+		this._queryProperty = new QueryProperty2( {
 			queryContainer: this,
 
 			name: rootPropertyData.name,
 
 			definition: new DigestedObjectSchemaProperty( rootPropertyData.uri ),
 			containerType: rootPropertyData.containerType,
+
+			optional: false,
 		} );
-	}
-
-
-	serializeLiteral( type:string, value:any ):string {
-		if( ! this.context.jsonldConverter.literalSerializers.has( type ) )
-			throw new IllegalArgumentError( `Type "${ type }" hasn't a defined serializer.` );
-
-		return this.context.jsonldConverter
-			.literalSerializers
-			.get( type )
-			.serialize( value );
 	}
 
 }

@@ -1,3 +1,5 @@
+import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
+
 import { QueryContainer } from "./QueryContainer";
 import { QueryContainerType } from "./QueryContainerType";
 
@@ -7,6 +9,6 @@ export interface QueryRootPropertyData {
 
 	name:string;
 
-	uri:string;
+	definition:DigestedObjectSchemaProperty;
 	containerType:QueryContainerType;
 }

@@ -8,23 +8,20 @@ import {
 	ValuesToken
 } from "sparqler/tokens";
 
-import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
-
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 
-import { QueryableProperty } from "./QueryableProperty";
 import { QueryBuilderPropertyData } from "./QueryBuilderPropertyData";
-import { QueryPropertyType } from "./QueryPropertyType";
+import { QueryProperty2 } from "./QueryProperty2";
 import { SubQueryPropertyDefinition } from "./SubQueryPropertyDefinition";
-import { _getMatchDefinition, _getRootPath } from "./Utils";
+import { _getMatchingDefinition } from "./Utils";
 
 
-export class QueryBuilderProperty extends QueryableProperty {
+export class QueryBuilderProperty extends QueryProperty2 {
 	readonly parent?:QueryBuilderProperty;
 
-	protected readonly _types:IRIToken[];
+	protected readonly _types:string[];
 	protected readonly _values:(LiteralToken | IRIToken)[];
 	protected readonly _filters:string[];
 
@@ -42,13 +39,6 @@ export class QueryBuilderProperty extends QueryableProperty {
 		this._filters = [];
 
 		this._subProperties = new Map();
-	}
-
-
-	isComplete():boolean {
-		return this.propertyType === QueryPropertyType.ALL
-			|| this.propertyType === QueryPropertyType.FULL
-			;
 	}
 
 
@@ -87,12 +77,16 @@ export class QueryBuilderProperty extends QueryableProperty {
 	protected __createTypesSearchPatterns():PatternToken[] {
 		const patterns:PatternToken[] = super.__createTypesSearchPatterns();
 
-		if( this._types.length ) patterns
-			.push( new SubjectToken( this.variable )
+		if( this._types.length ) {
+			const types:IRIToken[] = this._types
+				.map( type => this.queryContainer.compactIRI( type ) );
+
+			patterns.push( new SubjectToken( this.variable )
 				.addProperty( new PropertyToken( "a" )
-					.addObject( ...this._types )
+					.addObject( ...types )
 				)
 			);
+		}
 
 		return patterns;
 	}
@@ -100,82 +94,39 @@ export class QueryBuilderProperty extends QueryableProperty {
 
 	hasProperties():boolean {
 		return this._subProperties.size !== 0
-			|| this.isComplete()
+			|| this.__isComplete()
 			;
 	}
 
-	getProperty( path?:string, flags?:{ create:true, inherit?:false } ):QueryBuilderProperty | undefined {
-		if( ! path ) return this;
-
-		const rootPath:string = _getRootPath( path );
-		const property:QueryBuilderProperty | undefined = this._subProperties.get( rootPath );
-
-		if( ! property ) {
-			// If immediate child and can be created in valid property
-			if( rootPath === path && flags && flags.create && this.isComplete() ) {
-				const newProperty:QueryBuilderProperty = this.addProperty( rootPath, flags );
-				newProperty.setType( QueryPropertyType.ALL );
-
-				return newProperty;
-			}
-
-			return;
-		}
-
-		const restPath:string = path.substr( rootPath.length + 1 );
-		return property.getProperty( restPath );
-	}
-
 	addProperty( propertyName:string, propertyDefinition:SubQueryPropertyDefinition ):QueryBuilderProperty {
-		const definition:DigestedObjectSchemaProperty = this
-			.__getDefinition( propertyName, propertyDefinition );
-
-		const property:QueryBuilderProperty = new QueryBuilderProperty( {
-			queryContainer: this.queryContainer,
-			parent: this,
-
-			name: propertyName,
-
-			definition,
-			pathBuilderFn: propertyDefinition.path,
-			optional: true,
-		} );
-
-		this._subProperties.set( propertyName, property );
-		return property;
-	}
-
-	protected __getDefinition( propertyName:string, propertyDefinition:SubQueryPropertyDefinition ):DigestedObjectSchemaProperty {
-		const digestedDefinition:DigestedObjectSchemaProperty = ObjectSchemaDigester
-			.digestProperty( propertyName, propertyDefinition, this._getSearchSchema() );
-
-		if( propertyDefinition.inherit === false ) return digestedDefinition;
-
-		const propertyURI:string | undefined = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
-		const inheritDefinition:DigestedObjectSchemaProperty | undefined = this.__getInheritDefinition( propertyName, propertyURI );
-
-		if( inheritDefinition ) {
-			for( const key in inheritDefinition ) {
-				if( digestedDefinition[ key ] !== null && key !== "uri" ) continue;
-				digestedDefinition[ key ] = inheritDefinition[ key ];
-			}
-		}
-
-		if( ! digestedDefinition.uri )
-			throw new IllegalArgumentError( `Invalid property "${ propertyName }" definition, "@id" is necessary.` );
-
-		return digestedDefinition;
+		return super
+			.addProperty( propertyName, propertyDefinition ) as any;
 	}
 
 	protected __getInheritDefinition( propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
 		const searchSchema:DigestedObjectSchema = this._getSearchSchema();
 		const localDefinition:DigestedObjectSchemaProperty | undefined =
-			_getMatchDefinition( searchSchema, searchSchema, propertyName, propertyURI );
+			_getMatchingDefinition( searchSchema, searchSchema, propertyName, propertyURI );
 
 		if( localDefinition ) return localDefinition;
 
-		return this.queryContainer
-			._getInheritDefinition( searchSchema, propertyName, propertyURI );
+		const schemas:DigestedObjectSchema[] = this.queryContainer.context
+			._getTypeObjectSchemas( this._types );
+
+		for( const targetSchema of schemas ) {
+			const definition:DigestedObjectSchemaProperty | undefined = _getMatchingDefinition(
+				searchSchema,
+				targetSchema,
+				propertyName,
+				propertyURI
+			);
+
+			if( definition ) return definition;
+		}
+	}
+
+	protected __createPropertyFrom( data:QueryBuilderPropertyData ):QueryBuilderProperty {
+		return new QueryBuilderProperty( data );
 	}
 
 
@@ -184,9 +135,7 @@ export class QueryBuilderProperty extends QueryableProperty {
 	addType( type:string ):void {
 		const schema:DigestedObjectSchema = this._getSearchSchema();
 		const iri:string = schema.resolveURI( type, { vocab: true } );
-
-		const iriToken:IRIToken = this.queryContainer.compactIRI( iri );
-		this._types.push( iriToken );
+		this._types.push( iri );
 
 		if( ! this.queryContainer.context.hasObjectSchema( iri ) ) return;
 
@@ -215,7 +164,7 @@ export class QueryBuilderProperty extends QueryableProperty {
 	// Helper for schema related actions
 	protected _getSearchSchema():DigestedObjectSchema {
 		if( this._searchSchema ) return this._searchSchema;
-		return this._searchSchema = this.queryContainer.context.getObjectSchema();
+		return this._searchSchema = this.queryContainer.getGeneralSchema();
 	}
 
 }

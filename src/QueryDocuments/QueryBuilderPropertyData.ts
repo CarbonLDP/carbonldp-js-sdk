@@ -1,7 +1,7 @@
-import { QueryablePropertyData } from "./QueryablePropertyData";
 import { QueryBuilderProperty } from "./QueryBuilderProperty";
+import { QueryPropertyData } from "./QueryPropertyData";
 
 
-export interface QueryBuilderPropertyData extends QueryablePropertyData {
+export interface QueryBuilderPropertyData extends QueryPropertyData {
 	parent?:QueryBuilderProperty;
 }

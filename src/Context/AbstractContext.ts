@@ -109,8 +109,14 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 		}
 	}
 
-	_getTypeObjectSchemas():DigestedObjectSchema[] {
-		const types:string[] = this.__getObjectSchemasTypes();
+	_getTypeObjectSchemas( excepts:string[] = [] ):DigestedObjectSchema[] {
+		const exceptsSet:Set<string> = new Set( excepts );
+
+		const types:string[] = this
+			.__getObjectSchemasTypes()
+			.filter( type => ! exceptsSet.has( type ) )
+		;
+
 		return types.map( this.getObjectSchema, this );
 	}
 

@@ -17,8 +17,8 @@ import { $Registry, _getPointer, Registry } from "../Registry/Registry";
 
 import { QueryableMetadata } from "./QueryableMetadata";
 import { QueryablePointer } from "./QueryablePointer";
-import { QueryableProperty } from "./QueryableProperty";
 import { QueryContainer } from "./QueryContainer";
+import { QueryProperty2 } from "./QueryProperty2";
 import { QueryPropertyType } from "./QueryPropertyType";
 
 
@@ -86,7 +86,7 @@ export class QueryResultCompacter {
 
 
 	private __processNode( compactionNode:CompactionNode, path:string ):string[] {
-		const property:QueryableProperty | undefined = this.queryContainer
+		const property:QueryProperty2 | undefined = this.queryContainer
 			._queryProperty.getProperty( path, { create: true, inherit: false } );
 
 		if( ! property || property.propertyType === void 0 ) return [];
@@ -97,7 +97,7 @@ export class QueryResultCompacter {
 		return this.__compactNode( compactionNode.node, compactionNode.resource, compactionNode.registry, targetSchema, partialSchema );
 	}
 
-	private __getTargetSchema( property:QueryableProperty, node:RDFNode ):DigestedObjectSchema {
+	private __getTargetSchema( property:QueryProperty2, node:RDFNode ):DigestedObjectSchema {
 		switch( property.propertyType ) {
 			case QueryPropertyType.EMPTY:
 			case QueryPropertyType.PARTIAL:
@@ -107,7 +107,7 @@ export class QueryResultCompacter {
 		}
 	}
 
-	private __getPartialSchema( property:QueryableProperty, targetSchema:DigestedObjectSchema ):DigestedObjectSchema | undefined {
+	private __getPartialSchema( property:QueryProperty2, targetSchema:DigestedObjectSchema ):DigestedObjectSchema | undefined {
 		switch( property.propertyType ) {
 			case QueryPropertyType.PARTIAL:
 				return targetSchema;

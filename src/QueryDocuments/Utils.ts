@@ -156,7 +156,7 @@ export function _areDifferentType( a:any, b:any ):boolean {
 }
 
 
-export function _getMatchDefinition( generalSchema:DigestedObjectSchema, targetSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
+export function _getMatchingDefinition( generalSchema:DigestedObjectSchema, targetSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
 	if( ! targetSchema.properties.has( propertyName ) ) return;
 
 	const definition:DigestedObjectSchemaProperty = ObjectSchemaUtils

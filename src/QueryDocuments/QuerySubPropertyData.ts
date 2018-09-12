@@ -2,15 +2,15 @@ import { Path, PathBuilder } from "sparqler/patterns";
 
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
-import { QueryableProperty } from "./QueryableProperty";
 import { QueryContainer } from "./QueryContainer";
 import { QueryContainerType } from "./QueryContainerType";
+import { QueryProperty2 } from "./QueryProperty2";
 import { QueryPropertyType } from "./QueryPropertyType";
 
 
-export interface QueryablePropertyData {
-	queryContainer:QueryContainer;
-	parent?:QueryableProperty;
+export interface QuerySubPropertyData {
+	queryContainer?:QueryContainer;
+	parent?:QueryProperty2;
 
 	name:string;
 	definition:DigestedObjectSchemaProperty;
@@ -19,5 +19,5 @@ export interface QueryablePropertyData {
 	propertyType?:QueryPropertyType;
 	containerType?:QueryContainerType;
 
-	optional:boolean;
+	optional?:boolean;
 }

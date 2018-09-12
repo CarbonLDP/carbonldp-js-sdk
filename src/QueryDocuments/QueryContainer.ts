@@ -7,25 +7,25 @@ import { AbstractContext } from "../Context/AbstractContext";
 
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
+import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
+import { ObjectSchemaProperty } from "../ObjectSchema/ObjectSchemaProperty";
 
-import { QueryBuilderProperty } from "./QueryBuilderProperty";
+import { QueryProperty2 } from "./QueryProperty2";
 import { QueryVariable } from "./QueryVariable";
-import { _getMatchDefinition } from "./Utils";
 
 
 export abstract class QueryContainer extends FluentPathContainer<undefined> {
 	readonly context:AbstractContext<any, any, any>;
-	abstract readonly _queryProperty:QueryBuilderProperty;
+	abstract readonly _queryProperty:QueryProperty2;
 
+	private readonly _generalSchema:DigestedObjectSchema;
 	private readonly _prefixesTuples:[ string, string ][];
 
 	private readonly _variablesMap:Map<string, QueryVariable>;
 	private _variablesCounter:number;
 
-	private _typeSchemas:DigestedObjectSchema[];
 
-
-	constructor( context:AbstractContext<any, any, any> ) {
+	protected constructor( context:AbstractContext<any, any, any> ) {
 		const schema:DigestedObjectSchema = context.getObjectSchema();
 		super( {
 			iriResolver: __createIRIResolver( schema ),
@@ -35,6 +35,8 @@ export abstract class QueryContainer extends FluentPathContainer<undefined> {
 		} );
 
 		this.context = context;
+
+		this._generalSchema = schema;
 		this._prefixesTuples = Array.from( schema.prefixes );
 
 		this._variablesCounter = 0;
@@ -83,20 +85,14 @@ export abstract class QueryContainer extends FluentPathContainer<undefined> {
 	}
 
 
-	_getInheritDefinition( generalSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty {
-		for( const targetSchema of this.__getTypeSchemas() ) {
-			const definition:DigestedObjectSchemaProperty | undefined =
-				_getMatchDefinition( generalSchema, targetSchema, propertyName, propertyURI );
-
-			if( definition ) return definition;
-		}
+	digestProperty( name:string, definition:ObjectSchemaProperty ):DigestedObjectSchemaProperty {
+		return ObjectSchemaDigester
+			.digestProperty( name, definition, this._generalSchema );
 	}
 
-	protected __getTypeSchemas():DigestedObjectSchema[] {
-		if( this._typeSchemas ) return this._typeSchemas;
-
-		return this._typeSchemas = this.context
-			._getTypeObjectSchemas();
+	getGeneralSchema():DigestedObjectSchema {
+		return ObjectSchemaDigester
+			.combineDigestedObjectSchemas( [ this._generalSchema ] );
 	}
 
 }

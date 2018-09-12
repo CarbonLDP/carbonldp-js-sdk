@@ -3,12 +3,10 @@ import { LimitToken, OffsetToken, OrderToken, PatternToken, SubSelectToken } fro
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
 
-import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
-
 import { QueryBuilderProperty } from "./QueryBuilderProperty";
-import { QueryBuilderPropertyData } from "./QueryBuilderPropertyData";
 import { QueryContainerType } from "./QueryContainerType";
 import { QueryDocumentsOrder } from "./QueryDocumentsOrder";
+import { QueryProperty2 } from "./QueryProperty2";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { QueryRootPropertyData } from "./QueryRootPropertyData";
 
@@ -22,12 +20,8 @@ export class QueryRootProperty extends QueryBuilderProperty {
 
 
 	constructor( data:QueryRootPropertyData ) {
-		const definition:DigestedObjectSchemaProperty = new DigestedObjectSchemaProperty();
-		definition.uri = data.uri;
-
-		super( <QueryBuilderPropertyData> {
+		super( {
 			...data,
-			definition,
 			optional: false,
 			propertyType: QueryPropertyType.PARTIAL,
 		} );
@@ -60,14 +54,14 @@ export class QueryRootProperty extends QueryBuilderProperty {
 			.addPattern( super.__createSelfPattern() );
 
 		if( this.order ) {
-			const targetProperty:QueryBuilderProperty | undefined = this.getProperty( this.order.path, { create: true } );
+			const targetProperty:QueryProperty2 | undefined = this.getProperty( this.order.path, { create: true } );
 			if( ! targetProperty ) throw new IllegalArgumentError( `Property "${ this.order.path }" hasn't been defined.` );
 
 			// Add modifier
 			subSelect.addModifier( new OrderToken( targetProperty.variable, this.order.flow ) );
 
 			// Add patterns to the sub-select
-			subSelect.addPattern( ...this.__createPatternsFrom( targetProperty ) );
+			subSelect.addPattern( ...this.__createSubPatternsFrom( targetProperty ) );
 		}
 
 		if( this._limit ) {
@@ -81,7 +75,7 @@ export class QueryRootProperty extends QueryBuilderProperty {
 		return subSelect;
 	}
 
-	protected __createPatternsFrom( targetProperty:QueryBuilderProperty ):PatternToken[] {
+	protected __createSubPatternsFrom( targetProperty:QueryProperty2 ):PatternToken[] {
 		let matchPatterns:PatternToken[] = [];
 
 		// While not been the root property

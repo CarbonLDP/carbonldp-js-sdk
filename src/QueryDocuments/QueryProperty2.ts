@@ -9,8 +9,7 @@ import {
 	PatternToken,
 	PropertyToken,
 	SubjectToken,
-	ValuesToken,
-	VariableToken
+	ValuesToken
 } from "sparqler/tokens";
 
 import { IllegalActionError } from "../Errors/IllegalActionError";
@@ -20,16 +19,19 @@ import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 import { LDP } from "../Vocabularies/LDP";
 
-import { QueryablePropertyData } from "./QueryablePropertyData";
 import { QueryContainer } from "./QueryContainer";
 import { QueryContainerType } from "./QueryContainerType";
+import { QueryPropertyData } from "./QueryPropertyData";
 import { QueryPropertyType } from "./QueryPropertyType";
+import { QuerySubPropertyData } from "./QuerySubPropertyData";
 import { QueryVariable } from "./QueryVariable";
+import { SubQueryPropertyDefinition } from "./SubQueryPropertyDefinition";
+import { _getRootPath } from "./Utils";
 
 
-export class QueryableProperty implements QueryablePropertyData {
+export class QueryProperty2 implements QueryPropertyData {
 	readonly queryContainer:QueryContainer;
-	readonly parent?:QueryableProperty;
+	readonly parent?:QueryProperty2;
 
 	readonly name:string;
 	readonly fullName:string;
@@ -47,10 +49,10 @@ export class QueryableProperty implements QueryablePropertyData {
 	optional:boolean;
 
 
-	protected readonly _subProperties:Map<string, QueryableProperty>;
+	protected readonly _subProperties:Map<string, QueryProperty2>;
 
 
-	constructor( data:QueryablePropertyData ) {
+	constructor( data:QueryPropertyData ) {
 		this.queryContainer = data.queryContainer;
 		this.parent = data.parent;
 
@@ -64,11 +66,98 @@ export class QueryableProperty implements QueryablePropertyData {
 		this.propertyType = data.propertyType;
 		this.containerType = data.containerType;
 
-		this.optional = data.optional;
+		this.optional = data.optional === void 0
+			? true
+			: data.optional;
 
 		this._subProperties = new Map();
 	}
 
+
+	// Sub-properties helpers
+
+	getProperty( path?:string, flags?:{ create:true, inherit?:false } ):QueryProperty2 | undefined {
+		if( ! path ) return this;
+
+		const rootPath:string = _getRootPath( path );
+		const property:QueryProperty2 | undefined = this._subProperties.get( rootPath );
+
+		if( ! property ) {
+			// If immediate child and can be created in valid property
+			if( rootPath === path && flags && flags.create && this.__isComplete() ) {
+				const newProperty:QueryProperty2 = this.addProperty( rootPath, flags );
+				newProperty.setType( QueryPropertyType.ALL );
+
+				return newProperty;
+			}
+
+			return;
+		}
+
+		const restPath:string = path.substr( rootPath.length + 1 );
+		return property.getProperty( restPath );
+	}
+
+	addProperty( propertyName:string, propertyDefinition:SubQueryPropertyDefinition ):QueryProperty2 {
+		const definition:DigestedObjectSchemaProperty = this
+			.__getDefinition( propertyName, propertyDefinition );
+
+		return this._addSubProperty( {
+			name: propertyName,
+
+			definition,
+			pathBuilderFn: propertyDefinition.path,
+		} );
+	}
+
+	_addSubProperty( data:QuerySubPropertyData ):QueryProperty2 {
+		const property:QueryProperty2 = this.__createPropertyFrom( {
+			...data,
+			queryContainer: this.queryContainer,
+			parent: this,
+		} );
+
+		this._subProperties.set( data.name, property );
+
+		return property;
+	}
+
+	protected __createPropertyFrom( data:QueryPropertyData ):QueryProperty2 {
+		return new QueryProperty2( data );
+	}
+
+	protected __getDefinition( propertyName:string, propertyDefinition:SubQueryPropertyDefinition ):DigestedObjectSchemaProperty {
+		const digestedDefinition:DigestedObjectSchemaProperty = this.queryContainer
+			.digestProperty( propertyName, propertyDefinition );
+
+		if( propertyDefinition.inherit === false ) return digestedDefinition;
+
+		const propertyURI:string | undefined = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
+		const inheritDefinition:DigestedObjectSchemaProperty | undefined = this
+			.__getInheritDefinition( propertyName, propertyURI );
+
+		if( inheritDefinition ) {
+			for( const key in inheritDefinition ) {
+				if( digestedDefinition[ key ] !== null && key !== "uri" ) continue;
+				digestedDefinition[ key ] = inheritDefinition[ key ];
+			}
+		}
+
+		return digestedDefinition;
+	}
+
+	protected __getInheritDefinition( propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
+		return;
+	}
+
+	protected __isComplete():boolean {
+		return this.propertyType === QueryPropertyType.ALL
+			|| this.propertyType === QueryPropertyType.FULL
+			;
+	}
+
+
+	// Tokens creation helpers
 
 	protected __getVariable( name:string ):QueryVariable {
 		return this.queryContainer
@@ -102,7 +191,7 @@ export class QueryableProperty implements QueryablePropertyData {
 
 	// Merge helpers
 
-	merge( data:QueryablePropertyData ):void {
+	merge( data:QueryPropertyData ):void {
 		if( data.pathBuilderFn )
 			throw new IllegalArgumentError( `Cannot merge properties with a "path".` );
 
@@ -168,8 +257,8 @@ export class QueryableProperty implements QueryablePropertyData {
 	}
 
 	protected __createMemberSelfPattern():PatternToken {
-		const membershipResource:VariableToken = this.queryContainer.getVariable( "membershipResource" );
-		const hasMemberRelation:VariableToken = this.queryContainer.getVariable( "hasMemberRelation" );
+		const membershipResource:QueryVariable = this.queryContainer.getVariable( "membershipResource" );
+		const hasMemberRelation:QueryVariable = this.queryContainer.getVariable( "hasMemberRelation" );
 
 		const memberRelations:PatternToken = new SubjectToken( this.__createIRIToken() )
 			.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.membershipResource ) )

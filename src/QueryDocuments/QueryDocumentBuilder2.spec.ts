@@ -39,7 +39,16 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 			context = createMockContext( { uri: "https://example.com" } );
 			context.extendObjectSchema( {
 				"@vocab": "https://example.com/vocab#",
+
 				"ex": "https://example.com/ns#",
+				"xsd": "http://www.w3.org/2001/XMLSchema#",
+
+				"inheritGeneralProperty": {
+					"@id": "ex:inheritProperty",
+				},
+				"extendedGeneralProperty": {
+					"@id": "ex:extendedGeneralProperty",
+				},
 			} );
 
 			queryContainer = new QueryDocumentContainer( context, { name: "root", uri: "https://example.com/#root", containerType: QueryContainerType.DOCUMENT } );
@@ -423,73 +432,93 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder2" ), ():void =>
 			} );
 
 
-			it( "should create QueryBuilderProperty's", ():void => {
-				context.extendObjectSchema( {
-					"xsd": "http://www.w3.org/2001/XMLSchema#",
-					"ex": "https://example.com/ns#",
-					"inheritProperty": {
-						"@id": "ex:inheritProperty",
-					},
-					"extendedProperty": {
-						"@id": "ex:extendedProperty",
-					},
-				} );
-
+			it( "should create property with default data", ():void => {
 				const builder:QueryDocumentBuilder2 = new QueryDocumentBuilder2( queryContainer, baseProperty );
 				builder.properties( {
 					"defaultProperty": {},
-					"inheritProperty": {},
-					"extendedProperty": {
-						"@type": "xsd:string",
-					},
-					"inlineProperty": "ex:inlineProperty",
-				} );
-
-				expect( baseProperty.getProperty( "defaultProperty" ) ).toBeDefined();
-				expect( baseProperty.getProperty( "inheritProperty" ) ).toBeDefined();
-
-				expect( baseProperty.getProperty( "extendedProperty" ) ).toBeDefined();
-				expect( baseProperty.getProperty( "inlineProperty" ) ).toBeDefined();
-			} );
-
-			it( "should create properties' definition", ():void => {
-				context.extendObjectSchema( {
-					"xsd": "http://www.w3.org/2001/XMLSchema#",
-					"ex": "https://example.com/ns#",
-					"inheritProperty": {
-						"@id": "ex:inheritProperty",
-					},
-					"extendedProperty": {
-						"@id": "ex:extendedProperty",
-					},
-				} );
-
-				const builder:QueryDocumentBuilder2 = new QueryDocumentBuilder2( queryContainer, baseProperty );
-				builder.properties( {
-					"defaultProperty": {},
-					"inheritProperty": {},
-					"extendedProperty": {
-						"@type": "xsd:string",
-					},
-					"inlineProperty": "ex:inlineProperty",
 				} );
 
 				expect( baseProperty.getProperty( "defaultProperty" ).definition )
 					.toEqual( jasmine.objectContaining( {
 						uri: "https://example.com/vocab#defaultProperty",
 					} ) );
+			} );
 
-				expect( baseProperty.getProperty( "inheritProperty" ).definition )
+			it( "should create property with general inherit data", ():void => {
+				const builder:QueryDocumentBuilder2 = new QueryDocumentBuilder2( queryContainer, baseProperty );
+				builder.properties( {
+					"inheritGeneralProperty": {},
+				} );
+
+				expect( baseProperty.getProperty( "inheritGeneralProperty" ).definition )
+					.toEqual( jasmine.objectContaining( {
+						uri: "https://example.com/ns#inheritProperty",
+					} ) );
+			} );
+
+			it( "should create property with extended general inherit data", ():void => {
+				const builder:QueryDocumentBuilder2 = new QueryDocumentBuilder2( queryContainer, baseProperty );
+				builder.properties( {
+					"extendedGeneralProperty": {
+						"@type": "xsd:string",
+					},
+				} );
+
+				expect( baseProperty.getProperty( "extendedGeneralProperty" ).definition )
+					.toEqual( jasmine.objectContaining( {
+						uri: "https://example.com/ns#extendedGeneralProperty",
+						literal: true,
+						literalType: "http://www.w3.org/2001/XMLSchema#string",
+					} ) );
+			} );
+
+			it( "should create property with typed inherit data", ():void => {
+				context.extendObjectSchema( "Type", {
+					"inheritTypedProperty": {
+						"@id": "ex:inheritProperty",
+					},
+				} );
+
+				const builder:QueryDocumentBuilder2 = new QueryDocumentBuilder2( queryContainer, baseProperty );
+				builder.properties( {
+					"inheritTypedProperty": {},
+				} );
+
+				expect( baseProperty.getProperty( "inheritTypedProperty" ).definition )
 					.toEqual( jasmine.objectContaining( {
 						uri: "https://example.com/ns#inheritProperty",
 					} ) );
 
-				expect( baseProperty.getProperty( "extendedProperty" ).definition )
+			} );
+
+			it( "should create property with typed local data", ():void => {
+				context.extendObjectSchema( "Type", {
+					"inheritTypedProperty": {
+						"@id": "ex:inheritProperty",
+					},
+				} );
+
+				const builder:QueryDocumentBuilder2 = new QueryDocumentBuilder2( queryContainer, baseProperty );
+
+				builder.withType( "Type" );
+				context.clearObjectSchema( "Type" );
+
+				builder.properties( {
+					"inheritTypedProperty": {},
+				} );
+
+				expect( baseProperty.getProperty( "inheritTypedProperty" ).definition )
 					.toEqual( jasmine.objectContaining( {
-						uri: "https://example.com/ns#extendedProperty",
-						literal: true,
-						literalType: "http://www.w3.org/2001/XMLSchema#string",
+						uri: "https://example.com/ns#inheritProperty",
 					} ) );
+
+			} );
+
+			it( "should create property with inline data", ():void => {
+				const builder:QueryDocumentBuilder2 = new QueryDocumentBuilder2( queryContainer, baseProperty );
+				builder.properties( {
+					"inlineProperty": "ex:inlineProperty",
+				} );
 
 				expect( baseProperty.getProperty( "inlineProperty" ).definition )
 					.toEqual( jasmine.objectContaining( {

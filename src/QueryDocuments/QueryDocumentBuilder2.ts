@@ -9,6 +9,7 @@ import { isObject } from "../Utils";
 import { QueryBuilderProperty } from "./QueryBuilderProperty";
 import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import { QueryObject2 } from "./QueryObject2";
+import { QueryProperty2 } from "./QueryProperty2";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { QuerySchema2 } from "./QuerySchema2";
 import { QuerySchemaProperty2 } from "./QuerySchemaProperty2";
@@ -37,7 +38,7 @@ export class QueryDocumentBuilder2 {
 	property( name?:string ):QueryVariable {
 		let parent:QueryBuilderProperty | undefined = this._queryProperty;
 		while( parent ) {
-			const property:QueryBuilderProperty | undefined = parent.getProperty( name, { create: true } );
+			const property:QueryProperty2 | undefined = parent.getProperty( name, { create: true } );
 			if( property ) return property.variable;
 
 			parent = parent.parent;

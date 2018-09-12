@@ -1,18 +1,13 @@
 import { FluentPathContainer } from "sparqler/patterns";
 import { IRIRefToken, PrefixedNameToken } from "sparqler/tokens";
 
-import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
-import { createMockContext } from "../../test/helpers/mocks/core";
-import { MockQueryContainer } from "../../test/helpers/mocks/querying/MockQueryContainer";
+import { createMockContext, MockQueryContainer } from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
-
-import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
 import { clazz, constructor, extendsClass, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
 import { QueryContainer } from "./QueryContainer";
-import { QueryBuilderProperty } from "./QueryBuilderProperty";
 import { QueryVariable } from "./QueryVariable";
 
 
