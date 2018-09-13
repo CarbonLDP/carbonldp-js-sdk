@@ -13,11 +13,12 @@ import {
 } from "sparqler/tokens";
 
 import { IllegalActionError } from "../Errors/IllegalActionError";
-import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
+import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 import { LDP } from "../Vocabularies/LDP";
+import { QueryablePropertyData } from "./QueryablePropertyData";
 
 import { QueryContainer } from "./QueryContainer";
 import { QueryContainerType } from "./QueryContainerType";
@@ -26,10 +27,10 @@ import { QueryPropertyType } from "./QueryPropertyType";
 import { QuerySubPropertyData } from "./QuerySubPropertyData";
 import { QueryVariable } from "./QueryVariable";
 import { SubQueryPropertyDefinition } from "./SubQueryPropertyDefinition";
-import { _getRootPath } from "./Utils";
+import { _getBestType, _getRootPath } from "./Utils";
 
 
-export class QueryProperty2 implements QueryPropertyData {
+export class QueryProperty2 implements QueryablePropertyData {
 	readonly queryContainer:QueryContainer;
 	readonly parent?:QueryProperty2;
 
@@ -49,7 +50,7 @@ export class QueryProperty2 implements QueryPropertyData {
 	optional:boolean;
 
 
-	protected readonly _subProperties:Map<string, QueryProperty2>;
+	readonly subProperties:Map<string, QueryProperty2>;
 
 
 	constructor( data:QueryPropertyData ) {
@@ -70,7 +71,7 @@ export class QueryProperty2 implements QueryPropertyData {
 			? true
 			: data.optional;
 
-		this._subProperties = new Map();
+		this.subProperties = new Map();
 	}
 
 
@@ -80,11 +81,11 @@ export class QueryProperty2 implements QueryPropertyData {
 		if( ! path ) return this;
 
 		const rootPath:string = _getRootPath( path );
-		const property:QueryProperty2 | undefined = this._subProperties.get( rootPath );
+		const property:QueryProperty2 | undefined = this.subProperties.get( rootPath );
 
 		if( ! property ) {
 			// If immediate child and can be created in valid property
-			if( rootPath === path && flags && flags.create && this.__isComplete() ) {
+			if( rootPath === path && flags && flags.create && this._isComplete() ) {
 				const newProperty:QueryProperty2 = this.addProperty( rootPath, flags );
 				newProperty.setType( QueryPropertyType.ALL );
 
@@ -117,7 +118,7 @@ export class QueryProperty2 implements QueryPropertyData {
 			parent: this,
 		} );
 
-		this._subProperties.set( data.name, property );
+		this.subProperties.set( data.name, property );
 
 		return property;
 	}
@@ -150,9 +151,17 @@ export class QueryProperty2 implements QueryPropertyData {
 		return;
 	}
 
-	protected __isComplete():boolean {
+
+	_isComplete():boolean {
 		return this.propertyType === QueryPropertyType.ALL
 			|| this.propertyType === QueryPropertyType.FULL
+			;
+	}
+
+	_isPartial():boolean {
+		return this.propertyType === QueryPropertyType.PARTIAL
+			|| this.propertyType === QueryPropertyType.ALL
+			|| ! ! this.subProperties.size
 			;
 	}
 
@@ -184,29 +193,7 @@ export class QueryProperty2 implements QueryPropertyData {
 
 
 	setType( type:QueryPropertyType ):void {
-		if( type <= this.propertyType ) return;
-		this.propertyType = type;
-	}
-
-
-	// Merge helpers
-
-	merge( data:QueryPropertyData ):void {
-		if( data.pathBuilderFn )
-			throw new IllegalArgumentError( `Cannot merge properties with a "path".` );
-
-		this.setType( data.propertyType );
-		this.__mergeDefinition( data.definition );
-	}
-
-	protected __mergeDefinition( newDefinition:DigestedObjectSchemaProperty ):void {
-		for( const key in newDefinition ) {
-			const newValue:any = newDefinition[ key ];
-			const oldValue:any = this.definition[ key ];
-
-			if( newValue !== oldValue )
-				throw new IllegalArgumentError( `Property "${ this.fullName }" has different "${ key }": "${ oldValue }", "${ newValue }".` );
-		}
+		this.propertyType = _getBestType( this.propertyType, type );
 	}
 
 
@@ -338,7 +325,7 @@ export class QueryProperty2 implements QueryPropertyData {
 	protected __createPartialSearchPatterns():PatternToken[] {
 		const patterns:PatternToken[] = this.__createTypesSearchPatterns();
 
-		this._subProperties.forEach( subProperty => {
+		this.subProperties.forEach( subProperty => {
 			patterns.push( ...subProperty.getSearchPatterns() );
 		} );
 
@@ -364,7 +351,7 @@ export class QueryProperty2 implements QueryPropertyData {
 		const selfPattern:SubjectToken | undefined = this.__createSelfConstructPattern();
 		if( selfPattern ) patterns.push( selfPattern );
 
-		this._subProperties.forEach( property => {
+		this.subProperties.forEach( property => {
 			const subPatterns:SubjectToken[] = property
 				.getConstructPatterns();
 
@@ -396,7 +383,7 @@ export class QueryProperty2 implements QueryPropertyData {
 	protected __createPartialConstructPattern():SubjectToken {
 		const subject:SubjectToken = this.__createTypesPattern();
 
-		this._subProperties.forEach( subProperty => {
+		this.subProperties.forEach( subProperty => {
 			subject.addProperty( new PropertyToken( subProperty.__createIRIToken() )
 				.addObject( subProperty.variable )
 			);
@@ -438,10 +425,27 @@ export class QueryProperty2 implements QueryPropertyData {
 
 	// Helper for property result compaction
 
-	getSchema():DigestedObjectSchema {
+	getSchemaFor( object:object ):DigestedObjectSchema {
+		switch( this.propertyType ) {
+			case void 0:
+				return new DigestedObjectSchema();
+
+			case QueryPropertyType.EMPTY:
+			case QueryPropertyType.PARTIAL:
+				return this.__createSchema();
+
+			default:
+				return ObjectSchemaDigester._combineSchemas( [
+					this.queryContainer.context.registry.getSchemaFor( object ),
+					this.__createSchema(),
+				] );
+		}
+	}
+
+	protected __createSchema():DigestedObjectSchema {
 		const schema:DigestedObjectSchema = new DigestedObjectSchema();
 
-		this._subProperties.forEach( property => {
+		this.subProperties.forEach( property => {
 			schema.properties.set( property.name, property.definition );
 		} );
 

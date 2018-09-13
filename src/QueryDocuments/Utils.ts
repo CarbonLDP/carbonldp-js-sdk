@@ -16,6 +16,7 @@ import { ObjectSchemaUtils } from "../ObjectSchema/ObjectSchemaUtils";
 import { isObject } from "../Utils";
 
 import { QueryContext } from "./QueryContext";
+import { QueryPropertyType } from "./QueryPropertyType";
 
 
 export function _getLevelRegExp( property:string ):RegExp {
@@ -155,6 +156,13 @@ export function _areDifferentType( a:any, b:any ):boolean {
 	return false;
 }
 
+
+export function _getBestType( type1:QueryPropertyType, type2:QueryPropertyType ):QueryPropertyType {
+	if( type2 <= type1 )
+		return type1;
+
+	return type2;
+}
 
 export function _getMatchingDefinition( generalSchema:DigestedObjectSchema, targetSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
 	if( ! targetSchema.properties.has( propertyName ) ) return;

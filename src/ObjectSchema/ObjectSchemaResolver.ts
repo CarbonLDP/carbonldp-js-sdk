@@ -75,18 +75,9 @@ export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
 		},
 
 		getSchemaFor( this:ObjectSchemaResolver, object:object | QueryablePointer ):DigestedObjectSchema {
-			const schema:DigestedObjectSchema = "types" in object || "$id" in object ?
+			return "types" in object || "$id" in object ?
 				__getSchemaForResource( this.context, object ) :
 				__getSchemaForNode( this.context, object );
-
-			if( ! ("$_queryableMetadata" in object) || ! object.$_queryableMetadata )
-				return schema;
-
-			return ObjectSchemaDigester
-				._combineSchemas( [
-					schema,
-					object.$_queryableMetadata.schema,
-				] );
 		},
 	},
 

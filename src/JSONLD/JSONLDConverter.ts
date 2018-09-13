@@ -84,6 +84,31 @@ export class JSONLDConverter {
 		if( ! Array.isArray( compactedObjectOrObjects ) ) return this.__expandSingle( compactedObjectOrObjects, generalSchema, digestedSchema );
 	}
 
+
+	update( target:object, node:RDFNode, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary, strict?:boolean ):void {
+		const compactedData:object = this.compact( node, {}, digestedSchema, pointerLibrary, strict );
+
+		new Set( [
+			...Object.keys( target ),
+			...Object.keys( compactedData ),
+		] ).forEach( key => {
+			if( ! compactedData.hasOwnProperty( key ) ) {
+				if( ! strict || digestedSchema.properties.has( key ) ) delete target[ key ];
+				return;
+			}
+
+			if( ! Array.isArray( target[ key ] ) ) {
+				target[ key ] = compactedData[ key ];
+				return;
+			}
+
+			const values:any[] = Array.isArray( compactedData[ key ] ) ? compactedData[ key ] : [ compactedData[ key ] ];
+			target[ key ].length = 0;
+			target[ key ].push( ...values );
+		} );
+	}
+
+
 	private __expandSingle( compactedObject:Object, generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):RDFNode {
 		let expandedObject:any = {};
 

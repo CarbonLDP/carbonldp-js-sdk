@@ -3,7 +3,6 @@ export { QueryablePointer } from "./QueryablePointer";
 
 export * from "./QueryContext";
 export * from "./QueryContextBuilder";
-export * from "./QueryContextPartial";
 export * from "./QueryDocumentBuilder";
 export * from "./QueryDocumentsBuilder";
 export * from "./QueryMetadata";

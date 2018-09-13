@@ -21,11 +21,13 @@ import { _guessXSDType } from "../JSONLD/Utils";
 import { ContainerType } from "../ObjectSchema/ContainerType";
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
+import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 import { PointerType } from "../ObjectSchema/PointerType";
 
 import { Pointer } from "../Pointer/Pointer";
 
 import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
+import { QueryableProperty } from "../QueryDocuments/QueryableProperty";
 
 import { Resource } from "../Resource/Resource";
 
@@ -183,23 +185,26 @@ export class DeltaCreator {
 		this.__addPrefixFrom( resource, schema );
 	}
 
-	private __getSchema( id:string, previousResource:TargetResource, currentResource:TargetResource ):DigestedObjectSchema {
-		const types:Set<string> = new Set();
+	private __getSchema( $id:string, previousResource:TargetResource, currentResource:TargetResource ):DigestedObjectSchema {
+		const typesSet:Set<string> = new Set();
 
 		if( "types" in previousResource ) previousResource
-			.types.forEach( types.add, types );
+			.types.forEach( typesSet.add, typesSet );
 		if( "types" in currentResource ) currentResource
-			.types.forEach( types.add, types );
+			.types.forEach( typesSet.add, typesSet );
 
 
-		const mergeResource:Pointer & TargetResource = {
-			$id: id,
-			types: Array.from( types ),
-			$_queryableMetadata: currentResource.$_queryableMetadata || previousResource.$_queryableMetadata,
-		};
+		const mergedResource:object = { $id, types: Array.from( typesSet ) };
+		const baseSchema:DigestedObjectSchema = this.context.registry
+			.getSchemaFor( mergedResource );
 
-		return this.context
-			.registry.getSchemaFor( mergeResource );
+		const queryableProperty:QueryableProperty | undefined = previousResource.$_queryableMetadata || previousResource.$_queryableMetadata;
+		if( ! queryableProperty ) return baseSchema;
+
+		return ObjectSchemaDigester._combineSchemas( [
+			baseSchema,
+			queryableProperty.getSchema(),
+		] );
 	}
 
 	private _getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken {

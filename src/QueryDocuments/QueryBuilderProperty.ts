@@ -26,7 +26,7 @@ export class QueryBuilderProperty extends QueryProperty2 {
 	protected readonly _filters:string[];
 
 	protected _searchSchema:DigestedObjectSchema | undefined;
-	protected readonly _subProperties:Map<string, QueryBuilderProperty>;
+	readonly subProperties:Map<string, QueryBuilderProperty>;
 
 
 	constructor( data:QueryBuilderPropertyData ) {
@@ -38,7 +38,7 @@ export class QueryBuilderProperty extends QueryProperty2 {
 		this._values = [];
 		this._filters = [];
 
-		this._subProperties = new Map();
+		this.subProperties = new Map();
 	}
 
 
@@ -93,8 +93,8 @@ export class QueryBuilderProperty extends QueryProperty2 {
 
 
 	hasProperties():boolean {
-		return this._subProperties.size !== 0
-			|| this.__isComplete()
+		return this.subProperties.size !== 0
+			|| this._isComplete()
 			;
 	}
 

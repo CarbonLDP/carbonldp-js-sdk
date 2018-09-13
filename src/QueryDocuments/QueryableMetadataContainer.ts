@@ -1,9 +1,8 @@
 import { AbstractContext } from "../Context/AbstractContext";
 
-import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
-
+import { QueryablePropertyData } from "./QueryablePropertyData";
+import { QueryableRootProperty } from "./QueryableRootProperty";
 import { QueryContainer } from "./QueryContainer";
-import { QueryContainerType } from "./QueryContainerType";
 import { QueryProperty2 } from "./QueryProperty2";
 
 
@@ -11,18 +10,12 @@ export class QueryableMetadataContainer extends QueryContainer {
 	readonly _queryProperty:QueryProperty2;
 
 
-	constructor( context:AbstractContext<any, any, any>, rootPropertyData:{ name:string, uri:string, containerType:QueryContainerType } ) {
+	constructor( context:AbstractContext<any, any, any>, property:QueryableRootProperty ) {
 		super( context );
 
 		this._queryProperty = new QueryProperty2( {
+			...property as QueryablePropertyData,
 			queryContainer: this,
-
-			name: rootPropertyData.name,
-
-			definition: new DigestedObjectSchemaProperty( rootPropertyData.uri ),
-			containerType: rootPropertyData.containerType,
-
-			optional: false,
 		} );
 	}
 

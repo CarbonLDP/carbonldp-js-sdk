@@ -5,7 +5,6 @@ import * as QueryDocument from "./index";
 import { QueryableMetadata } from "./QueryableMetadata";
 import { QueryContext } from "./QueryContext";
 import { QueryContextBuilder } from "./QueryContextBuilder";
-import { QueryContextPartial } from "./QueryContextPartial";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import { QueryDocumentsBuilder, QueryDocumentsBuilderOrderData } from "./QueryDocumentsBuilder";
 import { QueryMetadata, QueryMetadataFactory } from "./QueryMetadata";
@@ -49,15 +48,6 @@ describe( module( "carbonldp/QueryDocuments" ), ():void => {
 	), ():void => {
 		expect( QueryDocument.QueryContextBuilder ).toBeDefined();
 		expect( QueryDocument.QueryContextBuilder ).toBe( QueryContextBuilder );
-	} );
-
-	it( reexports(
-		INSTANCE,
-		"QueryContextPartial",
-		"CarbonLDP.QueryDocuments.QueryContextPartial"
-	), ():void => {
-		expect( QueryDocument.QueryContextPartial ).toBeDefined();
-		expect( QueryDocument.QueryContextPartial ).toBe( QueryContextPartial );
 	} );
 
 	it( reexports(

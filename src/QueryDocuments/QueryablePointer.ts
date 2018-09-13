@@ -5,11 +5,11 @@ import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 import { BaseResolvablePointer } from "../Repository/BaseResolvablePointer";
 import { ResolvablePointer } from "../Repository/ResolvablePointer";
 
-import { QueryableMetadata } from "./QueryableMetadata";
+import { QueryableProperty } from "./QueryableProperty";
 
 
 export interface QueryablePointer extends ResolvablePointer {
-	$_queryableMetadata:QueryableMetadata | undefined;
+	$_queryableMetadata:QueryableProperty | undefined;
 
 
 	$isQueried():boolean;

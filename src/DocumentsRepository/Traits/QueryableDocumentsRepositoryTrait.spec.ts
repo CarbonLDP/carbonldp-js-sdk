@@ -20,7 +20,7 @@ import {
 } from "sparqler/tokens";
 
 import { spyOnDecorated } from "../../../test/helpers/jasmine/spies";
-import { createMockQueryableMetadata } from "../../../test/helpers/mocks/core";
+import { createMockQueryableMetadata } from "../../../test/helpers/mocks";
 
 import { DocumentsContext } from "../../Context/DocumentsContext";
 
@@ -38,11 +38,8 @@ import { ErrorResponse } from "../../LDP/ErrorResponse";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
-
-import { ObjectSchemaDigester } from "../../ObjectSchema/ObjectSchemaDigester";
-
-import { QueryableMetadata } from "../../QueryDocuments/QueryableMetadata";
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
+import { QueryPropertyType } from "../../QueryDocuments/QueryPropertyType";
 
 import { BaseResource } from "../../Resource/BaseResource";
 
@@ -932,8 +929,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -941,11 +938,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"property2": {
 						"@id": "https://schema.org/property-2",
 						"@type": "@id",
+						"$propertyType": QueryPropertyType.PARTIAL,
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "_:1",
 					"property2": {
 						"@id": "https://example.com/ns#property-2",
 						"@type": XSD.integer,
@@ -1044,8 +1042,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				);
 
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -1056,8 +1054,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/another-resource/",
 					"property2": {
 						"@id": "https://example.com/ns#property-2",
 						"@type": XSD.integer,
@@ -1226,10 +1224,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should merge partial metadata", async () => {
 				document = createMockDocument( {
 					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
 						"@vocab": "https://example.com/ns#",
 						"property2": {
 							"@id": "https://schema.org/property-2",
 							"@type": "@id",
+							"$propertyType": QueryPropertyType.PARTIAL,
 						},
 						"property1": {
 							"@id": "property-1",
@@ -1240,6 +1240,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					property2: {
 						$_queryableMetadata: createMockQueryableMetadata( {
+							"$id": "_:1",
 							"@vocab": "https://example.com/ns#",
 							"property3": {
 								"@id": "https://schema.org/property-3",
@@ -1335,24 +1336,25 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property4": {
-						"@id": "https://example.com/ns#property-4",
-						"@type": XSD.boolean,
-					},
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property2": {
 						"@id": "https://schema.org/property-2",
 						"@type": "@id",
+						"$propertyType": QueryPropertyType.PARTIAL,
 					},
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
 					},
+					"property4": {
+						"@id": "https://example.com/ns#property-4",
+						"@type": XSD.boolean,
+					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "_:1",
 					"property3": {
 						"@id": "https://schema.org/property-3",
 						"@type": XSD.string,
@@ -2214,8 +2216,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -2223,11 +2225,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"property2": {
 						"@id": "https://schema.org/property-2",
 						"@type": "@id",
+						"$propertyType": QueryPropertyType.PARTIAL,
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "_:1",
 					"property2": {
 						"@id": "https://example.com/ns#property-2",
 						"@type": XSD.integer,
@@ -2326,8 +2329,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				);
 
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -2338,8 +2341,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/another-resource/",
 					"property2": {
 						"@id": "https://example.com/ns#property-2",
 						"@type": XSD.integer,
@@ -2507,6 +2510,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should merge partial metadata", async () => {
 				document = createMockDocument( {
 					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
 						"@vocab": "https://example.com/ns#",
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -2521,6 +2525,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					property2: {
 						$_queryableMetadata: createMockQueryableMetadata( {
+							"$id": "_:1",
 							"@vocab": "https://example.com/ns#",
 							"property3": {
 								"@id": "https://schema.org/property-3",
@@ -2616,8 +2621,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property4": {
 						"@id": "https://example.com/ns#property-4",
 						"@type": XSD.boolean,
@@ -2625,6 +2630,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"property2": {
 						"@id": "https://schema.org/property-2",
 						"@type": "@id",
+						"$propertyType": QueryPropertyType.PARTIAL,
 					},
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
@@ -2632,8 +2638,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "_:1",
 					"property3": {
 						"@id": "https://schema.org/property-3",
 						"@type": XSD.string,
@@ -3055,6 +3061,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 				document = createMockDocument( {
 					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -3063,6 +3070,21 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						"property2": {
 							"@id": "https://schema.org/property-2",
 							"@type": "@id",
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+							},
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
@@ -3072,21 +3094,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						$_queryableMetadata: createMockQueryableMetadata( {
-							"@vocab": "https://example.com/ns#",
-							"property3": {
-								"@id": "https://schema.org/property-3",
-								"@type": XSD.string,
-							},
-							"property5": {
-								"@id": "https://schema.org/property-5",
-								"@type": XSD.dateTime,
-							},
-							"property2": {
-								"@id": "https://example.com/ns#property-2",
-								"@type": XSD.integer,
-							},
-						} ),
 						$id: "_:1",
 					},
 				} );
@@ -3383,6 +3390,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 				document = createMockDocument( {
 					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -3391,6 +3399,21 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						"property2": {
 							"@id": "https://schema.org/property-2",
 							"@type": "@id",
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+							},
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
@@ -3400,21 +3423,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						$_queryableMetadata: createMockQueryableMetadata( {
-							"@vocab": "https://example.com/ns#",
-							"property3": {
-								"@id": "https://schema.org/property-3",
-								"@type": XSD.string,
-							},
-							"property5": {
-								"@id": "https://schema.org/property-5",
-								"@type": XSD.dateTime,
-							},
-							"property2": {
-								"@id": "https://example.com/ns#property-2",
-								"@type": XSD.integer,
-							},
-						} ),
 						$id: "_:1",
 					},
 				} );
@@ -3494,6 +3502,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 				document = createMockDocument( {
 					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -3502,6 +3511,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						"property2": {
 							"@id": "https://schema.org/property-2",
 							"@type": "@id",
+							"$propertyType": QueryPropertyType.ALL,
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
@@ -3511,7 +3521,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						$_queryableMetadata: new QueryableMetadata( QueryableMetadata.ALL ),
 						$id: "_:1",
 					},
 				} );
@@ -3629,6 +3638,21 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						"property2": {
 							"@id": "https://schema.org/property-2",
 							"@type": "@id",
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+							},
 						},
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -6242,7 +6266,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return full children", ( done:DoneFn ):void => {
+			it( "should return full members", ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -6423,7 +6447,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return .ALL children", ( done:DoneFn ):void => {
+			it( "should return .ALL members", ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -6587,7 +6611,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.catch( done.fail );
 			} );
 
-			it( "should return partial children", ( done:DoneFn ):void => {
+			it( "should return partial members", ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -6766,7 +6790,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return partial children with partial relations", ( done:DoneFn ):void => {
+			it( "should return partial members with partial relations", ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {

@@ -1,26 +1,18 @@
 import { AbstractContext } from "../../../src/Context/AbstractContext";
+import { ContextSettings } from "../../../src/Context/ContextSettings";
+
 import { GeneralRegistry } from "../../../src/GeneralRegistry/GeneralRegistry";
 import { GeneralRepository } from "../../../src/GeneralRepository/GeneralRepository";
 
 import { ModelDecorator } from "../../../src/Model";
 
-import {
-	DigestedObjectSchema,
-	DigestedObjectSchemaProperty,
-	ObjectSchema,
-	ObjectSchemaDigester,
-	ObjectSchemaUtils
-} from "../../../src/ObjectSchema";
-
-import { QueryableMetadata } from "../../../src/QueryDocuments";
+import { DigestedObjectSchema, DigestedObjectSchemaProperty } from "../../../src/ObjectSchema";
 
 import { BaseRegisteredPointer } from "../../../src/Registry/BaseRegisteredPointer";
 import { RegisteredPointer } from "../../../src/Registry/RegisteredPointer";
 
 import { BaseResolvablePointer } from "../../../src/Repository/BaseResolvablePointer";
 import { ResolvablePointer } from "../../../src/Repository/ResolvablePointer";
-
-import { ContextSettings } from "../../../src/Context/ContextSettings";
 
 
 export function createMockDigestedSchema( values?:Partial<DigestedObjectSchema> ):DigestedObjectSchema {
@@ -30,13 +22,6 @@ export function createMockDigestedSchema( values?:Partial<DigestedObjectSchema> 
 export function createMockDigestedSchemaProperty( values?:Partial<DigestedObjectSchemaProperty> ):DigestedObjectSchemaProperty {
 	return Object.assign( new DigestedObjectSchemaProperty(), values );
 }
-
-export function createMockQueryableMetadata( schema:ObjectSchema = {} ):QueryableMetadata {
-	const digestedSchema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( schema );
-	digestedSchema.properties.forEach( definition => ObjectSchemaUtils._resolveProperty( digestedSchema, definition, true ) );
-	return new QueryableMetadata( digestedSchema );
-}
-
 
 export function createMockContext<PARENT extends AbstractContext<any, any, any> = undefined>( data?:{
 	parentContext?:PARENT;

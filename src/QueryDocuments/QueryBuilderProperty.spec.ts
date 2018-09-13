@@ -16,6 +16,7 @@ import { clazz, constructor, hasProperty, hasSignature, INSTANCE, method, module
 
 import { QueryBuilderProperty } from "./QueryBuilderProperty";
 import { QueryContainer } from "./QueryContainer";
+import { QueryPropertyType } from "./QueryPropertyType";
 
 
 describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
@@ -235,8 +236,8 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( QueryBuilderProperty.prototype.getSchema ).toBeDefined();
-				expect( QueryBuilderProperty.prototype.getSchema ).toEqual( jasmine.any( Function ) );
+				expect( QueryBuilderProperty.prototype.getSchemaFor ).toBeDefined();
+				expect( QueryBuilderProperty.prototype.getSchemaFor ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return empty schema when no properties", ():void => {
@@ -247,7 +248,7 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
 					optional: true,
 				} );
 
-				const propertySchema:DigestedObjectSchema = queryProperty.getSchema();
+				const propertySchema:DigestedObjectSchema = queryProperty.getSchemaFor( {} );
 				expect( propertySchema ).toEqual( new DigestedObjectSchema() );
 			} );
 
@@ -257,12 +258,13 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty2" ), ():void => {
 					name: "name",
 					definition: new DigestedObjectSchemaProperty(),
 					optional: true,
+					propertyType: QueryPropertyType.PARTIAL,
 				} );
 
 				queryProperty.addProperty( "property1", {} );
 				queryProperty.addProperty( "property2", { "@id": "https://example.com/property2" } );
 
-				const propertySchema:DigestedObjectSchema = queryProperty.getSchema();
+				const propertySchema:DigestedObjectSchema = queryProperty.getSchemaFor( {} );
 				expect( propertySchema ).toEqual( createMockDigestedSchema( {
 					properties: new Map<string, DigestedObjectSchemaProperty>( [
 						[ "property1", createMockDigestedSchemaProperty( { uri: "https://example.com/vocab#property1" } ) ],

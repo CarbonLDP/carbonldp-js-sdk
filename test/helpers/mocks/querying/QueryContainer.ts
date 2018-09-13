@@ -14,7 +14,7 @@ export class MockQueryContainer extends QueryContainer {
 
 		this._queryProperty = new QueryBuilderProperty( {
 			queryContainer: this,
-			name: "property",
+			name: "root",
 			definition: new DigestedObjectSchemaProperty(),
 			optional: true,
 		} );
