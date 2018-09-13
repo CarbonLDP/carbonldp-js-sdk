@@ -4,13 +4,13 @@ import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSche
 
 import { QueryContainer } from "./QueryContainer";
 import { QueryContainerType } from "./QueryContainerType";
-import { QueryProperty2 } from "./QueryProperty2";
+import { QueryProperty } from "./QueryProperty";
 import { QueryPropertyType } from "./QueryPropertyType";
 
 
 export interface QueryPropertyData {
 	queryContainer:QueryContainer;
-	parent?:QueryProperty2;
+	parent?:QueryProperty;
 
 	name:string;
 	definition:DigestedObjectSchemaProperty;

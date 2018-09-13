@@ -8,7 +8,7 @@ import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
-import { QueryDocumentBuilder2 } from "../QueryDocuments/QueryDocumentBuilder2";
+import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
 
 import { isObject } from "../Utils";
 
@@ -23,12 +23,12 @@ export interface DocumentsRepository extends QueryableDocumentsRepositoryTrait, 
 	context:DocumentsContext;
 
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
-	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
-	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
+	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 	resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
-	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
-	resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
 

@@ -1,13 +1,4 @@
-import {
-	FilterToken,
-	IRIRefToken,
-	LiteralToken,
-	OptionalToken,
-	PrefixedNameToken,
-	PropertyToken,
-	SubjectToken,
-	ValuesToken,
-} from "sparqler/tokens";
+import { IRIRefToken, LiteralToken, PrefixedNameToken, ValuesToken, } from "sparqler/tokens";
 
 import { createMockContext } from "../../test/helpers/mocks";
 
@@ -16,29 +7,23 @@ import { AbstractContext } from "../Context/AbstractContext";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
 
-import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
-
 import { Pointer } from "../Pointer/Pointer";
 
-import { clazz, constructor, hasSignature, INSTANCE, method, module, property } from "../test/JasmineExtender";
+import { clazz, constructor, extendsClass, hasSignature, INSTANCE, method, module, property } from "../test/JasmineExtender";
 
-import { QueryContextBuilder } from "./QueryContextBuilder";
-import * as Module from "./QueryDocumentBuilder";
-import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import * as QueryObjectModule from "./QueryObject";
+import { QueryBuilderProperty } from "./QueryBuilderProperty";
+import { QueryContainerType } from "./QueryContainerType";
+import { QueryDocumentBuilder, SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
+import { QueryDocumentContainer } from "./QueryDocumentContainer";
+import * as QueryObject2Module from "./QueryObject";
 import { QueryObject } from "./QueryObject";
-import { QueryProperty } from "./QueryProperty";
-import * as QueryValueModule from "./QueryValue";
+import { QueryRootProperty } from "./QueryRootProperty";
+import * as QueryValue2Module from "./QueryValue";
 import { QueryValue } from "./QueryValue";
 import { QueryVariable } from "./QueryVariable";
 
 
 describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => {
-
-	it( "should exists", ():void => {
-		expect( Module ).toBeDefined();
-		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
 
 	describe( clazz( "CarbonLDP.QueryDocuments.QueryDocumentBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
 
@@ -48,61 +33,62 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 		} );
 
 		let context:AbstractContext<any, any>;
-		let queryContext:QueryContextBuilder;
-		let baseProperty:QueryProperty;
+		let queryContainer:QueryDocumentContainer;
+		let baseProperty:QueryBuilderProperty;
 		beforeEach( ():void => {
-			context = createMockContext( { uri: "http://example.com" } );
+			context = createMockContext( { uri: "https://example.com" } );
 			context.extendObjectSchema( {
-				"@vocab": "http://example.com/vocab#",
-				"ex": "http://example.com/ns#",
+				"@vocab": "https://example.com/vocab#",
+
+				"ex": "https://example.com/ns#",
+				"xsd": "http://www.w3.org/2001/XMLSchema#",
+
+				"inheritGeneralProperty": {
+					"@id": "ex:inheritProperty",
+				},
+				"extendedGeneralProperty": {
+					"@id": "ex:extendedGeneralProperty",
+				},
 			} );
 
-			queryContext = new QueryContextBuilder( context );
-			baseProperty = queryContext
-				.addProperty( "document" )
-				.setOptional( false );
+			queryContainer = new QueryDocumentContainer( context, { uri: "https://example.com/#root", containerType: QueryContainerType.DOCUMENT } );
+			baseProperty = queryContainer._queryProperty;
 		} );
 
 		describe( constructor(), ():void => {
 
 			it( "should exists", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 				expect( builder ).toBeDefined();
 				expect( builder ).toEqual( jasmine.any( QueryDocumentBuilder ) );
 			} );
 
 			it( "should set the document property", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				expect( builder[ "_document" ] ).toEqual( baseProperty );
-			} );
-
-			it( "should initialize the schema with a general schema", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-
-				const schema:DigestedObjectSchema = context.getObjectSchema();
-				expect( builder[ "_schema" ] ).toEqual( schema );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+				expect( builder._queryProperty ).toEqual( baseProperty );
 			} );
 
 		} );
 
+
 		describe( property( INSTANCE, "inherit", "Readonly<{}>", "Property to make a descriptive inheritance os a query property definition." ), ():void => {
 
 			it( "should exists", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 				expect( builder.inherit ).toBeDefined();
 				expect( builder.inherit ).toEqual( jasmine.any( Object ) );
 			} );
 
 			it( "should be frozen", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 				expect( builder.inherit ).toBeDefined();
 				expect( Object.isFrozen( builder.inherit ) ).toBe( true );
 			} );
 
 			it( "should be the same for every builder", ():void => {
-				const builder1:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				const builder2:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				const builder3:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder1:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+				const builder2:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+				const builder3:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
 				expect( builder1.inherit ).toBe( builder2.inherit );
 				expect( builder1.inherit ).toBe( builder3.inherit );
@@ -114,21 +100,21 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 		describe( property( INSTANCE, "all", "Readonly<{}>", "Property to describe the fetching of the entire resource properties." ), ():void => {
 
 			it( "should exists", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 				expect( builder.all ).toBeDefined();
 				expect( builder.all ).toEqual( jasmine.any( Object ) );
 			} );
 
 			it( "should be frozen", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 				expect( builder.all ).toBeDefined();
 				expect( Object.isFrozen( builder.all ) ).toBe( true );
 			} );
 
 			it( "should be the same for every builder", ():void => {
-				const builder1:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				const builder2:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				const builder3:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder1:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+				const builder2:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+				const builder3:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
 				expect( builder1.all ).toBe( builder2.all );
 				expect( builder1.all ).toBe( builder3.all );
@@ -136,6 +122,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 			} );
 
 		} );
+
 
 		describe( method( INSTANCE, "property" ), ():void => {
 
@@ -145,56 +132,153 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 				[
 					{ name: "name", type: "string", optional: true, description: "Optional name of the property to look for." },
 				],
-				{ type: "CarbonLDP.QueryDocuments.QueryProperty" }
-			), ():void => {
-			} );
+				{ type: "CarbonLDP.QueryDocuments.QueryVariable" }
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.property ).toBeDefined();
 				expect( QueryDocumentBuilder.prototype.property ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call the `getProperty` of the query context", ():void => {
-				spyOn( queryContext, "hasProperty" ).and.returnValue( true );
-				const spy:jasmine.Spy = spyOn( queryContext, "getProperty" );
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+			it( "should call the `getProperty` of the QueryBuilderProperty", ():void => {
+				const spy:jasmine.Spy = spyOn( QueryBuilderProperty.prototype, "getProperty" )
+					.and.returnValue( baseProperty );
+
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
 				builder.property( "name" );
-				expect( spy ).toHaveBeenCalledWith( "document.name" );
+				expect( spy ).toHaveBeenCalledWith( "name", { create: true } );
+
 				builder.property( "object.name" );
-				expect( spy ).toHaveBeenCalledWith( "document.object.name" );
+				expect( spy ).toHaveBeenCalledWith( "object.name", { create: true } );
 			} );
 
 			it( "should be able to look in all the properties tree", ():void => {
-				spyOn( queryContext, "getProperty" );
-				const spy:jasmine.Spy = spyOn( queryContext, "hasProperty" ).and.returnValue( false );
+				const spy0:jasmine.Spy = spyOn( baseProperty, "getProperty" )
+					.and.returnValue( undefined );
 
-				baseProperty = new QueryProperty( queryContext, "document.path1.path2.path3" );
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const path1:QueryBuilderProperty = baseProperty.addProperty( "path1", {} );
+				const spy1:jasmine.Spy = spyOn( path1, "getProperty" )
+					.and.returnValue( undefined );
+
+				const path2:QueryBuilderProperty = path1.addProperty( "path2", {} );
+				const spy2:jasmine.Spy = spyOn( path2, "getProperty" )
+					.and.returnValue( undefined );
+
+				const path3:QueryBuilderProperty = path2.addProperty( "path3", {} );
+				const spy3:jasmine.Spy = spyOn( path3, "getProperty" )
+					.and.returnValue( undefined );
+
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, path3 );
 
 				try {
 					builder.property( "name" );
 				} catch {}
 
-				expect( spy ).toHaveBeenCalledWith( "document.path1.path2.path3.name" );
-				expect( spy ).toHaveBeenCalledWith( "document.path1.path2.name" );
-				expect( spy ).toHaveBeenCalledWith( "document.path1.name" );
-				expect( spy ).toHaveBeenCalledWith( "document.name" );
+				expect( spy3 ).toHaveBeenCalledWith( "name", { create: true } );
+				expect( spy3 ).toHaveBeenCalledBefore( spy2 );
+
+				expect( spy2 ).toHaveBeenCalledWith( "name", { create: true } );
+				expect( spy2 ).toHaveBeenCalledBefore( spy1 );
+
+				expect( spy1 ).toHaveBeenCalledWith( "name", { create: true } );
+				expect( spy1 ).toHaveBeenCalledBefore( spy0 );
+
+				expect( spy0 ).toHaveBeenCalledWith( "name", { create: true } );
 			} );
 
 			it( "should throw error when the property does not exists", ():void => {
-				spyOn( queryContext, "getProperty" );
-				spyOn( queryContext, "hasProperty" ).and.callFake( name => name === "document.path1.name" );
+				baseProperty = baseProperty
+					.addProperty( "path1", {} )
+					.addProperty( "name", {} );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
-				baseProperty = new QueryProperty( queryContext, "document.path1.path2.path3" );
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = ( name:string ) => () => builder.property( name );
 
-				expect( helper( "name" ) ).not.toThrowError( IllegalArgumentError, `The "name" property was not declared.` );
-				expect( helper( "path1.name" ) ).not.toThrowError( IllegalArgumentError, `The "path1.name" property was not declared.` );
+				expect( helper( "name" ) ).not.toThrowError( IllegalArgumentError, `The property "name" was not declared.` );
+				expect( helper( "path1.name" ) ).not.toThrowError( IllegalArgumentError, `The property "path1.name" was not declared.` );
 
-				expect( helper( "path2.name" ) ).toThrowError( IllegalArgumentError, `The "path2.name" property was not declared.` );
-				expect( helper( "path1.path2.name" ) ).toThrowError( IllegalArgumentError, `The "path1.path2.name" property was not declared.` );
+				expect( helper( "path2.name" ) ).toThrowError( IllegalArgumentError, `The property "path2.name" was not declared.` );
+				expect( helper( "path1.path2.name" ) ).toThrowError( IllegalArgumentError, `The property "path1.path2.name" was not declared.` );
+			} );
+
+
+			it( "should return self property's variable when no path", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+
+				const variable:QueryVariable = builder.property();
+				expect( variable ).toBe( baseProperty.variable );
+			} );
+
+			it( "should return property's variable with one level path", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+
+				const targetProperty:QueryBuilderProperty = baseProperty.addProperty( "path1", {} );
+
+				const variable:QueryVariable = builder.property( "path1" );
+				expect( variable ).toBe( targetProperty.variable );
+			} );
+
+			it( "should return property's variable with three path", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+
+				const targetProperty:QueryBuilderProperty = baseProperty
+					.addProperty( "path1", {} )
+					.addProperty( "path2", {} )
+					.addProperty( "path3", {} )
+				;
+
+				const variable:QueryVariable = builder.property( "path1.path2.path3" );
+				expect( variable ).toBe( targetProperty.variable );
+			} );
+
+
+			it( "should return first property's variable from three path base property", ():void => {
+				const targetProperty:QueryBuilderProperty = baseProperty
+					.addProperty( "path1", {} )
+				;
+
+				baseProperty = targetProperty
+					.addProperty( "path2", {} )
+					.addProperty( "path3", {} )
+				;
+
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+
+				const variable:QueryVariable = builder.property( "path1" );
+				expect( variable ).toBe( targetProperty.variable );
+			} );
+
+			it( "should return second path property's variable from three path base property", ():void => {
+				const targetProperty:QueryBuilderProperty = baseProperty
+					.addProperty( "path1", {} )
+					.addProperty( "path2", {} )
+				;
+
+				baseProperty = targetProperty
+					.addProperty( "path3", {} )
+				;
+
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+
+				const variable:QueryVariable = builder.property( "path2" );
+				expect( variable ).toBe( targetProperty.variable );
+			} );
+
+			it( "should return second full path property's variable from three path base property", ():void => {
+				const targetProperty:QueryBuilderProperty = baseProperty
+					.addProperty( "path1", {} )
+					.addProperty( "path2", {} )
+				;
+
+				baseProperty = targetProperty
+					.addProperty( "path3", {} )
+				;
+
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+
+				const variable:QueryVariable = builder.property( "path1.path2" );
+				expect( variable ).toBe( targetProperty.variable );
 			} );
 
 		} );
@@ -207,34 +291,34 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					{ name: "value", type: "string | number | boolean | Date", description: "Value to be converted in a safe to use in query object." },
 				],
 				{ type: "CarbonLDP.QueryDocuments.QueryValue" }
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.value ).toBeDefined();
 				expect( QueryDocumentBuilder.prototype.value ).toEqual( jasmine.any( Function ) );
 			} );
 
+
 			it( "should create a QueryValue with the name provided", ():void => {
-				const spy:jasmine.Spy = spyOn( QueryValueModule, "QueryValue" );
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const spy:jasmine.Spy = spyOn( QueryValue2Module, "QueryValue" );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
 				builder.value( "name" );
-				expect( spy ).toHaveBeenCalledWith( queryContext, "name" );
+				expect( spy ).toHaveBeenCalledWith( queryContainer, "name" );
 
 				builder.value( 1 );
-				expect( spy ).toHaveBeenCalledWith( queryContext, 1 );
+				expect( spy ).toHaveBeenCalledWith( queryContainer, 1 );
 
 				builder.value( true );
-				expect( spy ).toHaveBeenCalledWith( queryContext, true );
+				expect( spy ).toHaveBeenCalledWith( queryContainer, true );
 
 				const date:Date = new Date();
 				builder.value( date );
-				expect( spy ).toHaveBeenCalledWith( queryContext, date );
+				expect( spy ).toHaveBeenCalledWith( queryContainer, date );
 			} );
 
 			it( "should return a QueryValue", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 				expect( builder.value( "value" ) ).toEqual( jasmine.any( QueryValue ) );
 				expect( builder.value( 10.01 ) ).toEqual( jasmine.any( QueryValue ) );
 				expect( builder.value( true ) ).toEqual( jasmine.any( QueryValue ) );
@@ -251,33 +335,34 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					{ name: "value", type: "CarbonLDP.Pointer | string", description: "Pointer or URI to be converted in a safe to use in query object." },
 				],
 				{ type: "CarbonLDP.QueryDocuments.QueryObject" }
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.object ).toBeDefined();
 				expect( QueryDocumentBuilder.prototype.object ).toEqual( jasmine.any( Function ) );
 			} );
 
+
 			it( "should create a QueryObject with the name provided", ():void => {
-				const spy:jasmine.Spy = spyOn( QueryObjectModule, "QueryObject" );
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const spy:jasmine.Spy = spyOn( QueryObject2Module, "QueryObject" );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
-				builder.object( "http://example.com/resource/" );
-				expect( spy ).toHaveBeenCalledWith( queryContext, "http://example.com/resource/" );
+				builder.object( "https://example.com/resource/" );
+				expect( spy ).toHaveBeenCalledWith( queryContainer, "https://example.com/resource/" );
 
-				const pointer:Pointer = context.registry.getPointer( "http://example.com/resource/" );
+				const pointer:Pointer = context.registry.getPointer( "https://example.com/resource/" );
 				builder.object( pointer );
-				expect( spy ).toHaveBeenCalledWith( queryContext, pointer );
+				expect( spy ).toHaveBeenCalledWith( queryContainer, "https://example.com/resource/" );
 			} );
 
 			it( "should return a QueryObject", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				expect( builder.object( "http://example.com/resource/" ) ).toEqual( jasmine.any( QueryObject ) );
-				expect( builder.object( context.registry.getPointer( "http://example.com/resource/" ) ) ).toEqual( jasmine.any( QueryObject ) );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+				expect( builder.object( "https://example.com/resource/" ) ).toEqual( jasmine.any( QueryObject ) );
+				expect( builder.object( context.registry.getPointer( "https://example.com/resource/" ) ) ).toEqual( jasmine.any( QueryObject ) );
 			} );
 
 		} );
+
 
 		describe( method( INSTANCE, "withType" ), ():void => {
 
@@ -288,17 +373,17 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					{ name: "type", type: "string", description: "The type of the target and schema" },
 				],
 				{ type: "this" }
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.withType ).toBeDefined();
 				expect( QueryDocumentBuilder.prototype.withType ).toEqual( jasmine.any( Function ) );
 			} );
 
+
 			it( "should throw error when properties already used", ():void => {
 				const helper:( type:string ) => void = type => () => {
-					const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+					const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 					builder.properties( {
 						"property": {},
 					} );
@@ -306,80 +391,24 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 				};
 
 				expect( helper( "Type" ) ).toThrowError( IllegalStateError, "Types must be specified before the properties." );
-				expect( helper( "http://example.com/ns#Type" ) ).toThrowError( IllegalStateError, "Types must be specified before the properties." );
+				expect( helper( "https://example.com/ns#Type" ) ).toThrowError( IllegalStateError, "Types must be specified before the properties." );
 			} );
 
-			it( "should add the schema of the type", ():void => {
-				context.extendObjectSchema( "Type-1", {
-					"property-1": {
-						"@id": "property-1",
-					},
-				} );
-				context.extendObjectSchema( "Type-2", {
-					"property-1": {
-						"@id": "property-2.1",
-					},
-					"property-2": {
-						"@id": "property-2",
-					},
-				} );
+			it( "should add the type to the property", ():void => {
+				context.extendObjectSchema( { "ex": "https://example.com/ns#" } );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const spy:jasmine.Spy = spyOn( baseProperty, "addType" );
 
 				builder.withType( "Type-1" );
-				const schema1:DigestedObjectSchema = context.getObjectSchema( "Type-1" );
-				expect( builder[ "_schema" ].properties ).not.toBe( schema1.properties );
-				expect( builder[ "_schema" ].properties.get( "property-1" ) ).toEqual( schema1.properties.get( "property-1" ) );
-
-				builder.withType( "Type-2" );
-				const schema2:DigestedObjectSchema = context.getObjectSchema( "Type-2" );
-				expect( builder[ "_schema" ].properties ).not.toBe( schema2.properties );
-				expect( builder[ "_schema" ].properties.get( "property-1" ) ).toEqual( schema2.properties.get( "property-1" ) );
-				expect( builder[ "_schema" ].properties.get( "property-2" ) ).toEqual( schema2.properties.get( "property-2" ) );
-			} );
-
-			it( "should add the type to the property's pattern", ():void => {
-				context.extendObjectSchema( {
-					"ex": "http://example.com/ns#",
-				} );
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				builder.withType( "Type-1" );
-				expect( baseProperty.getPatterns() ).toEqual( jasmine.arrayContaining( [
-					jasmine.objectContaining( {
-						token: "subject",
-						subject: baseProperty.variable,
-						properties: jasmine.arrayContaining( [
-							jasmine.objectContaining( {
-								token: "property",
-								verb: "a",
-								objects: jasmine.arrayContaining( [
-									new IRIRefToken( "http://example.com/vocab#Type-1" ),
-								] ),
-							} ),
-						] ),
-					} ),
-				] ) as any );
+				expect( spy ).toHaveBeenCalledWith( "Type-1" );
 
 				builder.withType( "ex:Type-2" );
-				expect( baseProperty.getPatterns() ).toEqual( jasmine.arrayContaining( [
-					jasmine.objectContaining( {
-						token: "subject",
-						subject: baseProperty.variable,
-						properties: jasmine.arrayContaining( [
-							jasmine.objectContaining( {
-								token: "property",
-								verb: "a",
-								objects: jasmine.arrayContaining( [
-									new PrefixedNameToken( "ex:Type-2" ),
-								] ),
-							} ),
-						] ),
-					} ),
-				] ) as any );
+				expect( spy ).toHaveBeenCalledWith( "ex:Type-2" );
 			} );
 
 			it( "should return to itself", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
 				const returned:QueryDocumentBuilder = builder.withType( "Type" );
 				expect( returned ).toBe( builder );
@@ -395,132 +424,149 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					{ name: "propertiesSchema", type: "CarbonLDP.QueryDocuments.QuerySchema", description: "Similar as an schema object, but this specifies the properties to be retrieved." },
 				],
 				{ type: "this" }
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.properties ).toBeDefined();
 				expect( QueryDocumentBuilder.prototype.properties ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should add properties to the schema", ():void => {
-				context.extendObjectSchema( {
-					"xsd": "http://www.w3.org/2001/XMLSchema#",
-					"ex": "http://example.com/ns#",
-					"inheritProperty": {
-						"@id": "ex:inheritProperty",
-					},
-					"extendedProperty": {
-						"@id": "ex:extendedProperty",
-					},
-				} );
 
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+			it( "should create property with default data", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 				builder.properties( {
 					"defaultProperty": {},
-					"inheritProperty": {},
-					"extendedProperty": {
-						"@type": "xsd:string",
-					},
-					"inlineProperty": "ex:inlineProperty",
 				} );
 
-				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
-					"defaultProperty",
-					jasmine.objectContaining( {
-						uri: "http://example.com/vocab#defaultProperty",
-					} ) as any,
-				] ] ) ) );
-
-				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
-					"inheritProperty",
-					jasmine.objectContaining( {
-						uri: "http://example.com/ns#inheritProperty",
-					} ) as any,
-				] ] ) ) );
-
-				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
-					"extendedProperty",
-					jasmine.objectContaining( {
-						uri: "http://example.com/ns#extendedProperty",
-						literal: true,
-						literalType: "http://www.w3.org/2001/XMLSchema#string",
-					} ) as any,
-				] ] ) ) );
-
-				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
-					"inlineProperty",
-					jasmine.objectContaining( {
-						uri: "http://example.com/ns#inlineProperty",
-					} ) as any,
-				] ] ) ) );
+				expect( baseProperty.getProperty( "defaultProperty" ).definition )
+					.toEqual( jasmine.objectContaining( {
+						uri: "https://example.com/vocab#defaultProperty",
+					} ) );
 			} );
 
-			it( "should add properties and its tokens", ():void => {
-				context.extendObjectSchema( {
-					"xsd": "http://www.w3.org/2001/XMLSchema#",
-					"ex": "http://example.com/ns#",
-					"inheritProperty": {
-						"@id": "ex:inheritProperty",
-					},
-					"extendedProperty": {
-						"@id": "ex:extendedProperty",
+			it( "should create property with general inherit data", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+				builder.properties( {
+					"inheritGeneralProperty": {},
+				} );
+
+				expect( baseProperty.getProperty( "inheritGeneralProperty" ).definition )
+					.toEqual( jasmine.objectContaining( {
+						uri: "https://example.com/ns#inheritProperty",
+					} ) );
+			} );
+
+			it( "should create property with extended general inherit data", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+				builder.properties( {
+					"extendedGeneralProperty": {
+						"@type": "xsd:string",
 					},
 				} );
 
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				builder.properties( {
-					"defaultProperty": {},
-					"inheritProperty": {},
-					"extendedProperty": {
-						"@type": "xsd:string",
+				expect( baseProperty.getProperty( "extendedGeneralProperty" ).definition )
+					.toEqual( jasmine.objectContaining( {
+						uri: "https://example.com/ns#extendedGeneralProperty",
+						literal: true,
+						literalType: "http://www.w3.org/2001/XMLSchema#string",
+					} ) );
+			} );
+
+			it( "should create property with typed inherit data", ():void => {
+				context.extendObjectSchema( "Type", {
+					"inheritTypedProperty": {
+						"@id": "ex:inheritProperty",
 					},
+				} );
+
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+				builder.properties( {
+					"inheritTypedProperty": {},
+				} );
+
+				expect( baseProperty.getProperty( "inheritTypedProperty" ).definition )
+					.toEqual( jasmine.objectContaining( {
+						uri: "https://example.com/ns#inheritProperty",
+					} ) );
+
+			} );
+
+			it( "should create property with typed local data", ():void => {
+				context.extendObjectSchema( "Type", {
+					"inheritTypedProperty": {
+						"@id": "ex:inheritProperty",
+					},
+				} );
+
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+
+				builder.withType( "Type" );
+				context.clearObjectSchema( "Type" );
+
+				builder.properties( {
+					"inheritTypedProperty": {},
+				} );
+
+				expect( baseProperty.getProperty( "inheritTypedProperty" ).definition )
+					.toEqual( jasmine.objectContaining( {
+						uri: "https://example.com/ns#inheritProperty",
+					} ) );
+
+			} );
+
+			it( "should create property with inline data", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
+				builder.properties( {
 					"inlineProperty": "ex:inlineProperty",
 				} );
 
-				const defaultProperty:QueryProperty = builder.property( "defaultProperty" );
-				expect( defaultProperty ).toBeDefined();
-				expect( defaultProperty.getPatterns() ).toEqual( [
-					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
-							.addProperty( new PropertyToken( new IRIRefToken( "http://example.com/vocab#defaultProperty" ) )
-								.addObject( new QueryVariable( "document.defaultProperty", jasmine.any( Number ) as any ) ) ) )
-					,
-				] );
-
-				const inheritProperty:QueryProperty = builder.property( "inheritProperty" );
-				expect( inheritProperty ).toBeDefined();
-				expect( inheritProperty.getPatterns() ).toEqual( [
-					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
-							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:inheritProperty" ) )
-								.addObject( new QueryVariable( "document.inheritProperty", jasmine.any( Number ) as any ) ) ) )
-					,
-				] );
-
-				const extendedProperty:QueryProperty = builder.property( "extendedProperty" );
-				expect( extendedProperty ).toBeDefined();
-				expect( extendedProperty.getPatterns() ).toEqual( [
-					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
-							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:extendedProperty" ) )
-								.addObject( new QueryVariable( "document.extendedProperty", jasmine.any( Number ) as any ) ) ) )
-						.addPattern( new FilterToken( "datatype( ?document__extendedProperty ) = xsd:string" ) )
-					,
-				] );
-
-				const inlineProperty:QueryProperty = builder.property( "inlineProperty" );
-				expect( inlineProperty ).toBeDefined();
-				expect( inlineProperty.getPatterns() ).toEqual( [
-					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
-							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:inlineProperty" ) )
-								.addObject( new QueryVariable( "document.inlineProperty", jasmine.any( Number ) as any ) ) ) )
-					,
-				] );
+				expect( baseProperty.getProperty( "inlineProperty" ).definition )
+					.toEqual( jasmine.objectContaining( {
+						uri: "https://example.com/ns#inlineProperty",
+					} ) );
 			} );
 
 		} );
+
+	} );
+
+	describe( clazz( "CarbonLDP.QueryDocuments.SubQueryDocumentsBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
+
+		it( "should exists", ():void => {
+			expect( SubQueryDocumentsBuilder ).toBeDefined();
+			expect( SubQueryDocumentsBuilder ).toEqual( jasmine.any( Function ) );
+		} );
+
+		let context:AbstractContext<any, any>;
+		let queryContainer:QueryDocumentContainer;
+		let baseProperty:QueryRootProperty;
+		beforeEach( ():void => {
+			context = createMockContext( { uri: "https://example.com" } );
+			context.extendObjectSchema( {
+				"@vocab": "https://example.com/vocab#",
+				"ex": "https://example.com/ns#",
+			} );
+
+			queryContainer = new QueryDocumentContainer( context, { uri: "https://example.com/#root", containerType: QueryContainerType.DOCUMENT } );
+			baseProperty = queryContainer._queryProperty;
+		} );
+
+		describe( constructor(), ():void => {
+
+			it( "should exists", ():void => {
+				const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, baseProperty );
+				expect( builder ).toBeDefined();
+				expect( builder ).toEqual( jasmine.any( SubQueryDocumentsBuilder ) );
+			} );
+
+		} );
+
+		it( extendsClass( "CarbonLDP.QueryDocuments.QueryDocumentBuilder" ), () => {
+			const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, baseProperty );
+			expect( builder ).toBeDefined();
+			expect( builder ).toEqual( jasmine.any( QueryDocumentBuilder ) );
+		} );
+
 
 		describe( method( INSTANCE, "filter" ), ():void => {
 
@@ -530,31 +576,49 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					{ name: "constraint", type: "string", description: "RAW constrain of the filter to make." },
 				],
 				{ type: "this" }
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( QueryDocumentBuilder.prototype.filter ).toBeDefined();
-				expect( QueryDocumentBuilder.prototype.filter ).toEqual( jasmine.any( Function ) );
+				expect( SubQueryDocumentsBuilder.prototype.filter ).toBeDefined();
+				expect( SubQueryDocumentsBuilder.prototype.filter ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should add the filter to the base property", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				const helper:( constraint:string, propertyName?:string ) => void = ( constraint, propertyName ) => {
-					const targetBuilder:QueryDocumentBuilder = propertyName ?
-						new QueryDocumentBuilder( queryContext, queryContext.addProperty( propertyName ) ) :
-						builder
-					;
 
-					targetBuilder.filter( constraint );
-					expect( baseProperty.getPatterns() ).toContain( new FilterToken( constraint ) );
-				};
+			it( "should add the filter to the base property from base builder", ():void => {
+				const spy:jasmine.Spy = spyOn( baseProperty, "addFilter" );
 
-				helper( "?property1 = ?property2" );
-				helper( "?property1 = 12345" );
+				const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, baseProperty );
 
-				helper( "?document__subProperty = 12345", "document.subProperty" );
-				helper( "?document__subProperty = 12345", "document.subProperty.subSubProperty" );
+				builder.filter( "?property1 = ?property2" );
+				expect( spy ).toHaveBeenCalledWith( "?property1 = ?property2" );
+			} );
+
+			it( "should add the filter to the property in one level builder", ():void => {
+				const subProperty:QueryBuilderProperty = baseProperty
+					.addProperty( "subProperty", {} )
+				;
+
+				const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, subProperty );
+
+				const spy:jasmine.Spy = spyOn( subProperty, "addFilter" );
+				builder.filter( "?property1 = ?property2" );
+
+				expect( spy ).toHaveBeenCalledWith( "?property1 = ?property2" );
+			} );
+
+			it( "should add the filter to the property in level three builder", ():void => {
+				const subProperty:QueryBuilderProperty = baseProperty
+					.addProperty( "subProperty1", {} )
+					.addProperty( "subProperty1.1", {} )
+					.addProperty( "subProperty1.1.1", {} )
+				;
+
+				const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, subProperty );
+
+				const spy:jasmine.Spy = spyOn( subProperty, "addFilter" );
+				builder.filter( "?property1 = ?property2" );
+
+				expect( spy ).toHaveBeenCalledWith( "?property1 = ?property2" );
 			} );
 
 		} );
@@ -568,48 +632,59 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					{ name: "...values", type: "(CarbonLDP.QueryDocuments.QueryValue | CarbonLDP.QueryDocuments.QueryObject)[]", description: "Values the property must have so that the document would be returned." },
 				],
 				{ type: "this" }
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( QueryDocumentBuilder.prototype.values ).toBeDefined();
-				expect( QueryDocumentBuilder.prototype.values ).toEqual( jasmine.any( Function ) );
+				expect( SubQueryDocumentsBuilder.prototype.values ).toBeDefined();
+				expect( SubQueryDocumentsBuilder.prototype.values ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should add values as non optional of the property", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+			it( "should add values to the property", ():void => {
+				const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, baseProperty );
 
 				builder.values(
 					builder.value( "hello" ),
 					builder.value( "world" )
 				);
-				expect( baseProperty.getPatterns() ).toContain( new ValuesToken()
-					.addVariables( baseProperty.variable )
-					.addValues( new LiteralToken( "hello" ) )
-					.addValues( new LiteralToken( "world" ) )
-				);
 
-				builder.values(
-					builder.object( Pointer.create( { $id: "http://example.com/pointer-1" } ) ),
-					builder.object( Pointer.create( { $id: "ex:pointer2" } ) )
-				);
-				expect( baseProperty.getPatterns() ).toContain( new ValuesToken()
+				expect( baseProperty.getSearchPatterns() ).toContain( new ValuesToken()
 					.addVariables( baseProperty.variable )
 					.addValues( new LiteralToken( "hello" ) )
 					.addValues( new LiteralToken( "world" ) )
-					.addValues( new IRIRefToken( "http://example.com/pointer-1" ) )
+				);
+			} );
+
+			it( "should append values to the property", ():void => {
+				const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, baseProperty );
+
+				builder
+					.values(
+						builder.value( "hello" ),
+						builder.value( "world" )
+					)
+					.values(
+						builder.object( Pointer.create( { $id: "https://example.com/pointer-1" } ) ),
+						builder.object( Pointer.create( { $id: "ex:pointer2" } ) )
+					)
+				;
+
+				expect( baseProperty.getSearchPatterns() ).toContain( new ValuesToken()
+					.addVariables( baseProperty.variable )
+					.addValues( new LiteralToken( "hello" ) )
+					.addValues( new LiteralToken( "world" ) )
+					.addValues( new IRIRefToken( "https://example.com/pointer-1" ) )
 					.addValues( new PrefixedNameToken( "ex:pointer2" ) )
 				);
 			} );
 
 			it( "should throw error if blank node is provided", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, baseProperty );
 				const helper:( label:string ) => void = label => () => {
 					builder.values( builder.object( Pointer.create( { $id: label } ) ) );
 				};
 
-				expect( helper( "_:blank-node" ) ).toThrowError( IllegalArgumentError, `Blank node "_:blank-node" is not a valid value.` );
-				expect( helper( "_:another-one" ) ).toThrowError( IllegalArgumentError, `Blank node "_:another-one" is not a valid value.` );
+				expect( helper( "_:blank-node" ) ).toThrowError( IllegalArgumentError, `Cannot assign blank nodes ("_:blank-node").` );
+				expect( helper( "_:another-one" ) ).toThrowError( IllegalArgumentError, `Cannot assign blank nodes ("_:another-one").` );
 			} );
 
 		} );

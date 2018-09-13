@@ -8,7 +8,7 @@ import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 
 import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 import { QueryContainer } from "./QueryContainer";
-import { QueryProperty2 } from "./QueryProperty2";
+import { QueryProperty } from "./QueryProperty";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { QueryResultCompacter } from "./QueryResultCompacter";
 
@@ -138,7 +138,7 @@ describe( module( "carbonldp/JSONLD/QueryResultCompacter" ), ():void => {
 			it( "should merge metadata level schema from related to each other", ():void => {
 				queryContainer._queryProperty
 					.setType( QueryPropertyType.PARTIAL );
-				const subProperty:QueryProperty2 = queryContainer._queryProperty
+				const subProperty:QueryProperty = queryContainer._queryProperty
 					.addProperty( "pointer1", {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",
@@ -210,7 +210,7 @@ describe( module( "carbonldp/JSONLD/QueryResultCompacter" ), ():void => {
 			it( "should compact a resource with a fragment", ():void => {
 				queryContainer._queryProperty
 					.setType( QueryPropertyType.PARTIAL );
-				const subProperty:QueryProperty2 = queryContainer._queryProperty
+				const subProperty:QueryProperty = queryContainer._queryProperty
 					.addProperty( "pointer", {
 						"@id": "https://example.com/ns#pointer",
 						"@type": "@id",
@@ -262,7 +262,7 @@ describe( module( "carbonldp/JSONLD/QueryResultCompacter" ), ():void => {
 			it( "should compact every level from related to each other", ():void => {
 				queryContainer._queryProperty
 					.setType( QueryPropertyType.PARTIAL );
-				const subProperty:QueryProperty2 = queryContainer._queryProperty
+				const subProperty:QueryProperty = queryContainer._queryProperty
 					.addProperty( "pointer1", {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",
@@ -325,7 +325,7 @@ describe( module( "carbonldp/JSONLD/QueryResultCompacter" ), ():void => {
 			it( "should compact same related document", ():void => {
 				queryContainer._queryProperty
 					.setType( QueryPropertyType.PARTIAL );
-				const subProperty:QueryProperty2 = queryContainer._queryProperty
+				const subProperty:QueryProperty = queryContainer._queryProperty
 					.addProperty( "pointer", {
 						"@id": "https://example.com/ns#pointer",
 						"@type": "@id",

@@ -10,13 +10,13 @@ import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSche
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 import { ObjectSchemaProperty } from "../ObjectSchema/ObjectSchemaProperty";
 
-import { QueryProperty2 } from "./QueryProperty2";
+import { QueryProperty } from "./QueryProperty";
 import { QueryVariable } from "./QueryVariable";
 
 
 export abstract class QueryContainer extends FluentPathContainer<undefined> {
 	readonly context:AbstractContext<any, any, any>;
-	abstract readonly _queryProperty:QueryProperty2;
+	abstract readonly _queryProperty:QueryProperty;
 
 	private readonly _generalSchema:DigestedObjectSchema;
 	private readonly _prefixesTuples:[ string, string ][];

@@ -13,12 +13,12 @@ import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSche
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 
 import { QueryBuilderPropertyData } from "./QueryBuilderPropertyData";
-import { QueryProperty2 } from "./QueryProperty2";
+import { QueryProperty } from "./QueryProperty";
 import { SubQueryPropertyDefinition } from "./SubQueryPropertyDefinition";
 import { _getMatchingDefinition } from "./Utils";
 
 
-export class QueryBuilderProperty extends QueryProperty2 {
+export class QueryBuilderProperty extends QueryProperty {
 	readonly parent?:QueryBuilderProperty;
 
 	protected readonly _types:string[];

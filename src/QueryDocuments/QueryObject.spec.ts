@@ -4,21 +4,14 @@ import { createMockContext } from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
 
-import { Pointer } from "../Pointer/Pointer";
-
 import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
-import { QueryContext } from "./QueryContext";
-import * as Module from "./QueryObject";
+import { QueryContainerType } from "./QueryContainerType";
+import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import { QueryObject } from "./QueryObject";
 
 
 describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
-
-	it( "should exists", ():void => {
-		expect( Module ).toBeDefined();
-		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
 
 	describe( clazz( "CarbonLDP.QueryDocuments.QueryObject", "Class that represents any resource." ), ():void => {
 
@@ -28,13 +21,13 @@ describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
 		} );
 
 		let context:AbstractContext<any, any>;
-		let queryContext:QueryContext;
+		let queryContainer:QueryDocumentContainer;
 		beforeEach( ():void => {
 			context = createMockContext( { uri: "https://example.com/" } );
 			context.extendObjectSchema( {
 				"ex": "http://example.com/ns#",
 			} );
-			queryContext = new QueryContext( context );
+			queryContainer = new QueryDocumentContainer( context, { uri: "root", containerType: QueryContainerType.DOCUMENT } );
 		} );
 
 		describe( constructor(), ():void => {
@@ -42,37 +35,37 @@ describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
 			it( hasSignature(
 				"Creates an object for the specified object resource.",
 				[
-					{ name: "context", type: "CarbonLDP.QueryDocuments.QueryContext", description: "The context of the query where the object is been used." },
-					{ name: "object", type: "CarbonLDP.Pointer | string", description: "The object to be converted in a safe to use in query object resource." },
+					{ name: "queryContainer", type: "CarbonLDP.QueryDocuments.QueryDocumentContainer" },
+					{ name: "id", type: "string", description: "The ID to be converted in a safe to use object in the query statements." },
 				]
 			), ():void => {
 			} );
 
 			it( "should exists", ():void => {
-				const queryObject:QueryObject = new QueryObject( queryContext, "http://example.com/" );
+				const queryObject:QueryObject = new QueryObject( queryContainer, "http://example.com/" );
 				expect( queryObject ).toEqual( jasmine.any( QueryObject ) );
 			} );
 
 			it( "should create an IRI token", ():void => {
-				const queryObject:QueryObject = new QueryObject( queryContext, "http://example.com/resource/" );
+				const queryObject:QueryObject = new QueryObject( queryContainer, "http://example.com/resource/" );
 				expect( queryObject[ "_resource" ] ).toEqual( jasmine.any( IRIRefToken ) );
 			} );
 
 			it( "should create an PrefixedName token", ():void => {
-				const queryObject:QueryObject = new QueryObject( queryContext, "ex:resource" );
+				const queryObject:QueryObject = new QueryObject( queryContainer, "ex:resource" );
 				expect( queryObject[ "_resource" ] ).toEqual( jasmine.any( PrefixedNameToken ) );
 			} );
 
 			it( "should create an BlankNodeToken token", ():void => {
-				const queryObject:QueryObject = new QueryObject( queryContext, "_:resource" );
+				const queryObject:QueryObject = new QueryObject( queryContainer, "_:resource" );
 				expect( queryObject[ "_resource" ] ).toEqual( jasmine.any( BlankNodeToken ) );
 			} );
 
 			it( "should call the compactIRI", ():void => {
-				const spy:jasmine.Spy = spyOn( queryContext, "compactIRI" ).and.callThrough();
+				const spy:jasmine.Spy = spyOn( queryContainer, "compactIRI" ).and.callThrough();
 
 				const helper:( iri:string ) => void = iri => {
-					new QueryObject( queryContext, iri );
+					new QueryObject( queryContainer, iri );
 					expect( spy ).toHaveBeenCalledWith( iri );
 				};
 
@@ -81,10 +74,10 @@ describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
 			} );
 
 			it( "should no call the compactIRI when blank node", ():void => {
-				const spy:jasmine.Spy = spyOn( queryContext, "compactIRI" ).and.callThrough();
+				const spy:jasmine.Spy = spyOn( queryContainer, "compactIRI" ).and.callThrough();
 
 				const helper:( iri:string ) => void = iri => {
-					new QueryObject( queryContext, iri );
+					new QueryObject( queryContainer, iri );
 					expect( spy ).not.toHaveBeenCalled();
 				};
 
@@ -97,9 +90,8 @@ describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
 
 			it( hasSignature(
 				"Returns the SPARQL token of the object.",
-				{ type: "SPARQL/tokens/IRIToken | SPARQL/tokens/BlankNodeToken | SPARQL/tokens/PrefixedNameToken" }
-			), ():void => {
-			} );
+				{ type: "sparqler/tokens/IRIToken | sparqler/tokens/BlankNodeToken | sparqler/tokens/PrefixedNameToken" }
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryObject.prototype.getToken ).toBeDefined();
@@ -107,18 +99,14 @@ describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
 			} );
 
 			it( "should return the token created", ():void => {
-				const helper:( object:string | Pointer ) => void = object => {
-					const queryObject:QueryObject = new QueryObject( queryContext, object );
+				const helper:( object:string ) => void = object => {
+					const queryObject:QueryObject = new QueryObject( queryContainer, object );
 					expect( queryObject.getToken() ).toBe( queryObject[ "_resource" ] );
 				};
 
 				helper( "http://example.com/" );
 				helper( "ex:resource" );
 				helper( "_:blank-node" );
-
-				helper( Pointer.create( { $id: "http://example.com/" } ) );
-				helper( Pointer.create( { $id: "ex:resource" } ) );
-				helper( Pointer.create( { $id: "_:blank-node" } ) );
 			} );
 
 		} );
@@ -128,8 +116,7 @@ describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
 			it( hasSignature(
 				"Returns the SPARQL string representation of the object to be used in the query.",
 				{ type: "string" }
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should override the default toString", ():void => {
 				expect( QueryObject.prototype.toString ).not.toBe( Object.prototype.toString );
@@ -137,7 +124,7 @@ describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
 
 			it( "should return the string of the resource", ():void => {
 				const helper:( iri:string ) => void = iri => {
-					const queryObject:QueryObject = new QueryObject( queryContext, iri );
+					const queryObject:QueryObject = new QueryObject( queryContainer, iri );
 					expect( queryObject.toString() ).toBe( queryObject[ "_resource" ].toString() );
 				};
 

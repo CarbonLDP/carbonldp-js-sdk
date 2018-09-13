@@ -8,8 +8,8 @@ import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
-import { QueryDocumentBuilder2 } from "../../QueryDocuments/QueryDocumentBuilder2";
-import { QueryDocumentsBuilder2 } from "../../QueryDocuments/QueryDocumentsBuilder2";
+import { QueryDocumentBuilder } from "../../QueryDocuments/QueryDocumentBuilder";
+import { QueryDocumentsBuilder } from "../../QueryDocuments/QueryDocumentsBuilder";
 
 import { Document } from "../Document";
 import { LDPDocumentTrait } from "./LDPDocumentTrait";
@@ -23,26 +23,26 @@ export interface QueryableDocumentTrait extends LDPDocumentTrait, QueryablePoint
 	$repository:QueryableDocumentsRepositoryTrait;
 
 
-	$get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
-	$get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
-	$get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
-	$get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
+	$get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	$get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	$get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	$get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
-	$resolve<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & this & Document>;
-	$resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & this & Document>;
-	$resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
-	$resolve<T extends object>( document:Document, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
+	$resolve<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	$resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	$resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	$resolve<T extends object>( document:Document, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 
-	$getChildren<T extends object>( requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
-	$getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
-	$getChildren<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
-	$getChildren<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
+	$getChildren<T extends object>( requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	$getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	$getChildren<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	$getChildren<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
-	$getMembers<T extends object>( requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
-	$getMembers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
-	$getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
-	$getMembers<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
+	$getMembers<T extends object>( requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	$getMembers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	$getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	$getMembers<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
 
 	$listChildren<T extends object>( requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
@@ -53,7 +53,7 @@ export interface QueryableDocumentTrait extends LDPDocumentTrait, QueryablePoint
 }
 
 
-type QueryDocsBuilderFn = Function & (( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2);
+type QueryDocsBuilderFn = Function & (( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder);
 
 export type QueryableDocumentTraitFactory =
 	& ModelPrototype<QueryableDocumentTrait, LDPDocumentTrait & QueryablePointer>

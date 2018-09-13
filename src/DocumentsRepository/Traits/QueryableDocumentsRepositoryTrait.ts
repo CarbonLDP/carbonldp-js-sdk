@@ -23,11 +23,11 @@ import { QueryableMetadataContainer } from "../../QueryDocuments/QueryableMetada
 import { QueryableProperty } from "../../QueryDocuments/QueryableProperty";
 import { QueryContainer } from "../../QueryDocuments/QueryContainer";
 import { QueryContainerType } from "../../QueryDocuments/QueryContainerType";
-import { QueryDocumentBuilder2 } from "../../QueryDocuments/QueryDocumentBuilder2";
+import { QueryDocumentBuilder } from "../../QueryDocuments/QueryDocumentBuilder";
 import { QueryDocumentContainer } from "../../QueryDocuments/QueryDocumentContainer";
-import { QueryDocumentsBuilder2 } from "../../QueryDocuments/QueryDocumentsBuilder2";
+import { QueryDocumentsBuilder } from "../../QueryDocuments/QueryDocumentsBuilder";
 import { QueryMetadata } from "../../QueryDocuments/QueryMetadata";
-import { QueryProperty2 } from "../../QueryDocuments/QueryProperty2";
+import { QueryProperty } from "../../QueryDocuments/QueryProperty";
 import { QueryPropertyType } from "../../QueryDocuments/QueryPropertyType";
 import { QueryResultCompacter } from "../../QueryDocuments/QueryResultCompacter";
 import { _areDifferentType, _getPathProperty } from "../../QueryDocuments/Utils";
@@ -50,12 +50,12 @@ import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
 
 export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositoryTrait {
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
-	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
-	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
+	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 	resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
-	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
-	resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2 ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 
 	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
@@ -63,11 +63,11 @@ export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositor
 	saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
-	getChildren<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
-	getChildren<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
+	getChildren<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	getChildren<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
-	getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
-	getMembers<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder2 ) => QueryDocumentsBuilder2 ):Promise<(T & Document)[]>;
+	getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	getMembers<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
 	listChildren<T extends object>( uri:string, requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 
@@ -76,7 +76,6 @@ export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositor
 
 
 type QueryData = {
-	rootName:string;
 	containerType:QueryContainerType;
 	queryBuilderFn?:QueryBuilderFn;
 	rootType?:QueryPropertyType;
@@ -171,13 +170,12 @@ function __executeQueryBuilder<T extends object>( repository:QueryableDocumentsR
 
 	const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( repository.context, {
 		containerType: queryData.containerType,
-		name: queryData.rootName,
 		uri: url,
 	} );
 
-	const queryBuilder:QueryDocumentBuilder2 | QueryDocumentsBuilder2 = queryContainer._queryProperty.isMultipleContainer()
-		? new QueryDocumentsBuilder2( queryContainer, queryContainer._queryProperty )
-		: new QueryDocumentBuilder2( queryContainer, queryContainer._queryProperty );
+	const queryBuilder:QueryDocumentBuilder | QueryDocumentsBuilder = queryContainer._queryProperty.isMultipleContainer()
+		? new QueryDocumentsBuilder( queryContainer, queryContainer._queryProperty )
+		: new QueryDocumentBuilder( queryContainer, queryContainer._queryProperty );
 
 	if( queryData.rootType !== void 0 ) queryContainer._queryProperty
 		.setType( queryData.rootType );
@@ -241,7 +239,6 @@ function __getQueryable<T extends object>( repository:QueryableDocumentsReposito
 
 	const queryData:QueryData = {
 		containerType: QueryContainerType.DOCUMENT,
-		rootName: "document",
 		queryBuilderFn,
 		target,
 	};
@@ -251,9 +248,9 @@ function __getQueryable<T extends object>( repository:QueryableDocumentsReposito
 }
 
 
-function __addRefreshProperties( parentProperty:QueryProperty2, queryableProperty:QueryableProperty ):void {
+function __addRefreshProperties( parentProperty:QueryProperty, queryableProperty:QueryableProperty ):void {
 	queryableProperty.subProperties.forEach( subProperty => {
-		const queryProperty:QueryProperty2 = parentProperty._addSubProperty( subProperty );
+		const queryProperty:QueryProperty = parentProperty._addSubProperty( subProperty );
 		__addRefreshProperties( queryProperty, subProperty );
 	} );
 }
@@ -289,7 +286,7 @@ export type QueryableDocumentsRepositoryTraitFactory =
 	& ModelDecorator<QueryableDocumentsRepositoryTrait, BaseDocumentsRepository>
 	;
 
-type QueryBuilderFn = Function & (( queryBuilder:QueryDocumentBuilder2 ) => QueryDocumentBuilder2);
+type QueryBuilderFn = Function & (( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder);
 
 export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTraitFactory = {
 	PROTOTYPE: {
@@ -355,7 +352,6 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			return __executeQueryBuilder<T>( this, uri, requestOptions, {
 				rootType: queryBuilderFn ? void 0 : QueryPropertyType.FULL,
 				containerType: QueryContainerType.CHILDREN,
-				rootName: "child",
 				queryBuilderFn,
 			} );
 		},
@@ -372,7 +368,6 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			return __executeQueryBuilder<T>( this, uri, requestOptions, {
 				rootType: queryBuilderFn ? void 0 : QueryPropertyType.FULL,
 				containerType: QueryContainerType.MEMBERS,
-				rootName: "member",
 				queryBuilderFn,
 			} );
 		},
@@ -381,7 +376,6 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			return __executeQueryBuilder<T>( this, uri, requestOptions, {
 				containerType: QueryContainerType.CHILDREN,
 				rootType: QueryPropertyType.EMPTY,
-				rootName: "child",
 			} );
 		},
 
@@ -389,7 +383,6 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			return __executeQueryBuilder<T>( this, uri, requestOptions, {
 				rootType: QueryPropertyType.EMPTY,
 				containerType: QueryContainerType.MEMBERS,
-				rootName: "member",
 			} );
 		},
 	},

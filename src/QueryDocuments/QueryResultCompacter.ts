@@ -17,7 +17,7 @@ import { RDFNode } from "../RDF/Node";
 import { QueryableProperty } from "./QueryableProperty";
 import { QueryableRootProperty } from "./QueryableRootProperty";
 import { QueryContainer } from "./QueryContainer";
-import { QueryProperty2 } from "./QueryProperty2";
+import { QueryProperty } from "./QueryProperty";
 
 
 interface CompactionNode {
@@ -82,7 +82,7 @@ export class QueryResultCompacter {
 			const compactionNode:CompactionNode | undefined = this.compactionMap.get( documentID );
 			if( ! compactionNode ) throw new IllegalArgumentError( `Invalid data provided.` );
 
-			const targetProperty:QueryProperty2 = this.queryContainer._queryProperty;
+			const targetProperty:QueryProperty = this.queryContainer._queryProperty;
 			const metadataProperty:QueryableProperty = new QueryableProperty( targetProperty );
 
 			this.__processNode2( compactionNode, targetProperty, metadataProperty );
@@ -112,7 +112,7 @@ export class QueryResultCompacter {
 	}
 
 
-	private __processNode2( compactionNode:CompactionNode, queryProperty:QueryProperty2, metadataProperty:QueryableProperty ):void {
+	private __processNode2( compactionNode:CompactionNode, queryProperty:QueryProperty, metadataProperty:QueryableProperty ):void {
 		compactionNode.isCompacted = true;
 		const { node, registry } = compactionNode;
 

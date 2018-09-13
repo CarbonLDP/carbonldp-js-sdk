@@ -13,13 +13,13 @@ export class QueryDocumentContainer extends QueryContainer {
 	readonly _queryProperty:QueryRootProperty;
 
 
-	constructor( context:AbstractContext<any, any, any>, rootPropertyData:{ name:string, uri:string, containerType:QueryContainerType } ) {
+	constructor( context:AbstractContext<any, any, any>, rootPropertyData:{ uri:string, containerType:QueryContainerType } ) {
 		super( context );
 
 		this._queryProperty = new QueryRootProperty( {
 			queryContainer: this,
 
-			name: rootPropertyData.name,
+			name: __getName( rootPropertyData.containerType ),
 
 			definition: new DigestedObjectSchemaProperty( rootPropertyData.uri ),
 			containerType: rootPropertyData.containerType,
@@ -37,4 +37,17 @@ export class QueryDocumentContainer extends QueryContainer {
 			.serialize( value );
 	}
 
+}
+
+function __getName( containerType:QueryContainerType ):string {
+	switch( containerType ) {
+		case QueryContainerType.DOCUMENT:
+			return "document";
+		case QueryContainerType.MEMBERS:
+			return "member";
+		case QueryContainerType.CHILDREN:
+			return "child";
+		default:
+			throw new IllegalArgumentError( `Invalid container type: "${ containerType }"` );
+	}
 }

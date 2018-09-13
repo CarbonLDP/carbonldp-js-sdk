@@ -6,7 +6,7 @@ import { IllegalStateError } from "../Errors/IllegalStateError";
 import { QueryBuilderProperty } from "./QueryBuilderProperty";
 import { QueryContainerType } from "./QueryContainerType";
 import { QueryDocumentsOrder } from "./QueryDocumentsOrder";
-import { QueryProperty2 } from "./QueryProperty2";
+import { QueryProperty } from "./QueryProperty";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { QueryRootPropertyData } from "./QueryRootPropertyData";
 
@@ -54,7 +54,7 @@ export class QueryRootProperty extends QueryBuilderProperty {
 			.addPattern( super.__createSelfPattern() );
 
 		if( this.order ) {
-			const targetProperty:QueryProperty2 | undefined = this.getProperty( this.order.path, { create: true } );
+			const targetProperty:QueryProperty | undefined = this.getProperty( this.order.path, { create: true } );
 			if( ! targetProperty ) throw new IllegalArgumentError( `Property "${ this.order.path }" hasn't been defined.` );
 
 			// Add modifier
@@ -75,7 +75,7 @@ export class QueryRootProperty extends QueryBuilderProperty {
 		return subSelect;
 	}
 
-	protected __createSubPatternsFrom( targetProperty:QueryProperty2 ):PatternToken[] {
+	protected __createSubPatternsFrom( targetProperty:QueryProperty ):PatternToken[] {
 		let matchPatterns:PatternToken[] = [];
 
 		// While not been the root property
