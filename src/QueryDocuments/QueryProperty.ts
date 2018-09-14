@@ -1,8 +1,7 @@
 import { Path, PathBuilder } from "sparqler/patterns";
 import {
 	FilterToken,
-	GraphToken,
-	GroupPatternToken,
+	GraphToken, GroupPatternToken,
 	IRIToken,
 	LiteralToken,
 	OptionalToken,
@@ -10,6 +9,7 @@ import {
 	PatternToken,
 	PropertyToken,
 	SubjectToken,
+	SubSelectToken,
 	ValuesToken
 } from "sparqler/tokens";
 
@@ -273,10 +273,14 @@ export class QueryProperty implements QueryablePropertyData {
 		switch( this.containerType ) {
 			case QueryContainerType.DOCUMENT:
 				return this.__createDocumentSelfPattern();
+
 			case QueryContainerType.CHILDREN:
 				return this.__createChildSelfPattern();
+
 			case QueryContainerType.MEMBERS:
-				return this.__createMemberSelfPattern();
+				return new GroupPatternToken()
+					.addPattern( ...this.__createMemberSelfPattern() );
+
 			default:
 				return this.__createSimpleSelfPattern();
 		}
@@ -305,16 +309,19 @@ export class QueryProperty implements QueryablePropertyData {
 			);
 	}
 
-	protected __createMemberSelfPattern():PatternToken {
+	protected __createMemberSelfPattern():PatternToken[] {
 		const membershipResource:QueryVariable = this.queryContainer.getVariable( "membershipResource" );
 		const hasMemberRelation:QueryVariable = this.queryContainer.getVariable( "hasMemberRelation" );
 
-		const memberRelations:PatternToken = new SubjectToken( this.__createIRIToken() )
-			.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.membershipResource ) )
-				.addObject( membershipResource )
-			)
-			.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.hasMemberRelation ) )
-				.addObject( hasMemberRelation )
+		const memberRelations:PatternToken = new SubSelectToken()
+			.addVariable( membershipResource, hasMemberRelation )
+			.addPattern( new SubjectToken( this.__createIRIToken() )
+				.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.membershipResource ) )
+					.addObject( membershipResource )
+				)
+				.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.hasMemberRelation ) )
+					.addObject( hasMemberRelation )
+				)
 			);
 
 		const memberSelection:PatternToken = new SubjectToken( membershipResource )
@@ -322,8 +329,7 @@ export class QueryProperty implements QueryablePropertyData {
 				.addObject( this.variable )
 			);
 
-		return new GroupPatternToken()
-			.addPattern( memberRelations, memberSelection );
+		return [ memberRelations, memberSelection ];
 	}
 
 

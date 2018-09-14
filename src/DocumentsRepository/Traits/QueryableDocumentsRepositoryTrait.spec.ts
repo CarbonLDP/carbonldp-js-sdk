@@ -6635,10 +6635,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +
-					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + "" + " SELECT ?membershipResource ?hasMemberRelation {" +
+					"" + "" + "" + "" + " <https://example.com/>" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
+					"" + "" + "" + " }" +
 					"" + "" + " }" +
+					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
 
 					"" + "" + " ?member a <https://example.com/ns#Resource>." +
 
@@ -6721,10 +6724,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +
-					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + "" + " SELECT ?membershipResource ?hasMemberRelation {" +
+					"" + "" + "" + "" + " <https://example.com/>" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
+					"" + "" + "" + " }" +
 					"" + "" + " }" +
+					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
 					"" + " }" +
 					" }" +
 
@@ -6780,10 +6786,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +
-					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + "" + " SELECT ?membershipResource ?hasMemberRelation {" +
+					"" + "" + "" + "" + " <https://example.com/>" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
+					"" + "" + "" + " }" +
 					"" + "" + " }" +
+					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
 					"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
 					"" + " }" +
 					"" + " ORDER BY ?member__property2" +
@@ -6891,7 +6900,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
 						.addPattern( new SubSelectToken( "DISTINCT" )
 							.addVariable( variableHelper( "member" ) )
-							.addPattern( new GroupPatternToken()
+							.addPattern( new SubSelectToken()
+								.addVariable( variableHelper( "membershipResource" ), variableHelper( "hasMemberRelation" ) )
 								.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
 									.addProperty( new PropertyToken( new IRIRefToken( LDP.membershipResource ) )
 										.addObject( variableHelper( "membershipResource" ) )
@@ -6900,10 +6910,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										.addObject( variableHelper( "hasMemberRelation" ) )
 									)
 								)
-								.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
-									.addProperty( new PropertyToken( variableHelper( "hasMemberRelation" ) )
-										.addObject( variableHelper( "member" ) )
-									)
+							)
+							.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
+								.addProperty( new PropertyToken( variableHelper( "hasMemberRelation" ) )
+									.addObject( variableHelper( "member" ) )
 								)
 							)
 							.addPattern( new SubjectToken( variableHelper( "member" ) )
@@ -8487,10 +8497,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +
-					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + "" + " SELECT ?membershipResource ?hasMemberRelation {" +
+					"" + "" + "" + "" + " <https://example.com/>" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
+					"" + "" + "" + " }" +
 					"" + "" + " }" +
+					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
 					"" + " }" +
 					" }" +
 

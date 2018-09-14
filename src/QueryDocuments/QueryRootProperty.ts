@@ -58,8 +58,14 @@ export class QueryRootProperty extends QueryProperty {
 
 	protected __createSubSelectPattern():SubSelectToken {
 		const subSelect:SubSelectToken = new SubSelectToken( "DISTINCT" )
-			.addVariable( this.variable )
-			.addPattern( super.__createSelfPattern() );
+			.addVariable( this.variable );
+
+		if( this.containerType === QueryContainerType.CHILDREN ) {
+			subSelect.addPattern( this.__createChildSelfPattern() );
+		} else if( this.containerType === QueryContainerType.MEMBERS ) {
+			subSelect.addPattern( ...this.__createMemberSelfPattern() );
+		}
+
 
 		// Add filter types to sub-select
 		if( this._types.length ) {
@@ -69,7 +75,6 @@ export class QueryRootProperty extends QueryProperty {
 			super.__addTypesTo( typesPattern );
 			subSelect.addPattern( typesPattern );
 		}
-
 
 
 		if( this.order ) {
