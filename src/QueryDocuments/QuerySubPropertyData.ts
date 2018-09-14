@@ -12,7 +12,6 @@ export interface QuerySubPropertyData {
 	queryContainer?:QueryContainer;
 	parent?:QueryProperty;
 
-	name:string;
 	definition:DigestedObjectSchemaProperty;
 	pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
 

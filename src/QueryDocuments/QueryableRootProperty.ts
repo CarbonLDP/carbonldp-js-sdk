@@ -9,8 +9,6 @@ export class QueryableRootProperty extends QueryableProperty {
 
 	constructor( { uri, propertyType }:{ uri:string, propertyType?:QueryPropertyType } ) {
 		super( {
-			name: "document",
-
 			definition: new DigestedObjectSchemaProperty( uri ),
 
 			propertyType: propertyType,
@@ -18,6 +16,11 @@ export class QueryableRootProperty extends QueryableProperty {
 
 			optional: false,
 		} );
+	}
+
+	protected __mergeDefinition( propertyName:string, newDefinition:DigestedObjectSchemaProperty ):void {
+		// Definitions does not matter in root
+		return;
 	}
 
 }

@@ -249,8 +249,8 @@ function __getQueryable<T extends object>( repository:QueryableDocumentsReposito
 
 
 function __addRefreshProperties( parentProperty:QueryProperty, queryableProperty:QueryableProperty ):void {
-	queryableProperty.subProperties.forEach( subProperty => {
-		const queryProperty:QueryProperty = parentProperty._addSubProperty( subProperty );
+	queryableProperty.subProperties.forEach( ( subProperty, propertyName ) => {
+		const queryProperty:QueryProperty = parentProperty._addSubProperty( propertyName, subProperty );
 		__addRefreshProperties( queryProperty, subProperty );
 	} );
 }
@@ -311,7 +311,13 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 
 			if( target && target.$isQueried() ) requestOptions.ensureLatest = true;
 			return LDPDocumentsRepositoryTrait.PROTOTYPE
-				.get.call( this, uri, requestOptions );
+				.get.call( this, uri, requestOptions )
+				.then( ( document:T & Document ) => {
+					// Remove query metadata if exists
+					document.$_queryableMetadata = void 0;
+
+					return document;
+				} );
 		},
 
 		resolve<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptionsOrQueryBuilderFn?:RequestOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {

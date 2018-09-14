@@ -7,7 +7,6 @@ import { QueryPropertyType } from "./QueryPropertyType";
 
 
 export interface QueryablePropertyData {
-	name:string;
 	definition:DigestedObjectSchemaProperty;
 	pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
 

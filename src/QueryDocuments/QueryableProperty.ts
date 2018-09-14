@@ -1,17 +1,17 @@
 import { Path, PathBuilder } from "sparqler/patterns";
+
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
-
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
-import { QueryablePropertyData } from "./QueryablePropertyData";
 
+import { QueryablePropertyData } from "./QueryablePropertyData";
 import { QueryContainerType } from "./QueryContainerType";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { _getBestType } from "./Utils";
 
 
 export class QueryableProperty {
-	readonly name:string;
 	readonly definition:DigestedObjectSchemaProperty;
 	readonly pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
 
@@ -22,8 +22,7 @@ export class QueryableProperty {
 
 	readonly subProperties:Map<string, QueryableProperty>;
 
-	constructor( data:QueryablePropertyData, mergeData?:QueryablePropertyData ) {
-		this.name = data.name;
+	constructor( data:QueryablePropertyData ) {
 		this.definition = data.definition;
 		this.pathBuilderFn = data.pathBuilderFn;
 
@@ -33,39 +32,58 @@ export class QueryableProperty {
 		this.optional = data.optional;
 
 		this.subProperties = new Map();
-
-		if( mergeData ) this.__mergeData( mergeData );
 	}
 
 
-	getProperty( data:QueryablePropertyData ):QueryableProperty {
-		if( ! this.subProperties.has( data.name ) ) {
+	setType( type:QueryPropertyType ):void {
+		this.propertyType = _getBestType( this.propertyType, type );
+	}
+
+
+	setProperty( propertyName:string, property:QueryableProperty ):void {
+		this.subProperties.set( propertyName, property );
+	}
+
+	getProperty( propertyName:string, data?:QueryablePropertyData ):QueryableProperty {
+		if( ! this.subProperties.has( propertyName ) ) {
+			if( ! data )
+				throw new Error( `Property "${ propertyName }" doesn't exists.` );
+
 			const property:QueryableProperty = new QueryableProperty( data );
 
-			this.subProperties.set( data.name, property );
+			this.subProperties.set( propertyName, property );
 			return property;
 
 		} else {
-			const property:QueryableProperty = this.subProperties.get( data.name );
+			const property:QueryableProperty = this.subProperties.get( propertyName );
 
-			property.__mergeData( data );
+			if( data ) property
+				.mergeData( propertyName, data );
+
 			return property;
 		}
 	}
 
 
-	protected __mergeData( data:QueryablePropertyData ):void {
-		this.propertyType = _getBestType( this.propertyType, data.propertyType );
-		this.__mergeDefinition( data.definition );
+	mergeData( propertyName:string, data:QueryablePropertyData ):void {
+		if( this === data ) return;
+
+		this.setType( data.propertyType );
+		this.__mergeDefinition( propertyName, data.definition );
 	}
 
-	protected __mergeDefinition( newDefinition:DigestedObjectSchemaProperty ):void {
+	// TODO: Improve merging
+	protected __mergeDefinition( propertyName:string, newDefinition:DigestedObjectSchemaProperty ):void {
 		for( const key in newDefinition ) {
-			const newValue:any = newDefinition[ key ];
 			const oldValue:any = this.definition[ key ];
+			const newValue:any = newDefinition[ key ];
 
-			if( newValue !== oldValue )
-				throw new IllegalArgumentError( `Property "${ this.name }" has different "${ key }": "${ oldValue }", "${ newValue }".` );
+			if( oldValue === null )
+				this.definition[ key ] = newValue;
+
+			if( newValue !== oldValue ) {
+				throw new IllegalArgumentError( `Property "${ propertyName }" has different "${ key }": "${ oldValue }", "${ newValue }".` );
+			}
 		}
 	}
 
@@ -73,8 +91,8 @@ export class QueryableProperty {
 	getSchema():DigestedObjectSchema {
 		const schema:DigestedObjectSchema = new DigestedObjectSchema();
 
-		this.subProperties.forEach( property => {
-			schema.properties.set( property.name, property.definition );
+		this.subProperties.forEach( ( property, propertyName ) => {
+			schema.properties.set( propertyName, property.definition );
 		} );
 
 		return schema;

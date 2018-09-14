@@ -64,6 +64,7 @@ export class QueryProperty implements QueryablePropertyData {
 			: data.name;
 
 		this.definition = data.definition;
+		this.pathBuilderFn = data.pathBuilderFn;
 
 		this.propertyType = data.propertyType;
 		this.containerType = data.containerType;
@@ -104,22 +105,21 @@ export class QueryProperty implements QueryablePropertyData {
 		const definition:DigestedObjectSchemaProperty = this
 			.__getDefinition( propertyName, propertyDefinition );
 
-		return this._addSubProperty( {
-			name: propertyName,
-
+		return this._addSubProperty( propertyName, {
 			definition,
 			pathBuilderFn: propertyDefinition.path,
 		} );
 	}
 
-	_addSubProperty( data:QuerySubPropertyData ):QueryProperty {
+	_addSubProperty( propertyName:string, data:QuerySubPropertyData ):QueryProperty {
 		const property:QueryProperty = this.__createPropertyFrom( {
 			...data,
+			name: propertyName,
 			queryContainer: this.queryContainer,
 			parent: this,
 		} );
 
-		this.subProperties.set( data.name, property );
+		this.subProperties.set( propertyName, property );
 
 		return property;
 	}
