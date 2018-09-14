@@ -2,17 +2,17 @@ import { AbstractContext } from "../../../../src/Context/AbstractContext";
 
 import { DigestedObjectSchemaProperty } from "../../../../src/ObjectSchema/DigestedObjectSchemaProperty";
 
-import { QueryBuilderProperty } from "../../../../src/QueryDocuments/QueryBuilderProperty";
 import { QueryContainer } from "../../../../src/QueryDocuments/QueryContainer";
+import { QueryProperty } from "../../../../src/QueryDocuments/QueryProperty";
 
 
 export class MockQueryContainer extends QueryContainer {
-	readonly _queryProperty:QueryBuilderProperty;
+	readonly _queryProperty:QueryProperty;
 
 	constructor( context:AbstractContext<any, any, any> ) {
 		super( context );
 
-		this._queryProperty = new QueryBuilderProperty( {
+		this._queryProperty = new QueryProperty( {
 			queryContainer: this,
 			name: "root",
 			definition: new DigestedObjectSchemaProperty(),

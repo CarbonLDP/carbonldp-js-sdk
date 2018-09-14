@@ -3,7 +3,6 @@ import { LimitToken, OffsetToken, OrderToken, PatternToken, SubSelectToken } fro
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
 
-import { QueryBuilderProperty } from "./QueryBuilderProperty";
 import { QueryContainerType } from "./QueryContainerType";
 import { QueryDocumentsOrder } from "./QueryDocumentsOrder";
 import { QueryProperty } from "./QueryProperty";
@@ -11,7 +10,7 @@ import { QueryPropertyType } from "./QueryPropertyType";
 import { QueryRootPropertyData } from "./QueryRootPropertyData";
 
 
-export class QueryRootProperty extends QueryBuilderProperty {
+export class QueryRootProperty extends QueryProperty {
 	readonly parent:undefined;
 
 	order?:QueryDocumentsOrder;

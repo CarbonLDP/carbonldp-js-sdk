@@ -2,8 +2,6 @@ export { QueryableMetadataContainer } from "./QueryableMetadataContainer";
 export { QueryablePointer } from "./QueryablePointer";
 export { QueryableProperty } from "./QueryableProperty";
 export { QueryablePropertyData } from "./QueryablePropertyData";
-export { QueryBuilderProperty } from "./QueryBuilderProperty";
-export { QueryBuilderPropertyData } from "./QueryBuilderPropertyData";
 export { QueryContainer } from "./QueryContainer";
 export { QueryContainerType } from "./QueryContainerType";
 export { QueryDocumentBuilder } from "./QueryDocumentBuilder";

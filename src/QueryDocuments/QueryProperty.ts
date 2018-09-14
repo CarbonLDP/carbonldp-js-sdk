@@ -4,6 +4,7 @@ import {
 	GraphToken,
 	GroupPatternToken,
 	IRIToken,
+	LiteralToken,
 	OptionalToken,
 	PathToken,
 	PatternToken,
@@ -28,7 +29,7 @@ import { QueryPropertyType } from "./QueryPropertyType";
 import { QuerySubPropertyData } from "./QuerySubPropertyData";
 import { QueryVariable } from "./QueryVariable";
 import { SubQueryPropertyDefinition } from "./SubQueryPropertyDefinition";
-import { _getBestType, _getRootPath } from "./Utils";
+import { _getBestType, _getMatchingDefinition, _getRootPath } from "./Utils";
 
 
 export class QueryProperty implements QueryablePropertyData {
@@ -54,6 +55,13 @@ export class QueryProperty implements QueryablePropertyData {
 	readonly subProperties:Map<string, QueryProperty>;
 
 
+	protected readonly _types:string[];
+	protected readonly _values:(LiteralToken | IRIToken)[];
+	protected readonly _filters:string[];
+
+	protected _searchSchema:DigestedObjectSchema | undefined;
+
+
 	constructor( data:QueryPropertyData ) {
 		this.queryContainer = data.queryContainer;
 		this.parent = data.parent;
@@ -74,10 +82,20 @@ export class QueryProperty implements QueryablePropertyData {
 			: data.optional;
 
 		this.subProperties = new Map();
+
+		this._types = [];
+		this._values = [];
+		this._filters = [];
 	}
 
 
 	// Sub-properties helpers
+
+	hasProperties():boolean {
+		return this.subProperties.size !== 0
+			|| this._isComplete()
+			;
+	}
 
 	getProperty( path?:string, flags?:{ create:true, inherit?:false } ):QueryProperty | undefined {
 		if( ! path ) return this;
@@ -112,7 +130,7 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	_addSubProperty( propertyName:string, data:QuerySubPropertyData ):QueryProperty {
-		const property:QueryProperty = this.__createPropertyFrom( {
+		const property:QueryProperty = new QueryProperty( {
 			...data,
 			name: propertyName,
 			queryContainer: this.queryContainer,
@@ -122,10 +140,6 @@ export class QueryProperty implements QueryablePropertyData {
 		this.subProperties.set( propertyName, property );
 
 		return property;
-	}
-
-	protected __createPropertyFrom( data:QueryPropertyData ):QueryProperty {
-		return new QueryProperty( data );
 	}
 
 	protected __getDefinition( propertyName:string, propertyDefinition:SubQueryPropertyDefinition ):DigestedObjectSchemaProperty {
@@ -149,9 +163,26 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	protected __getInheritDefinition( propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
-		return;
-	}
+		const searchSchema:DigestedObjectSchema = this._getSearchSchema();
+		const localDefinition:DigestedObjectSchemaProperty | undefined =
+			_getMatchingDefinition( searchSchema, searchSchema, propertyName, propertyURI );
 
+		if( localDefinition ) return localDefinition;
+
+		const schemas:DigestedObjectSchema[] = this.queryContainer.context
+			._getTypeObjectSchemas( this._types );
+
+		for( const targetSchema of schemas ) {
+			const definition:DigestedObjectSchemaProperty | undefined = _getMatchingDefinition(
+				searchSchema,
+				targetSchema,
+				propertyName,
+				propertyURI
+			);
+
+			if( definition ) return definition;
+		}
+	}
 
 	_isComplete():boolean {
 		return this.propertyType === QueryPropertyType.ALL
@@ -164,6 +195,41 @@ export class QueryProperty implements QueryablePropertyData {
 			|| this.propertyType === QueryPropertyType.ALL
 			|| ! ! this.subProperties.size
 			;
+	}
+
+
+	// Helpers for property specialization
+
+	setType( type:QueryPropertyType ):void {
+		this.propertyType = _getBestType( this.propertyType, type );
+	}
+
+	addType( type:string ):void {
+		const schema:DigestedObjectSchema = this._getSearchSchema();
+		const iri:string = schema.resolveURI( type, { vocab: true } );
+		this._types.push( iri );
+
+		if( ! this.queryContainer.context.hasObjectSchema( iri ) ) return;
+
+		const typedSchema:DigestedObjectSchema = this.queryContainer.context.getObjectSchema( iri );
+		ObjectSchemaDigester._combineSchemas( [ schema, typedSchema ] );
+	}
+
+	addValues( values:(LiteralToken | IRIToken)[] ):void {
+		this._values.push( ...values );
+	}
+
+	addFilter( constraint:string ):void {
+		this._filters.push( constraint );
+	}
+
+	setObligatory( flags?:{ inheritParents:true } ):void {
+		if( ! this.optional ) return;
+
+		this.optional = false;
+
+		if( flags && flags.inheritParents && this.parent )
+			this.parent.setObligatory( flags );
 	}
 
 
@@ -190,11 +256,6 @@ export class QueryProperty implements QueryablePropertyData {
 		return this.pathBuilderFn
 			.call( void 0, pathBuilder )
 			.getPath();
-	}
-
-
-	setType( type:QueryPropertyType ):void {
-		this.propertyType = _getBestType( this.propertyType, type );
 	}
 
 
@@ -281,6 +342,9 @@ export class QueryProperty implements QueryablePropertyData {
 	protected __createSearchPatterns():PatternToken[] {
 		const patterns:PatternToken[] = [];
 
+		const values:PatternToken | undefined = this.__createValuesPattern();
+		if( values ) patterns.push( values );
+
 		const selfTriple:PatternToken = this.__createSelfPattern();
 		patterns.push( selfTriple );
 
@@ -308,7 +372,25 @@ export class QueryProperty implements QueryablePropertyData {
 				break;
 		}
 
+		if( this._filters.length ) {
+			const filters:FilterToken[] = this._filters
+				.map( constraint => new FilterToken( constraint ) );
+			patterns.push( ...filters );
+		}
+
 		return patterns;
+	}
+
+	protected __createValuesPattern():ValuesToken | undefined {
+		if( ! this._values.length ) return;
+
+		const values:ValuesToken = new ValuesToken()
+			.addVariables( this.variable );
+
+		this._values
+			.forEach( value => values.addValues( value ) );
+
+		return values;
 	}
 
 	protected __createSelfTypeFilter():PatternToken | undefined {
@@ -339,6 +421,17 @@ export class QueryProperty implements QueryablePropertyData {
 		patterns.push( new OptionalToken()
 			.addPattern( this.__createTypesPattern() )
 		);
+
+		if( this._types.length ) {
+			const types:IRIToken[] = this._types
+				.map( type => this.queryContainer.compactIRI( type ) );
+
+			patterns.push( new SubjectToken( this.variable )
+				.addProperty( new PropertyToken( "a" )
+					.addObject( ...types )
+				)
+			);
+		}
 
 		return patterns;
 	}
@@ -451,6 +544,13 @@ export class QueryProperty implements QueryablePropertyData {
 		} );
 
 		return schema;
+	}
+
+
+	// Helper for schema related actions
+	protected _getSearchSchema():DigestedObjectSchema {
+		if( this._searchSchema ) return this._searchSchema;
+		return this._searchSchema = this.queryContainer.getGeneralSchema();
 	}
 
 }

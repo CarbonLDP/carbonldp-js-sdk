@@ -6,7 +6,6 @@ import { IllegalStateError } from "../Errors/IllegalStateError";
 import { Pointer } from "../Pointer/Pointer";
 import { isObject } from "../Utils";
 
-import { QueryBuilderProperty } from "./QueryBuilderProperty";
 import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import { QueryObject } from "./QueryObject";
 import { QueryProperty } from "./QueryProperty";
@@ -26,17 +25,17 @@ export class QueryDocumentBuilder {
 	readonly all:Readonly<{}> = QueryDocumentBuilder.ALL;
 
 	readonly _queryContainer:QueryDocumentContainer;
-	readonly _queryProperty:QueryBuilderProperty;
+	readonly _queryProperty:QueryProperty;
 
 
-	constructor( queryContainer:QueryDocumentContainer, queryProperty:QueryBuilderProperty ) {
+	constructor( queryContainer:QueryDocumentContainer, queryProperty:QueryProperty ) {
 		this._queryContainer = queryContainer;
 		this._queryProperty = queryProperty;
 	}
 
 
 	property( name?:string ):QueryVariable {
-		let parent:QueryBuilderProperty | undefined = this._queryProperty;
+		let parent:QueryProperty | undefined = this._queryProperty;
 		while( parent ) {
 			const property:QueryProperty | undefined = parent.getProperty( name, { create: true } );
 			if( property ) return property.variable;
@@ -81,7 +80,7 @@ export class QueryDocumentBuilder {
 			const querySchemaProperty:QuerySchemaProperty = isObject( queryPropertySchema )
 				? queryPropertySchema : { "@id": queryPropertySchema };
 
-			const property:QueryBuilderProperty = this._queryProperty
+			const property:QueryProperty = this._queryProperty
 				.addProperty( propertyName, querySchemaProperty );
 
 			const subQuery:QuerySchemaProperty[ "query" ] | undefined = querySchemaProperty.query;

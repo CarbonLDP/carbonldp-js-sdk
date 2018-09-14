@@ -11,12 +11,12 @@ import { Pointer } from "../Pointer/Pointer";
 
 import { clazz, constructor, extendsClass, hasSignature, INSTANCE, method, module, property } from "../test/JasmineExtender";
 
-import { QueryBuilderProperty } from "./QueryBuilderProperty";
 import { QueryContainerType } from "./QueryContainerType";
 import { QueryDocumentBuilder, SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
 import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import * as QueryObject2Module from "./QueryObject";
 import { QueryObject } from "./QueryObject";
+import { QueryProperty } from "./QueryProperty";
 import { QueryRootProperty } from "./QueryRootProperty";
 import * as QueryValue2Module from "./QueryValue";
 import { QueryValue } from "./QueryValue";
@@ -34,7 +34,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 
 		let context:AbstractContext<any, any>;
 		let queryContainer:QueryDocumentContainer;
-		let baseProperty:QueryBuilderProperty;
+		let baseProperty:QueryProperty;
 		beforeEach( ():void => {
 			context = createMockContext( { uri: "https://example.com" } );
 			context.extendObjectSchema( {
@@ -140,8 +140,8 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 				expect( QueryDocumentBuilder.prototype.property ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call the `getProperty` of the QueryBuilderProperty", ():void => {
-				const spy:jasmine.Spy = spyOn( QueryBuilderProperty.prototype, "getProperty" )
+			it( "should call the `getProperty` of the QueryProperty", ():void => {
+				const spy:jasmine.Spy = spyOn( QueryProperty.prototype, "getProperty" )
 					.and.returnValue( baseProperty );
 
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
@@ -157,15 +157,15 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 				const spy0:jasmine.Spy = spyOn( baseProperty, "getProperty" )
 					.and.returnValue( undefined );
 
-				const path1:QueryBuilderProperty = baseProperty.addProperty( "path1", {} );
+				const path1:QueryProperty = baseProperty.addProperty( "path1", {} );
 				const spy1:jasmine.Spy = spyOn( path1, "getProperty" )
 					.and.returnValue( undefined );
 
-				const path2:QueryBuilderProperty = path1.addProperty( "path2", {} );
+				const path2:QueryProperty = path1.addProperty( "path2", {} );
 				const spy2:jasmine.Spy = spyOn( path2, "getProperty" )
 					.and.returnValue( undefined );
 
-				const path3:QueryBuilderProperty = path2.addProperty( "path3", {} );
+				const path3:QueryProperty = path2.addProperty( "path3", {} );
 				const spy3:jasmine.Spy = spyOn( path3, "getProperty" )
 					.and.returnValue( undefined );
 
@@ -213,7 +213,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 			it( "should return property's variable with one level path", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
-				const targetProperty:QueryBuilderProperty = baseProperty.addProperty( "path1", {} );
+				const targetProperty:QueryProperty = baseProperty.addProperty( "path1", {} );
 
 				const variable:QueryVariable = builder.property( "path1" );
 				expect( variable ).toBe( targetProperty.variable );
@@ -222,7 +222,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 			it( "should return property's variable with three path", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
-				const targetProperty:QueryBuilderProperty = baseProperty
+				const targetProperty:QueryProperty = baseProperty
 					.addProperty( "path1", {} )
 					.addProperty( "path2", {} )
 					.addProperty( "path3", {} )
@@ -234,7 +234,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 
 
 			it( "should return first property's variable from three path base property", ():void => {
-				const targetProperty:QueryBuilderProperty = baseProperty
+				const targetProperty:QueryProperty = baseProperty
 					.addProperty( "path1", {} )
 				;
 
@@ -250,7 +250,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 			} );
 
 			it( "should return second path property's variable from three path base property", ():void => {
-				const targetProperty:QueryBuilderProperty = baseProperty
+				const targetProperty:QueryProperty = baseProperty
 					.addProperty( "path1", {} )
 					.addProperty( "path2", {} )
 				;
@@ -266,7 +266,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 			} );
 
 			it( "should return second full path property's variable from three path base property", ():void => {
-				const targetProperty:QueryBuilderProperty = baseProperty
+				const targetProperty:QueryProperty = baseProperty
 					.addProperty( "path1", {} )
 					.addProperty( "path2", {} )
 				;
@@ -594,7 +594,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 			} );
 
 			it( "should add the filter to the property in one level builder", ():void => {
-				const subProperty:QueryBuilderProperty = baseProperty
+				const subProperty:QueryProperty = baseProperty
 					.addProperty( "subProperty", {} )
 				;
 
@@ -607,7 +607,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 			} );
 
 			it( "should add the filter to the property in level three builder", ():void => {
-				const subProperty:QueryBuilderProperty = baseProperty
+				const subProperty:QueryProperty = baseProperty
 					.addProperty( "subProperty1", {} )
 					.addProperty( "subProperty1.1", {} )
 					.addProperty( "subProperty1.1.1", {} )

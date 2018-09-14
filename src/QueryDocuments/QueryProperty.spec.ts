@@ -150,12 +150,16 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty" ), ():void => {
 		} );
 
 
+		// TODO: Test .hasProperties
 		// TODO: Test .addProperty
 		// TODO: Test ._addSubProperty
 
 
 		// TODO: Test .setType
-
+		// TODO: Test .addValues
+		// TODO: Test .addType
+		// TODO: Test .addFilter
+		// TODO: Test .setObligatory
 		// TODO: Test ._isPartial
 		// TODO: Test ._isComplete
 
