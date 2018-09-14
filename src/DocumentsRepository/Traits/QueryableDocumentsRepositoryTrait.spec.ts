@@ -461,7 +461,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
 					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
@@ -1560,7 +1559,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" OPTIONAL {" +
 					"" + " ?document ^<https://example.com/ns#property2>/<https://example.com/ns#property2.2> ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
 					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
@@ -2174,7 +2172,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
 					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
@@ -2267,7 +2264,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
 					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
@@ -3673,7 +3669,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
 					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
@@ -4002,7 +3997,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
 					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
@@ -4097,7 +4091,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" OPTIONAL {" +
 					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
 					"" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
 					" }" +
 
@@ -4653,7 +4646,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" OPTIONAL {" +
 					"" + " ?document ^<https://example.com/ns#property2>/<https://example.com/ns#property2.2> ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
 					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
 
 					"" + " OPTIONAL {" +
@@ -5066,6 +5058,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
+						"property4": {
+							"@id": "https://schema.org/property-4",
+							"@type": "@id",
+						},
 					} )
 					.extendObjectSchema( "Resource", {
 						"property1": {
@@ -5094,6 +5090,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"query": __ => __.properties( {
 								"property2": __.inherit,
 								"property3": __.inherit,
+								"property4": __.inherit,
 							} ),
 						},
 					} )
@@ -5116,7 +5113,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" ?child__property2 a ?child__property2__types;" +
 					"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
-					"" + " schema:property-3 ?child__property2__property3 " +
+					"" + " schema:property-3 ?child__property2__property3;" +
+					"" + " schema:property-4 ?child__property2__property4 " +
 
 					"} {" +
 					" BIND(BNODE() AS ?metadata)" +
@@ -5141,7 +5139,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" OPTIONAL {" +
 					"" + " ?child schema:property-2 ?child__property2." +
-					"" + " FILTER( ! isLiteral( ?child__property2 ) )" +
 					"" + " OPTIONAL { ?child__property2 a ?child__property2__types }" +
 
 					"" + " OPTIONAL {" +
@@ -5152,6 +5149,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OPTIONAL {" +
 					"" + "" + " ?child__property2 schema:property-3 ?child__property2__property3." +
 					"" + "" + " FILTER( datatype( ?child__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					"" + " }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " ?child__property2 schema:property-4 ?child__property2__property4." +
+					"" + "" + " FILTER( ! isLiteral( ?child__property2__property4 ) )" +
 					"" + " }" +
 					" } " +
 					"}"
@@ -5408,7 +5410,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								.addObject( variableHelper( "child__property2" ) )
 							)
 						)
-						.addPattern( new FilterToken( "! isLiteral( ?child__property2 )" ) )
 						.addPattern( new OptionalToken()
 							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
 								.addProperty( new PropertyToken( "a" )
@@ -6566,6 +6567,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
+						"property4": {
+							"@id": "https://schema.org/property-4",
+							"@type": "@id",
+						},
 					} )
 					.extendObjectSchema( "Resource", {
 						"property1": {
@@ -6594,6 +6599,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"query": __ => __.properties( {
 								"property2": __.inherit,
 								"property3": __.inherit,
+								"property4": __.inherit,
 							} ),
 						},
 					} )
@@ -6616,7 +6622,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" ?member__property2 a ?member__property2__types;" +
 					"" + " <https://example.com/ns#property-2> ?member__property2__property2;" +
-					"" + " schema:property-3 ?member__property2__property3 " +
+					"" + " schema:property-3 ?member__property2__property3;" +
+					"" + " schema:property-4 ?member__property2__property4 " +
 
 					"} {" +
 					" BIND(BNODE() AS ?metadata)" +
@@ -6645,7 +6652,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" OPTIONAL {" +
 					"" + " ?member schema:property-2 ?member__property2." +
-					"" + " FILTER( ! isLiteral( ?member__property2 ) )" +
 					"" + " OPTIONAL { ?member__property2 a ?member__property2__types }" +
 
 					"" + " OPTIONAL {" +
@@ -6656,6 +6662,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OPTIONAL {" +
 					"" + "" + " ?member__property2 schema:property-3 ?member__property2__property3." +
 					"" + "" + " FILTER( datatype( ?member__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					"" + " }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " ?member__property2 schema:property-4 ?member__property2__property4." +
+					"" + "" + " FILTER( ! isLiteral( ?member__property2__property4 ) )" +
 					"" + " }" +
 					" } " +
 					"}"
@@ -6925,7 +6936,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								.addObject( variableHelper( "member__property2" ) )
 							)
 						)
-						.addPattern( new FilterToken( "! isLiteral( ?member__property2 )" ) )
 						.addPattern( new OptionalToken()
 							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
 								.addProperty( new PropertyToken( "a" )

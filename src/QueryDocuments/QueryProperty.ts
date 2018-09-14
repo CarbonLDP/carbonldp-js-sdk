@@ -348,9 +348,6 @@ export class QueryProperty implements QueryablePropertyData {
 		const selfTriple:PatternToken = this.__createSelfPattern();
 		patterns.push( selfTriple );
 
-		const selfTypeFilter:PatternToken | undefined = this.__createSelfTypeFilter();
-		if( selfTypeFilter ) patterns.push( selfTypeFilter );
-
 		switch( this.propertyType ) {
 			case QueryPropertyType.EMPTY:
 				patterns.push( ...this.__createTypesSearchPatterns() );
@@ -369,6 +366,8 @@ export class QueryProperty implements QueryablePropertyData {
 				break;
 
 			default:
+				const selfTypeFilter:PatternToken | undefined = this.__createSelfTypeFilter();
+				if( selfTypeFilter ) patterns.push( selfTypeFilter );
 				break;
 		}
 
