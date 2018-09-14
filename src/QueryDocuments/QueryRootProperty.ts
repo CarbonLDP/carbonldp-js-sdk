@@ -1,4 +1,13 @@
-import { LimitToken, OffsetToken, OrderToken, PatternToken, SubSelectToken } from "sparqler/tokens";
+import {
+	IRIToken,
+	LimitToken,
+	OffsetToken,
+	OrderToken,
+	PatternToken,
+	PropertyToken,
+	SubjectToken,
+	SubSelectToken
+} from "sparqler/tokens";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
@@ -52,6 +61,17 @@ export class QueryRootProperty extends QueryProperty {
 			.addVariable( this.variable )
 			.addPattern( super.__createSelfPattern() );
 
+		// Add filter types to sub-select
+		if( this._types.length ) {
+			const typesPattern:SubjectToken = new SubjectToken( this.variable )
+				.addProperty( new PropertyToken( "a" ) );
+
+			super.__addTypesTo( typesPattern );
+			subSelect.addPattern( typesPattern );
+		}
+
+
+
 		if( this.order ) {
 			const targetProperty:QueryProperty | undefined = this.getProperty( this.order.path, { create: true } );
 			if( ! targetProperty ) throw new IllegalArgumentError( `Property "${ this.order.path }" hasn't been defined.` );
@@ -97,6 +117,22 @@ export class QueryRootProperty extends QueryProperty {
 		}
 
 		return matchPatterns;
+	}
+
+
+	// Override to only add when DOCUMENT, other case will be added in the sub-select
+	protected __addTypesTo( pattern:SubjectToken ):void {
+		if( this.containerType !== QueryContainerType.DOCUMENT )
+			return;
+
+		// Parse string types
+		const types:IRIToken[] = this._types
+			.map( type => this.queryContainer.compactIRI( type ) );
+
+		pattern
+			.properties[ 0 ] // Should be the `a` predicate
+			.objects
+			.unshift( ...types ); // Add them as first matches
 	}
 
 

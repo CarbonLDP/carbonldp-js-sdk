@@ -350,7 +350,7 @@ export class QueryProperty implements QueryablePropertyData {
 
 		switch( this.propertyType ) {
 			case QueryPropertyType.EMPTY:
-				patterns.push( ...this.__createTypesSearchPatterns() );
+				patterns.push( this.__createTypesSearchPatterns() );
 				break;
 
 			case QueryPropertyType.PARTIAL:
@@ -405,7 +405,9 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	protected __createPartialSearchPatterns():PatternToken[] {
-		const patterns:PatternToken[] = this.__createTypesSearchPatterns();
+		const patterns:PatternToken[] = [
+			this.__createTypesSearchPatterns(),
+		];
 
 		this.subProperties.forEach( subProperty => {
 			patterns.push( ...subProperty.getSearchPatterns() );
@@ -414,25 +416,29 @@ export class QueryProperty implements QueryablePropertyData {
 		return patterns;
 	}
 
-	protected __createTypesSearchPatterns():PatternToken[] {
-		const patterns:PatternToken[] = [];
+	protected __createTypesSearchPatterns():PatternToken {
+		const pattern:SubjectToken = this.__createTypesPattern();
 
-		patterns.push( new OptionalToken()
-			.addPattern( this.__createTypesPattern() )
-		);
+		// Return optional types
+		if( ! this._types.length )
+			return new OptionalToken()
+				.addPattern( pattern );
 
-		if( this._types.length ) {
-			const types:IRIToken[] = this._types
-				.map( type => this.queryContainer.compactIRI( type ) );
+		// Add types to the same subject
+		this.__addTypesTo( pattern );
 
-			patterns.push( new SubjectToken( this.variable )
-				.addProperty( new PropertyToken( "a" )
-					.addObject( ...types )
-				)
-			);
-		}
+		return pattern;
+	}
 
-		return patterns;
+	protected __addTypesTo( pattern:SubjectToken ):void {
+		// Parse string types
+		const types:IRIToken[] = this._types
+			.map( type => this.queryContainer.compactIRI( type ) );
+
+		pattern
+			.properties[ 0 ] // Should be the `a` predicate
+			.objects
+			.unshift( ...types ); // Add them as first matches
 	}
 
 

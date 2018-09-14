@@ -451,8 +451,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" BIND(BNODE() AS ?metadata)" +
 
 					" VALUES ?document { <https://example.com/resource/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
-					" ?document a <https://example.com/ns#Resource>." +
+
+					" ?document a" +
+					"" + " <https://example.com/ns#Resource>," +
+					"" + " ?document__types." +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
@@ -1549,8 +1551,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" BIND(BNODE() AS ?metadata)" +
 
 					" VALUES ?document { <https://example.com/resource/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
-					" ?document a <https://example.com/ns#Resource>." +
+					" ?document a" +
+					"" + " <https://example.com/ns#Resource>," +
+					"" + " ?document__types." +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
@@ -2162,8 +2165,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" BIND(BNODE() AS ?metadata)" +
 
 					" VALUES ?document { <https://example.com/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
-					" ?document a <https://example.com/ns#Resource>." +
+					" ?document a" +
+					"" + " <https://example.com/ns#Resource>," +
+					"" + " ?document__types." +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
@@ -2251,11 +2255,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" BIND(BNODE() AS ?metadata)" +
 
 					" VALUES ?document { <https://example.com/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
 					" ?document a" +
 					"" + " <https://example.com/ns#A-Type>," +
 					"" + " <https://example.com/ns#Another-Type>," +
-					"" + " <https://example.com/ns#Resource>." +
+					"" + " <https://example.com/ns#Resource>," +
+					"" + " ?document__types." +
 
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
@@ -5122,15 +5126,18 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" {" +
 					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
+
+					"" + "" + " ?child a <https://example.com/ns#Resource>." +
+
 					"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
+
 					"" + " }" +
 					"" + " ORDER BY ?child__property2" +
 					"" + " LIMIT 10" +
 					"" + " OFFSET 5" +
 					" }" +
 
-					" OPTIONAL { ?child a ?child__types }" +
-					" ?child a <https://example.com/ns#Resource>." +
+					" ?child a ?child__types." +
 
 					" OPTIONAL {" +
 					"" + " ?child <https://example.com/ns#property-1> ?child__property1." +
@@ -5375,6 +5382,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								)
 							)
 							.addPattern( new SubjectToken( variableHelper( "child" ) )
+								.addProperty( new PropertyToken( "a" )
+									.addObject( new PrefixedNameToken( "ex:Resource" ) )
+								)
+							)
+							.addPattern( new SubjectToken( variableHelper( "child" ) )
 								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 									.addObject( variableHelper( "child__property2" ) )
 								)
@@ -5383,17 +5395,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							.addModifier( new LimitToken( 10 ) )
 							.addModifier( new OffsetToken( 5 ) )
 						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addProperty( new PropertyToken( "a" )
-										.addObject( variableHelper( "child__types" ) )
-									)
-								)
-						)
 						.addPattern( new SubjectToken( variableHelper( "child" ) )
 							.addProperty( new PropertyToken( "a" )
-								.addObject( new PrefixedNameToken( "ex:Resource" ) )
+								.addObject( variableHelper( "child__types" ) )
 							)
 						)
 						.addPattern(
@@ -6635,6 +6639,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
 					"" + "" + " }" +
+
+					"" + "" + " ?member a <https://example.com/ns#Resource>." +
+
 					"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
 					"" + " }" +
 					"" + " ORDER BY ?member__property2" +
@@ -6642,8 +6649,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" OPTIONAL { ?member a ?member__types }" +
-					" ?member a <https://example.com/ns#Resource>." +
+					" ?member a ?member__types." +
 
 					" OPTIONAL {" +
 					"" + " ?member <https://example.com/ns#property-1> ?member__property1." +
@@ -6901,6 +6907,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								)
 							)
 							.addPattern( new SubjectToken( variableHelper( "member" ) )
+								.addProperty( new PropertyToken( "a" )
+									.addObject( new PrefixedNameToken( "ex:Resource" ) )
+								)
+							)
+							.addPattern( new SubjectToken( variableHelper( "member" ) )
 								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 									.addObject( variableHelper( "member__property2" ) )
 								)
@@ -6909,17 +6920,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							.addModifier( new LimitToken( 10 ) )
 							.addModifier( new OffsetToken( 5 ) )
 						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addProperty( new PropertyToken( "a" )
-										.addObject( variableHelper( "member__types" ) )
-									)
-								)
-						)
 						.addPattern( new SubjectToken( variableHelper( "member" ) )
 							.addProperty( new PropertyToken( "a" )
-								.addObject( new PrefixedNameToken( "ex:Resource" ) )
+								.addObject( variableHelper( "member__types" ) )
 							)
 						)
 						.addPattern(
