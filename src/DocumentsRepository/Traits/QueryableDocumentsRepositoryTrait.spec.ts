@@ -1,8 +1,6 @@
 import {
-	BindToken,
 	ConstructToken,
 	FilterToken,
-	GroupPatternToken,
 	IRIRefToken,
 	LimitToken,
 	OffsetToken,
@@ -56,6 +54,7 @@ import {
 	property,
 	STATIC
 } from "../../test/JasmineExtender";
+import { UUIDUtils } from "../../Utils";
 
 import { C } from "../../Vocabularies/C";
 import { LDP } from "../../Vocabularies/LDP";
@@ -183,6 +182,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		let repository:QueryableDocumentsRepositoryTrait;
 		let document:Document;
+		let UUIDSpy:jasmine.Spy;
 		beforeEach( () => {
 			repository = QueryableDocumentsRepositoryTrait.decorate( { context } );
 
@@ -192,6 +192,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				$registry: context.registry,
 				$_queryableMetadata: createMockQueryableMetadata(),
 			} );
+
+
+			UUIDSpy = spyOn( UUIDUtils, "generate" )
+				.and.callThrough();
 		} );
 
 		function createMockDocument<T extends {}>( data:T & Partial<Document> ):T & Document {
@@ -436,7 +440,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
 
 					" ?document a ?document__types;" +
@@ -448,8 +452,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " schema:property-3 ?document__property2__property3 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" VALUES ?document { <https://example.com/resource/> }" +
 
 					" ?document a" +
@@ -1536,7 +1538,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
 
 					" ?document a ?document__types;" +
@@ -1548,8 +1550,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " schema:property-3 ?document__property2__property3 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" VALUES ?document { <https://example.com/resource/> }" +
 					" ?document a" +
 					"" + " <https://example.com/ns#Resource>," +
@@ -2150,7 +2150,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
 
 					" ?document a ?document__types;" +
@@ -2162,8 +2162,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " schema:property-3 ?document__property2__property3 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" VALUES ?document { <https://example.com/> }" +
 					" ?document a" +
 					"" + " <https://example.com/ns#Resource>," +
@@ -2240,7 +2238,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
 
 					" ?document a ?document__types;" +
@@ -2252,8 +2250,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " schema:property-3 ?document__property2__property3 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" VALUES ?document { <https://example.com/> }" +
 					" ?document a" +
 					"" + " <https://example.com/ns#A-Type>," +
@@ -3647,7 +3643,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
 
 					" ?document a ?document__types;" +
@@ -3661,8 +3657,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" VALUES ?document { <https://example.com/> }" +
 					" OPTIONAL { ?document a ?document__types }" +
 
@@ -3975,7 +3969,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
 
 					" ?document a ?document__types;" +
@@ -3989,8 +3983,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" VALUES ?document { <https://example.com/> }" +
 					" OPTIONAL { ?document a ?document__types }" +
 
@@ -4072,7 +4064,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
 
 					" ?document a ?document__types;" +
@@ -4083,8 +4075,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" ?document__property2 ?document__property2___predicate ?document__property2___object " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" VALUES ?document { <https://example.com/> }" +
 					" OPTIONAL { ?document a ?document__types }" +
 
@@ -4624,7 +4614,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
 
 					" ?document a ?document__types;" +
@@ -4638,8 +4628,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" VALUES ?document { <https://example.com/> }" +
 					" OPTIONAL { ?document a ?document__types }" +
 
@@ -5108,7 +5096,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?child.` +
 
 					" ?child a ?child__types;" +
@@ -5121,8 +5109,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " schema:property-4 ?child__property2__property4 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
@@ -5200,14 +5186,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?child.` +
 
 					" ?child ?child___predicate ?child___object " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
@@ -5258,14 +5242,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?child.` +
 
 					" ?child ?child___predicate ?child___object " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
@@ -5341,7 +5323,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const query:QueryToken = spy.calls.mostRecent().object;
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
-						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }` ) )
 							.addProperty( new PropertyToken( "a" )
 								.addObject( new IRIRefToken( C.VolatileResource ) )
 								.addObject( new IRIRefToken( C.QueryMetadata ) )
@@ -5373,7 +5355,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							)
 						)
 
-						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
 						.addPattern( new SubSelectToken( "DISTINCT" )
 							.addVariable( variableHelper( "child" ) )
 							.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
@@ -6617,7 +6598,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?member.` +
 
 					" ?member a ?member__types;" +
@@ -6630,8 +6611,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " schema:property-4 ?member__property2__property4 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +
@@ -6713,14 +6692,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?member.` +
 
 					" ?member___subject ?member___predicate ?member___object " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +
@@ -6775,14 +6752,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?member.` +
 
 					" ?member ?member___predicate ?member___object " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +
@@ -6865,7 +6840,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const query:QueryToken = spy.calls.mostRecent().object;
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
-						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }` ) )
 							.addProperty( new PropertyToken( "a" )
 								.addObject( new IRIRefToken( C.VolatileResource ) )
 								.addObject( new IRIRefToken( C.QueryMetadata ) )
@@ -6897,7 +6872,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							)
 						)
 
-						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
 						.addPattern( new SubSelectToken( "DISTINCT" )
 							.addVariable( variableHelper( "member" ) )
 							.addPattern( new SubSelectToken()
@@ -8112,14 +8086,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?child.` +
 
 					" ?child a ?child__types " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + ` <https://example.com/> <${ LDP.contains }> ?child` +
@@ -8486,14 +8458,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?member.` +
 
 					" ?member a ?member__types " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +

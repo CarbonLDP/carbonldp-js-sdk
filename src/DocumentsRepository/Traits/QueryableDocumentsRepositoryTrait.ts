@@ -1,4 +1,4 @@
-import { BindToken, ConstructToken, PropertyToken, QueryToken, SubjectToken, VariableToken } from "sparqler/tokens";
+import { ConstructToken, IRIRefToken, PropertyToken, QueryToken, SubjectToken } from "sparqler/tokens";
 
 import { Document } from "../../Document/Document";
 
@@ -38,7 +38,7 @@ import { URI } from "../../RDF/URI";
 
 import { SPARQLService } from "../../SPARQL/SPARQLService";
 
-import { isBoolean, isDate, isFunction, isNumber, isObject, isString } from "../../Utils";
+import { isBoolean, isDate, isFunction, isNumber, isObject, isString, UUIDUtils } from "../../Utils";
 
 import { C } from "../../Vocabularies/C";
 
@@ -83,9 +83,8 @@ type QueryData = {
 };
 
 function __executeQueryContainer<T extends object>( this:void, repository:QueryableDocumentsRepositoryTrait, url:string, requestOptions:RequestOptions, queryContainer:QueryContainer, target?:Document ):Promise<(T & Document)[]> {
-	const metadataVar:VariableToken = queryContainer.getVariable( "metadata" );
 	const construct:ConstructToken = new ConstructToken()
-		.addTriple( new SubjectToken( metadataVar )
+		.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDUtils.generate() }` ) )
 			.addProperty( new PropertyToken( "a" )
 				.addObject( queryContainer.compactIRI( C.VolatileResource ) )
 				.addObject( queryContainer.compactIRI( C.QueryMetadata ) )
@@ -95,7 +94,6 @@ function __executeQueryContainer<T extends object>( this:void, repository:Querya
 			)
 		)
 		.addTriple( ...queryContainer._queryProperty.getConstructPatterns() )
-		.addPattern( new BindToken( "BNODE()", metadataVar ) )
 		.addPattern( ...queryContainer._queryProperty.getSearchPatterns() );
 
 	const query:QueryToken = new QueryToken( construct )
