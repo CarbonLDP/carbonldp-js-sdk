@@ -264,6 +264,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"QueryContextMetadata",
+			"https://carbonldp.com/ns/v1/platform#QueryContextMetadata"
+		), ():void => {
+			const target:C[ "QueryContextMetadata" ] = "https://carbonldp.com/ns/v1/platform#QueryContextMetadata";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"QueryMetadata",
 			"https://carbonldp.com/ns/v1/platform#QueryMetadata"
 		), ():void => {
@@ -332,6 +341,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			"https://carbonldp.com/ns/v1/platform#buildDate"
 		), ():void => {
 			const target:C[ "buildDate" ] = "https://carbonldp.com/ns/v1/platform#buildDate";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"context",
+			"https://carbonldp.com/ns/v1/platform#context"
+		), ():void => {
+			const target:C[ "context" ] = "https://carbonldp.com/ns/v1/platform#context";
 			expect( target ).toBeDefined();
 		} );
 
@@ -575,7 +593,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( C ).length ).toBe( 62 );
+			expect( Object.keys( C ).length ).toBe( 64 );
 		} );
 
 		it( "C.namespace", ():void => {
@@ -718,6 +736,11 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.PreferResultsContext ).toBe( "https://carbonldp.com/ns/v1/platform#PreferResultsContext" );
 		} );
 
+		it( "C.QueryContextMetadata", ():void => {
+			expect( C.QueryContextMetadata ).toEqual( jasmine.any( String ) );
+			expect( C.QueryContextMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#QueryContextMetadata" );
+		} );
+
 		it( "C.QueryMetadata", ():void => {
 			expect( C.QueryMetadata ).toEqual( jasmine.any( String ) );
 			expect( C.QueryMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#QueryMetadata" );
@@ -752,6 +775,11 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		it( "C.bNodesMap", ():void => {
 			expect( C.bNodesMap ).toEqual( jasmine.any( String ) );
 			expect( C.bNodesMap ).toBe( "https://carbonldp.com/ns/v1/platform#bNodesMap" );
+		} );
+
+		it( "C.context", ():void => {
+			expect( C.context ).toEqual( jasmine.any( String ) );
+			expect( C.context ).toBe( "https://carbonldp.com/ns/v1/platform#context" );
 		} );
 
 		it( "C.buildDate", ():void => {

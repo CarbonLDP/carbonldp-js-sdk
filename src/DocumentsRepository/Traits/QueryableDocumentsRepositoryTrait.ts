@@ -1,4 +1,16 @@
-import { ConstructToken, IRIRefToken, PropertyToken, QueryToken, SubjectToken } from "sparqler/tokens";
+import {
+	ConstructToken,
+	FilterToken,
+	GraphToken,
+	IRIRefToken,
+	LimitToken,
+	OptionalToken,
+	PropertyToken,
+	QueryToken,
+	SubjectToken,
+	SubSelectToken,
+	VariableToken
+} from "sparqler/tokens";
 
 import { Document } from "../../Document/Document";
 
@@ -82,23 +94,115 @@ type QueryData = {
 	target?:Document;
 };
 
+
+function __createContextTriple( property:QueryProperty ):SubjectToken {
+	return new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDUtils.generate() }` ) )
+		.addProperty( new PropertyToken( "a" )
+			.addObject( property.queryContainer.compactIRI( C.VolatileResource ) )
+			.addObject( property.queryContainer.compactIRI( C.QueryContextMetadata ) )
+		)
+		.addProperty( new PropertyToken( property.queryContainer.compactIRI( C.context ) )
+			.addObject( property._getVariable( `_graph` ) )
+		)
+		.addProperty( new PropertyToken( property.queryContainer.compactIRI( C.target ) )
+			.addObject( property.variable )
+		)
+		;
+}
+
+function __getContextTriples( property:QueryProperty ):SubjectToken[] {
+	const triples:SubjectToken[] = [];
+	if( property.propertyType === void 0 ) return triples;
+
+	if( property.propertyType !== QueryPropertyType.FULL ) {
+		triples.push( __createContextTriple( property ) );
+	}
+
+	property.subProperties.forEach( subProperty => {
+		const subPatterns:SubjectToken[] = __getContextTriples( subProperty );
+		triples.push( ...subPatterns );
+	} );
+
+	return triples;
+}
+
+function __createContextPattern( property:QueryProperty ):OptionalToken {
+	const predicate:VariableToken = property._getVariable( `_predicate` );
+	const object:VariableToken = property._getVariable( `_object` );
+
+	const anySelfTriple:SubjectToken = new SubjectToken( property.variable )
+		.addProperty( new PropertyToken( predicate )
+			.addObject( object )
+		);
+
+	// Add optional with only bNodes filter
+	const pattern:OptionalToken = new OptionalToken()
+		.addPattern( new FilterToken( `isBlank( ${ property.variable } )` ) );
+
+	// All properties has already predicates and objects selected
+	if( property.propertyType !== QueryPropertyType.ALL ) {
+		pattern
+			.addPattern( new SubSelectToken()
+				.addVariable( predicate, object )
+				.addPattern( anySelfTriple )
+				.addModifier( new LimitToken( 1 ) )
+			);
+	}
+
+	const graph:VariableToken = property._getVariable( `_graph` );
+
+	// Add the graph selection
+	pattern
+		.addPattern( new GraphToken( graph )
+			.addPattern( anySelfTriple )
+		);
+
+	return pattern;
+}
+
+function __getContextPatterns( property:QueryProperty ):OptionalToken[] {
+	const patterns:OptionalToken[] = [];
+	if( property.propertyType === void 0 ) return patterns;
+
+	if( property.propertyType !== QueryPropertyType.FULL ) {
+		patterns.push( __createContextPattern( property ) );
+	}
+
+	property.subProperties.forEach( subProperty => {
+		const subPatterns:OptionalToken[] = __getContextPatterns( subProperty );
+		patterns.push( ...subPatterns );
+	} );
+
+	return patterns;
+}
+
 function __executeQueryContainer<T extends object>( this:void, repository:QueryableDocumentsRepositoryTrait, url:string, requestOptions:RequestOptions, queryContainer:QueryContainer, target?:Document ):Promise<(T & Document)[]> {
 	const construct:ConstructToken = new ConstructToken()
-		.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDUtils.generate() }` ) )
-			.addProperty( new PropertyToken( "a" )
-				.addObject( queryContainer.compactIRI( C.VolatileResource ) )
-				.addObject( queryContainer.compactIRI( C.QueryMetadata ) )
-			)
-			.addProperty( new PropertyToken( queryContainer.compactIRI( C.target ) )
-				.addObject( queryContainer._queryProperty.variable )
-			)
+		.addTriple(
+			// Add QueryMetadata of the target elements
+			new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDUtils.generate() }` ) )
+				.addProperty( new PropertyToken( "a" )
+					.addObject( queryContainer.compactIRI( C.VolatileResource ) )
+					.addObject( queryContainer.compactIRI( C.QueryMetadata ) )
+				)
+				.addProperty( new PropertyToken( queryContainer.compactIRI( C.target ) )
+					.addObject( queryContainer._queryProperty.variable )
+				)
 		)
+		// Add context metadata
+		.addTriple( ...__getContextTriples( queryContainer._queryProperty ) )
+		// Add construct and search patterns
 		.addTriple( ...queryContainer._queryProperty.getConstructPatterns() )
-		.addPattern( ...queryContainer._queryProperty.getSearchPatterns() );
+		.addPattern( ...queryContainer._queryProperty.getSearchPatterns() )
+		// Add search context patterns
+		.addPattern( ...__getContextPatterns( queryContainer._queryProperty ) )
+	;
 
+	// Add the used prefixes
 	const query:QueryToken = new QueryToken( construct )
 		.addPrologues( ...queryContainer.getPrologues() );
 
+	// Header to convert the triples into quads
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions );
 
 	return SPARQLService

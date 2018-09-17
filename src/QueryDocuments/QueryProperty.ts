@@ -1,7 +1,8 @@
 import { Path, PathBuilder } from "sparqler/patterns";
 import {
 	FilterToken,
-	GraphToken, GroupPatternToken,
+	GraphToken,
+	GroupPatternToken,
 	IRIToken,
 	LiteralToken,
 	OptionalToken,
@@ -107,7 +108,9 @@ export class QueryProperty implements QueryablePropertyData {
 			// If immediate child and can be created in valid property
 			if( rootPath === path && flags && flags.create && this._isComplete() ) {
 				const newProperty:QueryProperty = this.addProperty( rootPath, flags );
-				newProperty.setType( QueryPropertyType.ALL );
+
+				if( this.propertyType === QueryPropertyType.FULL )
+					newProperty.setType( QueryPropertyType.ALL );
 
 				return newProperty;
 			}
@@ -235,7 +238,7 @@ export class QueryProperty implements QueryablePropertyData {
 
 	// Tokens creation helpers
 
-	protected __getVariable( name:string ):QueryVariable {
+	_getVariable( name:string ):QueryVariable {
 		return this.queryContainer
 			.getVariable( `${ this.fullName }.${ name }` );
 	}
@@ -503,14 +506,14 @@ export class QueryProperty implements QueryablePropertyData {
 	protected __createTypesPattern():SubjectToken {
 		return new SubjectToken( this.variable )
 			.addProperty( new PropertyToken( "a" )
-				.addObject( this.__getVariable( "types" ) )
+				.addObject( this._getVariable( "types" ) )
 			);
 	}
 
 	protected __createAllPattern():SubjectToken {
 		return new SubjectToken( this.variable )
-			.addProperty( new PropertyToken( this.__getVariable( "_predicate" ) )
-				.addObject( this.__getVariable( "_object" ) )
+			.addProperty( new PropertyToken( this._getVariable( "_predicate" ) )
+				.addObject( this._getVariable( "_object" ) )
 			);
 	}
 
@@ -521,9 +524,9 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	protected __createGraphSubPattern():SubjectToken {
-		return new SubjectToken( this.__getVariable( "_subject" ) )
-			.addProperty( new PropertyToken( this.__getVariable( "_predicate" ) )
-				.addObject( this.__getVariable( "_object" ) )
+		return new SubjectToken( this._getVariable( "_subject" ) )
+			.addProperty( new PropertyToken( this._getVariable( "_predicate" ) )
+				.addObject( this._getVariable( "_object" ) )
 			);
 	}
 

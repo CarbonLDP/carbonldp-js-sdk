@@ -1,6 +1,7 @@
 import {
 	ConstructToken,
 	FilterToken,
+	GraphToken,
 	IRIRefToken,
 	LimitToken,
 	OffsetToken,
@@ -440,8 +441,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document___graph;` +
+					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document__property2___graph;` +
+					"" + ` <${ C.target }> ?document__property2.` +
 
 					" ?document a ?document__types;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
@@ -476,7 +486,34 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
-					" } " +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document___predicate ?document___object {" +
+					"" + "" + "" + " ?document ?document___predicate ?document___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document___graph {" +
+					"" + "" + " ?document ?document___predicate ?document___object" +
+					"" + " }" +
+					" }" +
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document__property2 ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document__property2___predicate ?document__property2___object {" +
+					"" + "" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document__property2___graph {" +
+					"" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + " }" +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -1538,8 +1575,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document___graph;` +
+					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document__property2___graph;` +
+					"" + ` <${ C.target }> ?document__property2.` +
 
 					" ?document a ?document__types;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
@@ -1573,7 +1619,34 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
-					" } " +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document___predicate ?document___object {" +
+					"" + "" + "" + " ?document ?document___predicate ?document___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document___graph {" +
+					"" + "" + " ?document ?document___predicate ?document___object" +
+					"" + " }" +
+					" }" +
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document__property2 ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document__property2___predicate ?document__property2___object {" +
+					"" + "" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document__property2___graph {" +
+					"" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + " }" +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -2150,8 +2223,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document___graph;` +
+					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document__property2___graph;` +
+					"" + ` <${ C.target }> ?document__property2.` +
 
 					" ?document a ?document__types;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
@@ -2185,7 +2267,34 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
-					" } " +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document___predicate ?document___object {" +
+					"" + "" + "" + " ?document ?document___predicate ?document___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document___graph {" +
+					"" + "" + " ?document ?document___predicate ?document___object" +
+					"" + " }" +
+					" }" +
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document__property2 ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document__property2___predicate ?document__property2___object {" +
+					"" + "" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document__property2___graph {" +
+					"" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + " }" +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -2238,8 +2347,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document___graph;` +
+					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document__property2___graph;` +
+					"" + ` <${ C.target }> ?document__property2.` +
 
 					" ?document a ?document__types;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
@@ -2275,7 +2393,34 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
-					" } " +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document___predicate ?document___object {" +
+					"" + "" + "" + " ?document ?document___predicate ?document___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document___graph {" +
+					"" + "" + " ?document ?document___predicate ?document___object" +
+					"" + " }" +
+					" }" +
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document__property2 ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document__property2___predicate ?document__property2___object {" +
+					"" + "" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document__property2___graph {" +
+					"" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + " }" +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -3643,8 +3788,18 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document___graph;` +
+					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document__property2___graph;` +
+					"" + ` <${ C.target }> ?document__property2.` +
+
 
 					" ?document a ?document__types;" +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
@@ -3690,7 +3845,33 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					" }" +
 
-					" }"
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document___predicate ?document___object {" +
+					"" + "" + "" + " ?document ?document___predicate ?document___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document___graph {" +
+					"" + "" + " ?document ?document___predicate ?document___object" +
+					"" + " }" +
+					" }" +
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document__property2 ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document__property2___predicate ?document__property2___object {" +
+					"" + "" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document__property2___graph {" +
+					"" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + " }" +
+					" }" +
+
+					" " +
+					"}"
 				);
 			} );
 
@@ -3969,8 +4150,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document___graph;` +
+					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document__property2___graph;` +
+					"" + ` <${ C.target }> ?document__property2.` +
 
 					" ?document a ?document__types;" +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
@@ -4014,6 +4204,31 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document___predicate ?document___object {" +
+					"" + "" + "" + " ?document ?document___predicate ?document___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document___graph {" +
+					"" + "" + " ?document ?document___predicate ?document___object" +
+					"" + " }" +
+					" }" +
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document__property2 ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document__property2___predicate ?document__property2___object {" +
+					"" + "" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document__property2___graph {" +
+					"" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + " }" +
 					" }" +
 
 					" }"
@@ -4064,8 +4279,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document___graph;` +
+					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document__property2___graph;` +
+					"" + ` <${ C.target }> ?document__property2.` +
 
 					" ?document a ?document__types;" +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
@@ -4091,6 +4315,25 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document___predicate ?document___object {" +
+					"" + "" + "" + " ?document ?document___predicate ?document___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document___graph {" +
+					"" + "" + " ?document ?document___predicate ?document___object" +
+					"" + " }" +
+					" }" +
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document__property2 ) )" +
+					"" + " GRAPH ?document__property2___graph {" +
+					"" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + " }" +
 					" }" +
 
 					" }"
@@ -4614,8 +4857,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?document.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document___graph;` +
+					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?document__property2___graph;` +
+					"" + ` <${ C.target }> ?document__property2.` +
 
 					" ?document a ?document__types;" +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
@@ -4659,6 +4911,31 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					" OPTIONAL {" +
 					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document___predicate ?document___object {" +
+					"" + "" + "" + " ?document ?document___predicate ?document___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document___graph {" +
+					"" + "" + " ?document ?document___predicate ?document___object" +
+					"" + " }" +
+					" }" +
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?document__property2 ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?document__property2___predicate ?document__property2___object {" +
+					"" + "" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?document__property2___graph {" +
+					"" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + " }" +
 					" }" +
 
 					" }"
@@ -5096,8 +5373,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?child.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?child___graph;` +
+					"" + ` <${ C.target }> ?child.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?child__property2___graph;` +
+					"" + ` <${ C.target }> ?child__property2.` +
 
 					" ?child a ?child__types;" +
 					"" + " <https://example.com/ns#property-1> ?child__property1;" +
@@ -5148,7 +5434,34 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + "" + " ?child__property2 schema:property-4 ?child__property2__property4." +
 					"" + "" + " FILTER( ! isLiteral( ?child__property2__property4 ) )" +
 					"" + " }" +
-					" } " +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?child ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?child___predicate ?child___object {" +
+					"" + "" + "" + " ?child ?child___predicate ?child___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?child___graph {" +
+					"" + "" + " ?child ?child___predicate ?child___object" +
+					"" + " }" +
+					" }" +
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?child__property2 ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?child__property2___predicate ?child__property2___object {" +
+					"" + "" + "" + " ?child__property2 ?child__property2___predicate ?child__property2___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?child__property2___graph {" +
+					"" + "" + " ?child__property2 ?child__property2___predicate ?child__property2___object" +
+					"" + " }" +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -5174,35 +5487,27 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 
-				await repository.getChildren( "/", _ => _
-					.properties( _.all )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
+				await repository.getChildren( "/" );
 
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?child.` +
 
-					" ?child ?child___predicate ?child___object " +
+					" ?child___subject ?child___predicate ?child___object " +
 
 					"} {" +
 					" {" +
 					"" + " SELECT DISTINCT ?child {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
-					"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
+					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child" +
 					"" + " }" +
-					"" + " ORDER BY ?child__property2" +
-					"" + " LIMIT 10" +
-					"" + " OFFSET 5" +
 					" }" +
 
-					" ?child ?child___predicate ?child___object" +
+					" GRAPH ?child {" +
+					"" + " ?child___subject ?child___predicate ?child___object" +
+					" }" +
 
 					" " +
 					"}"
@@ -5242,7 +5547,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?child.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?child___graph;` +
 					"" + ` <${ C.target }> ?child.` +
 
 					" ?child ?child___predicate ?child___object " +
@@ -5258,7 +5568,14 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" ?child ?child___predicate ?child___object" +
+					" ?child ?child___predicate ?child___object." +
+
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?child ) )" +
+					"" + " GRAPH ?child___graph {" +
+					"" + "" + " ?child ?child___predicate ?child___object" +
+					"" + " }" +
+					" }" +
 
 					" " +
 					"}"
@@ -5323,13 +5640,37 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const query:QueryToken = spy.calls.mostRecent().object;
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
-						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }` ) )
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }` ) )
 							.addProperty( new PropertyToken( "a" )
 								.addObject( new IRIRefToken( C.VolatileResource ) )
 								.addObject( new IRIRefToken( C.QueryMetadata ) )
 							)
 							.addProperty( new PropertyToken( new IRIRefToken( C.target ) )
 								.addObject( variableHelper( "child" ) )
+							)
+						)
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }` ) )
+							.addProperty( new PropertyToken( "a" )
+								.addObject( new IRIRefToken( C.VolatileResource ) )
+								.addObject( new IRIRefToken( C.QueryContextMetadata ) )
+							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.context ) )
+								.addObject( variableHelper( "child___graph" ) )
+							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.target ) )
+								.addObject( variableHelper( "child" ) )
+							)
+						)
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }` ) )
+							.addProperty( new PropertyToken( "a" )
+								.addObject( new IRIRefToken( C.VolatileResource ) )
+								.addObject( new IRIRefToken( C.QueryContextMetadata ) )
+							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.context ) )
+								.addObject( variableHelper( "child__property2___graph" ) )
+							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.target ) )
+								.addObject( variableHelper( "child__property2" ) )
 							)
 						)
 						.addTriple( new SubjectToken( variableHelper( "child" ) )
@@ -5425,6 +5766,44 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							.addPattern( new FilterToken( "datatype( ?child__property2__property3 ) = xsd:string" ) )
 						)
 						.addPattern( new FilterToken( `?child__property2__property2 = "12345"^^xsd:integer` ) )
+						.addPattern( new OptionalToken()
+							.addPattern( new FilterToken( `isBlank( ?child )` ) )
+							.addPattern( new SubSelectToken()
+								.addVariable( variableHelper( "child___predicate" ), variableHelper( "child___object" ) )
+								.addPattern( new SubjectToken( variableHelper( "child" ) )
+									.addProperty( new PropertyToken( variableHelper( "child___predicate" ) )
+										.addObject( variableHelper( "child___object" ) )
+									)
+								)
+								.addModifier( new LimitToken( 1 ) )
+							)
+							.addPattern( new GraphToken( variableHelper( "child___graph" ) )
+								.addPattern( new SubjectToken( variableHelper( "child" ) )
+									.addProperty( new PropertyToken( variableHelper( "child___predicate" ) )
+										.addObject( variableHelper( "child___object" ) )
+									)
+								)
+							)
+						)
+						.addPattern( new OptionalToken()
+							.addPattern( new FilterToken( `isBlank( ?child__property2 )` ) )
+							.addPattern( new SubSelectToken()
+								.addVariable( variableHelper( "child__property2___predicate" ), variableHelper( "child__property2___object" ) )
+								.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+									.addProperty( new PropertyToken( variableHelper( "child__property2___predicate" ) )
+										.addObject( variableHelper( "child__property2___object" ) )
+									)
+								)
+								.addModifier( new LimitToken( 1 ) )
+							)
+							.addPattern( new GraphToken( variableHelper( "child__property2___graph" ) )
+								.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+									.addProperty( new PropertyToken( variableHelper( "child__property2___predicate" ) )
+										.addObject( variableHelper( "child__property2___object" ) )
+									)
+								)
+							)
+						)
 					)
 
 						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
@@ -6598,8 +6977,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?member.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?member___graph;` +
+					"" + ` <${ C.target }> ?member.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?member__property2___graph;` +
+					"" + ` <${ C.target }> ?member__property2.` +
 
 					" ?member a ?member__types;" +
 					"" + " <https://example.com/ns#property-1> ?member__property1;" +
@@ -6656,7 +7044,34 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + "" + " ?member__property2 schema:property-4 ?member__property2__property4." +
 					"" + "" + " FILTER( ! isLiteral( ?member__property2__property4 ) )" +
 					"" + " }" +
-					" } " +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?member ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?member___predicate ?member___object {" +
+					"" + "" + "" + " ?member ?member___predicate ?member___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?member___graph {" +
+					"" + "" + " ?member ?member___predicate ?member___object" +
+					"" + " }" +
+					" }" +
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?member__property2 ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?member__property2___predicate ?member__property2___object {" +
+					"" + "" + "" + " ?member__property2 ?member__property2___predicate ?member__property2___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?member__property2___graph {" +
+					"" + "" + " ?member__property2 ?member__property2___predicate ?member__property2___object" +
+					"" + " }" +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -6692,7 +7107,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?member.` +
 
 					" ?member___subject ?member___predicate ?member___object " +
@@ -6752,7 +7167,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?member.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?member___graph;` +
 					"" + ` <${ C.target }> ?member.` +
 
 					" ?member ?member___predicate ?member___object " +
@@ -6775,7 +7195,14 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" ?member ?member___predicate ?member___object" +
+					" ?member ?member___predicate ?member___object." +
+
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?member ) )" +
+					"" + " GRAPH ?member___graph {" +
+					"" + "" + " ?member ?member___predicate ?member___object" +
+					"" + " }" +
+					" }" +
 
 					" " +
 					"}"
@@ -6840,13 +7267,37 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const query:QueryToken = spy.calls.mostRecent().object;
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
-						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }` ) )
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }` ) )
 							.addProperty( new PropertyToken( "a" )
 								.addObject( new IRIRefToken( C.VolatileResource ) )
 								.addObject( new IRIRefToken( C.QueryMetadata ) )
 							)
 							.addProperty( new PropertyToken( new IRIRefToken( C.target ) )
 								.addObject( variableHelper( "member" ) )
+							)
+						)
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }` ) )
+							.addProperty( new PropertyToken( "a" )
+								.addObject( new IRIRefToken( C.VolatileResource ) )
+								.addObject( new IRIRefToken( C.QueryContextMetadata ) )
+							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.context ) )
+								.addObject( variableHelper( "member___graph" ) )
+							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.target ) )
+								.addObject( variableHelper( "member" ) )
+							)
+						)
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 2 ].returnValue }` ) )
+							.addProperty( new PropertyToken( "a" )
+								.addObject( new IRIRefToken( C.VolatileResource ) )
+								.addObject( new IRIRefToken( C.QueryContextMetadata ) )
+							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.context ) )
+								.addObject( variableHelper( "member__property2___graph" ) )
+							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.target ) )
+								.addObject( variableHelper( "member__property2" ) )
 							)
 						)
 						.addTriple( new SubjectToken( variableHelper( "member" ) )
@@ -6953,6 +7404,44 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							.addPattern( new FilterToken( "datatype( ?member__property2__property3 ) = xsd:string" ) )
 						)
 						.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
+						.addPattern( new OptionalToken()
+							.addPattern( new FilterToken( `isBlank( ?member )` ) )
+							.addPattern( new SubSelectToken()
+								.addVariable( variableHelper( "member___predicate" ), variableHelper( "member___object" ) )
+								.addPattern( new SubjectToken( variableHelper( "member" ) )
+									.addProperty( new PropertyToken( variableHelper( "member___predicate" ) )
+										.addObject( variableHelper( "member___object" ) )
+									)
+								)
+								.addModifier( new LimitToken( 1 ) )
+							)
+							.addPattern( new GraphToken( variableHelper( "member___graph" ) )
+								.addPattern( new SubjectToken( variableHelper( "member" ) )
+									.addProperty( new PropertyToken( variableHelper( "member___predicate" ) )
+										.addObject( variableHelper( "member___object" ) )
+									)
+								)
+							)
+						)
+						.addPattern( new OptionalToken()
+							.addPattern( new FilterToken( `isBlank( ?member__property2 )` ) )
+							.addPattern( new SubSelectToken()
+								.addVariable( variableHelper( "member__property2___predicate" ), variableHelper( "member__property2___object" ) )
+								.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+									.addProperty( new PropertyToken( variableHelper( "member__property2___predicate" ) )
+										.addObject( variableHelper( "member__property2___object" ) )
+									)
+								)
+								.addModifier( new LimitToken( 1 ) )
+							)
+							.addPattern( new GraphToken( variableHelper( "member__property2___graph" ) )
+								.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+									.addProperty( new PropertyToken( variableHelper( "member__property2___predicate" ) )
+										.addObject( variableHelper( "member__property2___object" ) )
+									)
+								)
+							)
+						)
 					)
 
 						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
@@ -8086,7 +8575,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?child.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?child___graph;` +
 					"" + ` <${ C.target }> ?child.` +
 
 					" ?child a ?child__types " +
@@ -8098,8 +8592,22 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " }" +
 					" }" +
 
-					" OPTIONAL { ?child a ?child__types } " +
+					" OPTIONAL { ?child a ?child__types }" +
 
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?child ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?child___predicate ?child___object {" +
+					"" + "" + "" + " ?child ?child___predicate ?child___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?child___graph {" +
+					"" + "" + " ?child ?child___predicate ?child___object" +
+					"" + " }" +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -8458,7 +8966,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${ UUIDSpy.calls.mostRecent().returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }> a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?member.` +
+
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 1 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryContextMetadata }>;` +
+					"" + ` <${ C.context }> ?member___graph;` +
 					"" + ` <${ C.target }> ?member.` +
 
 					" ?member a ?member__types " +
@@ -8477,8 +8990,22 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " }" +
 					" }" +
 
-					" OPTIONAL { ?member a ?member__types } " +
+					" OPTIONAL { ?member a ?member__types }" +
 
+					" OPTIONAL {" +
+					"" + " FILTER( isBlank( ?member ) )" +
+					"" + " {" +
+					"" + "" + " SELECT ?member___predicate ?member___object {" +
+					"" + "" + "" + " ?member ?member___predicate ?member___object" +
+					"" + "" + " }" +
+					"" + "" + " LIMIT 1" +
+					"" + " }" +
+					"" + " GRAPH ?member___graph {" +
+					"" + "" + " ?member ?member___predicate ?member___object" +
+					"" + " }" +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
