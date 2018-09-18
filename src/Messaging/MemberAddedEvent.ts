@@ -3,20 +3,20 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { C } from "../Vocabularies/C";
 
 import { EventMessage } from "./EventMessage";
-import { MemberRemovedDetails } from "./MemberRemovedDetails";
+import { MemberAddedEventDetails } from "./MemberAddedEventDetails";
 
 
-export interface MemberRemoved extends EventMessage {
-	details:MemberRemovedDetails;
+export interface MemberAddedEvent extends EventMessage {
+	details:MemberAddedEventDetails;
 }
 
 
-export interface MemberRemovedFactory {
+export interface MemberAddedEventFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.MemberRemovedEvent;
+const TYPE:string = C.MemberAddedEvent;
 const SCHEMA:ObjectSchema = {
 	...EventMessage.SCHEMA,
 	"details": {
@@ -25,7 +25,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const MemberRemoved:MemberRemovedFactory = {
+export const MemberAddedEvent:MemberAddedEventFactory = {
 	TYPE,
 	SCHEMA,
 };

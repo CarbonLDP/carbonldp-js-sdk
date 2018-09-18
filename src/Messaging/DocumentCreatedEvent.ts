@@ -2,16 +2,16 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
 
-import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
+import { DocumentCreatedEventDetails } from "./DocumentCreatedEventDetails";
 import { EventMessage } from "./EventMessage";
 
 
-export interface DocumentCreated extends EventMessage {
-	details:DocumentCreatedDetails;
+export interface DocumentCreatedEvent extends EventMessage {
+	details:DocumentCreatedEventDetails;
 }
 
 
-export interface DocumentCreatedFactory {
+export interface DocumentCreatedEventFactory {
 	SCHEMA:ObjectSchema;
 }
 
@@ -23,6 +23,6 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const DocumentCreated:DocumentCreatedFactory = {
+export const DocumentCreatedEvent:DocumentCreatedEventFactory = {
 	SCHEMA,
 };

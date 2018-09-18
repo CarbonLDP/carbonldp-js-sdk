@@ -4,13 +4,13 @@ import { Document } from "../../Document/Document";
 
 import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 
-import { ChildCreated } from "../../Messaging/ChildCreated";
-import { DocumentDeleted } from "../../Messaging/DocumentDeleted";
-import { DocumentModified } from "../../Messaging/DocumentModified";
+import { ChildCreatedEvent } from "../../Messaging/ChildCreatedEvent";
+import { DocumentDeletedEvent } from "../../Messaging/DocumentDeletedEvent";
+import { DocumentModifiedEvent } from "../../Messaging/DocumentModifiedEvent";
 import { Event } from "../../Messaging/Event";
 import { EventMessage } from "../../Messaging/EventMessage";
-import { MemberAdded } from "../../Messaging/MemberAdded";
-import { MemberRemoved } from "../../Messaging/MemberRemoved";
+import { MemberAddedEvent } from "../../Messaging/MemberAddedEvent";
+import { MemberRemovedEvent } from "../../Messaging/MemberRemovedEvent";
 import { _createDestination } from "../../Messaging/Utils";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
@@ -24,33 +24,33 @@ import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 export interface EventEmitterDocumentsRepositoryTrait extends GeneralRepository<Document> {
 	context:DocumentsContext;
 
-	on( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
-	on( event:Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
-	on( event:Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:DocumentDeleted ) => void, onError?:( error:Error ) => void ):void;
-	on( event:Event.MEMBER_ADDED, uriPattern:string, onEvent:( message:MemberAdded ) => void, onError?:( error:Error ) => void ):void;
-	on( event:Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:MemberRemoved ) => void, onError?:( error:Error ) => void ):void;
+	on( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreatedEvent ) => void, onError?:( error:Error ) => void ):void;
+	on( event:Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:DocumentModifiedEvent ) => void, onError?:( error:Error ) => void ):void;
+	on( event:Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:DocumentDeletedEvent ) => void, onError?:( error:Error ) => void ):void;
+	on( event:Event.MEMBER_ADDED, uriPattern:string, onEvent:( message:MemberAddedEvent ) => void, onError?:( error:Error ) => void ):void;
+	on( event:Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:MemberRemovedEvent ) => void, onError?:( error:Error ) => void ):void;
 	on( event:Event | string, uriPattern:string, onEvent:( message:EventMessage ) => void, onError?:( error:Error ) => void ):void;
 
-	off( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
-	off( event:Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
-	off( event:Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:DocumentDeleted ) => void, onError?:( error:Error ) => void ):void;
-	off( event:Event.MEMBER_ADDED, uriPattern:string, onEvent:( message:MemberAdded ) => void, onError?:( error:Error ) => void ):void;
-	off( event:Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:MemberRemoved ) => void, onError?:( error:Error ) => void ):void;
+	off( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreatedEvent ) => void, onError?:( error:Error ) => void ):void;
+	off( event:Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:DocumentModifiedEvent ) => void, onError?:( error:Error ) => void ):void;
+	off( event:Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:DocumentDeletedEvent ) => void, onError?:( error:Error ) => void ):void;
+	off( event:Event.MEMBER_ADDED, uriPattern:string, onEvent:( message:MemberAddedEvent ) => void, onError?:( error:Error ) => void ):void;
+	off( event:Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:MemberRemovedEvent ) => void, onError?:( error:Error ) => void ):void;
 	off( event:Event | string, uriPattern:string, onEvent:( message:EventMessage ) => void, onError?:( error:Error ) => void ):void;
 
-	one( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
-	one( event:Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
-	one( event:Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:DocumentDeleted ) => void, onError?:( error:Error ) => void ):void;
-	one( event:Event.MEMBER_ADDED, uriPattern:string, onEvent:( message:MemberAdded ) => void, onError?:( error:Error ) => void ):void;
-	one( event:Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:MemberRemoved ) => void, onError?:( error:Error ) => void ):void;
+	one( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreatedEvent ) => void, onError?:( error:Error ) => void ):void;
+	one( event:Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:DocumentModifiedEvent ) => void, onError?:( error:Error ) => void ):void;
+	one( event:Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:DocumentDeletedEvent ) => void, onError?:( error:Error ) => void ):void;
+	one( event:Event.MEMBER_ADDED, uriPattern:string, onEvent:( message:MemberAddedEvent ) => void, onError?:( error:Error ) => void ):void;
+	one( event:Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:MemberRemovedEvent ) => void, onError?:( error:Error ) => void ):void;
 	one( event:Event | string, uriPattern:string, onEvent:( message:EventMessage ) => void, onError?:( error:Error ) => void ):void;
 
 
-	onChildCreated( uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
-	onDocumentModified( uriPattern:string, onEvent:( message:DocumentModified ) => void, onError?:( error:Error ) => void ):void;
-	onDocumentDeleted( uriPattern:string, onEvent:( message:DocumentDeleted ) => void, onError?:( error:Error ) => void ):void;
-	onMemberAdded( uriPattern:string, onEvent:( message:MemberAdded ) => void, onError?:( error:Error ) => void ):void;
-	onMemberRemoved( uriPattern:string, onEvent:( message:MemberRemoved ) => void, onError?:( error:Error ) => void ):void;
+	onChildCreated( uriPattern:string, onEvent:( message:ChildCreatedEvent ) => void, onError?:( error:Error ) => void ):void;
+	onDocumentModified( uriPattern:string, onEvent:( message:DocumentModifiedEvent ) => void, onError?:( error:Error ) => void ):void;
+	onDocumentDeleted( uriPattern:string, onEvent:( message:DocumentDeletedEvent ) => void, onError?:( error:Error ) => void ):void;
+	onMemberAdded( uriPattern:string, onEvent:( message:MemberAddedEvent ) => void, onError?:( error:Error ) => void ):void;
+	onMemberRemoved( uriPattern:string, onEvent:( message:MemberRemovedEvent ) => void, onError?:( error:Error ) => void ):void;
 }
 
 
@@ -104,23 +104,23 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 		},
 
 
-		onChildCreated( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<ChildCreated>, onError?:OnError ):void {
+		onChildCreated( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<ChildCreatedEvent>, onError?:OnError ):void {
 			return this.on( Event.CHILD_CREATED, uriPattern, onEvent, onError );
 		},
 
-		onDocumentModified( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<DocumentModified>, onError?:OnError ):void {
+		onDocumentModified( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<DocumentModifiedEvent>, onError?:OnError ):void {
 			return this.on( Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
 		},
 
-		onDocumentDeleted( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<DocumentDeleted>, onError?:OnError ):void {
+		onDocumentDeleted( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<DocumentDeletedEvent>, onError?:OnError ):void {
 			return this.on( Event.DOCUMENT_DELETED, uriPattern, onEvent, onError );
 		},
 
-		onMemberAdded( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<MemberAdded>, onError?:OnError ):void {
+		onMemberAdded( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<MemberAddedEvent>, onError?:OnError ):void {
 			return this.on( Event.MEMBER_ADDED, uriPattern, onEvent, onError );
 		},
 
-		onMemberRemoved( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<MemberRemoved>, onError?:OnError ):void {
+		onMemberRemoved( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<MemberRemovedEvent>, onError?:OnError ):void {
 			return this.on( Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
 		},
 	},

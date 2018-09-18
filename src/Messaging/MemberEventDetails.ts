@@ -7,25 +7,23 @@ import { Resource } from "../Resource/Resource";
 import { C } from "../Vocabularies/C";
 
 
-export interface DocumentCreatedDetails extends Resource {
-	createdDocuments:Document[];
+export interface MemberEventDetails extends Resource {
+	members:Document[];
 }
 
 
-export interface DocumentCreatedDetailsFactory {
-	TYPE:string;
+export interface MemberEventDetailsFactory {
 	SCHEMA:ObjectSchema;
 }
 
 const SCHEMA:ObjectSchema = {
-	"createdDocuments": {
-		"@id": C.createdDocument,
+	"members": {
+		"@id": C.member,
 		"@type": "@id",
 		"@container": "@set",
 	},
 };
 
-export const DocumentCreatedDetails:DocumentCreatedDetailsFactory = {
-	TYPE: C.DocumentCreatedEventDetails,
+export const MemberEventDetails:MemberEventDetailsFactory = {
 	SCHEMA,
 };
