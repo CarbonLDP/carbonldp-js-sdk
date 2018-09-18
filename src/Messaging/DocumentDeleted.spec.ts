@@ -80,7 +80,7 @@ describe( module( "carbonldp/Messaging/DocumentDeleted" ), ():void => {
 			expect( DocumentDeleted.TYPE ).toBeDefined();
 			expect( DocumentDeleted.TYPE ).toEqual( jasmine.any( String ) );
 
-			expect( DocumentDeleted.TYPE ).toBe( C.DocumentDeleted );
+			expect( DocumentDeleted.TYPE ).toBe( C.DocumentDeletedEvent );
 		} );
 
 		// TODO: Separate in different tests

@@ -81,7 +81,7 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 			expect( DocumentCreatedDetails.TYPE ).toBeDefined();
 			expect( DocumentCreatedDetails.TYPE ).toEqual( jasmine.any( String ) );
 
-			expect( DocumentCreatedDetails.TYPE ).toBe( C.DocumentCreatedDetails );
+			expect( DocumentCreatedDetails.TYPE ).toBe( C.DocumentCreatedEventDetails );
 		} );
 
 		// TODO: Separate in different tests

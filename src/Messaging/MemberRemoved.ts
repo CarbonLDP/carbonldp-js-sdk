@@ -16,7 +16,7 @@ export interface MemberRemovedFactory {
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.MemberRemoved;
+const TYPE:string = C.MemberRemovedEvent;
 const SCHEMA:ObjectSchema = {
 	...EventMessage.SCHEMA,
 	"details": {

@@ -26,6 +26,6 @@ const SCHEMA:ObjectSchema = {
 };
 
 export const DocumentCreatedDetails:DocumentCreatedDetailsFactory = {
-	TYPE: C.DocumentCreatedDetails,
+	TYPE: C.DocumentCreatedEventDetails,
 	SCHEMA,
 };

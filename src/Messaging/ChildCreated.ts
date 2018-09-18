@@ -14,7 +14,7 @@ export interface ChildCreatedFactory {
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.ChildCreated;
+const TYPE:string = C.ChildCreatedEvent;
 const SCHEMA:ObjectSchema = DocumentCreated.SCHEMA;
 
 export const ChildCreated:ChildCreatedFactory = {

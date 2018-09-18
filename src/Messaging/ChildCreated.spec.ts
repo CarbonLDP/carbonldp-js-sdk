@@ -79,7 +79,7 @@ describe( module( "carbonldp/Messaging/ChildCreated" ), ():void => {
 			expect( ChildCreated.TYPE ).toBeDefined();
 			expect( ChildCreated.TYPE ).toEqual( jasmine.any( String ) );
 
-			expect( ChildCreated.TYPE ).toBe( C.ChildCreated );
+			expect( ChildCreated.TYPE ).toBe( C.ChildCreatedEvent );
 		} );
 
 		// TODO: Separate in different tests

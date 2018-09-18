@@ -90,7 +90,7 @@ describe( module( "carbonldp/Messaging/MemberAdded" ), ():void => {
 			expect( MemberAdded.TYPE ).toBeDefined();
 			expect( MemberAdded.TYPE ).toEqual( jasmine.any( String ) );
 
-			expect( MemberAdded.TYPE ).toBe( C.MemberAdded );
+			expect( MemberAdded.TYPE ).toBe( C.MemberAddedEvent );
 		} );
 
 		// TODO: Separate in different tests

@@ -14,7 +14,7 @@ export interface DocumentModifiedFactory {
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.DocumentModified;
+const TYPE:string = C.DocumentModifiedEvent;
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
 export const DocumentModified:DocumentModifiedFactory = {

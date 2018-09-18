@@ -14,7 +14,7 @@ export interface DocumentDeletedFactory {
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.DocumentDeleted;
+const TYPE:string = C.DocumentDeletedEvent;
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
 export const DocumentDeleted:DocumentDeletedFactory = {

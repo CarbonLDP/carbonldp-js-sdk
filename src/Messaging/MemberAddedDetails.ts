@@ -14,7 +14,7 @@ export interface MemberAddedDetailsFactory {
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.MemberAddedDetails;
+const TYPE:string = C.MemberAddedEventDetails;
 const SCHEMA:ObjectSchema = MemberDetails.SCHEMA;
 
 export const MemberAddedDetails:MemberAddedDetailsFactory = {

@@ -16,7 +16,7 @@ export interface MemberAddedFactory {
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.MemberAdded;
+const TYPE:string = C.MemberAddedEvent;
 const SCHEMA:ObjectSchema = {
 	...EventMessage.SCHEMA,
 	"details": {

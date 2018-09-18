@@ -80,7 +80,7 @@ describe( module( "carbonldp/Messaging/DocumentModified" ), ():void => {
 			expect( DocumentModified.TYPE ).toBeDefined();
 			expect( DocumentModified.TYPE ).toEqual( jasmine.any( String ) );
 
-			expect( DocumentModified.TYPE ).toBe( C.DocumentModified );
+			expect( DocumentModified.TYPE ).toBe( C.DocumentModifiedEvent );
 		} );
 
 		// TODO: Separate in different tests
