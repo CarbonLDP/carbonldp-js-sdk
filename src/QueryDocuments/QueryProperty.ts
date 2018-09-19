@@ -302,11 +302,16 @@ export class QueryProperty implements QueryablePropertyData {
 		}
 	}
 
-	protected __createSimpleSelfPattern():PatternToken {
+	protected __createSimpleSelfPattern():SubjectToken {
 		if( ! this.parent )
 			throw new IllegalActionError( "Cannot create pattern without a parent." );
 
-		return new SubjectToken( this.parent.variable )
+		return this
+			.__addPropertyTo( new SubjectToken( this.parent.variable ) );
+	}
+
+	protected __addPropertyTo( subject:SubjectToken ):SubjectToken {
+		return subject
 			.addProperty( new PropertyToken( this.__createPathToken() )
 				.addObject( this.variable ) );
 	}
@@ -466,13 +471,58 @@ export class QueryProperty implements QueryablePropertyData {
 
 	protected __addTypesTo( pattern:SubjectToken ):void {
 		// Parse string types
-		const types:IRIToken[] = this._types
-			.map( type => this.queryContainer.compactIRI( type ) );
+		const types:IRIToken[] = this
+			.__createTypesTokens();
 
 		pattern
 			.properties[ 0 ] // Should be the `a` predicate
 			.objects
 			.unshift( ...types ); // Add them as first matches
+	}
+
+	protected __createTypesTokens():IRIToken[] {
+		return this._types
+			.map( type => this.queryContainer.compactIRI( type ) );
+	}
+
+
+	// Values that filter the query
+
+	protected __getValuedPatterns():PatternToken[] | undefined {
+		if( this.optional ) return;
+
+		const selfSubject:SubjectToken = new SubjectToken( this.variable );
+		const patterns:PatternToken[] = [ selfSubject ];
+
+		const valuesPattern:PatternToken | undefined = this.__createValuesPattern();
+		if( valuesPattern ) patterns.push( valuesPattern );
+
+		if( this._types.length ) {
+			const typesTokens:IRIToken[] = this
+				.__createTypesTokens();
+
+			selfSubject
+				.addProperty( new PropertyToken( "a" )
+					.addObject( ...typesTokens )
+				);
+		}
+
+		// Create sub-properties patterns
+		this.subProperties.forEach( subProperty => {
+			const subPatterns:PatternToken[] | undefined = subProperty
+				.__getValuedPatterns();
+
+			if( subPatterns ) {
+				subProperty.__addPropertyTo( selfSubject );
+				patterns.push( ...subPatterns );
+			}
+		} );
+
+		// Exclude self if no predicated added
+		if( ! selfSubject.properties.length )
+			return patterns.slice( 1 );
+
+		return patterns;
 	}
 
 

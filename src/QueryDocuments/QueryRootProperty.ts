@@ -1,6 +1,6 @@
 import {
-	IRIToken,
 	LimitToken,
+	ObjectToken,
 	OffsetToken,
 	OrderToken,
 	PatternToken,
@@ -66,15 +66,11 @@ export class QueryRootProperty extends QueryProperty {
 			subSelect.addPattern( ...this.__createMemberSelfPattern() );
 		}
 
-
-		// Add filter types to sub-select
-		if( this._types.length ) {
-			const typesPattern:SubjectToken = new SubjectToken( this.variable )
-				.addProperty( new PropertyToken( "a" ) );
-
-			super.__addTypesTo( typesPattern );
-			subSelect.addPattern( typesPattern );
-		}
+		// Add non-optional properties that may affect pagination
+		const valuedPatterns:PatternToken[] | undefined = this
+			.__getValuedPatterns();
+		if( valuedPatterns )
+			subSelect.addPattern( ...valuedPatterns );
 
 
 		if( this.order ) {
@@ -84,15 +80,54 @@ export class QueryRootProperty extends QueryProperty {
 			// Add modifier
 			subSelect.addModifier( new OrderToken( targetProperty.variable, this.order.flow ) );
 
-			// Add patterns to the sub-select
-			subSelect.addPattern( ...this.__createSubPatternsFrom( targetProperty ) );
+			const orderPatterns:PatternToken[] = this.__createSubPatternsFrom( targetProperty );
+			// Add patterns to the sub-select that do not exists
+			orderPatterns
+				.filter( pattern => {
+					if( pattern.token !== "subject" ) return true;
+
+					const targetSubject:SubjectToken | undefined = subSelect
+						.where.groupPattern.patterns
+						.find( ( selectPattern ):selectPattern is SubjectToken => {
+							if( selectPattern.token !== "subject" ) return;
+							return selectPattern.subject === pattern.subject;
+						} );
+
+					if( ! targetSubject ) return true;
+
+					pattern.properties.forEach( property => {
+						const targetPredicate:PropertyToken | undefined = targetSubject
+							.properties
+							.find( ( selectProperty ) => {
+								return property.toString() === selectProperty.toString();
+							} );
+
+						if( ! targetPredicate )
+							targetSubject.addProperty( property );
+
+						property.objects.forEach( object => {
+							const targetObject:ObjectToken | undefined = targetPredicate
+								.objects
+								.find( ( selectObject ) => {
+									return selectObject.toString() === object.toString();
+								} );
+
+							if( ! targetObject )
+								targetPredicate.addObject( object );
+						} );
+					} );
+				} )
+				.forEach( pattern => {
+					subSelect.addPattern( pattern );
+				} )
+			;
 		}
 
-		if( this._limit ) {
+		if( this._limit !== void 0 ) {
 			subSelect.addModifier( new LimitToken( this._limit ) );
 		}
 
-		if( this._offset ) {
+		if( this._offset !== void 0 ) {
 			subSelect.addModifier( new OffsetToken( this._offset ) );
 		}
 
@@ -130,14 +165,7 @@ export class QueryRootProperty extends QueryProperty {
 		if( this.containerType !== QueryContainerType.DOCUMENT )
 			return;
 
-		// Parse string types
-		const types:IRIToken[] = this._types
-			.map( type => this.queryContainer.compactIRI( type ) );
-
-		pattern
-			.properties[ 0 ] // Should be the `a` predicate
-			.objects
-			.unshift( ...types ); // Add them as first matches
+		super.__addTypesTo( pattern );
 	}
 
 
