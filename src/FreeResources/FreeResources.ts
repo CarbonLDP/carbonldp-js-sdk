@@ -1,3 +1,4 @@
+import { isAbsolute } from "sparqler/iri";
 import { Context } from "../Context/Context";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
@@ -58,7 +59,7 @@ export const FreeResources:FreeResourcesFactory = {
 		registry: void 0,
 
 		_getLocalID( this:FreeResources, id:string ):string {
-			if( URI.isBNodeID( id ) ) return id;
+			if( isAbsolute( id ) && ! URI.hasProtocol( id ) ) return id;
 			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		},
 

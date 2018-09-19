@@ -494,7 +494,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/resource/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -586,7 +586,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -682,7 +682,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -745,7 +745,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -875,7 +875,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -983,7 +983,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1095,7 +1095,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1311,7 +1311,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1598,7 +1598,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/resource/", {
 					resources: [
 						{
-							"@id": "_:0",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1693,7 +1693,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/resource/", {
 					resources: [
 						{
-							"@id": "_:0",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1793,7 +1793,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1905,7 +1905,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:0",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2317,7 +2317,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2409,7 +2409,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2505,7 +2505,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2568,7 +2568,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2698,7 +2698,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2807,7 +2807,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2919,7 +2919,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -3134,7 +3134,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -3736,7 +3736,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -4154,7 +4154,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -4325,7 +4325,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -4387,7 +4387,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -4479,7 +4479,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -4728,7 +4728,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:0",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -4833,7 +4833,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:0",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
