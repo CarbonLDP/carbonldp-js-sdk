@@ -528,15 +528,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"eTag",
-			"https://carbonldp.com/ns/v1/platform#eTag"
-		), ():void => {
-			const target:C[ "eTag" ] = "https://carbonldp.com/ns/v1/platform#eTag";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"requestID",
 			"https://carbonldp.com/ns/v1/platform#requestID"
 		), ():void => {
@@ -593,7 +584,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( C ).length ).toBe( 64 );
+			expect( Object.keys( C ).length ).toBe( 63 );
 		} );
 
 		it( "C.namespace", ():void => {
@@ -882,11 +873,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		it( "C.relatedDocument", ():void => {
 			expect( C.relatedDocument ).toEqual( jasmine.any( String ) );
 			expect( C.relatedDocument ).toBe( "https://carbonldp.com/ns/v1/platform#relatedDocument" );
-		} );
-
-		it( "C.eTag", ():void => {
-			expect( C.eTag ).toEqual( jasmine.any( String ) );
-			expect( C.eTag ).toBe( "https://carbonldp.com/ns/v1/platform#eTag" );
 		} );
 
 		it( "C.requestID", ():void => {

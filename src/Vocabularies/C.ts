@@ -53,7 +53,6 @@ export interface C {
 	errorDetails:"https://carbonldp.com/ns/v1/platform#errorDetails";
 	errorMessage:"https://carbonldp.com/ns/v1/platform#errorMessage";
 	errorParameters:"https://carbonldp.com/ns/v1/platform#errorParameters";
-	eTag:"https://carbonldp.com/ns/v1/platform#eTag";
 	httpStatusCode:"https://carbonldp.com/ns/v1/platform#httpStatusCode";
 	instance:"https://carbonldp.com/ns/v1/platform#instance";
 	mediaType:"https://carbonldp.com/ns/v1/platform#mediaType";
@@ -122,7 +121,6 @@ export const C:C = {
 	errorDetails: "https://carbonldp.com/ns/v1/platform#errorDetails",
 	errorMessage: "https://carbonldp.com/ns/v1/platform#errorMessage",
 	errorParameters: "https://carbonldp.com/ns/v1/platform#errorParameters",
-	eTag: "https://carbonldp.com/ns/v1/platform#eTag",
 	httpStatusCode: "https://carbonldp.com/ns/v1/platform#httpStatusCode",
 	instance: "https://carbonldp.com/ns/v1/platform#instance",
 	mediaType: "https://carbonldp.com/ns/v1/platform#mediaType",
