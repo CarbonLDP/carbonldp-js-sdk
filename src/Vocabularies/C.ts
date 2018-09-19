@@ -6,6 +6,7 @@ export interface C {
 	AddMemberAction:"https://carbonldp.com/ns/v1/platform#AddMemberAction";
 	ChildCreated:"https://carbonldp.com/ns/v1/platform#ChildCreatedEvent";
 	Document:"https://carbonldp.com/ns/v1/platform#Document";
+	DocumentChecksums:"https://carbonldp.com/ns/v1/platform#DocumentChecksums";
 	DocumentCreatedDetails:"https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails";
 	DocumentDeleted:"https://carbonldp.com/ns/v1/platform#DocumentDeleted";
 	DocumentMetadata:"https://carbonldp.com/ns/v1/platform#DocumentMetadata";
@@ -24,7 +25,6 @@ export interface C {
 	PreferContainer:"https://carbonldp.com/ns/v1/platform#PreferContainer";
 	PreferContainmentResources:"https://carbonldp.com/ns/v1/platform#PreferContainmentResources";
 	PreferContainmentTriples:"https://carbonldp.com/ns/v1/platform#PreferContainmentTriples";
-	PreferDocumentETags:"https://carbonldp.com/ns/v1/platform#PreferDocumentETags";
 	PreferMembershipResources:"https://carbonldp.com/ns/v1/platform#PreferMembershipResources";
 	PreferMembershipTriples:"https://carbonldp.com/ns/v1/platform#PreferMembershipTriples";
 	PreferResultsContext:"https://carbonldp.com/ns/v1/platform#PreferResultsContext";
@@ -38,6 +38,7 @@ export interface C {
 	accessPoint:"https://carbonldp.com/ns/v1/platform#accessPoint";
 	bNodesMap:"https://carbonldp.com/ns/v1/platform#bNodesMap";
 	buildDate:"https://carbonldp.com/ns/v1/platform#buildDate";
+	checksum:"https://carbonldp.com/ns/v1/platform#checksum";
 	created:"https://carbonldp.com/ns/v1/platform#created";
 	createdDocument:"https://carbonldp.com/ns/v1/platform#createdDocument";
 	details:"https://carbonldp.com/ns/v1/platform#details";
@@ -74,6 +75,7 @@ export const C:C = {
 	AddMemberAction: "https://carbonldp.com/ns/v1/platform#AddMemberAction",
 	ChildCreated: "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent",
 	Document: "https://carbonldp.com/ns/v1/platform#Document",
+	DocumentChecksums: "https://carbonldp.com/ns/v1/platform#DocumentChecksums",
 	DocumentCreatedDetails: "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails",
 	DocumentDeleted: "https://carbonldp.com/ns/v1/platform#DocumentDeleted",
 	DocumentMetadata: "https://carbonldp.com/ns/v1/platform#DocumentMetadata",
@@ -92,7 +94,6 @@ export const C:C = {
 	PreferContainer: "https://carbonldp.com/ns/v1/platform#PreferContainer",
 	PreferContainmentResources: "https://carbonldp.com/ns/v1/platform#PreferContainmentResources",
 	PreferContainmentTriples: "https://carbonldp.com/ns/v1/platform#PreferContainmentTriples",
-	PreferDocumentETags: "https://carbonldp.com/ns/v1/platform#PreferDocumentETags",
 	PreferMembershipResources: "https://carbonldp.com/ns/v1/platform#PreferMembershipResources",
 	PreferMembershipTriples: "https://carbonldp.com/ns/v1/platform#PreferMembershipTriples",
 	PreferResultsContext: "https://carbonldp.com/ns/v1/platform#PreferResultsContext",
@@ -106,6 +107,7 @@ export const C:C = {
 	accessPoint: "https://carbonldp.com/ns/v1/platform#accessPoint",
 	bNodesMap: "https://carbonldp.com/ns/v1/platform#bNodesMap",
 	buildDate: "https://carbonldp.com/ns/v1/platform#buildDate",
+	checksum: "https://carbonldp.com/ns/v1/platform#checksum",
 	created: "https://carbonldp.com/ns/v1/platform#created",
 	createdDocument: "https://carbonldp.com/ns/v1/platform#createdDocument",
 	details: "https://carbonldp.com/ns/v1/platform#details",

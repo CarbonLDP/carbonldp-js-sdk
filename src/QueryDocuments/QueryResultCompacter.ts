@@ -15,6 +15,9 @@ import { PointerLibrary } from "../Pointer/PointerLibrary";
 import { RDFDocument } from "../RDF/Document";
 import { RDFNode } from "../RDF/Node";
 
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
+
 import { QueryablePointer } from "./QueryablePointer";
 import { QueryableProperty } from "./QueryableProperty";
 import { QueryableRootProperty } from "./QueryableRootProperty";
@@ -117,11 +120,26 @@ export class QueryResultCompacter {
 			this.registry.decorate( resource );
 		} );
 
-		// Sync documents (and its fragments)
 		rdfDocuments
 			.map( RDFNode.getID )
-			.map( id => this.registry.getPointer( id, true ) )
-			.forEach( resource => resource.$_syncSnapshot() )
+			.map( id => compactionMap.get( id ) )
+			.filter( compactionNode => compactionNode )
+			.forEach( ( { resource, node } ) => {
+				// Sync documents (and its fragments)
+				resource.$_syncSnapshot();
+
+
+				// Extract checksum to eTag
+
+				const rawValues:RDFNode[ any ] | undefined = node[ C.checksum ];
+				if( ! rawValues || typeof rawValues === "string" ) return;
+
+				const [ eTag ] = RDFNode.getPropertyLiterals( rawValues, XSD.string );
+				if( ! eTag ) return;
+
+				resource.$eTag = eTag;
+				resource.$_resolved = true;
+			} )
 		;
 
 		return targetDocuments.map( id => {

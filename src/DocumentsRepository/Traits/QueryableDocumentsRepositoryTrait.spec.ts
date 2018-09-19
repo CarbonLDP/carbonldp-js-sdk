@@ -374,7 +374,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
+						`include="${ C.DocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );
@@ -692,29 +692,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							} ],
 						},
 						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
 							"@id": "https://example.com/",
 							"@graph": [
 								{
@@ -725,6 +702,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "\"1-12345\"",
+									} ],
 								},
 							],
 						},
@@ -755,44 +735,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							} ],
 						},
 						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							}, {
-								"@id": "_:4",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:4",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"2-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/another-resource/",
-							} ],
-						},
-						{
 							"@id": "https://example.com/",
 							"@graph": [
 								{
@@ -803,6 +745,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "\"1-12345\"",
+									} ],
 									"https://example.com/ns#property-1": [ {
 										"@value": "value",
 									} ],
@@ -816,6 +761,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/another-resource/",
 							"@graph": [ {
 								"@id": "https://example.com/another-resource/",
+								[ C.checksum ]: [ {
+									"@value": "\"2-12345\"",
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": XSD.integer,
@@ -2099,7 +2047,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
+						`include="${ C.DocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );
@@ -2515,29 +2463,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							} ],
 						},
 						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
 							"@id": "https://example.com/",
 							"@graph": [
 								{
@@ -2548,6 +2473,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "\"1-12345\"",
+									} ],
 								},
 							],
 						},
@@ -2578,44 +2506,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							} ],
 						},
 						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							}, {
-								"@id": "_:4",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:4",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"2-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/another-resource/",
-							} ],
-						},
-						{
 							"@id": "https://example.com/",
 							"@graph": [
 								{
@@ -2626,6 +2516,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "\"1-12345\"",
+									} ],
 									"https://example.com/ns#property-1": [ {
 										"@value": "value",
 									} ],
@@ -2639,6 +2532,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/another-resource/",
 							"@graph": [ {
 								"@id": "https://example.com/another-resource/",
+								[ C.checksum ]: [ {
+									"@value": "\"2-12345\"",
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": XSD.integer,
@@ -3488,7 +3384,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
+						`include="${ C.DocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );
@@ -3746,29 +3642,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							} ],
 						},
 						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
 							"@id": "https://example.com/",
 							"@graph": [
 								{
@@ -3779,6 +3652,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "\"1-12345\"",
+									} ],
 								},
 							],
 						},
@@ -3927,7 +3803,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
+						`include="${ C.DocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );
@@ -4335,29 +4211,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							} ],
 						},
 						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
 							"@id": "https://example.com/",
 							"@graph": [
 								{
@@ -4368,6 +4221,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "\"1-12345\"",
+									} ],
 								},
 							],
 						},
@@ -4380,98 +4236,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
 					$_resolved: true,
-				} ) );
-			} );
-
-			it( "should not process if same eTag", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "cldp-sdk://metadata-1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "updated value",
-									} ],
-								},
-							],
-						},
-					],
-				} );
-
-				document = context.registry._addPointer( {
-					$eTag: "\"1-12345\"",
-					$id: "https://example.com/",
-
-					property1: "value",
-					$_queryableMetadata: createMockQueryableMetadata(),
-				} );
-
-				context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-				type MyResource = Document & { property1:string };
-				const returned:MyResource = await repository.refresh<{ property1:string }>( document );
-
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					property1: "value",
 				} ) );
 			} );
 
@@ -4489,29 +4253,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							} ],
 						},
 						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
 							"@id": "https://example.com/",
 							"@graph": [
 								{
@@ -4522,6 +4263,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "\"1-12345\"",
+									} ],
 								},
 							],
 						},
@@ -5080,7 +4824,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
+						`include="${ C.DocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );
@@ -5539,41 +5283,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -5583,6 +5292,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"1-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -5609,6 +5321,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"2-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -5710,41 +5425,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -5754,6 +5434,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"1-12345\\""
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -5783,6 +5466,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"2-12345\\""
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -5894,41 +5580,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -5938,6 +5589,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"1-12345\\""
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -5955,6 +5609,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"2-12345\\""
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -6059,41 +5716,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -6103,6 +5725,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"1-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -6129,6 +5754,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"2-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -6239,69 +5867,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							}, {
-								"@id": "_:6"
-							}, {
-								"@id": "_:7"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
-							"@id": "_:6",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"3-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/sub-documents/sub-document1/"
-							} ]
-						}, {
-							"@id": "_:7",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"4-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/sub-documents/sub-document2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -6311,6 +5876,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"1-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -6322,6 +5890,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/sub-documents/sub-document1/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/",
+								"${ C.checksum }": [ {
+									"@value": "\\"3-12345\\""
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ XSD.integer }"
@@ -6340,6 +5911,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"2-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -6351,6 +5925,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/sub-documents/sub-document2/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/",
+								"${ C.checksum }": [ {
+									"@value": "\\"4-12345\\""
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
 									"@type": "${ XSD.integer }"
@@ -6606,7 +6183,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
+						`include="${ C.DocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );
@@ -7097,41 +6674,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -7141,6 +6683,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"1-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -7167,6 +6712,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"2-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -7268,41 +6816,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -7312,6 +6825,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"1-12345\\""
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -7341,6 +6857,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"2-12345\\""
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -7449,41 +6968,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -7493,6 +6977,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"1-12345\\""
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -7510,6 +6997,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"2-12345\\""
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -7613,41 +7103,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -7657,6 +7112,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"1-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -7683,6 +7141,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"2-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -7792,69 +7253,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							}, {
-								"@id": "_:6"
-							}, {
-								"@id": "_:7"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
-							"@id": "_:6",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"3-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/sub-documents/sub-document1/"
-							} ]
-						}, {
-							"@id": "_:7",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"4-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/sub-documents/sub-document2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -7864,6 +7262,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"1-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -7875,6 +7276,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/sub-documents/sub-document1/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/",
+								"${ C.checksum }": [ {
+									"@value": "\\"3-12345\\""
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ XSD.integer }"
@@ -7893,6 +7297,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "\\"2-12345\\""
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -7904,6 +7311,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/sub-documents/sub-document2/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/",
+								"${ C.checksum }": [ {
+									"@value": "\\"4-12345\\""
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
 									"@type": "${ XSD.integer }"

@@ -1,16 +1,4 @@
-import {
-	ConstructToken,
-	FilterToken,
-	GraphToken,
-	IRIRefToken,
-	LimitToken,
-	OptionalToken,
-	PropertyToken,
-	QueryToken,
-	SubjectToken,
-	SubSelectToken,
-	VariableToken
-} from "sparqler/tokens";
+import { ConstructToken, IRIRefToken, PropertyToken, QueryToken, SubjectToken } from "sparqler/tokens";
 
 import { Document } from "../../Document/Document";
 
@@ -22,9 +10,6 @@ import { FreeResources } from "../../FreeResources/FreeResources";
 import { GETOptions, RequestOptions, RequestUtils } from "../../HTTP/Request";
 
 import { JSONLDParser } from "../../JSONLD/JSONLDParser";
-
-import { DocumentMetadata } from "../../LDP/DocumentMetadata";
-import { ResponseMetadata } from "../../LDP/ResponseMetadata";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
@@ -91,11 +76,10 @@ type QueryData = {
 	containerType:QueryContainerType;
 	queryBuilderFn?:QueryBuilderFn;
 	rootType?:QueryPropertyType;
-	target?:Document;
 };
 
 
-function __executeQueryContainer<T extends object>( this:void, repository:QueryableDocumentsRepositoryTrait, url:string, requestOptions:RequestOptions, queryContainer:QueryContainer, target?:Document ):Promise<(T & Document)[]> {
+function __executeQueryContainer<T extends object>( this:void, repository:QueryableDocumentsRepositoryTrait, url:string, requestOptions:RequestOptions, queryContainer:QueryContainer ):Promise<(T & Document)[]> {
 	const construct:ConstructToken = new ConstructToken()
 		.addTriple(
 			// Add QueryMetadata of the target elements
@@ -141,32 +125,8 @@ function __executeQueryContainer<T extends object>( this:void, repository:Querya
 				.map( x => x.$id )
 			;
 
-			const targetETag:string | undefined = target && target.$eTag;
-			if( target ) target.$eTag = void 0;
-
-			freeResources
-				.getPointers( true )
-				.filter( ResponseMetadata.is )
-				.map<DocumentMetadata[] | DocumentMetadata>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ C.documentMetadata ] )
-				.map<DocumentMetadata[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
-				.forEach( documentsMetadata => documentsMetadata.forEach( documentMetadata => {
-					if( ! documentMetadata ) return;
-
-					const relatedDocument:Document = documentMetadata.relatedDocument || documentMetadata[ C.relatedDocument ];
-					const eTag:string = documentMetadata.eTag || documentMetadata[ C.eTag ];
-
-					if( ! eTag ) return;
-					relatedDocument.$_resolved = true;
-
-					if( relatedDocument.$eTag === void 0 ) relatedDocument.$eTag = eTag;
-					if( relatedDocument.$eTag !== eTag ) relatedDocument.$eTag = null;
-				} ) );
-
-			if( targetETag && targetETag === target.$eTag )
-				return [ target as T & Document ];
-
 			const rdfDocuments:RDFDocument[] = rdfNodes
-				.filter<any>( RDFDocument.is );
+				.filter( RDFDocument.is );
 
 			return new QueryResultCompacter( repository.context.registry, queryContainer )
 				.compactDocuments<T & Document>( rdfDocuments, targetDocuments );
@@ -176,7 +136,7 @@ function __executeQueryContainer<T extends object>( this:void, repository:Querya
 }
 
 function __executeQueryBuilder<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryData:QueryData ):Promise<(T & Document)[]> {
-	const { queryBuilderFn, target } = queryData;
+	const { queryBuilderFn } = queryData;
 
 	if( ! repository.context.registry.inScope( uri, true ) )
 		return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
@@ -200,7 +160,7 @@ function __executeQueryBuilder<T extends object>( repository:QueryableDocumentsR
 	if( queryBuilderFn && queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
 		throw new IllegalArgumentError( "The provided query builder was not returned" );
 
-	return __executeQueryContainer<T>( repository, url, requestOptions, queryContainer, target )
+	return __executeQueryContainer<T>( repository, url, requestOptions, queryContainer )
 		.then( documents => {
 			if( ! queryContainer._queryProperty.order ) return documents;
 
@@ -251,13 +211,12 @@ function __executeQueryBuilder<T extends object>( repository:QueryableDocumentsR
 }
 
 
-function __getQueryable<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn, target?:Document ):Promise<T & Document> {
-	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
+function __getQueryable<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
+	RequestUtils.setRetrievalPreferences( { include: [ C.DocumentChecksums ] }, requestOptions );
 
 	const queryData:QueryData = {
 		containerType: QueryContainerType.DOCUMENT,
 		queryBuilderFn,
-		target,
 	};
 
 	return __executeQueryBuilder<T>( repository, uri, requestOptions, queryData )
@@ -284,9 +243,9 @@ function __refreshQueryable<T extends object>( this:void, repository:QueryableDo
 	const queryContainer:QueryableMetadataContainer = new QueryableMetadataContainer( repository.context, document.$_queryableMetadata );
 	__addRefreshProperties( queryContainer._queryProperty, document.$_queryableMetadata );
 
-	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
+	RequestUtils.setRetrievalPreferences( { include: [ C.DocumentChecksums ] }, requestOptions );
 
-	return __executeQueryContainer<T>( repository, url, requestOptions, queryContainer, document )
+	return __executeQueryContainer<T>( repository, url, requestOptions, queryContainer )
 		.then( ( documents ) => documents[ 0 ] );
 }
 
@@ -370,7 +329,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			queryBuilderFn = isFunction( requestOptionsOrQueryBuilderFn ) ?
 				requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
-			RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
+			RequestUtils.setRetrievalPreferences( { include: [ C.DocumentChecksums ] }, requestOptions );
 
 			return __executeQueryBuilder<T>( this, uri, requestOptions, {
 				rootType: queryBuilderFn ? void 0 : QueryPropertyType.FULL,
@@ -386,7 +345,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			queryBuilderFn = isFunction( requestOptionsOrQueryBuilderFn ) ?
 				requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
-			RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
+			RequestUtils.setRetrievalPreferences( { include: [ C.DocumentChecksums ] }, requestOptions );
 
 			return __executeQueryBuilder<T>( this, uri, requestOptions, {
 				rootType: queryBuilderFn ? void 0 : QueryPropertyType.FULL,

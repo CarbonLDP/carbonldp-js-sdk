@@ -66,6 +66,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"DocumentChecksums",
+			"https://carbonldp.com/ns/v1/platform#DocumentChecksums"
+		), ():void => {
+			const target:C[ "DocumentChecksums" ] = "https://carbonldp.com/ns/v1/platform#DocumentChecksums";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"DocumentCreatedDetails",
 			"https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails"
 		), ():void => {
@@ -228,15 +237,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"PreferDocumentETags",
-			"https://carbonldp.com/ns/v1/platform#PreferDocumentETags"
-		), ():void => {
-			const target:C[ "PreferDocumentETags" ] = "https://carbonldp.com/ns/v1/platform#PreferDocumentETags";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"PreferMembershipResources",
 			"https://carbonldp.com/ns/v1/platform#PreferMembershipResources"
 		), ():void => {
@@ -332,6 +332,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			"https://carbonldp.com/ns/v1/platform#buildDate"
 		), ():void => {
 			const target:C[ "buildDate" ] = "https://carbonldp.com/ns/v1/platform#buildDate";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"checksum",
+			"https://carbonldp.com/ns/v1/platform#checksum"
+		), ():void => {
+			const target:C[ "checksum" ] = "https://carbonldp.com/ns/v1/platform#checksum";
 			expect( target ).toBeDefined();
 		} );
 
@@ -584,7 +593,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( C ).length ).toBe( 63 );
+			expect( Object.keys( C ).length ).toBe( 64 );
 		} );
 
 		it( "C.namespace", ():void => {
@@ -615,6 +624,11 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		it( "C.Document", ():void => {
 			expect( C.Document ).toEqual( jasmine.any( String ) );
 			expect( C.Document ).toBe( "https://carbonldp.com/ns/v1/platform#Document" );
+		} );
+
+		it( "C.DocumentChecksums", ():void => {
+			expect( C.DocumentChecksums ).toEqual( jasmine.any( String ) );
+			expect( C.DocumentChecksums ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentChecksums" );
 		} );
 
 		it( "C.DocumentCreatedDetails", ():void => {
@@ -707,11 +721,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.PreferContainmentTriples ).toBe( "https://carbonldp.com/ns/v1/platform#PreferContainmentTriples" );
 		} );
 
-		it( "C.PreferDocumentETags", ():void => {
-			expect( C.PreferDocumentETags ).toEqual( jasmine.any( String ) );
-			expect( C.PreferDocumentETags ).toBe( "https://carbonldp.com/ns/v1/platform#PreferDocumentETags" );
-		} );
-
 		it( "C.PreferMembershipResources", ():void => {
 			expect( C.PreferMembershipResources ).toEqual( jasmine.any( String ) );
 			expect( C.PreferMembershipResources ).toBe( "https://carbonldp.com/ns/v1/platform#PreferMembershipResources" );
@@ -766,6 +775,11 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		it( "C.buildDate", ():void => {
 			expect( C.buildDate ).toEqual( jasmine.any( String ) );
 			expect( C.buildDate ).toBe( "https://carbonldp.com/ns/v1/platform#buildDate" );
+		} );
+
+		it( "C.checksum", ():void => {
+			expect( C.checksum ).toEqual( jasmine.any( String ) );
+			expect( C.checksum ).toBe( "https://carbonldp.com/ns/v1/platform#checksum" );
 		} );
 
 		it( "C.created", ():void => {
