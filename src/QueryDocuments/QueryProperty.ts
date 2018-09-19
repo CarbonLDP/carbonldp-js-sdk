@@ -19,7 +19,7 @@ import { IllegalActionError } from "../Errors/IllegalActionError";
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
-
+import { C } from "../Vocabularies/C";
 import { LDP } from "../Vocabularies/LDP";
 
 import { QueryablePropertyData } from "./QueryablePropertyData";
@@ -261,6 +261,19 @@ export class QueryProperty implements QueryablePropertyData {
 			.getPath();
 	}
 
+	// Context helpers
+
+	protected _getContextVariable():QueryVariable {
+		if( this.propertyType === QueryPropertyType.FULL )
+			return this.variable;
+
+		return this._getVariable( "_graph" );
+	}
+
+	protected _getContextGraph():GraphToken {
+		return new GraphToken( this._getContextVariable() );
+	}
+
 
 	// Self description patterns
 
@@ -355,7 +368,13 @@ export class QueryProperty implements QueryablePropertyData {
 		if( values ) patterns.push( values );
 
 		const selfTriple:PatternToken = this.__createSelfPattern();
-		patterns.push( selfTriple );
+		// If self is sub-property and not virtual, add inside graph
+		if( this.parent && ! this.pathBuilderFn ) {
+			patterns.push( this.parent._getContextGraph()
+				.addPattern( selfTriple ) );
+		} else {
+			patterns.push( selfTriple );
+		}
 
 		switch( this.propertyType ) {
 			case QueryPropertyType.EMPTY:
@@ -367,7 +386,8 @@ export class QueryProperty implements QueryablePropertyData {
 				break;
 
 			case QueryPropertyType.ALL:
-				patterns.push( this.__createAllPattern() );
+				patterns.push( this._getContextGraph()
+					.addPattern( this.__createAllPattern() ) );
 				break;
 
 			case QueryPropertyType.FULL:
@@ -426,7 +446,12 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	protected __createTypesSearchPatterns():PatternToken {
-		const pattern:SubjectToken = this.__createTypesPattern();
+		const types:SubjectToken = this.__createTypesPattern();
+
+		const pattern:PatternToken = this.propertyType === QueryPropertyType.EMPTY
+			? types
+			: this._getContextGraph()
+				.addPattern( types );
 
 		// Return optional types
 		if( ! this._types.length )
@@ -434,7 +459,7 @@ export class QueryProperty implements QueryablePropertyData {
 				.addPattern( pattern );
 
 		// Add types to the same subject
-		this.__addTypesTo( pattern );
+		this.__addTypesTo( types );
 
 		return pattern;
 	}
@@ -478,18 +503,35 @@ export class QueryProperty implements QueryablePropertyData {
 				return this.__createPartialConstructPattern();
 
 			case QueryPropertyType.ALL:
-				return this.__createAllPattern();
-
 			case QueryPropertyType.FULL:
-				return this.__createGraphSubPattern();
+				return this.__createCompleteConstructPattern()
+					.addProperty( new PropertyToken( this.queryContainer.compactIRI( C.document ) )
+						.addObject( this._getContextVariable() )
+					);
 
 			default:
 				return;
 		}
 	}
 
+	protected __createCompleteConstructPattern():SubjectToken {
+		switch( this.propertyType ) {
+			case QueryPropertyType.ALL:
+				return this.__createAllPattern();
+
+			case QueryPropertyType.FULL:
+				return this.__createGraphSubPattern();
+
+			default:
+				throw new IllegalActionError( "Invalid property type" );
+		}
+	}
+
 	protected __createPartialConstructPattern():SubjectToken {
-		const subject:SubjectToken = this.__createTypesPattern();
+		const subject:SubjectToken = this.__createTypesPattern()
+			.addProperty( new PropertyToken( this.queryContainer.compactIRI( C.document ) )
+				.addObject( this._getContextVariable() )
+			);
 
 		this.subProperties.forEach( subProperty => {
 			subject.addProperty( new PropertyToken( subProperty.__createIRIToken() )

@@ -29,7 +29,6 @@ export interface C {
 	PreferMembershipTriples:"https://carbonldp.com/ns/v1/platform#PreferMembershipTriples";
 	PreferResultsContext:"https://carbonldp.com/ns/v1/platform#PreferResultsContext";
 	PreferSelectedMembershipTriples:"https://carbonldp.com/ns/v1/platform#PreferSelectedMembershipTriples";
-	QueryContextMetadata:"https://carbonldp.com/ns/v1/platform#QueryContextMetadata";
 	QueryMetadata:"https://carbonldp.com/ns/v1/platform#QueryMetadata";
 	RemoveMemberAction:"https://carbonldp.com/ns/v1/platform#RemoveMemberAction";
 	ResponseMetadata:"https://carbonldp.com/ns/v1/platform#ResponseMetadata";
@@ -39,11 +38,11 @@ export interface C {
 	accessPoint:"https://carbonldp.com/ns/v1/platform#accessPoint";
 	bNodesMap:"https://carbonldp.com/ns/v1/platform#bNodesMap";
 	buildDate:"https://carbonldp.com/ns/v1/platform#buildDate";
-	context:"https://carbonldp.com/ns/v1/platform#context";
 	created:"https://carbonldp.com/ns/v1/platform#created";
 	createdDocument:"https://carbonldp.com/ns/v1/platform#createdDocument";
 	details:"https://carbonldp.com/ns/v1/platform#details";
 	defaultInteractionModel:"https://carbonldp.com/ns/v1/platform#defaultInteractionModel";
+	document:"https://carbonldp.com/ns/v1/platform#document";
 	documentMetadata:"https://carbonldp.com/ns/v1/platform#documentMetadata";
 	entry:"https://carbonldp.com/ns/v1/platform#entry";
 	entryKey:"https://carbonldp.com/ns/v1/platform#key";
@@ -99,7 +98,6 @@ export const C:C = {
 	PreferResultsContext: "https://carbonldp.com/ns/v1/platform#PreferResultsContext",
 	PreferSelectedMembershipTriples: "https://carbonldp.com/ns/v1/platform#PreferSelectedMembershipTriples",
 	QueryMetadata: "https://carbonldp.com/ns/v1/platform#QueryMetadata",
-	QueryContextMetadata: "https://carbonldp.com/ns/v1/platform#QueryContextMetadata",
 	RemoveMemberAction: "https://carbonldp.com/ns/v1/platform#RemoveMemberAction",
 	ResponseMetadata: "https://carbonldp.com/ns/v1/platform#ResponseMetadata",
 	ValidationError: "https://carbonldp.com/ns/v1/platform#ValidationError",
@@ -108,11 +106,11 @@ export const C:C = {
 	accessPoint: "https://carbonldp.com/ns/v1/platform#accessPoint",
 	bNodesMap: "https://carbonldp.com/ns/v1/platform#bNodesMap",
 	buildDate: "https://carbonldp.com/ns/v1/platform#buildDate",
-	context: "https://carbonldp.com/ns/v1/platform#context",
 	created: "https://carbonldp.com/ns/v1/platform#created",
 	createdDocument: "https://carbonldp.com/ns/v1/platform#createdDocument",
 	details: "https://carbonldp.com/ns/v1/platform#details",
 	defaultInteractionModel: "https://carbonldp.com/ns/v1/platform#defaultInteractionModel",
+	document: "https://carbonldp.com/ns/v1/platform#document",
 	documentMetadata: "https://carbonldp.com/ns/v1/platform#documentMetadata",
 	entry: "https://carbonldp.com/ns/v1/platform#entry",
 	entryKey: "https://carbonldp.com/ns/v1/platform#key",

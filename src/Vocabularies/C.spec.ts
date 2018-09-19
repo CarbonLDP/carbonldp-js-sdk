@@ -264,15 +264,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"QueryContextMetadata",
-			"https://carbonldp.com/ns/v1/platform#QueryContextMetadata"
-		), ():void => {
-			const target:C[ "QueryContextMetadata" ] = "https://carbonldp.com/ns/v1/platform#QueryContextMetadata";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"QueryMetadata",
 			"https://carbonldp.com/ns/v1/platform#QueryMetadata"
 		), ():void => {
@@ -346,15 +337,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"context",
-			"https://carbonldp.com/ns/v1/platform#context"
-		), ():void => {
-			const target:C[ "context" ] = "https://carbonldp.com/ns/v1/platform#context";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"created",
 			"https://carbonldp.com/ns/v1/platform#created"
 		), ():void => {
@@ -386,6 +368,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			"https://carbonldp.com/ns/v1/platform#defaultInteractionModel"
 		), ():void => {
 			const target:C[ "defaultInteractionModel" ] = "https://carbonldp.com/ns/v1/platform#defaultInteractionModel";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"document",
+			"https://carbonldp.com/ns/v1/platform#document"
+		), ():void => {
+			const target:C[ "document" ] = "https://carbonldp.com/ns/v1/platform#document";
 			expect( target ).toBeDefined();
 		} );
 
@@ -593,7 +584,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( C ).length ).toBe( 64 );
+			expect( Object.keys( C ).length ).toBe( 63 );
 		} );
 
 		it( "C.namespace", ():void => {
@@ -736,11 +727,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.PreferResultsContext ).toBe( "https://carbonldp.com/ns/v1/platform#PreferResultsContext" );
 		} );
 
-		it( "C.QueryContextMetadata", ():void => {
-			expect( C.QueryContextMetadata ).toEqual( jasmine.any( String ) );
-			expect( C.QueryContextMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#QueryContextMetadata" );
-		} );
-
 		it( "C.QueryMetadata", ():void => {
 			expect( C.QueryMetadata ).toEqual( jasmine.any( String ) );
 			expect( C.QueryMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#QueryMetadata" );
@@ -777,11 +763,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.bNodesMap ).toBe( "https://carbonldp.com/ns/v1/platform#bNodesMap" );
 		} );
 
-		it( "C.context", ():void => {
-			expect( C.context ).toEqual( jasmine.any( String ) );
-			expect( C.context ).toBe( "https://carbonldp.com/ns/v1/platform#context" );
-		} );
-
 		it( "C.buildDate", ():void => {
 			expect( C.buildDate ).toEqual( jasmine.any( String ) );
 			expect( C.buildDate ).toBe( "https://carbonldp.com/ns/v1/platform#buildDate" );
@@ -805,6 +786,11 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		it( "C.defaultInteractionModel", ():void => {
 			expect( C.defaultInteractionModel ).toEqual( jasmine.any( String ) );
 			expect( C.defaultInteractionModel ).toBe( "https://carbonldp.com/ns/v1/platform#defaultInteractionModel" );
+		} );
+
+		it( "C.document", ():void => {
+			expect( C.document ).toEqual( jasmine.any( String ) );
+			expect( C.document ).toBe( "https://carbonldp.com/ns/v1/platform#document" );
 		} );
 
 		it( "C.documentMetadata", ():void => {
