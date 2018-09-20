@@ -701,7 +701,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										"https://example.com/ns#Resource",
 									],
 									[ C.checksum ]: [ {
-										"@value": "\"1-12345\"",
+										"@value": "1-12345",
 									} ],
 								},
 							],
@@ -744,7 +744,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										"https://example.com/ns#Resource",
 									],
 									[ C.checksum ]: [ {
-										"@value": "\"1-12345\"",
+										"@value": "1-12345",
 									} ],
 									"https://example.com/ns#property-1": [ {
 										"@value": "value",
@@ -760,7 +760,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@graph": [ {
 								"@id": "https://example.com/another-resource/",
 								[ C.checksum ]: [ {
-									"@value": "\"2-12345\"",
+									"@value": "2-12345",
 								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
@@ -2469,7 +2469,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										"https://example.com/ns#Resource",
 									],
 									[ C.checksum ]: [ {
-										"@value": "\"1-12345\"",
+										"@value": "1-12345",
 									} ],
 								},
 							],
@@ -2512,7 +2512,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										"https://example.com/ns#Resource",
 									],
 									[ C.checksum ]: [ {
-										"@value": "\"1-12345\"",
+										"@value": "1-12345",
 									} ],
 									"https://example.com/ns#property-1": [ {
 										"@value": "value",
@@ -2528,7 +2528,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@graph": [ {
 								"@id": "https://example.com/another-resource/",
 								[ C.checksum ]: [ {
-									"@value": "\"2-12345\"",
+									"@value": "2-12345",
 								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
@@ -3647,7 +3647,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										"https://example.com/ns#Resource",
 									],
 									[ C.checksum ]: [ {
-										"@value": "\"1-12345\"",
+										"@value": "1-12345",
 									} ],
 								},
 							],
@@ -4215,7 +4215,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										"https://example.com/ns#Resource",
 									],
 									[ C.checksum ]: [ {
-										"@value": "\"1-12345\"",
+										"@value": "1-12345",
 									} ],
 								},
 							],
@@ -4257,7 +4257,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										"https://example.com/ns#Resource",
 									],
 									[ C.checksum ]: [ {
-										"@value": "\"1-12345\"",
+										"@value": "1-12345",
 									} ],
 								},
 							],
@@ -5279,7 +5279,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"1-12345\\""
+									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5308,7 +5308,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"2-12345\\""
+									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5421,7 +5421,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"1-12345\\""
+									"@value": "1-12345"
 								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -5453,7 +5453,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"2-12345\\""
+									"@value": "2-12345"
 								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -5576,7 +5576,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"1-12345\\""
+									"@value": "1-12345"
 								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -5596,7 +5596,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"2-12345\\""
+									"@value": "2-12345"
 								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -5712,7 +5712,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"1-12345\\""
+									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5741,7 +5741,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"2-12345\\""
+									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5863,7 +5863,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"1-12345\\""
+									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5877,7 +5877,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/",
 								"${ C.checksum }": [ {
-									"@value": "\\"3-12345\\""
+									"@value": "3-12345"
 								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
@@ -5898,7 +5898,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"2-12345\\""
+									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5912,7 +5912,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/",
 								"${ C.checksum }": [ {
-									"@value": "\\"4-12345\\""
+									"@value": "4-12345"
 								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
@@ -6664,7 +6664,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"1-12345\\""
+									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -6693,7 +6693,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"2-12345\\""
+									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -6806,7 +6806,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"1-12345\\""
+									"@value": "1-12345"
 								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -6838,7 +6838,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"2-12345\\""
+									"@value": "2-12345"
 								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -6958,7 +6958,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"1-12345\\""
+									"@value": "1-12345"
 								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -6978,7 +6978,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"2-12345\\""
+									"@value": "2-12345"
 								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -7093,7 +7093,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"1-12345\\""
+									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -7122,7 +7122,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"2-12345\\""
+									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -7243,7 +7243,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"1-12345\\""
+									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -7257,7 +7257,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/",
 								"${ C.checksum }": [ {
-									"@value": "\\"3-12345\\""
+									"@value": "3-12345"
 								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
@@ -7278,7 +7278,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.RDFSource }"
 								],
 								"${ C.checksum }": [ {
-									"@value": "\\"2-12345\\""
+									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -7292,7 +7292,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/",
 								"${ C.checksum }": [ {
-									"@value": "\\"4-12345\\""
+									"@value": "4-12345"
 								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",

@@ -137,7 +137,7 @@ export class QueryResultCompacter {
 				const [ eTag ] = RDFNode.getPropertyLiterals( rawValues, XSD.string );
 				if( ! eTag ) return;
 
-				resource.$eTag = eTag;
+				resource.$eTag = `"${ eTag }"`;
 				resource.$_resolved = true;
 			} )
 		;
