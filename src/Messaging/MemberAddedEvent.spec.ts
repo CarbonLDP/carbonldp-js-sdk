@@ -14,24 +14,24 @@ import {
 import { C } from "../Vocabularies/C";
 
 import { EventMessage } from "./EventMessage";
-import { MemberAdded } from "./MemberAdded";
-import { MemberAddedDetails } from "./MemberAddedDetails";
+import { MemberAddedEvent } from "./MemberAddedEvent";
+import { MemberAddedEventDetails } from "./MemberAddedEventDetails";
 
 
-describe( module( "carbonldp/Messaging/MemberAdded" ), ():void => {
+describe( module( "carbonldp/Messaging/MemberAddedEvent" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberAdded",
+		"CarbonLDP.Messaging.MemberAddedEvent",
 		"Interface with the properties of the data received in a member added event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:MemberAdded = {} as any;
+			const target:MemberAddedEvent = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
 		it( extendsClass( "CarbonLDP.Messaging.EventMessage" ), ():void => {
-			const target:EventMessage = {} as MemberAdded;
+			const target:EventMessage = {} as MemberAddedEvent;
 			expect( target ).toBeDefined();
 		} );
 
@@ -40,24 +40,24 @@ describe( module( "carbonldp/Messaging/MemberAdded" ), ():void => {
 			"target",
 			"CarbonLDP.Document"
 		), ():void => {
-			const target:MemberAdded[ "target" ] = {} as Document;
+			const target:MemberAddedEvent[ "target" ] = {} as Document;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"details",
-			"CarbonLDP.Messaging.MemberAddedDetails"
+			"CarbonLDP.Messaging.MemberAddedEventDetails"
 		), ():void => {
-			const target:MemberAdded[ "details" ] = {} as MemberAddedDetails;
+			const target:MemberAddedEvent[ "details" ] = {} as MemberAddedEventDetails;
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberAddedFactory",
-		"Interface with the factory, decorator and utils for `CarbonLDP.Messaging.MemberAdded` objects."
+		"CarbonLDP.Messaging.MemberAddedEventFactory",
+		"Interface with the factory, decorator and utils for `CarbonLDP.Messaging.MemberAddedEvent` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -76,39 +76,39 @@ describe( module( "carbonldp/Messaging/MemberAdded" ), ():void => {
 
 	describe( property(
 		STATIC,
-		"MemberAdded",
-		"CarbonLDP.Messaging.MemberAddedFactory"
+		"MemberAddedEvent",
+		"CarbonLDP.Messaging.MemberAddedEventFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( MemberAdded ).toBeDefined();
-			expect( MemberAdded ).toEqual( jasmine.any( Object ) );
+			expect( MemberAddedEvent ).toBeDefined();
+			expect( MemberAddedEvent ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
-		it( "MemberAdded.TYPE", ():void => {
-			expect( MemberAdded.TYPE ).toBeDefined();
-			expect( MemberAdded.TYPE ).toEqual( jasmine.any( String ) );
+		it( "MemberAddedEvent.TYPE", ():void => {
+			expect( MemberAddedEvent.TYPE ).toBeDefined();
+			expect( MemberAddedEvent.TYPE ).toEqual( jasmine.any( String ) );
 
-			expect( MemberAdded.TYPE ).toBe( C.MemberAdded );
+			expect( MemberAddedEvent.TYPE ).toBe( C.MemberAddedEvent );
 		} );
 
 		// TODO: Separate in different tests
-		it( "MemberAdded.SCHEMA", ():void => {
-			expect( MemberAdded.SCHEMA ).toBeDefined();
-			expect( MemberAdded.SCHEMA ).toEqual( jasmine.any( Object ) );
+		it( "MemberAddedEvent.SCHEMA", ():void => {
+			expect( MemberAddedEvent.SCHEMA ).toBeDefined();
+			expect( MemberAddedEvent.SCHEMA ).toEqual( jasmine.any( Object ) );
 
-			expect( MemberAdded.SCHEMA as {} ).toEqual( {
+			expect( MemberAddedEvent.SCHEMA as {} ).toEqual( {
 				"target": jasmine.any( Object ),
 				"details": jasmine.any( Object ),
 			} );
 
-			expect( MemberAdded.SCHEMA[ "target" ] ).toEqual( {
+			expect( MemberAddedEvent.SCHEMA[ "target" ] ).toEqual( {
 				"@id": C.target,
 				"@type": "@id",
 			} );
 
-			expect( MemberAdded.SCHEMA[ "details" ] ).toEqual( {
+			expect( MemberAddedEvent.SCHEMA[ "details" ] ).toEqual( {
 				"@id": C.details,
 				"@type": "@id",
 			} );

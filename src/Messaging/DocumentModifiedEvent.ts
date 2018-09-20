@@ -5,19 +5,19 @@ import { C } from "../Vocabularies/C";
 import { EventMessage } from "./EventMessage";
 
 
-export interface DocumentModified extends EventMessage {
+export interface DocumentModifiedEvent extends EventMessage {
 }
 
 
-export interface DocumentModifiedFactory {
+export interface DocumentModifiedEventFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.DocumentModified;
+const TYPE:string = C.DocumentModifiedEvent;
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
-export const DocumentModified:DocumentModifiedFactory = {
+export const DocumentModifiedEvent:DocumentModifiedEventFactory = {
 	TYPE,
 	SCHEMA,
 };

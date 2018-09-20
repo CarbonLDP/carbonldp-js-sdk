@@ -15,22 +15,22 @@ import {
 
 import { C } from "../Vocabularies/C";
 
-import { MemberDetails } from "./MemberDetails";
+import { MemberEventDetails } from "./MemberEventDetails";
 
-describe( module( "carbonldp/Messaging/MemberDetails" ), ():void => {
+describe( module( "carbonldp/Messaging/MemberEventDetails" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberDetails",
+		"CarbonLDP.Messaging.MemberEventDetails",
 		"Interface with the base properties of the details in a member related event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:MemberDetails = {} as any;
+			const target:MemberEventDetails = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:Resource = {} as MemberDetails;
+			const target:Resource = {} as MemberEventDetails;
 			expect( target ).toBeDefined();
 		} );
 
@@ -39,15 +39,15 @@ describe( module( "carbonldp/Messaging/MemberDetails" ), ():void => {
 			"members",
 			"CarbonLDP.Document[]"
 		), ():void => {
-			const target:MemberDetails[ "members" ] = [] as Document[];
+			const target:MemberEventDetails[ "members" ] = [] as Document[];
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberDetailsFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.MemberDetails` objects."
+		"CarbonLDP.Messaging.MemberEventDetailsFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.MemberEventDetails` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -60,25 +60,25 @@ describe( module( "carbonldp/Messaging/MemberDetails" ), ():void => {
 
 	describe( property(
 		STATIC,
-		"MemberDetails",
-		"CarbonLDP.Messaging.MemberDetailsFactory"
+		"MemberEventDetails",
+		"CarbonLDP.Messaging.MemberEventDetailsFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( MemberDetails ).toBeDefined();
-			expect( MemberDetails ).toEqual( jasmine.any( Object ) );
+			expect( MemberEventDetails ).toBeDefined();
+			expect( MemberEventDetails ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
-		it( "MemberDetails.SCHEMA", ():void => {
-			expect( MemberDetails.SCHEMA ).toBeDefined();
-			expect( MemberDetails.SCHEMA ).toEqual( jasmine.any( Object ) );
+		it( "MemberEventDetails.SCHEMA", ():void => {
+			expect( MemberEventDetails.SCHEMA ).toBeDefined();
+			expect( MemberEventDetails.SCHEMA ).toEqual( jasmine.any( Object ) );
 
-			expect( MemberDetails.SCHEMA as {} ).toEqual( {
+			expect( MemberEventDetails.SCHEMA as {} ).toEqual( {
 				"members": jasmine.any( Object ),
 			} );
 
-			expect( MemberDetails.SCHEMA[ "members" ] ).toEqual( {
+			expect( MemberEventDetails.SCHEMA[ "members" ] ).toEqual( {
 				"@id": C.member,
 				"@type": "@id",
 				"@container": "@set",

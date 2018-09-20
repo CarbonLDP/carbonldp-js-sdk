@@ -13,25 +13,25 @@ import {
 
 import { C } from "../Vocabularies/C";
 
-import { DocumentCreated } from "./DocumentCreated";
-import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
+import { DocumentCreatedEvent } from "./DocumentCreatedEvent";
+import { DocumentCreatedEventDetails } from "./DocumentCreatedEventDetails";
 import { EventMessage } from "./EventMessage";
 
 
-describe( module( "carbonldp/Messaging/DocumentCreated" ), ():void => {
+describe( module( "carbonldp/Messaging/DocumentCreatedEvent" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentCreated",
+		"CarbonLDP.Messaging.DocumentCreatedEvent",
 		"Interface with the base properties of the data received in any document created event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:DocumentCreated = {} as any;
+			const target:DocumentCreatedEvent = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
 		it( extendsClass( "CarbonLDP.Messaging.EventMessage" ), ():void => {
-			const target:EventMessage = {} as DocumentCreated;
+			const target:EventMessage = {} as DocumentCreatedEvent;
 			expect( target ).toBeDefined();
 		} );
 
@@ -40,24 +40,24 @@ describe( module( "carbonldp/Messaging/DocumentCreated" ), ():void => {
 			"target",
 			"CarbonLDP.Document"
 		), ():void => {
-			const target:DocumentCreated[ "target" ] = {} as Document;
+			const target:DocumentCreatedEvent[ "target" ] = {} as Document;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"details",
-			"CarbonLDP.Messaging.DocumentCreatedDetails"
+			"CarbonLDP.Messaging.DocumentCreatedEventDetails"
 		), ():void => {
-			const target:DocumentCreated[ "details" ] = {} as DocumentCreatedDetails;
+			const target:DocumentCreatedEvent[ "details" ] = {} as DocumentCreatedEventDetails;
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentCreatedFactory",
-		"Interface with the factory, decorate and utils elements for `CarbonLDP.Messaging.DocumentCreated` objects."
+		"CarbonLDP.Messaging.DocumentCreatedEventFactory",
+		"Interface with the factory, decorate and utils elements for `CarbonLDP.Messaging.DocumentCreatedEvent` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -70,31 +70,31 @@ describe( module( "carbonldp/Messaging/DocumentCreated" ), ():void => {
 
 	describe( property(
 		STATIC,
-		"DocumentCreated",
-		"CarbonLDP.Messaging.DocumentCreatedFactory"
+		"DocumentCreatedEvent",
+		"CarbonLDP.Messaging.DocumentCreatedEventFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( DocumentCreated ).toBeDefined();
-			expect( DocumentCreated ).toEqual( jasmine.any( Object ) );
+			expect( DocumentCreatedEvent ).toBeDefined();
+			expect( DocumentCreatedEvent ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
-		it( "DocumentCreated.SCHEMA", ():void => {
-			expect( DocumentCreated.SCHEMA ).toBeDefined();
-			expect( DocumentCreated.SCHEMA ).toEqual( jasmine.any( Object ) );
+		it( "DocumentCreatedEvent.SCHEMA", ():void => {
+			expect( DocumentCreatedEvent.SCHEMA ).toBeDefined();
+			expect( DocumentCreatedEvent.SCHEMA ).toEqual( jasmine.any( Object ) );
 
-			expect( DocumentCreated.SCHEMA as {} ).toEqual( {
+			expect( DocumentCreatedEvent.SCHEMA as {} ).toEqual( {
 				"target": jasmine.any( Object ),
 				"details": jasmine.any( Object ),
 			} );
 
-			expect( DocumentCreated.SCHEMA[ "target" ] ).toEqual( {
+			expect( DocumentCreatedEvent.SCHEMA[ "target" ] ).toEqual( {
 				"@id": C.target,
 				"@type": "@id",
 			} );
 
-			expect( DocumentCreated.SCHEMA[ "details" ] ).toEqual( {
+			expect( DocumentCreatedEvent.SCHEMA[ "details" ] ).toEqual( {
 				"@id": C.details,
 				"@type": "@id",
 			} );

@@ -2,21 +2,19 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
 
+import { DocumentCreatedEventDetails } from "./DocumentCreatedEventDetails";
 import { EventMessage } from "./EventMessage";
-import { MemberAddedDetails } from "./MemberAddedDetails";
 
 
-export interface MemberAdded extends EventMessage {
-	details:MemberAddedDetails;
+export interface DocumentCreatedEvent extends EventMessage {
+	details:DocumentCreatedEventDetails;
 }
 
 
-export interface MemberAddedFactory {
-	TYPE:string;
+export interface DocumentCreatedEventFactory {
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.MemberAdded;
 const SCHEMA:ObjectSchema = {
 	...EventMessage.SCHEMA,
 	"details": {
@@ -25,7 +23,6 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const MemberAdded:MemberAddedFactory = {
-	TYPE,
+export const DocumentCreatedEvent:DocumentCreatedEventFactory = {
 	SCHEMA,
 };

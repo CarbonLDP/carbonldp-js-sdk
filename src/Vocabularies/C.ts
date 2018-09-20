@@ -2,22 +2,21 @@ export interface C {
 	namespace:"https://carbonldp.com/ns/v1/platform#";
 
 	AccessPoint:"https://carbonldp.com/ns/v1/platform#AccessPoint";
-	AccessPointCreated:"https://carbonldp.com/ns/v1/platform#AccessPointCreated";
 	AddMemberAction:"https://carbonldp.com/ns/v1/platform#AddMemberAction";
-	ChildCreated:"https://carbonldp.com/ns/v1/platform#ChildCreatedEvent";
+	ChildCreatedEvent:"https://carbonldp.com/ns/v1/platform#ChildCreatedEvent";
 	Document:"https://carbonldp.com/ns/v1/platform#Document";
-	DocumentCreatedDetails:"https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails";
-	DocumentDeleted:"https://carbonldp.com/ns/v1/platform#DocumentDeleted";
+	DocumentCreatedEventDetails:"https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails";
+	DocumentDeletedEvent:"https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent";
 	DocumentMetadata:"https://carbonldp.com/ns/v1/platform#DocumentMetadata";
-	DocumentModified:"https://carbonldp.com/ns/v1/platform#DocumentModified";
+	DocumentModifiedEvent:"https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent";
 	ErrorResponse:"https://carbonldp.com/ns/v1/platform#ErrorResponse";
 	Error:"https://carbonldp.com/ns/v1/platform#Error";
 	Instance:"https://carbonldp.com/ns/v1/platform#Instance";
 	Map:"https://carbonldp.com/ns/v1/platform#Map";
-	MemberAdded:"https://carbonldp.com/ns/v1/platform#MemberAddedEvent";
-	MemberAddedDetails:"https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails";
-	MemberRemoved:"https://carbonldp.com/ns/v1/platform#MemberRemovedEvent";
-	MemberRemovedDetails:"https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails";
+	MemberAddedEvent:"https://carbonldp.com/ns/v1/platform#MemberAddedEvent";
+	MemberAddedEventDetails:"https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails";
+	MemberRemovedEvent:"https://carbonldp.com/ns/v1/platform#MemberRemovedEvent";
+	MemberRemovedEventDetails:"https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails";
 	NonReadableMembershipResourceTriples:"https://carbonldp.com/ns/v1/platform#NonReadableMembershipResourceTriples";
 	Platform:"https://carbonldp.com/ns/v1/platform#Platform";
 	PlatformInstance:"https://carbonldp.com/ns/v1/platform#PlatformInstance";
@@ -70,22 +69,21 @@ export const C:C = {
 	namespace: "https://carbonldp.com/ns/v1/platform#",
 
 	AccessPoint: "https://carbonldp.com/ns/v1/platform#AccessPoint",
-	AccessPointCreated: "https://carbonldp.com/ns/v1/platform#AccessPointCreated",
 	AddMemberAction: "https://carbonldp.com/ns/v1/platform#AddMemberAction",
-	ChildCreated: "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent",
+	ChildCreatedEvent: "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent",
 	Document: "https://carbonldp.com/ns/v1/platform#Document",
-	DocumentCreatedDetails: "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails",
-	DocumentDeleted: "https://carbonldp.com/ns/v1/platform#DocumentDeleted",
+	DocumentCreatedEventDetails: "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails",
+	DocumentDeletedEvent: "https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent",
 	DocumentMetadata: "https://carbonldp.com/ns/v1/platform#DocumentMetadata",
-	DocumentModified: "https://carbonldp.com/ns/v1/platform#DocumentModified",
+	DocumentModifiedEvent: "https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent",
 	ErrorResponse: "https://carbonldp.com/ns/v1/platform#ErrorResponse",
 	Error: "https://carbonldp.com/ns/v1/platform#Error",
 	Instance: "https://carbonldp.com/ns/v1/platform#Instance",
 	Map: "https://carbonldp.com/ns/v1/platform#Map",
-	MemberAdded: "https://carbonldp.com/ns/v1/platform#MemberAddedEvent",
-	MemberAddedDetails: "https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails",
-	MemberRemoved: "https://carbonldp.com/ns/v1/platform#MemberRemovedEvent",
-	MemberRemovedDetails: "https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails",
+	MemberAddedEvent: "https://carbonldp.com/ns/v1/platform#MemberAddedEvent",
+	MemberAddedEventDetails: "https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails",
+	MemberRemovedEvent: "https://carbonldp.com/ns/v1/platform#MemberRemovedEvent",
+	MemberRemovedEventDetails: "https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails",
 	NonReadableMembershipResourceTriples: "https://carbonldp.com/ns/v1/platform#NonReadableMembershipResourceTriples",
 	Platform: "https://carbonldp.com/ns/v1/platform#Platform",
 	PlatformInstance: "https://carbonldp.com/ns/v1/platform#PlatformInstance",

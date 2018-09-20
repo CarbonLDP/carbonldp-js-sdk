@@ -82,7 +82,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to the specified document event notifications.",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for its notifications." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -92,7 +92,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -120,7 +120,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to the specified document event notifications.",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for its notifications." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -130,7 +130,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -139,7 +139,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to the specified document event notifications.",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for its notifications." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -149,7 +149,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -158,7 +158,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to the specified document event notifications.",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for its notifications." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -168,7 +168,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -177,7 +177,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to the specified document event notifications.",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for its notifications." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -187,7 +187,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -255,7 +255,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Remove a subscription that contains the document event and onEvent callback provided.",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -265,7 +265,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -293,7 +293,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Remove a subscription that contains the document event and onEvent callback provided.",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -303,7 +303,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -312,7 +312,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Remove a subscription that contains the document event and onEvent callback provided.",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -322,7 +322,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -331,7 +331,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Remove a subscription that contains the document event and onEvent callback provided.",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -341,7 +341,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -350,7 +350,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Remove a subscription that contains the document event and onEvent callback provided.",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -360,7 +360,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -429,7 +429,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to only one notification to the document event provided",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for one notification." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -439,7 +439,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for one notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -467,7 +467,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to only one notification to the document event provided",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for one notification." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -477,7 +477,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for one notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -486,7 +486,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to only one notification to the document event provided",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for one notification." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -496,7 +496,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for one notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -505,7 +505,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to only one notification to the document event provided",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for one notification." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -515,7 +515,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for one notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -524,7 +524,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to only one notification to the document event provided",
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for one notification." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -534,7 +534,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for one notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -603,7 +603,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			it( hasSignature(
 				"Subscribe to the `CarbonLDP.Messaging.Event.CHILD_CREATED` event notifications for the document.",
 				[
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -612,7 +612,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to the `CarbonLDP.Messaging.Event.CHILD_CREATED` event notifications for the uri pattern specified.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -660,7 +660,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			it( hasSignature(
 				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the document.",
 				[
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -669,7 +669,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the uri pattern specified.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -717,7 +717,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			it( hasSignature(
 				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_DELETED` event notifications for the document.",
 				[
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -726,7 +726,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_DELETED` event notifications for the uri pattern specified.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -774,7 +774,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			it( hasSignature(
 				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_ADDED` event notifications for the document.",
 				[
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -783,7 +783,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_ADDED` event notifications for the uri pattern specified.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -831,7 +831,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 			it( hasSignature(
 				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_REMOVED` event notifications for the document.",
 				[
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -840,7 +840,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentTrai
 				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_REMOVED` event notifications for the uri pattern specified.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
