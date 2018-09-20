@@ -111,15 +111,22 @@ function __executeQueryContainer<T extends object>( this:void, repository:Querya
 		.then<(T & Document)[]>( ( rdfNodes:RDFNode[] ) => {
 			const freeNodes:RDFNode[] = RDFDocument.getFreeNodes( rdfNodes );
 
+			rdfNodes.forEach( ( node, index ) => { // TODO: Remove when `cldp-sdk://` fixed
+				if( ! RDFNode.getID( node ).startsWith( "cldp-sdk://" ) ) return;
+				if( ! Array.isArray( node[ "@graph" ] ) ) return;
+
+				freeNodes.push( ...node[ "@graph" ] as RDFNode[] );
+				rdfNodes.splice( index, 1 );
+			} );
+
 			const freeResources:FreeResources = FreeResources
 				.parseFreeNodes( repository.context.registry, freeNodes );
 
 			const targetDocuments:string[] = freeResources
 				.getPointers( true )
-				.filter<QueryMetadata>( QueryMetadata.is )
-				.map<Pointer | Pointer[]>( x => x.target )
-				// Alternative to flatMap
-				.reduce<Pointer[]>( ( targets, currentTargets ) => targets.concat( currentTargets ), [] )
+				.filter( QueryMetadata.is )
+				.map( x => x.targets )
+				.reduce( ( targets, x ) => targets.concat( x ), [] )
 				.map( x => x.$id )
 			;
 

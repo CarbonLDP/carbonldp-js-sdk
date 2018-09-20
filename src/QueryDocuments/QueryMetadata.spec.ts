@@ -26,11 +26,11 @@ describe( module( "carbonldp/QueryDocuments/QueryMetadata" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"target",
-			"CarbonLDP.QueryDocuments.QueryablePointer",
-			"The pointer to one of the targeted resources requested in the partial query."
+			"targets",
+			"CarbonLDP.QueryDocuments.QueryablePointer[]",
+			"The pointers to one of the targeted resources requested in the partial query."
 		), ():void => {
-			const target:QueryMetadata[ "target" ] = {} as QueryablePointer;
+			const target:QueryMetadata[ "targets" ] = [] as QueryablePointer[];
 			expect( target ).toBeDefined();
 		} );
 
@@ -89,10 +89,10 @@ describe( module( "carbonldp/QueryDocuments/QueryMetadata" ), ():void => {
 			expect( QueryMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );
 
 			expect( QueryMetadata.SCHEMA as {} ).toEqual( {
-				"target": jasmine.any( Object ),
+				"targets": jasmine.any( Object ),
 			} );
 
-			expect( QueryMetadata.SCHEMA[ "target" ] ).toEqual( {
+			expect( QueryMetadata.SCHEMA[ "targets" ] ).toEqual( {
 				"@id": C.target,
 				"@type": "@id",
 				"@container": "@set",
@@ -117,7 +117,7 @@ describe( module( "carbonldp/QueryDocuments/QueryMetadata" ), ():void => {
 			it( "should verify the resource TYPE", ():void => {
 				const target:QueryMetadata = Resource.createFrom( {
 					types: [ C.VolatileResource, C.QueryMetadata ],
-					"target": null,
+					targets: [],
 				} );
 
 				expect( QueryMetadata.is( target ) ).toBe( true );
