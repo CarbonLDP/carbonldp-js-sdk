@@ -1,4 +1,4 @@
-import { createMockContext, createMockQueryableMetadata, MockQueryContainer } from "../../test/helpers/mocks";
+import { createMockContext, createMockQueryableMetadata } from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
 
@@ -27,7 +27,7 @@ describe( module( "carbonldp/JSONLD/QueryResultCompacter" ), ():void => {
 
 			registry = GeneralRegistry.create( { __modelDecorator: Document, context: context } );
 
-			queryContainer = new MockQueryContainer( context );
+			queryContainer = new QueryContainer( context, { uri: "root/" } );
 		} );
 
 

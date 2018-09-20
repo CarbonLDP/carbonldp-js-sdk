@@ -1,14 +1,14 @@
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
+import { QueryContainerProperty } from "./QueryContainerProperty";
 import { SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
-import { QueryDocumentContainer } from "./QueryDocumentContainer";
-import { QueryRootProperty } from "./QueryRootProperty";
+import { QueryContainer } from "./QueryContainer";
 
 
 export class QueryDocumentsBuilder extends SubQueryDocumentsBuilder {
-	readonly _queryProperty:QueryRootProperty;
+	readonly _queryProperty:QueryContainerProperty;
 
-	constructor( queryContainer:QueryDocumentContainer, queryProperty:QueryRootProperty ) {
+	constructor( queryContainer:QueryContainer, queryProperty:QueryContainerProperty ) {
 		super( queryContainer, queryProperty );
 	}
 

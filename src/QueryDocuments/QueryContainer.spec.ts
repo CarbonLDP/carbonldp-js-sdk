@@ -1,7 +1,7 @@
 import { FluentPathContainer } from "sparqler/patterns";
 import { IRIRefToken, PrefixedNameToken } from "sparqler/tokens";
 
-import { createMockContext, MockQueryContainer } from "../../test/helpers/mocks";
+import { createMockContext } from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
 
@@ -39,7 +39,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContainer" ), ():void => {
 			), ():void => {} );
 
 			it( "should be instantiable", ():void => {
-				const queryContainer:QueryContainer = new MockQueryContainer( context );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "root/" } );
 
 				expect( queryContainer ).toBeDefined();
 				expect( queryContainer ).toEqual( jasmine.any( QueryContainer ) );
@@ -48,7 +48,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContainer" ), ():void => {
 		} );
 
 		it( extendsClass( "sparqler/patterns/FluentPathContainer" ), () => {
-			const queryContainer:QueryContainer = new MockQueryContainer( context );
+			const queryContainer:QueryContainer = new QueryContainer( context, { uri: "root/" } );
 
 			expect( queryContainer ).toEqual( jasmine.any( FluentPathContainer ) );
 		} );
@@ -73,14 +73,14 @@ describe( module( "carbonldp/QueryDocuments/QueryContainer" ), ():void => {
 
 
 			it( "should return a QueryVariable", ():void => {
-				const queryContainer:QueryContainer = new MockQueryContainer( context );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "root/" } );
 
 				const variable:QueryVariable = queryContainer.getVariable( "name" );
 				expect( variable ).toEqual( jasmine.any( QueryVariable ) );
 			} );
 
 			it( "should return variable with the existing name", ():void => {
-				const queryContainer:QueryContainer = new MockQueryContainer( context );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "root/" } );
 
 				function helper( name:string ):void {
 					const variable:QueryVariable = queryContainer.getVariable( name );
@@ -93,14 +93,14 @@ describe( module( "carbonldp/QueryDocuments/QueryContainer" ), ():void => {
 
 
 			it( "should init with zero index", ():void => {
-				const queryContainer:QueryContainer = new MockQueryContainer( context );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "root/" } );
 
 				const variable:QueryVariable = queryContainer.getVariable( "name" );
 				expect( variable.index ).toBe( 0 );
 			} );
 
 			it( "should increase index", ():void => {
-				const queryContainer:QueryContainer = new MockQueryContainer( context );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "root/" } );
 
 				expect( queryContainer.getVariable( "name0" ).index ).toBe( 0 );
 				expect( queryContainer.getVariable( "name1" ).index ).toBe( 1 );
@@ -128,7 +128,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContainer" ), ():void => {
 			} );
 
 			it( "should throw error if no prefix declared when prefixedName", ():void => {
-				const queryContainer:QueryContainer = new MockQueryContainer( context );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "root/" } );
 				const helper:( prefixed:string ) => void = prefixed => () => queryContainer.compactIRI( prefixed );
 
 				expect( helper( "ex:resource" ) ).toThrowError( `The prefix "ex" has not been declared.` );
@@ -139,7 +139,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContainer" ), ():void => {
 				context.extendObjectSchema( {
 					"ex": "http://example.com/ns#",
 				} );
-				const queryContainer:QueryContainer = new MockQueryContainer( context );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "root/" } );
 
 				const iri:IRIRefToken = <IRIRefToken> queryContainer.compactIRI( "https://schema.org/resource" );
 				expect( iri ).toEqual( jasmine.any( IRIRefToken ) );
@@ -153,7 +153,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContainer" ), ():void => {
 					"ex": "http://example.com/ns#",
 					"schema": "https://schema.org/",
 				} );
-				const queryContainer:QueryContainer = new MockQueryContainer( context );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "root/" } );
 
 				const prefixedName1:PrefixedNameToken = <PrefixedNameToken> queryContainer.compactIRI( "http://example.com/ns#resource" );
 				expect( prefixedName1 ).toEqual( jasmine.any( PrefixedNameToken ) );
@@ -175,7 +175,7 @@ describe( module( "carbonldp/QueryDocuments/QueryContainer" ), ():void => {
 					"ex": "http://example.com/ns#",
 					"schema": "https://schema.org/",
 				} );
-				const queryContainer:QueryContainer = new MockQueryContainer( context );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "root/" } );
 
 				const prefixedName1:PrefixedNameToken = <PrefixedNameToken> queryContainer.compactIRI( "ex:resource" );
 				expect( prefixedName1 ).toEqual( jasmine.any( PrefixedNameToken ) );

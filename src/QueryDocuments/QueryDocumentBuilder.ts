@@ -1,4 +1,4 @@
-import { IRIToken, LiteralToken, TermToken } from "sparqler/tokens";
+import { IRIToken, LiteralToken, TermToken, VariableToken } from "sparqler/tokens";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
@@ -6,14 +6,13 @@ import { IllegalStateError } from "../Errors/IllegalStateError";
 import { Pointer } from "../Pointer/Pointer";
 import { isObject } from "../Utils";
 
-import { QueryDocumentContainer } from "./QueryDocumentContainer";
+import { QueryContainer } from "./QueryContainer";
 import { QueryObject } from "./QueryObject";
 import { QueryProperty } from "./QueryProperty";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { QuerySchema } from "./QuerySchema";
 import { QuerySchemaProperty } from "./QuerySchemaProperty";
 import { QueryValue } from "./QueryValue";
-import { QueryVariable } from "./QueryVariable";
 
 
 export class QueryDocumentBuilder {
@@ -24,21 +23,21 @@ export class QueryDocumentBuilder {
 	readonly inherit:Readonly<{}> = QueryDocumentBuilder.INHERIT;
 	readonly all:Readonly<{}> = QueryDocumentBuilder.ALL;
 
-	readonly _queryContainer:QueryDocumentContainer;
+	readonly _queryContainer:QueryContainer;
 	readonly _queryProperty:QueryProperty;
 
 
-	constructor( queryContainer:QueryDocumentContainer, queryProperty:QueryProperty ) {
+	constructor( queryContainer:QueryContainer, queryProperty:QueryProperty ) {
 		this._queryContainer = queryContainer;
 		this._queryProperty = queryProperty;
 	}
 
 
-	property( name?:string ):QueryVariable {
+	property( name?:string ):VariableToken | IRIToken | LiteralToken {
 		let parent:QueryProperty | undefined = this._queryProperty;
 		while( parent ) {
 			const property:QueryProperty | undefined = parent.getProperty( name, { create: true } );
-			if( property ) return property.variable;
+			if( property ) return property.identifier;
 
 			parent = parent.parent;
 		}
@@ -114,6 +113,16 @@ export class SubQueryDocumentsBuilder extends QueryDocumentBuilder {
 			.map( value => {
 				const token:TermToken = value.getToken();
 				if( token.token === "blankNode" ) throw new IllegalArgumentError( `Cannot assign blank nodes ("${ token.label }").` );
+
+				if( this._queryProperty.definition.literal ) {
+					if( token.token !== "literal" )
+						throw new IllegalArgumentError( `"${ token }" is not a literal value.` );
+				}
+
+				if( this._queryProperty.definition.pointerType !== null ) {
+					if( token.token === "literal" )
+						throw new IllegalArgumentError( `"${ token }" is not a resource value.` );
+				}
 
 				return token;
 			} );

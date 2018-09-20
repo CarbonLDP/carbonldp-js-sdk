@@ -4,8 +4,7 @@ import { AbstractContext } from "../Context/AbstractContext";
 
 import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
-import { QueryContainerType } from "./QueryContainerType";
-import { QueryDocumentContainer } from "./QueryDocumentContainer";
+import { QueryContainer } from "./QueryContainer";
 import { QueryRootProperty } from "./QueryRootProperty";
 
 
@@ -14,8 +13,8 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentContainer" ), ():void =
 	describe( clazz( "CarbonLDP.QueryDocuments.QueryDocumentContainer", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
-			expect( QueryDocumentContainer ).toBeDefined();
-			expect( QueryDocumentContainer ).toEqual( jasmine.any( Function ) );
+			expect( QueryContainer ).toBeDefined();
+			expect( QueryContainer ).toEqual( jasmine.any( Function ) );
 		} );
 
 		let context:AbstractContext<any, any>;
@@ -34,17 +33,16 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentContainer" ), ():void =
 			), ():void => {} );
 
 			it( "should be instantiable", ():void => {
-				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { uri: "property/", containerType: QueryContainerType.DOCUMENT } );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "property/" } );
 				expect( queryContainer ).toBeDefined();
-				expect( queryContainer ).toEqual( jasmine.any( QueryDocumentContainer ) );
+				expect( queryContainer ).toEqual( jasmine.any( QueryContainer ) );
 			} );
 
 			it( "should init property", () => {
-				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { uri: "property/", containerType: QueryContainerType.DOCUMENT } );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "property/" } );
 
 				expect( queryContainer._queryProperty ).toEqual( jasmine.any( QueryRootProperty ) );
 				expect( queryContainer._queryProperty.name ).toBe( "document" );
-				expect( queryContainer._queryProperty.containerType ).toBe( QueryContainerType.DOCUMENT );
 			} );
 
 		} );
@@ -63,12 +61,12 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentContainer" ), ():void =
 			} );
 
 			it( "should exists", ():void => {
-				expect( QueryDocumentContainer.prototype.serializeLiteral ).toBeDefined();
-				expect( QueryDocumentContainer.prototype.serializeLiteral ).toEqual( jasmine.any( Function ) );
+				expect( QueryContainer.prototype.serializeLiteral ).toBeDefined();
+				expect( QueryContainer.prototype.serializeLiteral ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should use the literal serializers of carbon", ():void => {
-				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { uri: "property/", containerType:QueryContainerType.DOCUMENT } );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "property/" } );
 				const spy:jasmine.Spy = spyOnProperty( context.jsonldConverter, "literalSerializers", "get" ).and.callThrough();
 
 				queryContainer.serializeLiteral( "http://www.w3.org/2001/XMLSchema#string", "value" );
@@ -76,7 +74,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentContainer" ), ():void =
 			} );
 
 			it( "should get the correct literal serializer", ():void => {
-				const queryContainer:QueryDocumentContainer = new QueryDocumentContainer( context, { uri: "property/", containerType:QueryContainerType.DOCUMENT } );
+				const queryContainer:QueryContainer = new QueryContainer( context, { uri: "property/" } );
 				const spy:jasmine.Spy = spyOn( context.jsonldConverter.literalSerializers, "get" ).and.callThrough();
 
 				queryContainer.serializeLiteral( "http://www.w3.org/2001/XMLSchema#string", "value" );

@@ -2,7 +2,6 @@ import { Path, PathBuilder } from "sparqler/patterns";
 import {
 	FilterToken,
 	GraphToken,
-	GroupPatternToken,
 	IRIToken,
 	LiteralToken,
 	OptionalToken,
@@ -10,8 +9,8 @@ import {
 	PatternToken,
 	PropertyToken,
 	SubjectToken,
-	SubSelectToken,
-	ValuesToken
+	ValuesToken,
+	VariableToken
 } from "sparqler/tokens";
 
 import { IllegalActionError } from "../Errors/IllegalActionError";
@@ -19,16 +18,14 @@ import { IllegalActionError } from "../Errors/IllegalActionError";
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
+
 import { C } from "../Vocabularies/C";
-import { LDP } from "../Vocabularies/LDP";
 
 import { QueryablePropertyData } from "./QueryablePropertyData";
 import { QueryContainer } from "./QueryContainer";
-import { QueryContainerType } from "./QueryContainerType";
 import { QueryPropertyData } from "./QueryPropertyData";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { QuerySubPropertyData } from "./QuerySubPropertyData";
-import { QueryVariable } from "./QueryVariable";
 import { SubQueryPropertyDefinition } from "./SubQueryPropertyDefinition";
 import { _getBestType, _getMatchingDefinition, _getRootPath } from "./Utils";
 
@@ -40,24 +37,32 @@ export class QueryProperty implements QueryablePropertyData {
 	readonly name:string;
 	readonly fullName:string;
 
-	get variable():QueryVariable {
-		return this.queryContainer.getVariable( this.fullName );
+	get variable():VariableToken {
+		return this.queryContainer
+			.getVariable( this.fullName );
+	}
+
+	get identifier():VariableToken | LiteralToken | IRIToken {
+		if( this.values.length === 1 ) {
+			return this.values[ 0 ];
+		}
+
+		return this.queryContainer
+			.getVariable( this.fullName );
 	}
 
 	readonly definition:DigestedObjectSchemaProperty;
 	readonly pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
 
 	propertyType?:QueryPropertyType;
-	containerType?:QueryContainerType;
-
 	optional:boolean;
 
 
 	readonly subProperties:Map<string, QueryProperty>;
 
 
+	readonly values:(LiteralToken | IRIToken)[];
 	protected readonly _types:string[];
-	protected readonly _values:(LiteralToken | IRIToken)[];
 	protected readonly _filters:string[];
 
 	protected _searchSchema:DigestedObjectSchema | undefined;
@@ -76,16 +81,14 @@ export class QueryProperty implements QueryablePropertyData {
 		this.pathBuilderFn = data.pathBuilderFn;
 
 		this.propertyType = data.propertyType;
-		this.containerType = data.containerType;
-
 		this.optional = data.optional === void 0
 			? true
 			: data.optional;
 
 		this.subProperties = new Map();
 
+		this.values = data.values ? data.values : [];
 		this._types = [];
-		this._values = [];
 		this._filters = [];
 	}
 
@@ -219,7 +222,7 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	addValues( values:(LiteralToken | IRIToken)[] ):void {
-		this._values.push( ...values );
+		this.values.push( ...values );
 	}
 
 	addFilter( constraint:string ):void {
@@ -238,7 +241,7 @@ export class QueryProperty implements QueryablePropertyData {
 
 	// Tokens creation helpers
 
-	_getVariable( name:string ):QueryVariable {
+	_getVariable( name:string ):VariableToken {
 		return this.queryContainer
 			.getVariable( `${ this.fullName }.${ name }` );
 	}
@@ -249,7 +252,7 @@ export class QueryProperty implements QueryablePropertyData {
 			.compactIRI( this.definition.uri );
 	}
 
-	protected __createPathToken():PathToken {
+	protected __createPathToken():PathToken | VariableToken {
 		if( ! this.pathBuilderFn )
 			return this.__createIRIToken();
 
@@ -263,9 +266,9 @@ export class QueryProperty implements QueryablePropertyData {
 
 	// Context helpers
 
-	protected _getContextVariable():QueryVariable {
+	protected _getContextVariable():VariableToken | IRIToken {
 		if( this.propertyType === QueryPropertyType.FULL )
-			return this.variable;
+			return this.__getSelfToken();
 
 		return this._getVariable( "_graph" );
 	}
@@ -277,80 +280,27 @@ export class QueryProperty implements QueryablePropertyData {
 
 	// Self description patterns
 
-	getSelfPattern():PatternToken {
-		const pattern:PatternToken = this.__createSelfPattern();
+	getSelfPattern():PatternToken | undefined {
+		const pattern:PatternToken | undefined = this.__createSelfPattern();
+		if( ! pattern ) return;
 
 		if( ! this.optional ) return pattern;
 		return new OptionalToken()
 			.addPattern( pattern );
 	}
 
-	protected __createSelfPattern():PatternToken {
-		switch( this.containerType ) {
-			case QueryContainerType.DOCUMENT:
-				return this.__createDocumentSelfPattern();
-
-			case QueryContainerType.CHILDREN:
-				return this.__createChildSelfPattern();
-
-			case QueryContainerType.MEMBERS:
-				return new GroupPatternToken()
-					.addPattern( ...this.__createMemberSelfPattern() );
-
-			default:
-				return this.__createSimpleSelfPattern();
-		}
-	}
-
-	protected __createSimpleSelfPattern():SubjectToken {
+	protected __createSelfPattern():PatternToken | undefined {
 		if( ! this.parent )
 			throw new IllegalActionError( "Cannot create pattern without a parent." );
 
 		return this
-			.__addPropertyTo( new SubjectToken( this.parent.variable ) );
+			.__addPropertyTo( new SubjectToken( this.parent.identifier ) );
 	}
 
 	protected __addPropertyTo( subject:SubjectToken ):SubjectToken {
 		return subject
 			.addProperty( new PropertyToken( this.__createPathToken() )
-				.addObject( this.variable ) );
-	}
-
-	protected __createDocumentSelfPattern():PatternToken {
-		return new ValuesToken()
-			.addVariables( this.variable )
-			.addValues( this.__createIRIToken() )
-			;
-	}
-
-	protected __createChildSelfPattern():PatternToken {
-		return new SubjectToken( this.__createIRIToken() )
-			.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.contains ) )
-				.addObject( this.variable )
-			);
-	}
-
-	protected __createMemberSelfPattern():PatternToken[] {
-		const membershipResource:QueryVariable = this.queryContainer.getVariable( "membershipResource" );
-		const hasMemberRelation:QueryVariable = this.queryContainer.getVariable( "hasMemberRelation" );
-
-		const memberRelations:PatternToken = new SubSelectToken()
-			.addVariable( membershipResource, hasMemberRelation )
-			.addPattern( new SubjectToken( this.__createIRIToken() )
-				.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.membershipResource ) )
-					.addObject( membershipResource )
-				)
-				.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.hasMemberRelation ) )
-					.addObject( hasMemberRelation )
-				)
-			);
-
-		const memberSelection:PatternToken = new SubjectToken( membershipResource )
-			.addProperty( new PropertyToken( hasMemberRelation )
-				.addObject( this.variable )
-			);
-
-		return [ memberRelations, memberSelection ];
+				.addObject( this.identifier ) );
 	}
 
 
@@ -372,13 +322,15 @@ export class QueryProperty implements QueryablePropertyData {
 		const values:PatternToken | undefined = this.__createValuesPattern();
 		if( values ) patterns.push( values );
 
-		const selfTriple:PatternToken = this.__createSelfPattern();
 		// If self is sub-property and not virtual, add inside graph
-		if( this.parent && ! this.pathBuilderFn ) {
-			patterns.push( this.parent._getContextGraph()
-				.addPattern( selfTriple ) );
-		} else {
-			patterns.push( selfTriple );
+		const selfTriple:PatternToken | undefined = this.__createSelfPattern();
+		if( selfTriple ) {
+			if( this.parent && ! this.pathBuilderFn ) {
+				patterns.push( this.parent._getContextGraph()
+					.addPattern( selfTriple ) );
+			} else {
+				patterns.push( selfTriple );
+			}
 		}
 
 		switch( this.propertyType ) {
@@ -415,27 +367,30 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	protected __createValuesPattern():ValuesToken | undefined {
-		if( ! this._values.length ) return;
+		if( this.values.length <= 1 ) return;
 
 		const values:ValuesToken = new ValuesToken()
 			.addVariables( this.variable );
 
-		this._values
+		this.values
 			.forEach( value => values.addValues( value ) );
 
 		return values;
 	}
 
 	protected __createSelfTypeFilter():PatternToken | undefined {
+		const identifier:VariableToken | IRIToken | LiteralToken = this.identifier;
+
 		if( this.definition.literal ) {
 			const literalToken:IRIToken = this.queryContainer
 				.compactIRI( this.definition.literalType );
 
-			return new FilterToken( `datatype( ${ this.variable } ) = ${ literalToken }` );
+			if( identifier.token === "variable" )
+				return new FilterToken( `datatype( ${ identifier } ) = ${ literalToken }` );
 		}
 
-		if( this.definition.pointerType !== null )
-			return new FilterToken( `! isLiteral( ${ this.variable } )` );
+		if( this.definition.pointerType !== null && identifier.token === "variable" )
+			return new FilterToken( `! isLiteral( ${ identifier } )` );
 	}
 
 	protected __createPartialSearchPatterns():PatternToken[] {
@@ -491,7 +446,7 @@ export class QueryProperty implements QueryablePropertyData {
 	protected __getValuedPatterns():PatternToken[] | undefined {
 		if( this.optional ) return;
 
-		const selfSubject:SubjectToken = new SubjectToken( this.variable );
+		const selfSubject:SubjectToken = new SubjectToken( this.identifier );
 		const patterns:PatternToken[] = [ selfSubject ];
 
 		const valuesPattern:PatternToken | undefined = this.__createValuesPattern();
@@ -585,7 +540,7 @@ export class QueryProperty implements QueryablePropertyData {
 
 		this.subProperties.forEach( subProperty => {
 			subject.addProperty( new PropertyToken( subProperty.__createIRIToken() )
-				.addObject( subProperty.variable )
+				.addObject( subProperty.identifier )
 			);
 		} );
 
@@ -596,21 +551,21 @@ export class QueryProperty implements QueryablePropertyData {
 	// Shared Construct & Search patterns
 
 	protected __createTypesPattern():SubjectToken {
-		return new SubjectToken( this.variable )
+		return new SubjectToken( this.identifier )
 			.addProperty( new PropertyToken( "a" )
 				.addObject( this._getVariable( "types" ) )
 			);
 	}
 
 	protected __createAllPattern():SubjectToken {
-		return new SubjectToken( this.variable )
+		return new SubjectToken( this.identifier )
 			.addProperty( new PropertyToken( this._getVariable( "_predicate" ) )
 				.addObject( this._getVariable( "_object" ) )
 			);
 	}
 
 	protected __createGraphPattern():GraphToken {
-		return new GraphToken( this.variable )
+		return new GraphToken( this.__getSelfToken() )
 			.addPattern( this.__createGraphSubPattern() )
 			;
 	}
@@ -620,6 +575,16 @@ export class QueryProperty implements QueryablePropertyData {
 			.addProperty( new PropertyToken( this._getVariable( "_predicate" ) )
 				.addObject( this._getVariable( "_object" ) )
 			);
+	}
+
+
+	protected __getSelfToken():VariableToken | IRIToken {
+		const identifier:VariableToken | LiteralToken | IRIToken = this.identifier;
+
+		if( identifier.token === "literal" )
+			throw new IllegalActionError( `Property is not a resource.` );
+
+		return identifier;
 	}
 
 

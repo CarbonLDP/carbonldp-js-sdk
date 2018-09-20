@@ -10,8 +10,7 @@ import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../t
 
 import { XSD } from "../Vocabularies/XSD";
 
-import { QueryContainerType } from "./QueryContainerType";
-import { QueryDocumentContainer } from "./QueryDocumentContainer";
+import { QueryContainer } from "./QueryContainer";
 import { QueryValue } from "./QueryValue";
 
 
@@ -25,10 +24,10 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 		} );
 
 		let context:AbstractContext<any, any>;
-		let queryContainer:QueryDocumentContainer;
+		let queryContainer:QueryContainer;
 		beforeEach( ():void => {
 			context = createMockContext();
-			queryContainer = new QueryDocumentContainer( context, { uri: "root", containerType: QueryContainerType.DOCUMENT } );
+			queryContainer = new QueryContainer( context, { uri: "root" } );
 		} );
 
 		describe( constructor(), ():void => {

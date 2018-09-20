@@ -3,7 +3,6 @@ import * as QueryDocument from "./index";
 
 import { QueryContainer } from "./QueryContainer";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
 import { QueryDocumentsOrder } from "./QueryDocumentsOrder";
 import { QueryMetadata } from "./QueryMetadata";
@@ -38,8 +37,8 @@ describe( module( "carbonldp/QueryDocuments" ), ():void => {
 		"QueryDocumentContainer",
 		"CarbonLDP.QueryDocuments.QueryDocumentContainer"
 	), ():void => {
-		expect( QueryDocument.QueryDocumentContainer ).toBeDefined();
-		expect( QueryDocument.QueryDocumentContainer ).toBe( QueryDocumentContainer );
+		expect( QueryDocument.QueryContainer ).toBeDefined();
+		expect( QueryDocument.QueryContainer ).toBe( QueryContainer );
 	} );
 
 	it( reexports(

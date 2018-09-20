@@ -4,7 +4,6 @@ import {
 	createMockContext,
 	createMockDigestedSchema,
 	createMockDigestedSchemaProperty,
-	MockQueryContainer
 } from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
@@ -52,7 +51,7 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty" ), ():void => {
 		let queryContainer:QueryContainer;
 		beforeEach( ():void => {
 			context = createMockContext( { settings: { vocabulary: "https://example.com/vocab#" } } );
-			queryContainer = new MockQueryContainer( context );
+			queryContainer = new QueryContainer( context, { uri: "root/" } );
 		} );
 
 		describe( constructor(), ():void => {

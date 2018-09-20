@@ -215,7 +215,6 @@ export class QueryResultCompacter {
 					} else {
 						// Add a floating metadata
 						subCompactionNode.resource.$_queryableMetadata = new QueryableProperty( {
-							containerType: subMetadataProperty.containerType,
 							propertyType: subMetadataProperty.propertyType,
 							optional: subMetadataProperty.optional,
 							definition: Object.assign( new DigestedObjectSchemaProperty(), subMetadataProperty.definition, {
