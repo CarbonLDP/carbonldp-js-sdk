@@ -7,6 +7,7 @@ import {
 	LanguageToken,
 	LiteralToken,
 	ObjectToken,
+	PathToken,
 	PrefixedNameToken,
 	PropertyToken,
 	RDFLiteralToken,
@@ -294,7 +295,7 @@ export class DeltaCreator {
 		return new PrefixedNameToken( matchPrefix[ 0 ], iri.substr( matchPrefix[ 1 ].length ) );
 	}
 
-	private __addPrefixFrom( object:ObjectToken | "a", schema:DigestedObjectSchema ):void {
+	private __addPrefixFrom( object:ObjectToken | PathToken, schema:DigestedObjectSchema ):void {
 		if( object === "a" ) return;
 
 		if( "objects" in object )
