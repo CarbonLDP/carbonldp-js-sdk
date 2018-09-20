@@ -27,7 +27,7 @@ export interface C {
 	PreferDocumentChecksums:"https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums";
 	PreferMembershipResources:"https://carbonldp.com/ns/v1/platform#PreferMembershipResources";
 	PreferMembershipTriples:"https://carbonldp.com/ns/v1/platform#PreferMembershipTriples";
-	PreferResultsContext:"https://carbonldp.com/ns/v1/platform#PreferResultsContext";
+	PreferResultsContexts:"https://carbonldp.com/ns/v1/platform#PreferResultsContexts";
 	PreferSelectedMembershipTriples:"https://carbonldp.com/ns/v1/platform#PreferSelectedMembershipTriples";
 	QueryMetadata:"https://carbonldp.com/ns/v1/platform#QueryMetadata";
 	RemoveMemberAction:"https://carbonldp.com/ns/v1/platform#RemoveMemberAction";
@@ -95,7 +95,7 @@ export const C:C = {
 	PreferDocumentChecksums: "https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums",
 	PreferMembershipResources: "https://carbonldp.com/ns/v1/platform#PreferMembershipResources",
 	PreferMembershipTriples: "https://carbonldp.com/ns/v1/platform#PreferMembershipTriples",
-	PreferResultsContext: "https://carbonldp.com/ns/v1/platform#PreferResultsContext",
+	PreferResultsContexts: "https://carbonldp.com/ns/v1/platform#PreferResultsContexts",
 	PreferSelectedMembershipTriples: "https://carbonldp.com/ns/v1/platform#PreferSelectedMembershipTriples",
 	QueryMetadata: "https://carbonldp.com/ns/v1/platform#QueryMetadata",
 	RemoveMemberAction: "https://carbonldp.com/ns/v1/platform#RemoveMemberAction",

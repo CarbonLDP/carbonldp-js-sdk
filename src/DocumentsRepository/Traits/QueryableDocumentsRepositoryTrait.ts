@@ -100,7 +100,7 @@ function __executeQueryContainer<T extends object>( this:void, repository:Querya
 		.addPrologues( ...queryContainer.getPrologues() );
 
 	// Header to convert the triples into quads
-	RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions );
+	RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContexts ] }, requestOptions );
 
 	return SPARQLService
 		.executeRawCONSTRUCTQuery( url, query.toString(), requestOptions )

@@ -255,10 +255,10 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"PreferResultsContext",
-			"https://carbonldp.com/ns/v1/platform#PreferResultsContext"
+			"PreferResultsContexts",
+			"https://carbonldp.com/ns/v1/platform#PreferResultsContexts"
 		), ():void => {
-			const target:C[ "PreferResultsContext" ] = "https://carbonldp.com/ns/v1/platform#PreferResultsContext";
+			const target:C[ "PreferResultsContexts" ] = "https://carbonldp.com/ns/v1/platform#PreferResultsContexts";
 			expect( target ).toBeDefined();
 		} );
 
@@ -722,9 +722,9 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.PreferMembershipTriples ).toBe( "https://carbonldp.com/ns/v1/platform#PreferMembershipTriples" );
 		} );
 
-		it( "C.PreferResultsContext", ():void => {
-			expect( C.PreferResultsContext ).toEqual( jasmine.any( String ) );
-			expect( C.PreferResultsContext ).toBe( "https://carbonldp.com/ns/v1/platform#PreferResultsContext" );
+		it( "C.PreferResultsContexts", ():void => {
+			expect( C.PreferResultsContexts ).toEqual( jasmine.any( String ) );
+			expect( C.PreferResultsContexts ).toBe( "https://carbonldp.com/ns/v1/platform#PreferResultsContexts" );
 		} );
 
 		it( "C.QueryMetadata", ():void => {

@@ -374,7 +374,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"content-type": "application/sparql-query",
 					"prefer": [
 						`include="${ C.PreferDocumentChecksums }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -2045,7 +2045,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"content-type": "application/sparql-query",
 					"prefer": [
 						`include="${ C.PreferDocumentChecksums }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -3380,7 +3380,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"content-type": "application/sparql-query",
 					"prefer": [
 						`include="${ C.PreferDocumentChecksums }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -3798,7 +3798,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"content-type": "application/sparql-query",
 					"prefer": [
 						`include="${ C.PreferDocumentChecksums }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -4817,7 +4817,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"content-type": "application/sparql-query",
 					"prefer": [
 						`include="${ C.PreferDocumentChecksums }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -6170,7 +6170,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"content-type": "application/sparql-query",
 					"prefer": [
 						`include="${ C.PreferDocumentChecksums }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -7537,7 +7537,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -7911,7 +7911,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
