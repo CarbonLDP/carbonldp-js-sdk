@@ -35,7 +35,7 @@ describe( module( "carbonldp/QueryDocuments" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryDocumentContainer",
-		"CarbonLDP.QueryDocuments.QueryDocumentContainer"
+		"CarbonLDP.QueryDocuments.QueryContainer"
 	), ():void => {
 		expect( QueryDocument.QueryContainer ).toBeDefined();
 		expect( QueryDocument.QueryContainer ).toBe( QueryContainer );

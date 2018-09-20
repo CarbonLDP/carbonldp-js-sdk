@@ -51,7 +51,7 @@ describe( module( "carbonldp/QueryDocuments" ), () => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_queryableMetadata",
-			"CarbonLDP.QueryDocuments.QueryableMetadata",
+			"CarbonLDP.QueryDocuments.QueryableProperty | undefined",
 			"Metadata for documents that are partial documents."
 		), ():void => {} );
 

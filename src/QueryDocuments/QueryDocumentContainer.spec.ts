@@ -10,7 +10,7 @@ import { QueryRootProperty } from "./QueryRootProperty";
 
 describe( module( "carbonldp/QueryDocuments/QueryDocumentContainer" ), ():void => {
 
-	describe( clazz( "CarbonLDP.QueryDocuments.QueryDocumentContainer", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocuments.QueryContainer", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContainer ).toBeDefined();

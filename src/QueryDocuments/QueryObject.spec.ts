@@ -34,7 +34,7 @@ describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
 			it( hasSignature(
 				"Creates an object for the specified object resource.",
 				[
-					{ name: "queryContainer", type: "CarbonLDP.QueryDocuments.QueryDocumentContainer" },
+					{ name: "queryContainer", type: "CarbonLDP.QueryDocuments.QueryContainer" },
 					{ name: "id", type: "string", description: "The ID to be converted in a safe to use object in the query statements." },
 				]
 			), ():void => {

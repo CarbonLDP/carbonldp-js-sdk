@@ -35,7 +35,7 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 			it( hasSignature(
 				"Creates a value wrapper for the specified value.",
 				[
-					{ name: "queryContainer", type: "CarbonLDP.QueryDocuments.QueryDocumentContainer" },
+					{ name: "queryContainer", type: "CarbonLDP.QueryDocuments.QueryContainer" },
 					{ name: "value", type: "string | number | boolean | Date", description: "The value to be converted and wrapped fot the ready to use in the query statements." },
 				]
 			), ():void => {} );
