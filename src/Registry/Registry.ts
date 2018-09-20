@@ -15,7 +15,6 @@ import { RegisteredPointer } from "./RegisteredPointer";
 
 
 export interface Registry<MODEL extends RegisteredPointer = RegisteredPointer> extends PointerLibrary, PointerValidator {
-	// TODO: Change to unknown
 	readonly registry:Registry<any> | $Registry<any> | undefined;
 
 	readonly __modelDecorator:ModelDecorator<MODEL, BaseRegisteredPointer>;
@@ -45,7 +44,6 @@ export interface Registry<MODEL extends RegisteredPointer = RegisteredPointer> e
 }
 
 export interface $Registry<MODEL extends RegisteredPointer = RegisteredPointer> extends Pointer, $PointerLibrary, $PointerValidator {
-	// TODO: Change to unknown
 	readonly $registry:Registry<any> | $Registry<any> | undefined;
 
 	readonly $__modelDecorator:ModelDecorator<MODEL, BaseRegisteredPointer>;

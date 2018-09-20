@@ -3,7 +3,6 @@ import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
 import * as Utils from "../Utils";
 
 import * as JSONLD from "./";
-import { JSONLDCompacter } from "./JSONLDCompacter";
 import { JSONLDConverter } from "./JSONLDConverter";
 import { JSONLDParser } from "./JSONLDParser";
 import { JSONLDProcessor } from "./JSONLDProcessor";
@@ -13,15 +12,6 @@ describe( module( "carbonldp/JSONLD" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( JSONLD ).toBeDefined();
 		expect( Utils.isObject( JSONLD ) ).toBe( true );
-	} );
-
-	it( reexports(
-		STATIC,
-		"JSONLDCompacter",
-		"CarbonLDP.JSONLD.JSONLDCompacter"
-	), ():void => {
-		expect( JSONLD.JSONLDCompacter ).toBeDefined();
-		expect( JSONLD.JSONLDCompacter ).toBe( JSONLDCompacter );
 	} );
 
 	it( reexports(

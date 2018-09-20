@@ -1,4 +1,4 @@
-import { createMockQueryableMetadata } from "../../test/helpers/mocks/core";
+import { createMockQueryableMetadata } from "../../test/helpers/mocks";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 

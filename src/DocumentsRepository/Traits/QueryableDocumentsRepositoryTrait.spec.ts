@@ -2,6 +2,7 @@ import {
 	BindToken,
 	ConstructToken,
 	FilterToken,
+	GroupPatternToken,
 	IRIRefToken,
 	LimitToken,
 	OffsetToken,
@@ -19,7 +20,8 @@ import {
 } from "sparqler/tokens";
 
 import { spyOnDecorated } from "../../../test/helpers/jasmine/spies";
-import { createMockQueryableMetadata } from "../../../test/helpers/mocks/core";
+import { createMockDigestedSchemaProperty, createMockQueryableMetadata } from "../../../test/helpers/mocks";
+import { createSubMockQueryableMetadata } from "../../../test/helpers/mocks/querying/QueriableMetadata";
 
 import { DocumentsContext } from "../../Context/DocumentsContext";
 
@@ -37,11 +39,9 @@ import { ErrorResponse } from "../../LDP/ErrorResponse";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
-
-import { ObjectSchemaDigester } from "../../ObjectSchema/ObjectSchemaDigester";
-
-import { QueryableMetadata } from "../../QueryDocuments/QueryableMetadata";
+import { PointerType } from "../../ObjectSchema/PointerType";
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
+import { QueryPropertyType } from "../../QueryDocuments/QueryPropertyType";
 
 import { BaseResource } from "../../Resource/BaseResource";
 
@@ -201,6 +201,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			}, data ) );
 
 			mockDocument.$_normalize();
+
+			if( data.$_queryableMetadata ) {
+				data.$_queryableMetadata.subProperties.forEach( ( metadataProperty, propertyName ) => {
+					if( ! metadataProperty.subProperties.size ) return;
+
+					const value:any = mockDocument[ propertyName ];
+					if( ! QueryablePointer.is( value ) ) return;
+
+					value.$_queryableMetadata = metadataProperty;
+				} );
+			}
 
 			return mockDocument;
 		}
@@ -931,8 +942,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -940,20 +951,21 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"property2": {
 						"@id": "https://schema.org/property-2",
 						"@type": "@id",
+						"$propertyType": QueryPropertyType.PARTIAL,
+						"$subProperties": {
+							"property2": {
+								"@id": "https://example.com/ns#property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						},
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property2": {
-						"@id": "https://example.com/ns#property-2",
-						"@type": XSD.integer,
-					},
-					"property3": {
-						"@id": "https://schema.org/property-3",
-						"@type": XSD.string,
-					},
-				} ) );
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
 			} );
 
 			it( "should add partial metadata at the partial relations", async () => {
@@ -1043,8 +1055,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				);
 
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -1055,8 +1067,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/another-resource/",
 					"property2": {
 						"@id": "https://example.com/ns#property-2",
 						"@type": XSD.integer,
@@ -1225,30 +1237,32 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should merge partial metadata", async () => {
 				document = createMockDocument( {
 					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
 						"@vocab": "https://example.com/ns#",
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
 						"property1": {
 							"@id": "property-1",
 							"@type": XSD.string,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"@vocab": "https://example.com/ns#",
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property2": {
+									"@id": "property-2",
+									"@type": XSD.integer,
+								},
+							},
 						},
 					} ),
 					$id: "https://example.com/",
 
 					property2: {
-						$_queryableMetadata: createMockQueryableMetadata( {
-							"@vocab": "https://example.com/ns#",
-							"property3": {
-								"@id": "https://schema.org/property-3",
-								"@type": XSD.string,
-							},
-							"property2": {
-								"@id": "property-2",
-								"@type": XSD.integer,
-							},
-						} ),
 						$id: "_:1",
 					},
 				} );
@@ -1334,37 +1348,38 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property4": {
 						"@id": "https://example.com/ns#property-4",
 						"@type": XSD.boolean,
-					},
-					"property2": {
-						"@id": "https://schema.org/property-2",
-						"@type": "@id",
 					},
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
 					},
+					"property2": {
+						"@id": "https://schema.org/property-2",
+						"@type": "@id",
+						"$propertyType": QueryPropertyType.PARTIAL,
+						"$subProperties": {
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+							"property5": {
+								"@id": "https://schema.org/property-5",
+								"@type": XSD.dateTime,
+							},
+							"property2": {
+								"@id": "https://example.com/ns#property-2",
+								"@type": XSD.integer,
+							},
+						},
+					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property3": {
-						"@id": "https://schema.org/property-3",
-						"@type": XSD.string,
-					},
-					"property5": {
-						"@id": "https://schema.org/property-5",
-						"@type": XSD.dateTime,
-					},
-					"property2": {
-						"@id": "https://example.com/ns#property-2",
-						"@type": XSD.integer,
-					},
-				} ) );
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
 			} );
 
 
@@ -1471,6 +1486,526 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						} ] );
 					} )
 				;
+			} );
+
+
+			it( "should send CONSTRUCT query with virtual property", async () => {
+				stubRequest( "https://example.com/resource/" );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+					.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": "integer",
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": "string",
+						},
+					} )
+				;
+
+
+				await repository.get( "https://example.com/resource/", _ => _
+					.withType( "Resource" )
+					.properties( {
+						"property1": _.inherit,
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"path": __ => __.inverse( "property2" ).then( "property2.2" ),
+							"query": __ => __.properties( {
+								"property2": __.inherit,
+								"property3": __.inherit,
+							} ),
+						},
+					} )
+				);
+
+
+				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+				expect( request.params ).toEqual( "" +
+					"PREFIX schema: <https://schema.org/> " +
+					"CONSTRUCT {" +
+					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?document.` +
+
+					" ?document a ?document__types;" +
+					"" + " <https://example.com/ns#property-1> ?document__property1;" +
+					"" + " schema:property-2 ?document__property2." +
+
+					" ?document__property2 a ?document__property2__types;" +
+					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
+					"" + " schema:property-3 ?document__property2__property3 " +
+
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
+
+					" VALUES ?document { <https://example.com/resource/> }" +
+					" OPTIONAL { ?document a ?document__types }" +
+					" ?document a <https://example.com/ns#Resource>." +
+
+					" OPTIONAL {" +
+					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " ?document ^<https://example.com/ns#property2>/<https://example.com/ns#property2.2> ?document__property2." +
+					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
+					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+					"" + " }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					"" + " }" +
+					" } " +
+					"}"
+				);
+			} );
+
+			it( "should return queried document with local virtual property", async () => {
+				stubRequest( "https://example.com/resource/", {
+					resources: [
+						{
+							"@id": "_:0",
+							"@type": [
+								C.VolatileResource,
+								C.QueryMetadata,
+							],
+							[ C.target ]: [ {
+								"@id": "https://example.com/resource/",
+							} ],
+						},
+						{
+							"@id": "https://example.com/resource/",
+							"@graph": [
+								{
+									"@id": "https://example.com/resource/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+									"https://schema.org/property-2": [ {
+										"@id": "_:1",
+									} ],
+								},
+								{
+									"@id": "_:1",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								},
+							],
+						},
+					],
+				} );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+					} )
+					.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": XSD.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": XSD.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": XSD.string,
+						},
+					} )
+				;
+
+
+				type MyDocument = { property1:string, property2?:{ property2:number, property3:string } };
+				const returned:MyDocument = await repository.get<MyDocument>( "resource/", _ => _
+					.withType( "Resource" )
+					.properties( {
+						"property1": _.inherit,
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"path": __ => __.inverse( "property2" ).then( "property2.2" ),
+							"query": __ => __.properties( {
+								"property2": __.inherit,
+								"property3": __.inherit,
+							} ),
+						},
+					} )
+				);
+
+				expect( returned ).toEqual( {
+					property1: "value",
+				} );
+
+				expect( returned.propertyIsEnumerable( "property2" ) ).toBe( false );
+				expect( returned.property2 ).toEqual( {
+					"property2": 12345,
+					"property3": "another value",
+				} );
+			} );
+
+			it( "should return queried document with external virtual property", async () => {
+				stubRequest( "https://example.com/resource/", {
+					resources: [
+						{
+							"@id": "_:0",
+							"@type": [
+								C.VolatileResource,
+								C.QueryMetadata,
+							],
+							[ C.target ]: [ {
+								"@id": "https://example.com/resource/",
+							} ],
+						},
+						{
+							"@id": "https://example.com/resource/",
+							"@graph": [
+								{
+									"@id": "https://example.com/resource/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+									"https://schema.org/property-2": [ {
+										"@id": "_:1",
+									} ],
+								},
+							],
+						},
+						{
+							"@id": "https://example.com/another-resource/",
+							"@graph": [
+								{
+									"@id": "_:1",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								},
+							],
+						},
+					],
+				} );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+					} )
+					.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": XSD.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": XSD.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": XSD.string,
+						},
+					} )
+				;
+
+
+				type MyDocument = { property1:string, property2?:{ property2:number, property3:string } };
+				const returned:MyDocument = await repository.get<MyDocument>( "resource/", _ => _
+					.withType( "Resource" )
+					.properties( {
+						"property1": _.inherit,
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"path": __ => __.inverse( "property2" ).then( "property2.2" ),
+							"query": __ => __.properties( {
+								"property2": __.inherit,
+								"property3": __.inherit,
+							} ),
+						},
+					} )
+				);
+
+				expect( returned ).toEqual( {
+					property1: "value",
+				} );
+
+				expect( returned.propertyIsEnumerable( "property2" ) ).toBe( false );
+				expect( returned.property2 ).toEqual( {
+					"property2": 12345,
+					"property3": "another value",
+				} );
+			} );
+
+			it( "should add partial metadata data with local virtual property", async () => {
+				stubRequest( "https://example.com/", {
+					resources: [
+						{
+							"@id": "_:1",
+							"@type": [
+								C.VolatileResource,
+								C.QueryMetadata,
+							],
+							[ C.target ]: [ {
+								"@id": "https://example.com/",
+							} ],
+						},
+						{
+							"@id": "https://example.com/",
+							"@graph": [
+								{
+									"@id": "https://example.com/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+									"https://schema.org/property-2": [ {
+										"@id": "_:1",
+									} ],
+								},
+								{
+									"@id": "_:1",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								},
+							],
+						},
+					],
+				} );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+					} )
+					.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": XSD.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": XSD.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": XSD.string,
+						},
+					} )
+				;
+
+				type MyResource = Document & { property2:QueryablePointer };
+				const pathBuilderFn:any = __ => __.inverse( "property2" ).then( "property2.2" );
+
+				const returned:MyResource = await repository.get<{ property2:QueryablePointer }>( "/", _ => _
+					.withType( "Resource" )
+					.properties( {
+						"property1": _.inherit,
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"path": pathBuilderFn,
+							"query": __ => __.properties( {
+								"property2": __.inherit,
+								"property3": __.inherit,
+							} ),
+						},
+					} )
+				);
+
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
+					"property1": {
+						"@id": "https://example.com/ns#property-1",
+						"@type": XSD.string,
+					},
+					"property2": {
+						"@id": "https://schema.org/property-2",
+						"@type": "@id",
+						"$propertyType": QueryPropertyType.PARTIAL,
+						"$pathBuilderFn": pathBuilderFn,
+						"$subProperties": {
+							"property2": {
+								"@id": "https://example.com/ns#property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						},
+					},
+				} ) );
+
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
+			} );
+
+			it( "should add partial metadata data with external virtual property", async () => {
+				stubRequest( "https://example.com/", {
+					resources: [
+						{
+							"@id": "_:0",
+							"@type": [
+								C.VolatileResource,
+								C.QueryMetadata,
+							],
+							[ C.target ]: [ {
+								"@id": "https://example.com/",
+							} ],
+						},
+						{
+							"@id": "https://example.com/",
+							"@graph": [
+								{
+									"@id": "https://example.com/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+									"https://schema.org/property-2": [ {
+										"@id": "_:1",
+									} ],
+								},
+							],
+						},
+						{
+							"@id": "https://example.com/another-resource/",
+							"@graph": [
+								{
+									"@id": "_:1",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								},
+							],
+						},
+					],
+				} );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+					} )
+					.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": XSD.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": XSD.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": XSD.string,
+						},
+					} )
+				;
+
+				type MyResource = Document & { property2:QueryablePointer };
+				const pathBuilderFn:any = __ => __.inverse( "property2" ).then( "property2.2" );
+
+				const returned:MyResource = await repository.get<{ property2:QueryablePointer }>( "/", _ => _
+					.withType( "Resource" )
+					.properties( {
+						"property1": _.inherit,
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"path": pathBuilderFn,
+							"query": __ => __.properties( {
+								"property2": __.inherit,
+								"property3": __.inherit,
+							} ),
+						},
+					} )
+				);
+
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
+					"property1": {
+						"@id": "https://example.com/ns#property-1",
+						"@type": XSD.string,
+					},
+					"property2": {
+						"@id": "https://schema.org/property-2",
+						"@type": "@id",
+						"$pathBuilderFn": pathBuilderFn,
+					},
+				} ) );
+
+				expect( returned.property2.$_queryableMetadata ).toEqual( createSubMockQueryableMetadata( {
+					definition: createMockDigestedSchemaProperty( {
+						uri: null,
+						literal: false,
+						pointerType: PointerType.ID,
+					} ),
+					optional: true,
+					propertyType: QueryPropertyType.PARTIAL,
+					"$subProperties": {
+						"property2": {
+							"@id": "https://example.com/ns#property-2",
+							"@type": XSD.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": XSD.string,
+						},
+					},
+				} ) );
 			} );
 
 		} );
@@ -2213,8 +2748,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -2222,20 +2757,22 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"property2": {
 						"@id": "https://schema.org/property-2",
 						"@type": "@id",
+						"$propertyType": QueryPropertyType.PARTIAL,
+						"$subProperties": {
+							"property2": {
+								"@id": "https://example.com/ns#property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						},
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property2": {
-						"@id": "https://example.com/ns#property-2",
-						"@type": XSD.integer,
-					},
-					"property3": {
-						"@id": "https://schema.org/property-3",
-						"@type": XSD.string,
-					},
-				} ) );
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
+
 			} );
 
 			it( "should add partial metadata at the partial relations", async () => {
@@ -2325,8 +2862,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				);
 
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
 						"@type": XSD.string,
@@ -2337,8 +2874,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.property2.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/another-resource/",
 					"property2": {
 						"@id": "https://example.com/ns#property-2",
 						"@type": XSD.integer,
@@ -2506,10 +3043,23 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			it( "should merge partial metadata", async () => {
 				document = createMockDocument( {
 					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
 						"@vocab": "https://example.com/ns#",
 						"property2": {
 							"@id": "https://schema.org/property-2",
 							"@type": "@id",
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"@vocab": "https://example.com/ns#",
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property2": {
+									"@id": "property-2",
+									"@type": XSD.integer,
+								},
+							},
 						},
 						"property1": {
 							"@id": "property-1",
@@ -2519,17 +3069,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						$_queryableMetadata: createMockQueryableMetadata( {
-							"@vocab": "https://example.com/ns#",
-							"property3": {
-								"@id": "https://schema.org/property-3",
-								"@type": XSD.string,
-							},
-							"property2": {
-								"@id": "property-2",
-								"@type": XSD.integer,
-							},
-						} ),
 						$id: "_:1",
 					},
 				} );
@@ -2615,8 +3154,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					} )
 				);
 
-				expect( returned.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
 					"property4": {
 						"@id": "https://example.com/ns#property-4",
 						"@type": XSD.boolean,
@@ -2624,6 +3163,21 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"property2": {
 						"@id": "https://schema.org/property-2",
 						"@type": "@id",
+						"$propertyType": QueryPropertyType.PARTIAL,
+						"$subProperties": {
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+							"property5": {
+								"@id": "https://schema.org/property-5",
+								"@type": XSD.dateTime,
+							},
+							"property2": {
+								"@id": "https://example.com/ns#property-2",
+								"@type": XSD.integer,
+							},
+						},
 					},
 					"property1": {
 						"@id": "https://example.com/ns#property-1",
@@ -2631,21 +3185,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
-				expect( returned.property2.$_queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property3": {
-						"@id": "https://schema.org/property-3",
-						"@type": XSD.string,
-					},
-					"property5": {
-						"@id": "https://schema.org/property-5",
-						"@type": XSD.dateTime,
-					},
-					"property2": {
-						"@id": "https://example.com/ns#property-2",
-						"@type": XSD.integer,
-					},
-				} ) );
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
 			} );
 
 
@@ -3054,6 +3594,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 				document = createMockDocument( {
 					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -3062,6 +3603,21 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						"property2": {
 							"@id": "https://schema.org/property-2",
 							"@type": "@id",
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+							},
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
@@ -3071,21 +3627,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						$_queryableMetadata: createMockQueryableMetadata( {
-							"@vocab": "https://example.com/ns#",
-							"property3": {
-								"@id": "https://schema.org/property-3",
-								"@type": XSD.string,
-							},
-							"property5": {
-								"@id": "https://schema.org/property-5",
-								"@type": XSD.dateTime,
-							},
-							"property2": {
-								"@id": "https://example.com/ns#property-2",
-								"@type": XSD.integer,
-							},
-						} ),
 						$id: "_:1",
 					},
 				} );
@@ -3382,6 +3923,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 				document = createMockDocument( {
 					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -3390,6 +3932,21 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						"property2": {
 							"@id": "https://schema.org/property-2",
 							"@type": "@id",
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+							},
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
@@ -3399,21 +3956,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						$_queryableMetadata: createMockQueryableMetadata( {
-							"@vocab": "https://example.com/ns#",
-							"property3": {
-								"@id": "https://schema.org/property-3",
-								"@type": XSD.string,
-							},
-							"property5": {
-								"@id": "https://schema.org/property-5",
-								"@type": XSD.dateTime,
-							},
-							"property2": {
-								"@id": "https://example.com/ns#property-2",
-								"@type": XSD.integer,
-							},
-						} ),
 						$id: "_:1",
 					},
 				} );
@@ -3493,6 +4035,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 				document = createMockDocument( {
 					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -3501,6 +4044,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						"property2": {
 							"@id": "https://schema.org/property-2",
 							"@type": "@id",
+							"$propertyType": QueryPropertyType.ALL,
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
@@ -3510,7 +4054,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					$id: "https://example.com/",
 
 					property2: {
-						$_queryableMetadata: new QueryableMetadata( QueryableMetadata.ALL ),
 						$id: "_:1",
 					},
 				} );
@@ -3628,6 +4171,21 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						"property2": {
 							"@id": "https://schema.org/property-2",
 							"@type": "@id",
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+							},
 						},
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -4009,10 +4567,347 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 			} );
 
+
+			it( "should send CONSTRUCT query with virtual property", async () => {
+				stubRequest( "https://example.com/" );
+
+				document = createMockDocument( {
+					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
+						"@vocab": "https://example.com/ns#",
+						"property4": {
+							"@id": "https://example.com/ns#property-4",
+							"@type": "boolean",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"$pathBuilderFn": __ => __.inverse( "property2" ).then( "property2.2" ),
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+							},
+						},
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+					} ),
+					$id: "https://example.com/",
+
+					property2: {
+						$id: "_:1",
+					},
+				} );
+				document.$_syncSavedFragments();
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+				;
+
+
+				await repository.refresh( document );
+
+
+				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+				expect( request.params ).toEqual( "" +
+					"PREFIX schema: <https://schema.org/> " +
+					"CONSTRUCT {" +
+					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?document.` +
+
+					" ?document a ?document__types;" +
+					"" + " <https://example.com/ns#property-4> ?document__property4;" +
+					"" + " schema:property-2 ?document__property2;" +
+					"" + " <https://example.com/ns#property-1> ?document__property1." +
+
+					" ?document__property2 a ?document__property2__types;" +
+					"" + " schema:property-3 ?document__property2__property3;" +
+					"" + " schema:property-5 ?document__property2__property5;" +
+					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
+
+					"} {" +
+					" BIND(BNODE() AS ?metadata)" +
+
+					" VALUES ?document { <https://example.com/> }" +
+					" OPTIONAL { ?document a ?document__types }" +
+
+					" OPTIONAL {" +
+					"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
+					"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " ?document ^<https://example.com/ns#property2>/<https://example.com/ns#property2.2> ?document__property2." +
+					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
+					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					"" + " }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " ?document__property2 schema:property-5 ?document__property2__property5." +
+					"" + "" + " FILTER( datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime> )" +
+					"" + " }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+					"" + " }" +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					" }" +
+
+					" }"
+				);
+			} );
+
+			it( "should return queried document with virtual property", async () => {
+				stubRequest( "https://example.com/", {
+					resources: [
+						{
+							"@id": "_:0",
+							"@type": [
+								C.VolatileResource,
+								C.QueryMetadata,
+							],
+							[ C.target ]: [ {
+								"@id": "https://example.com/",
+							} ],
+						},
+						{
+							"@id": "https://example.com/",
+							"@graph": [
+								{
+									"@id": "https://example.com/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+									"https://schema.org/property-2": [ {
+										"@id": "_:1",
+									} ],
+								},
+								{
+									"@id": "_:1",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								},
+							],
+						},
+					],
+				} );
+
+
+				document = createMockDocument( {
+					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
+						"@vocab": "https://example.com/ns#",
+						"property4": {
+							"@id": "https://example.com/ns#property-4",
+							"@type": "boolean",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"$pathBuilderFn": __ => __.inverse( "property2" ).then( "property2.2" ),
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+							},
+						},
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+					} ),
+					$id: "https://example.com/",
+
+					property2: {
+						$id: "_:1",
+					},
+				} );
+				document.$_syncSavedFragments();
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+				;
+
+				type MyDocument = { property1:string, property2?:{ property2:number, property3:string } };
+				const returned:MyDocument = await repository.refresh<MyDocument>( document );
+
+				expect( returned ).toEqual( {
+					property1: "value",
+				} );
+
+				expect( returned.propertyIsEnumerable( "property2" ) ).toBe( false );
+				expect( returned.property2 ).toEqual( {
+					"property2": 12345,
+					"property3": "another value",
+				} );
+			} );
+
+			it( "should maintain partial metadata data with local virtual property", async () => {
+				stubRequest( "https://example.com/", {
+					resources: [
+						{
+							"@id": "_:0",
+							"@type": [
+								C.VolatileResource,
+								C.QueryMetadata,
+							],
+							[ C.target ]: [ {
+								"@id": "https://example.com/",
+							} ],
+						},
+						{
+							"@id": "https://example.com/",
+							"@graph": [
+								{
+									"@id": "https://example.com/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+									"https://schema.org/property-2": [ {
+										"@id": "_:1",
+									} ],
+								},
+								{
+									"@id": "_:1",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								},
+							],
+						},
+					],
+				} );
+
+
+				const pathBuilderFn:any = __ => __.inverse( "property2" ).then( "property2.2" );
+				document = createMockDocument( {
+					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
+						"@vocab": "https://example.com/ns#",
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"$pathBuilderFn": pathBuilderFn,
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+							},
+						},
+					} ),
+					$id: "https://example.com/",
+
+					property2: {
+						$id: "_:1",
+					},
+				} );
+				document.$_syncSavedFragments();
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+				;
+
+				type MyResource = Document & { property2:QueryablePointer };
+				const returned:MyResource = await repository.refresh<MyResource>( document );
+
+				expect( returned.$_queryableMetadata ).toEqual( createMockQueryableMetadata( {
+					"$id": "https://example.com/",
+					"property1": {
+						"@id": "https://example.com/ns#property-1",
+						"@type": XSD.string,
+					},
+					"property2": {
+						"@id": "https://schema.org/property-2",
+						"@type": "@id",
+						"$propertyType": QueryPropertyType.PARTIAL,
+						"$pathBuilderFn": pathBuilderFn,
+						"$subProperties": {
+							"property2": {
+								"@id": "https://example.com/ns#property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						},
+					},
+				} ) );
+
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
+			} );
+
 		} );
 
 
-		describe( method( OBLIGATORY, "getChildren" ), () => {
+		describe( method( OBLIGATORY, "$getChildren" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -4314,12 +5209,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" ?child ?child___predicate ?child___object." +
-
-					" OPTIONAL {" +
-					"" + " ?child schema:property-2 ?child__property2." +
-					"" + " FILTER( datatype( ?child__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					" }" +
+					" ?child ?child___predicate ?child___object" +
 
 					" " +
 					"}"
@@ -4377,12 +5267,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" ?child ?child___predicate ?child___object." +
-
-					" OPTIONAL {" +
-					"" + " ?child schema:property-2 ?child__property2." +
-					"" + " FILTER( datatype( ?child__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					" }" +
+					" ?child ?child___predicate ?child___object" +
 
 					" " +
 					"}"
@@ -4487,11 +5372,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									.addObject( variableHelper( "child" ) )
 								)
 							)
-							.addPattern( new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
-										.addObject( variableHelper( "child__property2" ) )
-									)
+							.addPattern( new SubjectToken( variableHelper( "child" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "child__property2" ) )
 								)
 							)
 							.addModifier( new OrderToken( variableHelper( "child__property2" ) ) )
@@ -4520,7 +5403,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								)
 								.addPattern( new FilterToken( "datatype( ?child__property1 ) = xsd:string" ) )
 						)
-						.addPattern( new FilterToken( `?child__property2__property2 = "12345"^^xsd:integer` ) )
 						.addPattern( new SubjectToken( variableHelper( "child" ) )
 							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 								.addObject( variableHelper( "child__property2" ) )
@@ -4556,11 +5438,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							)
 							.addPattern( new FilterToken( "datatype( ?child__property2__property3 ) = xsd:string" ) )
 						)
+						.addPattern( new FilterToken( `?child__property2__property2 = "12345"^^xsd:integer` ) )
 					)
 
+						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
 						.addPrologues( new PrefixToken( "ex", new IRIRefToken( "https://example.com/ns#" ) ) )
 						.addPrologues( new PrefixToken( "xsd", new IRIRefToken( XSD.namespace ) ) )
-						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
 				);
 			} );
 
@@ -5522,7 +6405,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "getMembers" ), () => {
+		describe( method( OBLIGATORY, "$getMembers" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -5740,9 +6623,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
+					"" + "" + " {" +
+					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + " }" +
 					"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
 					"" + " }" +
 					"" + " ORDER BY ?member__property2" +
@@ -5818,9 +6703,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + " {" +
+					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + " }" +
 					"" + " }" +
 					" }" +
 
@@ -5875,9 +6762,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
+					"" + "" + " {" +
+					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + " }" +
 					"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
 					"" + " }" +
 					"" + " ORDER BY ?member__property2" +
@@ -5885,12 +6774,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" ?member ?member___predicate ?member___object." +
-
-					" OPTIONAL {" +
-					"" + " ?member schema:property-2 ?member__property2." +
-					"" + " FILTER( datatype( ?member__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					" }" +
+					" ?member ?member___predicate ?member___object" +
 
 					" " +
 					"}"
@@ -5990,24 +6874,24 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
 						.addPattern( new SubSelectToken( "DISTINCT" )
 							.addVariable( variableHelper( "member" ) )
-							.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
-								.addProperty( new PropertyToken( new IRIRefToken( LDP.membershipResource ) )
-									.addObject( variableHelper( "membershipResource" ) )
-								)
-								.addProperty( new PropertyToken( new IRIRefToken( LDP.hasMemberRelation ) )
-									.addObject( variableHelper( "hasMemberRelation" ) )
-								)
-							)
-							.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
-								.addProperty( new PropertyToken( variableHelper( "hasMemberRelation" ) )
-									.addObject( variableHelper( "member" ) )
-								)
-							)
-							.addPattern( new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
-										.addObject( variableHelper( "member__property2" ) )
+							.addPattern( new GroupPatternToken()
+								.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
+									.addProperty( new PropertyToken( new IRIRefToken( LDP.membershipResource ) )
+										.addObject( variableHelper( "membershipResource" ) )
 									)
+									.addProperty( new PropertyToken( new IRIRefToken( LDP.hasMemberRelation ) )
+										.addObject( variableHelper( "hasMemberRelation" ) )
+									)
+								)
+								.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
+									.addProperty( new PropertyToken( variableHelper( "hasMemberRelation" ) )
+										.addObject( variableHelper( "member" ) )
+									)
+								)
+							)
+							.addPattern( new SubjectToken( variableHelper( "member" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "member__property2" ) )
 								)
 							)
 							.addModifier( new OrderToken( variableHelper( "member__property2" ) ) )
@@ -6036,7 +6920,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								)
 								.addPattern( new FilterToken( "datatype( ?member__property1 ) = xsd:string" ) )
 						)
-						.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
 						.addPattern( new SubjectToken( variableHelper( "member" ) )
 							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 								.addObject( variableHelper( "member__property2" ) )
@@ -6072,11 +6955,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							)
 							.addPattern( new FilterToken( "datatype( ?member__property2__property3 ) = xsd:string" ) )
 						)
+						.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
 					)
 
+						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
 						.addPrologues( new PrefixToken( "ex", new IRIRefToken( "https://example.com/ns#" ) ) )
 						.addPrologues( new PrefixToken( "xsd", new IRIRefToken( XSD.namespace ) ) )
-						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
 				);
 			} );
 
@@ -6252,7 +7136,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return full children", ( done:DoneFn ):void => {
+			it( "should return full members", ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -6433,7 +7317,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return .ALL children", ( done:DoneFn ):void => {
+			it( "should return .ALL members", ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -6597,7 +7481,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.catch( done.fail );
 			} );
 
-			it( "should return partial children", ( done:DoneFn ):void => {
+			it( "should return partial members", ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -6776,7 +7660,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return partial children with partial relations", ( done:DoneFn ):void => {
+			it( "should return partial members with partial relations", ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -7032,7 +7916,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		} );
 
 
-		describe( method( OBLIGATORY, "listChildren" ), () => {
+		describe( method( OBLIGATORY, "$listChildren" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -7406,7 +8290,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "listMembers" ), () => {
+		describe( method( OBLIGATORY, "$listMembers" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -7589,9 +8473,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + " {" +
+					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + " }" +
 					"" + " }" +
 					" }" +
 

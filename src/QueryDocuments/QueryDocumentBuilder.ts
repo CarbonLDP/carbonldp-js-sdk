@@ -1,204 +1,127 @@
-import { FilterToken, IRIToken, LiteralToken, PropertyToken, SubjectToken, TermToken, ValuesToken } from "sparqler/tokens";
+import { IRIToken, LiteralToken, TermToken } from "sparqler/tokens";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
 
-import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
-import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
-import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
-import { ObjectSchemaProperty } from "../ObjectSchema/ObjectSchemaProperty";
-
 import { Pointer } from "../Pointer/Pointer";
-
 import { isObject } from "../Utils";
 
-import { QueryContextBuilder } from "./QueryContextBuilder";
+import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import { QueryObject } from "./QueryObject";
-import { QueryProperty, QueryPropertyType } from "./QueryProperty";
+import { QueryProperty } from "./QueryProperty";
+import { QueryPropertyType } from "./QueryPropertyType";
 import { QuerySchema } from "./QuerySchema";
 import { QuerySchemaProperty } from "./QuerySchemaProperty";
 import { QueryValue } from "./QueryValue";
-import { _createPropertyPatterns, _getParentPath } from "./Utils";
+import { QueryVariable } from "./QueryVariable";
 
-
-const INHERIT:Readonly<{}> = Object.freeze( {} );
 
 export class QueryDocumentBuilder {
 	static readonly ALL:Readonly<{}> = Object.freeze( {} );
+	static readonly FULL:Readonly<{}> = Object.freeze( {} );
+	static readonly INHERIT:Readonly<{}> = Object.freeze( {} );
 
-	inherit:Readonly<{}> = INHERIT;
-	all:Readonly<{}> = QueryDocumentBuilder.ALL;
+	readonly inherit:Readonly<{}> = QueryDocumentBuilder.INHERIT;
+	readonly all:Readonly<{}> = QueryDocumentBuilder.ALL;
 
-	readonly _context:QueryContextBuilder;
+	readonly _queryContainer:QueryDocumentContainer;
+	readonly _queryProperty:QueryProperty;
 
-	protected _document:QueryProperty;
 
-	private _typesTriple:SubjectToken;
-	private _values:ValuesToken;
-
-	private _schema:DigestedObjectSchema;
-
-	constructor( queryContext:QueryContextBuilder, property:QueryProperty ) {
-		this._context = queryContext;
-
-		property._builder = this;
-		this._document = property;
-
-		this._typesTriple = new SubjectToken( property.variable ).addProperty( new PropertyToken( "a" ) );
-		this._values = new ValuesToken().addVariables( property.variable );
-
-		this._schema = this._context.getGeneralSchema();
+	constructor( queryContainer:QueryDocumentContainer, queryProperty:QueryProperty ) {
+		this._queryContainer = queryContainer;
+		this._queryProperty = queryProperty;
 	}
 
-	property( name?:string ):QueryProperty {
-		if( name === void 0 ) return this._document;
 
-		let parent:string = this._document.name;
+	property( name?:string ):QueryVariable {
+		let parent:QueryProperty | undefined = this._queryProperty;
 		while( parent ) {
-			const fullPath:string = `${ parent }.${ name }`;
+			const property:QueryProperty | undefined = parent.getProperty( name, { create: true } );
+			if( property ) return property.variable;
 
-			if( this._context.hasProperty( fullPath ) ) return this._context.getProperty( fullPath );
-
-			const directPath:string = _getParentPath( fullPath );
-			if( this._context.hasProperty( directPath ) ) {
-				const direct:QueryProperty = this._context.getProperty( directPath );
-				const directType:QueryPropertyType = direct.getType();
-				if( directType === QueryPropertyType.FULL || directType === QueryPropertyType.ALL ) {
-					const propertyName:string = fullPath.substr( directPath.length + 1 );
-					return direct._builder._addProperty( propertyName, INHERIT );
-				}
-			}
-
-			parent = _getParentPath( parent );
+			parent = parent.parent;
 		}
 
-		throw new IllegalArgumentError( `The "${ name }" property was not declared.` );
+		throw new IllegalArgumentError( `The property "${ name }" was not declared.` );
 	}
 
 	value( value:string | number | boolean | Date ):QueryValue {
-		return new QueryValue( this._context, value );
+		return new QueryValue( this._queryContainer, value );
 	}
 
 	object( object:Pointer | string ):QueryObject {
-		return new QueryObject( this._context, object );
+		const id:string = Pointer.getID( object );
+		return new QueryObject( this._queryContainer, id );
 	}
 
+
 	withType( type:string ):this {
-		if( this._context.hasProperties( this._document.name ) ) throw new IllegalStateError( "Types must be specified before the properties." );
+		if( this._queryProperty.hasProperties() )
+			throw new IllegalStateError( "Types must be specified before the properties." );
 
-		type = this._schema.resolveURI( type, { vocab: true } );
-		if( ! this._typesTriple.properties[ 0 ].objects.length )
-			this._document.addPattern( this._typesTriple );
-
-		this._typesTriple.properties[ 0 ].addObject( this._context.compactIRI( type ) );
-
-		if( ! this._context.context ) return this;
-
-		if( this._context.context.hasObjectSchema( type ) )
-			ObjectSchemaDigester._combineSchemas( [
-				this._schema,
-				this._context.context.getObjectSchema( type ),
-			] );
-
+		this._queryProperty.addType( type );
 		return this;
 	}
 
 	properties( propertiesSchema:QuerySchema ):this {
 		if( propertiesSchema === QueryDocumentBuilder.ALL ) {
-			this._document.setType( QueryPropertyType.ALL );
+			this._queryProperty.setType( QueryPropertyType.ALL );
+			return this;
+		}
+
+		if( propertiesSchema === QueryDocumentBuilder.FULL ) {
+			this._queryProperty.setType( QueryPropertyType.FULL );
 			return this;
 		}
 
 		for( const propertyName in propertiesSchema ) {
 			const queryPropertySchema:QuerySchemaProperty | string = propertiesSchema[ propertyName ];
-			const propertyDefinition:QuerySchemaProperty = isObject( queryPropertySchema ) ? queryPropertySchema : { "@id": queryPropertySchema };
+			const querySchemaProperty:QuerySchemaProperty = isObject( queryPropertySchema )
+				? queryPropertySchema : { "@id": queryPropertySchema };
 
-			this._addProperty( propertyName, propertyDefinition );
+			const property:QueryProperty = this._queryProperty
+				.addProperty( propertyName, querySchemaProperty );
+
+			const subQuery:QuerySchemaProperty[ "query" ] | undefined = querySchemaProperty.query;
+			if( ! subQuery ) continue;
+
+			if( property.definition.literal === false )
+				property.setType( QueryPropertyType.PARTIAL );
+
+			const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( this._queryContainer, property );
+			if( builder !== subQuery.call( void 0, builder ) )
+				throw new IllegalArgumentError( "The provided query builder was not returned" );
 		}
 
 		return this;
 	}
 
+}
+
+
+export class SubQueryDocumentsBuilder extends QueryDocumentBuilder {
+
 	filter( constraint:string ):this {
-		const [ baseName ]:string[] = this._document.name.split( "." );
-		this._context
-			.getProperty( baseName )
-			.addPattern( new FilterToken( constraint ) );
+		this._queryProperty
+			.addFilter( constraint );
 
 		return this;
 	}
 
 	values( ...values:(QueryValue | QueryObject)[] ):this {
-		const termTokens:(LiteralToken | IRIToken)[] = values.map( value => {
-			const token:TermToken = value.getToken();
-			if( token.token === "blankNode" ) throw new IllegalArgumentError( `Blank node "${ token.label }" is not a valid value.` );
+		const tokens:(LiteralToken | IRIToken)[] = values
+			.map( value => {
+				const token:TermToken = value.getToken();
+				if( token.token === "blankNode" ) throw new IllegalArgumentError( `Cannot assign blank nodes ("${ token.label }").` );
 
-			return token;
-		} );
+				return token;
+			} );
 
-		// Add values pattern when used
-		if( ! this._values.values.length ) {
-			// Added in first for better performance
-			this._document._patterns.unshift( this._values );
-		}
-		termTokens.forEach( val => this._values.addValues( val ) );
-
-		let property:QueryProperty = this._document;
-		while( property.isOptional() ) {
-			property.setOptional( false );
-
-			const parentPath:string = _getParentPath( property.name );
-			property = this._context.getProperty( parentPath );
-		}
+		this._queryProperty.addValues( tokens );
+		this._queryProperty.setObligatory( { inheritParents: true } );
 
 		return this;
-	}
-
-	_addProperty( propertyName:string, propertyDefinition:QuerySchemaProperty ):QueryProperty {
-		const digestedDefinition:DigestedObjectSchemaProperty = this.__addPropertyDefinition( propertyName, propertyDefinition );
-		const name:string = `${ this._document.name }.${ propertyName }`;
-
-		const property:QueryProperty = this._context
-			.addProperty( name )
-			.addPattern( ..._createPropertyPatterns(
-				this._context,
-				this._document.name,
-				name,
-				digestedDefinition
-			) );
-
-		if( "query" in propertyDefinition ) {
-			if( digestedDefinition.literal === false ) {
-				property.setType( QueryPropertyType.PARTIAL );
-			}
-
-			const builder:QueryDocumentBuilder = new QueryDocumentBuilder( this._context, property );
-			if( builder !== propertyDefinition[ "query" ].call( void 0, builder ) )
-				throw new IllegalArgumentError( "The provided query builder was not returned" );
-		}
-
-		this._document.addPattern( ...property.getPatterns() );
-
-		return property;
-	}
-
-	private __addPropertyDefinition( propertyName:string, propertyDefinition:ObjectSchemaProperty ):DigestedObjectSchemaProperty {
-		const digestedDefinition:DigestedObjectSchemaProperty = ObjectSchemaDigester.digestProperty( propertyName, propertyDefinition, this._schema );
-
-		const uri:string = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
-		const inheritDefinition:DigestedObjectSchemaProperty = this._context.getInheritTypeDefinition( this._schema, propertyName, uri );
-		if( inheritDefinition ) {
-			for( const key in inheritDefinition ) {
-				if( digestedDefinition[ key ] !== null && key !== "uri" ) continue;
-				digestedDefinition[ key ] = inheritDefinition[ key ];
-			}
-		}
-
-		if( ! digestedDefinition.uri ) throw new IllegalArgumentError( `Invalid property "${ propertyName }" definition, "@id" is necessary.` );
-
-		this._document.getSchema()
-			.properties.set( propertyName, digestedDefinition );
-		return digestedDefinition;
 	}
 
 }

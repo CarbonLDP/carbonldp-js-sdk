@@ -1,70 +1,25 @@
-import { OptionalToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import { OptionalToken, VariableToken } from "sparqler/tokens";
 
-import { createMockContext } from "../../test/helpers/mocks";
+import {
+	createMockContext,
+	createMockDigestedSchema,
+	createMockDigestedSchemaProperty,
+	MockQueryContainer
+} from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
 
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
-import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
+import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
-import {
-	clazz,
-	constructor,
-	enumeration,
-	hasEnumeral,
-	hasProperty,
-	hasSignature,
-	INSTANCE,
-	method,
-	module,
-} from "../test/JasmineExtender";
+import { clazz, constructor, hasProperty, hasSignature, INSTANCE, method, module, } from "../test/JasmineExtender";
+import { QueryContainer } from "./QueryContainer";
 
-import { QueryContext } from "./QueryContext";
-import * as Module from "./QueryProperty";
-import { QueryProperty, QueryPropertyType } from "./QueryProperty";
+import { QueryProperty } from "./QueryProperty";
+import { QueryPropertyType } from "./QueryPropertyType";
 
 
 describe( module( "carbonldp/QueryDocuments/QueryProperty" ), ():void => {
-
-	it( "should exists", ():void => {
-		expect( Module ).toBeDefined();
-		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
-
-	describe( enumeration(
-		"CarbonLDP.QueryDocuments.QueryPropertyType",
-		"Enum fot the type of data expected to return for a property."
-	), () => {
-
-		it( hasEnumeral(
-			"FULL",
-			"The property is expected to point to a fulled resolved document"
-		), () => {
-			expect( QueryPropertyType.FULL ).toBeDefined();
-		} );
-
-		it( hasEnumeral(
-			"PARTIAL",
-			"The property is expected to point to a partial resource (document/fragment)."
-		), () => {
-			expect( QueryPropertyType.PARTIAL ).toBeDefined();
-		} );
-
-		it( hasEnumeral(
-			"ALL",
-			"The property is expected to point to a resource with all is properties but without related fragments resolved."
-		), () => {
-			expect( QueryPropertyType.ALL ).toBeDefined();
-		} );
-
-		it( hasEnumeral(
-			"EMPTY",
-			"The property point to a literal, or its known."
-		), () => {
-			expect( QueryPropertyType.EMPTY ).toBeDefined();
-		} );
-
-	} );
 
 	describe( clazz(
 		"CarbonLDP.QueryDocuments.QueryProperty",
@@ -74,43 +29,6 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty" ), ():void => {
 		it( "should exists", ():void => {
 			expect( QueryProperty ).toBeDefined();
 			expect( QueryProperty ).toEqual( jasmine.any( Function ) );
-		} );
-
-		let context:AbstractContext<any, any>;
-		let queryContext:QueryContext;
-		beforeEach( ():void => {
-			context = createMockContext( { settings: { vocabulary: "http://example.com/vocab#" } } );
-
-			queryContext = new QueryContext( context );
-		} );
-
-		describe( constructor(), ():void => {
-
-			it( hasSignature(
-				"Creates a query property for the specified name.\n" +
-				"By default the property will be optional, i.e. the patterns returned will be wrapped by an optional token.",
-				[
-					{ name: "context", type: "CarbonLDP.QueryDocuments.QueryContext", description: "The context of the query where the property is been used." },
-					{ name: "name", type: "string", description: "The name of the property." },
-				]
-			), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
-				expect( queryProperty ).toEqual( jasmine.any( QueryProperty ) );
-			} );
-
-			it( "should create an variable token", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
-				expect( queryProperty[ "variable" ] ).toEqual( jasmine.any( VariableToken ) );
-			} );
-
-			it( "should initialize patterns", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
-				expect( queryProperty[ "_patterns" ] ).toEqual( [] );
-			} );
-
 		} );
 
 		it( hasProperty(
@@ -129,79 +47,185 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty" ), ():void => {
 		), ():void => {
 		} );
 
-		describe( method( INSTANCE, "addPattern" ), ():void => {
+
+		let context:AbstractContext<any, any>;
+		let queryContainer:QueryContainer;
+		beforeEach( ():void => {
+			context = createMockContext( { settings: { vocabulary: "https://example.com/vocab#" } } );
+			queryContainer = new MockQueryContainer( context );
+		} );
+
+		describe( constructor(), ():void => {
 
 			it( hasSignature(
-				"Adds an pattern to query specification of the property retrieval.",
+				"Creates a query property for the specified name.\n" +
+				"By default the property will be optional, i.e. the patterns returned will be wrapped by an optional token.",
 				[
-					{ name: "...patterns", type: "SPARQL/tokens/PatternToken[]" },
-				],
-				{ type: "this" }
+					{ name: "context", type: "CarbonLDP.QueryDocuments.QueryContext", description: "The context of the query where the property is been used." },
+					{ name: "name", type: "string", description: "The name of the property." },
+				]
 			), ():void => {
 			} );
 
 			it( "should exists", ():void => {
-				expect( QueryProperty.prototype.addPattern ).toBeDefined();
-				expect( QueryProperty.prototype.addPattern ).toEqual( jasmine.any( Function ) );
+				const queryProperty:QueryProperty = new QueryProperty( {
+					queryContainer: queryContainer,
+					name: "name",
+					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
+				} );
+				expect( queryProperty ).toEqual( jasmine.any( QueryProperty ) );
 			} );
 
-			it( "should add a pattern", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
 
-				queryProperty.addPattern( new ValuesToken() );
-				expect( queryProperty[ "_patterns" ] ).toEqual( [
-					new ValuesToken(),
-				] );
+			it( "should create full name with no parent", ():void => {
+				const queryProperty:QueryProperty = new QueryProperty( {
+					queryContainer: queryContainer,
+					name: "name",
+					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
+				} );
 
-				queryProperty.addPattern( new OptionalToken() );
-				expect( queryProperty[ "_patterns" ] ).toEqual( [
-					new ValuesToken(),
-					new OptionalToken(),
-				] );
+				expect( queryProperty.fullName ).toEqual( "name" );
 			} );
 
-			it( "should add multiple patterns", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
+			it( "should create full name with parent", ():void => {
+				const parentProperty:QueryProperty = new QueryProperty( {
+					queryContainer: queryContainer,
+					name: "parent",
+					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
+				} );
 
-				queryProperty.addPattern( new ValuesToken(), new OptionalToken() );
-				expect( queryProperty[ "_patterns" ] ).toEqual( [
-					new ValuesToken(),
-					new OptionalToken(),
-				] );
+				const queryProperty:QueryProperty = new QueryProperty( {
+					queryContainer: queryContainer,
+					name: "name",
+					parent: parentProperty,
+					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
+				} );
+
+				expect( queryProperty.fullName ).toEqual( "parent.name" );
+			} );
+
+			it( "should create full name with parent with parent", ():void => {
+				const grandParentProperty:QueryProperty = new QueryProperty( {
+					queryContainer: queryContainer,
+					name: "grandParent",
+					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
+				} );
+
+				const parentProperty:QueryProperty = new QueryProperty( {
+					queryContainer: queryContainer,
+					name: "parent",
+					parent: grandParentProperty,
+					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
+				} );
+
+				const queryProperty:QueryProperty = new QueryProperty( {
+					queryContainer: queryContainer,
+					name: "name",
+					parent: parentProperty,
+					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
+				} );
+
+				expect( queryProperty.fullName ).toEqual( "grandParent.parent.name" );
+			} );
+
+
+			it( "should create an variable token", ():void => {
+				const queryProperty:QueryProperty = new QueryProperty( {
+					queryContainer: queryContainer,
+					name: "name",
+					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
+				} );
+
+				expect( queryProperty.variable ).toEqual( jasmine.any( VariableToken ) );
 			} );
 
 		} );
 
-		describe( method( INSTANCE, "getPatterns" ), ():void => {
+
+		// TODO: Test .hasProperties
+		// TODO: Test .addProperty
+		// TODO: Test ._addSubProperty
+
+
+		// TODO: Test .setType
+		// TODO: Test .addValues
+		// TODO: Test .addType
+		// TODO: Test .addFilter
+		// TODO: Test .setObligatory
+		// TODO: Test ._isPartial
+		// TODO: Test ._isComplete
+
+
+		// TODO: Test .getSelfPattern
+
+		describe( method( INSTANCE, "getSearchPatterns" ), ():void => {
 
 			it( hasSignature(
 				"Returns the pattern to be used in the query that specifies the property and its elements\n" +
 				"If the property is optional the patterns will be wrapped in an optional SPARQL token.",
-				{ type: "SPARQL/tokens/PatternToken[]" }
-			), ():void => {
-			} );
+				{ type: "sparqler/tokens/PatternToken[]" }
+			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( QueryProperty.prototype.getPatterns ).toBeDefined();
-				expect( QueryProperty.prototype.getPatterns ).toEqual( jasmine.any( Function ) );
+				expect( QueryProperty.prototype.getSearchPatterns ).toBeDefined();
+				expect( QueryProperty.prototype.getSearchPatterns ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should return the patterns array when isn't optional", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" )
-					.setOptional( false );
-				expect( queryProperty.getPatterns() ).toEqual( queryProperty[ "_patterns" ] );
-			} );
+			it( "should return the patterns as optional", ():void => {
+				const queryProperty:QueryProperty = new QueryProperty( {
+					queryContainer: queryContainer,
+					name: "name",
+					parent: new QueryProperty( {
+						queryContainer: queryContainer,
+						name: "parent",
+						definition: new DigestedObjectSchemaProperty(),
+						optional: true,
+					} ),
+					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
+				} );
 
-			it( "should return the patterns as optional array when is optional", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
-				expect( queryProperty.getPatterns() ).toEqual( [ new OptionalToken()
-					.addPattern( ...queryProperty[ "_patterns" ] ),
+				expect( queryProperty.getSearchPatterns() ).toEqual( [
+					jasmine.any( OptionalToken ) as any as OptionalToken,
 				] );
 			} );
 
+			it( "should return the patterns when obligatory", ():void => {
+				const queryProperty:QueryProperty = new QueryProperty( {
+						queryContainer: queryContainer,
+						name: "name",
+						parent: new QueryProperty( {
+							queryContainer: queryContainer,
+							name: "parent",
+							definition: new DigestedObjectSchemaProperty(),
+							optional: true,
+						} ),
+						definition: new DigestedObjectSchemaProperty(),
+						optional: false,
+					} )
+				;
+
+				expect( queryProperty.getSearchPatterns() ).not.toEqual( [
+					jasmine.any( OptionalToken ) as any as OptionalToken,
+				] );
+			} );
+
+			// TODO: Test more cases
+
 		} );
 
-		describe( method( INSTANCE, "getSchema" ), ():void => {
+		// TODO: Test .getConstructPatterns
+
+
+		describe( method( INSTANCE, "getSchemaFor" ), ():void => {
 
 			it( hasSignature(
 				"Returns the specific schema for the property objects that was created query definition.",
@@ -209,46 +233,41 @@ describe( module( "carbonldp/QueryDocuments/QueryProperty" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( QueryProperty.prototype.getSchema ).toBeDefined();
-				expect( QueryProperty.prototype.getSchema ).toEqual( jasmine.any( Function ) );
+				expect( QueryProperty.prototype.getSchemaFor ).toBeDefined();
+				expect( QueryProperty.prototype.getSchemaFor ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should initialize the schema with an empty schema", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
+			it( "should return empty schema when no properties", ():void => {
+				const queryProperty:QueryProperty = new QueryProperty( {
+					queryContainer: queryContainer,
+					name: "name",
+					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
+				} );
 
-				const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {} );
-				expect( queryProperty[ "_schema" ] ).toBeUndefined();
-
-				const propertySchema:DigestedObjectSchema = queryProperty.getSchema();
-				expect( propertySchema ).toEqual( schema );
-				expect( queryProperty[ "_schema" ] ).toBe( propertySchema );
+				const propertySchema:DigestedObjectSchema = queryProperty.getSchemaFor( {} );
+				expect( propertySchema ).toEqual( new DigestedObjectSchema() );
 			} );
 
-		} );
+			it( "should return schema from sub-properties", ():void => {
+				const queryProperty:QueryProperty = new QueryProperty( {
+					queryContainer: queryContainer,
+					name: "name",
+					definition: new DigestedObjectSchemaProperty(),
+					optional: true,
+					propertyType: QueryPropertyType.PARTIAL,
+				} );
 
-		describe( method( INSTANCE, "toString" ), ():void => {
+				queryProperty.addProperty( "property1", {} );
+				queryProperty.addProperty( "property2", { "@id": "https://example.com/property2" } );
 
-			it( hasSignature(
-				"Returns the string representation of the query property that is the SPARQL variable string.",
-				{ type: "string" }
-			), ():void => {
-			} );
-
-			it( "should override the default toString", ():void => {
-				expect( QueryProperty.prototype.toString ).not.toBe( Object.prototype.toString );
-			} );
-
-			it( "should return the string of the variable", ():void => {
-				const helper:( name:string ) => void = name => {
-					const queryProperty:QueryProperty = new QueryProperty( queryContext, name );
-					expect( queryProperty.toString() ).toBe( queryProperty[ "variable" ].toString() );
-				};
-
-				helper( "name" );
-				helper( "another_name" );
-				helper( "ex:property" );
-				helper( "property.subProperty" );
-				helper( "ex:property.ex:subProperty" );
+				const propertySchema:DigestedObjectSchema = queryProperty.getSchemaFor( {} );
+				expect( propertySchema ).toEqual( createMockDigestedSchema( {
+					properties: new Map<string, DigestedObjectSchemaProperty>( [
+						[ "property1", createMockDigestedSchemaProperty( { uri: "https://example.com/vocab#property1" } ) ],
+						[ "property2", createMockDigestedSchemaProperty( { uri: "https://example.com/property2" } ) ],
+					] ),
+				} ) );
 			} );
 
 		} );

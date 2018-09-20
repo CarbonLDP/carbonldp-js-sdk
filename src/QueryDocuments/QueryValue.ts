@@ -4,18 +4,18 @@ import { isDate } from "../Utils";
 
 import { XSD } from "../Vocabularies/XSD";
 
-import { QueryContext } from "./QueryContext";
+import { QueryDocumentContainer } from "./QueryDocumentContainer";
 
 
 export class QueryValue {
-	private readonly _value:string | number | boolean | Date;
+	private readonly _queryContainer:QueryDocumentContainer;
 
-	private readonly _context:QueryContext;
+	private readonly _value:string | number | boolean | Date;
 	private _literal:LiteralToken;
 
-	constructor( context:QueryContext, value:string | number | boolean | Date ) {
+	constructor( queryContainer:QueryDocumentContainer, value:string | number | boolean | Date ) {
 		this._value = value;
-		this._context = context;
+		this._queryContainer = queryContainer;
 
 		if( isDate( value ) ) {
 			this.withType( XSD.dateTime );
@@ -24,23 +24,25 @@ export class QueryValue {
 		}
 	}
 
+
 	withType( type:string ):this {
 		if( XSD.hasOwnProperty( type ) ) type = XSD[ type ];
 
-		const value:string = this._context.serializeLiteral( type, this._value );
-		const typeToken:IRIToken = this._context.compactIRI( type );
+		const value:string = this._queryContainer.serializeLiteral( type, this._value );
+		const typeToken:IRIToken = this._queryContainer.compactIRI( type );
 		this._literal = new RDFLiteralToken( value, typeToken );
 
 		return this;
 	}
 
 	withLanguage( language:string ):this {
-		const value:string = this._context.serializeLiteral( XSD.string, this._value );
+		const value:string = this._queryContainer.serializeLiteral( XSD.string, this._value );
 		const languageToken:LanguageToken = new LanguageToken( language );
 		this._literal = new RDFLiteralToken( value, languageToken );
 
 		return this;
 	}
+
 
 	getToken():LiteralToken {
 		return this._literal;

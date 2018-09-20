@@ -1,5 +1,6 @@
 import { QuerySchemaProperty } from "./QuerySchemaProperty";
 
-export interface QuerySchema  {
+
+export interface QuerySchema {
 	[ propertyName:string ]:QuerySchemaProperty | string;
 }
