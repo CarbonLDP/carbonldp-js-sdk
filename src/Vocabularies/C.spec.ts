@@ -66,15 +66,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"DocumentChecksums",
-			"https://carbonldp.com/ns/v1/platform#DocumentChecksums"
-		), ():void => {
-			const target:C[ "DocumentChecksums" ] = "https://carbonldp.com/ns/v1/platform#DocumentChecksums";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"DocumentCreatedDetails",
 			"https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails"
 		), ():void => {
@@ -232,6 +223,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			"https://carbonldp.com/ns/v1/platform#PreferContainmentTriples"
 		), ():void => {
 			const target:C[ "PreferContainmentTriples" ] = "https://carbonldp.com/ns/v1/platform#PreferContainmentTriples";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"PreferDocumentChecksums",
+			"https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums"
+		), ():void => {
+			const target:C[ "PreferDocumentChecksums" ] = "https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums";
 			expect( target ).toBeDefined();
 		} );
 
@@ -617,11 +617,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.Document ).toBe( "https://carbonldp.com/ns/v1/platform#Document" );
 		} );
 
-		it( "C.DocumentChecksums", ():void => {
-			expect( C.DocumentChecksums ).toEqual( jasmine.any( String ) );
-			expect( C.DocumentChecksums ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentChecksums" );
-		} );
-
 		it( "C.DocumentCreatedDetails", ():void => {
 			expect( C.DocumentCreatedDetails ).toEqual( jasmine.any( String ) );
 			expect( C.DocumentCreatedDetails ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails" );
@@ -710,6 +705,11 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		it( "C.PreferContainmentTriples", ():void => {
 			expect( C.PreferContainmentTriples ).toEqual( jasmine.any( String ) );
 			expect( C.PreferContainmentTriples ).toBe( "https://carbonldp.com/ns/v1/platform#PreferContainmentTriples" );
+		} );
+
+		it( "C.PreferDocumentChecksums", ():void => {
+			expect( C.PreferDocumentChecksums ).toEqual( jasmine.any( String ) );
+			expect( C.PreferDocumentChecksums ).toBe( "https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums" );
 		} );
 
 		it( "C.PreferMembershipResources", ():void => {

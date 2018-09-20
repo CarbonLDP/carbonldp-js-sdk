@@ -373,7 +373,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.DocumentChecksums }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );
@@ -2044,7 +2044,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.DocumentChecksums }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );
@@ -3379,7 +3379,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.DocumentChecksums }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );
@@ -3797,7 +3797,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.DocumentChecksums }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );
@@ -4816,7 +4816,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.DocumentChecksums }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );
@@ -6169,7 +6169,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.DocumentChecksums }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
 						`include="${ C.PreferResultsContext }"`,
 					].join( ", " ),
 				} );

@@ -6,7 +6,6 @@ export interface C {
 	AddMemberAction:"https://carbonldp.com/ns/v1/platform#AddMemberAction";
 	ChildCreated:"https://carbonldp.com/ns/v1/platform#ChildCreatedEvent";
 	Document:"https://carbonldp.com/ns/v1/platform#Document";
-	DocumentChecksums:"https://carbonldp.com/ns/v1/platform#DocumentChecksums";
 	DocumentCreatedDetails:"https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails";
 	DocumentDeleted:"https://carbonldp.com/ns/v1/platform#DocumentDeleted";
 	DocumentMetadata:"https://carbonldp.com/ns/v1/platform#DocumentMetadata";
@@ -25,6 +24,7 @@ export interface C {
 	PreferContainer:"https://carbonldp.com/ns/v1/platform#PreferContainer";
 	PreferContainmentResources:"https://carbonldp.com/ns/v1/platform#PreferContainmentResources";
 	PreferContainmentTriples:"https://carbonldp.com/ns/v1/platform#PreferContainmentTriples";
+	PreferDocumentChecksums:"https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums";
 	PreferMembershipResources:"https://carbonldp.com/ns/v1/platform#PreferMembershipResources";
 	PreferMembershipTriples:"https://carbonldp.com/ns/v1/platform#PreferMembershipTriples";
 	PreferResultsContext:"https://carbonldp.com/ns/v1/platform#PreferResultsContext";
@@ -74,7 +74,6 @@ export const C:C = {
 	AddMemberAction: "https://carbonldp.com/ns/v1/platform#AddMemberAction",
 	ChildCreated: "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent",
 	Document: "https://carbonldp.com/ns/v1/platform#Document",
-	DocumentChecksums: "https://carbonldp.com/ns/v1/platform#DocumentChecksums",
 	DocumentCreatedDetails: "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails",
 	DocumentDeleted: "https://carbonldp.com/ns/v1/platform#DocumentDeleted",
 	DocumentMetadata: "https://carbonldp.com/ns/v1/platform#DocumentMetadata",
@@ -93,6 +92,7 @@ export const C:C = {
 	PreferContainer: "https://carbonldp.com/ns/v1/platform#PreferContainer",
 	PreferContainmentResources: "https://carbonldp.com/ns/v1/platform#PreferContainmentResources",
 	PreferContainmentTriples: "https://carbonldp.com/ns/v1/platform#PreferContainmentTriples",
+	PreferDocumentChecksums: "https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums",
 	PreferMembershipResources: "https://carbonldp.com/ns/v1/platform#PreferMembershipResources",
 	PreferMembershipTriples: "https://carbonldp.com/ns/v1/platform#PreferMembershipTriples",
 	PreferResultsContext: "https://carbonldp.com/ns/v1/platform#PreferResultsContext",

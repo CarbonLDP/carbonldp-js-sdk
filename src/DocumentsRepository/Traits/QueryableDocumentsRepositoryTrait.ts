@@ -210,7 +210,7 @@ function __executeQueryBuilder<T extends object>( repository:QueryableDocumentsR
 
 
 function __getQueryable<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
-	RequestUtils.setRetrievalPreferences( { include: [ C.DocumentChecksums ] }, requestOptions );
+	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentChecksums ] }, requestOptions );
 
 	const queryData:QueryData = {
 		queryBuilderFn,
@@ -240,7 +240,7 @@ function __refreshQueryable<T extends object>( this:void, repository:QueryableDo
 	const queryContainer:QueryContainer = new QueryContainer( repository.context, { uri: url } );
 	__addRefreshProperties( queryContainer._queryProperty, document.$_queryableMetadata );
 
-	RequestUtils.setRetrievalPreferences( { include: [ C.DocumentChecksums ] }, requestOptions );
+	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentChecksums ] }, requestOptions );
 
 	return __executeQueryContainer<T>( repository, url, requestOptions, queryContainer )
 		.then( ( documents ) => documents[ 0 ] );
@@ -326,7 +326,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			queryBuilderFn = isFunction( requestOptionsOrQueryBuilderFn ) ?
 				requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
-			RequestUtils.setRetrievalPreferences( { include: [ C.DocumentChecksums ] }, requestOptions );
+			RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentChecksums ] }, requestOptions );
 
 			return __executeQueryBuilder<T>( this, uri, requestOptions, {
 				rootType: queryBuilderFn ? void 0 : QueryPropertyType.FULL,
@@ -342,7 +342,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			queryBuilderFn = isFunction( requestOptionsOrQueryBuilderFn ) ?
 				requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
-			RequestUtils.setRetrievalPreferences( { include: [ C.DocumentChecksums ] }, requestOptions );
+			RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentChecksums ] }, requestOptions );
 
 			return __executeQueryBuilder<T>( this, uri, requestOptions, {
 				rootType: queryBuilderFn ? void 0 : QueryPropertyType.FULL,
