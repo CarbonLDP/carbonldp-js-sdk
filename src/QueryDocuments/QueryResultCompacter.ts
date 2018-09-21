@@ -114,6 +114,9 @@ export class QueryResultCompacter {
 			if( ! isCompacted ) {
 				const targetSchema:DigestedObjectSchema = this.queryContainer.context.registry.getSchemaFor( node );
 				this.jsonldConverter.update( resource, node, targetSchema, document );
+
+				// Remove possible metadata
+				resource.$_queryableMetadata = void 0;
 			}
 
 			// Decorate models

@@ -15,6 +15,7 @@ import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { Pointer } from "../../Pointer/Pointer";
+import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
 
 import { QueryableProperty } from "../../QueryDocuments/QueryableProperty";
 import { QueryContainer } from "../../QueryDocuments/QueryContainer";
@@ -293,8 +294,17 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			return LDPDocumentsRepositoryTrait.PROTOTYPE
 				.get.call( this, uri, requestOptions )
 				.then( ( document:T & Document ) => {
-					// Remove query metadata if exists
-					document.$_queryableMetadata = void 0;
+					if( ! document.$_queryableMetadata )
+						return document;
+
+					// Remove possible query metadata
+
+					const resources:QueryablePointer[] = document.$getFragments();
+					resources.push( document );
+
+					resources.forEach( resource => {
+						resource.$_queryableMetadata = void 0;
+					} );
 
 					return document;
 				} );

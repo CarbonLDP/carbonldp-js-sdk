@@ -28,6 +28,8 @@ import { Document } from "../../Document/Document";
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../../Errors/IllegalStateError";
 
+import { Fragment } from "../../Fragment/Fragment";
+
 import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 
 import { HTTPError } from "../../HTTP/Errors/HTTPError";
@@ -214,6 +216,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					if( ! QueryablePointer.is( value ) ) return;
 
 					value.$_queryableMetadata = metadataProperty;
+
+					if( metadataProperty.pathBuilderFn )
+						Object.defineProperty( mockDocument, propertyName, {
+							enumerable: false,
+							writable: true,
+							configurable: true,
+						} );
 				} );
 			}
 
@@ -228,7 +237,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		};
 
 
-		describe( method( OBLIGATORY, "$get" ), ():void => {
+		describe( method( OBLIGATORY, "get" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -267,7 +276,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 
-			function stubRequest( url:string, options:{ status?:number, headers?:{ [ key:string ]:string }, resources?:object[] } = {} ):void {
+			function stubRequest( url:string, options:{ GET?:true, status?:number, headers?:{ [ key:string ]:string }, resources?:object[] } = {} ):void {
 				const status:number = options.status ?
 					options.status : 200;
 
@@ -279,7 +288,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					options.resources : [];
 
 				jasmine.Ajax
-					.stubRequest( url, null, "POST" )
+					.stubRequest( url, null, options.GET ? "GET" : "POST" )
 					.andReturn( {
 						status,
 						responseHeaders: {
@@ -1970,9 +1979,205 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ) );
 			} );
 
+
+			it( "should query metadata when partial and entire requested", async () => {
+				stubRequest( "https://example.com/", {
+					GET: true,
+					resources: [
+						{
+							"@id": "https://example.com/",
+							"@graph": [
+								{
+									"@id": "https://example.com/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+									"https://schema.org/property-2": [ {
+										"@id": "_:1",
+									} ],
+								},
+								{
+									"@id": "_:1",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								},
+							],
+						},
+					],
+					headers: {
+						eTag: "\"1-12345\"",
+					},
+				} );
+
+				document = createMockDocument( {
+					$id: "https://example.com/",
+					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
+						"@vocab": "https://example.com/ns#",
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+							},
+						},
+					} ),
+
+					property2: {
+						$id: "_:1",
+						property2: - 1,
+						property3: "old value",
+					},
+				} );
+				document.$_syncSavedFragments();
+
+				context.registry._addPointer( document );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+					.extendObjectSchema( "https://example.com/ns#Resource", {
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} )
+				;
+
+				type MyDocument = { property1:string, property2?:{ property2:number, property3:string } & Fragment };
+				const returned:MyDocument & Document = await repository.get<MyDocument>( "https://example.com/" );
+
+				expect( returned.$_queryableMetadata ).toBeUndefined();
+				expect( returned.property2.$_queryableMetadata ).toBeUndefined();
+			} );
+
+			it( "should remove virtual property when partial and entire requested", async () => {
+				stubRequest( "https://example.com/", {
+					GET: true,
+					resources: [
+						{
+							"@id": "https://example.com/",
+							"@graph": [
+								{
+									"@id": "https://example.com/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+								},
+							],
+						},
+					],
+					headers: {
+						eTag: "\"1-12345\"",
+					},
+				} );
+
+				document = createMockDocument( {
+					$id: "https://example.com/",
+					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
+						"@vocab": "https://example.com/ns#",
+						"property4": {
+							"@id": "https://example.com/ns#property-4",
+							"@type": "boolean",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"$pathBuilderFn": __ => __.inverse( "property2" ).then( "property2.2" ),
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+							},
+						},
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+					} ),
+
+					property2: {
+						$id: "_:1",
+						property2: - 1,
+						property3: "old value",
+					},
+				} );
+				document.$_syncSavedFragments();
+
+				context.registry._addPointer( document );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+					.extendObjectSchema( "https://example.com/ns#Resource", {
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} )
+				;
+
+				type MyDocument = { property1:string, property2?:{ property2:number, property3:string } };
+				const returned:MyDocument = await repository.get<MyDocument>( "https://example.com/" );
+
+				expect( returned ).toEqual( {
+					property1: "value",
+				} );
+
+				expect( returned.property2 ).toBeUndefined();
+			} );
+
 		} );
 
-		describe( method( OBLIGATORY, "$resolve" ), () => {
+		describe( method( OBLIGATORY, "resolve" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -3212,7 +3417,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		} );
 
 
-		describe( method( OBLIGATORY, "$saveAndRefresh" ), () => {
+		describe( method( OBLIGATORY, "saveAndRefresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -3737,7 +3942,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "$refresh" ), () => {
+		describe( method( OBLIGATORY, "refresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -4540,6 +4745,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					property2: {
 						$id: "_:1",
+						property2: - 1,
+						property3: "old value",
 					},
 				} );
 				document.$_syncSavedFragments();
@@ -4683,10 +4890,100 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
 			} );
 
+			it( "should remove virtual property when no in new data", async () => {
+				stubRequest( "https://example.com/", {
+					resources: [
+						{
+							"@id": "cldp-sdk://metadata-1",
+							"@type": [
+								C.VolatileResource,
+								C.QueryMetadata,
+							],
+							[ C.target ]: [ {
+								"@id": "https://example.com/",
+							} ],
+						},
+						{
+							"@id": "https://example.com/",
+							"@graph": [
+								{
+									"@id": "https://example.com/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+								},
+							],
+						},
+					],
+				} );
+
+
+				document = createMockDocument( {
+					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
+						"@vocab": "https://example.com/ns#",
+						"property4": {
+							"@id": "https://example.com/ns#property-4",
+							"@type": "boolean",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"$pathBuilderFn": __ => __.inverse( "property2" ).then( "property2.2" ),
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+							},
+						},
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+					} ),
+					$id: "https://example.com/",
+
+					property2: {
+						$id: "_:1",
+						property2: - 1,
+						property3: "old value",
+					},
+				} );
+				document.$_syncSavedFragments();
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+				;
+
+				type MyDocument = { property1:string, property2?:{ property2:number, property3:string } };
+				const returned:MyDocument = await repository.refresh<MyDocument>( document );
+
+				expect( returned ).toEqual( {
+					property1: "value",
+				} );
+
+				expect( returned.property2 ).toBeUndefined();
+			} );
+
 		} );
 
 
-		describe( method( OBLIGATORY, "$getChildren" ), () => {
+		describe( method( OBLIGATORY, "getChildren" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -6043,7 +6340,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "$getMembers" ), () => {
+		describe( method( OBLIGATORY, "getMembers" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -7429,7 +7726,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		} );
 
 
-		describe( method( OBLIGATORY, "$listChildren" ), () => {
+		describe( method( OBLIGATORY, "listChildren" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -7803,7 +8100,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "$listMembers" ), () => {
+		describe( method( OBLIGATORY, "listMembers" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],

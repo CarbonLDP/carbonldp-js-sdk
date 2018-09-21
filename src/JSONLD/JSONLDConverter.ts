@@ -16,7 +16,7 @@ import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 import { RDFValue } from "../RDF/Value";
 
-import { forEachOwnProperty, isNull, isObject, isString, MapUtils } from "../Utils";
+import { forEachOwnProperty, isFunction, isNull, isObject, isString, MapUtils } from "../Utils";
 
 import { XSD } from "../Vocabularies/XSD";
 
@@ -89,9 +89,12 @@ export class JSONLDConverter {
 		const compactedData:object = this.compact( node, {}, digestedSchema, pointerLibrary, strict );
 
 		new Set( [
-			...Object.keys( target ),
+			...Object.getOwnPropertyNames( target ),
 			...Object.keys( compactedData ),
 		] ).forEach( key => {
+			if( key.startsWith( "$" ) ) return;
+			if( isFunction( target[ key ] ) ) return;
+
 			if( ! compactedData.hasOwnProperty( key ) ) {
 				if( ! strict || digestedSchema.properties.has( key ) ) delete target[ key ];
 				return;

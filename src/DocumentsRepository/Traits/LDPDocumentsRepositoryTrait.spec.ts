@@ -169,7 +169,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		} );
 
 
-		describe( method( OBLIGATORY, "$get" ), ():void => {
+		describe( method( OBLIGATORY, "get" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -519,7 +519,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "$resolve" ), () => {
+		describe( method( OBLIGATORY, "resolve" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -783,7 +783,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "$exists" ), () => {
+		describe( method( OBLIGATORY, "exists" ), () => {
 
 			it( hasSignature(
 				[
@@ -2528,7 +2528,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		} );
 
 
-		describe( method( OBLIGATORY, "$save" ), () => {
+		describe( method( OBLIGATORY, "save" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -2906,7 +2906,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "$saveAndRefresh" ), () => {
+		describe( method( OBLIGATORY, "saveAndRefresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -3358,7 +3358,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "$refresh" ), () => {
+		describe( method( OBLIGATORY, "refresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -3738,7 +3738,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		} );
 
 
-		describe( method( OBLIGATORY, "$delete" ), () => {
+		describe( method( OBLIGATORY, "delete" ), () => {
 
 			it( hasSignature(
 				"Delete the resource referred by the URI provided from the server.", [
