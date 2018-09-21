@@ -158,7 +158,14 @@ export class QueryResultCompacter {
 		const targetSchema:DigestedObjectSchema = queryProperty.getSchemaFor( node );
 		const pointerLibrary:PointerLibrary = __createPointerLibrary( compactionMap, document );
 
-		this.jsonldConverter.update( resource, node, targetSchema, pointerLibrary, isPartial );
+		// Avoid compaction of c:checksum
+		const targetNode:RDFNode = {
+			...node,
+			[ C.checksum ]: null,
+		};
+
+		this.jsonldConverter
+			.update( resource, targetNode, targetSchema, pointerLibrary, isPartial );
 
 		if( ! isPartial ) {
 			resource.$_queryableMetadata = void 0;

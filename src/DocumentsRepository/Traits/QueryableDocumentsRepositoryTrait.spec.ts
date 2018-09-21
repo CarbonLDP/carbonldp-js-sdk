@@ -5521,24 +5521,30 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 					expect( myDocuments[ 0 ].$isQueried() ).toBe( false );
 					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": "\"1-12345\"",
-						"property1": "value 1",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 1",
-							"property4": 12345,
-						} ) as any,
+						$eTag: "\"1-12345\"",
+						$_resolved: true,
 					} ) );
+					expect<MyDocument>( myDocuments[ 0 ] ).toEqual( {
+						property1: "value 1",
+						property2: {
+							property3: "another value 1",
+							property4: 12345,
+						},
+					} );
 
 					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
 					expect( myDocuments[ 1 ].$isQueried() ).toBe( false );
 					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": "\"2-12345\"",
-						"property1": "value 2",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 2",
-							"property4": 67890,
-						} ) as any,
+						$eTag: "\"2-12345\"",
+						$_resolved: true,
 					} ) );
+					expect<MyDocument>( myDocuments[ 1 ] ).toEqual( {
+						property1: "value 2",
+						property2: {
+							property3: "another value 2",
+							property4: 67890,
+						},
+					} );
 
 					done();
 				} ).catch( done.fail );
@@ -6906,22 +6912,29 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						expect( doc.$isQueried() ).toBe( false );
 					}
 
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": "\"1-12345\"",
-						"property1": "value 1",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 1",
-							"property4": 12345,
-						} ) as any,
+					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document>( {
+						$eTag: "\"1-12345\"",
+						$_resolved: true,
 					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": "\"2-12345\"",
-						"property1": "value 2",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 2",
-							"property4": 67890,
-						} ) as any,
+					expect<MyDocument>( myDocuments[ 0 ] ).toEqual( {
+						property1: "value 1",
+						property2: {
+							property3: "another value 1",
+							property4: 12345,
+						},
+					} );
+
+					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document>( {
+						$eTag: "\"2-12345\"",
+						$_resolved: true,
 					} ) );
+					expect<MyDocument>( myDocuments[ 1 ] ).toEqual( {
+						property1: "value 2",
+						property2: {
+							property3: "another value 2",
+							property4: 67890,
+						},
+					} );
 					done();
 				} ).catch( done.fail );
 			} );

@@ -247,6 +247,7 @@ export class JSONLDConverter {
 		forEachOwnProperty( expandedObject, ( propertyURI:string, propertyValues:any[] ):void => {
 			if( propertyURI === "@id" ) return;
 			if( propertyURI === "@type" ) return;
+			if( propertyValues === null ) return;
 
 			if( ! propertyURINameMap.has( propertyURI ) && strict ) return;
 
