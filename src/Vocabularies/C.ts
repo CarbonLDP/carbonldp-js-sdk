@@ -45,8 +45,8 @@ export interface C {
 	document:"https://carbonldp.com/ns/v1/platform#document";
 	documentMetadata:"https://carbonldp.com/ns/v1/platform#documentMetadata";
 	entry:"https://carbonldp.com/ns/v1/platform#entry";
-	entryKey:"https://carbonldp.com/ns/v1/platform#key";
-	entryValue:"https://carbonldp.com/ns/v1/platform#value";
+	entryKey:"https://carbonldp.com/ns/v1/platform#entryKey";
+	entryValue:"https://carbonldp.com/ns/v1/platform#entryValue";
 	error:"https://carbonldp.com/ns/v1/platform#error";
 	errorCode:"https://carbonldp.com/ns/v1/platform#errorCode";
 	errorDetails:"https://carbonldp.com/ns/v1/platform#errorDetails";
@@ -112,8 +112,8 @@ export const C:C = {
 	document: "https://carbonldp.com/ns/v1/platform#document",
 	documentMetadata: "https://carbonldp.com/ns/v1/platform#documentMetadata",
 	entry: "https://carbonldp.com/ns/v1/platform#entry",
-	entryKey: "https://carbonldp.com/ns/v1/platform#key",
-	entryValue: "https://carbonldp.com/ns/v1/platform#value",
+	entryKey: "https://carbonldp.com/ns/v1/platform#entryKey",
+	entryValue: "https://carbonldp.com/ns/v1/platform#entryValue",
 	error: "https://carbonldp.com/ns/v1/platform#error",
 	errorCode: "https://carbonldp.com/ns/v1/platform#errorCode",
 	errorDetails: "https://carbonldp.com/ns/v1/platform#errorDetails",
