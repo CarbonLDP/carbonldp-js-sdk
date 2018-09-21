@@ -36,13 +36,6 @@ describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"eTag",
-			"string",
-			"The ETag of the resource the metadata refers to."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"bNodesMap",
 			"CarbonLDP.LDP.Map<CarbonLDP.Pointer, CarbonLDP.Pointer>",
 			"A `c:Map` object that contains the changes of persisted BNode IDs."
@@ -96,18 +89,12 @@ describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 
 			expect( DocumentMetadata.SCHEMA as { [key:string]:jasmine.Any } ).toEqual( {
 				relatedDocument: jasmine.any( Object ),
-				eTag: jasmine.any( Object ),
 				bNodesMap: jasmine.any( Object ),
 			} );
 
 			expect( DocumentMetadata.SCHEMA[ "relatedDocument" ] ).toEqual( {
 				"@id": C.relatedDocument,
 				"@type": "@id",
-			} );
-
-			expect( DocumentMetadata.SCHEMA[ "eTag" ] ).toEqual( {
-				"@id": C.eTag,
-				"@type": XSD.string,
 			} );
 
 			expect( DocumentMetadata.SCHEMA[ "bNodesMap" ] ).toEqual( {

@@ -1,4 +1,5 @@
 import { Path, PathBuilder } from "sparqler/patterns";
+import { IRIToken, LiteralToken } from "sparqler/tokens";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
@@ -6,7 +7,6 @@ import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
 import { QueryablePropertyData } from "./QueryablePropertyData";
-import { QueryContainerType } from "./QueryContainerType";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { _getBestType } from "./Utils";
 
@@ -16,22 +16,26 @@ export class QueryableProperty {
 	readonly pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
 
 	propertyType?:QueryPropertyType;
-	containerType?:QueryContainerType;
-
 	optional:boolean;
 
 	readonly subProperties:Map<string, QueryableProperty>;
+
+	readonly values:(IRIToken | LiteralToken)[];
+
 
 	constructor( data:QueryablePropertyData ) {
 		this.definition = data.definition;
 		this.pathBuilderFn = data.pathBuilderFn;
 
 		this.propertyType = data.propertyType;
-		this.containerType = data.containerType;
 
 		this.optional = data.optional;
 
 		this.subProperties = new Map();
+
+		this.values = data.values
+			? data.values
+			: [];
 	}
 
 

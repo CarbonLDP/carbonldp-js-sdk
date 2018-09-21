@@ -5,18 +5,22 @@ import { IRIRefToken, IRIToken, PrefixToken } from "sparqler/tokens";
 
 import { AbstractContext } from "../Context/AbstractContext";
 
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 import { ObjectSchemaProperty } from "../ObjectSchema/ObjectSchemaProperty";
 
-import { QueryProperty } from "./QueryProperty";
+import { QueryContainerProperty } from "./QueryContainerProperty";
+import { QueryContainerPropertyType } from "./QueryContainerPropertyType";
+import { QueryRootProperty } from "./QueryRootProperty";
 import { QueryVariable } from "./QueryVariable";
 
 
-export abstract class QueryContainer extends FluentPathContainer<undefined> {
+export class QueryContainer extends FluentPathContainer<undefined> {
 	readonly context:AbstractContext<any, any, any>;
-	abstract readonly _queryProperty:QueryProperty;
+	readonly _queryProperty:QueryRootProperty | QueryContainerProperty;
 
 	private readonly _generalSchema:DigestedObjectSchema;
 	private readonly _prefixesTuples:[ string, string ][];
@@ -25,7 +29,7 @@ export abstract class QueryContainer extends FluentPathContainer<undefined> {
 	private _variablesCounter:number;
 
 
-	protected constructor( context:AbstractContext<any, any, any> ) {
+	constructor( context:AbstractContext<any, any, any>, propertyData:{ uri:string, containerPropertyType?:QueryContainerPropertyType } ) {
 		const schema:DigestedObjectSchema = context.getObjectSchema();
 		super( {
 			iriResolver: __createIRIResolver( schema ),
@@ -41,6 +45,22 @@ export abstract class QueryContainer extends FluentPathContainer<undefined> {
 
 		this._variablesCounter = 0;
 		this._variablesMap = new Map();
+
+		// Create target property
+		const iri:IRIToken = this.compactIRI( propertyData.uri );
+		if( propertyData.containerPropertyType === void 0 ) {
+			this._queryProperty = new QueryRootProperty( {
+				queryContainer: this,
+				documentIRI: iri,
+			} );
+
+		} else {
+			this._queryProperty = new QueryContainerProperty( {
+				queryContainer: this,
+				containerIRI: iri,
+				containerPropertyType: propertyData.containerPropertyType,
+			} );
+		}
 	}
 
 
@@ -93,6 +113,17 @@ export abstract class QueryContainer extends FluentPathContainer<undefined> {
 	getGeneralSchema():DigestedObjectSchema {
 		return ObjectSchemaDigester
 			.combineDigestedObjectSchemas( [ this._generalSchema ] );
+	}
+
+
+	serializeLiteral( type:string, value:any ):string {
+		if( ! this.context.jsonldConverter.literalSerializers.has( type ) )
+			throw new IllegalArgumentError( `Type "${ type }" hasn't a defined serializer.` );
+
+		return this.context.jsonldConverter
+			.literalSerializers
+			.get( type )
+			.serialize( value );
 	}
 
 }

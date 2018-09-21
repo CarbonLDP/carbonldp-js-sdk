@@ -9,12 +9,12 @@ import { RDFValue } from "./Value";
 
 export type RDFNodePropertyValue = string | RDFNode | RDFList | RDFValue | RDFLiteral;
 
-export interface RDFNode {
+export type RDFNode = {
 	"@id":string;
 	"@type"?:string[];
 
 	[propertyURI:string]:string | RDFNodePropertyValue[];
-}
+};
 
 
 export interface RDFNodeFactory {

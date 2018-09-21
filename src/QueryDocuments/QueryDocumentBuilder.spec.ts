@@ -1,4 +1,4 @@
-import { IRIRefToken, LiteralToken, PrefixedNameToken, ValuesToken, } from "sparqler/tokens";
+import { IRIRefToken, IRIToken, LiteralToken, PrefixedNameToken, ValuesToken, VariableToken, } from "sparqler/tokens";
 
 import { createMockContext } from "../../test/helpers/mocks";
 
@@ -11,16 +11,14 @@ import { Pointer } from "../Pointer/Pointer";
 
 import { clazz, constructor, extendsClass, hasSignature, INSTANCE, method, module, property } from "../test/JasmineExtender";
 
-import { QueryContainerType } from "./QueryContainerType";
+import { QueryContainer } from "./QueryContainer";
 import { QueryDocumentBuilder, SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
-import { QueryDocumentContainer } from "./QueryDocumentContainer";
 import * as QueryObject2Module from "./QueryObject";
 import { QueryObject } from "./QueryObject";
 import { QueryProperty } from "./QueryProperty";
 import { QueryRootProperty } from "./QueryRootProperty";
 import * as QueryValue2Module from "./QueryValue";
 import { QueryValue } from "./QueryValue";
-import { QueryVariable } from "./QueryVariable";
 
 
 describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => {
@@ -33,7 +31,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 		} );
 
 		let context:AbstractContext<any, any>;
-		let queryContainer:QueryDocumentContainer;
+		let queryContainer:QueryContainer;
 		let baseProperty:QueryProperty;
 		beforeEach( ():void => {
 			context = createMockContext( { uri: "https://example.com" } );
@@ -51,7 +49,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 				},
 			} );
 
-			queryContainer = new QueryDocumentContainer( context, { uri: "https://example.com/#root", containerType: QueryContainerType.DOCUMENT } );
+			queryContainer = new QueryContainer( context, { uri: "https://example.com/#root" } );
 			baseProperty = queryContainer._queryProperty;
 		} );
 
@@ -203,11 +201,11 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 			} );
 
 
-			it( "should return self property's variable when no path", ():void => {
+			it( "should return self property's identifier when no path", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
-				const variable:QueryVariable = builder.property();
-				expect( variable ).toBe( baseProperty.variable );
+				const variable:VariableToken | IRIToken | LiteralToken = builder.property();
+				expect( variable ).toBe( baseProperty.identifier );
 			} );
 
 			it( "should return property's variable with one level path", ():void => {
@@ -215,7 +213,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 
 				const targetProperty:QueryProperty = baseProperty.addProperty( "path1", {} );
 
-				const variable:QueryVariable = builder.property( "path1" );
+				const variable:VariableToken | IRIToken | LiteralToken = builder.property( "path1" );
 				expect( variable ).toBe( targetProperty.variable );
 			} );
 
@@ -228,7 +226,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					.addProperty( "path3", {} )
 				;
 
-				const variable:QueryVariable = builder.property( "path1.path2.path3" );
+				const variable:VariableToken | IRIToken | LiteralToken = builder.property( "path1.path2.path3" );
 				expect( variable ).toBe( targetProperty.variable );
 			} );
 
@@ -245,7 +243,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
-				const variable:QueryVariable = builder.property( "path1" );
+				const variable:VariableToken | IRIToken | LiteralToken = builder.property( "path1" );
 				expect( variable ).toBe( targetProperty.variable );
 			} );
 
@@ -261,7 +259,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
-				const variable:QueryVariable = builder.property( "path2" );
+				const variable:VariableToken | IRIToken | LiteralToken = builder.property( "path2" );
 				expect( variable ).toBe( targetProperty.variable );
 			} );
 
@@ -277,7 +275,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 
-				const variable:QueryVariable = builder.property( "path1.path2" );
+				const variable:VariableToken | IRIToken | LiteralToken = builder.property( "path1.path2" );
 				expect( variable ).toBe( targetProperty.variable );
 			} );
 
@@ -538,7 +536,7 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 		} );
 
 		let context:AbstractContext<any, any>;
-		let queryContainer:QueryDocumentContainer;
+		let queryContainer:QueryContainer;
 		let baseProperty:QueryRootProperty;
 		beforeEach( ():void => {
 			context = createMockContext( { uri: "https://example.com" } );
@@ -547,8 +545,8 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 				"ex": "https://example.com/ns#",
 			} );
 
-			queryContainer = new QueryDocumentContainer( context, { uri: "https://example.com/#root", containerType: QueryContainerType.DOCUMENT } );
-			baseProperty = queryContainer._queryProperty;
+			queryContainer = new QueryContainer( context, { uri: "https://example.com/#root" } );
+			baseProperty = queryContainer._queryProperty as QueryRootProperty;
 		} );
 
 		describe( constructor(), ():void => {
@@ -640,22 +638,28 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 			} );
 
 			it( "should add values to the property", ():void => {
-				const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, baseProperty );
+				const targetProperty:QueryProperty = baseProperty
+					.addProperty( "sub-property", {} );
+
+				const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, targetProperty );
 
 				builder.values(
 					builder.value( "hello" ),
 					builder.value( "world" )
 				);
 
-				expect( baseProperty.getSearchPatterns() ).toContain( new ValuesToken()
-					.addVariables( baseProperty.variable )
+				expect( targetProperty.getSearchPatterns() ).toContain( new ValuesToken()
+					.addVariables( targetProperty.variable )
 					.addValues( new LiteralToken( "hello" ) )
 					.addValues( new LiteralToken( "world" ) )
 				);
 			} );
 
 			it( "should append values to the property", ():void => {
-				const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, baseProperty );
+				const targetProperty:QueryProperty = baseProperty
+					.addProperty( "sub-property", {} );
+
+				const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, targetProperty );
 
 				builder
 					.values(
@@ -668,8 +672,8 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => 
 					)
 				;
 
-				expect( baseProperty.getSearchPatterns() ).toContain( new ValuesToken()
-					.addVariables( baseProperty.variable )
+				expect( targetProperty.getSearchPatterns() ).toContain( new ValuesToken()
+					.addVariables( targetProperty.variable )
 					.addValues( new LiteralToken( "hello" ) )
 					.addValues( new LiteralToken( "world" ) )
 					.addValues( new IRIRefToken( "https://example.com/pointer-1" ) )

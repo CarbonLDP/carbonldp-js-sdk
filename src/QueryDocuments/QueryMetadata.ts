@@ -9,7 +9,7 @@ import { QueryablePointer } from "./QueryablePointer";
 
 
 export interface QueryMetadata extends VolatileResource {
-	target:QueryablePointer;
+	targets:QueryablePointer[];
 }
 
 
@@ -21,7 +21,7 @@ export interface QueryMetadataFactory extends ModelSchema {
 }
 
 const SCHEMA:ObjectSchema = {
-	"target": {
+	"targets": {
 		"@id": C.target,
 		"@type": "@id",
 		"@container": "@set",

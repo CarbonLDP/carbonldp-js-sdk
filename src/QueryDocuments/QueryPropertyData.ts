@@ -1,9 +1,10 @@
 import { Path, PathBuilder } from "sparqler/patterns";
+import { IRIToken, LiteralToken } from "sparqler/tokens";
 
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
 import { QueryContainer } from "./QueryContainer";
-import { QueryContainerType } from "./QueryContainerType";
+import { QueryContainerPropertyType } from "./QueryContainerPropertyType";
 import { QueryProperty } from "./QueryProperty";
 import { QueryPropertyType } from "./QueryPropertyType";
 
@@ -17,7 +18,7 @@ export interface QueryPropertyData {
 	pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
 
 	propertyType?:QueryPropertyType;
-	containerType?:QueryContainerType;
-
 	optional?:boolean;
+
+	values?:(IRIToken | LiteralToken)[];
 }

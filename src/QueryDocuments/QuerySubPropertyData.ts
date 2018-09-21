@@ -3,7 +3,7 @@ import { Path, PathBuilder } from "sparqler/patterns";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
 import { QueryContainer } from "./QueryContainer";
-import { QueryContainerType } from "./QueryContainerType";
+import { QueryContainerPropertyType } from "./QueryContainerPropertyType";
 import { QueryProperty } from "./QueryProperty";
 import { QueryPropertyType } from "./QueryPropertyType";
 
@@ -16,7 +16,5 @@ export interface QuerySubPropertyData {
 	pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
 
 	propertyType?:QueryPropertyType;
-	containerType?:QueryContainerType;
-
 	optional?:boolean;
 }

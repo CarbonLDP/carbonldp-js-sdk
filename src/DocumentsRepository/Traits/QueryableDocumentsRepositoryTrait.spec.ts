@@ -1,8 +1,7 @@
 import {
-	BindToken,
 	ConstructToken,
 	FilterToken,
-	GroupPatternToken,
+	GraphToken,
 	IRIRefToken,
 	LimitToken,
 	OffsetToken,
@@ -15,7 +14,6 @@ import {
 	RDFLiteralToken,
 	SubjectToken,
 	SubSelectToken,
-	ValuesToken,
 	VariableToken
 } from "sparqler/tokens";
 
@@ -29,6 +27,8 @@ import { Document } from "../../Document/Document";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../../Errors/IllegalStateError";
+
+import { Fragment } from "../../Fragment/Fragment";
 
 import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 
@@ -56,6 +56,7 @@ import {
 	property,
 	STATIC
 } from "../../test/JasmineExtender";
+import { UUIDUtils } from "../../Utils";
 
 import { C } from "../../Vocabularies/C";
 import { LDP } from "../../Vocabularies/LDP";
@@ -183,6 +184,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		let repository:QueryableDocumentsRepositoryTrait;
 		let document:Document;
+		let UUIDSpy:jasmine.Spy;
 		beforeEach( () => {
 			repository = QueryableDocumentsRepositoryTrait.decorate( { context } );
 
@@ -192,6 +194,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				$registry: context.registry,
 				$_queryableMetadata: createMockQueryableMetadata(),
 			} );
+
+
+			UUIDSpy = spyOn( UUIDUtils, "generate" )
+				.and.callThrough();
 		} );
 
 		function createMockDocument<T extends {}>( data:T & Partial<Document> ):T & Document {
@@ -210,6 +216,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					if( ! QueryablePointer.is( value ) ) return;
 
 					value.$_queryableMetadata = metadataProperty;
+
+					if( metadataProperty.pathBuilderFn )
+						Object.defineProperty( mockDocument, propertyName, {
+							enumerable: false,
+							writable: true,
+							configurable: true,
+						} );
 				} );
 			}
 
@@ -224,7 +237,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		};
 
 
-		describe( method( OBLIGATORY, "$get" ), ():void => {
+		describe( method( OBLIGATORY, "get" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -263,7 +276,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 
-			function stubRequest( url:string, options:{ status?:number, headers?:{ [ key:string ]:string }, resources?:object[] } = {} ):void {
+			function stubRequest( url:string, options:{ GET?:true, status?:number, headers?:{ [ key:string ]:string }, resources?:object[] } = {} ):void {
 				const status:number = options.status ?
 					options.status : 200;
 
@@ -275,7 +288,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					options.resources : [];
 
 				jasmine.Ajax
-					.stubRequest( url, null, "POST" )
+					.stubRequest( url, null, options.GET ? "GET" : "POST" )
 					.andReturn( {
 						status,
 						responseHeaders: {
@@ -369,8 +382,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -436,44 +449,49 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/resource/>.` +
 
-					" ?document a ?document__types;" +
+					" <https://example.com/resource/> a ?document__types;" +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
 					"" + " schema:property-2 ?document__property2." +
 
 					" ?document__property2 a ?document__property2__types;" +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/resource/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
-					" ?document a <https://example.com/ns#Resource>." +
+					" GRAPH ?document___graph {" +
+					"" + " <https://example.com/resource/> a" +
+					"" + "" + " <https://example.com/ns#Resource>," +
+					"" + "" + " ?document__types" +
+					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+					"" + " GRAPH ?document___graph { <https://example.com/resource/> <https://example.com/ns#property-1> ?document__property1 }" +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
+					"" + " GRAPH ?document___graph { <https://example.com/resource/> schema:property-2 ?document__property2 }" +
+					"" + " OPTIONAL { GRAPH ?document__property2___graph { ?document__property2 a ?document__property2__types } }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-3 ?document__property2__property3 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
-					" } " +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -483,7 +501,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/resource/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -575,7 +593,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -671,35 +689,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
 							],
 							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
 								"@id": "https://example.com/",
 							} ],
 						},
@@ -714,6 +709,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "1-12345",
+									} ],
 								},
 							],
 						},
@@ -734,51 +732,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
 							],
 							[ C.target ]: [ {
 								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							}, {
-								"@id": "_:4",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:4",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"2-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/another-resource/",
 							} ],
 						},
 						{
@@ -792,6 +752,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "1-12345",
+									} ],
 									"https://example.com/ns#property-1": [ {
 										"@value": "value",
 									} ],
@@ -805,6 +768,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/another-resource/",
 							"@graph": [ {
 								"@id": "https://example.com/another-resource/",
+								[ C.checksum ]: [ {
+									"@value": "2-12345",
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": XSD.integer,
@@ -864,7 +830,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -972,7 +938,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1084,7 +1050,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1300,7 +1266,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1535,44 +1501,49 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/resource/>.` +
 
-					" ?document a ?document__types;" +
+					" <https://example.com/resource/> a ?document__types;" +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
 					"" + " schema:property-2 ?document__property2." +
 
 					" ?document__property2 a ?document__property2__types;" +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/resource/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
-					" ?document a <https://example.com/ns#Resource>." +
+					" GRAPH ?document___graph {" +
+					"" + " <https://example.com/resource/> a" +
+					"" + "" + " <https://example.com/ns#Resource>," +
+					"" + "" + " ?document__types" +
+					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+					"" + " GRAPH ?document___graph { <https://example.com/resource/> <https://example.com/ns#property-1> ?document__property1 }" +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document ^<https://example.com/ns#property2>/<https://example.com/ns#property2.2> ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
+					"" + " <https://example.com/resource/> ^<https://example.com/ns#property2>/<https://example.com/ns#property2.2> ?document__property2." +
+					"" + " OPTIONAL { GRAPH ?document__property2___graph { ?document__property2 a ?document__property2__types } }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-3 ?document__property2__property3 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
-					" } " +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -1581,7 +1552,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/resource/", {
 					resources: [
 						{
-							"@id": "_:0",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1676,7 +1647,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/resource/", {
 					resources: [
 						{
-							"@id": "_:0",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1776,7 +1747,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -1888,7 +1859,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:0",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2008,9 +1979,205 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ) );
 			} );
 
+
+			it( "should query metadata when partial and entire requested", async () => {
+				stubRequest( "https://example.com/", {
+					GET: true,
+					resources: [
+						{
+							"@id": "https://example.com/",
+							"@graph": [
+								{
+									"@id": "https://example.com/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+									"https://schema.org/property-2": [ {
+										"@id": "_:1",
+									} ],
+								},
+								{
+									"@id": "_:1",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								},
+							],
+						},
+					],
+					headers: {
+						eTag: "\"1-12345\"",
+					},
+				} );
+
+				document = createMockDocument( {
+					$id: "https://example.com/",
+					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
+						"@vocab": "https://example.com/ns#",
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+							},
+						},
+					} ),
+
+					property2: {
+						$id: "_:1",
+						property2: - 1,
+						property3: "old value",
+					},
+				} );
+				document.$_syncSavedFragments();
+
+				context.registry._addPointer( document );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+					.extendObjectSchema( "https://example.com/ns#Resource", {
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} )
+				;
+
+				type MyDocument = { property1:string, property2?:{ property2:number, property3:string } & Fragment };
+				const returned:MyDocument & Document = await repository.get<MyDocument>( "https://example.com/" );
+
+				expect( returned.$_queryableMetadata ).toBeUndefined();
+				expect( returned.property2.$_queryableMetadata ).toBeUndefined();
+			} );
+
+			it( "should remove virtual property when partial and entire requested", async () => {
+				stubRequest( "https://example.com/", {
+					GET: true,
+					resources: [
+						{
+							"@id": "https://example.com/",
+							"@graph": [
+								{
+									"@id": "https://example.com/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+								},
+							],
+						},
+					],
+					headers: {
+						eTag: "\"1-12345\"",
+					},
+				} );
+
+				document = createMockDocument( {
+					$id: "https://example.com/",
+					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
+						"@vocab": "https://example.com/ns#",
+						"property4": {
+							"@id": "https://example.com/ns#property-4",
+							"@type": "boolean",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"$pathBuilderFn": __ => __.inverse( "property2" ).then( "property2.2" ),
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+							},
+						},
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+					} ),
+
+					property2: {
+						$id: "_:1",
+						property2: - 1,
+						property3: "old value",
+					},
+				} );
+				document.$_syncSavedFragments();
+
+				context.registry._addPointer( document );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+					.extendObjectSchema( "https://example.com/ns#Resource", {
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} )
+				;
+
+				type MyDocument = { property1:string, property2?:{ property2:number, property3:string } };
+				const returned:MyDocument = await repository.get<MyDocument>( "https://example.com/" );
+
+				expect( returned ).toEqual( {
+					property1: "value",
+				} );
+
+				expect( returned.property2 ).toBeUndefined();
+			} );
+
 		} );
 
-		describe( method( OBLIGATORY, "$resolve" ), () => {
+		describe( method( OBLIGATORY, "resolve" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -2082,8 +2249,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -2149,44 +2316,49 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
-					" ?document a ?document__types;" +
+					" <https://example.com/> a ?document__types;" +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
 					"" + " schema:property-2 ?document__property2." +
 
 					" ?document__property2 a ?document__property2__types;" +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
-					" ?document a <https://example.com/ns#Resource>." +
+					" GRAPH ?document___graph {" +
+					"" + " <https://example.com/> a" +
+					"" + "" + " <https://example.com/ns#Resource>," +
+					"" + "" + " ?document__types" +
+					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+					"" + " GRAPH ?document___graph { <https://example.com/> <https://example.com/ns#property-1> ?document__property1 }" +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
+					"" + " GRAPH ?document___graph { <https://example.com/> schema:property-2 ?document__property2 }" +
+					"" + " OPTIONAL { GRAPH ?document__property2___graph { ?document__property2 a ?document__property2__types } }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-3 ?document__property2__property3 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
-					" } " +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -2239,47 +2411,51 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
-					" ?document a ?document__types;" +
+					" <https://example.com/> a ?document__types;" +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
 					"" + " schema:property-2 ?document__property2." +
 
 					" ?document__property2 a ?document__property2__types;" +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
-					" ?document a" +
-					"" + " <https://example.com/ns#A-Type>," +
-					"" + " <https://example.com/ns#Another-Type>," +
-					"" + " <https://example.com/ns#Resource>." +
+					" GRAPH ?document___graph {" +
+					"" + " <https://example.com/> a" +
+					"" + "" + " <https://example.com/ns#A-Type>," +
+					"" + "" + " <https://example.com/ns#Another-Type>," +
+					"" + "" + " <https://example.com/ns#Resource>," +
+					"" + "" + " ?document__types" +
+					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+					"" + " GRAPH ?document___graph { <https://example.com/> <https://example.com/ns#property-1> ?document__property1 }" +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
+					"" + " GRAPH ?document___graph { <https://example.com/> schema:property-2 ?document__property2 }" +
+					"" + " OPTIONAL { GRAPH ?document__property2___graph { ?document__property2 a ?document__property2__types } }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-3 ?document__property2__property3 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
-					" } " +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -2289,7 +2465,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2381,7 +2557,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2477,35 +2653,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
 							],
 							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
 								"@id": "https://example.com/",
 							} ],
 						},
@@ -2520,6 +2673,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "1-12345",
+									} ],
 								},
 							],
 						},
@@ -2540,51 +2696,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
 							],
 							[ C.target ]: [ {
 								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							}, {
-								"@id": "_:4",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:4",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"2-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/another-resource/",
 							} ],
 						},
 						{
@@ -2598,6 +2716,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "1-12345",
+									} ],
 									"https://example.com/ns#property-1": [ {
 										"@value": "value",
 									} ],
@@ -2611,6 +2732,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/another-resource/",
 							"@graph": [ {
 								"@id": "https://example.com/another-resource/",
+								[ C.checksum ]: [ {
+									"@value": "2-12345",
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": XSD.integer,
@@ -2670,7 +2794,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2779,7 +2903,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -2891,7 +3015,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -3106,7 +3230,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -3293,7 +3417,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		} );
 
 
-		describe( method( OBLIGATORY, "$saveAndRefresh" ), () => {
+		describe( method( OBLIGATORY, "saveAndRefresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -3460,8 +3584,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -3647,57 +3771,59 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
-					" ?document a ?document__types;" +
+
+					" <https://example.com/> a ?document__types;" +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
 					"" + " schema:property-2 ?document__property2;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1." +
 
 					" ?document__property2 a ?document__property2__types;" +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " schema:property-3 ?document__property2__property3;" +
 					"" + " schema:property-5 ?document__property2__property5;" +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
+					" OPTIONAL { GRAPH ?document___graph { <https://example.com/> a ?document__types } }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
+					"" + " GRAPH ?document___graph { <https://example.com/> <https://example.com/ns#property-4> ?document__property4 }" +
 					"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
+					"" + " GRAPH ?document___graph { <https://example.com/> schema:property-2 ?document__property2 }" +
+					"" + " OPTIONAL { GRAPH ?document__property2___graph { ?document__property2 a ?document__property2__types } }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-3 ?document__property2__property3 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-5 ?document__property2__property5." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-5 ?document__property2__property5 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
 					"" + " }" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+					"" + " GRAPH ?document___graph { <https://example.com/> <https://example.com/ns#property-1> ?document__property1 }" +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					" }" +
 
-					" }"
+					" " +
+					"}"
 				);
 			} );
 
@@ -3705,35 +3831,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
 							],
 							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
 								"@id": "https://example.com/",
 							} ],
 						},
@@ -3748,6 +3851,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "1-12345",
+									} ],
 								},
 							],
 						},
@@ -3836,7 +3942,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "$refresh" ), () => {
+		describe( method( OBLIGATORY, "refresh" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -3896,8 +4002,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -3976,57 +4082,59 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
-					" ?document a ?document__types;" +
+					" <https://example.com/> a ?document__types;" +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
 					"" + " schema:property-2 ?document__property2;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1." +
 
 					" ?document__property2 a ?document__property2__types;" +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " schema:property-3 ?document__property2__property3;" +
 					"" + " schema:property-5 ?document__property2__property5;" +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
+					" OPTIONAL { GRAPH ?document___graph { <https://example.com/> a ?document__types } }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
+					"" + " GRAPH ?document___graph { <https://example.com/> <https://example.com/ns#property-4> ?document__property4 }" +
 					"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
+					"" + " GRAPH ?document___graph { <https://example.com/> schema:property-2 ?document__property2 }" +
+
+					"" + " OPTIONAL { GRAPH ?document__property2___graph { ?document__property2 a ?document__property2__types } }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-3 ?document__property2__property3 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-5 ?document__property2__property5." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-5 ?document__property2__property5 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
 					"" + " }" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+					"" + " GRAPH ?document___graph { <https://example.com/> <https://example.com/ns#property-1> ?document__property1 }" +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					" }" +
 
-					" }"
+					" " +
+					"}"
 				);
 			} );
 
@@ -4074,39 +4182,45 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
-					" ?document a ?document__types;" +
+					" <https://example.com/> a ?document__types;" +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
 					"" + " schema:property-2 ?document__property2;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1." +
 
-					" ?document__property2 ?document__property2___predicate ?document__property2___object " +
+					" ?document__property2" +
+					"" + " ?document__property2___predicate ?document__property2___object;" +
+					"" + ` <${ C.document }> ?document__property2___graph` +
 
+					" " +
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
+					" OPTIONAL { GRAPH ?document___graph { <https://example.com/> a ?document__types } }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
+					"" + " GRAPH ?document___graph { <https://example.com/> <https://example.com/ns#property-4> ?document__property4 }" +
 					"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
-					"" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + " GRAPH ?document___graph { <https://example.com/> schema:property-2 ?document__property2 }" +
+
+					"" + " GRAPH ?document__property2___graph {" +
+					"" + "" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+					"" + " }" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+					"" + " GRAPH ?document___graph { <https://example.com/> <https://example.com/ns#property-1> ?document__property1 }" +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					" }" +
 
-					" }"
+					" " +
+					"}"
 				);
 			} );
 
@@ -4114,7 +4228,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -4285,35 +4399,12 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
 							],
 							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
 								"@id": "https://example.com/",
 							} ],
 						},
@@ -4328,6 +4419,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "1-12345",
+									} ],
 								},
 							],
 						},
@@ -4343,131 +4437,16 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ) );
 			} );
 
-			it( "should not process if same eTag", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "updated value",
-									} ],
-								},
-							],
-						},
-					],
-				} );
-
-				document = context.registry._addPointer( {
-					$eTag: "\"1-12345\"",
-					$id: "https://example.com/",
-
-					property1: "value",
-					$_queryableMetadata: createMockQueryableMetadata(),
-				} );
-
-				context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-				type MyResource = Document & { property1:string };
-				const returned:MyResource = await repository.refresh<{ property1:string }>( document );
-
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					property1: "value",
-				} ) );
-			} );
-
 			it( "should assign new eTag when locally outdated", async () => {
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:1",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
 							],
 							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
 								"@id": "https://example.com/",
 							} ],
 						},
@@ -4482,6 +4461,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										C.Document,
 										"https://example.com/ns#Resource",
 									],
+									[ C.checksum ]: [ {
+										"@value": "1-12345",
+									} ],
 								},
 							],
 						},
@@ -4627,57 +4609,59 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
-					" ?document a ?document__types;" +
+					" <https://example.com/> a ?document__types;" +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
 					"" + " schema:property-2 ?document__property2;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1." +
 
 					" ?document__property2 a ?document__property2__types;" +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " schema:property-3 ?document__property2__property3;" +
 					"" + " schema:property-5 ?document__property2__property5;" +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
 
-					" VALUES ?document { <https://example.com/> }" +
-					" OPTIONAL { ?document a ?document__types }" +
+					" OPTIONAL { GRAPH ?document___graph { <https://example.com/> a ?document__types } }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
+					"" + " GRAPH ?document___graph { <https://example.com/> <https://example.com/ns#property-4> ?document__property4 }" +
 					"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document ^<https://example.com/ns#property2>/<https://example.com/ns#property2.2> ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )" +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }" +
+					"" + " <https://example.com/> ^<https://example.com/ns#property2>/<https://example.com/ns#property2.2> ?document__property2." +
+
+					"" + " OPTIONAL { GRAPH ?document__property2___graph { ?document__property2 a ?document__property2__types } }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-3 ?document__property2__property3 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-5 ?document__property2__property5." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-5 ?document__property2__property5 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2 }" +
 					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
 					"" + " }" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+					"" + " GRAPH ?document___graph { <https://example.com/> <https://example.com/ns#property-1> ?document__property1 }" +
 					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					" }" +
 
-					" }"
+					" " +
+					"}"
 				);
 			} );
 
@@ -4685,7 +4669,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:0",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -4761,6 +4745,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 					property2: {
 						$id: "_:1",
+						property2: - 1,
+						property3: "old value",
 					},
 				} );
 				document.$_syncSavedFragments();
@@ -4790,7 +4776,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
-							"@id": "_:0",
+							"@id": "cldp-sdk://metadata-1",
 							"@type": [
 								C.VolatileResource,
 								C.QueryMetadata,
@@ -4904,10 +4890,100 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
 			} );
 
+			it( "should remove virtual property when no in new data", async () => {
+				stubRequest( "https://example.com/", {
+					resources: [
+						{
+							"@id": "cldp-sdk://metadata-1",
+							"@type": [
+								C.VolatileResource,
+								C.QueryMetadata,
+							],
+							[ C.target ]: [ {
+								"@id": "https://example.com/",
+							} ],
+						},
+						{
+							"@id": "https://example.com/",
+							"@graph": [
+								{
+									"@id": "https://example.com/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value",
+									} ],
+								},
+							],
+						},
+					],
+				} );
+
+
+				document = createMockDocument( {
+					$_queryableMetadata: createMockQueryableMetadata( {
+						"$id": "https://example.com/",
+						"@vocab": "https://example.com/ns#",
+						"property4": {
+							"@id": "https://example.com/ns#property-4",
+							"@type": "boolean",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"$pathBuilderFn": __ => __.inverse( "property2" ).then( "property2.2" ),
+							"$propertyType": QueryPropertyType.PARTIAL,
+							"$subProperties": {
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+							},
+						},
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": "string",
+						},
+					} ),
+					$id: "https://example.com/",
+
+					property2: {
+						$id: "_:1",
+						property2: - 1,
+						property3: "old value",
+					},
+				} );
+				document.$_syncSavedFragments();
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+				;
+
+				type MyDocument = { property1:string, property2?:{ property2:number, property3:string } };
+				const returned:MyDocument = await repository.refresh<MyDocument>( document );
+
+				expect( returned ).toEqual( {
+					property1: "value",
+				} );
+
+				expect( returned.property2 ).toBeUndefined();
+			} );
+
 		} );
 
 
-		describe( method( OBLIGATORY, "$getChildren" ), () => {
+		describe( method( OBLIGATORY, "getChildren" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -5037,8 +5113,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -5066,6 +5142,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
+						"property4": {
+							"@id": "https://schema.org/property-4",
+							"@type": "@id",
+						},
 					} )
 					.extendObjectSchema( "Resource", {
 						"property1": {
@@ -5094,6 +5174,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"query": __ => __.properties( {
 								"property2": __.inherit,
 								"property3": __.inherit,
+								"property4": __.inherit,
 							} ),
 						},
 					} )
@@ -5107,53 +5188,65 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?child.` +
 
 					" ?child a ?child__types;" +
+					"" + ` <${ C.document }> ?child___graph;` +
 					"" + " <https://example.com/ns#property-1> ?child__property1;" +
 					"" + " schema:property-2 ?child__property2." +
 
 					" ?child__property2 a ?child__property2__types;" +
+					"" + ` <${ C.document }> ?child__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
-					"" + " schema:property-3 ?child__property2__property3 " +
+					"" + " schema:property-3 ?child__property2__property3;" +
+					"" + " schema:property-4 ?child__property2__property4 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
+
+					"" + "" + " ?child a <https://example.com/ns#Resource>." +
+
 					"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
+
 					"" + " }" +
 					"" + " ORDER BY ?child__property2" +
 					"" + " LIMIT 10" +
 					"" + " OFFSET 5" +
 					" }" +
 
-					" OPTIONAL { ?child a ?child__types }" +
-					" ?child a <https://example.com/ns#Resource>." +
+					" GRAPH ?child___graph { ?child a ?child__types }" +
 
 					" OPTIONAL {" +
-					"" + " ?child <https://example.com/ns#property-1> ?child__property1." +
+					"" + " GRAPH ?child___graph { ?child <https://example.com/ns#property-1> ?child__property1 }" +
 					"" + " FILTER( datatype( ?child__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?child schema:property-2 ?child__property2." +
-					"" + " FILTER( ! isLiteral( ?child__property2 ) )" +
-					"" + " OPTIONAL { ?child__property2 a ?child__property2__types }" +
+					"" + " GRAPH ?child___graph { ?child schema:property-2 ?child__property2 }" +
+
+					"" + " OPTIONAL { GRAPH ?child__property2___graph { ?child__property2 a ?child__property2__types } }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
+					"" + "" + " GRAPH ?child__property2___graph { ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2 }" +
 					"" + "" + " FILTER( datatype( ?child__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?child__property2 schema:property-3 ?child__property2__property3." +
+					"" + "" + " GRAPH ?child__property2___graph { ?child__property2 schema:property-3 ?child__property2__property3 }" +
 					"" + "" + " FILTER( datatype( ?child__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
-					" } " +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " GRAPH ?child__property2___graph { ?child__property2 schema:property-4 ?child__property2__property4 }" +
+					"" + "" + " FILTER( ! isLiteral( ?child__property2__property4 ) )" +
+					"" + " }" +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -5179,37 +5272,31 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				;
 
 
-				await repository.getChildren( "/", _ => _
-					.properties( _.all )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
+				await repository.getChildren( "/" );
 
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?child.` +
 
-					" ?child ?child___predicate ?child___object " +
+					" ?child___subject" +
+					"" + " ?child___predicate ?child___object;" +
+					"" + ` <${ C.document }> ?child` +
 
+					" " +
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?child {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
-					"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
+					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child" +
 					"" + " }" +
-					"" + " ORDER BY ?child__property2" +
-					"" + " LIMIT 10" +
-					"" + " OFFSET 5" +
 					" }" +
 
-					" ?child ?child___predicate ?child___object" +
+					" GRAPH ?child {" +
+					"" + " ?child___subject ?child___predicate ?child___object" +
+					" }" +
 
 					" " +
 					"}"
@@ -5249,14 +5336,16 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?child.` +
 
-					" ?child ?child___predicate ?child___object " +
+					" ?child" +
+					"" + " ?child___predicate ?child___object;" +
+					"" + ` <${ C.document }> ?child___graph` +
 
+					" " +
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
@@ -5267,7 +5356,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" ?child ?child___predicate ?child___object" +
+					" GRAPH ?child___graph { ?child ?child___predicate ?child___object }" +
 
 					" " +
 					"}"
@@ -5332,7 +5421,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const query:QueryToken = spy.calls.mostRecent().object;
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
-						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }` ) )
 							.addProperty( new PropertyToken( "a" )
 								.addObject( new IRIRefToken( C.VolatileResource ) )
 								.addObject( new IRIRefToken( C.QueryMetadata ) )
@@ -5345,6 +5434,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							.addProperty( new PropertyToken( "a" )
 								.addObject( variableHelper( "child__types" ) )
 							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.document ) )
+								.addObject( variableHelper( "child___graph" ) )
+							)
 							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-1" ) )
 								.addObject( variableHelper( "child__property1" ) )
 							)
@@ -5356,15 +5448,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							.addProperty( new PropertyToken( "a" )
 								.addObject( variableHelper( "child__property2__types" ) )
 							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.document ) )
+								.addObject( variableHelper( "child__property2___graph" ) )
+							)
 							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "child__property2__property2" ) )
+								.addObject( new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) )
 							)
 							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-3" ) )
 								.addObject( variableHelper( "child__property2__property3" ) )
 							)
 						)
 
-						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
 						.addPattern( new SubSelectToken( "DISTINCT" )
 							.addVariable( variableHelper( "child" ) )
 							.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
@@ -5373,72 +5467,74 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								)
 							)
 							.addPattern( new SubjectToken( variableHelper( "child" ) )
+								.addProperty( new PropertyToken( "a" )
+									.addObject( new PrefixedNameToken( "ex:Resource" ) )
+								)
 								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 									.addObject( variableHelper( "child__property2" ) )
+								)
+							)
+							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) )
 								)
 							)
 							.addModifier( new OrderToken( variableHelper( "child__property2" ) ) )
 							.addModifier( new LimitToken( 10 ) )
 							.addModifier( new OffsetToken( 5 ) )
 						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addProperty( new PropertyToken( "a" )
-										.addObject( variableHelper( "child__types" ) )
-									)
+						.addPattern( new GraphToken( variableHelper( "child___graph" ) )
+							.addPattern( new SubjectToken( variableHelper( "child" ) )
+								.addProperty( new PropertyToken( "a" )
+									.addObject( variableHelper( "child__types" ) )
 								)
-						)
-						.addPattern( new SubjectToken( variableHelper( "child" ) )
-							.addProperty( new PropertyToken( "a" )
-								.addObject( new PrefixedNameToken( "ex:Resource" ) )
 							)
 						)
 						.addPattern(
 							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-1" ) )
-										.addObject( variableHelper( "child__property1" ) )
+								.addPattern( new GraphToken( variableHelper( "child___graph" ) )
+									.addPattern( new SubjectToken( variableHelper( "child" ) )
+										.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-1" ) )
+											.addObject( variableHelper( "child__property1" ) )
+										)
 									)
 								)
 								.addPattern( new FilterToken( "datatype( ?child__property1 ) = xsd:string" ) )
 						)
-						.addPattern( new SubjectToken( variableHelper( "child" ) )
-							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
-								.addObject( variableHelper( "child__property2" ) )
-							)
-						)
-						.addPattern( new FilterToken( "! isLiteral( ?child__property2 )" ) )
-						.addPattern( new OptionalToken()
-							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
-								.addProperty( new PropertyToken( "a" )
-									.addObject( variableHelper( "child__property2__types" ) )
+						.addPattern( new GraphToken( variableHelper( "child___graph" ) )
+							.addPattern( new SubjectToken( variableHelper( "child" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "child__property2" ) )
 								)
 							)
 						)
-						.addPattern( new ValuesToken()
-							.addVariables(
-								variableHelper( "child__property2__property2" )
-							)
-							.addValues(
-								new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) )
-							)
-						)
-						.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
-							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "child__property2__property2" ) )
-							)
-						)
-						.addPattern( new FilterToken( "datatype( ?child__property2__property2 ) = xsd:integer" ) )
 						.addPattern( new OptionalToken()
+							.addPattern( new GraphToken( variableHelper( "child__property2___graph" ) )
+								.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+									.addProperty( new PropertyToken( "a" )
+										.addObject( variableHelper( "child__property2__types" ) )
+									)
+								)
+							)
+						)
+						.addPattern( new GraphToken( variableHelper( "child__property2___graph" ) )
 							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
-								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-3" ) )
-									.addObject( variableHelper( "child__property2__property3" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) )
+								)
+							)
+						)
+						.addPattern( new OptionalToken()
+							.addPattern( new GraphToken( variableHelper( "child__property2___graph" ) )
+								.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+									.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-3" ) )
+										.addObject( variableHelper( "child__property2__property3" ) )
+									)
 								)
 							)
 							.addPattern( new FilterToken( "datatype( ?child__property2__property3 ) = xsd:string" ) )
 						)
-						.addPattern( new FilterToken( `?child__property2__property2 = "12345"^^xsd:integer` ) )
+						.addPattern( new FilterToken( `${ new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) } = "12345"^^xsd:integer` ) )
 					)
 
 						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
@@ -5470,41 +5566,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -5514,6 +5575,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "1-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -5540,6 +5604,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "2-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -5641,41 +5708,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -5685,6 +5717,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "1-12345"
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -5714,6 +5749,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "2-12345"
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -5780,24 +5818,30 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 					expect( myDocuments[ 0 ].$isQueried() ).toBe( false );
 					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": "\"1-12345\"",
-						"property1": "value 1",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 1",
-							"property4": 12345,
-						} ) as any,
+						$eTag: "\"1-12345\"",
+						$_resolved: true,
 					} ) );
+					expect<MyDocument>( myDocuments[ 0 ] ).toEqual( {
+						property1: "value 1",
+						property2: {
+							property3: "another value 1",
+							property4: 12345,
+						},
+					} );
 
 					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
 					expect( myDocuments[ 1 ].$isQueried() ).toBe( false );
 					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": "\"2-12345\"",
-						"property1": "value 2",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 2",
-							"property4": 67890,
-						} ) as any,
+						$eTag: "\"2-12345\"",
+						$_resolved: true,
 					} ) );
+					expect<MyDocument>( myDocuments[ 1 ] ).toEqual( {
+						property1: "value 2",
+						property2: {
+							property3: "another value 2",
+							property4: 67890,
+						},
+					} );
 
 					done();
 				} ).catch( done.fail );
@@ -5825,41 +5869,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -5869,6 +5878,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "1-12345"
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -5886,6 +5898,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "2-12345"
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -5990,41 +6005,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -6034,6 +6014,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "1-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -6060,6 +6043,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "2-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -6170,69 +6156,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							}, {
-								"@id": "_:6"
-							}, {
-								"@id": "_:7"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
-							"@id": "_:6",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"3-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/sub-documents/sub-document1/"
-							} ]
-						}, {
-							"@id": "_:7",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"4-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/sub-documents/sub-document2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -6242,6 +6165,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "1-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -6253,6 +6179,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/sub-documents/sub-document1/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/",
+								"${ C.checksum }": [ {
+									"@value": "3-12345"
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ XSD.integer }"
@@ -6271,6 +6200,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "2-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -6282,6 +6214,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/sub-documents/sub-document2/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/",
+								"${ C.checksum }": [ {
+									"@value": "4-12345"
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
 									"@type": "${ XSD.integer }"
@@ -6405,7 +6340,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "$getMembers" ), () => {
+		describe( method( OBLIGATORY, "getMembers" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -6537,8 +6472,8 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -6566,6 +6501,10 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.extendObjectSchema( {
 						"@vocab": "https://example.com/ns#",
 						"schema": "https://schema.org/",
+						"property4": {
+							"@id": "https://schema.org/property-4",
+							"@type": "@id",
+						},
 					} )
 					.extendObjectSchema( "Resource", {
 						"property1": {
@@ -6594,6 +6533,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"query": __ => __.properties( {
 								"property2": __.inherit,
 								"property3": __.inherit,
+								"property4": __.inherit,
 							} ),
 						},
 					} )
@@ -6607,27 +6547,35 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?member.` +
 
 					" ?member a ?member__types;" +
+					"" + ` <${ C.document }> ?member___graph;` +
 					"" + " <https://example.com/ns#property-1> ?member__property1;" +
 					"" + " schema:property-2 ?member__property2." +
 
 					" ?member__property2 a ?member__property2__types;" +
+					"" + ` <${ C.document }> ?member__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?member__property2__property2;" +
-					"" + " schema:property-3 ?member__property2__property3 " +
+					"" + " schema:property-3 ?member__property2__property3;" +
+					"" + " schema:property-4 ?member__property2__property4 " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +
-					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + "" + " SELECT ?membershipResource ?hasMemberRelation {" +
+					"" + "" + "" + "" + " <https://example.com/>" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
+					"" + "" + "" + " }" +
 					"" + "" + " }" +
+					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
+
+					"" + "" + " ?member a <https://example.com/ns#Resource>." +
+
 					"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
 					"" + " }" +
 					"" + " ORDER BY ?member__property2" +
@@ -6635,29 +6583,35 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" OPTIONAL { ?member a ?member__types }" +
-					" ?member a <https://example.com/ns#Resource>." +
+					" GRAPH ?member___graph { ?member a ?member__types }" +
 
 					" OPTIONAL {" +
-					"" + " ?member <https://example.com/ns#property-1> ?member__property1." +
+					"" + " GRAPH ?member___graph { ?member <https://example.com/ns#property-1> ?member__property1 }" +
 					"" + " FILTER( datatype( ?member__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					" }" +
 
 					" OPTIONAL {" +
-					"" + " ?member schema:property-2 ?member__property2." +
-					"" + " FILTER( ! isLiteral( ?member__property2 ) )" +
-					"" + " OPTIONAL { ?member__property2 a ?member__property2__types }" +
+					"" + " GRAPH ?member___graph { ?member schema:property-2 ?member__property2 }" +
+
+					"" + " OPTIONAL { GRAPH ?member__property2___graph { ?member__property2 a ?member__property2__types } }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
+					"" + "" + " GRAPH ?member__property2___graph { ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2 }" +
 					"" + "" + " FILTER( datatype( ?member__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
 					"" + " }" +
 
 					"" + " OPTIONAL {" +
-					"" + "" + " ?member__property2 schema:property-3 ?member__property2__property3." +
+					"" + "" + " GRAPH ?member__property2___graph { ?member__property2 schema:property-3 ?member__property2__property3 }" +
 					"" + "" + " FILTER( datatype( ?member__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 					"" + " }" +
-					" } " +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " GRAPH ?member__property2___graph { ?member__property2 schema:property-4 ?member__property2__property4 }" +
+					"" + "" + " FILTER( ! isLiteral( ?member__property2__property4 ) )" +
+					"" + " }" +
+					" }" +
+
+					" " +
 					"}"
 				);
 			} );
@@ -6693,21 +6647,25 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?member.` +
 
-					" ?member___subject ?member___predicate ?member___object " +
+					" ?member___subject" +
+					"" + " ?member___predicate ?member___object;" +
+					"" + ` <${ C.document }> ?member ` +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +
-					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + "" + " SELECT ?membershipResource ?hasMemberRelation {" +
+					"" + "" + "" + "" + " <https://example.com/>" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
+					"" + "" + "" + " }" +
 					"" + "" + " }" +
+					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
 					"" + " }" +
 					" }" +
 
@@ -6752,21 +6710,25 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?member.` +
 
-					" ?member ?member___predicate ?member___object " +
+					" ?member" +
+					"" + " ?member___predicate ?member___object;" +
+					"" + ` <${ C.document }> ?member___graph ` +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +
-					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + "" + " SELECT ?membershipResource ?hasMemberRelation {" +
+					"" + "" + "" + "" + " <https://example.com/>" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
+					"" + "" + "" + " }" +
 					"" + "" + " }" +
+					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
 					"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
 					"" + " }" +
 					"" + " ORDER BY ?member__property2" +
@@ -6774,7 +6736,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + " OFFSET 5" +
 					" }" +
 
-					" ?member ?member___predicate ?member___object" +
+					" GRAPH ?member___graph { ?member ?member___predicate ?member___object }" +
 
 					" " +
 					"}"
@@ -6839,7 +6801,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const query:QueryToken = spy.calls.mostRecent().object;
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
-						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }` ) )
 							.addProperty( new PropertyToken( "a" )
 								.addObject( new IRIRefToken( C.VolatileResource ) )
 								.addObject( new IRIRefToken( C.QueryMetadata ) )
@@ -6852,6 +6814,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							.addProperty( new PropertyToken( "a" )
 								.addObject( variableHelper( "member__types" ) )
 							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.document ) )
+								.addObject( variableHelper( "member___graph" ) )
+							)
 							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-1" ) )
 								.addObject( variableHelper( "member__property1" ) )
 							)
@@ -6863,18 +6828,21 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							.addProperty( new PropertyToken( "a" )
 								.addObject( variableHelper( "member__property2__types" ) )
 							)
+							.addProperty( new PropertyToken( new IRIRefToken( C.document ) )
+								.addObject( variableHelper( "member__property2___graph" ) )
+							)
 							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "member__property2__property2" ) )
+								.addObject( new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) )
 							)
 							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-3" ) )
 								.addObject( variableHelper( "member__property2__property3" ) )
 							)
 						)
 
-						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
 						.addPattern( new SubSelectToken( "DISTINCT" )
 							.addVariable( variableHelper( "member" ) )
-							.addPattern( new GroupPatternToken()
+							.addPattern( new SubSelectToken()
+								.addVariable( variableHelper( "membershipResource" ), variableHelper( "hasMemberRelation" ) )
 								.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
 									.addProperty( new PropertyToken( new IRIRefToken( LDP.membershipResource ) )
 										.addObject( variableHelper( "membershipResource" ) )
@@ -6883,79 +6851,81 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 										.addObject( variableHelper( "hasMemberRelation" ) )
 									)
 								)
-								.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
-									.addProperty( new PropertyToken( variableHelper( "hasMemberRelation" ) )
-										.addObject( variableHelper( "member" ) )
-									)
+							)
+							.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
+								.addProperty( new PropertyToken( variableHelper( "hasMemberRelation" ) )
+									.addObject( variableHelper( "member" ) )
 								)
 							)
 							.addPattern( new SubjectToken( variableHelper( "member" ) )
+								.addProperty( new PropertyToken( "a" )
+									.addObject( new PrefixedNameToken( "ex:Resource" ) )
+								)
 								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
 									.addObject( variableHelper( "member__property2" ) )
+								)
+							)
+							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) )
 								)
 							)
 							.addModifier( new OrderToken( variableHelper( "member__property2" ) ) )
 							.addModifier( new LimitToken( 10 ) )
 							.addModifier( new OffsetToken( 5 ) )
 						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addProperty( new PropertyToken( "a" )
-										.addObject( variableHelper( "member__types" ) )
-									)
+						.addPattern( new GraphToken( variableHelper( "member___graph" ) )
+							.addPattern( new SubjectToken( variableHelper( "member" ) )
+								.addProperty( new PropertyToken( "a" )
+									.addObject( variableHelper( "member__types" ) )
 								)
-						)
-						.addPattern( new SubjectToken( variableHelper( "member" ) )
-							.addProperty( new PropertyToken( "a" )
-								.addObject( new PrefixedNameToken( "ex:Resource" ) )
 							)
 						)
 						.addPattern(
 							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-1" ) )
-										.addObject( variableHelper( "member__property1" ) )
+								.addPattern( new GraphToken( variableHelper( "member___graph" ) )
+									.addPattern( new SubjectToken( variableHelper( "member" ) )
+										.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-1" ) )
+											.addObject( variableHelper( "member__property1" ) )
+										)
 									)
 								)
 								.addPattern( new FilterToken( "datatype( ?member__property1 ) = xsd:string" ) )
 						)
-						.addPattern( new SubjectToken( variableHelper( "member" ) )
-							.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
-								.addObject( variableHelper( "member__property2" ) )
-							)
-						)
-						.addPattern( new FilterToken( "! isLiteral( ?member__property2 )" ) )
-						.addPattern( new OptionalToken()
-							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
-								.addProperty( new PropertyToken( "a" )
-									.addObject( variableHelper( "member__property2__types" ) )
+						.addPattern( new GraphToken( variableHelper( "member___graph" ) )
+							.addPattern( new SubjectToken( variableHelper( "member" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "member__property2" ) )
 								)
 							)
 						)
-						.addPattern( new ValuesToken()
-							.addVariables(
-								variableHelper( "member__property2__property2" )
-							)
-							.addValues(
-								new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) )
-							)
-						)
-						.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
-							.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "member__property2__property2" ) )
-							)
-						)
-						.addPattern( new FilterToken( "datatype( ?member__property2__property2 ) = xsd:integer" ) )
 						.addPattern( new OptionalToken()
+							.addPattern( new GraphToken( variableHelper( "member__property2___graph" ) )
+								.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+									.addProperty( new PropertyToken( "a" )
+										.addObject( variableHelper( "member__property2__types" ) )
+									)
+								)
+							)
+						)
+						.addPattern( new GraphToken( variableHelper( "member__property2___graph" ) )
 							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
-								.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-3" ) )
-									.addObject( variableHelper( "member__property2__property3" ) )
+								.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) )
+								)
+							)
+						)
+						.addPattern( new OptionalToken()
+							.addPattern( new GraphToken( variableHelper( "member__property2___graph" ) )
+								.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+									.addProperty( new PropertyToken( new PrefixedNameToken( "schema:property-3" ) )
+										.addObject( variableHelper( "member__property2__property3" ) )
+									)
 								)
 							)
 							.addPattern( new FilterToken( "datatype( ?member__property2__property3 ) = xsd:string" ) )
 						)
-						.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
+						.addPattern( new FilterToken( `${ new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) } = "12345"^^xsd:integer` ) )
 					)
 
 						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
@@ -6987,41 +6957,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -7031,6 +6966,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "1-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -7057,6 +6995,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "2-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -7158,41 +7099,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -7202,6 +7108,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "1-12345"
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -7231,6 +7140,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "2-12345"
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -7297,22 +7209,29 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 						expect( doc.$isQueried() ).toBe( false );
 					}
 
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": "\"1-12345\"",
-						"property1": "value 1",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 1",
-							"property4": 12345,
-						} ) as any,
+					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document>( {
+						$eTag: "\"1-12345\"",
+						$_resolved: true,
 					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"$eTag": "\"2-12345\"",
-						"property1": "value 2",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 2",
-							"property4": 67890,
-						} ) as any,
+					expect<MyDocument>( myDocuments[ 0 ] ).toEqual( {
+						property1: "value 1",
+						property2: {
+							property3: "another value 1",
+							property4: 12345,
+						},
+					} );
+
+					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document>( {
+						$eTag: "\"2-12345\"",
+						$_resolved: true,
 					} ) );
+					expect<MyDocument>( myDocuments[ 1 ] ).toEqual( {
+						property1: "value 2",
+						property2: {
+							property3: "another value 2",
+							property4: 67890,
+						},
+					} );
 					done();
 				} ).catch( done.fail );
 			} );
@@ -7339,41 +7258,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -7383,6 +7267,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "1-12345"
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -7400,6 +7287,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "2-12345"
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -7503,41 +7393,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -7547,6 +7402,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "1-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -7573,6 +7431,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "2-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -7682,69 +7543,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							}, {
-								"@id": "_:6"
-							}, {
-								"@id": "_:7"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
-							"@id": "_:6",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"3-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/sub-documents/sub-document1/"
-							} ]
-						}, {
-							"@id": "_:7",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"4-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/sub-documents/sub-document2/"
-							} ]
-						}, {
 							"@id": "https://example.com/resource/child1/",
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
@@ -7754,6 +7552,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "1-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -7765,6 +7566,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/sub-documents/sub-document1/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/",
+								"${ C.checksum }": [ {
+									"@value": "3-12345"
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ XSD.integer }"
@@ -7783,6 +7587,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 									"${ LDP.BasicContainer }",
 									"${ LDP.RDFSource }"
 								],
+								"${ C.checksum }": [ {
+									"@value": "2-12345"
+								} ],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
@@ -7794,6 +7601,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 							"@id": "https://example.com/sub-documents/sub-document2/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/",
+								"${ C.checksum }": [ {
+									"@value": "4-12345"
+								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
 									"@type": "${ XSD.integer }"
@@ -7916,7 +7726,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		} );
 
 
-		describe( method( OBLIGATORY, "$listChildren" ), () => {
+		describe( method( OBLIGATORY, "listChildren" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -8037,7 +7847,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -8089,22 +7899,22 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?child.` +
 
 					" ?child a ?child__types " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?child {" +
 					"" + "" + ` <https://example.com/> <${ LDP.contains }> ?child` +
 					"" + " }" +
 					" }" +
 
-					" OPTIONAL { ?child a ?child__types } " +
+					" OPTIONAL { ?child a ?child__types }" +
 
+					" " +
 					"}"
 				);
 			} );
@@ -8290,7 +8100,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "$listMembers" ), () => {
+		describe( method( OBLIGATORY, "listMembers" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -8411,7 +8221,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${ C.PreferResultsContext }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -8463,26 +8273,29 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 					"" + ` <${ C.target }> ?member.` +
 
 					" ?member a ?member__types " +
 
 					"} {" +
-					" BIND(BNODE() AS ?metadata)" +
-
 					" {" +
 					"" + " SELECT DISTINCT ?member {" +
 					"" + "" + " {" +
-					"" + "" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + "" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + "" + "" + " SELECT ?membershipResource ?hasMemberRelation {" +
+					"" + "" + "" + "" + " <https://example.com/>" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
+					"" + "" + "" + " }" +
 					"" + "" + " }" +
+					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
 					"" + " }" +
 					" }" +
 
-					" OPTIONAL { ?member a ?member__types } " +
+					" OPTIONAL { ?member a ?member__types }" +
 
+					" " +
 					"}"
 				);
 			} );

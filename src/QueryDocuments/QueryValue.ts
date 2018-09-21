@@ -4,16 +4,16 @@ import { isDate } from "../Utils";
 
 import { XSD } from "../Vocabularies/XSD";
 
-import { QueryDocumentContainer } from "./QueryDocumentContainer";
+import { QueryContainer } from "./QueryContainer";
 
 
 export class QueryValue {
-	private readonly _queryContainer:QueryDocumentContainer;
+	private readonly _queryContainer:QueryContainer;
 
 	private readonly _value:string | number | boolean | Date;
 	private _literal:LiteralToken;
 
-	constructor( queryContainer:QueryDocumentContainer, value:string | number | boolean | Date ) {
+	constructor( queryContainer:QueryContainer, value:string | number | boolean | Date ) {
 		this._value = value;
 		this._queryContainer = queryContainer;
 

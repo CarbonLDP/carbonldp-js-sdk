@@ -15,6 +15,9 @@ import { PointerLibrary } from "../Pointer/PointerLibrary";
 import { RDFDocument } from "../RDF/Document";
 import { RDFNode } from "../RDF/Node";
 
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
+
 import { QueryablePointer } from "./QueryablePointer";
 import { QueryableProperty } from "./QueryableProperty";
 import { QueryableRootProperty } from "./QueryableRootProperty";
@@ -111,17 +114,35 @@ export class QueryResultCompacter {
 			if( ! isCompacted ) {
 				const targetSchema:DigestedObjectSchema = this.queryContainer.context.registry.getSchemaFor( node );
 				this.jsonldConverter.update( resource, node, targetSchema, document );
+
+				// Remove possible metadata
+				resource.$_queryableMetadata = void 0;
 			}
 
 			// Decorate models
 			this.registry.decorate( resource );
 		} );
 
-		// Sync documents (and its fragments)
 		rdfDocuments
 			.map( RDFNode.getID )
-			.map( id => this.registry.getPointer( id, true ) )
-			.forEach( resource => resource.$_syncSnapshot() )
+			.map( id => compactionMap.get( id ) )
+			.filter( compactionNode => compactionNode )
+			.forEach( ( { resource, node } ) => {
+				// Sync documents (and its fragments)
+				resource.$_syncSnapshot();
+
+
+				// Extract checksum to eTag
+
+				const rawValues:RDFNode[ any ] | undefined = node[ C.checksum ];
+				if( ! rawValues || typeof rawValues === "string" ) return;
+
+				const [ eTag ] = RDFNode.getPropertyLiterals( rawValues, XSD.string );
+				if( ! eTag ) return;
+
+				resource.$eTag = `"${ eTag }"`;
+				resource.$_resolved = true;
+			} )
 		;
 
 		return targetDocuments.map( id => {
@@ -140,7 +161,14 @@ export class QueryResultCompacter {
 		const targetSchema:DigestedObjectSchema = queryProperty.getSchemaFor( node );
 		const pointerLibrary:PointerLibrary = __createPointerLibrary( compactionMap, document );
 
-		this.jsonldConverter.update( resource, node, targetSchema, pointerLibrary, isPartial );
+		// Avoid compaction of c:checksum
+		const targetNode:RDFNode = {
+			...node,
+			[ C.checksum ]: null,
+		};
+
+		this.jsonldConverter
+			.update( resource, targetNode, targetSchema, pointerLibrary, isPartial );
 
 		if( ! isPartial ) {
 			resource.$_queryableMetadata = void 0;
@@ -197,7 +225,6 @@ export class QueryResultCompacter {
 					} else {
 						// Add a floating metadata
 						subCompactionNode.resource.$_queryableMetadata = new QueryableProperty( {
-							containerType: subMetadataProperty.containerType,
 							propertyType: subMetadataProperty.propertyType,
 							optional: subMetadataProperty.optional,
 							definition: Object.assign( new DigestedObjectSchemaProperty(), subMetadataProperty.definition, {

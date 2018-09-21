@@ -23,10 +23,10 @@ export interface C {
 	PreferContainer:"https://carbonldp.com/ns/v1/platform#PreferContainer";
 	PreferContainmentResources:"https://carbonldp.com/ns/v1/platform#PreferContainmentResources";
 	PreferContainmentTriples:"https://carbonldp.com/ns/v1/platform#PreferContainmentTriples";
-	PreferDocumentETags:"https://carbonldp.com/ns/v1/platform#PreferDocumentETags";
+	PreferDocumentChecksums:"https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums";
 	PreferMembershipResources:"https://carbonldp.com/ns/v1/platform#PreferMembershipResources";
 	PreferMembershipTriples:"https://carbonldp.com/ns/v1/platform#PreferMembershipTriples";
-	PreferResultsContext:"https://carbonldp.com/ns/v1/platform#PreferResultsContext";
+	PreferResultsContexts:"https://carbonldp.com/ns/v1/platform#PreferResultsContexts";
 	PreferSelectedMembershipTriples:"https://carbonldp.com/ns/v1/platform#PreferSelectedMembershipTriples";
 	QueryMetadata:"https://carbonldp.com/ns/v1/platform#QueryMetadata";
 	RemoveMemberAction:"https://carbonldp.com/ns/v1/platform#RemoveMemberAction";
@@ -37,10 +37,12 @@ export interface C {
 	accessPoint:"https://carbonldp.com/ns/v1/platform#accessPoint";
 	bNodesMap:"https://carbonldp.com/ns/v1/platform#bNodesMap";
 	buildDate:"https://carbonldp.com/ns/v1/platform#buildDate";
+	checksum:"https://carbonldp.com/ns/v1/platform#checksum";
 	created:"https://carbonldp.com/ns/v1/platform#created";
 	createdDocument:"https://carbonldp.com/ns/v1/platform#createdDocument";
 	details:"https://carbonldp.com/ns/v1/platform#details";
 	defaultInteractionModel:"https://carbonldp.com/ns/v1/platform#defaultInteractionModel";
+	document:"https://carbonldp.com/ns/v1/platform#document";
 	documentMetadata:"https://carbonldp.com/ns/v1/platform#documentMetadata";
 	entry:"https://carbonldp.com/ns/v1/platform#entry";
 	entryKey:"https://carbonldp.com/ns/v1/platform#key";
@@ -50,7 +52,6 @@ export interface C {
 	errorDetails:"https://carbonldp.com/ns/v1/platform#errorDetails";
 	errorMessage:"https://carbonldp.com/ns/v1/platform#errorMessage";
 	errorParameters:"https://carbonldp.com/ns/v1/platform#errorParameters";
-	eTag:"https://carbonldp.com/ns/v1/platform#eTag";
 	httpStatusCode:"https://carbonldp.com/ns/v1/platform#httpStatusCode";
 	instance:"https://carbonldp.com/ns/v1/platform#instance";
 	mediaType:"https://carbonldp.com/ns/v1/platform#mediaType";
@@ -89,10 +90,10 @@ export const C:C = {
 	PreferContainer: "https://carbonldp.com/ns/v1/platform#PreferContainer",
 	PreferContainmentResources: "https://carbonldp.com/ns/v1/platform#PreferContainmentResources",
 	PreferContainmentTriples: "https://carbonldp.com/ns/v1/platform#PreferContainmentTriples",
-	PreferDocumentETags: "https://carbonldp.com/ns/v1/platform#PreferDocumentETags",
+	PreferDocumentChecksums: "https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums",
 	PreferMembershipResources: "https://carbonldp.com/ns/v1/platform#PreferMembershipResources",
 	PreferMembershipTriples: "https://carbonldp.com/ns/v1/platform#PreferMembershipTriples",
-	PreferResultsContext: "https://carbonldp.com/ns/v1/platform#PreferResultsContext",
+	PreferResultsContexts: "https://carbonldp.com/ns/v1/platform#PreferResultsContexts",
 	PreferSelectedMembershipTriples: "https://carbonldp.com/ns/v1/platform#PreferSelectedMembershipTriples",
 	QueryMetadata: "https://carbonldp.com/ns/v1/platform#QueryMetadata",
 	RemoveMemberAction: "https://carbonldp.com/ns/v1/platform#RemoveMemberAction",
@@ -103,10 +104,12 @@ export const C:C = {
 	accessPoint: "https://carbonldp.com/ns/v1/platform#accessPoint",
 	bNodesMap: "https://carbonldp.com/ns/v1/platform#bNodesMap",
 	buildDate: "https://carbonldp.com/ns/v1/platform#buildDate",
+	checksum: "https://carbonldp.com/ns/v1/platform#checksum",
 	created: "https://carbonldp.com/ns/v1/platform#created",
 	createdDocument: "https://carbonldp.com/ns/v1/platform#createdDocument",
 	details: "https://carbonldp.com/ns/v1/platform#details",
 	defaultInteractionModel: "https://carbonldp.com/ns/v1/platform#defaultInteractionModel",
+	document: "https://carbonldp.com/ns/v1/platform#document",
 	documentMetadata: "https://carbonldp.com/ns/v1/platform#documentMetadata",
 	entry: "https://carbonldp.com/ns/v1/platform#entry",
 	entryKey: "https://carbonldp.com/ns/v1/platform#key",
@@ -116,7 +119,6 @@ export const C:C = {
 	errorDetails: "https://carbonldp.com/ns/v1/platform#errorDetails",
 	errorMessage: "https://carbonldp.com/ns/v1/platform#errorMessage",
 	errorParameters: "https://carbonldp.com/ns/v1/platform#errorParameters",
-	eTag: "https://carbonldp.com/ns/v1/platform#eTag",
 	httpStatusCode: "https://carbonldp.com/ns/v1/platform#httpStatusCode",
 	instance: "https://carbonldp.com/ns/v1/platform#instance",
 	mediaType: "https://carbonldp.com/ns/v1/platform#mediaType",

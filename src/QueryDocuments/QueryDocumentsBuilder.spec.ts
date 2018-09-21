@@ -3,13 +3,13 @@ import { createMockContext } from "../../test/helpers/mocks";
 import { AbstractContext } from "../Context/AbstractContext";
 
 import { clazz, extendsClass, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
-import { QueryContainerType } from "./QueryContainerType";
 
+import { QueryContainerProperty } from "./QueryContainerProperty";
+import { QueryContainerPropertyType } from "./QueryContainerPropertyType";
 import { SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
-import { QueryDocumentContainer } from "./QueryDocumentContainer";
+import { QueryContainer } from "./QueryContainer";
 import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
 import { QueryDocumentsOrder } from "./QueryDocumentsOrder";
-import { QueryRootProperty } from "./QueryRootProperty";
 
 
 describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void => {
@@ -25,8 +25,8 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 		} );
 
 		let context:AbstractContext<any, any>;
-		let queryContainer:QueryDocumentContainer;
-		let baseProperty:QueryRootProperty;
+		let queryContainer:QueryContainer;
+		let baseProperty:QueryContainerProperty;
 		beforeEach( ():void => {
 			context = createMockContext( {
 				uri: "http://example.com",
@@ -36,8 +36,8 @@ describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void =>
 				"ex": "http://example.com/ns#",
 			} );
 
-			queryContainer = new QueryDocumentContainer( context, { uri: "root/", containerType: QueryContainerType.MEMBERS } );
-			baseProperty = queryContainer._queryProperty;
+			queryContainer = new QueryContainer( context, { uri: "root/", containerPropertyType: QueryContainerPropertyType.CHILD } );
+			baseProperty = queryContainer._queryProperty as QueryContainerProperty;
 		} );
 
 		describe( "QueryDocumentsBuilder.constructor", ():void => {
