@@ -2,10 +2,12 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
 
-import { DocumentCreatedEvent } from "./DocumentCreatedEvent";
+import { DocumentCreatedEventDetails } from "./DocumentCreatedEventDetails";
+import { EventMessage } from "./EventMessage";
 
 
-export interface ChildCreatedEvent extends DocumentCreatedEvent {
+export interface ChildCreatedEvent extends EventMessage {
+	details:DocumentCreatedEventDetails;
 }
 
 
@@ -15,7 +17,13 @@ export interface ChildCreatedEventFactory {
 }
 
 const TYPE:string = C.ChildCreatedEvent;
-const SCHEMA:ObjectSchema = DocumentCreatedEvent.SCHEMA;
+const SCHEMA:ObjectSchema = {
+	...EventMessage.SCHEMA,
+	"details": {
+		"@id": C.details,
+		"@type": "@id",
+	},
+};
 
 export const ChildCreatedEvent:ChildCreatedEventFactory = {
 	TYPE,
