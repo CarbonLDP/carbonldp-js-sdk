@@ -1,16 +1,14 @@
 import { INSTANCE, module, reexports } from "../test/JasmineExtender";
-
 import * as QueryDocument from "./index";
 
-import { QueryableMetadata } from "./QueryableMetadata";
-import { QueryContext } from "./QueryContext";
-import { QueryContextBuilder } from "./QueryContextBuilder";
-import { QueryContextPartial } from "./QueryContextPartial";
+import { QueryContainer } from "./QueryContainer";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import { QueryDocumentsBuilder, QueryDocumentsBuilderOrderData } from "./QueryDocumentsBuilder";
-import { QueryMetadata, QueryMetadataFactory } from "./QueryMetadata";
+import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
+import { QueryDocumentsOrder } from "./QueryDocumentsOrder";
+import { QueryMetadata } from "./QueryMetadata";
 import { QueryObject } from "./QueryObject";
-import { QueryProperty, QueryPropertyType } from "./QueryProperty";
+import { QueryProperty } from "./QueryProperty";
+import { QueryPropertyType } from "./QueryPropertyType";
 import { QuerySchema } from "./QuerySchema";
 import { QuerySchemaProperty } from "./QuerySchemaProperty";
 import { QueryValue } from "./QueryValue";
@@ -24,40 +22,23 @@ describe( module( "carbonldp/QueryDocuments" ), ():void => {
 		expect( QueryDocument ).toEqual( jasmine.any( Object ) );
 	} );
 
+
 	it( reexports(
 		INSTANCE,
-		"QueryableMetadata",
-		"CarbonLDP.QueryDocuments.QueryableMetadata"
+		"QueryContainer",
+		"CarbonLDP.QueryDocuments.QueryContainer"
 	), ():void => {
-		expect( QueryDocument.QueryableMetadata ).toBeDefined();
-		expect( QueryDocument.QueryableMetadata ).toBe( QueryableMetadata );
+		expect( QueryDocument.QueryContainer ).toBeDefined();
+		expect( QueryDocument.QueryContainer ).toBe( QueryContainer );
 	} );
 
 	it( reexports(
 		INSTANCE,
-		"QueryContext",
-		"CarbonLDP.QueryDocuments.QueryContext"
+		"QueryDocumentContainer",
+		"CarbonLDP.QueryDocuments.QueryContainer"
 	), ():void => {
-		expect( QueryDocument.QueryContext ).toBeDefined();
-		expect( QueryDocument.QueryContext ).toBe( QueryContext );
-	} );
-
-	it( reexports(
-		INSTANCE,
-		"QueryContextBuilder",
-		"CarbonLDP.QueryDocuments.QueryContextBuilder"
-	), ():void => {
-		expect( QueryDocument.QueryContextBuilder ).toBeDefined();
-		expect( QueryDocument.QueryContextBuilder ).toBe( QueryContextBuilder );
-	} );
-
-	it( reexports(
-		INSTANCE,
-		"QueryContextPartial",
-		"CarbonLDP.QueryDocuments.QueryContextPartial"
-	), ():void => {
-		expect( QueryDocument.QueryContextPartial ).toBeDefined();
-		expect( QueryDocument.QueryContextPartial ).toBe( QueryContextPartial );
+		expect( QueryDocument.QueryContainer ).toBeDefined();
+		expect( QueryDocument.QueryContainer ).toBe( QueryContainer );
 	} );
 
 	it( reexports(
@@ -71,10 +52,10 @@ describe( module( "carbonldp/QueryDocuments" ), ():void => {
 
 	it( reexports(
 		INSTANCE,
-		"QueryDocumentsBuilderOrderData",
-		"CarbonLDP.QueryDocuments.QueryDocumentsBuilderOrderData"
+		"QueryDocumentsOrder",
+		"CarbonLDP.QueryDocuments.QueryDocumentsOrder"
 	), ():void => {
-		const target:QueryDocument.QueryDocumentsBuilderOrderData = {} as QueryDocumentsBuilderOrderData;
+		const target:QueryDocument.QueryDocumentsOrder = {} as QueryDocumentsOrder;
 		expect( target ).toBeDefined();
 	} );
 
@@ -94,15 +75,6 @@ describe( module( "carbonldp/QueryDocuments" ), ():void => {
 	), ():void => {
 		expect( QueryDocument.QueryMetadata ).toBeDefined();
 		expect( QueryDocument.QueryMetadata ).toBe( QueryMetadata );
-	} );
-
-	it( reexports(
-		INSTANCE,
-		"QueryMetadataFactory",
-		"CarbonLDP.QueryDocuments.QueryMetadataFactory"
-	), ():void => {
-		const target:QueryDocument.QueryMetadataFactory = {} as QueryMetadataFactory;
-		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(

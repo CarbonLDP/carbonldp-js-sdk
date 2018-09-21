@@ -1,10 +1,12 @@
+import { Path, PathBuilder } from "sparqler/patterns";
+
 import { hasProperty, interfaze, module, OPTIONAL } from "../test/JasmineExtender";
 
-import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
+import { SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
 import { QuerySchemaProperty } from "./QuerySchemaProperty";
 
 
-describe( module( "carbonldp/QueryDocuments/QueryPropertySchema" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QuerySchemaProperty" ), ():void => {
 
 	describe( interfaze( "CarbonLDP.QueryDocuments.QuerySchemaProperty", "Interface that describes an property to retrieve in a partial query creation." ), ():void => {
 
@@ -61,10 +63,20 @@ describe( module( "carbonldp/QueryDocuments/QueryPropertySchema" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"query",
-			"( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder",
+			"( queryBuilder:CarbonLDP.QueryDocuments.SubQueryBuilder ) => CarbonLDP.QueryDocuments.SubQueryBuilder",
 			"Function to build a query to specify sub-properties or when retrieving multiple resources to filter the resources."
 		), ():void => {
-			const target:QuerySchemaProperty[ "query" ] = ( queryBuilder:QueryDocumentBuilder ) => queryBuilder;
+			const target:QuerySchemaProperty[ "query" ] = ( queryBuilder:SubQueryDocumentsBuilder ) => queryBuilder;
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"path",
+			"( path:sparqler/patterns/PathBuilder ) => sparqler/patterns/Path",
+			"Function to build a path to specify an property that may point to data from another document."
+		), ():void => {
+			const target:QuerySchemaProperty[ "path" ] = ( pathBuilder:PathBuilder ) => pathBuilder.subPath() as Path;
 			expect( target ).toBeDefined();
 		} );
 

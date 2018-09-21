@@ -117,10 +117,15 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 			this._typeObjectSchemaMap.delete( type );
 		}
 	}
+                                      
+	_getTypeObjectSchemas( excepts:string[] = [] ):DigestedObjectSchema[] {
+		const exceptsSet:Set<string> = new Set( excepts );
 
-
-	_getTypeObjectSchemas():DigestedObjectSchema[] {
-		const types:string[] = this.__getObjectSchemasTypes();
+		const types:string[] = this
+			.__getObjectSchemasTypes()
+			.filter( type => ! exceptsSet.has( type ) )
+		;
+                                      
 		return types.map( this.getObjectSchema, this );
 	}
 

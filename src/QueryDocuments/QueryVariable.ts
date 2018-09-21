@@ -3,7 +3,7 @@ import { VariableToken } from "sparqler/tokens";
 
 export class QueryVariable extends VariableToken {
 	readonly name:string;
-	private readonly index:number;
+	readonly index:number;
 
 	constructor( name:string, index:number ) {
 		super( name

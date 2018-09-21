@@ -30,15 +30,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"AccessPointCreated",
-			"https://carbonldp.com/ns/v1/platform#AccessPointCreated"
-		), ():void => {
-			const target:C[ "AccessPointCreated" ] = "https://carbonldp.com/ns/v1/platform#AccessPointCreated";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"AddMemberAction",
 			"https://carbonldp.com/ns/v1/platform#AddMemberAction"
 		), ():void => {
@@ -48,10 +39,10 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"ChildCreated",
+			"ChildCreatedEvent",
 			"https://carbonldp.com/ns/v1/platform#ChildCreatedEvent"
 		), ():void => {
-			const target:C[ "ChildCreated" ] = "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent";
+			const target:C[ "ChildCreatedEvent" ] = "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent";
 			expect( target ).toBeDefined();
 		} );
 
@@ -66,19 +57,19 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"DocumentCreatedDetails",
+			"DocumentCreatedEventDetails",
 			"https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails"
 		), ():void => {
-			const target:C[ "DocumentCreatedDetails" ] = "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails";
+			const target:C[ "DocumentCreatedEventDetails" ] = "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails";
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"DocumentDeleted",
-			"https://carbonldp.com/ns/v1/platform#DocumentDeleted"
+			"DocumentDeletedEvent",
+			"https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent"
 		), ():void => {
-			const target:C[ "DocumentDeleted" ] = "https://carbonldp.com/ns/v1/platform#DocumentDeleted";
+			const target:C[ "DocumentDeletedEvent" ] = "https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent";
 			expect( target ).toBeDefined();
 		} );
 
@@ -93,10 +84,10 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"DocumentModified",
-			"https://carbonldp.com/ns/v1/platform#DocumentModified"
+			"DocumentModifiedEvent",
+			"https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent"
 		), ():void => {
-			const target:C[ "DocumentModified" ] = "https://carbonldp.com/ns/v1/platform#DocumentModified";
+			const target:C[ "DocumentModifiedEvent" ] = "https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent";
 			expect( target ).toBeDefined();
 		} );
 
@@ -138,37 +129,37 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"MemberAdded",
+			"MemberAddedEvent",
 			"https://carbonldp.com/ns/v1/platform#MemberAddedEvent"
 		), ():void => {
-			const target:C[ "MemberAdded" ] = "https://carbonldp.com/ns/v1/platform#MemberAddedEvent";
+			const target:C[ "MemberAddedEvent" ] = "https://carbonldp.com/ns/v1/platform#MemberAddedEvent";
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"MemberAddedDetails",
+			"MemberAddedEventDetails",
 			"https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails"
 		), ():void => {
-			const target:C[ "MemberAddedDetails" ] = "https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails";
+			const target:C[ "MemberAddedEventDetails" ] = "https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails";
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"MemberRemoved",
+			"MemberRemovedEvent",
 			"https://carbonldp.com/ns/v1/platform#MemberRemovedEvent"
 		), ():void => {
-			const target:C[ "MemberRemoved" ] = "https://carbonldp.com/ns/v1/platform#MemberRemovedEvent";
+			const target:C[ "MemberRemovedEvent" ] = "https://carbonldp.com/ns/v1/platform#MemberRemovedEvent";
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"MemberRemovedDetails",
+			"MemberRemovedEventDetails",
 			"https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails"
 		), ():void => {
-			const target:C[ "MemberRemovedDetails" ] = "https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails";
+			const target:C[ "MemberRemovedEventDetails" ] = "https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails";
 			expect( target ).toBeDefined();
 		} );
 
@@ -228,10 +219,10 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"PreferDocumentETags",
-			"https://carbonldp.com/ns/v1/platform#PreferDocumentETags"
+			"PreferDocumentChecksums",
+			"https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums"
 		), ():void => {
-			const target:C[ "PreferDocumentETags" ] = "https://carbonldp.com/ns/v1/platform#PreferDocumentETags";
+			const target:C[ "PreferDocumentChecksums" ] = "https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums";
 			expect( target ).toBeDefined();
 		} );
 
@@ -255,10 +246,10 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"PreferResultsContext",
-			"https://carbonldp.com/ns/v1/platform#PreferResultsContext"
+			"PreferResultsContexts",
+			"https://carbonldp.com/ns/v1/platform#PreferResultsContexts"
 		), ():void => {
-			const target:C[ "PreferResultsContext" ] = "https://carbonldp.com/ns/v1/platform#PreferResultsContext";
+			const target:C[ "PreferResultsContexts" ] = "https://carbonldp.com/ns/v1/platform#PreferResultsContexts";
 			expect( target ).toBeDefined();
 		} );
 
@@ -337,6 +328,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"checksum",
+			"https://carbonldp.com/ns/v1/platform#checksum"
+		), ():void => {
+			const target:C[ "checksum" ] = "https://carbonldp.com/ns/v1/platform#checksum";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"created",
 			"https://carbonldp.com/ns/v1/platform#created"
 		), ():void => {
@@ -368,6 +368,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			"https://carbonldp.com/ns/v1/platform#defaultInteractionModel"
 		), ():void => {
 			const target:C[ "defaultInteractionModel" ] = "https://carbonldp.com/ns/v1/platform#defaultInteractionModel";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"document",
+			"https://carbonldp.com/ns/v1/platform#document"
+		), ():void => {
+			const target:C[ "document" ] = "https://carbonldp.com/ns/v1/platform#document";
 			expect( target ).toBeDefined();
 		} );
 
@@ -510,15 +519,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"eTag",
-			"https://carbonldp.com/ns/v1/platform#eTag"
-		), ():void => {
-			const target:C[ "eTag" ] = "https://carbonldp.com/ns/v1/platform#eTag";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"requestID",
 			"https://carbonldp.com/ns/v1/platform#requestID"
 		), ():void => {
@@ -588,19 +588,14 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.AccessPoint ).toBe( "https://carbonldp.com/ns/v1/platform#AccessPoint" );
 		} );
 
-		it( "C.AccessPointCreated", ():void => {
-			expect( C.AccessPointCreated ).toEqual( jasmine.any( String ) );
-			expect( C.AccessPointCreated ).toBe( "https://carbonldp.com/ns/v1/platform#AccessPointCreated" );
-		} );
-
 		it( "C.AddMemberAction", ():void => {
 			expect( C.AddMemberAction ).toEqual( jasmine.any( String ) );
 			expect( C.AddMemberAction ).toBe( "https://carbonldp.com/ns/v1/platform#AddMemberAction" );
 		} );
 
-		it( "C.ChildCreated", ():void => {
-			expect( C.ChildCreated ).toEqual( jasmine.any( String ) );
-			expect( C.ChildCreated ).toBe( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" );
+		it( "C.ChildCreatedEvent", ():void => {
+			expect( C.ChildCreatedEvent ).toEqual( jasmine.any( String ) );
+			expect( C.ChildCreatedEvent ).toBe( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" );
 		} );
 
 		it( "C.Document", ():void => {
@@ -608,14 +603,14 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.Document ).toBe( "https://carbonldp.com/ns/v1/platform#Document" );
 		} );
 
-		it( "C.DocumentCreatedDetails", ():void => {
-			expect( C.DocumentCreatedDetails ).toEqual( jasmine.any( String ) );
-			expect( C.DocumentCreatedDetails ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails" );
+		it( "C.DocumentCreatedEventDetails", ():void => {
+			expect( C.DocumentCreatedEventDetails ).toEqual( jasmine.any( String ) );
+			expect( C.DocumentCreatedEventDetails ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails" );
 		} );
 
-		it( "C.DocumentDeleted", ():void => {
-			expect( C.DocumentDeleted ).toEqual( jasmine.any( String ) );
-			expect( C.DocumentDeleted ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentDeleted" );
+		it( "C.DocumentDeletedEvent", ():void => {
+			expect( C.DocumentDeletedEvent ).toEqual( jasmine.any( String ) );
+			expect( C.DocumentDeletedEvent ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent" );
 		} );
 
 		it( "C.DocumentMetadata", ():void => {
@@ -623,9 +618,9 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.DocumentMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentMetadata" );
 		} );
 
-		it( "C.DocumentModified", ():void => {
-			expect( C.DocumentModified ).toEqual( jasmine.any( String ) );
-			expect( C.DocumentModified ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentModified" );
+		it( "C.DocumentModifiedEvent", ():void => {
+			expect( C.DocumentModifiedEvent ).toEqual( jasmine.any( String ) );
+			expect( C.DocumentModifiedEvent ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent" );
 		} );
 
 		it( "C.ErrorResponse", ():void => {
@@ -648,24 +643,24 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.Map ).toBe( "https://carbonldp.com/ns/v1/platform#Map" );
 		} );
 
-		it( "C.MemberAdded", ():void => {
-			expect( C.MemberAdded ).toEqual( jasmine.any( String ) );
-			expect( C.MemberAdded ).toBe( "https://carbonldp.com/ns/v1/platform#MemberAddedEvent" );
+		it( "C.MemberAddedEvent", ():void => {
+			expect( C.MemberAddedEvent ).toEqual( jasmine.any( String ) );
+			expect( C.MemberAddedEvent ).toBe( "https://carbonldp.com/ns/v1/platform#MemberAddedEvent" );
 		} );
 
-		it( "C.MemberAddedDetails", ():void => {
-			expect( C.MemberAddedDetails ).toEqual( jasmine.any( String ) );
-			expect( C.MemberAddedDetails ).toBe( "https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails" );
+		it( "C.MemberAddedEventDetails", ():void => {
+			expect( C.MemberAddedEventDetails ).toEqual( jasmine.any( String ) );
+			expect( C.MemberAddedEventDetails ).toBe( "https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails" );
 		} );
 
-		it( "C.MemberRemoved", ():void => {
-			expect( C.MemberRemoved ).toEqual( jasmine.any( String ) );
-			expect( C.MemberRemoved ).toBe( "https://carbonldp.com/ns/v1/platform#MemberRemovedEvent" );
+		it( "C.MemberRemovedEvent", ():void => {
+			expect( C.MemberRemovedEvent ).toEqual( jasmine.any( String ) );
+			expect( C.MemberRemovedEvent ).toBe( "https://carbonldp.com/ns/v1/platform#MemberRemovedEvent" );
 		} );
 
-		it( "C.MemberRemovedDetails", ():void => {
-			expect( C.MemberRemovedDetails ).toEqual( jasmine.any( String ) );
-			expect( C.MemberRemovedDetails ).toBe( "https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails" );
+		it( "C.MemberRemovedEventDetails", ():void => {
+			expect( C.MemberRemovedEventDetails ).toEqual( jasmine.any( String ) );
+			expect( C.MemberRemovedEventDetails ).toBe( "https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails" );
 		} );
 
 		it( "C.NonReadableMembershipResourceTriples", ():void => {
@@ -698,9 +693,9 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.PreferContainmentTriples ).toBe( "https://carbonldp.com/ns/v1/platform#PreferContainmentTriples" );
 		} );
 
-		it( "C.PreferDocumentETags", ():void => {
-			expect( C.PreferDocumentETags ).toEqual( jasmine.any( String ) );
-			expect( C.PreferDocumentETags ).toBe( "https://carbonldp.com/ns/v1/platform#PreferDocumentETags" );
+		it( "C.PreferDocumentChecksums", ():void => {
+			expect( C.PreferDocumentChecksums ).toEqual( jasmine.any( String ) );
+			expect( C.PreferDocumentChecksums ).toBe( "https://carbonldp.com/ns/v1/platform#PreferDocumentChecksums" );
 		} );
 
 		it( "C.PreferMembershipResources", ():void => {
@@ -713,9 +708,9 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.PreferMembershipTriples ).toBe( "https://carbonldp.com/ns/v1/platform#PreferMembershipTriples" );
 		} );
 
-		it( "C.PreferResultsContext", ():void => {
-			expect( C.PreferResultsContext ).toEqual( jasmine.any( String ) );
-			expect( C.PreferResultsContext ).toBe( "https://carbonldp.com/ns/v1/platform#PreferResultsContext" );
+		it( "C.PreferResultsContexts", ():void => {
+			expect( C.PreferResultsContexts ).toEqual( jasmine.any( String ) );
+			expect( C.PreferResultsContexts ).toBe( "https://carbonldp.com/ns/v1/platform#PreferResultsContexts" );
 		} );
 
 		it( "C.QueryMetadata", ():void => {
@@ -759,6 +754,11 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			expect( C.buildDate ).toBe( "https://carbonldp.com/ns/v1/platform#buildDate" );
 		} );
 
+		it( "C.checksum", ():void => {
+			expect( C.checksum ).toEqual( jasmine.any( String ) );
+			expect( C.checksum ).toBe( "https://carbonldp.com/ns/v1/platform#checksum" );
+		} );
+
 		it( "C.created", ():void => {
 			expect( C.created ).toEqual( jasmine.any( String ) );
 			expect( C.created ).toBe( "https://carbonldp.com/ns/v1/platform#created" );
@@ -777,6 +777,11 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		it( "C.defaultInteractionModel", ():void => {
 			expect( C.defaultInteractionModel ).toEqual( jasmine.any( String ) );
 			expect( C.defaultInteractionModel ).toBe( "https://carbonldp.com/ns/v1/platform#defaultInteractionModel" );
+		} );
+
+		it( "C.document", ():void => {
+			expect( C.document ).toEqual( jasmine.any( String ) );
+			expect( C.document ).toBe( "https://carbonldp.com/ns/v1/platform#document" );
 		} );
 
 		it( "C.documentMetadata", ():void => {
@@ -854,11 +859,6 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		it( "C.relatedDocument", ():void => {
 			expect( C.relatedDocument ).toEqual( jasmine.any( String ) );
 			expect( C.relatedDocument ).toBe( "https://carbonldp.com/ns/v1/platform#relatedDocument" );
-		} );
-
-		it( "C.eTag", ():void => {
-			expect( C.eTag ).toEqual( jasmine.any( String ) );
-			expect( C.eTag ).toBe( "https://carbonldp.com/ns/v1/platform#eTag" );
 		} );
 
 		it( "C.requestID", ():void => {

@@ -12,14 +12,14 @@ import { RemoveMemberAction } from "../LDP/RemoveMemberAction";
 import { ResponseMetadata } from "../LDP/ResponseMetadata";
 import { ValidationError } from "../LDP/ValidationError";
 
-import { ChildCreated } from "../Messaging/ChildCreated";
-import { DocumentCreatedDetails } from "../Messaging/DocumentCreatedDetails";
-import { DocumentDeleted } from "../Messaging/DocumentDeleted";
-import { DocumentModified } from "../Messaging/DocumentModified";
-import { MemberAdded } from "../Messaging/MemberAdded";
-import { MemberAddedDetails } from "../Messaging/MemberAddedDetails";
-import { MemberRemoved } from "../Messaging/MemberRemoved";
-import { MemberRemovedDetails } from "../Messaging/MemberRemovedDetails";
+import { ChildCreatedEvent } from "../Messaging/ChildCreatedEvent";
+import { DocumentCreatedEventDetails } from "../Messaging/DocumentCreatedEventDetails";
+import { DocumentDeletedEvent } from "../Messaging/DocumentDeletedEvent";
+import { DocumentModifiedEvent } from "../Messaging/DocumentModifiedEvent";
+import { MemberAddedEvent } from "../Messaging/MemberAddedEvent";
+import { MemberAddedEventDetails } from "../Messaging/MemberAddedEventDetails";
+import { MemberRemovedEvent } from "../Messaging/MemberRemovedEvent";
+import { MemberRemovedEventDetails } from "../Messaging/MemberRemovedEventDetails";
 
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 

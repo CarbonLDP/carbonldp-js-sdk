@@ -11,7 +11,11 @@ export class ObjectSchemaUtils {
 		const resolvedType:string = schema.resolveURI( type, { vocab: true, base: true } );
 
 		if( resolvedURI !== uri || resolvedType !== type ) {
-			definition = inSame ? definition : { ...definition };
+			if( ! inSame ) {
+				definition = Object
+					.assign( new DigestedObjectSchemaProperty(), definition );
+			}
+
 			definition.uri = resolvedURI;
 			definition.literalType = resolvedType;
 		}

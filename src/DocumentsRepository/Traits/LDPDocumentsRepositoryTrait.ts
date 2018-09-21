@@ -5,6 +5,8 @@ import { TransientDocument } from "../../Document/TransientDocument";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 
+import { Fragment } from "../../Fragment/Fragment";
+
 import { FreeResources } from "../../FreeResources/FreeResources";
 
 import { HTTPError } from "../../HTTP/Errors/HTTPError";
@@ -14,7 +16,6 @@ import { Header } from "../../HTTP/Header";
 import { GETOptions, RequestOptions, RequestService, RequestUtils } from "../../HTTP/Request";
 import { Response } from "../../HTTP/Response";
 
-import { JSONLDCompacter } from "../../JSONLD/JSONLDCompacter";
 import { JSONLDParser } from "../../JSONLD/JSONLDParser";
 
 import { AddMemberAction } from "../../LDP/AddMemberAction";
@@ -26,6 +27,8 @@ import { DeltaCreator } from "../../LDPatch/DeltaCreator";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
+
+import { DigestedObjectSchema } from "../../ObjectSchema/DigestedObjectSchema";
 
 import { Pointer } from "../../Pointer/Pointer";
 
@@ -472,25 +475,51 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 		},
 
 
-		_parseResponseData<T extends object>( this:HTTPRepositoryTrait<Document>, response:Response, id:string ):Promise<T & Document> {
+		_parseResponseData<T extends object>( this:LDPDocumentsRepositoryTrait, response:Response, id:string ):Promise<T & Document> {
 			return __JSONLD_PARSER
 				.parse( response.data )
 				.then( ( rdfNodes:object[] ) => {
 					const rdfDocuments:RDFDocument[] = RDFDocument
 						.getDocuments( rdfNodes );
 
-					const documents:(T & Document)[] = new JSONLDCompacter( this.context.registry )
-						.compactDocuments( rdfDocuments );
-
 					id = __getTargetID( id, response );
-					const target:T & Document | undefined = documents.find( doc => doc.$id === id );
+					const rdfDocument:RDFDocument | undefined = rdfDocuments.find( doc => doc[ "@id" ] === id );
 
-					if( ! target ) throw new BadResponseError( `No document "${ id }" was returned.`, response );
+					if( ! rdfDocument ) throw new BadResponseError( `No document "${ id }" was returned.`, response );
+					const document:T & Document = this.context.registry.register( id ) as T & Document;
 
-					target.$eTag = response.getETag();
-					target.$_resolved = true;
+					const previousFragments:Set<string> = new Set();
+					document
+						.$getPointers( true )
+						.forEach( pointer => previousFragments.add( pointer.$id ) );
 
-					return target;
+					// Update all elements data
+					const elements:(Document | Fragment)[] = rdfDocument[ "@graph" ].map( node => {
+						const target:Document | Fragment = document.$getPointer( node[ "@id" ] ) as Document | Fragment;
+
+						const schema:DigestedObjectSchema = this.context.registry.getSchemaFor( node );
+						this.context.jsonldConverter.update( target, node, schema, document );
+
+						// Remove updated fragments
+						if( "$document" in target ) previousFragments.delete( target.$id );
+
+						return target;
+					} );
+
+					// Delete not updated fragments
+					previousFragments
+						.forEach( pointer => document.$removePointer( pointer ) );
+
+					// Finish elements after all compactions
+					elements.forEach( element => {
+						element.$_syncSnapshot();
+						this.context.registry.decorate( element );
+					} );
+
+					document.$eTag = response.getETag();
+					document.$_resolved = true;
+
+					return document;
 				} )
 				;
 		},

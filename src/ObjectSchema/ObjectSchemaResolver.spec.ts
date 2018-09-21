@@ -1,13 +1,9 @@
-import { createMockContext, createMockQueryableMetadata } from "../../test/helpers/mocks/core";
+import { createMockContext } from "../../test/helpers/mocks";
 
 import { Context } from "../Context/Context";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelPrototype } from "../Model/ModelPrototype";
-
-import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
-
-import { BaseResource } from "../Resource/BaseResource";
 
 import {
 	extendsClass,
@@ -270,33 +266,6 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 					"@base": "https://example.com/",
 					"inGeneral": {},
 					"inType": {},
-				} ) );
-			} );
-
-			it( "should return combined with partial schema when queryable resource", () => {
-				const $context:Context = createMockContext();
-				const resolver:ObjectSchemaResolver = createMock( { context: $context } );
-
-				$context
-					.extendObjectSchema( { "inGeneral": {} } )
-					.extendObjectSchema( "Type-1", { "inType": {} } )
-				;
-
-
-				const resource:object = QueryablePointer.decorate<Partial<QueryablePointer> & BaseResource>( {
-					$repository: $context.repository,
-					types: [ "Type-1" ],
-					$_queryableMetadata: createMockQueryableMetadata( {
-						"inQueryableMetadata": {},
-					} ),
-				} );
-
-				const returned:DigestedObjectSchema = resolver.getSchemaFor( resource );
-				expect( returned ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"@base": "https://example.com/",
-					"inGeneral": {},
-					"inType": {},
-					"inQueryableMetadata": {},
 				} ) );
 			} );
 

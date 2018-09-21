@@ -4,21 +4,17 @@ import { createMockContext } from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
 
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
 import { clazz, constructor, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
 import { XSD } from "../Vocabularies/XSD";
 
-import { QueryContext } from "./QueryContext";
-import * as Module from "./QueryValue";
+import { QueryContainer } from "./QueryContainer";
 import { QueryValue } from "./QueryValue";
 
 
 describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
-
-	it( "should exists", ():void => {
-		expect( Module ).toBeDefined();
-		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
 
 	describe( clazz( "CarbonLDP.QueryDocuments.QueryValue", "Class that represents a property in the query" ), ():void => {
 
@@ -28,10 +24,10 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 		} );
 
 		let context:AbstractContext<any, any>;
-		let queryContext:QueryContext;
+		let queryContainer:QueryContainer;
 		beforeEach( ():void => {
 			context = createMockContext();
-			queryContext = new QueryContext( context );
+			queryContainer = new QueryContainer( context, { uri: "root" } );
 		} );
 
 		describe( constructor(), ():void => {
@@ -39,36 +35,36 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 			it( hasSignature(
 				"Creates a value wrapper for the specified value.",
 				[
-					{ name: "context", type: "CarbonLDP.QueryDocuments.QueryContext", description: "The context of the query where the value is been used." },
+					{ name: "queryContainer", type: "CarbonLDP.QueryDocuments.QueryContainer" },
 					{ name: "value", type: "string | number | boolean | Date", description: "The value to be converted and wrapped fot the ready to use in the query statements." },
 				]
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const queryValue:QueryValue = new QueryValue( queryContext, "value" );
+				const queryValue:QueryValue = new QueryValue( queryContainer, "value" );
 				expect( queryValue ).toEqual( jasmine.any( QueryValue ) );
 			} );
 
+
 			it( "should create a literal token when string", ():void => {
-				const queryValue:QueryValue = new QueryValue( queryContext, "value" );
+				const queryValue:QueryValue = new QueryValue( queryContainer, "value" );
 				expect( queryValue[ "_literal" ] ).toEqual( jasmine.any( LiteralToken ) );
 			} );
 
 			it( "should create a literal token when number", ():void => {
-				const queryValue:QueryValue = new QueryValue( queryContext, 1 );
+				const queryValue:QueryValue = new QueryValue( queryContainer, 1 );
 				expect( queryValue[ "_literal" ] ).toEqual( jasmine.any( LiteralToken ) );
 			} );
 
 			it( "should create a literal token when boolean", ():void => {
-				const queryValue:QueryValue = new QueryValue( queryContext, true );
+				const queryValue:QueryValue = new QueryValue( queryContainer, true );
 				expect( queryValue[ "_literal" ] ).toEqual( jasmine.any( LiteralToken ) );
 			} );
 
 			it( "should create a literal token using withType when Date", ():void => {
 				const spy:jasmine.Spy = spyOn( QueryValue.prototype, "withType" ).and.callThrough();
 
-				new QueryValue( queryContext, new Date() );
+				new QueryValue( queryContainer, new Date() );
 				expect( spy ).toHaveBeenCalledWith( XSD.dateTime );
 			} );
 
@@ -83,17 +79,17 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 					{ name: "type", type: "string", description: "The type to be assigned to the literal value." },
 				],
 				{ type: "this" }
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryValue.prototype.withType ).toBeDefined();
 				expect( QueryValue.prototype.withType ).toEqual( jasmine.any( Function ) );
 			} );
 
+
 			it( "should accept relative XSD type", ():void => {
 				const helper:( type:string, value:any ) => void = ( type, value ) => {
-					const queryValue:QueryValue = new QueryValue( queryContext, value );
+					const queryValue:QueryValue = new QueryValue( queryContainer, value );
 
 					queryValue.withType( type );
 					expect( queryValue[ "_literal" ] ).toEqual( jasmine.objectContaining<RDFLiteralToken>( {
@@ -108,12 +104,12 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 			} );
 
 			it( "should create a serialize and add the type", ():void => {
-				const serializeSpy:jasmine.Spy = spyOn( queryContext, "serializeLiteral" ).and.callThrough();
+				const serializeSpy:jasmine.Spy = spyOn( queryContainer, "serializeLiteral" ).and.callThrough();
 
 				const helper:( value:any, type:string ) => void = ( value, type ) => {
 					serializeSpy.calls.reset();
 
-					const queryValue:QueryValue = new QueryValue( queryContext, value );
+					const queryValue:QueryValue = new QueryValue( queryContainer, value );
 					queryValue.withType( type );
 
 					expect( serializeSpy ).toHaveBeenCalledWith( type, value );
@@ -125,19 +121,26 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 
 				helper( new Date(), XSD.dateTime );
 				helper( 10.01, XSD.float );
-				helper( "a-value", "http://example.com/types#a-type" );
 			} );
 
 			it( "should return the object", ():void => {
 				const helper:( value:any, type:string ) => void = ( value, type ) => {
-					const queryValue:QueryValue = new QueryValue( queryContext, value );
+					const queryValue:QueryValue = new QueryValue( queryContainer, value );
 					const returnedValue:QueryValue = queryValue.withType( type );
 					expect( queryValue ).toBe( returnedValue );
 				};
 
 				helper( new Date(), "dateTime" );
 				helper( 10.01, XSD.float );
-				helper( "a-value", "http://example.com/types#a-type" );
+			} );
+
+
+			it( "should throw error when type without serializer", ():void => {
+				const queryValue:QueryValue = new QueryValue( queryContainer, "value" );
+
+				expect( () => {
+					queryValue.withType( "http://example.com/types#a-type" );
+				} ).toThrowError( IllegalArgumentError, `Type "http://example.com/types#a-type" hasn't a defined serializer.` );
 			} );
 
 		} );
@@ -150,17 +153,17 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 					{ name: "language", type: "string", description: "The language to be assigned to the string literal value." },
 				],
 				{ type: "this" }
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryValue.prototype.withLanguage ).toBeDefined();
 				expect( QueryValue.prototype.withLanguage ).toEqual( jasmine.any( Function ) );
 			} );
 
+
 			it( "should call the literal setLanguage", ():void => {
 				const helper:( language:string ) => void = language => {
-					const queryValue:QueryValue = new QueryValue( queryContext, "value" );
+					const queryValue:QueryValue = new QueryValue( queryContainer, "value" );
 
 					queryValue.withLanguage( language );
 					expect( queryValue[ "_literal" ] ).toEqual( jasmine.objectContaining<RDFLiteralToken>( {
@@ -178,18 +181,18 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 
 			it( hasSignature(
 				"Returns the SPARQL token of the value.",
-				{ type: "SPARQL/tokens/LiteralToken" }
-			), ():void => {
-			} );
+				{ type: "sparqler/tokens/LiteralToken" }
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryValue.prototype.getToken ).toBeDefined();
 				expect( QueryValue.prototype.getToken ).toEqual( jasmine.any( Function ) );
 			} );
 
+
 			it( "should return the token created", ():void => {
 				const helper:( value:string | number | boolean | Date ) => void = value => {
-					const queryValue:QueryValue = new QueryValue( queryContext, value );
+					const queryValue:QueryValue = new QueryValue( queryContainer, value );
 					expect( queryValue.getToken() ).toBe( queryValue[ "_literal" ] );
 				};
 
@@ -206,16 +209,16 @@ describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 			it( hasSignature(
 				"Returns the SPARQL string representation of the value to be used in the query.",
 				{ type: "string" }
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should override the default toString", ():void => {
 				expect( QueryValue.prototype.toString ).not.toBe( Object.prototype.toString );
 			} );
 
+
 			it( "should return the string of the literal", ():void => {
 				const helper:( value:any, type?:string, lang?:string ) => void = ( value, type, lang ) => {
-					const queryValue:QueryValue = new QueryValue( queryContext, value );
+					const queryValue:QueryValue = new QueryValue( queryContainer, value );
 					if( type ) queryValue.withType( type );
 					if( lang ) queryValue.withLanguage( lang );
 

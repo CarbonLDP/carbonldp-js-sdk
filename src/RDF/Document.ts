@@ -4,10 +4,10 @@ import { RDFNode } from "./Node";
 import { URI } from "./URI";
 
 
-export interface RDFDocument extends RDFNode {
+export type RDFDocument = {
 	"@id":string;
 	"@graph":RDFNode[];
-}
+};
 
 
 export interface RDFDocumentFactory {

@@ -16,7 +16,7 @@ import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 import { RDFValue } from "../RDF/Value";
 
-import { forEachOwnProperty, isNull, isObject, isString, MapUtils } from "../Utils";
+import { forEachOwnProperty, isFunction, isNull, isObject, isString, MapUtils } from "../Utils";
 
 import { XSD } from "../Vocabularies/XSD";
 
@@ -83,6 +83,34 @@ export class JSONLDConverter {
 	expand( compactedObjectOrObjects:Object[], generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):any {
 		if( ! Array.isArray( compactedObjectOrObjects ) ) return this.__expandSingle( compactedObjectOrObjects, generalSchema, digestedSchema );
 	}
+
+
+	update( target:object, node:RDFNode, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary, strict?:boolean ):void {
+		const compactedData:object = this.compact( node, {}, digestedSchema, pointerLibrary, strict );
+
+		new Set( [
+			...Object.getOwnPropertyNames( target ),
+			...Object.keys( compactedData ),
+		] ).forEach( key => {
+			if( key.startsWith( "$" ) ) return;
+			if( isFunction( target[ key ] ) ) return;
+
+			if( ! compactedData.hasOwnProperty( key ) ) {
+				if( ! strict || digestedSchema.properties.has( key ) ) delete target[ key ];
+				return;
+			}
+
+			if( ! Array.isArray( target[ key ] ) ) {
+				target[ key ] = compactedData[ key ];
+				return;
+			}
+
+			const values:any[] = Array.isArray( compactedData[ key ] ) ? compactedData[ key ] : [ compactedData[ key ] ];
+			target[ key ].length = 0;
+			target[ key ].push( ...values );
+		} );
+	}
+
 
 	private __expandSingle( compactedObject:Object, generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):RDFNode {
 		let expandedObject:any = {};
@@ -222,6 +250,7 @@ export class JSONLDConverter {
 		forEachOwnProperty( expandedObject, ( propertyURI:string, propertyValues:any[] ):void => {
 			if( propertyURI === "@id" ) return;
 			if( propertyURI === "@type" ) return;
+			if( propertyValues === null ) return;
 
 			if( ! propertyURINameMap.has( propertyURI ) && strict ) return;
 
