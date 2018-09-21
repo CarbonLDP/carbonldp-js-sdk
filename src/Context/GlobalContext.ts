@@ -77,14 +77,14 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined,
 
 			.extendObjectSchema( QueryMetadata )
 
-			.extendObjectSchema( ChildCreated )
-			.extendObjectSchema( DocumentCreatedDetails )
-			.extendObjectSchema( DocumentDeleted )
-			.extendObjectSchema( DocumentModified )
-			.extendObjectSchema( MemberAdded )
-			.extendObjectSchema( MemberAddedDetails )
-			.extendObjectSchema( MemberRemoved )
-			.extendObjectSchema( MemberRemovedDetails )
+			.extendObjectSchema( ChildCreatedEvent )
+			.extendObjectSchema( DocumentCreatedEventDetails )
+			.extendObjectSchema( DocumentDeletedEvent )
+			.extendObjectSchema( DocumentModifiedEvent )
+			.extendObjectSchema( MemberAddedEvent )
+			.extendObjectSchema( MemberAddedEventDetails )
+			.extendObjectSchema( MemberRemovedEvent )
+			.extendObjectSchema( MemberRemovedEventDetails )
 		;
 	}
 
