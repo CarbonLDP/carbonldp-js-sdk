@@ -161,9 +161,11 @@ export class QueryResultCompacter {
 		const targetSchema:DigestedObjectSchema = queryProperty.getSchemaFor( node );
 		const pointerLibrary:PointerLibrary = __createPointerLibrary( compactionMap, document );
 
-		// Avoid compaction of c:checksum
 		const targetNode:RDFNode = {
 			...node,
+			// Avoid compaction of c:document
+			[ C.document ]: null,
+			// Avoid compaction of c:checksum
 			[ C.checksum ]: null,
 		};
 
