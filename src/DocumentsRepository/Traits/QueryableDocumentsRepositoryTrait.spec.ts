@@ -5720,6 +5720,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
+								"${ C.document }": [ {
+									"@id": "https://example.com/resource/child1/"
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -5751,6 +5754,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								],
 								"${ C.checksum }": [ {
 									"@value": "2-12345"
+								} ],
+								"${ C.document }": [ {
+									"@id": "https://example.com/resource/child2/"
 								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -7111,6 +7117,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
+								"${ C.document }": [ {
+									"@id": "https://example.com/resource/child1/"
+								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
 								} ],
@@ -7142,6 +7151,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 								],
 								"${ C.checksum }": [ {
 									"@value": "2-12345"
+								} ],
+								"${ C.document }": [ {
+									"@id": "https://example.com/resource/child2/"
 								} ],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
