@@ -5,6 +5,8 @@ import { GeneralRepository } from "../GeneralRepository/GeneralRepository";
 
 import { JSONLDConverter } from "../JSONLD/JSONLDConverter";
 
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
@@ -13,6 +15,8 @@ import { URI } from "../RDF/URI";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
 import { ResolvablePointer } from "../Repository/ResolvablePointer";
+
+import { isString } from "../Utils";
 
 import { Context } from "./Context";
 import { ContextSettings } from "./ContextSettings";
@@ -55,6 +59,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 		return ! ! this.parentContext && this.parentContext.hasObjectSchema( type );
 	}
 
+
 	getObjectSchema( type?:string ):DigestedObjectSchema {
 		if( ! ! type ) {
 			// Type specific schema
@@ -83,32 +88,36 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 		}
 	}
 
+
 	extendObjectSchema( type:string, objectSchema:ObjectSchema ):this;
+	extendObjectSchema( modelSchema:ModelSchema ):this;
 	extendObjectSchema( objectSchema:ObjectSchema ):this;
-	extendObjectSchema( typeOrObjectSchema:any, objectSchema?:ObjectSchema ):this {
-		const type:string = objectSchema ? typeOrObjectSchema : null;
-		objectSchema = objectSchema ? objectSchema : typeOrObjectSchema;
+	extendObjectSchema( schemas:(ModelSchema | ObjectSchema)[] ):this;
+	extendObjectSchema( objectSchemaOrTypeOrModelSchema:string | ModelSchema | (ModelSchema | ObjectSchema)[] | ObjectSchema, objectSchema?:ObjectSchema ):this {
+		if( isString( objectSchemaOrTypeOrModelSchema ) )
+			return this.__extendTypeSchema( objectSchema, objectSchemaOrTypeOrModelSchema );
 
-		const digestedSchema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( objectSchema );
+		if( ModelSchema.is( objectSchemaOrTypeOrModelSchema ) )
+			return this.__extendTypeSchema( objectSchemaOrTypeOrModelSchema.SCHEMA, objectSchemaOrTypeOrModelSchema.TYPE );
 
-		if( ! type ) {
-			this.__extendGeneralSchema( digestedSchema );
-		} else {
-			this.__extendTypeSchema( digestedSchema, type );
+		if( Array.isArray( objectSchemaOrTypeOrModelSchema ) ) {
+			objectSchemaOrTypeOrModelSchema.forEach( this.extendObjectSchema, this );
+			return this;
 		}
 
-		return this;
+		return this.__extendGeneralSchema( objectSchemaOrTypeOrModelSchema );
 	}
 
+
 	clearObjectSchema( type?:string ):void {
-		if( ! type ) {
+		if( type === void 0 ) {
 			this._generalObjectSchema = this.parentContext ? null : new DigestedObjectSchema();
 		} else {
 			type = this.__resolveTypeURI( type );
 			this._typeObjectSchemaMap.delete( type );
 		}
 	}
-
+                                      
 	_getTypeObjectSchemas( excepts:string[] = [] ):DigestedObjectSchema[] {
 		const exceptsSet:Set<string> = new Set( excepts );
 
@@ -116,7 +125,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 			.__getObjectSchemasTypes()
 			.filter( type => ! exceptsSet.has( type ) )
 		;
-
+                                      
 		return types.map( this.getObjectSchema, this );
 	}
 
@@ -134,41 +143,55 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 		return allTypes;
 	}
 
-	protected __extendGeneralSchema( digestedSchema:DigestedObjectSchema ):void {
-		let digestedSchemaToExtend:DigestedObjectSchema;
-		if( ! ! this._generalObjectSchema ) {
-			digestedSchemaToExtend = this._generalObjectSchema;
-		} else if( ! ! this.parentContext ) {
-			digestedSchemaToExtend = this.parentContext.getObjectSchema();
-		} else {
-			digestedSchemaToExtend = new DigestedObjectSchema();
-		}
+
+	protected __extendGeneralSchema( objectSchema:ObjectSchema ):this {
+		const digestedSchemaToExtend:DigestedObjectSchema = this.__getInheritGeneralSchema();
 
 		this._generalObjectSchema = ObjectSchemaDigester._combineSchemas( [
 			digestedSchemaToExtend,
-			digestedSchema,
+			ObjectSchemaDigester.digestSchema( objectSchema ),
 		] );
+
+		return this;
 	}
 
-	protected __extendTypeSchema( digestedSchema:DigestedObjectSchema, type:string ):void {
+	protected __extendTypeSchema( objectSchema:ObjectSchema, type:string ):this {
 		type = this.__resolveTypeURI( type );
-		let digestedSchemaToExtend:DigestedObjectSchema;
+		const digestedSchemaToExtend:DigestedObjectSchema = this.__getInheritTypeSchema( type );
 
-		if( this._typeObjectSchemaMap.has( type ) ) {
-			digestedSchemaToExtend = this._typeObjectSchemaMap.get( type );
-		} else if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) {
-			digestedSchemaToExtend = this.parentContext.getObjectSchema( type );
-		} else {
-			digestedSchemaToExtend = new DigestedObjectSchema();
-		}
+		const extendedDigestedSchema:DigestedObjectSchema = ObjectSchemaDigester
+			.combineDigestedObjectSchemas( [
+				digestedSchemaToExtend,
+				ObjectSchemaDigester.digestSchema( objectSchema ),
+			] );
 
-		let extendedDigestedSchema:DigestedObjectSchema = ObjectSchemaDigester.combineDigestedObjectSchemas( [
-			digestedSchemaToExtend,
-			digestedSchema,
-		] );
+		this._typeObjectSchemaMap
+			.set( type, extendedDigestedSchema );
 
-		this._typeObjectSchemaMap.set( type, extendedDigestedSchema );
+		return this;
 	}
+
+
+	protected __getInheritGeneralSchema():DigestedObjectSchema {
+		if( this._generalObjectSchema )
+			return this._generalObjectSchema;
+
+		if( this.parentContext )
+			return this.parentContext.getObjectSchema();
+
+		return new DigestedObjectSchema();
+	}
+
+	protected __getInheritTypeSchema( type:string ):DigestedObjectSchema {
+		if( this._typeObjectSchemaMap.has( type ) )
+			return this._typeObjectSchemaMap.get( type );
+
+		if( this.parentContext && this.parentContext.hasObjectSchema( type ) )
+			return this.parentContext.getObjectSchema( type );
+
+		return new DigestedObjectSchema();
+	}
+
 
 	private __resolveTypeURI( uri:string ):string {
 		return this.getObjectSchema()
