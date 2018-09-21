@@ -403,7 +403,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			"entryKey",
 			"https://carbonldp.com/ns/v1/platform#key"
 		), ():void => {
-			const target:C[ "entryKey" ] = "https://carbonldp.com/ns/v1/platform#key";
+			const target:C[ "entryKey" ] = "https://carbonldp.com/ns/v1/platform#entryKey";
 			expect( target ).toBeDefined();
 		} );
 
@@ -531,7 +531,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 			"entryValue",
 			"https://carbonldp.com/ns/v1/platform#value"
 		), ():void => {
-			const target:C[ "entryValue" ] = "https://carbonldp.com/ns/v1/platform#value";
+			const target:C[ "entryValue" ] = "https://carbonldp.com/ns/v1/platform#entryValue";
 			expect( target ).toBeDefined();
 		} );
 
@@ -796,7 +796,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( "C.entryKey", ():void => {
 			expect( C.entryKey ).toEqual( jasmine.any( String ) );
-			expect( C.entryKey ).toBe( "https://carbonldp.com/ns/v1/platform#key" );
+			expect( C.entryKey ).toBe( "https://carbonldp.com/ns/v1/platform#entryKey" );
 		} );
 
 		it( "C.modified", ():void => {
@@ -868,7 +868,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( "C.entryValue", ():void => {
 			expect( C.entryValue ).toEqual( jasmine.any( String ) );
-			expect( C.entryValue ).toBe( "https://carbonldp.com/ns/v1/platform#value" );
+			expect( C.entryValue ).toBe( "https://carbonldp.com/ns/v1/platform#entryValue" );
 		} );
 
 		it( "C.version", ():void => {
