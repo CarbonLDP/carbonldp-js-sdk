@@ -175,16 +175,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			it( hasSignature(
 				"Remove the subscription specified by the uri pattern, event and onEvent callback provided.",
 				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event of the subscription to remove." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreatedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Remove the subscription specified by the uri pattern, event and onEvent callback provided.",
-				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
 					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
