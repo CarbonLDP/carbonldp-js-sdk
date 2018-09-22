@@ -77,7 +77,7 @@ export class CarbonLDP extends DocumentsContext {
 	static Utils:typeof Utils = Utils;
 
 
-	static get version():string { return "5.0.0-alpha.3"; }
+	static get version():string { return "5.0.0-alpha.4"; }
 
 	// noinspection JSMethodCanBeStatic
 	get version():string { return CarbonLDP.version; }
