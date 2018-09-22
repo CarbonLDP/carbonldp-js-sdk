@@ -4,11 +4,11 @@
 [![Downloads][npm-downloads]][npm-url]
 [![Join the chat at https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK][gitter-image]][gitter-url]
 
-[![Build status](https://circleci.com/gh/CarbonLDP/carbonldp-js-sdk/tree/version%2F5.x.x.svg?style=svg)](https://circleci.com/gh/CarbonLDP/carbonldp-js-sdk/tree/version%2F5.x.x)
+[![Build status][circleci-image]][circleci-url]
 
 Official JavaScript SDK for Carbon LDP applications. Simplifies the use of Carbon LDP's REST API.
 
-For information on how to use the SDK, please refer to the [JavaScript SDK user guide](https://carbonldp.com/documentation/v1.0.x/javascript-sdk/) on the Carbon LDP website.
+For information on how to use the SDK, please refer to the [JavaScript SDK user guide](https://carbonldp.com/documentation/javascript-sdk/) on the Carbon LDP website.
 
 ## Installing
 
@@ -20,7 +20,6 @@ npm install carbonldp
 
 1. Install dependencies
     - [node.js 6+](https://nodejs.org/en/)
-    - gulp: `npm install gulp -g` (you may need to run it as root)
 2. cd into the project's root directory
 3. Run `npm install`
 5. Build the source code by running `npm start`
@@ -81,5 +80,5 @@ npm install carbonldp
 [npm-downloads]: https://img.shields.io/npm/dm/carbonldp.svg?style=flat-square
 [gitter-image]: https://badges.gitter.im/CarbonLDP/CarbonLDP-JS-SDK.svg
 [gitter-url]: https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
-[travis-image]: https://travis-ci.org/CarbonLDP/carbonldp-js-sdk.svg
-[travis-url]: https://travis-ci.org/CarbonLDP/carbonldp-js-sdk
+[circleci-image]: https://circleci.com/gh/CarbonLDP/carbonldp-js-sdk/tree/master.svg?style=svg
+[circleci-url]: https://circleci.com/gh/CarbonLDP/carbonldp-js-sdk/tree/master
