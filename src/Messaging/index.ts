@@ -1,5 +1,4 @@
 export * from "./ChildCreatedEvent";
-export * from "./DocumentCreatedEvent";
 export * from "./DocumentCreatedEventDetails";
 export * from "./DocumentDeletedEvent";
 export * from "./DocumentModifiedEvent";

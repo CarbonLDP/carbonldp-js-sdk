@@ -14,13 +14,15 @@ import {
 import { C } from "../Vocabularies/C";
 
 import { ChildCreatedEvent } from "./ChildCreatedEvent";
-import { DocumentCreatedEvent } from "./DocumentCreatedEvent";
+import { DocumentCreatedEventDetails } from "./DocumentCreatedEventDetails";
+import { EventMessage } from "./EventMessage";
+
 
 describe( module( "carbonldp/Messaging/ChildCreatedEvent" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.ChildCreatedEvent",
-		"Interface with the properties of the data received in a child created event."
+		"Interface with the base properties of the data received in any document created event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -28,8 +30,8 @@ describe( module( "carbonldp/Messaging/ChildCreatedEvent" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Messaging.DocumentCreatedEvent" ), ():void => {
-			const target:DocumentCreatedEvent = {} as ChildCreatedEvent;
+		it( extendsClass( "CarbonLDP.Messaging.EventMessage" ), ():void => {
+			const target:EventMessage = {} as ChildCreatedEvent;
 			expect( target ).toBeDefined();
 		} );
 
@@ -42,18 +44,21 @@ describe( module( "carbonldp/Messaging/ChildCreatedEvent" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
+		it( hasProperty(
+			OBLIGATORY,
+			"details",
+			"CarbonLDP.Messaging.DocumentCreatedEventDetails"
+		), ():void => {
+			const target:ChildCreatedEvent[ "details" ] = {} as DocumentCreatedEventDetails;
+			expect( target ).toBeDefined();
+		} );
+
 	} );
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.ChildCreatedEventFactory",
 		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.ChildCreatedEvent` objects."
 	), ():void => {
-
-		it( hasProperty(
-			OBLIGATORY,
-			"TYPE",
-			"string"
-		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -72,14 +77,6 @@ describe( module( "carbonldp/Messaging/ChildCreatedEvent" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( ChildCreatedEvent ).toBeDefined();
 			expect( ChildCreatedEvent ).toEqual( jasmine.any( Object ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( "ChildCreatedEvent.TYPE", ():void => {
-			expect( ChildCreatedEvent.TYPE ).toBeDefined();
-			expect( ChildCreatedEvent.TYPE ).toEqual( jasmine.any( String ) );
-
-			expect( ChildCreatedEvent.TYPE ).toBe( C.ChildCreatedEvent );
 		} );
 
 		// TODO: Separate in different tests

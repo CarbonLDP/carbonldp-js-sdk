@@ -3,7 +3,6 @@ import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
 import * as Messaging from "./";
 
 import { ChildCreatedEvent, ChildCreatedEventFactory } from "./ChildCreatedEvent";
-import { DocumentCreatedEvent, DocumentCreatedEventFactory } from "./DocumentCreatedEvent";
 import { DocumentCreatedEventDetails, DocumentCreatedEventDetailsFactory } from "./DocumentCreatedEventDetails";
 import { DocumentDeletedEvent, DocumentDeletedEventFactory } from "./DocumentDeletedEvent";
 import { DocumentModifiedEvent, DocumentModifiedEventFactory } from "./DocumentModifiedEvent";
@@ -42,33 +41,6 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 	), ():void => {
 		const target:Messaging.ChildCreatedEventFactory = {} as ChildCreatedEventFactory;
 		expect( target ).toBeDefined();
-	} );
-
-	it( reexports(
-		STATIC,
-		"DocumentCreated",
-		"CarbonLDP.Messaging.DocumentCreatedEvent"
-	), ():void => {
-		expect( Messaging.DocumentCreatedEvent ).toBeDefined();
-		expect( Messaging.DocumentCreatedEvent ).toBe( DocumentCreatedEvent );
-	} );
-
-	it( reexports(
-		STATIC,
-		"DocumentCreatedFactory",
-		"CarbonLDP.Messaging.DocumentCreatedEventFactory"
-	), ():void => {
-		const target:Messaging.DocumentCreatedEventFactory = {} as DocumentCreatedEventFactory;
-		expect( target ).toBeDefined();
-	} );
-
-	it( reexports(
-		STATIC,
-		"DocumentCreatedDetails",
-		"CarbonLDP.Messaging.DocumentCreatedEventDetails"
-	), ():void => {
-		expect( Messaging.DocumentCreatedEventDetails ).toBeDefined();
-		expect( Messaging.DocumentCreatedEventDetails ).toBe( DocumentCreatedEventDetails );
 	} );
 
 	it( reexports(

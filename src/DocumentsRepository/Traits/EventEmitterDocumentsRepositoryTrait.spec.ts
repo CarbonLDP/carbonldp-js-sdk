@@ -77,16 +77,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			it( hasSignature(
 				"Subscribe to the specified uri pattern event notifications.",
 				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for its notifications." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to the specified uri pattern event notifications.",
-				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
 					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "Callback that receives the data message from the notification event." },
@@ -185,16 +175,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			it( hasSignature(
 				"Remove the subscription specified by the uri pattern, event and onEvent callback provided.",
 				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event of the subscription to remove." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreatedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Remove the subscription specified by the uri pattern, event and onEvent callback provided.",
-				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
 					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
@@ -286,16 +266,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for one notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
 					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to only one notification to the uri pattern and event provided",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for one notification." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
