@@ -1,16 +1,11 @@
-import { PersistedDocument } from "../PersistedDocument";
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
+import { Document } from "../Document/Document";
+
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
 
 import { PlatformMetadata } from "./PlatformMetadata";
+
 
 describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 
@@ -19,8 +14,8 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 		"Interface that represents the document with the data of the Carbon LDP Platform instance."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedDocument" ), ():void => {
-			const target:PersistedDocument = {} as PlatformMetadata;
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {
+			const target:Document = {} as PlatformMetadata;
 			expect( target ).toBeDefined();
 		} );
 

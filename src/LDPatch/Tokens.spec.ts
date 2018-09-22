@@ -1,32 +1,10 @@
-import {
-	CollectionToken,
-	IRIToken,
-	LiteralToken,
-	PredicateToken,
-	PrefixedNameToken,
-	SubjectToken,
-} from "sparqler/tokens";
-import * as TokenUtils from "sparqler/tokens/utils";
+import { CollectionToken, IRIRefToken, LiteralToken, PrefixedNameToken, PropertyToken, SubjectToken } from "sparqler/tokens";
 
-import {
-	clazz,
-	constructor,
-	hasProperty,
-	hasSignature,
-	INSTANCE,
-	method,
-	module,
-} from "../test/JasmineExtender";
+import { clazz, constructor, hasProperty, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
 
 import * as Module from "./Tokens";
-import {
-	AddToken,
-	DeleteToken,
-	LDPatchToken,
-	PrefixToken,
-	SliceToken,
-	UpdateListToken,
-} from "./Tokens";
+import { AddToken, DeleteToken, LDPatchToken, PrefixToken, SliceToken, UpdateListToken } from "./Tokens";
+
 
 describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 
@@ -96,23 +74,23 @@ describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 			it( "should return the list of actions", ():void => {
 				const token:LDPatchToken = new LDPatchToken();
 				token.prologues.push( ...[
-					new PrefixToken( "profile", new IRIToken( "http://ogp.me/ns/profile#" ) ),
-					new PrefixToken( "ex", new IRIToken( "http://example.org/vocab#" ) ),
+					new PrefixToken( "profile", new IRIRefToken( "http://ogp.me/ns/profile#" ) ),
+					new PrefixToken( "ex", new IRIRefToken( "http://example.org/vocab#" ) ),
 				] );
 
-				const resource:IRIToken = new IRIToken( "#" );
+				const resource:IRIRefToken = new IRIRefToken( "#" );
 
 				const deleteName:DeleteToken = new DeleteToken();
 				deleteName.triples.push( new SubjectToken( resource )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "profile", "first_name" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "profile", "first_name" ) )
 						.addObject( new LiteralToken( "Tim" ) ) ) );
 
 				const addNameAndImage:AddToken = new AddToken();
 				addNameAndImage.triples.push( new SubjectToken( resource )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "profile", "first_name" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "profile", "first_name" ) )
 						.addObject( new LiteralToken( "Timothy" ) ) )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "profile", "image" ) )
-						.addObject( new IRIToken( "https://example.org/tim.jpg" ) ) ) );
+					.addProperty( new PropertyToken( new PrefixedNameToken( "profile", "image" ) )
+						.addObject( new IRIRefToken( "https://example.org/tim.jpg" ) ) ) );
 
 				const newLanguages:CollectionToken = new CollectionToken();
 				newLanguages.objects.push( new LiteralToken( "fr-CH" ) );
@@ -149,7 +127,7 @@ describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 		it( hasProperty( INSTANCE, "namespace", "string" ), ():void => {
 		} );
 
-		it( hasProperty( INSTANCE, "iri", "sparqler/tokens/IRIToken" ), ():void => {
+		it( hasProperty( INSTANCE, "iri", "sparqler/tokens/IRIRefToken" ), ():void => {
 		} );
 
 
@@ -163,7 +141,7 @@ describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 			it( hasSignature(
 				[
 					{ name: "namespace", type: "string", description: "The namespace of the LD Patch prefix." },
-					{ name: "iri", type: "sparqler/tokens/IRIToken", description: "The IRI of the LD Patch prefix." },
+					{ name: "iri", type: "sparqler/tokens/IRIRefToken", description: "The IRI of the LD Patch prefix." },
 				]
 			), ():void => {
 			} );
@@ -180,7 +158,7 @@ describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 			} );
 
 			it( "should initialize iri", ():void => {
-				const iri:IRIToken = new IRIToken( "http://example.com/" );
+				const iri:IRIRefToken = new IRIRefToken( "http://example.com/" );
 				const token:PrefixToken = new PrefixToken( null, iri );
 				expect( token.iri ).toBe( iri );
 			} );
@@ -207,7 +185,7 @@ describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 			} );
 
 			it( "should return the prefix", ():void => {
-				const token:PrefixToken = new PrefixToken( "ex", new IRIToken( "http://example.com/" ) );
+				const token:PrefixToken = new PrefixToken( "ex", new IRIRefToken( "http://example.com/" ) );
 
 				expect( token.toString() ).toBe( `@prefix ex: <http://example.com/>.` );
 			} );
@@ -266,24 +244,13 @@ describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 				expect( AddToken.prototype.toString ).not.toBe( Object.prototype.toString );
 			} );
 
-			it( "should join triples with `joinPatterns` function", ():void => {
-				const spy:jasmine.Spy = spyOn( TokenUtils, "joinPatterns" );
-				const token:AddToken = new AddToken();
-				token.triples.push( new SubjectToken( new IRIToken( "http://example.com/" ) )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property" ) )
-						.addObject( new LiteralToken( "literal" ) ) ) );
-
-				token.toString();
-				expect( spy ).toHaveBeenCalledWith( token.triples );
-			} );
-
 			it( "should return the action", ():void => {
 				const token:AddToken = new AddToken();
-				token.triples.push( new SubjectToken( new IRIToken( "http://example.com/" ) )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property" ) )
+				token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property" ) )
 						.addObject( new LiteralToken( "literal" ) ) ) );
-				token.triples.push( new SubjectToken( new IRIToken( "http://example.com/" ) )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property2" ) )
+				token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property2" ) )
 						.addObject( new LiteralToken( "literal-2" ) ) ) );
 
 				expect( token.toString() ).toBe( `Add { <http://example.com/> ex:property "literal". <http://example.com/> ex:property2 "literal-2". }.` );
@@ -343,24 +310,13 @@ describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 				expect( DeleteToken.prototype.toString ).not.toBe( Object.prototype.toString );
 			} );
 
-			it( "should join triples with `joinPatterns` function", ():void => {
-				const spy:jasmine.Spy = spyOn( TokenUtils, "joinPatterns" );
-				const token:DeleteToken = new DeleteToken();
-				token.triples.push( new SubjectToken( new IRIToken( "http://example.com/" ) )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property" ) )
-						.addObject( new LiteralToken( "literal" ) ) ) );
-
-				token.toString();
-				expect( spy ).toHaveBeenCalledWith( token.triples );
-			} );
-
 			it( "should return the action", ():void => {
 				const token:DeleteToken = new DeleteToken();
-				token.triples.push( new SubjectToken( new IRIToken( "http://example.com/" ) )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property" ) )
+				token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property" ) )
 						.addObject( new LiteralToken( "literal" ) ) ) );
-				token.triples.push( new SubjectToken( new IRIToken( "http://example.com/" ) )
-					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property2" ) )
+				token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
+					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property2" ) )
 						.addObject( new LiteralToken( "literal-2" ) ) ) );
 
 				expect( token.toString() ).toBe( `Delete { <http://example.com/> ex:property "literal". <http://example.com/> ex:property2 "literal-2". }.` );
@@ -378,7 +334,7 @@ describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 		it( hasProperty( INSTANCE, "subject", "sparqler/tokens/VariableORIRI | sparqler/tokens/BlankNodeToken", ), ():void => {
 		} );
 
-		it( hasProperty( INSTANCE, "predicate", "sparqler/tokens/IRIToken | sparqler/tokens/PrefixedNameToken" ), ():void => {
+		it( hasProperty( INSTANCE, "predicate", "sparqler/tokens/IRIRefToken | sparqler/tokens/PrefixedNameToken" ), ():void => {
 		} );
 
 		it( hasProperty( INSTANCE, "slice", "CarbonLDP.LDPatch.SliceToken" ), ():void => {
@@ -398,7 +354,7 @@ describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 			it( hasSignature(
 				[
 					{ name: "subject", type: "sparqler/tokens/VariableORIRI | sparqler/tokens/BlankNodeToken", description: "The subject that contains the list to update." },
-					{ name: "predicate", type: "sparqler/tokens/IRIToken | sparqler/tokens/PrefixedNameToken", description: "The predicate relation to the list to update." },
+					{ name: "predicate", type: "sparqler/tokens/IRIRefToken | sparqler/tokens/PrefixedNameToken", description: "The predicate relation to the list to update." },
 					{ name: "slice", type: "CarbonLDP.LDPatch.SliceToken", description: "The slice that specifies the index of the elements in the list that will be replaced." },
 					{ name: "collection", type: "sparqler/tokens/CollectionToken", description: "The collection to replace the selected elements by the slice token." },
 				]
@@ -428,7 +384,7 @@ describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 			} );
 
 			it( "should print the action", ():void => {
-				const subject:IRIToken = new IRIToken( "http://example.com/" );
+				const subject:IRIRefToken = new IRIRefToken( "http://example.com/" );
 				const predicate:PrefixedNameToken = new PrefixedNameToken( "ex:property" );
 				const slice:SliceToken = new SliceToken();
 				const collection:CollectionToken = new CollectionToken();

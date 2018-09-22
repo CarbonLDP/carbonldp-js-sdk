@@ -1,10 +1,5 @@
-import {
-	hasProperty,
-	isDefined,
-	module,
-	reexports,
-	STATIC,
-} from "../../test/JasmineExtender";
+import { hasProperty, isDefined, module, reexports, STATIC } from "../../test/JasmineExtender";
+
 import * as Utils from "../../Utils";
 
 import * as Errors from "./";

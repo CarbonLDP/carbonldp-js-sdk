@@ -1,38 +1,32 @@
-import { BlankNode } from "../BlankNode";
-import { ObjectSchema } from "../ObjectSchema";
-import { PersistedDocument } from "../PersistedDocument";
-import * as Utils from "../Utils";
+import { Document } from "../Document/Document";
+
+import { ModelSchema } from "../Model/ModelSchema";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Pointer } from "../Pointer/Pointer";
+
 import { C } from "../Vocabularies/C";
-import { XSD } from "../Vocabularies/XSD";
+
 import { Map } from "./Map";
 import { VolatileResource } from "./VolatileResource";
-import { ModelFactory } from "../ModelFactory";
-import { ModelDecorator } from "../ModelDecorator";
+
 
 export interface DocumentMetadata extends VolatileResource {
-	relatedDocument:PersistedDocument;
-	eTag?:string;
-	bNodesMap?:Map<BlankNode, BlankNode>;
+	relatedDocument:Document;
+	bNodesMap:Map<Pointer, Pointer>;
 }
 
 
-export interface DocumentMetadataFactory extends ModelFactory<DocumentMetadata>, ModelDecorator<DocumentMetadata> {
-	TYPE:string;
+export interface DocumentMetadataFactory extends ModelSchema {
+	TYPE:C[ "DocumentMetadata" ];
 	SCHEMA:ObjectSchema;
-
-	isDecorated( object:object ):object is DocumentMetadata;
-
-	is( object:object ):object is DocumentMetadata;
 }
 
 const SCHEMA:ObjectSchema = {
 	"relatedDocument": {
 		"@id": C.relatedDocument,
 		"@type": "@id",
-	},
-	"eTag": {
-		"@id": C.eTag,
-		"@type": XSD.string,
 	},
 	"bNodesMap": {
 		"@id": C.bNodesMap,
@@ -43,16 +37,4 @@ const SCHEMA:ObjectSchema = {
 export const DocumentMetadata:DocumentMetadataFactory = {
 	TYPE: C.DocumentMetadata,
 	SCHEMA,
-
-	isDecorated( object:object ):object is DocumentMetadata {
-		return Utils.hasPropertyDefined( object, "relatedDocument" );
-	},
-
-	is( object:object ):object is DocumentMetadata {
-		return VolatileResource.is( object )
-			&& object.hasType( DocumentMetadata.TYPE )
-			&& DocumentMetadata.isDecorated( object )
-			;
-	},
-
 };

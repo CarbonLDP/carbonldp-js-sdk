@@ -1,9 +1,4 @@
-import {
-	isDefined,
-	module,
-	reexports,
-	STATIC
-} from "../test/JasmineExtender";
+import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
 
 import * as Errors from "./";
 
@@ -14,6 +9,7 @@ import { IllegalArgumentError } from "./IllegalArgumentError";
 import { IllegalStateError } from "./IllegalStateError";
 import { InvalidJSONLDSyntaxError } from "./InvalidJSONLDSyntaxError";
 import { NotImplementedError } from "./NotImplementedError";
+
 
 describe( module( "carbonldp/Errors" ), ():void => {
 

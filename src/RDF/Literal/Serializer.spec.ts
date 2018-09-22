@@ -1,11 +1,5 @@
-import {
-	extendsClass,
-	hasMethod,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-} from "../../test/JasmineExtender";
+import { extendsClass, hasMethod, interfaze, isDefined, module, OBLIGATORY } from "../../test/JasmineExtender";
+
 import * as Utils from "./../../Utils";
 
 import * as Serializer from "./Serializer";
@@ -24,7 +18,7 @@ describe( module(
 		"Interface that serializer classes must implement."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,

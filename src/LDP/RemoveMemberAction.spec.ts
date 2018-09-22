@@ -1,29 +1,51 @@
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
-	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
+
+import * as Utils from "../Utils";
 import { C } from "../Vocabularies/C";
-import * as Utils from "./../Utils";
 
-import { RemoveMemberAction } from "./RemoveMemberAction";
+import { BaseRemoveMemberAction, RemoveMemberAction } from "./RemoveMemberAction";
 
-describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
+
+describe( module( "carbonldp/Members/RemoveMemberAction" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.RemoveMemberAction",
+		"CarbonLDP.Members.BaseRemoveMemberAction",
+		"Interface that represents an object to be sent in a request that add members to a container."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"targetMembers",
+			"CarbonLDP.Pointer[]",
+			"The target members to remove in a `removeMember` request."
+		), ():void => {
+		} );
+
+	} );
+
+	describe( interfaze(
+		"CarbonLDP.Members.RemoveMemberAction",
 		"Interface that represents an object to be sent in a request that removes specific members to a container."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -35,8 +57,8 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.RemoveMemberActionFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.RemoveMemberAction`"
+		"CarbonLDP.Members.RemoveMemberActionFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.Members.RemoveMemberAction`"
 	), ():void => {
 
 		it( hasProperty(
@@ -51,31 +73,144 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
-		it( hasMethod(
-			STATIC,
-			"isDecorated",
-			"Returns true if the object has the properties of a `CarbonLDP.LDP.RemoveMemberAction` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "object is CarbonLDP.LDP.RemoveMemberAction" }
-		), ():void => {} );
+		describe( method( OBLIGATORY, "is" ), ():void => {
 
-		it( hasMethod(
-			STATIC,
-			"create",
-			"Creates a `CarbonLDP.LDP.RemoveMemberAction` resource for the specified targetMembers.", [
-				{ name: "targetMembers", type: "CarbonLDP.Pointer", description: "The target members of the remove action." },
-			],
-			{ type: "CarbonLDP.LDP.RemoveMemberAction" }
-		), ():void => {} );
+			it( hasSignature(
+				"Returns true if the object is considered a `CarbonLDP.Members.RemoveMemberAction` object.", [
+					{ name: "value", type: "any" },
+				],
+				{ type: "value is CarbonLDP.Members.RemoveMemberAction" }
+			), ():void => {} );
+
+
+			it( "should exists", ():void => {
+				expect( RemoveMemberAction.is ).toBeDefined();
+				expect( RemoveMemberAction.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let isTransientResource:jasmine.Spy;
+			let mockObject:jasmine.SpyObj<Resource>;
+			beforeEach( ():void => {
+				isTransientResource = spyOn( Resource, "is" )
+					.and.returnValue( true );
+
+				mockObject = jasmine.createSpyObj( {
+					$hasType: true,
+				} );
+			} );
+
+
+			it( "should be a TransientResource", () => {
+				RemoveMemberAction.is( mockObject );
+				expect( isTransientResource ).toHaveBeenCalledWith( mockObject );
+			} );
+
+			it( "should have type c:RemoveMemberAction", () => {
+				RemoveMemberAction.is( mockObject );
+				expect( mockObject.$hasType ).toHaveBeenCalledWith( C.RemoveMemberAction );
+			} );
+
+			it( "should return true when all assertions", () => {
+				const returned:boolean = RemoveMemberAction.is( mockObject );
+				expect( returned ).toBe( true );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "create" ), ():void => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Creates `CarbonLDP.Members.RemoveMemberAction` resource for the specified targetMembers.", [
+					{ name: "data", type: "T & CarbonLDP.Members.BaseRemoveMemberAction", description: "Data to be used in the creation of an remove member action." },
+				],
+				{ type: "CarbonLDP.Members.RemoveMemberAction" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( RemoveMemberAction.create ).toBeDefined();
+				expect( RemoveMemberAction.create ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return an RemoveMemberAction", () => {
+				const returned:RemoveMemberAction = RemoveMemberAction.create( { targetMembers: [] } );
+				expect( returned ).toEqual( anyThatMatches( RemoveMemberAction.is, "isRemoveMemberAction" ) as any );
+			} );
+
+			it( "should add type c:RemoveMemberAction", () => {
+				const returned:RemoveMemberAction = RemoveMemberAction.create( { targetMembers: [] } );
+				expect( returned.types ).toContain( C.RemoveMemberAction );
+			} );
+
+			it( "should maintain targetMembers", () => {
+				const targetMembers:Pointer[] = [];
+				const returned:RemoveMemberAction = RemoveMemberAction.create( { targetMembers } );
+
+
+				expect( returned.targetMembers ).toBe( targetMembers );
+			} );
+
+			it( "should return different reference", () => {
+				const base:BaseRemoveMemberAction = { targetMembers: [] };
+				const returned:RemoveMemberAction = RemoveMemberAction.create( base );
+
+				expect( base ).not.toBe( returned );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "createFrom" ), ():void => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Creates `CarbonLDP.Members.RemoveMemberAction` resource for the specified targetMembers.", [
+					{ name: "object", type: "T & CarbonLDP.Members.BaseRemoveMemberAction", description: "Object to be converted into an remove member action." },
+				],
+				{ type: "CarbonLDP.Members.RemoveMemberAction" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( RemoveMemberAction.createFrom ).toBeDefined();
+				expect( RemoveMemberAction.createFrom ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return an RemoveMemberAction", () => {
+				const returned:RemoveMemberAction = RemoveMemberAction.createFrom( { targetMembers: [] } );
+				expect( returned ).toEqual( anyThatMatches( RemoveMemberAction.is, "isRemoveMemberAction" ) as any );
+			} );
+
+			it( "should add type c:RemoveMemberAction", () => {
+				const returned:RemoveMemberAction = RemoveMemberAction.createFrom( { targetMembers: [] } );
+				expect( returned.types ).toContain( C.RemoveMemberAction );
+			} );
+
+			it( "should maintain targetMembers", () => {
+				const targetMembers:Pointer[] = [];
+				const returned:RemoveMemberAction = RemoveMemberAction.createFrom( { targetMembers } );
+
+
+				expect( returned.targetMembers ).toBe( targetMembers );
+			} );
+
+			it( "should return same reference", () => {
+				const base:BaseRemoveMemberAction = { targetMembers: [] };
+				const returned:RemoveMemberAction = RemoveMemberAction.createFrom( base );
+
+				expect( base ).toBe( returned );
+			} );
+
+		} );
 
 	} );
 
 	describe( property(
 		STATIC,
 		"RemoveMemberAction",
-		"CarbonLDP.LDP.RemoveMemberActionFactory",
-		"Constant that implements the `CarbonLDP.LDP.RemoveMemberActionFactory` interface."
+		"CarbonLDP.Members.RemoveMemberActionFactory",
+		"Constant that implements the `CarbonLDP.Members.RemoveMemberActionFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -103,40 +238,6 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 				"@type": "@id",
 			} );
 
-		} );
-
-		// TODO: Separate in different tests
-		it( "RemoveMemberAction.isDecorated", ():void => {
-			expect( RemoveMemberAction.isDecorated ).toBeDefined();
-			expect( Utils.isFunction( RemoveMemberAction.isDecorated ) ).toBe( true );
-
-			let object:any = void 0;
-			expect( RemoveMemberAction.isDecorated( object ) ).toBe( false );
-
-			object = {
-				targetMembers: null,
-			};
-			expect( RemoveMemberAction.isDecorated( object ) ).toBe( true );
-
-			delete object.targetMembers;
-			expect( RemoveMemberAction.isDecorated( object ) ).toBe( false );
-			object.targetMembers = null;
-		} );
-
-		// TODO: Separate in different tests
-		it( "RemoveMemberAction.create", ():void => {
-			expect( RemoveMemberAction.create ).toBeDefined();
-			expect( Utils.isFunction( RemoveMemberAction.create ) ).toBe( true );
-
-			const pointers:Pointer[] = [];
-			pointers.push( Pointer.create( "the-pointer/" ) );
-
-			const removeMemberAction:RemoveMemberAction = RemoveMemberAction.create( pointers );
-
-			expect( Resource.is( removeMemberAction ) ).toBe( true );
-			expect( RemoveMemberAction.isDecorated( removeMemberAction ) ).toBe( true );
-			expect( removeMemberAction.targetMembers ).toEqual( pointers );
-			expect( removeMemberAction.types ).toContain( RemoveMemberAction.TYPE );
 		} );
 
 	} );

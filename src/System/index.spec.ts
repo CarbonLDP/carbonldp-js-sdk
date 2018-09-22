@@ -1,15 +1,9 @@
-import {
-	INSTANCE,
-	module,
-	reexports
-} from "../test/JasmineExtender";
+import { INSTANCE, module, reexports } from "../test/JasmineExtender";
 
 import * as System from "./";
 
-import {
-	PlatformMetadata,
-	PlatformMetadataFactory,
-} from "./PlatformMetadata";
+import { PlatformInstance } from "./PlatformInstance";
+import { PlatformMetadata, PlatformMetadataFactory } from "./PlatformMetadata";
 
 describe( module( "carbonldp/System" ), () => {
 
@@ -34,6 +28,15 @@ describe( module( "carbonldp/System" ), () => {
 	), ():void => {
 		const target:System.PlatformMetadataFactory = {} as PlatformMetadataFactory;
 		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		INSTANCE,
+		"PlatformInstance",
+		"CarbonLDP.System.PlatformInstance"
+	), ():void => {
+		expect( System.PlatformInstance ).toBeDefined();
+		expect( System.PlatformInstance ).toBe( PlatformInstance );
 	} );
 
 } );

@@ -1,17 +1,12 @@
-import {
-	clazz,
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-} from "../test/JasmineExtender";
+import { clazz, extendsClass, hasMethod, hasProperty, interfaze, module, OBLIGATORY } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
+
 import * as Utils from "./../Utils";
 
 import { ErrorResponse } from "./ErrorResponse";
+
 
 describe( module( "carbonldp/LDP/ErrorResponse" ), ():void => {
 
@@ -20,7 +15,7 @@ describe( module( "carbonldp/LDP/ErrorResponse" ), ():void => {
 		"Interface that its used to represents part of an error (or multiple of them) thrown by the server."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

@@ -1,20 +1,20 @@
-import { PointerLibrary } from "../Pointer";
+import * as Utils from "../Utils";
 import { XSD } from "../Vocabularies/XSD";
-import * as Utils from "./../Utils";
-import { RDFDocument } from "./Document";
+
 import { RDFList } from "./List";
 import { RDFLiteral } from "./Literal";
 import { URI } from "./URI";
 import { RDFValue } from "./Value";
 
+
 export type RDFNodePropertyValue = string | RDFNode | RDFList | RDFValue | RDFLiteral;
 
-export interface RDFNode {
+export type RDFNode = {
 	"@id":string;
 	"@type"?:string[];
 
 	[propertyURI:string]:string | RDFNodePropertyValue[];
-}
+};
 
 
 export interface RDFNodeFactory {
@@ -35,13 +35,7 @@ export interface RDFNodeFactory {
 
 	getTypes( node:RDFNode ):string[];
 
-	getFreeNodes( objects:object | object[] ):RDFNode[];
-
 	getList( propertyValues:RDFNodePropertyValue[] ):RDFList | undefined;
-
-	getProperties( propertyValues:RDFNodePropertyValue[], pointerLibrary:PointerLibrary ):any[] | undefined;
-
-	getPropertyPointers( propertyValues:RDFNodePropertyValue[], pointerLibrary:PointerLibrary ):any[] | undefined;
 
 	getPropertyLiterals( propertyValues:RDFNodePropertyValue[], literalType:string ):any[] | undefined;
 
@@ -88,39 +82,11 @@ export const RDFNode:RDFNodeFactory = {
 		return node[ "@type" ];
 	},
 
-	getFreeNodes( objects:object | object[] ):RDFNode[] {
-		if( ! Array.isArray( objects ) ) return [];
-
-		return objects
-			.filter( element => ! RDFDocument.is( element ) )
-			.filter( RDFNode.is );
-	},
-
 	getList( propertyValues:RDFNodePropertyValue[] ):RDFList | undefined {
 		if( ! Array.isArray( propertyValues ) ) return;
 
 		return propertyValues
 			.find( RDFList.is )
-			;
-	},
-
-	getProperties( propertyValues:RDFNodePropertyValue[], pointerLibrary:PointerLibrary ):any[] | undefined {
-		if( ! Array.isArray( propertyValues ) ) return;
-
-		return propertyValues
-			.map( RDFValue.parse.bind( null, pointerLibrary ) )
-			.filter( value => ! Utils.isNull( value ) )
-			;
-	},
-
-	getPropertyPointers( propertyValues:RDFNodePropertyValue[], pointerLibrary:PointerLibrary ):any[] | undefined {
-		if( ! Array.isArray( propertyValues ) ) return;
-
-		return propertyValues
-			.filter( RDFNode.is )
-			.map( RDFNode.getID )
-			.map( pointerLibrary.getPointer, pointerLibrary )
-			.filter( pointer => ! Utils.isNull( pointer ) )
 			;
 	},
 

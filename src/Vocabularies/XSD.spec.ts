@@ -1,13 +1,7 @@
-import {
-	hasProperty,
-	interfaze,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
+import { hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
 
 import { XSD } from "./XSD";
+
 
 describe( module( "carbonldp/Vocabularies/XSD" ), ():void => {
 

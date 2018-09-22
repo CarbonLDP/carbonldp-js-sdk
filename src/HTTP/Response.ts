@@ -1,8 +1,8 @@
-import {
-	ClientRequest,
-	IncomingMessage,
-} from "http";
+import { ClientRequest, IncomingMessage } from "http";
+
+import { BadResponseError } from "./Errors/ServerErrors/BadResponseError";
 import { Header } from "./Header";
+
 
 export class Response {
 	readonly status:number;
@@ -40,7 +40,9 @@ export class Response {
 		const eTagHeader:Header = this.getHeader( "ETag" );
 
 		// TODO: Warn multiple ETags
-		if( ! eTagHeader || ! eTagHeader.values.length ) return null;
+		if( ! eTagHeader || ! eTagHeader.values.length )
+			throw new BadResponseError( "The response doesn't contain an ETag", this );
+
 		return eTagHeader.values[ 0 ];
 	}
 

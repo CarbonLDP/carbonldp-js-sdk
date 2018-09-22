@@ -1,19 +1,10 @@
-import {
-	module,
-	reexports,
-	STATIC
-} from "../test/JasmineExtender";
+import { module, reexports, STATIC } from "../test/JasmineExtender";
 
 import * as SHACL from "./";
 
-import {
-	ValidationReport,
-	ValidationReportFactory,
-} from "./ValidationReport";
-import {
-	ValidationResult,
-	ValidationResultFactory,
-} from "./ValidationResult";
+import { ValidationReport, ValidationReportFactory } from "./ValidationReport";
+import { ValidationResult, ValidationResultFactory } from "./ValidationResult";
+
 
 describe( module( "carbonldp/SHACL" ), ():void => {
 

@@ -1,20 +1,21 @@
-import { ModelFactory } from "../ModelFactory";
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-import { hasProperty } from "../Utils";
+import { Document } from "../Document/Document";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Resource } from "../Resource/Resource";
+
 import { C } from "../Vocabularies/C";
 
 
 export interface EventMessage extends Resource {
-	target:Pointer;
+	target:Document;
 }
 
 
-export interface EventMessageFactory extends ModelFactory<EventMessage> {
+export interface EventMessageFactory {
 	SCHEMA:ObjectSchema;
 
-	isDecorated( object:object ):object is EventMessage;
+	is( value:any ):value is EventMessage;
 }
 
 const SCHEMA:ObjectSchema = {
@@ -27,8 +28,10 @@ const SCHEMA:ObjectSchema = {
 export const EventMessage:EventMessageFactory = {
 	SCHEMA,
 
-	isDecorated( object:object ):object is EventMessage {
-		return hasProperty( object, "target" );
+	is( value:any ):value is EventMessage {
+		return Resource.is( value )
+			&& value.hasOwnProperty( "target" )
+			;
 	},
 };
 

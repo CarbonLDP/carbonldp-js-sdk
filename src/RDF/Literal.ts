@@ -1,11 +1,15 @@
-import * as Errors from "../Errors";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import * as Utils from "../Utils";
+
 import { XSD } from "../Vocabularies/XSD";
-import * as Utils from "./../Utils";
 
 import * as Serializers from "./Literal/Serializers";
 
+
 export * from "./Literal/Serializer";
 export { Serializers };
+
 
 export interface RDFLiteral {
 	"@type"?:string;
@@ -19,7 +23,6 @@ export interface RDFLiteralFactory {
 
 
 	parse( value:string, type?:string ):any;
-
 	parse( literal:RDFLiteral ):any;
 
 
@@ -32,9 +35,9 @@ export interface RDFLiteralFactory {
 export const RDFLiteral:RDFLiteralFactory = {
 	from( value:any ):RDFLiteral {
 		if( Utils.isNull( value ) )
-			throw new Errors.IllegalArgumentError( "Null cannot be converted into a Literal" );
+			throw new IllegalArgumentError( "Null cannot be converted into a Literal" );
 		if( ! Utils.isDefined( value ) )
-			throw new Errors.IllegalArgumentError( "The value is undefined" );
+			throw new IllegalArgumentError( "The value is undefined" );
 
 		let type:any;
 

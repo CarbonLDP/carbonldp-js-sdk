@@ -1,8 +1,12 @@
-import { Resource } from "../Resource";
+import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
+
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
 	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
 	module,
@@ -10,10 +14,13 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
+
 import * as Utils from "./../Utils";
 
 import { VolatileResource } from "./VolatileResource";
+
 
 describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 
@@ -22,7 +29,7 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 		"Interface that represents a free resource, i.e. a dynamic generated resource that does not have a persisted form."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
 
 	} );
 
@@ -37,31 +44,112 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 			"string"
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Return true if the object provided is considered a `CarbonLDP.LDP.VolatileResource` object.", [
-				{ name: "object", type: "object", description: "Object to check." },
-			],
-			{ type: "object is CarbonLDP.LDP.VolatileResource" }
-		), ():void => {} );
+		describe( hasMethod( OBLIGATORY, "is" ), ():void => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"create",
-			"Creates empty `CarbonLDP.LDP.VolatileResource` object.",
-			{ type: "CarbonLDP.LDP.VolatileResource" }
-		), ():void => {} );
+			it( hasSignature(
+				"Return true if the object provided is considered a `CarbonLDP.LDP.VolatileResource` object.", [
+					{ name: "value", type: "any", description: "Object to check." },
+				],
+				{ type: "value is CarbonLDP.LDP.VolatileResource" }
+			), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"createFrom",
-			[ "T extends object" ],
-			"Creates a `CarbonLDP.LDP.VolatileResource` object from the object specified.", [
-				{ name: "object", type: "T" },
-			],
-			{ type: "T & CarbonLDP.LDP.VolatileResource" }
-		), ():void => {} );
+			it( "should exists", ():void => {
+				expect( VolatileResource.is ).toBeDefined();
+				expect( VolatileResource.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let isTransientResource:jasmine.Spy;
+			let mockObject:jasmine.SpyObj<Resource>;
+			beforeEach( ():void => {
+				isTransientResource = spyOn( Resource, "is" )
+					.and.returnValue( true );
+				mockObject = jasmine.createSpyObj( {
+					$hasType: true,
+				} );
+			} );
+
+			it( "should be a TransientResource", () => {
+				VolatileResource.is( mockObject );
+				expect( isTransientResource ).toHaveBeenCalledWith( mockObject );
+			} );
+
+			it( "should has type c:VolatileResource", () => {
+				VolatileResource.is( mockObject );
+				expect( mockObject.$hasType ).toHaveBeenCalledWith( C.VolatileResource );
+			} );
+
+			it( "should return true when all assertions", () => {
+				const returned:boolean = VolatileResource.is( mockObject );
+				expect( returned ).toBe( true );
+			} );
+
+		} );
+
+		describe( hasMethod( OBLIGATORY, "create" ), ():void => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Creates empty `CarbonLDP.LDP.VolatileResource` object.", [
+					{ name: "data", type: "T", optional: true },
+				],
+				{ type: "T & CarbonLDP.LDP.VolatileResource" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( VolatileResource.create ).toBeDefined();
+				expect( VolatileResource.create ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return a VolatileResource when object provided", () => {
+				const returned:VolatileResource = VolatileResource.create( {} );
+				expect( returned ).toEqual( anyThatMatches( VolatileResource.is, "isVolatileResource" ) as any );
+			} );
+
+			it( "should return a VolatileResource when NO object provided", () => {
+				const returned:VolatileResource = VolatileResource.create();
+				expect( returned ).toEqual( anyThatMatches( VolatileResource.is, "isVolatileResource" ) as any );
+			} );
+
+			it( "should return different reference", () => {
+				const object:{} = {};
+				const returned:{} = VolatileResource.create( object );
+
+				expect( returned ).not.toBe( object );
+			} );
+
+		} );
+
+		describe( hasMethod( OBLIGATORY, "createFrom" ), ():void => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Creates a `CarbonLDP.LDP.VolatileResource` object from the object specified.", [
+					{ name: "object", type: "T" },
+				],
+				{ type: "T & CarbonLDP.LDP.VolatileResource" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( VolatileResource.createFrom ).toBeDefined();
+				expect( VolatileResource.createFrom ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return a VolatileResource", () => {
+				const returned:VolatileResource = VolatileResource.createFrom( {} );
+				expect( returned ).toEqual( anyThatMatches( VolatileResource.is, "isVolatileResource" ) as any );
+			} );
+
+			it( "should return same reference", () => {
+				const object:{} = {};
+				const returned:{} = VolatileResource.createFrom( object );
+
+				expect( returned ).toBe( object );
+			} );
+
+		} );
 
 	} );
 
@@ -103,10 +191,6 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 			object[ "types" ].push( C.VolatileResource );
 			expect( VolatileResource.is( object ) ).toBe( true );
 		} );
-
-		// TODO: Test VolatileResource.is
-		// TODO: Test VolatileResource.create
-		// TODO: Test VolatileResource.createFrom
 
 	} );
 

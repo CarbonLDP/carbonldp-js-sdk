@@ -1,11 +1,16 @@
 import { VolatileResource } from "../LDP/VolatileResource";
-import { ObjectSchema } from "../ObjectSchema";
-import { PersistedFragment } from "../PersistedFragment";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 
+import { PlatformMetadata } from "./PlatformMetadata";
 
-export interface PlatformInstance extends VolatileResource, PersistedFragment {
+
+export interface PlatformInstance extends VolatileResource {
+	$registry:PlatformMetadata;
+
 	buildDate:Date;
 	version:string;
 }

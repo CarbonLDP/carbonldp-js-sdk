@@ -1,1 +1,0 @@
-{"version":3,"sources":["System/index.ts"],"names":[],"mappings":";;;;;AAAA,wCAAmC","file":"index.js","sourcesContent":["export * from \"./PlatformMetadata\";\n"]}

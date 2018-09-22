@@ -1,4 +1,5 @@
-import { Resource } from "../Resource";
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
 	hasMethod,
@@ -10,10 +11,13 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
+
 import * as Utils from "./../Utils";
 
 import { Map } from "./Map";
+
 
 describe( module( "carbonldp/LDP/Map" ), ():void => {
 
@@ -23,7 +27,7 @@ describe( module( "carbonldp/LDP/Map" ), ():void => {
 		"Interface that contains a set entries with a close relation in the form of a key/value pair."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -114,9 +118,9 @@ describe( module( "carbonldp/LDP/Map" ), ():void => {
 			} );
 			expect( Map.is( object ) ).toBe( true );
 
-			object.removeType( C.Map );
+			object.$removeType( C.Map );
 			expect( Map.is( object ) ).toBe( false );
-			object.addType( C.Map );
+			object.$addType( C.Map );
 
 			delete object.entries;
 			expect( Map.is( object ) ).toBe( false );

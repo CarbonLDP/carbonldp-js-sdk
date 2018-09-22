@@ -1,4 +1,5 @@
-import { Resource } from "../Resource";
+import { Resource } from "../Resource/Resource";
+
 import {
 	extendsClass,
 	hasMethod,
@@ -10,11 +11,13 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
+
 import { C } from "../Vocabularies/C";
-import { CS } from "../Vocabularies/CS";
+
 import * as Utils from "./../Utils";
 
 import { ResponseMetadata } from "./ResponseMetadata";
+
 
 describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 
@@ -97,7 +100,6 @@ describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 			it( "should have the model properties", ():void => {
 				expect( ResponseMetadata.SCHEMA as { [ key:string ]:object } ).toEqual( {
 					documentsMetadata: jasmine.any( Object ),
-					authToken: jasmine.any( Object ),
 				} );
 			} );
 
@@ -106,13 +108,6 @@ describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 					"@id": C.documentMetadata,
 					"@type": "@id",
 					"@container": "@set",
-				} );
-			} );
-
-			it( "should have cs:authToken", ():void => {
-				expect( ResponseMetadata.SCHEMA[ "authToken" ] ).toEqual( {
-					"@id": CS.authToken,
-					"@type": "@id",
 				} );
 			} );
 
@@ -139,13 +134,13 @@ describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 			} );
 			expect( ResponseMetadata.is( object ) ).toBe( true );
 
-			object.removeType( C.VolatileResource );
+			object.$removeType( C.VolatileResource );
 			expect( ResponseMetadata.is( object ) ).toBe( false );
-			object.addType( C.VolatileResource );
+			object.$addType( C.VolatileResource );
 
-			object.removeType( C.ResponseMetadata );
+			object.$removeType( C.ResponseMetadata );
 			expect( ResponseMetadata.is( object ) ).toBe( false );
-			object.addType( C.ResponseMetadata );
+			object.$addType( C.ResponseMetadata );
 
 			delete object.documentsMetadata;
 			expect( ResponseMetadata.is( object ) ).toBe( true );

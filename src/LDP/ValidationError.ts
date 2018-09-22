@@ -1,8 +1,12 @@
-import { ModelFactory } from "../ModelFactory";
+import { ModelSchema } from "../Model/ModelSchema";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { Resource } from "../Resource/Resource";
+
 import { C } from "../Vocabularies/C";
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
 
 
 export interface ValidationError extends Resource {
@@ -10,8 +14,8 @@ export interface ValidationError extends Resource {
 }
 
 
-export interface ValidationErrorFactory extends ModelFactory<ValidationError> {
-	TYPE:string;
+export interface ValidationErrorFactory extends ModelSchema {
+	TYPE:C[ "ValidationError" ];
 	SCHEMA:ObjectSchema;
 }
 

@@ -1,44 +1,45 @@
-import { AbstractContext } from "./AbstractContext";
-import { AccessPoint } from "./AccessPoint";
-import * as Auth from "./Auth";
-import { BlankNode } from "./BlankNode";
+import { anyThatMatches } from "../test/helpers/jasmine/equalities";
+
+import { AccessPoint } from "./AccessPoint/AccessPoint";
+import { TransientAccessPoint } from "./AccessPoint/TransientAccessPoint";
 
 import * as CarbonLDP from "./CarbonLDP";
+import { CarbonLDPSettings } from "./CarbonLDPSettings";
 
-import { Document } from "./Document";
-import { Documents } from "./Documents";
+import { AbstractContext } from "./Context/AbstractContext";
+import { DocumentsContext } from "./Context/DocumentsContext";
+import { GlobalContext } from "./Context/GlobalContext";
+
+import { Document } from "./Document/Document";
+
+import { DocumentsRegistry } from "./DocumentsRegistry";
+
 import * as Errors from "./Errors";
-import { Fragment } from "./Fragment";
-import { FreeResources } from "./FreeResources";
+
+import { Fragment } from "./Fragment/Fragment";
+import { TransientFragment } from "./Fragment/TransientFragment";
+
+import { FreeResources } from "./FreeResources/FreeResources";
+
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import { NamedFragment } from "./NamedFragment";
-import {
-	ContainerType,
-	DigestedObjectSchema,
-	DigestedObjectSchemaProperty,
-	ObjectSchemaDigester,
-	ObjectSchemaUtils,
-	PointerType,
-} from "./ObjectSchema";
-import { PersistedDocument } from "./PersistedDocument";
-import { PersistedFragment } from "./PersistedFragment";
-import { PersistedNamedFragment } from "./PersistedNamedFragment";
-import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
-import { PersistedResource } from "./PersistedResource";
-import { Pointer } from "./Pointer";
-import { ProtectedDocument } from "./ProtectedDocument";
+
+import { ContainerType } from "./ObjectSchema/ContainerType";
+import { DigestedObjectSchema } from "./ObjectSchema/DigestedObjectSchema";
+import { DigestedObjectSchemaProperty } from "./ObjectSchema/DigestedObjectSchemaProperty";
+import { ObjectSchemaDigester } from "./ObjectSchema/ObjectSchemaDigester";
+import { ObjectSchemaUtils } from "./ObjectSchema/ObjectSchemaUtils";
+import { PointerType } from "./ObjectSchema/PointerType";
+
+import { Pointer } from "./Pointer/Pointer";
+
 import * as RDF from "./RDF";
-import { Resource } from "./Resource";
-import {
-	globalContext,
-	SDKContext,
-} from "./SDKContext";
-import { ServiceAwareDocument } from "./ServiceAwareDocument";
-import * as Settings from "./Settings";
+
+import { Resource } from "./Resource/Resource";
+
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
@@ -60,6 +61,7 @@ import {
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
 
+
 describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -74,9 +76,9 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			expect( CarbonLDP.CarbonLDP ).toEqual( jasmine.any( Function ) );
 		} );
 
-		it( extendsClass( "CarbonLDP.AbstractContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.DocumentsContext" ), ():void => {
 			const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com" );
-			expect( carbon ).toEqual( jasmine.any( AbstractContext ) );
+			expect( carbon ).toEqual( jasmine.any( DocumentsContext ) );
 		} );
 
 		it( hasProperty(
@@ -111,38 +113,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Auth",
-			"carbonldp/Auth"
+			"TransientAccessPoint",
+			"carbonldp/TransientAccessPoint#TransientAccessPoint"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Auth ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Auth ).toBe( Auth );
-		} );
-
-		it( reexports(
-			STATIC,
-			"BlankNode",
-			"carbonldp/BlankNode#BlankNode"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.BlankNode ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.BlankNode ).toBe( BlankNode );
-		} );
-
-		it( reexports(
-			STATIC,
-			"Document",
-			"carbonldp/Document#Document"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Document ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Document ).toBe( Document );
-		} );
-
-		it( reexports(
-			STATIC,
-			"Documents",
-			"CarbonLDP.Documents"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Documents ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Documents ).toBe( Documents );
+			expect( CarbonLDP.CarbonLDP.TransientAccessPoint ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientAccessPoint ).toBe( TransientAccessPoint );
 		} );
 
 		it( reexports(
@@ -152,15 +127,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Errors ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Errors ).toBe( Errors );
-		} );
-
-		it( reexports(
-			STATIC,
-			"Fragment",
-			"carbonldp/Fragment#Fragment"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Fragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Fragment ).toBe( Fragment );
 		} );
 
 		it( reexports(
@@ -215,15 +181,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Messaging ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Messaging ).toBe( Messaging );
-		} );
-
-		it( reexports(
-			STATIC,
-			"NamedFragment",
-			"carbonldp/NamedFragment#NamedFragment"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBe( NamedFragment );
 		} );
 
 		it( reexports(
@@ -291,47 +248,29 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"PersistedDocument",
-			"carbonldp/PersistedDocument#PersistedDocument"
+			"Document",
+			"carbonldp/Document#Document"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedDocument ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedDocument ).toBe( PersistedDocument );
+			expect( CarbonLDP.CarbonLDP.Document ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.Document ).toBe( Document );
 		} );
 
 		it( reexports(
 			STATIC,
-			"PersistedFragment",
-			"carbonldp/PersistedFragment#PersistedFragment"
+			"Fragment",
+			"carbonldp/Fragment#Fragment"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedFragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedFragment ).toBe( PersistedFragment );
+			expect( CarbonLDP.CarbonLDP.Fragment ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.Fragment ).toBe( Fragment );
 		} );
 
 		it( reexports(
 			STATIC,
-			"PersistedNamedFragment",
-			"carbonldp/PersistedNamedFragment#PersistedNamedFragment"
+			"TransientFragment",
+			"carbonldp/TransientFragment#TransientFragment"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedNamedFragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedNamedFragment ).toBe( PersistedNamedFragment );
-		} );
-
-		it( reexports(
-			STATIC,
-			"PersistedProtectedDocument",
-			"carbonldp/PersistedProtectedDocument#PersistedProtectedDocument"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedProtectedDocument ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedProtectedDocument ).toBe( PersistedProtectedDocument );
-		} );
-
-		it( reexports(
-			STATIC,
-			"PersistedResource",
-			"carbonldp/PersistedResource#PersistedResource"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBe( PersistedResource );
+			expect( CarbonLDP.CarbonLDP.TransientFragment ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientFragment ).toBe( TransientFragment );
 		} );
 
 		it( reexports(
@@ -345,15 +284,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"ProtectedDocument",
-			"carbonldp/ProtectedDocument#ProtectedDocument"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.ProtectedDocument ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.ProtectedDocument ).toBe( ProtectedDocument );
-		} );
-
-		it( reexports(
-			STATIC,
 			"RDF",
 			"carbonldp/RDF"
 		), ():void => {
@@ -363,38 +293,20 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Resource",
-			"carbonldp/Resource#Resource"
+			"TransientResource",
+			"carbonldp/TransientResource#TransientResource"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Resource ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Resource ).toBe( Resource );
+			expect( CarbonLDP.CarbonLDP.TransientResource ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientResource ).toBe( Resource );
 		} );
 
 		it( reexports(
 			STATIC,
-			"SDKContext",
-			"CarbonLDP.SDKContext"
+			"GlobalContext",
+			"CarbonLDP.GlobalContext"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.SDKContext ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.SDKContext ).toBe( SDKContext );
-		} );
-
-		it( reexports(
-			STATIC,
-			"globalContext",
-			"carbonldp/SDKContext#globalContext"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.globalContext ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.globalContext ).toBe( globalContext );
-		} );
-
-		it( reexports(
-			STATIC,
-			"ServiceAwareDocument",
-			"carbonldp/ServiceAwareDocument#ServiceAwareDocument"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.ServiceAwareDocument ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.ServiceAwareDocument ).toBe( ServiceAwareDocument );
+			expect( CarbonLDP.CarbonLDP.GlobalContext ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.GlobalContext ).toBe( GlobalContext );
 		} );
 
 		it( reexports(
@@ -456,6 +368,15 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				expect( target ).toEqual( jasmine.any( CarbonLDP.CarbonLDP ) );
 			} );
 
+
+			it( "should initialize documents root document", () => {
+				const context:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
+
+				expect( context.documents ).toEqual( anyThatMatches( Document.is ) as any );
+				expect( context.documents.$id ).toEqual( "https://example.com/" );
+			} );
+
+
 			it( "should throw error when URL has not protocol", ():void => {
 				const helper:( url:string ) => () => void = url => () => {
 					new CarbonLDP.CarbonLDP( url );
@@ -490,7 +411,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 
 			it( "should throw error when invalid host property", ():void => {
-				const helper:( settings:Settings.CarbonLDPSettings ) => void = settings => () => {
+				const helper:( settings:CarbonLDPSettings ) => void = settings => () => {
 					new CarbonLDP.CarbonLDP( settings );
 				};
 
@@ -500,7 +421,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should throw error when invalid host with protocol", ():void => {
-				const helper:( settings:Settings.CarbonLDPSettings ) => void = settings => () => {
+				const helper:( settings:CarbonLDPSettings ) => void = settings => () => {
 					new CarbonLDP.CarbonLDP( settings );
 				};
 
@@ -510,7 +431,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should throw error when invalid host with port", ():void => {
-				const helper:( settings:Settings.CarbonLDPSettings ) => void = settings => () => {
+				const helper:( settings:CarbonLDPSettings ) => void = settings => () => {
 					new CarbonLDP.CarbonLDP( settings );
 				};
 
@@ -519,7 +440,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host", ():void => {
-				const helper:( settings:Settings.CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -529,7 +450,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host and ssl", ():void => {
-				const helper:( settings:Settings.CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -539,7 +460,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host and port", ():void => {
-				const helper:( settings:Settings.CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -549,7 +470,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host, ssl and port", ():void => {
-				const helper:( settings:Settings.CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -559,7 +480,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host, ssl and port", ():void => {
-				const helper:( settings:Settings.CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -571,7 +492,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 			it( "should have the default settings when url provided", ():void => {
 				const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
-				expect( carbon[ "settings" ] ).toEqual( {
+				expect( carbon[ "_settings" ] ).toEqual( {
 					vocabulary: "vocabularies/main/#",
 					paths: {
 						system: {
@@ -608,7 +529,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 					},
 				} );
 
-				expect( carbon[ "settings" ] ).toEqual( {
+				expect( carbon[ "_settings" ] ).toEqual( {
 					vocabulary: "https://schema.org/",
 					paths: {
 						system: {
@@ -637,12 +558,14 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				expect( carbon.version ).toBe( CarbonLDP.CarbonLDP.version );
 			} );
 
-			it( "should instantiate the messaging service when url", ():void => {
-				const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com" );
-				expect( carbon.messaging ).toEqual( jasmine.any( Messaging.MessagingService ) );
-			} );
-
 		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"documents",
+			"CarbonLDP.Document",
+			"Representation of the root document of the platform instance."
+		), () => {} );
 
 		it( hasProperty(
 			INSTANCE,
@@ -660,10 +583,13 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( hasProperty(
 			INSTANCE,
-			"messaging",
-			"CarbonLDP.Messaging.MessagingService",
-			"Service that contains the RAW methods to manage the messaging/real-time features."
-		), ():void => {} );
+			"registry",
+			"CarbonLDP.DocumentsRegistry",
+			"Registry that stores the documents of a Carbon LDP instance."
+		), ():void => {
+			const target:CarbonLDP.CarbonLDP[ "registry" ] = {} as DocumentsRegistry;
+			expect( target ).toBeDefined();
+		} );
 
 		describe( method( INSTANCE, "resolve" ), ():void => {
 
@@ -777,7 +703,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				carbon
 					.getPlatformMetadata()
 					.then( ( platformMetadata ):void => {
-						type AllPartial<T> = { [P in keyof T]?: Partial<T[P]> };
+						type AllPartial<T> = { [P in keyof T]?:Partial<T[P]> };
 						type JSPlatform = AllPartial<System.PlatformMetadata>;
 
 						expect( platformMetadata as JSPlatform ).toEqual( {

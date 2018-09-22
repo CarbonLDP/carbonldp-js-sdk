@@ -1,20 +1,17 @@
-import { AbstractContext } from "../AbstractContext";
-import { PersistedDocument } from "../PersistedDocument";
-import {
-	Pointer,
-	PointerLibrary,
-} from "../Pointer";
+import { Pointer, PointerLibrary } from "../Pointer";
 import {
 	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { XSD } from "../Vocabularies/XSD";
+import { XSD } from "../Vocabularies";
 import * as Utils from "./../Utils";
 import { RDFDocument } from "./Document";
 import { RDFList } from "./List";
@@ -61,24 +58,53 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 		), ():void => {} );
 
 
-		it( hasMethod(
-			OBLIGATORY,
-			"getID",
-			"Returns the `@id` of the node.", [
-				{ name: "node", type: "CarbonLDP.RDF.RDFNode" },
-			],
-			{ type: "string" }
-		), ():void => {} );
+		describe( method( OBLIGATORY, "getID" ), () => {
+
+			it( hasSignature(
+				"Returns the `@id` of the node.", [
+					{ name: "node", type: "CarbonLDP.RDF.RDFNode" },
+				],
+				{ type: "string" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( RDFNode.getID ).toBeDefined();
+				expect( RDFNode.getID ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return the @id of the node", () => {
+				const returned:string = RDFNode.getID( { "@id": "the-id/" } );
+				expect( returned ).toBe( "the-id/" );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "getRelativeID" ), () => {
+
+			it( hasSignature(
+				"Returns the relative `@id` of the node when it is a fragment node.", [
+					{ name: "node", type: "CarbonLDP.RDF.RDFNode" },
+				],
+				{ type: "string" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( RDFNode.getRelativeID ).toBeDefined();
+				expect( RDFNode.getRelativeID ).toEqual( jasmine.any( Function ) );
+			} );
 
 
-		it( hasMethod(
-			OBLIGATORY,
-			"getRelativeID",
-			"Returns the relative `@id` of the node when it is a fragment node.", [
-				{ name: "node", type: "CarbonLDP.RDF.RDFNode" },
-			],
-			{ type: "string" }
-		), ():void => {} );
+			it( "should return the fragment when resource is a named fragment", () => {
+				const returned:string = RDFNode.getRelativeID( { "@id": "https://example.com/#fragment" } );
+				expect( returned ).toBe( "fragment" );
+			} );
+
+			it( "should return bNode label when resource is bNode", () => {
+				const returned:string = RDFNode.getRelativeID( { "@id": "_:1" } );
+				expect( returned ).toBe( "_:1" );
+			} );
+
+		} );
 
 		it( hasMethod(
 			OBLIGATORY,
@@ -120,43 +146,12 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
-			"getFreeNodes",
-			"Returns an array with the nodes that are neither a Document nor are contained inside a one.", [
-				{ name: "objects", type: "objects[]", description: "The object to evaluate for its free nodes." },
-			],
-			{ type: "CarbonLDP.RDF.RDFNode[]" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
 			"getList",
 			"Returns the List object from the provided property of an expanded JSON-LD object.\n" +
 			"Returns `undefined` if no List object is found.", [
 				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | CarbonLDP.RDF.RDFLiteral)[]" },
 			],
 			{ type: "CarbonLDP.RDF.RDFList" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"getProperties",
-			"Returns the property array with the parsed Literal, Pointer or List.\n" +
-			"Returns `undefined` if it cannot be parsed.", [
-				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | CarbonLDP.RDF.RDFLiteral)[]" },
-				{ name: "pointerLibrary", type: "CarbonLDP.PointerLibrary" },
-			],
-			{ type: "any[]" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"getPropertyPointers",
-			"Returns the property array with the parsed Pointers values.\n" +
-			"Returns `undefined` if the property cannot be parsed as a pointer.", [
-				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | CarbonLDP.RDF.RDFLiteral)[]" },
-				{ name: "pointerLibrary", type: "CarbonLDP.PointerLibrary" },
-			],
-			{ type: "any[]" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -220,14 +215,11 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			expect( RDFNode.create( "some thing that is not an URI, but works" ) ).toEqual( { "@id": "some thing that is not an URI, but works" } );
 		} );
 
-		let expandedObject:any;
 		let documentResource:any;
 		let pointerLibrary:PointerLibrary;
 		let result:any;
-		let context:AbstractContext;
-
 		beforeEach( ():void => {
-			expandedObject = [ {
+			let expandedObject:any = [ {
 				"@id": "http://example.com/resource/",
 				"@graph": [
 					{
@@ -306,25 +298,12 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 				],
 			} ];
 
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.settings = { vocabulary: "http://example.com/vocab#" };
-				}
-			}
-
-			context = new MockedContext();
-
 			documentResource = RDFDocument.getDocumentResources( expandedObject )[ 0 ];
-			pointerLibrary = PersistedDocument.create( context.documents, expandedObject[ "@id" ] );
+			pointerLibrary = {
+				hasPointer: () => { throw new Error( "Not implemented." ); },
+				getPointer: id => Pointer.create( { $id: id } ),
+			};
 		} );
-
-		// TODO: Test `RDFNode.getID`
-
-		// TODO: Test `RDFNode.getRelativeID`
 
 		// TODO: Separate in different tests
 		it( "RDFNode.areEqual", ():void => {
@@ -407,56 +386,6 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 		} );
 
 		// TODO: Separate in different tests
-		it( "RDFNode.getFreeNodes", ():void => {
-			expect( RDFNode.getFreeNodes ).toBeDefined();
-			expect( Utils.isFunction( RDFNode.getFreeNodes ) ).toBe( true );
-
-			let object:any;
-
-			object = {};
-			expect( RDFNode.getFreeNodes( object ) ).toEqual( [] );
-
-			object = [];
-			expect( RDFNode.getFreeNodes( object ) ).toEqual( [] );
-			object = [
-				{
-					"@id": "http://example.com/resouce/",
-					"@graph": [ {} ],
-				},
-			];
-			expect( RDFNode.getFreeNodes( object ) ).toEqual( [] );
-			object = [
-				{
-					"@id": "http://example.com/resouce-1/",
-					"@graph": [ {} ],
-				},
-				{
-					"@id": "http://example.com/resouce-2/",
-					"@graph": [ {} ],
-				},
-			];
-			expect( RDFNode.getFreeNodes( object ) ).toEqual( [] );
-
-			object = [
-				{
-					"@id": "http://example.com/free-node-1/",
-				},
-				{
-					"@id": "http://example.com/resouce-1/",
-					"@graph": [ {} ],
-				},
-				{
-					"@id": "http://example.com/free-node-2/",
-				},
-				{
-					"@id": "http://example.com/resouce-2/",
-					"@graph": [ {} ],
-				},
-			];
-			expect( RDFNode.getFreeNodes( object ) ).toEqual( [ { "@id": "http://example.com/free-node-1/" }, { "@id": "http://example.com/free-node-2/" } ] );
-		} );
-
-		// TODO: Separate in different tests
 		it( "RDFNode.getList", ():void => {
 			expect( RDFNode.getList ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.getList ) ).toBe( true );
@@ -469,95 +398,6 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			expect( result ).toBeUndefined();
 
 			result = RDFNode.getList( documentResource[ "http://example.com/ns#string" ] );
-			expect( result ).toBeUndefined();
-		} );
-
-		// TODO: Separate in different tests
-		it( "RDFNode.getProperties", ():void => {
-			expect( RDFNode.getProperties ).toBeDefined();
-			expect( Utils.isFunction( RDFNode.getProperties ) ).toBe( true );
-
-			result = RDFNode.getProperties( documentResource[ "http://example.com/ns#string" ], pointerLibrary );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 1 );
-			expect( Utils.isString( result[ 0 ] ) ).toBe( true );
-			expect( result[ 0 ] ).toBe( "a string" );
-
-			result = RDFNode.getProperties( documentResource[ "http://example.com/ns#integer" ], pointerLibrary );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 1 );
-			expect( Utils.isNumber( result[ 0 ] ) ).toBe( true );
-			expect( result[ 0 ] ).toBe( 100 );
-
-			result = RDFNode.getProperties( documentResource[ "http://example.com/ns#date" ], pointerLibrary );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 1 );
-			expect( Utils.isDate( result[ 0 ] ) ).toBe( true );
-			expect( result[ 0 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
-
-			result = RDFNode.getProperties( documentResource[ "http://example.com/ns#pointer" ], pointerLibrary );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 1 );
-			expect( Pointer.is( result[ 0 ] ) ).toBe( true );
-			expect( result[ 0 ].id ).toBe( "http://example.com/pointer/1" );
-
-			result = RDFNode.getProperties( documentResource[ "http://example.com/ns#list" ], pointerLibrary );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 1 );
-			expect( Utils.isArray( result[ 0 ] ) ).toBe( true );
-			expect( result[ 0 ].length ).toBe( 3 );
-			expect( result[ 0 ][ 0 ] ).toBe( 100 );
-			expect( result[ 0 ][ 1 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
-			expect( Pointer.is( result[ 0 ][ 2 ] ) ).toBe( true );
-			expect( result[ 0 ][ 2 ].id ).toBe( "http://example.com/pointer/1" );
-
-			result = RDFNode.getProperties( documentResource[ "http://example.com/ns#pointerSet" ], pointerLibrary );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 3 );
-			expect( Pointer.is( result[ 0 ] ) ).toBe( true );
-			expect( result[ 0 ].id ).toBe( "_:1" );
-			expect( Pointer.is( result[ 1 ] ) ).toBe( true );
-			expect( result[ 1 ].id ).toBe( "http://example.com/resource/#1" );
-			expect( Pointer.is( result[ 2 ] ) ).toBe( true );
-			expect( result[ 2 ].id ).toBe( "http://example.com/external-resource/" );
-
-			result = RDFNode.getProperties( documentResource[ "http://example.com/ns#empty-property" ], pointerLibrary );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 0 );
-
-			result = RDFNode.getProperties( documentResource[ "http://example.com/ns#no-property" ], pointerLibrary );
-			expect( result ).toBeUndefined();
-		} );
-
-		// TODO: Separate in different tests
-		it( "RDFNode.getPropertyPointers", ():void => {
-			expect( RDFNode.getPropertyPointers ).toBeDefined();
-			expect( Utils.isFunction( RDFNode.getPropertyPointers ) ).toBe( true );
-
-			result = RDFNode.getPropertyPointers( documentResource[ "http://example.com/ns#pointer" ], pointerLibrary );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 1 );
-			expect( Pointer.is( result[ 0 ] ) ).toBe( true );
-			expect( result[ 0 ].id ).toBe( "http://example.com/pointer/1" );
-
-			result = RDFNode.getPropertyPointers( documentResource[ "http://example.com/ns#pointerSet" ], pointerLibrary );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 3 );
-			expect( Pointer.is( result[ 0 ] ) ).toBe( true );
-			expect( result[ 0 ].id ).toBe( "_:1" );
-			expect( Pointer.is( result[ 1 ] ) ).toBe( true );
-			expect( result[ 1 ].id ).toBe( "http://example.com/resource/#1" );
-			expect( Pointer.is( result[ 2 ] ) ).toBe( true );
-			expect( result[ 2 ].id ).toBe( "http://example.com/external-resource/" );
-
-			result = RDFNode.getPropertyPointers( documentResource[ "http://example.com/ns#string" ], pointerLibrary );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 0 );
-			result = RDFNode.getPropertyPointers( documentResource[ "http://example.com/ns#empty-property" ], pointerLibrary );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 0 );
-
-			result = RDFNode.getPropertyPointers( documentResource[ "http://example.com/ns#no-property" ], pointerLibrary );
 			expect( result ).toBeUndefined();
 		} );
 

@@ -235,7 +235,7 @@ class FakeClientRequest extends http.ClientRequest {
 	}
 
 	private endFake():void {
-		if( this.params === void 0 ) {
+		if( this.params === void 0 && this.requestBodyBuffers.length ) {
 			//  When request body is a binary buffer we internally use in its hexadecimal representation.
 			const requestBodyBuffer:Buffer = common.mergeChunks( this.requestBodyBuffers );
 			this.params = common.isBinaryBuffer( requestBodyBuffer ) ?

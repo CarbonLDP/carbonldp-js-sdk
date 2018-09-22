@@ -15,12 +15,11 @@ module.exports = function( options = {} ) {
 
 		resolve: {
 			alias: {
-				"sockjs-client$": path.resolve( TEST_DIR, "mock-sockjs.js" ),
+				"sockjs-client$": path.resolve( TEST_DIR, "mock-sockjs" ),
 			},
 		},
 
 		plugins: [
-			new webpack.IgnorePlugin( /nock/ ),
 			new webpack.IgnorePlugin( /es6-promise/, /jsonld/ ),
 		],
 

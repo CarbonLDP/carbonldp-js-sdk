@@ -302,6 +302,8 @@ export class MapUtils {
 	static extend<K, V>( toExtend:Map<K, V>, ...extenders:Map<K, V>[] ):Map<K, V> {
 		for( let i:number = 0, length:number = extenders.length; i < length; i ++ ) {
 			let extender:Map<K, V> = extenders[ i ];
+			if( ! extender ) continue;
+
 			let values:Iterator<Array<(K | V)>> = extender.entries();
 
 			let next:IteratorResult<Array<(K | V)>> = values.next();

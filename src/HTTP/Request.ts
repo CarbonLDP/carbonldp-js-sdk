@@ -2,12 +2,18 @@ import HTTP from "http";
 import HTTPS from "https";
 import URL from "url";
 
-import * as Utils from "./../Utils";
-import { BadResponseError } from "./Errors";
+import { hasProperty, hasPropertyDefined, isNumber, isString } from "../Utils";
+
+import { HTTPError } from "./Errors/HTTPError";
+import { statusCodeMap } from "./Errors/index";
+import { BadResponseError } from "./Errors/ServerErrors/BadResponseError";
+import { UnknownError } from "./Errors/UnknownError";
+
 import { Header } from "./Header";
 import { HTTPMethod } from "./HTTPMethod";
 import { Parser } from "./Parser";
 import { Response } from "./Response";
+
 
 export interface RequestOptions {
 	headers?:Map<string, Header>;
@@ -25,41 +31,34 @@ export interface RetrievalPreferences {
 	omit?:string[];
 }
 
-interface ResponseCallback {
-	( response:Response ):void;
-}
+type ResolveCallback = ( response:Response ) => void;
+type RejectCallback = ( error:HTTPError ) => void;
 
-function forEachHeaders( headers:Map<string, Header>, setHeader:( name:string, value:string ) => any ):void {
-	let namesIterator:Iterator<string> = headers.keys();
-	let next:IteratorResult<string> = namesIterator.next();
-	while( ! next.done ) {
-		let name:string = next.value;
-		let value:Header = headers.get( name );
-		setHeader( name, value.toString() );
-		next = namesIterator.next();
-	}
-}
-
-function onResolve( resolve:ResponseCallback, reject:ResponseCallback, response:Response ):void {
+function __onResolve( resolve:ResolveCallback, reject:RejectCallback, response:Response ):void {
 	if( response.status >= 200 && response.status <= 299 ) {
 		resolve( response );
 	} else {
-		reject( response );
+		if( ! statusCodeMap.has( response.status ) )
+			return reject( new UnknownError( response.data, response ) );
+
+		reject( new (statusCodeMap.get( response.status ))( response.data, response ) );
 	}
 }
 
-function sendWithBrowser( method:string, url:string, body:string | Blob, options:RequestOptions ):Promise<Response> {
-	return new Promise<Response>( ( resolve:ResponseCallback, reject:ResponseCallback ):void => {
+function __sendWithBrowser( method:string, url:string, body:string | Blob, options:RequestOptions ):Promise<Response> {
+	return new Promise<Response>( ( resolve:ResolveCallback, reject:RejectCallback ):void => {
 		let request:XMLHttpRequest = options.request ? options.request : new XMLHttpRequest();
 		request.open( method, url, true );
 
-		if( options.headers ) forEachHeaders( options.headers, ( name:string, value:string ) => request.setRequestHeader( name, value ) );
+		if( options.headers ) options.headers
+			.forEach( ( header:Header, name:string ) => request.setRequestHeader( name, header.toString() ) );
+
 		request.withCredentials = options.sendCredentialsOnCORS;
 		if( options.timeout ) request.timeout = options.timeout;
 
 		request.onload = request.onerror = () => {
 			let response:Response = new Response( request );
-			onResolve( resolve, reject, response );
+			__onResolve( resolve, reject, response );
 		};
 
 		if( body ) {
@@ -70,8 +69,8 @@ function sendWithBrowser( method:string, url:string, body:string | Blob, options
 	} );
 }
 
-function sendWithNode( method:string, url:string, body:string | Buffer, options:RequestOptions ):Promise<Response> {
-	return new Promise<Response>( ( resolve:ResponseCallback, reject:ResponseCallback ):void => {
+function __sendWithNode( method:string, url:string, body:string | Buffer, options:RequestOptions ):Promise<Response> {
+	return new Promise<Response>( ( resolve:ResolveCallback, reject:RejectCallback ):void => {
 		function returnResponse( request:HTTP.ClientRequest, res:HTTP.IncomingMessage ):void {
 			let rawData:Buffer[] = [];
 
@@ -82,7 +81,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 				let data:string = Buffer.concat( rawData ).toString( "utf8" );
 				let response:Response = new Response( request, data, res );
 
-				onResolve( resolve, reject, response );
+				__onResolve( resolve, reject, response );
 			} );
 		}
 
@@ -100,7 +99,9 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 				method: method,
 				headers: {},
 			};
-			if( options.headers ) forEachHeaders( options.headers, ( name:string, value:string ) => requestOptions.headers[ name ] = value );
+
+			if( options.headers ) options.headers
+				.forEach( ( header:Header, name:string ) => requestOptions.headers[ name ] = header.toString() );
 
 			let request:HTTP.ClientRequest = Adapter.request( requestOptions );
 			if( options.timeout ) request.setTimeout( options.timeout );
@@ -114,7 +115,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 
 			request.on( "error", ( error ) => {
 				let response:Response = new Response( request, error.message );
-				onResolve( resolve, reject, response );
+				__onResolve( resolve, reject, response );
 			} );
 			request.end( body );
 		}
@@ -124,14 +125,14 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 	} );
 }
 
-function sendRequest( method:string, url:string, body:string | Blob | Buffer, options:RequestOptions ):Promise<Response> {
+function __sendRequest( method:string, url:string, body:string | Blob | Buffer, options:RequestOptions ):Promise<Response> {
 	return typeof XMLHttpRequest !== "undefined" ?
-		sendWithBrowser( method, url, <string | Blob> body, options ) :
-		sendWithNode( method, url, <string | Buffer> body, options );
+		__sendWithBrowser( method, url, <string | Blob> body, options ) :
+		__sendWithNode( method, url, <string | Buffer> body, options );
 }
 
-function isBody( data:string | Blob | Buffer ):boolean {
-	return Utils.isString( data )
+function __isBody( data:string | Blob | Buffer ):boolean {
+	return isString( data )
 		|| typeof Blob !== "undefined" && data instanceof Blob
 		|| typeof Buffer !== "undefined" && data instanceof Buffer;
 }
@@ -148,10 +149,10 @@ export class RequestService {
 	static send<T>( method:(HTTPMethod | string), url:string, body:string | Blob | Buffer, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static send<T>( method:any, url:string, bodyOrOptions:any = RequestService.defaultOptions, optionsOrParser:any = RequestService.defaultOptions, parser:Parser<T> = null ):any {
 		let body:string | Blob | Buffer = null;
-		let options:RequestOptions = Utils.hasProperty( optionsOrParser, "parse" ) ? bodyOrOptions : optionsOrParser;
-		parser = Utils.hasProperty( optionsOrParser, "parse" ) ? optionsOrParser : parser;
+		let options:RequestOptions = hasProperty( optionsOrParser, "parse" ) ? bodyOrOptions : optionsOrParser;
+		parser = hasProperty( optionsOrParser, "parse" ) ? optionsOrParser : parser;
 
-		if( isBody( bodyOrOptions ) ) {
+		if( __isBody( bodyOrOptions ) ) {
 			body = bodyOrOptions;
 		} else {
 			options = bodyOrOptions ? bodyOrOptions : options;
@@ -159,11 +160,11 @@ export class RequestService {
 
 		options = Object.assign( {}, RequestService.defaultOptions, options );
 
-		if( Utils.isNumber( method ) ) method = HTTPMethod[ method ];
+		if( isNumber( method ) ) method = HTTPMethod[ method ];
 
-		const requestPromise:Promise<Response> = sendRequest( method, url, body, options )
+		const requestPromise:Promise<Response> = __sendRequest( method, url, body, options )
 			.then( response => {
-				if( method === "GET" && options.headers ) return this._handleGETResponse( url, options, response );
+				if( method === "GET" && options.headers ) return this.__handleGETResponse( url, options, response );
 				else return response;
 			} )
 		;
@@ -225,18 +226,18 @@ export class RequestService {
 	 * GET requests can be affected by previously cached resources that were originally requested with a different Accept header. This method identifies that
 	 * and retries the request with headers that force browsers to ignore cache.
 	 */
-	private static _handleGETResponse( url:string, requestOptions:RequestOptions, response:Response ):Promise<Response> {
+	private static __handleGETResponse( url:string, requestOptions:RequestOptions, response:Response ):Promise<Response> {
 		return Promise.resolve()
 			.then( () => {
-				if( this._contentTypeIsAccepted( requestOptions, response ) ) return response;
+				if( this.__contentTypeIsAccepted( requestOptions, response ) ) return response;
 
-				this._setNoCacheHeaders( requestOptions );
+				this.__setNoCacheHeaders( requestOptions );
 
-				if( ! this._isChromiumAgent() ) this._setFalseETag( requestOptions );
+				if( ! this.__isChromiumAgent() ) this.__setFalseETag( requestOptions );
 
-				return sendRequest( "GET", url, null, requestOptions )
+				return __sendRequest( "GET", url, null, requestOptions )
 					.then( noCachedResponse => {
-						if( ! this._contentTypeIsAccepted( requestOptions, response ) ) {
+						if( ! this.__contentTypeIsAccepted( requestOptions, response ) ) {
 							throw new BadResponseError( "The server responded with an unacceptable Content-Type", response );
 						}
 
@@ -245,7 +246,7 @@ export class RequestService {
 			} );
 	}
 
-	private static _contentTypeIsAccepted( requestOptions:RequestOptions, response:Response ):boolean {
+	private static __contentTypeIsAccepted( requestOptions:RequestOptions, response:Response ):boolean {
 		const accepts:string[] = requestOptions.headers.has( "accept" ) ?
 			requestOptions.headers.get( "accept" ).values :
 			[]
@@ -258,18 +259,18 @@ export class RequestService {
 		return ! contentType || accepts.some( contentType.hasValue, contentType );
 	}
 
-	private static _setNoCacheHeaders( requestOptions:RequestOptions ):void {
+	private static __setNoCacheHeaders( requestOptions:RequestOptions ):void {
 		requestOptions.headers
 			.set( "pragma", new Header( "no-cache" ) )
 			.set( "cache-control", new Header( "no-cache, max-age=0" ) )
 		;
 	}
 
-	private static _isChromiumAgent():boolean {
-		return typeof window !== "undefined" && ! window[ "chrome" ];
+	private static __isChromiumAgent():boolean {
+		return typeof window !== "undefined" && ! ! window[ "chrome" ];
 	}
 
-	private static _setFalseETag( requestOptions:RequestOptions ):void {
+	private static __setFalseETag( requestOptions:RequestOptions ):void {
 		requestOptions.headers.set( "if-none-match", new Header() );
 	}
 }
@@ -351,11 +352,12 @@ export class RequestUtils {
 		return requestOptions;
 	}
 
+
 	static isOptions( object:Object ):object is RequestOptions {
-		return Utils.hasPropertyDefined( object, "headers" )
-			|| Utils.hasPropertyDefined( object, "sendCredentialsOnCORS" )
-			|| Utils.hasPropertyDefined( object, "timeout" )
-			|| Utils.hasPropertyDefined( object, "request" );
+		return hasPropertyDefined( object, "headers" )
+			|| hasPropertyDefined( object, "sendCredentialsOnCORS" )
+			|| hasPropertyDefined( object, "timeout" )
+			|| hasPropertyDefined( object, "request" );
 	}
 
 	static cloneOptions( options:RequestOptions ):RequestOptions {

@@ -1,22 +1,20 @@
-import { ModelFactory } from "../ModelFactory";
-import { ObjectSchema } from "../ObjectSchema";
-import {
-	C,
-	CS,
-} from "../Vocabularies";
+import { ModelSchema } from "../Model/ModelSchema";
+
+import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+
+import { C } from "../Vocabularies/C";
+
 import { DocumentMetadata } from "./DocumentMetadata";
 import { VolatileResource } from "./VolatileResource";
-import { TokenCredentials } from "../Auth";
 
 
 export interface ResponseMetadata extends VolatileResource {
 	documentsMetadata?:DocumentMetadata[];
-	authToken?:TokenCredentials;
 }
 
 
-export interface ResponseMetadataFactory extends ModelFactory<ResponseMetadata> {
-	TYPE:string;
+export interface ResponseMetadataFactory extends ModelSchema {
+	TYPE:C[ "ResponseMetadata" ];
 	SCHEMA:ObjectSchema;
 
 	is( object:object ):object is ResponseMetadata;
@@ -28,10 +26,6 @@ const SCHEMA:ObjectSchema = {
 		"@type": "@id",
 		"@container": "@set",
 	},
-	"authToken": {
-		"@id": CS.authToken,
-		"@type": "@id",
-	},
 };
 
 export const ResponseMetadata:ResponseMetadataFactory = {
@@ -40,7 +34,7 @@ export const ResponseMetadata:ResponseMetadataFactory = {
 
 	is( object:object ):object is ResponseMetadata {
 		return VolatileResource.is( object )
-			&& object.hasType( ResponseMetadata.TYPE );
+			&& object.$hasType( ResponseMetadata.TYPE );
 	},
 
 };
