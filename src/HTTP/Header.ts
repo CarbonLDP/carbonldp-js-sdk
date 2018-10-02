@@ -43,6 +43,11 @@ export class Header {
 		return this.values.indexOf( value ) !== - 1;
 	}
 
+	addValue( value:string ):void {
+		const newValues:string[] = Header.__parseValues( value );
+		this.values.push( ...newValues );
+	}
+
 	toString():string {
 		return this.values.join( ", " );
 	}

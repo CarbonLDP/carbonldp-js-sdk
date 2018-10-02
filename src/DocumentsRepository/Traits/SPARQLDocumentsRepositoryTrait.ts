@@ -8,7 +8,7 @@ import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 
 import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 
-import { RequestOptions } from "../../HTTP/Request";
+import { RequestOptions, RequestUtils } from "../../HTTP/Request";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
@@ -51,6 +51,9 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
+			requestOptions = requestOptions ? requestOptions : {};
+			RequestUtils.setAcceptHeader( "application/ld+json", requestOptions! );
+
 			return SPARQLService
 				.executeASKQuery( url, askQuery, requestOptions )
 				.then( ( [ rawResults ] ) => rawResults )
@@ -60,6 +63,9 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 		executeSELECTQuery<T extends object>( this:SPARQLDocumentsRepositoryTrait, uri:string, selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLSelectResults<T>> {
 			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
+
+			requestOptions = requestOptions ? requestOptions : {};
+			RequestUtils.setAcceptHeader( "application/ld+json", requestOptions! );
 
 			return SPARQLService
 				.executeSELECTQuery<T>( url, selectQuery, this.context.registry, requestOptions )

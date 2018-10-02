@@ -263,7 +263,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 				const target:RequestOptions = spy.calls
 					.mostRecent()
 					.args[ 2 ];
-				expect( target ).toEqual( { timeout: 5050 } );
+				expect( target ).toEqual( jasmine.objectContaining( { timeout: 5050 } ) );
 			} );
 
 
@@ -300,6 +300,23 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 						} ] );
 					} )
 				;
+			} );
+
+
+			it( "should send basic request headers", async () => {
+				jasmine.Ajax.stubRequest( "https://example.com/" )
+					.andReturn( {
+						status: 200,
+						responseText: `{}`,
+					} );
+
+				await repository.executeASKQuery( "https://example.com/", "" );
+
+				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+				expect( request.requestHeaders ).toEqual( {
+					"accept": "application/ld+json, application/sparql-results+json",
+					"content-type": "application/sparql-query",
+				} );
 			} );
 
 		} );
@@ -410,7 +427,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 				const target:RequestOptions = spy.calls
 					.mostRecent()
 					.args[ 3 ];
-				expect( target ).toEqual( { timeout: 5050 } );
+				expect( target ).toEqual( jasmine.objectContaining( { timeout: 5050 } ) );
 			} );
 
 
@@ -447,6 +464,30 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 						} ] );
 					} )
 				;
+			} );
+
+
+			it( "should send basic request headers", async () => {
+				jasmine.Ajax.stubRequest( "https://example.com/" )
+					.andReturn( {
+						status: 200,
+						responseText: JSON.stringify( {
+							"head": {
+								"vars": [],
+							},
+							"results": {
+								"bindings": [],
+							},
+						} ),
+					} );
+
+				await repository.executeSELECTQuery( "https://example.com/", "" );
+
+				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+				expect( request.requestHeaders ).toEqual( {
+					"accept": "application/ld+json, application/sparql-results+json",
+					"content-type": "application/sparql-query",
+				} );
 			} );
 
 		} );
@@ -556,7 +597,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 				const target:RequestOptions = spy.calls
 					.mostRecent()
 					.args[ 2 ];
-				expect( target ).toEqual( { timeout: 5050 } );
+				expect( target ).toEqual( jasmine.objectContaining( { timeout: 5050 } ) );
 			} );
 
 
@@ -593,6 +634,23 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 						} ] );
 					} )
 				;
+			} );
+
+
+			it( "should send basic request headers", async () => {
+				jasmine.Ajax.stubRequest( "https://example.com/" )
+					.andReturn( {
+						status: 200,
+						responseText: `{}`,
+					} );
+
+				await repository.executeUPDATE( "https://example.com/", "" );
+
+				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+				expect( request.requestHeaders ).toEqual( {
+					"accept": "application/ld+json",
+					"content-type": "application/sparql-update",
+				} );
 			} );
 
 		} );
