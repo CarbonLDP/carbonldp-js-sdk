@@ -24,7 +24,7 @@ const DEFAULT_OPTIONS:Readonly<MessagingOptions> = {
 
 interface Subscription {
 	id:string;
-	errorCallback:( error:Error ) => void;
+	errorCallback?:( error:Error ) => void;
 }
 
 export class MessagingService {
@@ -99,7 +99,7 @@ export class MessagingService {
 		} );
 	}
 
-	subscribe( destination:string, onEvent:( data:EventMessage ) => void, onError:( error:Error ) => void ):void {
+	subscribe( destination:string, onEvent:( data:EventMessage ) => void, onError?:( error:Error ) => void ):void {
 		if( ! this._client ) this.connect();
 		if( ! this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
 		const callbacksMap:Map<( data:EventMessage ) => void, Subscription> = this._subscriptionsMap.get( destination );
@@ -132,12 +132,19 @@ export class MessagingService {
 
 	private __broadcastError( error:Error ):void {
 		if( ! this._subscriptionsMap ) return;
-		this._subscriptionsMap.forEach( callbacksMap => callbacksMap.forEach( subscription => {
-			subscription.errorCallback( error );
-		} ) );
+
+		this._subscriptionsMap
+			.forEach( callbacksMap => callbacksMap
+				.forEach( subscription => {
+					// TODO: Warn error not been broadcasted
+					if( ! subscription.errorCallback ) return;
+
+					subscription.errorCallback( error );
+				} )
+			);
 	}
 
-	private __makeSubscription( id:string, destination:string, eventCallback:( data:EventMessage ) => void, errorCallback:( error:Error ) => void ):() => void {
+	private __makeSubscription( id:string, destination:string, eventCallback:( data:EventMessage ) => void, errorCallback?:( error:Error ) => void ):() => void {
 		return () => this._client.subscribe( destination, message => {
 			new JSONLDParser()
 				.parse( message.body )
