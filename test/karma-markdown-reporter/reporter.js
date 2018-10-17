@@ -18,7 +18,7 @@ swag.registerHelpers( Handlebars );
 		return str.replace( /\t/g, "" );
 	} );
 
-	const classRegex = /CarbonLDP([./][./#a-zA-Z0-9]*)?/gmi;
+	const classRegex = /CarbonLDP([./][./#$a-zA-Z0-9]*)?/gmi;
 
 	Handlebars.registerHelper( "urlify", function( str, isHTML, noParagraph, options ) {
 		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
@@ -379,42 +379,6 @@ var MarkdownReporter = (() => {
 	 * @param server
 	 */
 	function onBrowserStart( browser, results, server ) {
-		// parseSpecs( docsData, results.specs );
-		// fs.writeFileSync( "doc/data.json", JSON.stringify( docsData ), "utf8" );
-	}
-
-	function parseSpecs( parent, specs ) {
-		for( let key of Object.keys( specs ) ) {
-			if( ! isJSON( key ) ) continue;
-			const data = parseData( key );
-
-			const container = getContainer( parent, data );
-			if( container === null ) continue;
-
-			for( let spec of specs[ key ]._ ) {
-				const subData = parseData( spec );
-				getContainer( container, subData );
-			}
-			delete specs[ key ]._;
-			parseSpecs( container, specs[ key ] );
-
-			sortObjectProperty( container, "namespaces" );
-			sortObjectProperty( container, "classes" );
-			sortObjectProperty( container, "interfaces" );
-			sortObjectProperty( container, "reexports" );
-			sortObjectProperty( container, "enums" );
-
-			let isClass;
-			isClass = sortObjectProperty( container, "methods", "instance" );
-			isClass = isClass || sortObjectProperty( container, "methods", "static" );
-			if( ! isClass )
-				sortObjectProperty( container, "methods" );
-
-			isClass = sortObjectProperty( container, "properties", "instance" );
-			isClass = isClass || sortObjectProperty( container, "properties", "static" );
-			if( ! isClass )
-				sortObjectProperty( container, "properties" );
-		}
 	}
 
 	/**
@@ -498,6 +462,7 @@ var MarkdownReporter = (() => {
 				return a.localeCompare( b );
 			} );
 	}
+
 
 	function obtainConfig( config, name ) {
 		if( config[ name ] )
