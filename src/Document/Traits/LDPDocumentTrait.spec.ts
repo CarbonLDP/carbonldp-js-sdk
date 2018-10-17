@@ -26,7 +26,7 @@ import { TransientDocument } from "../TransientDocument";
 import { BaseLDPDocumentTrait, LDPDocumentTrait, LDPDocumentTraitFactory } from "./LDPDocumentTrait";
 
 
-describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () => {
+describe( module( "carbonldp/Document/Traits/LDPDocumentTrait" ), () => {
 
 	let context:DocumentsContext;
 	let $repository:LDPDocumentsRepositoryTrait;
@@ -37,7 +37,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 
 
 	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.LDPDocumentTrait",
+		"CarbonLDP.Document.Traits.LDPDocumentTrait",
 		"Documents repository with the implementation for event subscriptions."
 	), () => {
 
@@ -988,16 +988,16 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.LDPDocumentTraitFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.DocumentsRepository.Traits.LDPDocumentTrait` objects."
+		"CarbonLDP.Document.Traits.LDPDocumentTraitFactory",
+		"Interface with the decoration, factory and utils for `CarbonLDP.Document.Traits.LDPDocumentTrait` objects."
 	), () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.DocumentsRepository.Traits.LDPDocumentTrait, CarbonLDP.TransientDocument, CarbonLDP.ResolvablePointer" ), () => {
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Document.Traits.LDPDocumentTrait, CarbonLDP.TransientDocument, CarbonLDP.ResolvablePointer" ), () => {
 			const target:ModelPrototype<LDPDocumentTrait, TransientDocument & ResolvablePointer> = {} as LDPDocumentTraitFactory;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.DocumentsRepository.Traits.LDPDocumentTrait<any>, CarbonLDP.BaseLDPDocumentTrait>" ), () => {
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Document.Traits.LDPDocumentTrait<any>, CarbonLDP.Document.Traits.BaseLDPDocumentTrait>" ), () => {
 			const target:ModelDecorator<LDPDocumentTrait, BaseLDPDocumentTrait> = {} as LDPDocumentTraitFactory;
 			expect( target ).toBeDefined();
 		} );
@@ -1074,7 +1074,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentTrait" ), () 
 	describe( property(
 		STATIC,
 		"LDPDocumentTrait",
-		"CarbonLDP.DocumentsRepository.Traits.LDPDocumentTraitFactory"
+		"CarbonLDP.Document.Traits.LDPDocumentTraitFactory"
 	), () => {
 
 		it( "should exists", ():void => {

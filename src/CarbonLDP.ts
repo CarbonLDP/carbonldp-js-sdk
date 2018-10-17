@@ -69,7 +69,7 @@ export class CarbonLDP extends DocumentsContext {
 	static TransientFragment:typeof TransientFragment = TransientFragment;
 	static Pointer:typeof Pointer = Pointer;
 	static RDF:typeof RDF = RDF;
-	static TransientResource:typeof Resource = Resource;
+	static Resource:typeof Resource = Resource;
 	static GlobalContext:typeof GlobalContext = GlobalContext;
 	static SHACL:typeof SHACL = SHACL;
 	static SPARQL:typeof SPARQL = SPARQL;

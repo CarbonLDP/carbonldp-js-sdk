@@ -9,13 +9,13 @@ describe( module( "carbonldp/Context" ), () => {
 
 	describe( interfaze(
 		"CarbonLDP.Paths",
-		"Interface that describe the key path key and its respective URI slug of another `CarbonLDP.DocumentPath` of a child document."
+		"Interface that describe the key path key and its respective URI slug of another `CarbonLDP.DocumentPaths` of a child document."
 	), () => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"[ document:string ]",
-			"string | DocumentPaths"
+			"string | CarbonLDP.DocumentPaths"
 		), ():void => {
 			const target:Paths[ "anything" ] = {} as string | DocumentPaths;
 			expect( target ).toBeDefined();

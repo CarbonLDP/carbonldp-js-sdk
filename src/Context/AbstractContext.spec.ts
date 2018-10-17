@@ -38,7 +38,7 @@ function createMock<PARENT extends AbstractContext<any, any, any> = undefined>( 
 	}( data && data.parentContext );
 }
 
-describe( module( "carbonldp/AbstractContext" ), ():void => {
+describe( module( "carbonldp/Context" ), ():void => {
 
 	describe( clazz(
 		"CarbonLDP.AbstractContext",

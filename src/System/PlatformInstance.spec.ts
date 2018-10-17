@@ -13,7 +13,7 @@ describe( module( "carbonldp/System/PlatformInstance" ), ():void => {
 		"Interface that represents the actual data a platform instance."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.LDP.VolatileResource.VolatileResource" ), ():void => {
+		it( extendsClass( "CarbonLDP.LDP.VolatileResource" ), ():void => {
 			const target:VolatileResource = {} as PlatformInstance;
 			expect( target ).toBeDefined();
 		} );

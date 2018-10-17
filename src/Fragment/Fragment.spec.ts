@@ -36,7 +36,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.QueryablePointer" ), ():void => {
+		it( extendsClass( "CarbonLDP.QueryDocuments.QueryablePointer" ), ():void => {
 			const target:QueryablePointer = {} as Fragment;
 			expect( target ).toBeDefined();
 		} );
