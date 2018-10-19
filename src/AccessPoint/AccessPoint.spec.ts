@@ -12,8 +12,8 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 
-import { AccessPoint, AccessPointFactory } from "./AccessPoint";
-import { TransientAccessPoint, TransientAccessPointFactory } from "./TransientAccessPoint";
+import { AccessPoint } from "./AccessPoint";
+import { TransientAccessPoint } from "./TransientAccessPoint";
 
 
 describe( module( "carbonldp/AccessPoint" ), ():void => {
@@ -61,13 +61,31 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 		"Interface with the factory, decorate and utils methods of a `CarbonLDP.AccessPointFactory` object."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.TransientAccessPointFactory" ), () => {
-			const target:TransientAccessPointFactory = AccessPoint as AccessPointFactory;
-			expect( target ).toEqual( jasmine.objectContaining( {
-				TYPE: TransientAccessPoint.TYPE,
-				create: TransientAccessPoint.create,
-				createFrom: TransientAccessPoint.createFrom,
-			} ) );
+		describe( "AccessPoint.TYPE", ():void => {
+
+			it( "should be TransientAccessPoint.TYPE", ():void => {
+				expect( TransientAccessPoint.TYPE ).toBeDefined();
+				expect( TransientAccessPoint.TYPE ).toBe( TransientAccessPoint.TYPE );
+			} );
+
+		} );
+
+		describe( "AccessPoint.create", ():void => {
+
+			it( "should be TransientAccessPoint.create", ():void => {
+				expect( TransientAccessPoint.create ).toBeDefined();
+				expect( TransientAccessPoint.create ).toBe( TransientAccessPoint.create );
+			} );
+
+		} );
+
+		describe( "AccessPoint.createFrom", ():void => {
+
+			it( "should be TransientAccessPoint.createFrom", ():void => {
+				expect( TransientAccessPoint.createFrom ).toBeDefined();
+				expect( TransientAccessPoint.createFrom ).toBe( TransientAccessPoint.createFrom );
+			} );
+
 		} );
 
 		describe( method( OBLIGATORY, "is" ), ():void => {
