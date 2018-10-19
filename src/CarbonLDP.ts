@@ -45,6 +45,15 @@ import * as System from "./System";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
 
+
+/**
+ * The main class of the SDK.
+ * Create an instance with the information of the platform to
+ * communicate.
+ *
+ * The class contains, as static members, the references to all the
+ * reexported submodules in the SDK.
+ */
 export class CarbonLDP extends DocumentsContext {
 
 	static AbstractContext:typeof AbstractContext = AbstractContext;
@@ -77,16 +86,34 @@ export class CarbonLDP extends DocumentsContext {
 	static Utils:typeof Utils = Utils;
 
 
+	/**
+	 * Version of the SDK.
+	 */
 	static get version():string { return "5.0.0"; }
 
-	// noinspection JSMethodCanBeStatic
+	/**
+	 * @see {@link CarbonLDP.version}
+	 */
 	get version():string { return CarbonLDP.version; }
 
-	protected _baseURI:string;
-
+	/**
+	 * The root document of the platform.
+	 */
 	readonly documents:Document;
 
+	/**
+	 * Creates the instance of the SDK with the URL of the platform
+	 * to communicate.
+	 *
+	 * @param url The URL of the of the platform.
+	 */
 	constructor( url:string );
+	/**
+	 * Creates the instance of the SDK with all the configurable
+	 * settings of the SDK.
+	 *
+	 * @param settings Object to fully configure the instance.
+	 */
 	constructor( settings:CarbonLDPSettings );
 	constructor( urlOrSettings:string | CarbonLDPSettings ) {
 		super( __getURLFrom( urlOrSettings ) );
@@ -117,7 +144,7 @@ export class CarbonLDP extends DocumentsContext {
 	}
 
 	/**
-	 * Retrieves the Metadata related to the CarbonLDP Platform.
+	 * Retrieves the metadata document of the platform.
 	 */
 	getPlatformMetadata():Promise<System.PlatformMetadata> {
 		return Utils.promiseMethod( () => {
