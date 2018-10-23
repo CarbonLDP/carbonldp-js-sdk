@@ -22,16 +22,34 @@ import { Context } from "./Context";
 import { ContextSettings } from "./ContextSettings";
 
 
+/**
+ * Abstract class used to define any context of the SDK.
+ */
 export abstract class AbstractContext<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer, PARENT extends AbstractContext = undefined> implements Context {
+	/**
+	 * @see {@link Context.registry}
+	 */
 	abstract readonly registry:GeneralRegistry<REGISTRY> | undefined;
+	/**
+	 * @see {@link Context.repository}
+	 */
 	abstract readonly repository:GeneralRepository<REPOSITORY> | undefined;
 
+	/**
+	 * @see {@link Context.jsonldConverter}
+	 */
 	readonly jsonldConverter:JSONLDConverter;
 
 	protected abstract _baseURI:string;
+	/**
+	 * @see {@link Context.baseURI}
+	 */
 	get baseURI():string { return this._baseURI; }
 
 	protected readonly _parentContext:PARENT | undefined;
+	/**
+	 * @see {@link Context.parentContext}
+	 */
 	get parentContext():PARENT | undefined { return this._parentContext; }
 
 	protected _settings?:ContextSettings;
@@ -40,6 +58,10 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 	protected _typeObjectSchemaMap:Map<string, DigestedObjectSchema>;
 
 
+	/**
+	 * Create the context with an optional associated parent.
+	 * @param parentContext The optional parent context to be associated to the context.
+	 */
 	constructor( parentContext?:PARENT ) {
 		this._parentContext = parentContext;
 		this._typeObjectSchemaMap = new Map<string, DigestedObjectSchema>();
@@ -48,11 +70,17 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 	}
 
 
+	/**
+	 * @see {@link Context.resolve}
+	 */
 	resolve( relativeURI:string ):string {
 		return URI.resolve( this.baseURI, relativeURI );
 	}
 
 
+	/**
+	 * @see {@link Context.hasObjectSchema}
+	 */
 	hasObjectSchema( type:string ):boolean {
 		type = this.__resolveTypeURI( type );
 		if( this._typeObjectSchemaMap.has( type ) ) return true;
@@ -60,6 +88,9 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 	}
 
 
+	/**
+	 * @see {@link Context.getObjectSchema}
+	 */
 	getObjectSchema( type?:string ):DigestedObjectSchema {
 		if( ! ! type ) {
 			// Type specific schema
@@ -93,6 +124,9 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 	extendObjectSchema( modelSchema:ModelSchema ):this;
 	extendObjectSchema( objectSchema:ObjectSchema ):this;
 	extendObjectSchema( schemas:(ModelSchema | ObjectSchema)[] ):this;
+	/**
+	 * @see {@link Context.extendObjectSchema}
+	 */
 	extendObjectSchema( objectSchemaOrTypeOrModelSchema:string | ModelSchema | (ModelSchema | ObjectSchema)[] | ObjectSchema, objectSchema?:ObjectSchema ):this {
 		if( isString( objectSchemaOrTypeOrModelSchema ) )
 			return this.__extendTypeSchema( objectSchema, objectSchemaOrTypeOrModelSchema );
@@ -109,6 +143,9 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 	}
 
 
+	/**
+	 * @see {@link Context.clearObjectSchema}
+	 */
 	clearObjectSchema( type?:string ):void {
 		if( type === void 0 ) {
 			this._generalObjectSchema = this.parentContext ? null : new DigestedObjectSchema();
@@ -117,7 +154,13 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 			this._typeObjectSchemaMap.delete( type );
 		}
 	}
-                                      
+
+	/**
+	 * Returns all the typed schemas including the ones from the parent contexts.
+	 *
+	 * @param excepts Optional types to exclude in the returning of the stored schemas.
+	 * @private
+	 */
 	_getTypeObjectSchemas( excepts:string[] = [] ):DigestedObjectSchema[] {
 		const exceptsSet:Set<string> = new Set( excepts );
 
@@ -125,7 +168,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 			.__getObjectSchemasTypes()
 			.filter( type => ! exceptsSet.has( type ) )
 		;
-                                      
+
 		return types.map( this.getObjectSchema, this );
 	}
 
