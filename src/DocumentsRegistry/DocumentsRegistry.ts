@@ -16,19 +16,36 @@ import { URI } from "../RDF/URI";
 import { BaseDocumentsRegistry } from "./BaseDocumentsRegistry";
 
 
+/**
+ * Registry that manages {@link Document}'s.
+ */
 export interface DocumentsRegistry extends GeneralRegistry<Document> {
+	/**
+	 * Context where the registry belongs to.
+	 */
 	readonly context:DocumentsContext;
 
+	/**
+	 * Register a document endpoint that already exists in the platform.
+	 * @param id The URI of the document to be registered.
+	 * @returns The shallow document of the endpoint, since this does not makes any request.
+	 */
 	register( id:string ):Document;
 }
 
 
+/**
+ * Factory, decorator and utils for {@link DocumentsRegistry}.
+ */
 export type DocumentsRegistryFactory =
 	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>, "_getLocalID">
 	& ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry>
 	& ModelFactory<DocumentsRegistry, BaseDocumentsRegistry>
 	;
 
+/**
+ * Constant that implements {@link DocumentsRegistryFactory}.
+ */
 export const DocumentsRegistry:DocumentsRegistryFactory = {
 	PROTOTYPE: {
 		register( this:DocumentsRegistry, id:string ):Document {
