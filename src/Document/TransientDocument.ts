@@ -29,33 +29,88 @@ import { isObject, isPlainObject, isString } from "../Utils";
 import { BaseDocument } from "./BaseDocument";
 
 
+/**
+ * In-memory model that represents a `c:Document.
+ */
 export interface TransientDocument extends Resource, $Registry<TransientFragment> {
+	/**
+	 * Registry where the resource will exits.
+	 */
 	$registry:DocumentsRegistry | undefined;
 
+	/**
+	 * @see {@link BaseDocument.hasMemberRelation}
+	 */
 	hasMemberRelation?:Pointer;
+	/**
+	 * @see {@link BaseDocument.hasMemberRelation}
+	 */
 	isMemberOfRelation?:Pointer;
+	/**
+	 * @see {@link BaseDocument.isMemberOfRelation}
+	 */
 	insertedContentRelation?:Pointer;
+	/**
+	 * @see {@link BaseDocument.defaultInteractionModel}
+	 */
 	defaultInteractionModel?:Pointer;
 
 
+	/**
+	 * Returns true if the document has a fragment with the ID specified.
+	 * @param id The ID of the fragment to check if exists.
+	 */
 	$hasFragment( id:string ):boolean;
 
+	/**
+	 * Returns the fragment with the ID specified.
+	 * If no fragment exists, `null` will be returned.
+	 * @param id The ID of the fragment to look for.
+	 */
 	$getFragment<T extends object>( id:string ):(T & TransientFragment) | null;
 
+	/**
+	 * Returns an array with all the fragments in the document.
+	 */
 	$getFragments():TransientFragment[];
 
+	/**
+	 * Creates a {@link TransientFragment} from the object and ID specified.
+	 * @param object The object to be converted into a fragment.
+	 * @param id Optional ID to be set for the fragment, if no provided a random BNode label will be assigned.
+	 */
 	$createFragment<T extends object>( object:T, id?:string ):T & TransientFragment;
+	/**
+	 * Creates a {@link TransientFragment} with the ID specified.
+	 * @param id Optional ID to be set for the fragment, if no provided a random BNode label will be assigned.
+	 */
 	$createFragment( id?:string ):TransientFragment;
 
-	$removeFragment( slugOrFragment:string | TransientFragment ):boolean;
+	/**
+	 * Removes the fragment provided from the document.
+	 * If a string is provided, it will be used as the ID of the fragment to be removed.
+	 * @param idOrFragment
+	 */
+	$removeFragment( idOrFragment:string | TransientFragment ):boolean;
 
 
+	/**
+	 * Search over the document for normal object and converted them into fragments.
+	 * If unused fragments with BNode label as ID are detected, they will be removed from the document.
+	 */
 	$_normalize():void;
 
 
+	/**
+	 * @see {@link $Registry.$_getLocalID}
+	 */
 	$_getLocalID( id:string ):string;
 
 
+	/**
+	 * Returns the JSON-LD representation of the current document.
+	 * @param contextOrKey A specific context to use for expand the data into JSON-LD instead of the internal one.
+	 */
 	toJSON( contextOrKey?:Context | string ):RDFDocument;
 }
 
@@ -111,6 +166,9 @@ export type OverriddenMembers =
 	| "toJSON"
 	;
 
+/**
+ * Factory, decorator and utils for {@link TransientDocument} objects.
+ */
 export type TransientDocumentFactory =
 	& ModelPrototype<TransientDocument, Resource & $Registry<TransientFragment>, OverriddenMembers>
 	& ModelDecorator<TransientDocument, BaseDocument>
@@ -118,6 +176,9 @@ export type TransientDocumentFactory =
 	& ModelTypeGuard<TransientDocument>
 	;
 
+/**
+ * Constant that implements {@link TransientDocumentFactory}.
+ */
 export const TransientDocument:TransientDocumentFactory = {
 	PROTOTYPE: {
 		$registry: void 0,

@@ -1,3 +1,5 @@
+import { AccessPoint } from "../AccessPoint/AccessPoint";
+
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository";
 
@@ -32,63 +34,140 @@ import { SPARQLDocumentTrait } from "./Traits/SPARQLDocumentTrait";
 import { TransientDocument } from "./TransientDocument";
 
 
+/**
+ * Required properties for creating a {@link Document} object.
+ */
 export interface BaseResolvableDocument extends BaseDocument {
+	/**
+	 * Registry where the created {@link Document} will exist.
+	 */
 	$registry:DocumentsRegistry;
+	/**
+	 * Repository where the created {@link Document} can manage its data.
+	 */
 	$repository:DocumentsRepository;
 }
 
+
+/**
+ * Model that represents a `c:Document`.
+ */
 export interface Document extends $Registry<Fragment>, QueryableDocumentTrait, SPARQLDocumentTrait, EventEmitterDocumentTrait {
+	/**
+	 * Registry where the document exists.
+	 */
 	$registry:DocumentsRegistry;
+	/**
+	 * Repository where the document can manage its data.
+	 */
 	$repository:DocumentsRepository;
 
 
+	/**
+	 * @see {@ink $Registry.$__modelDecorator}
+	 */
 	$__modelDecorator:ModelDecorator<Fragment>;
+	/**
+	 * @see {@link $Registry.$__resourcesMap}
+	 */
 	$__resourcesMap:Map<string, Fragment>;
+	/**
+	 * Array with the fragments that has been persisted.
+	 */
 	$__savedFragments:Fragment[];
 
 
+	/**
+	 * Datetime when the document was persisted.
+	 */
 	created?:Date;
+	/**
+	 * Last datetime when the document was modified.
+	 */
 	modified?:Date;
-	accessPoints?:Document[];
+	/**
+	 * Set with the access points of the document.
+	 */
+	accessPoints?:AccessPoint[];
+	/**
+	 * Set with the children of the document.
+	 */
 	contains?:Document[];
 
 
+	/**
+	 * @see {@link $Registry.$getPointer}
+	 */
 	$getPointer( id:string ):RegisteredPointer;
 	$getPointer( id:string, local:true ):Fragment;
 
+	/**
+	 * @see {@link $Registry.$getPointers}
+	 */
 	$getPointers():RegisteredPointer[];
 	$getPointers( local:true ):Fragment[];
 
 
+	/**
+	 * Makes all the current fragments in the document as fragments
+	 * that has been persisted in the served.
+	 */
 	$_syncSavedFragments():void;
 
+	/**
+	 * @see {@link TransientDocument.$getFragment}
+	 */
 	$getFragment<T extends object>( id:string ):(T & Fragment) | null;
 
+	/**
+	 * @see {@link TransientDocument.$getFragments}
+	 */
 	$getFragments():Fragment[];
 
+	/**
+	 * @see {@link TransientDocument.$createFragment}
+	 */
 	$createFragment<T extends object>( object:T, id?:string ):T & Fragment;
 	$createFragment( slug?:string ):Fragment;
 
+	/**
+	 * @see {@link TransientDocument.$removeFragment}
+	 */
 	$removeFragment( slugOrFragment:string | Fragment ):boolean;
 
 
+	/**
+	 * @see {@link QueryableDocumentTrait.$get}
+	 */
 	$get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	$get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	$get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	$get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
+	/**
+	 * @see {@link QueryableDocumentTrait.$resolve}
+	 */
 	$resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
 	$resolve<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
 	$resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	$resolve<T extends object>( document:Document, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 
+	/**
+	 * @see {@link ResolvablePointer.$refresh}
+	 */
 	$refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
 	$refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
+	/**
+	 * @see {@link ResolvablePointer.$save}
+	 */
 	$save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
 	$save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
+	/**
+	 * @see {@link ResolvablePointer.$saveAndRefresh}
+	 */
 	$saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
 	$saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 }
@@ -102,7 +181,7 @@ type ForcedMembers = Pick<Document,
 	| "$getFragments"
 	| "$createFragment"
 	| "$removeFragment"
-	| never >;
+	| never>;
 
 export type OverriddenMembers =
 	| "$_syncSnapshot"
@@ -110,6 +189,9 @@ export type OverriddenMembers =
 	| "$revert"
 	;
 
+/**
+ * Factory, decorator and utils for {@link Document} objects.
+ */
 export type DocumentFactory =
 	& ModelSchema<C[ "Document" ]>
 	& ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, OverriddenMembers>
@@ -118,6 +200,9 @@ export type DocumentFactory =
 	& ModelFactory<TransientDocument, BaseDocument>
 	;
 
+/**
+ * Constant that implements {@link DocumentFactory}.
+ */
 export const Document:DocumentFactory = {
 	TYPE: C.Document,
 	SCHEMA: {

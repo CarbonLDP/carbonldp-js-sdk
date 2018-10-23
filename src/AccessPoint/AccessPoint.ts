@@ -6,7 +6,7 @@ import { TransientAccessPoint, TransientAccessPointFactory } from "./TransientAc
 
 
 /**
- * Model that represents and `c:AccessPoint`.
+ * Model that represents a `c:AccessPoint`.
  */
 export interface AccessPoint extends Document {
 	/**
