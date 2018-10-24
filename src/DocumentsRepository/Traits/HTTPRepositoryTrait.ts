@@ -6,7 +6,7 @@ import { BaseGeneralRepository } from "../../GeneralRepository/BaseGeneralReposi
 import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 
 import { HTTPError } from "../../HTTP/Errors/HTTPError";
-import { GETOptions, RequestOptions, RequestService, RequestUtils } from "../../HTTP/Request";
+import { GETOptions, RequestOptions, RequestService } from "../../HTTP/Request";
 import { Response } from "../../HTTP/Response";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
@@ -16,19 +16,68 @@ import { RegisteredPointer } from "../../Registry/RegisteredPointer";
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 
 
+/**
+ * Trait of a {@link DocumentsRepository} with base methods of every REST repositoryØ.
+ */
 export interface HTTPRepositoryTrait<MODEL extends ResolvablePointer = ResolvablePointer> extends GeneralRepository<MODEL> {
+	/**
+	 * Context from where the repository is created.
+	 */
 	readonly context:Context<MODEL & RegisteredPointer, MODEL>;
 
+	/**
+	 * Retrieves the resource of the specified URI.
+	 * @param uri The URI of the resource to be retrieved.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & MODEL>;
+	/**
+	 * Resolves the specified resource.
+	 * @param resource The resource to be resolved.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	resolve<T extends object>( resource:MODEL, requestOptions?:RequestOptions ):Promise<T & MODEL>;
+	/**
+	 * Check if the resource of the specified URI exists.
+	 * @param uri The URI of the resource to check its existence.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
+	/**
+	 * Refreshes with the latest data of the specified resource.
+	 * @param resource The resource to be refreshed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	refresh<T extends object>( resource:MODEL, requestOptions?:RequestOptions ):Promise<T & MODEL>;
+	/**
+	 * Saves the changes of the specified resource.
+	 * @param resource The resource to be saved.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	save<T extends object>( resource:MODEL, requestOptions?:RequestOptions ):Promise<T & MODEL>;
+	/**
+	 * Saves the changes of the specified resource and retrieves its latest changes.
+	 * @param resource The resource to saved and refreshed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	saveAndRefresh<T extends object>( resource:MODEL, requestOptions?:RequestOptions ):Promise<T & MODEL>;
 
+	/**
+	 * Deletes the resource of the specified URI.
+	 * @param uri URI of the resource to be deleted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 
+	/**
+	 * Method that parses the {@link Response} of a retrieval request into the desired resource model.
+	 * This method must be overridden in the specialized repositories in accordance of its model since,
+	 * the current behaviour only creates a shallow pointer in the associated {@link Registry}.
+	 * @param response The response to be parsed into a resource model.
+	 * @param id The identification of the resource, commonly the URL of the resource.
+	 * @private
+	 */
 	_parseResponseData<T extends object>( response:Response, id:string ):Promise<T & MODEL>;
 }
 
@@ -43,13 +92,18 @@ export type OverriddenMembers =
 	| "delete"
 	;
 
-// FIXME: Use `unknown` for TS 3.0
-export type GeneralRepositoryFactory =
+/**
+ * Factory, decorator and utils for {@link HTTPRepositoryTrait}.
+ */
+export type HTTPRepositoryTraitFactory =
 	& ModelPrototype<HTTPRepositoryTrait, GeneralRepository, OverriddenMembers>
 	& ModelDecorator<HTTPRepositoryTrait<any>, BaseGeneralRepository>
 	;
 
-export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
+/**
+ * Constant that implements {@link HTTPRepositoryTraitFactory}-
+ */
+export const HTTPRepositoryTrait:HTTPRepositoryTraitFactory = {
 	PROTOTYPE: {
 		get<T extends object>( this:HTTPRepositoryTrait, uri:string, requestOptions?:GETOptions ):Promise<T & ResolvablePointer> {
 			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );

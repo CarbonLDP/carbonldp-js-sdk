@@ -19,36 +19,69 @@ import { QueryableDocumentsRepositoryTrait } from "./Traits/QueryableDocumentsRe
 import { SPARQLDocumentsRepositoryTrait } from "./Traits/SPARQLDocumentsRepositoryTrait";
 
 
+/**
+ * Repository for request related to {@link Document}'s.
+ */
 export interface DocumentsRepository extends QueryableDocumentsRepositoryTrait, SPARQLDocumentsRepositoryTrait, EventEmitterDocumentsRepositoryTrait {
-	context:DocumentsContext;
+	/**
+	 * Context where the repository belongs to.
+	 */
+	readonly context:DocumentsContext;
 
+	/**
+	 * @see {@link QueryableDocumentsRepositoryTrait.get}
+	 */
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
 	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
+	/**
+	 * @see {@link QueryableDocumentsRepositoryTrait.resolve}
+	 */
 	resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
 	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
+	/**
+	 * @see {@link HTTPRepositoryTrait.exists}
+	 */
 	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
 
+	/**
+	 * @see {@link QueryableDocumentsRepositoryTrait.refresh}
+	 */
 	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
+	/**
+	 * @see {@link LDPDocumentsRepositoryTrait.save}
+	 */
 	save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
+	/**
+	 * @see {@link QueryableDocumentsRepositoryTrait.saveAndRefresh}
+	 */
 	saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
+	/**
+	 * @see {@link LDPDocumentsRepositoryTrait.delete}
+	 */
 	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 }
 
 
+/**
+ * Factory, decorator and utils for {@link DocumentsRepository}.
+ */
 export type DocumentsRepositoryFactory =
 	& ModelFactory<DocumentsRepository, BaseDocumentsRepository>
 	& ModelTypeGuard<DocumentsRepository>
 	;
 
+/**
+ * Constant that implements {@link DocumentsRepositoryFactory}.
+ */
 export const DocumentsRepository:DocumentsRepositoryFactory = {
 	create<T extends object>( data:T & BaseDocumentsRepository ):T & DocumentsRepository {
 		return DocumentsRepository.createFrom( { ...data as any } );

@@ -25,26 +25,61 @@ import { _getErrorResponseParserFn } from "../Utils";
 import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
 
 
+/**
+ * Trait of a {@link DocumentsRepository} with methods for SPARQL requests.
+ */
 export interface SPARQLDocumentsRepositoryTrait extends GeneralRepository<Document> {
-	context:DocumentsContext;
+	/**
+	 * Context from where the repository is created.
+	 */
+	readonly context:DocumentsContext;
 
 
+	/**
+	 * Executes an ASK query on the document of the specified URI.
+	 * @param uri URI of the document where to execute the query.
+	 * @param askQuery ASK query to be executed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	executeASKQuery( uri:string, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
+	/**
+	 * Executes a SELECT query on the document of the specified URI.
+	 * @param uri URI of the document where to execute the query.
+	 * @param selectQuery SELECT query to be executed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	executeSELECTQuery<T extends object>( uri:string, selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLSelectResults<T>>;
 
+	/**
+	 * Executes an UPDATE in the document of the specified URI.
+	 * @param uri URI of the document where to execute the update.
+	 * @param update UPDATE to be executed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	executeUPDATE( uri:string, update:string, requestOptions?:RequestOptions ):Promise<void>;
 
 
+	/**
+	 * Creates an instance of [SPARQLER](https://github.com/CarbonLDP/sparqler) builder
+	 * for the current document or the one specified by the URI.
+	 * @param uri URI of the document from where to create the query builder.
+	 */
 	sparql( uri:string ):QueryClause<FinishSPARQLSelect, FinishSPARQLAsk>;
 }
 
 
+/**
+ * Factory, decorator and utils for {@link SPARQLDocumentsRepositoryTrait}.
+ */
 export type SPARQLDocumentsRepositoryTraitFactory =
 	& ModelPrototype<SPARQLDocumentsRepositoryTrait, HTTPRepositoryTrait>
 	& ModelDecorator<SPARQLDocumentsRepositoryTrait, BaseDocumentsRepository>
 	;
 
+/**
+ * Constant that implements {@link SPARQLDocumentsRepositoryTraitFactory}.
+ */
 export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactory = {
 	PROTOTYPE: {
 		executeASKQuery( this:SPARQLDocumentsRepositoryTrait, uri:string, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean> {

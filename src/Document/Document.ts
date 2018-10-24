@@ -154,21 +154,43 @@ export interface Document extends $Registry<Fragment>, QueryableDocumentTrait, S
 
 
 	/**
-	 * @see {@link ResolvablePointer.$refresh}
+	 * Refreshes with the latest data of the current document.
+	 * If the document was retrieved partially, only the partial properties will be refreshed.
+	 * @param requestOptions Customizable options for the request.
 	 */
 	$refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
+	/**
+	 * Refreshes with the latest data of the specified document.
+	 * If the document was retrieved partially, only the partial properties will be refreshed.
+	 * @param document The document to be refreshed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 	/**
-	 * @see {@link ResolvablePointer.$save}
+	 * Saves the changes of the current document.
+	 * @param requestOptions Customizable options for the request.
 	 */
 	$save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
+	/**
+	 * Saves the changes of the specified document.
+	 * @param document The document to be saved.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 	/**
-	 * @see {@link ResolvablePointer.$saveAndRefresh}
+	 * Saves the changes of the current document and retrieves its latest changes.
+	 * If the document was retrieved partially, only the partial properties will be refreshed.
+	 * @param requestOptions Customizable options for the request.
 	 */
 	$saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
+	/**
+	 * Saves the changes of the specified document and retrieves its latest changes.
+	 * If the document was retrieved partially, only the partial properties will be refreshed.
+	 * @param document The resource to saved and refreshed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 }
 

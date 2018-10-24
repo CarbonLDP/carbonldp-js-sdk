@@ -49,46 +49,169 @@ import { _getErrorResponseParserFn } from "../Utils";
 import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
 
 
+/**
+ * Trait of a {@link DocumentsRepository} with methods for LDP related requests.
+ */
 export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Document> {
-	context:DocumentsContext;
+	/**
+	 * Context from where the repository is created.
+	 */
+	readonly context:DocumentsContext;
 
+	/**
+	 * Retrieves the entire document of the URI specified.
+	 * @param uri URI of the document to be retrieved.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
 
+	/**
+	 * Resolves the entire document of the URI specified.
+	 * @param document Document to be resolved.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	resolve<T extends object>( document:Document, requestOptions?:GETOptions ):Promise<T & Document>;
 
 
+	/**
+	 * Persists multiple objects as children of the document of the specified URI.
+	 * @param uri URI of the document where to create the children.
+	 * @param children Objects to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	create<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists multiple objects as children of the document of the specified URI.
+	 * @param uri URI of the document where to create the children.
+	 * @param children Objects to be persisted.
+	 * @param slugs Suggested slugs for every child URI of the {@param children} provided. The slug will be assigned in the order they are provided.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	create<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists the object as a child of the document of the specified URI.
+	 * @param uri URI of the document where to create the child.
+	 * @param child Object to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	create<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
+	/**
+	 * Persists the object as a child of the document of the specified URI.
+	 * @param uri URI of the document where to create the child.
+	 * @param child Object to be persisted.
+	 * @param slug Suggested slug for the child URI.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	create<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 
+	/**
+	 * Persists multiple objects as children of the document of the specified URI and retrieves the updated data from the server.
+	 * @param uri URI of the document where to create the children.
+	 * @param children Objects to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	createAndRetrieve<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists multiple objects as children of the document of the specified URI and retrieves the updated data from the server.
+	 * @param uri URI of the document where to create the children.
+	 * @param children Objects to be persisted.
+	 * @param slugs Suggested slugs for every child URI of the {@param children} provided. The slug will be assigned in the order they are provided.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	createAndRetrieve<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists the object as a child of the document of the specified URI and retrieves the updated data from the server.
+	 * @param uri URI of the document where to create the child.
+	 * @param child Object to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	createAndRetrieve<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
+	/**
+	 * Persists the object as a child of the document of the specified URI and retrieves the updated data from the server.
+	 * @param uri URI of the document where to create the child.
+	 * @param child Object to be persisted.
+	 * @param slug Suggested slug for the child URI.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	createAndRetrieve<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
+	/**
+	 * Refreshes with the latest data of the specified document.
+	 * @param document The document to be refreshed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
+	/**
+	 * Saves the changes of the specified document.
+	 * @param document The document to be saved.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
+	/**
+	 * Saves the changes of the specified document and retrieves its latest changes.
+	 * @param document The resource to saved and refreshed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
+	/**
+	 * Deletes the document of the specified URI.
+	 * @param uri URI of the document to be deleted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 
 
+	/**
+	 * Adds the provided resource as member of the document of the specified URI.
+	 * @param uri URI of the document to add the member.
+	 * @param member Resource to be added as member.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	addMember( uri:string, member:(string | Pointer), requestOptions?:RequestOptions ):Promise<void>;
 
+	/**
+	 * Adds the provided resources as members of the document of the specified URI.
+	 * @param uri URI of the document to add the members.
+	 * @param members Resources to be added as members.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	addMembers( uri:string, members:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
 
 
+	/**
+	 * Removes the provided resource as member of the document of the specified URI.
+	 * @param uri URI of the document to remove the member.
+	 * @param member Resource to be removed as member.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	removeMember( uri:string, member:(string | Pointer), requestOptions?:RequestOptions ):Promise<void>;
 
+	/**
+	 * Removes the provided resources as members of the document of the specified URI.
+	 * IF no {@param members} is provided all the members of the specified document will be removed.
+	 * @param uri URI of the document to remove the members.
+	 * @param members Resources to be removed as members.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	removeMembers( uri:string, members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	/**
+	 * Removes all the members of the document of the specified URI.
+	 * @param uri URI of the document to remove its members.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	removeMembers( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 
 
+	/**
+	 * Override method to parse the data that is a JSON-LD Document into the {@link Document} model.
+	 * @see {@link HTTPRepositoryTrait._parseResponseData}
+	 * @private
+	 */
 	_parseResponseData<T extends object>( response:Response, id:string ):Promise<T & Document>;
 }
 
@@ -392,11 +515,17 @@ export type OverriddenMembers =
 	| "_parseResponseData"
 	;
 
+/**
+ * Factory, decorator and utils for {@link LDPDocumentsRepositoryTrait}.
+ */
 export type LDPDocumentsRepositoryTraitFactory =
 	& ModelPrototype<LDPDocumentsRepositoryTrait, HTTPRepositoryTrait, OverriddenMembers>
 	& ModelDecorator<LDPDocumentsRepositoryTrait, BaseDocumentsRepository>
 	;
 
+/**
+ * Constant that implements {@link LDPDocumentsRepositoryTraitFactory}.
+ */
 export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 	PROTOTYPE: {
 		get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> {
