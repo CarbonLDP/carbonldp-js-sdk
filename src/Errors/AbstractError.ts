@@ -1,3 +1,6 @@
+/**
+ * Class that works as template for the custom errors in the SDK.
+ */
 export abstract class AbstractError extends Error {
 	message:string;
 
