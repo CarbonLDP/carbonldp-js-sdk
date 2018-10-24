@@ -14,17 +14,29 @@ import { ResolvablePointer } from "../Repository/ResolvablePointer";
 import { BaseGeneralRepository } from "./BaseGeneralRepository";
 
 
+/**
+ * Base repository used by {@link Context}.
+ */
 export interface GeneralRepository<MODEL extends ResolvablePointer = ResolvablePointer> extends Repository<MODEL> {
+	/**
+	 * Context where the repository belongs to.
+	 */
 	context:Context<MODEL & RegisteredPointer, MODEL>;
 }
 
 
+/**
+ * Factory, decorator and utils for {@link GeneralRepository}.
+ */
 export type GeneralRepositoryFactory =
 	& ModelPrototype<GeneralRepository, Repository>
 	& ModelDecorator<GeneralRepository<any>, BaseGeneralRepository>
 	& ModelFactory<GeneralRepository, BaseGeneralRepository>
 	;
 
+/**
+ * Constant that implements {@link GeneralRepositoryFactory}.
+ */
 export const GeneralRepository:GeneralRepositoryFactory = {
 	PROTOTYPE: {
 		get context():Context<ResolvablePointer & RegisteredPointer, ResolvablePointer> {
