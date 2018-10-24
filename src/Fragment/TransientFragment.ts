@@ -14,8 +14,17 @@ import { Resource } from "../Resource/Resource";
 import { BaseTransientFragment } from "./BaseTransientFragment";
 
 
+/**
+ * In-memory model that represents a fragment of `c:Document`.
+ */
 export interface TransientFragment extends Resource {
+	/**
+	 * The document the fragment belongs to.
+	 */
 	$document:TransientDocument;
+	/**
+	 * Registry where the fragment belongs to.
+	 */
 	$registry:TransientDocument;
 }
 
@@ -26,6 +35,9 @@ export type OverriddenMembers =
 	| "$slug"
 	;
 
+/**
+ * Factory, decorator and utils for {@link TransientFragment}.
+ */
 export type TransientFragmentFactory =
 	& ModelPrototype<TransientFragment & BaseTransientFragment, Resource, OverriddenMembers>
 	& ModelDecorator<TransientFragment, BaseTransientFragment>
@@ -33,6 +45,9 @@ export type TransientFragmentFactory =
 	& ModelTypeGuard<TransientFragment>
 	;
 
+/**
+ * Constant that implements {@link TransientFragmentFactory}.
+ */
 export const TransientFragment:TransientFragmentFactory = {
 	PROTOTYPE: {
 		get $registry():TransientDocument {
