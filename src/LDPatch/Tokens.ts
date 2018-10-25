@@ -1,10 +1,17 @@
-import { BlankNodeToken, CollectionToken, IRIToken, SubjectToken, TokenNode, VariableOrIRIToken } from "sparqler/tokens";
+import { BlankNodeToken, CollectionToken, IRIToken, TokenNode, TripleToken, VariableOrIRIToken } from "sparqler/tokens";
 
 import { isNumber } from "../Utils";
 
 
+/**
+ * The tokens that states a change in the data.
+ * Used in the {@link LDPatchToken#statements}.
+ */
 export type StatementToken = AddToken | DeleteToken | UpdateListToken;
 
+/**
+ * Token for defining an LD Patch expression.
+ */
 export class LDPatchToken implements TokenNode {
 	readonly token:"ldpatch" = "ldpatch";
 	readonly prologues:PrefixToken[];
@@ -25,6 +32,11 @@ export class LDPatchToken implements TokenNode {
 	}
 }
 
+/**
+ * Token for defining a LD Patch prefix statement.
+ *
+ * @see {@link https://www.w3.org/TR/ldpatch/#grammar-production-prefixID}
+ */
 export class PrefixToken implements TokenNode {
 	readonly token:"prefix" = "prefix";
 	readonly namespace:string;
@@ -40,8 +52,12 @@ export class PrefixToken implements TokenNode {
 	}
 }
 
-export type TripleToken = SubjectToken;
-
+/**
+ * Token for defining a LD Patch add statement.
+ *
+ * @see {@link https://www.w3.org/TR/ldpatch/#Add-statement}.
+ * @see {@link https://www.w3.org/TR/ldpatch/#grammar-production-add}.
+ */
 export class AddToken implements TokenNode {
 	readonly token:"add" = "add";
 	readonly triples:TripleToken[];
@@ -55,6 +71,12 @@ export class AddToken implements TokenNode {
 	}
 }
 
+/**
+ * Token for defining a LD Patch delete statement.
+ *
+ * @see {@link https://www.w3.org/TR/ldpatch/#Delete-statement}.
+ * @see {@link https://www.w3.org/TR/ldpatch/#grammar-production-delete}.
+ */
 export class DeleteToken implements TokenNode {
 	readonly token:"delete" = "delete";
 	readonly triples:TripleToken[];
@@ -68,6 +90,12 @@ export class DeleteToken implements TokenNode {
 	}
 }
 
+/**
+ * Token for defining a LD Patch update list statement.
+ *
+ * @see {@link https://www.w3.org/TR/ldpatch/#UpdateList-statement}.
+ * @see {@link https://www.w3.org/TR/ldpatch/#grammar-production-updateList}.
+ */
 export class UpdateListToken implements TokenNode {
 	readonly token:"updateList" = "updateList";
 
@@ -89,6 +117,12 @@ export class UpdateListToken implements TokenNode {
 	}
 }
 
+/**
+ * Token for defining a LD Patch slice expression of a update list statement.
+ *
+ * @see {@link https://www.w3.org/TR/ldpatch/#dfn-slice-expression}.
+ * @see {@link https://www.w3.org/TR/ldpatch/#grammar-production-slice}.
+ */
 export class SliceToken implements TokenNode {
 	readonly token:"slice" = "slice";
 	readonly minIndex?:number;
