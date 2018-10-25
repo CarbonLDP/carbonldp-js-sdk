@@ -8,13 +8,30 @@ import { XSD } from "../Vocabularies/XSD";
 import { Map } from "./Map";
 
 
+/**
+ * Model that represents a `c:Error`.
+ * This model is returned by the server when an error occurs.
+ */
 export interface Error extends Resource {
+	/**
+	 * Code that indicates the type of error ocurred.
+	 */
 	errorCode:string;
+	/**
+	 * Message that explains the error.
+	 */
 	errorMessage:string;
+	/**
+	 * `c:Map` that contains the specific elements that generated the error.
+	 */
 	errorParameters:Map<string, any>;
 }
 
 
+/**
+ * Factory, decorator and utils for {@link Error}.
+ */
+// TODO: Change to type-alias
 export interface ErrorFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
@@ -35,8 +52,10 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link ErrorFactory}.
+ */
 export const Error:ErrorFactory = {
-	TYPE:C.Error,
+	TYPE: C.Error,
 	SCHEMA,
 };
-

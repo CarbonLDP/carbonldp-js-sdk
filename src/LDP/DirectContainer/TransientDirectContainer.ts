@@ -10,13 +10,25 @@ import { LDP } from "../../Vocabularies/LDP";
 
 import { BaseDirectContainer } from "./BaseDirectContainer";
 
-
+/**
+ * The in-memory model that represents a `ldp:DirectContainer`.
+ */
 export interface TransientDirectContainer extends TransientDocument {
+	/**
+	 * The resource the direct container belongs to.
+	 */
 	membershipResource?:Pointer;
+	/**
+	 * The relation the direct container will manage.
+	 */
 	hasMemberRelation:Pointer;
 }
 
 
+/**
+ * Factory, decorator and utils for {@link TransientDirectContainer}.
+ */
+// TODO: Change to type-alias
 export interface TransientDirectContainerFactory extends ModelFactory<TransientDirectContainer> {
 	TYPE:LDP[ "DirectContainer" ];
 
@@ -28,6 +40,9 @@ export interface TransientDirectContainerFactory extends ModelFactory<TransientD
 	createFrom<T extends object>( object:T & BaseDirectContainer ):T & TransientDirectContainer;
 }
 
+/**
+ * Constant that implements {@link TransientDirectContainerFactory}.
+ */
 export const TransientDirectContainer:TransientDirectContainerFactory = {
 	TYPE: LDP.DirectContainer,
 

@@ -8,11 +8,21 @@ import { DocumentMetadata } from "./DocumentMetadata";
 import { VolatileResource } from "./VolatileResource";
 
 
+/**
+ * Model that represents a `c:ResponseMetadata`.
+ * This model is returned in the response of a request when volatile metadata needs to be returned.
+ */
 export interface ResponseMetadata extends VolatileResource {
+	/**
+	 * Array with metadata of resources affected by the request.
+	 */
 	documentsMetadata?:DocumentMetadata[];
 }
 
 
+/**
+ * Factory, decorator and utils for {@link ResponseMetadata}.
+ */
 export interface ResponseMetadataFactory extends ModelSchema {
 	TYPE:C[ "ResponseMetadata" ];
 	SCHEMA:ObjectSchema;
@@ -28,6 +38,9 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link ResponseMetadataFactory}.
+ */
 export const ResponseMetadata:ResponseMetadataFactory = {
 	TYPE: C.ResponseMetadata,
 	SCHEMA,

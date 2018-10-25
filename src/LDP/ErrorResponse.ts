@@ -10,13 +10,29 @@ import { XSD } from "../Vocabularies/XSD";
 import { Error } from "./Error";
 
 
+/**
+ * Model that represents a `c:ErrorResponse`.
+ * This model is returned as the response of a request when any error occurs.
+ */
 export interface ErrorResponse extends Resource {
+	/**
+	 * Set of all the errors that the request generated.
+	 */
 	errors:Error[];
+	/**
+	 * String that identifies the request that caused the error.
+	 */
 	requestID:string;
+	/**
+	 * The HTTP status code for the general error of the request.
+	 */
 	statusCode:number;
 }
 
 
+/**
+ * Factory, decorator and utils for {@link ErrorResponse}.
+ */
 export interface ErrorResponseFactory extends ModelSchema {
 	TYPE:C[ "ErrorResponse" ];
 	SCHEMA:ObjectSchema;
@@ -44,6 +60,10 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link ErrorResponseFactory}.
+ */
+// TODO: Change to type-alias
 export const ErrorResponse:ErrorResponseFactory = {
 	TYPE: C.ErrorResponse,
 	SCHEMA,
