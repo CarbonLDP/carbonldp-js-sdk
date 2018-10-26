@@ -4,6 +4,9 @@ import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
 import { QueryContainer } from "./QueryContainer";
 
 
+/**
+ * Wrapper for a safe query value to the reference of any resource.
+ */
 export class QueryObject {
 	private readonly _queryContainer:QueryContainer;
 	private readonly _resource:IRIToken | BlankNodeToken | PrefixedNameToken;
@@ -17,10 +20,16 @@ export class QueryObject {
 	}
 
 
+	/**
+	 * Returns the SPARQL token of the object.
+	 */
 	getToken():IRIToken | BlankNodeToken | PrefixedNameToken {
 		return this._resource;
 	}
 
+	/**
+	 * Returns the SPARQL string representation of the object.
+	 */
 	toString():string {
 		return `${ this._resource }`;
 	}

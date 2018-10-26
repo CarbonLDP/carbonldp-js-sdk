@@ -7,6 +7,9 @@ import { XSD } from "../Vocabularies/XSD";
 import { QueryContainer } from "./QueryContainer";
 
 
+/**
+ * Wrapper for a safe query value of any standard JS value.
+ */
 export class QueryValue {
 	private readonly _queryContainer:QueryContainer;
 
@@ -25,6 +28,11 @@ export class QueryValue {
 	}
 
 
+	/**
+	 * Sets an specific type to the query value.
+	 * If the value is not string, it will be serialized.
+	 * @param type The type to be assigned to the literal value.
+	 */
 	withType( type:string ):this {
 		if( XSD.hasOwnProperty( type ) ) type = XSD[ type ];
 
@@ -35,6 +43,10 @@ export class QueryValue {
 		return this;
 	}
 
+	/**
+	 * Sets an specific language to the query value.
+	 * @param language The language to be assigned to the string literal value.
+	 */
 	withLanguage( language:string ):this {
 		const value:string = this._queryContainer.serializeLiteral( XSD.string, this._value );
 		const languageToken:LanguageToken = new LanguageToken( language );
@@ -44,14 +56,17 @@ export class QueryValue {
 	}
 
 
+	/**
+	 * Returns the SPARQL token of the value.
+	 */
 	getToken():LiteralToken {
 		return this._literal;
 	}
 
+	/**
+	 * Returns the SPARQL string representation of the value.
+	 */
 	toString():string {
 		return `${ this._literal }`;
 	}
 }
-
-
-

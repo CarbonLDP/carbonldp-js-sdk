@@ -8,11 +8,21 @@ import { C } from "../Vocabularies/C";
 import { QueryablePointer } from "./QueryablePointer";
 
 
+/**
+ * Model of the volatile resource expected by the SDK in the partial query request.
+ */
 export interface QueryMetadata extends VolatileResource {
+	/**
+	 * The pointers to the main targeted resources in the partial query.
+	 */
 	targets:QueryablePointer[];
 }
 
 
+// TODO: Change to type-alias
+/**
+ * Factory, decorator and utils for {@QueryMetadata}.
+ */
 export interface QueryMetadataFactory extends ModelSchema {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
@@ -28,6 +38,9 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link QueryMetadataFactory}.
+ */
 export const QueryMetadata:QueryMetadataFactory = {
 	TYPE: C.QueryMetadata,
 	SCHEMA,

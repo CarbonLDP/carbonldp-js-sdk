@@ -18,6 +18,9 @@ import { QueryRootProperty } from "./QueryRootProperty";
 import { QueryVariable } from "./QueryVariable";
 
 
+/**
+ * Container of the query data specialized with elements for the custom querying of documents.
+ */
 export class QueryContainer extends FluentPathContainer<undefined> {
 	readonly context:AbstractContext<any, any, any>;
 	readonly _queryProperty:QueryRootProperty | QueryContainerProperty;
@@ -64,6 +67,11 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	}
 
 
+	/**
+	 * Returns a variable from the specified name.
+	 * If a variable with the same name has already been created, it will be returned.
+	 * @param name Name of the variable to get.
+	 */
 	getVariable( name:string ):QueryVariable {
 		if( this._variablesMap.has( name ) )
 			return this._variablesMap.get( name );
@@ -75,6 +83,11 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	}
 
 
+	/**
+	 * Created the minimal form of the specified IRI,
+	 * and transform into its corresponding token.
+	 * @param iri The iri to compact into a token.
+	 */
 	compactIRI( iri:string ):IRIToken {
 		const compactedIRI:string = this.__getCompactedIRI( iri );
 		return this.iriResolver.resolve( compactedIRI );
@@ -93,6 +106,9 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	}
 
 
+	/**
+	 * Returns an array with the used prefixes in all the query.
+	 */
 	getPrologues():PrefixToken[] {
 		return this._prefixesTuples
 			.filter( this.__isUsedPrefix, this )
@@ -105,17 +121,30 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	}
 
 
+	/**
+	 * Standardizes the provided property definition using the schema associated of the container.
+	 * @param name The name of the property to process.
+	 * @param definition The definition of the property to process.
+	 */
 	digestProperty( name:string, definition:ObjectSchemaProperty ):DigestedObjectSchemaProperty {
 		return ObjectSchemaDigester
 			.digestProperty( name, definition, this._generalSchema );
 	}
 
+	/**
+	 * Gets a copy of the associated schema of the container.
+	 */
 	getGeneralSchema():DigestedObjectSchema {
 		return ObjectSchemaDigester
 			.combineDigestedObjectSchemas( [ this._generalSchema ] );
 	}
 
 
+	/**
+	 * Serializes a value using the specified type and the associated context's serializers.
+	 * @param type The type of the value to serialize.
+	 * @param value The value to serialize.
+	 */
 	serializeLiteral( type:string, value:any ):string {
 		if( ! this.context.jsonldConverter.literalSerializers.has( type ) )
 			throw new IllegalArgumentError( `Type "${ type }" hasn't a defined serializer.` );

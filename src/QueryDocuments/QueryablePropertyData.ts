@@ -6,6 +6,9 @@ import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSche
 import { QueryPropertyType } from "./QueryPropertyType";
 
 
+/**
+ * Base data to create a {@link QueryableProperty}.
+ */
 export interface QueryablePropertyData {
 	definition:DigestedObjectSchemaProperty;
 	pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;

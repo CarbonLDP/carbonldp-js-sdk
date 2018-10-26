@@ -33,6 +33,9 @@ interface CompactionNode {
 	resource:QueryablePointer & { types?:string[] };
 }
 
+/**
+ * Class for compacting a set of RDF resources by level of relations.
+ */
 export class QueryResultCompacter {
 
 	private get jsonldConverter():JSONLDConverter {
@@ -48,6 +51,11 @@ export class QueryResultCompacter {
 		this.queryContainer = queryContainer;
 	}
 
+	/**
+	 * Returns the resources as documents converted from the JSON-LD data provided.
+	 * @param rdfDocuments All the RDF documents returned by the query.
+	 * @param targetDocuments The main resources that will be set as the roots of the compaction.
+	 */
 	compactDocuments<T extends object>( rdfDocuments:RDFDocument[], targetDocuments?:string[] ):(T & Document)[] {
 		if( ! targetDocuments )
 			targetDocuments = rdfDocuments.map( x => x[ "@id" ] );

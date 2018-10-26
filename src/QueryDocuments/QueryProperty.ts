@@ -30,18 +30,38 @@ import { SubQueryPropertyDefinition } from "./SubQueryPropertyDefinition";
 import { _getBestType, _getMatchingDefinition, _getRootPath } from "./Utils";
 
 
+/**
+ * Class that represents a property to be query.
+ */
 export class QueryProperty implements QueryablePropertyData {
 	readonly queryContainer:QueryContainer;
+	/**
+	 * Parent property if the current property is a sub-property.
+	 */
 	readonly parent?:QueryProperty;
 
+	/**
+	 * Name of the query property.
+	 */
 	readonly name:string;
+	/**
+	 * Full path name of the property,
+	 * including the paths form the parents.
+	 */
 	readonly fullName:string;
 
+	/**
+	 * The variable that represents the property.
+	 */
 	get variable():VariableToken {
 		return this.queryContainer
 			.getVariable( this.fullName );
 	}
 
+	/**
+	 * The identifier that represents the property.
+	 * This value is one used in the final query.
+	 */
 	get identifier():VariableToken | LiteralToken | IRIToken {
 		if( this.values.length === 1 ) {
 			return this.values[ 0 ];
@@ -306,6 +326,10 @@ export class QueryProperty implements QueryablePropertyData {
 
 	// Search patterns
 
+	/**
+	 * Returns the patterns to be used in the query that specifies the property and its sub-properties.
+	 * If the property is optional the patterns will be wrapped in an optional SPARQL token.
+	 */
 	getSearchPatterns():PatternToken[] {
 		const patterns:PatternToken[] = this
 			.__createSearchPatterns();
@@ -483,6 +507,9 @@ export class QueryProperty implements QueryablePropertyData {
 
 	// Construct patterns
 
+	/**
+	 * Returns the patterns to be used in the construct patterns that specifies the property with its sub-properties.
+	 */
 	getConstructPatterns():SubjectToken[] {
 		const patterns:SubjectToken[] = [];
 
@@ -590,6 +617,11 @@ export class QueryProperty implements QueryablePropertyData {
 
 	// Helper for property result compaction
 
+	/**
+	 * Returns the specific schema for the property,
+	 * combining with the associated schema of the object provided if isn't a basic partial property.
+	 * @param object The associated resource of the property.
+	 */
 	getSchemaFor( object:object ):DigestedObjectSchema {
 		switch( this.propertyType ) {
 			case void 0:
