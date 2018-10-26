@@ -10,7 +10,6 @@ import {
 	PrefixToken,
 	SliceToken,
 	StatementToken,
-	TripleToken,
 	UpdateListToken,
 } from "./Tokens";
 
@@ -73,15 +72,6 @@ describe( module( "carbonldp/LDPatch" ), ():void => {
 	), ():void => {
 		expect( SliceToken ).toBeDefined();
 		expect( Module.SliceToken ).toBe( SliceToken );
-	} );
-
-	it( reexports(
-		STATIC,
-		"TripleToken",
-		"CarbonLDP.LDPatch.TripleToken"
-	), ():void => {
-		const target:Module.TripleToken = {} as TripleToken;
-		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
