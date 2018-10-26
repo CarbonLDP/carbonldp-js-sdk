@@ -546,14 +546,14 @@ export class RequestUtils {
 
 
 	/**
-	 * Checks if the object provided can be considered a {@link RequestOptions}.
-	 * @param object The object to be checked.
+	 * Checks if the value provided can be considered a {@link RequestOptions}.
+	 * @param value The value to be checked.
 	 */
-	static isOptions( object:object ):object is RequestOptions {
-		return hasPropertyDefined( object, "headers" )
-			|| hasPropertyDefined( object, "sendCredentialsOnCORS" )
-			|| hasPropertyDefined( object, "timeout" )
-			|| hasPropertyDefined( object, "request" );
+	static isOptions( value:any ):value is RequestOptions {
+		return hasPropertyDefined( value, "headers" )
+			|| hasPropertyDefined( value, "sendCredentialsOnCORS" )
+			|| hasPropertyDefined( value, "timeout" )
+			|| hasPropertyDefined( value, "request" );
 	}
 
 	/**
