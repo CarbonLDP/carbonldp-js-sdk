@@ -4,11 +4,29 @@ import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";
 import { ObjectSchemaUtils } from "./ObjectSchemaUtils";
 
 
+/**
+ * Standardized schema that is used for the SDK for compact and expand JSON-LD objects.
+ */
 export class DigestedObjectSchema {
+	/**
+	 * The base URI of the schema.
+	 */
 	base:string;
+	/**
+	 * The default language of the string properties.
+	 */
 	language:string;
+	/**
+	 * URI that will be used to resolve relative URIs that aren't defined in the schema.
+	 */
 	vocab:string;
+	/**
+	 * Map that contains the prefixes of absolutes URIs.
+	 */
 	prefixes:Map<string, string>;
+	/**
+	 * Map that contains the definitions of the properties in the schema.
+	 */
 	properties:Map<string, DigestedObjectSchemaProperty>;
 
 	constructor() {
@@ -19,6 +37,15 @@ export class DigestedObjectSchema {
 		this.properties = new Map<string, DigestedObjectSchemaProperty>();
 	}
 
+	/**
+	 * Tries to resolve a non absolute URI using the schema and the configuration provided.
+	 *
+	 * The configuration indicates if the `vocab` or the `base` URI must be used to resolve the URI;
+	 * if both are set, the `vocab` one takes preference before the `base`-
+	 *
+	 * @param uri Relative URI to resolve.
+	 * @param relativeTo Object with flags indicating which resolution mode to use.
+	 */
 	resolveURI( uri:string, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
 		if( uri === null || URI.isAbsolute( uri ) || URI.isBNodeID( uri ) ) return uri;
 
@@ -41,6 +68,14 @@ export class DigestedObjectSchema {
 		return uri;
 	}
 
+	/**
+	 * Returns the definition of a property resolving internal URIs
+	 * using the current schema configuration.
+	 *
+	 * If no property exists with the name provided `undefined` is returned.
+	 *
+	 * @param name Property name to return its definition.
+	 */
 	getProperty( name:string ):DigestedObjectSchemaProperty | undefined {
 		if( ! this.properties.has( name) ) return void 0;
 		return ObjectSchemaUtils._resolveProperty( this, this.properties.get( name ) );

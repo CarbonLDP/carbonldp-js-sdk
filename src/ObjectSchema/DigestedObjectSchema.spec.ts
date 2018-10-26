@@ -222,6 +222,8 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 		} );
 
+		// TODO: Test .getProperty
+
 	} );
 
 } );

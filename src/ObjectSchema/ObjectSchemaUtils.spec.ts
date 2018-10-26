@@ -14,7 +14,7 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 			expect( ObjectSchemaUtils ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Document and test .resolveProperty
+		// TODO: Test .resolveProperty
 
 	} );
 
