@@ -4,12 +4,24 @@ import { RDFNode } from "./Node";
 import { URI } from "./URI";
 
 
+/**
+ * Interface that represents an RDF Document.
+ */
 export type RDFDocument = {
+	/**
+	 * The ID URI of the current document.
+	 */
 	"@id":string;
+	/**
+	 * The graph content of the current document.
+	 */
 	"@graph":RDFNode[];
 };
 
 
+/**
+ * Factory and utils for {@link RDFDocument}.
+ */
 export interface RDFDocumentFactory {
 	is( value:any ):value is RDFDocument;
 
@@ -32,6 +44,9 @@ export interface RDFDocumentFactory {
 	getNodes( rdfDocument:RDFDocument ):[ RDFNode[], RDFNode[] ];
 }
 
+/**
+ * Constant that implements {@link RDFDocumentFactory}.
+ */
 export const RDFDocument:RDFDocumentFactory = {
 	is( value:any ):value is RDFDocument {
 		return Utils.hasProperty( value, "@graph" )

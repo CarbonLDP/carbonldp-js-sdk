@@ -5,63 +5,136 @@ import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { isString, StringUtils, UUIDUtils } from "../Utils";
 
 
+/**
+ * Utils for URI strings.
+ */
 export interface URIFactory {
+	/**
+	 * Returns true if the URI provided contains a fragment.
+	 * @param uri URI to check.
+	 */
 	hasFragment( uri:string ):boolean;
 
-
+	/**
+	 * Returns true if the URI provided contains query parameters.
+	 * @param uri URI to check.
+	 */
 	hasQuery( uri:string ):boolean;
 
-
+	/**
+	 * Returns true if the URI provided has a protocol.
+	 * @param uri URI to check.
+	 */
 	hasProtocol( uri:string ):boolean;
 
-
+	/**
+	 * Returns true if the URI provided is absolute.
+	 * @param uri URI to check.
+	 */
 	isAbsolute( uri:string ):boolean;
 
-
+	/**
+	 * Returns true if the URI provided is relative.
+	 * @param uri URI to check.
+	 */
 	isRelative( uri:string ):boolean;
 
-
+	/**
+	 * Returns true if the URI provided reference to a BlankNode.
+	 * @param uri URI to check.
+	 */
 	isBNodeID( uri:string ):boolean;
 
-
+	/**
+	 * Returns an ID for a BlankNode using a universally unique identifier (UUID).
+	 */
 	generateBNodeID():string;
 
-
+	/**
+	 * Returns true if the URI provided has a prefix.
+	 * @param uri URI to check.
+	 */
 	isPrefixed( uri:string ):boolean;
 
-
+	/**
+	 * Returns true if the first URI is a fragment of the second URI provided.
+	 * @param fragmentURI URI to check.
+	 * @param uri Base URI to be checked against {@param fragmentURI}.
+	 */
 	isFragmentOf( fragmentURI:string, uri:string ):boolean;
 
-
+	/**
+	 * Returns true if the first URI is parent of the second URI provided.
+	 * @param baseURI URI to check its the parent.
+	 * @param uri URI to check that is under the {@param baseURI }.
+	 */
 	isBaseOf( baseURI:string, uri:string ):boolean;
 
-
+	/**
+	 * Returns the relative URI from a base URI provided.
+	 * @param absoluteURI URI to be converted into a relative URI.
+	 * @param base The base URI to remove from the {@param absoluteURI}.
+	 */
 	getRelativeURI( absoluteURI:string, base:string ):string;
 
-
+	/**
+	 * Returns the URI that just reference to the document of the URI provided.
+	 * @param uri URI to obtains its document URI.
+	 */
 	getDocumentURI( uri:string ):string;
 
-
+	/**
+	 * Returns the name of the fragment in the URI provided.
+	 * If no fragment exists in the URI, null will be returned.
+	 * @param uri URI to obtains its fragment section.
+	 */
 	getFragment( uri:string ):string;
 
-
+	/**
+	 * Returns the slug of the URI.
+	 * @param uri URI to obtain ir slug.
+	 */
 	getSlug( uri:string ):string;
 
-
+	/**
+	 * Returns the query parameters of the URI provided in form of a Map.
+	 * @param uri URL to parse is query parameters.
+	 */
 	getParameters( uri:string ):Map<string, string | string[]>;
 
-
+	/**
+	 * Returns a URI formed from a parent URI and a relative child URI.
+	 * @param parentURI The absolute URI to be used as the base for the resolved URI.
+	 * @param childURI The relative URI to be appended in the parent URI.
+	 */
 	resolve( parentURI:string, childURI:string ):string;
 
-
+	/**
+	 * Removes the protocol of the URI provided.
+	 * @param uri URI to remove its protocol.
+	 */
 	removeProtocol( uri:string ):string;
 
-
+	/**
+	 * Replace a base of a URI with the prefix provided.
+	 * If the prefix can not be resolved, the URI provided will be returned.
+	 * @param uri URI to be prefixed.
+	 * @param prefix Prefix name to use in the compaction.
+	 * @param prefixURI Prefix URI to ensure the specified URI can be changed for a prefixed name.
+	 */
 	prefix( uri:string, prefix:string, prefixURI:string ):string;
-
+	/**
+	 * Replace the base of a URI with a prefix in accordance with the ObjectSchema provided.
+	 * If the prefix can not be resolved, the URI provided will be returned.
+	 * @param uri URI to be prefixed.
+	 * @param objectSchema Schema to look for a compatible prefix to use.
+	 */
 	prefix( uri:string, objectSchema:DigestedObjectSchema ):string;
 }
 
+/**
+ * Constant that implements {@link URIFactory}.
+ */
 export const URI:URIFactory = {
 	hasFragment( uri:string ):boolean {
 		return uri.indexOf( "#" ) !== - 1;
