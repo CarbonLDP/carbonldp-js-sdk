@@ -96,7 +96,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 		), ():void => {} );
 
 
-		// TODO: Document & Test .toJSON
+		// TODO: Test .toJSON
 
 	} );
 

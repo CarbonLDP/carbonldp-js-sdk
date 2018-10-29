@@ -47,7 +47,7 @@ export interface FreeResources extends Registry<Resource> {
 
 
 	/**
-	 * Returns the JSON-LDP representation of the every resources inside an array-
+	 * Returns the JSON-LD representation of the every resources inside an array.
 	 * @param contextOrKey A specific context to use for expand the data into JSON-LD instead of the internal one.
 	 */
 	toJSON( contextOrKey?:Context | string ):RDFNode[];
