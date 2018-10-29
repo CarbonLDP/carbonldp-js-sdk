@@ -7,11 +7,22 @@ import { C } from "../Vocabularies/C";
 import { PlatformInstance } from "./PlatformInstance";
 
 
+/**
+ * Model that represents a `c:Platform`.
+ * The model contains the reference of the metadata of a platform instance.
+ */
 export interface PlatformMetadata extends Document {
+	/**
+	 * Volatile fragment where the actual data of the instance lives on.
+	 */
 	instance:PlatformInstance;
 }
 
 
+// TODO: Change to type-alias.
+/**
+ * Factory and utils for {@link PlatformInstance}.
+ */
 export interface PlatformMetadataFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
@@ -24,6 +35,9 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link PlatformMetadata}.
+ */
 export const PlatformMetadata:PlatformMetadataFactory = {
 	TYPE: C.Platform,
 	SCHEMA,
