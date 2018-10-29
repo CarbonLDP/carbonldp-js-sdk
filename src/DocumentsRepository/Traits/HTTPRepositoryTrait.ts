@@ -38,7 +38,7 @@ export interface HTTPRepositoryTrait<MODEL extends ResolvablePointer = Resolvabl
 	 */
 	resolve<T extends object>( resource:MODEL, requestOptions?:RequestOptions ):Promise<T & MODEL>;
 	/**
-	 * Check if the resource of the specified URI exists.
+	 * Checks if the resource of the specified URI exists.
 	 * @param uri The URI of the resource to check its existence.
 	 * @param requestOptions Customizable options for the request.
 	 */

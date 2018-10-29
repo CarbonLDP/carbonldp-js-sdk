@@ -12,27 +12,103 @@ import { $BaseRepository, BaseRepository } from "./BaseRepository";
 import { ResolvablePointer } from "./ResolvablePointer";
 
 
+/**
+ * Interface with the base methods of a service that manages request of an specific type of resources.
+ */
 export interface Repository<MODEL extends ResolvablePointer = ResolvablePointer> {
+	/**
+	 * Retrieves the resources of the specified URI.
+	 * @param uri URI of the resource to retrieve.
+	 * @param params Rest params of the method.
+	 */
 	get( uri:string, ...params:any[] ):Promise<MODEL>;
+	/**
+	 * Resolve the specified resource.
+	 * @param resource Resource to resolve.
+	 * @param params Rest params of the method.
+	 */
 	resolve( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	/**
+	 * Checks if the resource of the specified URI exists.
+	 * @param uri URI of the resource to check.
+	 * @param params Rest params of the method.
+	 */
 	exists( uri:string, ...params:any[] ):Promise<boolean>;
 
+	/**
+	 * Refreshes the data of the specified resource.
+	 * @param resource Resource to refresh.
+	 * @param params Rest params of the method.
+	 */
 	refresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	/**
+	 * Saves the changes of the specified resource.
+	 * @param resource Resource to save.
+	 * @param params Rest params of the method.
+	 */
 	save( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	/**
+	 * Saves the changes of the specified resource and retrieves its latest changes.
+	 * @param resource Resource to save and refresh.
+	 * @param params Rest params of the method.
+	 */
 	saveAndRefresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
 
+	/**
+	 * Deletes the resource of the specified URI.
+	 * @param uri URI of the resource to delete.
+	 * @param params Rest params of the method.
+	 */
 	delete( uri:string, ...params:any[] ):Promise<void>;
 }
 
+/**
+ * Interface with the base methods of a model that manages request of an specific type of resources.
+ */
 export interface $Repository<MODEL extends ResolvablePointer = ResolvablePointer> extends Pointer {
+	/**
+	 * Retrieves the resources of the specified URI.
+	 * @param uri URI of the resource to retrieve.
+	 * @param params Rest params of the method.
+	 */
 	$get( uri:string, ...params:any[] ):Promise<MODEL>;
+	/**
+	 * Resolve the specified resource.
+	 * @param resource Resource to resolve.
+	 * @param params Rest params of the method.
+	 */
 	$resolve( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	/**
+	 * Checks if the resource of the specified URI exists.
+	 * @param uri URI of the resource to check.
+	 * @param params Rest params of the method.
+	 */
 	$exists( uri:string, ...params:any[] ):Promise<boolean>;
 
+	/**
+	 * Refreshes the data of the specified resource.
+	 * @param resource Resource to refresh.
+	 * @param params Rest params of the method.
+	 */
 	$refresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	/**
+	 * Saves the changes of the specified resource.
+	 * @param resource Resource to save.
+	 * @param params Rest params of the method.
+	 */
 	$save( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	/**
+	 * Saves the changes of the specified resource and retrieves its latest changes.
+	 * @param resource Resource to save and refresh.
+	 * @param params Rest params of the method.
+	 */
 	$saveAndRefresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
 
+	/**
+	 * Deletes the resource of the specified URI.
+	 * @param uri URI of the resource to delete.
+	 * @param params Rest params of the method.
+	 */
 	$delete( uri:string, ...params:any[] ):Promise<void>;
 }
 
@@ -41,12 +117,17 @@ function __throwNotImplemented():Promise<never> {
 	return Promise.reject( new NotImplementedError( "Must be implemented for a specific repository implementation." ) );
 }
 
-// TODO: Use `unknown`
+/**
+ * Factory, decorator and utils for {@link Repository}.
+ */
 export type RepositoryFactory =
 	& ModelPrototype<Repository, BaseRepository & ObjectSchemaResolver>
 	& BiModelDecorator<Repository<any>, $Repository<any>, BaseRepository, $BaseRepository>
 	;
 
+/**
+ * Constant that implements {@link RepositoryFactory}.
+ */
 export const Repository:RepositoryFactory = {
 	PROTOTYPE: {
 		get: __throwNotImplemented,
