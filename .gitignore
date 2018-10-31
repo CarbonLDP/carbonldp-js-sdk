@@ -16,6 +16,10 @@ test/helpers/**/*.map
 test/mock-sockjs/*.js
 test/mock-sockjs/*.map
 
+# Dgeni
+test/carbonldp-dgeni-api/**/*.js
+test/carbonldp-dgeni-api/**/*.map
+
 # JSPM
 **/jspm_packages/
 

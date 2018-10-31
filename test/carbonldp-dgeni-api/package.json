@@ -1,0 +1,15 @@
+{
+	"name": "carbonldp-dgeni-api",
+	"version": "0.0.1",
+	"dependencies": {
+		"dgeni": "^0.4.10",
+		"dgeni-packages": "^0.26.12",
+		"glob": "^7.1.3",
+		"handlebars": "^4.0.12",
+		"helper-markdown": "^1.0.0",
+		"swag": "^0.7.0"
+	},
+	"devDependencies": {
+		"@types/handlebars": "^4.0.39"
+	}
+}

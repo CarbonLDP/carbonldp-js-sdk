@@ -31,6 +31,8 @@ const htmlMinifier = require( "gulp-htmlmin" );
 
 const moduleAlias = require( "module-alias" );
 
+const { Dgeni } = require( "dgeni" );
+
 let config = {
 	source: {
 		typescript: [
@@ -242,6 +244,25 @@ gulp.task( "clean:src", ( done ) => {
 } );
 
 gulp.task( "compile:documentation", [ "compile:documentation:html" ] );
+
+gulp.task( "compile:documentation2", () => {
+	require( "ts-node/register/transpile-only" );
+
+	const dgeni = new Dgeni( [
+		require( "carbonldp-dgeni-api" )
+			.config( function( templateFinder, templateEngine, readTypeScriptModules, computePathsProcessor ) {
+				// Configure pattern for Handlebars templates
+				templateFinder.templateFolders = [ "build/docs/html/" ];
+				templateFinder.templatePatterns = [ "template.hbs" ];
+				templateEngine.partials = [ "partials/*.hbs" ];
+
+				// Exclude JasmineExtender
+				readTypeScriptModules.sourceFiles.push( "!test/JasmineExtender/*.ts" );
+			} ),
+	] );
+
+	return dgeni.generate();
+} );
 
 gulp.task( "compile:documentation:html", ( done ) => {
 	runSequence(
