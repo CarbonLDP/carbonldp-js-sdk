@@ -76,7 +76,6 @@ export interface HTTPRepositoryTrait<MODEL extends ResolvablePointer = Resolvabl
 	 * the current behaviour only creates a shallow pointer in the associated {@link Registry}.
 	 * @param response The response to be parsed into a resource model.
 	 * @param id The identification of the resource, commonly the URL of the resource.
-	 * @private
 	 */
 	_parseResponseData<T extends object>( response:Response, id:string ):Promise<T & MODEL>;
 }

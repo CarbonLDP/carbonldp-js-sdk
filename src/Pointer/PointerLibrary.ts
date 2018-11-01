@@ -42,7 +42,6 @@ export interface $PointerLibrary extends Pointer {
  * Returns the pointer references by the URI provided using the specified pointer library.
  * @param pointerLibrary Any type of pointer library from where to get the requested pointer.
  * @param id The URI of the pointer to get/create.
- * @package
  */
 export function _getPointer( pointerLibrary:PointerLibrary | $PointerLibrary, id:string ):Pointer {
 	return "$id" in pointerLibrary ?

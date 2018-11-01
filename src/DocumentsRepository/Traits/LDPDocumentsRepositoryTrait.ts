@@ -210,7 +210,6 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 	/**
 	 * Override method to parse the data that is a JSON-LD Document into the {@link Document} model.
 	 * @see {@link HTTPRepositoryTrait._parseResponseData}
-	 * @private
 	 */
 	_parseResponseData<T extends object>( response:Response, id:string ):Promise<T & Document>;
 }

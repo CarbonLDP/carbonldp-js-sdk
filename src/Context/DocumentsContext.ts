@@ -119,8 +119,6 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	 * of the context.
 	 *
 	 * @returns The absolute URI of the path provided.
-	 *
-	 * @private
 	 */
 	_resolvePath( path:string ):string {
 		const leftSearchedPaths:string[] = path.split( "." );

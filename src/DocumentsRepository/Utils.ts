@@ -27,7 +27,6 @@ import { isString } from "../Utils";
  * @param uri The possible URI to be selected or another argument.
  * @param args All the arguments of the repository method that is been executed.
  * @returns An object with the target URI detected and the rest of the arguments to be applied in the repository method.
- * @private
  */
 export function _parseURIParams<T>( this:void, resource:ResolvablePointer, uri?:string | T, args?:IArguments ):{ _uri:string, _args:any[] } {
 	const _uri:string = isString( uri ) ?
@@ -47,7 +46,6 @@ export function _parseURIParams<T>( this:void, resource:ResolvablePointer, uri?:
  * @param $resource The possible target resource to be selected or another argument.
  * @param args All the arguments of the repository method that is been executed.
  * @returns An object with the target resource detected and the rest of the argument to be applied in the repository method.
- * @private
  */
 export function _parseResourceParams<T>( this:void, resource:ResolvablePointer, $resource?:ResolvablePointer | T, args?:IArguments ):{ _resource:ResolvablePointer, _args:any[] } {
 	const _resource:ResolvablePointer = Pointer.is( $resource ) ?
@@ -64,7 +62,6 @@ export function _parseResourceParams<T>( this:void, resource:ResolvablePointer, 
 /**
  * Returns a function that can parse a {@link HTTPError} into a {@link ErrorResponse} inside a rejected Promise.
  * @param registry The registry from where to get the information to convert the {@link HTTPError#response}'s data.
- * @private
  */
 export function _getErrorResponseParserFn( this:void, registry:DocumentsRegistry ):( error:HTTPError | Error ) => Promise<never> {
 	return ( error:HTTPError | Error ) => {

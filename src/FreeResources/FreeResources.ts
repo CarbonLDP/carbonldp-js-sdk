@@ -35,13 +35,11 @@ export interface FreeResources extends Registry<Resource> {
 
 	/**
 	 * @see {@link Registry._getLocalID}
-	 * @private
 	 */
 	_getLocalID( id:string ):string;
 
 	/**
 	 * @see {@link Registry._addPointer}
-	 * @private
 	 */
 	_addPointer<T extends object>( base:T & Partial<Pointer> ):T & Resource;
 

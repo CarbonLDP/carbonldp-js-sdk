@@ -39,7 +39,6 @@ export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer
 
 	/**
 	 * Map that stores the decorators in the registry.
-	 * @private
 	 */
 	__modelDecorators:Map<string, TypedModelDecorator>;
 

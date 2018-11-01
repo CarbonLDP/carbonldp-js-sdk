@@ -5,7 +5,6 @@ import { XSD } from "../Vocabularies/XSD";
 /**
  * Returns the guessed {@link XSD} type from the specified value.
  * @param value the value to check its matching {@link XSD} type.
- * @private
  */
 export function _guessXSDType( value:any ):string {
 	if( isFunction( value ) )

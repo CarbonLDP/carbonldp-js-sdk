@@ -8,7 +8,6 @@ import { QueryPropertyType } from "./QueryPropertyType";
 /**
  * Returns the root name of a full property path.
  * @param path The path to extract its root.
- * @package
  */
 export function _getRootPath( path:string ):string {
 	const [ root ]:string[] = path
@@ -23,7 +22,6 @@ export function _getRootPath( path:string ):string {
  * Search and returns the property value indicated by the specified path inside the element provided.
  * @param element The element where to find the desired property.
  * @param path The path in the element to the desired property.
- * @package
  */
 export function _getPathProperty( element:any, path:string ):any {
 	if( element === void 0 || ! path ) return element;
@@ -41,7 +39,6 @@ export function _getPathProperty( element:any, path:string ):any {
  * This simulates the basic comparision in the SPARQL language.
  * @param a The first element to check against.
  * @param b The second element to check against.
- * @package
  */
 export function _areDifferentType( a:any, b:any ):boolean {
 	if( typeof a !== typeof b ) return true;
@@ -55,7 +52,6 @@ export function _areDifferentType( a:any, b:any ):boolean {
  * Returns the general type that would match the two provided.
  * @param type1 The first type to compare.
  * @param type2 The second type to compare.
- * @package
  */
 export function _getBestType( type1:QueryPropertyType, type2:QueryPropertyType ):QueryPropertyType {
 	if( type2 <= type1 )
@@ -72,7 +68,6 @@ export function _getBestType( type1:QueryPropertyType, type2:QueryPropertyType )
  * @param targetSchema The schema where to look for the property's definition.
  * @param propertyName The name of the property to look for.
  * @param propertyURI The optional URI that the property has to have for have a true matching.
- * @package
  */
 export function _getMatchingDefinition( generalSchema:DigestedObjectSchema, targetSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
 	if( ! targetSchema.properties.has( propertyName ) ) return;

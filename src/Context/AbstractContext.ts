@@ -159,7 +159,6 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 	 * Returns all the typed schemas including the ones from the parent contexts.
 	 *
 	 * @param excepts Optional types to exclude in the returning of the stored schemas.
-	 * @private
 	 */
 	_getTypeObjectSchemas( excepts:string[] = [] ):DigestedObjectSchema[] {
 		const exceptsSet:Set<string> = new Set( excepts );

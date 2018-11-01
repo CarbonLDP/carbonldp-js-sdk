@@ -11,7 +11,6 @@ export class ObjectSchemaUtils {
 	 * @param schema The schema to use for URI resolutions.
 	 * @param definition The definition of the property to resolve.
 	 * @param inSame Flag to indicate if to mutate the same definition or return a copy of it.
-	 * @package
 	 */
 	static _resolveProperty( schema:DigestedObjectSchema, definition:DigestedObjectSchemaProperty, inSame?:boolean ):DigestedObjectSchemaProperty {
 		const uri:string = definition.uri;

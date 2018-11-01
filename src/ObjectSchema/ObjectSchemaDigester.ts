@@ -123,7 +123,6 @@ export class ObjectSchemaDigester {
 	/**
 	 * Actual implementation of the standardization of a schema.
 	 * @param schema The schema to process.
-	 * @package
 	 */
 	static _digestSchema( schema:ObjectSchema ):DigestedObjectSchema {
 		const digestedSchema:DigestedObjectSchema = new DigestedObjectSchema();
@@ -177,7 +176,6 @@ export class ObjectSchemaDigester {
 	 * This method uses the first schema as the target schema where to combine the data.
 	 *
 	 * @param digestedSchemas The schemas to combine.
-	 * @package
 	 */
 	static _combineSchemas( digestedSchemas:DigestedObjectSchema[] ):DigestedObjectSchema {
 		const [ targetSchema, ...restSchemas ] = digestedSchemas;
