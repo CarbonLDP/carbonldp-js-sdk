@@ -70,12 +70,10 @@ export = new Package( "carbonldp-dgeni-api",
 		readTypeScriptModules.sortClassMembers = true;
 
 		// Entry points for docs generation.
-		readTypeScriptModules.sourceFiles = [
-			{
-				include: "**/*.ts",
-				exclude: "**/*.spec.ts",
-			},
-		];
+		readTypeScriptModules.sourceFiles = [ {
+			include: "**/*.ts",
+			exclude: "**/*.spec.ts",
+		} ];
 	} )
 
 	// Configure pattern for templates

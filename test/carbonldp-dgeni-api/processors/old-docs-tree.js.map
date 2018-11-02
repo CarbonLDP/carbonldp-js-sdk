@@ -1,1 +1,0 @@
-{"version":3,"file":"old-docs-tree.js","sourceRoot":"","sources":["old-docs-tree.ts"],"names":[],"mappings":";;AAEA;IACC,OAAO;QACN,SAAS,EAAE,CAAE,iBAAiB,CAAE;QAChC,UAAU,EAAE,CAAE,gBAAgB,CAAE;QAEhC,QAAQ,EAAR,UAAU,IAAkB;YAC3B;gBACC;oBACC,OAAO,EAAE,OAAO;oBAChB,OAAO,EAAE,IAAI;iBACb;qBACE,IAAI,EACN;QACH,CAAC;KACD,CAAC;AACH,CAAC;AAfD,8BAeC"}
