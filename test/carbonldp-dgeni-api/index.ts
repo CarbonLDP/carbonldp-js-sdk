@@ -7,6 +7,7 @@ import Typescript from "dgeni-packages/typescript";
 import HandleBars from "./packages/handlebars";
 
 // Processors
+import normalizeDocs from "./processors/normalizeDocs";
 import oldDocsTree from "./processors/old-docs-tree";
 
 // Paths configurations
@@ -22,6 +23,7 @@ export = new Package( "carbonldp-dgeni-api",
 		Links,
 	] )
 
+	.processor( normalizeDocs )
 	.processor( oldDocsTree )
 
 	.config( function( log:any ):void {
@@ -44,14 +46,31 @@ export = new Package( "carbonldp-dgeni-api",
 		computePathsProcessor.pathTemplates = [];
 		computeIdsProcessor.idTemplates = [];
 
+		computePathsProcessor.pathTemplates.push( {
+			docTypes: [ "module" ],
+			pathTemplate: "carbonldp/${ id }",
+			getOutputPath():void {},
+		} );
+
+		computePathsProcessor.pathTemplates.push( {
+			docTypes: [ "class", "interface" ],
+			getPath( doc:any ):string {
+				// Special case for main class
+				if( doc.id === "CarbonLDP" ) return doc.id;
+
+				const id:string = doc.id.replace( /\//g, "." );
+				return `CarbonLDP.${ id }`;
+			},
+			getOutputPath():void {},
+		} );
+
 
 		// Index Doc
 
 		computePathsProcessor.pathTemplates.push( {
 			docTypes: [ "index" ],
 			pathTemplate: ".",
-			// FIXME: Change to correct `index.html`
-			outputPathTemplate: "index2.html",
+			outputPathTemplate: "index.html",
 		} );
 
 		computeIdsProcessor.idTemplates.push( {
@@ -72,7 +91,7 @@ export = new Package( "carbonldp-dgeni-api",
 		// Entry points for docs generation.
 		readTypeScriptModules.sourceFiles = [ {
 			include: "**/*.ts",
-			exclude: "**/*.spec.ts",
+			exclude: "{**/*.spec.ts,test/*.ts}",
 		} ];
 	} )
 

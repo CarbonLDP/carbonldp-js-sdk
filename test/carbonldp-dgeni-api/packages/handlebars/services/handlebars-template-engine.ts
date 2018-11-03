@@ -38,8 +38,6 @@ export class HandlebarsTemplateEngine implements TemplateEngine {
 		}
 
 		return ( template, data ) => {
-			if( ! data.doc.outputPath ) return "";
-
 			const templateGlob:string = this._getTemplateGlob( template );
 			const [ file ] = glob.sync( templateGlob );
 

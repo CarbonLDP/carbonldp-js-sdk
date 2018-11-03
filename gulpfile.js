@@ -250,14 +250,11 @@ gulp.task( "compile:documentation2", () => {
 
 	const dgeni = new Dgeni( [
 		require( "carbonldp-dgeni-api" )
-			.config( function( templateFinder, templateEngine, readTypeScriptModules, computePathsProcessor ) {
+			.config( function( templateFinder, templateEngine ) {
 				// Configure pattern for Handlebars templates
 				templateFinder.templateFolders = [ "build/docs/html/" ];
 				templateFinder.templatePatterns = [ "template.hbs" ];
 				templateEngine.partials = [ "partials/*.hbs" ];
-
-				// Exclude JasmineExtender
-				readTypeScriptModules.sourceFiles.push( "!test/JasmineExtender/*.ts" );
 			} ),
 	] );
 

@@ -1,7 +1,22 @@
 import { DocCollection, Document, Processor } from "dgeni";
 
-import fs from "fs";
-import path from "path";
+import { ApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
+import { ModuleDoc } from "dgeni-packages/typescript/api-doc-types/ModuleDoc";
+import { SymbolFlags } from "typescript";
+
+
+interface SuiteDoc {
+	suiteType:string;
+	name:string;
+	id:string;
+	path:string;
+}
+
+interface OldModuleDoc extends SuiteDoc {
+	interfaces:SuiteDoc[];
+	classes:SuiteDoc[];
+	reexports:OldModuleDoc[];
+}
 
 
 export default function oldDocsTree():Processor {
@@ -9,46 +24,71 @@ export default function oldDocsTree():Processor {
 }
 
 export class OldDocsTree implements Processor {
-	$runAfter:[ "processing-docs" ];
-	$runBefore:[ "docs-processed" ];
-
-	private _indexMap:Map<string, boolean>;
+	$runAfter:[ "paths-computed" ];
+	$runBefore:[ "rendering-docs" ];
 
 	constructor() {
-		this.$runAfter = [ "processing-docs" ];
-		this.$runBefore = [ "docs-processed" ];
-
-		this._indexMap = new Map();
+		this.$runAfter = [ "paths-computed" ];
+		this.$runBefore = [ "rendering-docs" ];
 	}
 
-	$process( docs:DocCollection ):any {
-		// Filter modules that has corresponding index module
-		docs = docs.filter( ( doc ) => {
-			if( doc.docType !== "module" ) return true;
-			if( doc.fileInfo.baseName === "index" ) return true;
+	$process( docs:DocCollection ):any[] {
+		const preModules:OldModuleDoc[] = docs
+			.filter( doc => doc.docType === "module" )
+			.map( ( doc ) => this._getModule( doc ) )
+			.sort( ( a, b ) => a.id.localeCompare( b.id ) );
 
-			if( ! this._hasIndex( doc ) ) return true;
-		} );
+		const finalModules:OldModuleDoc[] = preModules
+			.filter( oldModule => {
+				if( ! oldModule.id.includes( "/" ) ) return true;
 
-		return [
-			{
-				docType: "index",
-				modules: docs,
-			},
-			...docs,
-		];
+				// Find paren module
+				const parentID:string = oldModule.id.replace( "/" + oldModule.name, "" );
+				const parentDoc:ModuleDoc | undefined = docs.find( doc => doc.id === parentID );
+				if( ! parentDoc ) return true;
+
+				const exportIndex:number = parentDoc.symbol.exportArray
+					.findIndex( symbol => {
+						return symbol.escapedName === oldModule.name
+							&& ! ! symbol.resolvedSymbol
+							&& ! ! (symbol.resolvedSymbol.flags && SymbolFlags.ValueModule);
+					} );
+
+				if( exportIndex !== - 1 ) return true;
+			} );
+
+		const index:Document = docs.find( doc => doc.docType === "index" );
+		index.modules = finalModules;
+
+		return [ index ];
 	}
 
-	_hasIndex( doc:Document ):boolean {
-		const indexPath:string = path.resolve( doc.fileInfo.filePath, "../index.ts" );
 
-		if( this._indexMap.has( indexPath ) )
-			return this._indexMap.get( indexPath );
+	private _getModule( doc:ModuleDoc ):OldModuleDoc {
+		const interfaces:SuiteDoc[] = doc.exports
+			.filter( subDoc => subDoc.docType === "interface" )
+			.map( subDoc => this._getSuite( subDoc ) );
 
-		const exists:boolean = fs.existsSync( indexPath );
-		this._indexMap.set( indexPath, exists );
+		const classes:SuiteDoc[] = doc.exports
+			.filter( subDoc => subDoc.docType === "class" )
+			.map( subDoc => this._getSuite( subDoc ) );
 
-		return exists;
+		return {
+			...this._getSuite( doc ),
+
+			interfaces: interfaces,
+			classes: classes,
+			reexports: [],
+		};
+	}
+
+	private _getSuite( doc:ApiDoc ):SuiteDoc {
+		return {
+			suiteType: doc.docType,
+			name: doc.name,
+			id: doc.id,
+			path: doc.path,
+		};
 	}
 
 }
