@@ -12,10 +12,16 @@ interface SuiteDoc {
 	path:string;
 }
 
+interface ReexportDoc {
+	access:"static";
+	name:string;
+	originalLocation:string;
+}
+
 interface OldModuleDoc extends SuiteDoc {
 	interfaces:SuiteDoc[];
 	classes:SuiteDoc[];
-	reexports:OldModuleDoc[];
+	reexports:ReexportDoc[];
 }
 
 
@@ -36,25 +42,12 @@ export class OldDocsTree implements Processor {
 		const preModules:OldModuleDoc[] = docs
 			.filter( doc => doc.docType === "module" )
 			.map( ( doc ) => this._getModule( doc ) )
-			.sort( ( a, b ) => a.id.localeCompare( b.id ) );
+			.sort( compareSuites );
 
 		const finalModules:OldModuleDoc[] = preModules
-			.filter( oldModule => {
-				if( ! oldModule.id.includes( "/" ) ) return true;
-
-				// Find paren module
-				const parentID:string = oldModule.id.replace( "/" + oldModule.name, "" );
-				const parentDoc:ModuleDoc | undefined = docs.find( doc => doc.id === parentID );
-				if( ! parentDoc ) return true;
-
-				const exportIndex:number = parentDoc.symbol.exportArray
-					.findIndex( symbol => {
-						return symbol.escapedName === oldModule.name
-							&& ! ! symbol.resolvedSymbol
-							&& ! ! (symbol.resolvedSymbol.flags && SymbolFlags.ValueModule);
-					} );
-
-				if( exportIndex !== - 1 ) return true;
+			.filter( doc => {
+				if( ! doc.id.includes( "/" ) ) return true;
+				return this._hasReexportParent( doc, preModules );
 			} );
 
 		const index:Document = docs.find( doc => doc.docType === "index" );
@@ -67,18 +60,31 @@ export class OldDocsTree implements Processor {
 	private _getModule( doc:ModuleDoc ):OldModuleDoc {
 		const interfaces:SuiteDoc[] = doc.exports
 			.filter( subDoc => subDoc.docType === "interface" )
-			.map( subDoc => this._getSuite( subDoc ) );
+			.map( subDoc => this._getSuite( subDoc ) )
+			.sort( compareSuites );
 
 		const classes:SuiteDoc[] = doc.exports
 			.filter( subDoc => subDoc.docType === "class" )
-			.map( subDoc => this._getSuite( subDoc ) );
+			.map( subDoc => this._getSuite( subDoc ) )
+			.sort( compareSuites );
+
+		const reexports:ReexportDoc[] = doc.symbol.exportArray
+			.filter( symbol =>
+				(symbol.resolvedSymbol && symbol.resolvedSymbol.flags) & SymbolFlags.ValueModule
+			)
+			.map<ReexportDoc>( symbol => ({
+				access: "static",
+				name: "" + symbol.escapedName,
+				originalLocation: "",
+			}) )
+			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
 
 		return {
 			...this._getSuite( doc ),
 
 			interfaces: interfaces,
 			classes: classes,
-			reexports: [],
+			reexports: reexports,
 		};
 	}
 
@@ -91,4 +97,28 @@ export class OldDocsTree implements Processor {
 		};
 	}
 
+	private _hasReexportParent( doc:OldModuleDoc, docs:OldModuleDoc[] ):boolean {
+		let parentID:string = doc.id;
+		while( parentID.includes( "/" ) ) {
+			parentID = parentID.substring( 0, parentID.lastIndexOf( "/" ) );
+
+			const parentDoc:OldModuleDoc | undefined = docs.find( x => x.id === parentID );
+			if( ! parentDoc ) continue;
+
+			const reexport:ReexportDoc | undefined = parentDoc.reexports
+				.find( x => x.name === doc.name );
+
+			if( reexport ) {
+				reexport.originalLocation = doc.path;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+}
+
+function compareSuites( a:SuiteDoc, b:SuiteDoc ):number {
+	return a.id.localeCompare( b.id );
 }
