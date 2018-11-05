@@ -2,7 +2,11 @@ import { DocCollection, Document, Processor } from "dgeni";
 
 import { ApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
 import { ModuleDoc } from "dgeni-packages/typescript/api-doc-types/ModuleDoc";
+import { ClassLikeExportDoc } from "dgeni-packages/typescript/api-doc-types/ClassLikeExportDoc";
+import { ClassExportDoc } from "dgeni-packages/typescript/api-doc-types/ClassExportDoc";
+import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
 import { SymbolFlags } from "typescript";
+import { Generic } from "../tags/generics";
 
 
 interface SuiteDoc {
@@ -18,9 +22,18 @@ interface ReexportDoc {
 	originalLocation:string;
 }
 
+interface JSDoc {
+	description?:string;
+}
+
+interface OldClassLikeDoc extends SuiteDoc {
+	description?:string;
+	generics?:string[];
+}
+
 interface OldModuleDoc extends SuiteDoc {
-	interfaces:SuiteDoc[];
-	classes:SuiteDoc[];
+	interfaces:OldClassLikeDoc[];
+	classes:OldClassLikeDoc[];
 	reexports:ReexportDoc[];
 }
 
@@ -52,20 +65,21 @@ export class OldDocsTree implements Processor {
 
 		const index:Document = docs.find( doc => doc.docType === "index" );
 		index.modules = finalModules;
+		index.docs = docs;
 
 		return [ index ];
 	}
 
 
 	private _getModule( doc:ModuleDoc ):OldModuleDoc {
-		const interfaces:SuiteDoc[] = doc.exports
+		const interfaces:OldClassLikeDoc[] = doc.exports
 			.filter( subDoc => subDoc.docType === "interface" )
-			.map( subDoc => this._getSuite( subDoc ) )
+			.map( subDoc => this._getClassLike( subDoc as InterfaceExportDoc ) )
 			.sort( compareSuites );
 
-		const classes:SuiteDoc[] = doc.exports
+		const classes:OldClassLikeDoc[] = doc.exports
 			.filter( subDoc => subDoc.docType === "class" )
-			.map( subDoc => this._getSuite( subDoc ) )
+			.map( subDoc => this._getClassLike( subDoc as ClassExportDoc ) )
 			.sort( compareSuites );
 
 		const reexports:ReexportDoc[] = doc.symbol.exportArray
@@ -85,6 +99,14 @@ export class OldDocsTree implements Processor {
 			interfaces: interfaces,
 			classes: classes,
 			reexports: reexports,
+		};
+	}
+
+	private _getClassLike( doc:ClassLikeExportDoc & JSDoc & Generic ):OldClassLikeDoc {
+		return {
+			...this._getSuite( doc ),
+			description: doc.description,
+			generics: doc.generics,
 		};
 	}
 

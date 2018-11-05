@@ -1,8 +1,6 @@
 import toURL from "./toURL";
 
-const classRegex:RegExp = /CarbonLDP([./][./#a-zA-Z0-9]*)?/gmi;
-
-export default ( str, isHTML, noParagraph, options ) => {
+export default ( str, isHTML, noParagraph, options:{ data:{ root:any } } ) => {
 	if( typeof str !== "string" )
 		throw new Error( "urlify: An string was expected, but received: " + str );
 
@@ -18,17 +16,17 @@ export default ( str, isHTML, noParagraph, options ) => {
 	}
 	isHTML = ! ! isHTML;
 
-	if( noParagraph )
+	if( noParagraph ) {
+		const breakIndex:number = str.indexOf( "\n" );
+		if( breakIndex !== - 1 )
+			str = str.substring( 0, breakIndex );
+
 		str = str
 			.replace( /<p>/gm, "" )
 			.replace( /<\/p>/gm, "" );
+	}
 
-	return str.replace( classRegex, ( matched ) => {
-		const uri:string = toURL( matched );
+	// FIXME: Re-implement links creation
 
-		if( isHTML )
-			return `<a href="#${ uri }">${ matched }</a>`;
-
-		return `[${ matched }](#${ uri })`;
-	} );
+	return str;
 };

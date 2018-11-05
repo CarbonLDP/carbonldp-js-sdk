@@ -9,6 +9,8 @@ import HandleBars from "./packages/handlebars";
 // Processors
 import normalizeDocs from "./processors/normalizeDocs";
 import oldDocsTree from "./processors/old-docs-tree";
+// Doc Tags
+import { generics } from "./tags/generics";
 
 // Paths configurations
 const projectPath:string = process.cwd();
@@ -28,6 +30,13 @@ export = new Package( "carbonldp-dgeni-api",
 
 	.config( function( log:any ):void {
 		log.level = "info";
+	} )
+
+	// Configure new tags inside Docs
+	.config( function( parseTagsProcessor:any, getInjectables:any ):void {
+		parseTagsProcessor.tagDefinitions.push( ...getInjectables( [
+			generics,
+		] ) );
 	} )
 
 	// Configure the processor for reading files from the file system.
