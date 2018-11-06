@@ -17,16 +17,28 @@ export default ( str, isHTML, noParagraph, options:{ data:{ root:any } } ) => {
 	isHTML = ! ! isHTML;
 
 	if( noParagraph ) {
-		const breakIndex:number = str.indexOf( "\n" );
-		if( breakIndex !== - 1 )
-			str = str.substring( 0, breakIndex );
-
 		str = str
 			.replace( /<p>/gm, "" )
 			.replace( /<\/p>/gm, "" );
+
+		str = getFirstLine( str );
 	}
 
 	// FIXME: Re-implement links creation
 
 	return str;
 };
+
+const revert:( str:string ) => string = str => str
+	.split( "" )
+	.reverse()
+	.join( "" );
+
+function getFirstLine( str:string ):string {
+	const reverseStr:string = revert( str );
+
+	const lines:string[] = reverseStr.split( /$|\s(?=\.)/ );
+	const line:string = lines.pop()!;
+
+	return revert( line );
+}
