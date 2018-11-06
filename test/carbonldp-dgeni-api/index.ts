@@ -66,13 +66,31 @@ export = new Package( "carbonldp-dgeni-api",
 		} );
 
 		computePathsProcessor.pathTemplates.push( {
-			docTypes: [ "class", "interface" ],
+			docTypes: [ "class", "interface", "type-alias" ],
 			getPath( doc:any ):string {
 				// Special case for main class
 				if( doc.id === "CarbonLDP" ) return doc.id;
 
 				const id:string = doc.id.replace( /\//g, "." );
 				return `CarbonLDP.${ id }`;
+			},
+			getOutputPath():void {},
+		} );
+
+
+		computePathsProcessor.pathTemplates.push( {
+			docTypes: [ "member" ],
+			getPath( doc:any ):string {
+				const access:string = doc.isStatic ? "#" : ".";
+				return `${ doc.containerDoc.path }${ access }${ doc.name }`;
+			},
+			getOutputPath():void {},
+		} );
+
+		computePathsProcessor.pathTemplates.push( {
+			docTypes: [ "const" ],
+			getPath( doc:any ):string {
+				return doc.id.replace( /\//g, "." );
 			},
 			getOutputPath():void {},
 		} );

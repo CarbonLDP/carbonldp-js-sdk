@@ -17,20 +17,6 @@ export default function oldDocsTree():Processor {
 	return new OldDocsTree();
 }
 
-enum DOC_TYPE_ORDER {
-	index = 0,
-	class = 1,
-	interface = 2,
-	"type-alias" = 3,
-	const = 4,
-	enum = 5,
-	function = 6,
-	module = 7,
-	parameter = 8,
-	member = 9,
-	"get-accessor-info" = 10,
-}
-
 export class OldDocsTree implements Processor {
 	$runAfter:[ "paths-computed" ];
 	$runBefore:[ "rendering-docs" ];
@@ -54,15 +40,7 @@ export class OldDocsTree implements Processor {
 
 		const index:Document = docs.find( doc => doc.docType === "index" );
 		index.modules = finalModules;
-		index.docs = docs.sort( ( a, b ) => {
-			const indexA:string | number = DOC_TYPE_ORDER[ a.docType ];
-			const indexB:string | number = DOC_TYPE_ORDER[ b.docType ];
-
-			if( indexA < indexB ) return - 1;
-			if( indexA > indexB ) return 1;
-
-			return 0;
-		} );
+		index.docs = docs;
 
 		return [ index ];
 	}

@@ -8,6 +8,21 @@ export default function normalizeDocs():NormalizeDocs {
 	return new NormalizeDocs();
 }
 
+
+const DOC_TYPE_ORDER:{ [ type:string ]:number } = {
+	index: 0,
+	class: 1,
+	interface: 2,
+	"type-alias": 3,
+	const: 4,
+	enum: 5,
+	function: 6,
+	module: 7,
+	member: 8,
+	"get-accessor-info": 9,
+	parameter: 10,
+};
+
 export class NormalizeDocs implements Processor {
 	$runAfter:[ "processing-docs" ];
 	$runBefore:[ "docs-processed" ];
@@ -51,9 +66,20 @@ export class NormalizeDocs implements Processor {
 			}
 		} );
 
-		return docs.concat( [
+		docs = docs.sort( ( a, b ) => {
+			const indexA:string | number = DOC_TYPE_ORDER[ a.docType ];
+			const indexB:string | number = DOC_TYPE_ORDER[ b.docType ];
+
+			if( indexA < indexB ) return - 1;
+			if( indexA > indexB ) return 1;
+
+			return 0;
+		} );
+
+		return [
 			{ docType: "index" },
-		] );
+			...docs,
+		];
 	}
 
 	_hasIndex( doc:Document ):boolean {

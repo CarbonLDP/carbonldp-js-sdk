@@ -4,7 +4,7 @@ import { VariableToken } from "sparqler/tokens";
 /**
  * Class used to represent an property inside the query.
  *
- * Instances of the the class are create internally by {@link QueryContainer.getVariable}.
+ * Instances of the the class are create internally by {@link QueryContainer.getVariable()}.
  */
 export class QueryVariable extends VariableToken {
 	readonly name:string;
