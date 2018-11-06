@@ -6,6 +6,8 @@ import Links from "dgeni-packages/links";
 import Typescript from "dgeni-packages/typescript";
 import HandleBars from "./packages/handlebars";
 
+// Services
+import getLinkInfo from "./services/getLinkInfo";
 // Processors
 import normalizeDocs from "./processors/normalizeDocs";
 import oldDocsTree from "./processors/old-docs-tree";
@@ -24,6 +26,8 @@ export = new Package( "carbonldp-dgeni-api",
 		Typescript,
 		Links,
 	] )
+
+	.factory( getLinkInfo )
 
 	.processor( normalizeDocs )
 	.processor( oldDocsTree )

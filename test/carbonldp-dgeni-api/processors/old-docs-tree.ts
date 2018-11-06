@@ -1,45 +1,34 @@
 import { DocCollection, Document, Processor } from "dgeni";
 
 import { ApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
-import { ModuleDoc } from "dgeni-packages/typescript/api-doc-types/ModuleDoc";
-import { ClassLikeExportDoc } from "dgeni-packages/typescript/api-doc-types/ClassLikeExportDoc";
 import { ClassExportDoc } from "dgeni-packages/typescript/api-doc-types/ClassExportDoc";
 import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
+import { ModuleDoc } from "dgeni-packages/typescript/api-doc-types/ModuleDoc";
 import { SymbolFlags } from "typescript";
-import { Generic } from "../tags/generics";
 
-
-interface SuiteDoc {
-	suiteType:string;
-	name:string;
-	id:string;
-	path:string;
-}
-
-interface ReexportDoc {
-	access:"static";
-	name:string;
-	originalLocation:string;
-}
-
-interface JSDoc {
-	description?:string;
-}
-
-interface OldClassLikeDoc extends SuiteDoc {
-	description?:string;
-	generics?:string[];
-}
-
-interface OldModuleDoc extends SuiteDoc {
-	interfaces:OldClassLikeDoc[];
-	classes:OldClassLikeDoc[];
-	reexports:ReexportDoc[];
-}
+import { ExtendedClassLikeExportDoc } from "../models/ExtendedClassLikeExportDoc";
+import { OldClassLikeDoc } from "../models/OldClassLikeDoc";
+import { OldModuleDoc } from "../models/OldModuleDoc";
+import { ReexportDoc } from "../models/ReexportDoc";
+import { SuiteDoc } from "../models/SuiteDoc";
 
 
 export default function oldDocsTree():Processor {
 	return new OldDocsTree();
+}
+
+enum DOC_TYPE_ORDER {
+	index = 0,
+	class = 1,
+	interface = 2,
+	"type-alias" = 3,
+	const = 4,
+	enum = 5,
+	function = 6,
+	module = 7,
+	parameter = 8,
+	member = 9,
+	"get-accessor-info" = 10,
 }
 
 export class OldDocsTree implements Processor {
@@ -65,7 +54,15 @@ export class OldDocsTree implements Processor {
 
 		const index:Document = docs.find( doc => doc.docType === "index" );
 		index.modules = finalModules;
-		index.docs = docs;
+		index.docs = docs.sort( ( a, b ) => {
+			const indexA:string | number = DOC_TYPE_ORDER[ a.docType ];
+			const indexB:string | number = DOC_TYPE_ORDER[ b.docType ];
+
+			if( indexA < indexB ) return - 1;
+			if( indexA > indexB ) return 1;
+
+			return 0;
+		} );
 
 		return [ index ];
 	}
@@ -102,7 +99,7 @@ export class OldDocsTree implements Processor {
 		};
 	}
 
-	private _getClassLike( doc:ClassLikeExportDoc & JSDoc & Generic ):OldClassLikeDoc {
+	private _getClassLike( doc:ExtendedClassLikeExportDoc ):OldClassLikeDoc {
 		return {
 			...this._getSuite( doc ),
 			description: doc.description,
