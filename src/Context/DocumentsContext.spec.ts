@@ -27,7 +27,7 @@ function createMock( data?:{
 	};
 }
 
-describe( module( "carbonldp/DocumentsContext" ), () => {
+describe( module( "carbonldp/Context" ), () => {
 
 	describe( interfaze(
 		"CarbonLDP.DocumentsContext",

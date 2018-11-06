@@ -14,7 +14,7 @@ import { AbstractContext } from "./AbstractContext";
 import { GlobalContext } from "./GlobalContext";
 
 
-describe( module( "carbonldp/GlobalContext" ), ():void => {
+describe( module( "carbonldp/Context" ), ():void => {
 
 	describe( clazz( "CarbonLDP.GlobalContext", "Base class of every Context in the SDK." ), ():void => {
 

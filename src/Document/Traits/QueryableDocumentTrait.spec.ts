@@ -27,7 +27,7 @@ import { LDPDocumentTrait } from "./LDPDocumentTrait";
 import { BaseQueryableDocumentTrait, QueryableDocumentTrait, QueryableDocumentTraitFactory } from "./QueryableDocumentTrait";
 
 
-describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" ), () => {
+describe( module( "carbonldp/Document/Traits/QueryableDocumentTrait" ), () => {
 
 	let context:DocumentsContext;
 	let $repository:QueryableDocumentsRepositoryTrait;
@@ -38,16 +38,16 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 
 
 	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.QueryableDocumentTrait",
+		"CarbonLDP.Document.Traits.QueryableDocumentTrait",
 		"Documents repository with the implementation for event subscriptions."
 	), () => {
 
-		it( extendsClass( "CarbonLDP.LDPDocumentTrait" ), () => {
+		it( extendsClass( "CarbonLDP.Document.Traits.LDPDocumentTrait" ), () => {
 			const target:LDPDocumentTrait = {} as QueryableDocumentTrait;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.QueryablePointer" ), () => {
+		it( extendsClass( "CarbonLDP.QueryDocuments.QueryablePointer" ), () => {
 			const target:QueryablePointer = {} as QueryableDocumentTrait;
 			expect( target ).toBeDefined();
 		} );
@@ -447,16 +447,16 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.QueryableDocumentTraitFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.DocumentsRepository.Traits.QueryableDocumentTrait` objects."
+		"CarbonLDP.Document.Traits.QueryableDocumentTraitFactory",
+		"Interface with the decoration, factory and utils for `CarbonLDP.Document.Traits.QueryableDocumentTrait` objects."
 	), () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.DocumentsRepository.Traits.QueryableDocumentTrait, CarbonLDP.LDPDocumentTrait, CarbonLDP.QueryablePointer" ), () => {
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Document.Traits.QueryableDocumentTrait, CarbonLDP.Document.Traits.LDPDocumentTrait, CarbonLDP.QueryDocuments.QueryablePointer" ), () => {
 			const target:ModelPrototype<QueryableDocumentTrait, LDPDocumentTrait & QueryablePointer> = {} as QueryableDocumentTraitFactory;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.DocumentsRepository.Traits.QueryableDocumentTrait<any>, CarbonLDP.BaseQueryableDocumentTrait>" ), () => {
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Document.Traits.QueryableDocumentTrait<any>, CarbonLDP.Document.Traits.BaseQueryableDocumentTrait>" ), () => {
 			const target:ModelDecorator<QueryableDocumentTrait, BaseQueryableDocumentTrait> = {} as QueryableDocumentTraitFactory;
 			expect( target ).toBeDefined();
 		} );
@@ -533,7 +533,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentTrait" 
 	describe( property(
 		STATIC,
 		"QueryableDocumentTrait",
-		"CarbonLDP.DocumentsRepository.Traits.QueryableDocumentTraitFactory"
+		"CarbonLDP.Document.Traits.QueryableDocumentTraitFactory"
 	), () => {
 
 		it( "should exists", ():void => {

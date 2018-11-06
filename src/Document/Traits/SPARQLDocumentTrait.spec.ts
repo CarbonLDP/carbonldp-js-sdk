@@ -26,7 +26,7 @@ import { TransientDocument } from "../TransientDocument";
 import { BaseSPARQLDocumentTrait, SPARQLDocumentTrait, SPARQLDocumentTraitFactory } from "./SPARQLDocumentTrait";
 
 
-describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), () => {
+describe( module( "carbonldp/Document/Traits/SPARQLDocumentTrait" ), () => {
 
 	let context:DocumentsContext;
 	let $repository:SPARQLDocumentsRepositoryTrait;
@@ -37,7 +37,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 
 
 	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentTrait",
+		"CarbonLDP.Document.Traits.SPARQLDocumentTrait",
 		"Documents repository with the implementation for event subscriptions."
 	), () => {
 
@@ -313,16 +313,16 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentTraitFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentTrait` objects."
+		"CarbonLDP.Document.Traits.SPARQLDocumentTraitFactory",
+		"Interface with the decoration, factory and utils for `CarbonLDP.Document.Traits.SPARQLDocumentTrait` objects."
 	), () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentTrait, CarbonLDP.TransientDocument, CarbonLDP.ResolvablePointer" ), () => {
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Document.Traits.SPARQLDocumentTrait, CarbonLDP.TransientDocument, CarbonLDP.ResolvablePointer" ), () => {
 			const target:ModelPrototype<SPARQLDocumentTrait, TransientDocument & ResolvablePointer> = {} as SPARQLDocumentTraitFactory;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentTrait<any>, CarbonLDP.BaseSPARQLDocumentTrait>" ), () => {
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Document.Traits.SPARQLDocumentTrait<any>, CarbonLDP.Document.Traits.BaseSPARQLDocumentTrait>" ), () => {
 			const target:ModelDecorator<SPARQLDocumentTrait, BaseSPARQLDocumentTrait> = {} as SPARQLDocumentTraitFactory;
 			expect( target ).toBeDefined();
 		} );
@@ -399,7 +399,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentTrait" ), 
 	describe( property(
 		STATIC,
 		"SPARQLDocumentTrait",
-		"CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentTraitFactory"
+		"CarbonLDP.Document.Traits.SPARQLDocumentTraitFactory"
 	), () => {
 
 		it( "should exists", ():void => {

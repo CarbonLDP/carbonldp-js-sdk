@@ -29,7 +29,7 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 		"Interface that represents a free resource, i.e. a dynamic generated resource that does not have a persisted form."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 	} );
 

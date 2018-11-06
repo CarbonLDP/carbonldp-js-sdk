@@ -114,7 +114,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"TransientAccessPoint",
-			"carbonldp/TransientAccessPoint#TransientAccessPoint"
+			"carbonldp/AccessPoint#TransientAccessPoint"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.TransientAccessPoint ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.TransientAccessPoint ).toBe( TransientAccessPoint );
@@ -267,7 +267,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"TransientFragment",
-			"carbonldp/TransientFragment#TransientFragment"
+			"carbonldp/Fragment#TransientFragment"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.TransientFragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.TransientFragment ).toBe( TransientFragment );
@@ -293,11 +293,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"TransientResource",
-			"carbonldp/TransientResource#TransientResource"
+			"Resource",
+			"carbonldp/Resource#Resource"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.TransientResource ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.TransientResource ).toBe( Resource );
+			expect( CarbonLDP.CarbonLDP.Resource ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.Resource ).toBe( Resource );
 		} );
 
 		it( reexports(

@@ -22,7 +22,7 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"instance",
-			"CarbonLDP.System.PlatformInstance.PlatformInstance",
+			"CarbonLDP.System.PlatformInstance",
 			"The fragment where the actual data of the instance lives on."
 		), ():void => {} );
 
