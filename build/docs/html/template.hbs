@@ -364,7 +364,7 @@
 
 			function scrollToHash() {
 				if( ! window.location.hash ) return;
-				var $sectionItem = $( "#SDKDocs-" + window.location.hash.slice( 1 ).replace( /([+@.])/g, "\\$1" ) );
+				var $sectionItem = $( "#SDKDocs-" + window.location.hash.slice( 1 ).replace( /([+@.$])/g, "\\$1" ) );
 				if( $sectionItem.length ) {
 					$( "html, body" ).animate( {
 						scrollTop: $sectionItem.offset().top - 170
