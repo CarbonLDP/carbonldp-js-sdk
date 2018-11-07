@@ -19,7 +19,7 @@ export interface Signature extends MemberLike {
 	returns:Returns;
 }
 
-export interface MethodDoc {
+export interface MethodDoc extends MemberLike {
 	name:string;
 	signatures:Signature[];
 	returns:Returns;

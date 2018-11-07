@@ -1,4 +1,4 @@
-import { ClassLikeDoc } from "./ClassLikeDoc";
+import { ClassDoc } from "./ClassDoc";
 import { InterfaceDoc } from "./InterfaceDoc";
 import { MethodDoc } from "./MethodDoc";
 import { PropertyDoc } from "./PropertyDoc";
@@ -7,7 +7,8 @@ import { SuiteDoc } from "./SuiteDoc";
 
 export interface ModuleDoc extends SuiteDoc {
 	interfaces:InterfaceDoc[];
-	classes:ClassLikeDoc[];
+	classes:ClassDoc[];
+
 	reexports:ReexportDoc[];
 
 	properties?:{

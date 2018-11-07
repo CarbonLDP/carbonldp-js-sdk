@@ -104,6 +104,7 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	 *
 	 * Example:
 	 * The path `system.platform` with the default setting:
+	 *
 	 * ```javascript
 	 * {
 	 *  paths: {
@@ -112,7 +113,9 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	 *          paths: { platform: "platform/" }
 	 *      }
 	 *  }
-	 * }```
+	 * }
+	 * ```
+	 *
 	 * This should resolve to something like `https://example.com/.system/platform/`.
 	 *
 	 * @param path The dot notation string that refers the path declared in the settings
