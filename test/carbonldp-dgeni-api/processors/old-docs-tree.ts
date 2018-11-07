@@ -4,11 +4,14 @@ import { ApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
 import { ClassExportDoc } from "dgeni-packages/typescript/api-doc-types/ClassExportDoc";
 import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
 import { ModuleDoc } from "dgeni-packages/typescript/api-doc-types/ModuleDoc";
+import { ConstExportDoc } from "dgeni-packages/typescript/api-doc-types/ConstExportDoc";
 import { SymbolFlags } from "typescript";
 
 import { ExtendedClassLikeExportDoc } from "../models/ExtendedClassLikeExportDoc";
+import { JSDoc } from "../models/JSDoc";
 import { OldClassLikeDoc } from "../models/OldClassLikeDoc";
 import { OldModuleDoc } from "../models/OldModuleDoc";
+import { OldPropertyDoc } from "../models/OldPropertyDoc";
 import { ReexportDoc } from "../models/ReexportDoc";
 import { SuiteDoc } from "../models/SuiteDoc";
 
@@ -66,7 +69,12 @@ export class OldDocsTree implements Processor {
 				name: "" + symbol.escapedName,
 				originalLocation: "",
 			}) )
-			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+			.sort( compareNamed );
+
+		const properties:OldPropertyDoc[] = doc.exports
+			.filter( _ => _.docType === "const" )
+			.map( _ => this._getConst( _ as ConstExportDoc ) )
+			.sort( compareNamed );
 
 		return {
 			...this._getSuite( doc ),
@@ -74,6 +82,9 @@ export class OldDocsTree implements Processor {
 			interfaces: interfaces,
 			classes: classes,
 			reexports: reexports,
+
+			properties: properties.length
+				? { static: properties } : undefined,
 		};
 	}
 
@@ -114,8 +125,21 @@ export class OldDocsTree implements Processor {
 		return false;
 	}
 
+	private _getConst( doc:ConstExportDoc & JSDoc ):OldPropertyDoc {
+		return {
+			access: "static",
+			name: doc.name,
+			description: doc.description,
+			type: doc.variableDeclaration.type.getText(),
+		};
+	}
+
 }
 
 function compareSuites( a:SuiteDoc, b:SuiteDoc ):number {
 	return a.id.localeCompare( b.id );
+}
+
+function compareNamed( a:{ name:string }, b:{ name:string } ):number {
+	return a.name.localeCompare( b.name );
 }
