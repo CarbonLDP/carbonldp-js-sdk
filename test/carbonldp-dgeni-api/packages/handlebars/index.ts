@@ -19,7 +19,7 @@ export = new Package( "handlebars", [ base ] )
 
 	.factory( handlebarsTemplateEngine )
 
-	.config( ( templateEngine:HandlebarsTemplateEngine ) => {
+	.config( ( templateEngine:HandlebarsTemplateEngine, trimIndentation:Function ) => {
 		Swag.registerHelpers( Handlebars );
 
 		templateEngine.helpers = {

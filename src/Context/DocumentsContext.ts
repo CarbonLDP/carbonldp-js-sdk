@@ -107,12 +107,12 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	 *
 	 * ```javascript
 	 * {
-	 *  paths: {
-	 *      system: {
-	 *          slug: ".system/",
-	 *          paths: { platform: "platform/" }
-	 *      }
-	 *  }
+	 *     paths: {
+	 *         system: {
+	 *             slug: ".system/",
+	 *             paths: { platform: "platform/" }
+	 *         }
+	 *     }
 	 * }
 	 * ```
 	 *

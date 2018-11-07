@@ -5527,14 +5527,7 @@
 																If such path does hasn&#39;t been declared an <a href="#CarbonLDP-Errors-IllegalStateError"><code>CarbonLDP.Errors.IllegalStateError</code></a> will be thrown.</p>
 																<p>Example:
 																The path <code>system.platform</code> with the default setting:</p>
-																<pre><code class="language-javascript">{
-																 paths: {
-																     system: {
-																         slug: &quot;.system/&quot;,
-																         paths: { platform: &quot;platform/&quot; }
-																     }
-																 }
-																}</code></pre>
+																<pre><code class="language-javascript">{<br>    paths: {<br>        system: {<br>            slug: ".system/",<br>            paths: { platform: "platform/" }<br>        }<br>    }<br>}</code></pre>
 																<p>This should resolve to something like <code>https://example.com/.system/platform/</code>.</p>
 																
 															</div>
@@ -30028,10 +30021,7 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 															<div class="doc-description">
 																	<p>Updates the messaging service options.</p>
 																<p>If any property is no defined the default is used:</p>
-																<pre><code class="language-typescript">{
-																    maxReconnectAttempts: 10,
-																    reconnectDelay: 1000
-																}</code></pre>
+																<pre><code class="language-typescript">{<br>    maxReconnectAttempts: 10,<br>    reconnectDelay: 1000<br>}</code></pre>
 																
 															</div>
 															<br>
