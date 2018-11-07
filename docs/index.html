@@ -5826,6 +5826,258 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 
 
 
+							
+								<h2 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Messaging--Methods">
+							
+							
+									<a class="doc-header__link" href="#Module-carbonldp-Messaging--Methods">
+										<div class="ui basic label doc-header__symbol symbol">
+											<i class="symbol__anchor large grey linkify icon"></i>
+										</div>
+									<span class="doc-header__main ">Methods</span>
+									</a>
+									
+									
+								</h2>
+							
+
+							<div class="ui basic segment doc-content">
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Messaging+_createDestination">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Messaging+_createDestination">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#_createDestination()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	string
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">_createDestination( event:string, uriPattern:string, baseURI:string ):string</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Creates a complete AMQP path to use as the destination of a subscription.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>event</code>
+																</td>
+																<td class="">
+																		<code>string
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																		<p>The event target to subscribe.</p>
+																	
+																</td>
+															</tr>
+									<tr>
+																<td class="single line">
+																	
+																	<code>uriPattern</code>
+																</td>
+																<td class="">
+																		<code>string
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																		<p>The URI pattern to subscribe.</p>
+																	
+																</td>
+															</tr>
+									<tr>
+																<td class="single line">
+																	
+																	<code>baseURI</code>
+																</td>
+																<td class="">
+																		<code>string
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																		<p>The base URI ro remove from an absolute URI pattern.</p>
+																	
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Messaging+_parseURIPattern">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Messaging+_parseURIPattern">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#_parseURIPattern()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	string
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">_parseURIPattern( uriPattern:string, baseURI:string ):string</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Parses an URI pattern into the form of a AMQP path.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>uriPattern</code>
+																</td>
+																<td class="">
+																		<code>string
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																		<p>The URI pattern to parse.</p>
+																	
+																</td>
+															</tr>
+									<tr>
+																<td class="single line">
+																	
+																	<code>baseURI</code>
+																</td>
+																<td class="">
+																		<code>string
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																		<p>The base URI to remove from an absolute URI pattern since the AMQP requires a relative path.</p>
+																	
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Messaging+_validateEventType">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Messaging+_validateEventType">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#_validateEventType()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	void
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">_validateEventType( event:string ):void</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Throws an error when an invalid event is provided.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>event</code>
+																</td>
+																<td class="">
+																		<code>string
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																		<p>The event to check.</p>
+																	
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									
+
+							</div>
 					</div>
 
 				</div>
@@ -7118,6 +7370,102 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 
 
 
+							
+								<h2 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Pointer--Methods">
+							
+							
+									<a class="doc-header__link" href="#Module-carbonldp-Pointer--Methods">
+										<div class="ui basic label doc-header__symbol symbol">
+											<i class="symbol__anchor large grey linkify icon"></i>
+										</div>
+									<span class="doc-header__main ">Methods</span>
+									</a>
+									
+									
+								</h2>
+							
+
+							<div class="ui basic segment doc-content">
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Pointer+_getPointer">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Pointer+_getPointer">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#_getPointer()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	Pointer
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">_getPointer( pointerLibrary:PointerLibrary | $PointerLibrary, id:string ):Pointer</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Returns the pointer references by the URI provided using the specified pointer library.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>pointerLibrary</code>
+																</td>
+																<td class="">
+																		<code>PointerLibrary | $PointerLibrary
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																		<p>Any type of pointer library from where to get the requested pointer.</p>
+																	
+																</td>
+															</tr>
+									<tr>
+																<td class="single line">
+																	
+																	<code>id</code>
+																</td>
+																<td class="">
+																		<code>string
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																		<p>The URI of the pointer to get/create.</p>
+																	
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									
+
+							</div>
 					</div>
 
 				</div>
@@ -10613,6 +10961,1215 @@ when creating an internal sub-property.
 
 
 
+							
+								<h2 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils--Methods">
+							
+							
+									<a class="doc-header__link" href="#Module-carbonldp-Utils--Methods">
+										<div class="ui basic label doc-header__symbol symbol">
+											<i class="symbol__anchor large grey linkify icon"></i>
+										</div>
+									<span class="doc-header__main ">Methods</span>
+									</a>
+									
+									
+								</h2>
+							
+
+							<div class="ui basic segment doc-content">
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+forEachOwnProperty">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+forEachOwnProperty">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#forEachOwnProperty()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	void
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">forEachOwnProperty( object:Object, action:(name: string, value: any) &#x3D;&gt; boolean | void ):void</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Executes an action for each own property of the object.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>object</code>
+																</td>
+																<td class="">
+																		<code>Object
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																		<p>The object to iterate over its properties.</p>
+																	
+																</td>
+															</tr>
+									<tr>
+																<td class="single line">
+																	
+																	<code>action</code>
+																</td>
+																<td class="">
+																		<code>(name: string, value: any) =&gt; boolean | void
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																		<p>A function that will be called for every property own property in the object.
+																	The loop will break if the action function returns <code>false</code>.</p>
+																	
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+hasFunction">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+hasFunction">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#hasFunction()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	boolean
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">hasFunction( object:Object, functionName:string ):boolean</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the object has a property with that name and if it that property is a function.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>object</code>
+																</td>
+																<td class="">
+																		<code>Object
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+									<tr>
+																<td class="single line">
+																	
+																	<code>functionName</code>
+																</td>
+																<td class="">
+																		<code>string
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+hasProperty">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+hasProperty">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#hasProperty()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	boolean
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">hasProperty( object:Object, property:string ):boolean</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the object has a property with that name.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>object</code>
+																</td>
+																<td class="">
+																		<code>Object
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+									<tr>
+																<td class="single line">
+																	
+																	<code>property</code>
+																</td>
+																<td class="">
+																		<code>string
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+hasPropertyDefined">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+hasPropertyDefined">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#hasPropertyDefined()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	boolean
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">hasPropertyDefined( object:Object, property:string ):boolean</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if an object has a property defined under that name (even if its value is undefined).</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>object</code>
+																</td>
+																<td class="">
+																		<code>Object
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+									<tr>
+																<td class="single line">
+																	
+																	<code>property</code>
+																</td>
+																<td class="">
+																		<code>string
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isArray">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isArray">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isArray()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	object is Array<any>
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isArray( object:any ):object is Array&lt;any&gt;</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is an array.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>object</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isBoolean">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isBoolean">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isBoolean()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	value is boolean
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isBoolean( value:any ):value is boolean</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is a boolean.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>value</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isDate">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isDate">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isDate()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	date is Date
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isDate( date:any ):date is Date</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is a Date object.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>date</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isDefined">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isDefined">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isDefined()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	boolean
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isDefined( value:any ):boolean</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is defined.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>value</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isDouble">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isDouble">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isDouble()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	boolean
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isDouble( value:any ):boolean</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is a double.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>value</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isFunction">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isFunction">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isFunction()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	value is Function
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isFunction( value:any ):value is Function</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is a function.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>value</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isInteger">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isInteger">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isInteger()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	boolean
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isInteger( value:any ):boolean</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is an integer.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>value</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isMap">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isMap">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isMap()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	boolean
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isMap( value:any ):boolean</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is an ES6 Map.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>value</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isNull">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isNull">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isNull()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	boolean
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isNull( value:any ):boolean</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is null.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>value</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isNumber">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isNumber">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isNumber()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	value is number
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isNumber( value:any ):value is number</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is a number.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>value</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isObject">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isObject">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isObject()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	object is object
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isObject( object:any ):object is object</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is a existing object.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>object</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isPlainObject">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isPlainObject">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isPlainObject()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	boolean
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isPlainObject( object:Object ):boolean</code></pre>
+											<br>
+									
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>object</code>
+																</td>
+																<td class="">
+																		<code>Object
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+isString">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+isString">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#isString()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	value is string
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">isString( value:any ):value is string</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Checks if the value passed is a string.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>value</code>
+																</td>
+																<td class="">
+																		<code>any
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+parseBoolean">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+parseBoolean">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#parseBoolean()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	boolean
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">parseBoolean( value:string ):boolean</code></pre>
+											<br>
+									
+												<div class="doc-description">
+														<p>Parses a string into a boolean.</p>
+													
+												</div>
+												<br>
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line">
+																	
+																	<code>value</code>
+																</td>
+																<td class="">
+																		<code>string
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									<br>
+									
+										<h4 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Utils+promiseMethod">
+									
+									
+											<a class="doc-header__link" href="#Module-carbonldp-Utils+promiseMethod">
+												<div class="ui basic label doc-header__symbol symbol">
+													<i class="symbol__anchor large grey linkify icon"></i>
+												</div>
+											<span class="doc-header__main code-label">#promiseMethod()</span>
+											</a>
+											<span class="doc-header__secondary"> : 	Promise<T>
+									
+									</span>
+											
+										</h4>
+									
+								
+									<div class="ui vertical segment doc-content doc-object-element__content">
+									
+											<br>
+											<pre><code class="typescript">promiseMethod( fn?:() &#x3D;&gt; T | Promise&lt;T&gt; ):Promise&lt;T&gt;</code></pre>
+											<br>
+									
+									
+									<table class="ui celled padded tablet stackable table">
+													<thead>
+														<tr>
+															<th class="single line">Param</th>
+															<th>Type</th>
+															<th>Default</th>
+															<th>Description</th>
+														</tr>
+													</thead>
+													<tbody>
+									<tr>
+																<td class="single line optional-label">
+																	<label class="ui blue right ribbon horizontal label">Optional</label>
+																	<code>fn</code>
+																</td>
+																<td class="">
+																		<code>() =&gt; T | Promise<T>
+																	</code>
+																</td>
+																<td class="">
+																</td>
+																<td class="justified">
+																</td>
+															</tr>
+													</tbody>
+												</table>
+											<br>
+										</div>
+									
+								
+									
+
+							</div>
 					</div>
 
 				</div>

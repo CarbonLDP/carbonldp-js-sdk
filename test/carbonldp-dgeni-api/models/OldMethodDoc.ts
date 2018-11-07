@@ -1,0 +1,23 @@
+export interface OldMethodDoc {
+	name:string;
+	signatures:Array<{
+		access:string;
+		name:string;
+		generics:string[];
+		description?:string;
+		arguments:Array<{
+			name:string;
+			type:string;
+			description?:string;
+		}>;
+		returns:{
+			type:string;
+			description?:string;
+		};
+		optional:boolean;
+	}>;
+	returns:{
+		type:string;
+		description?:string;
+	};
+}

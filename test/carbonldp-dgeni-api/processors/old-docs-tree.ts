@@ -8,8 +8,10 @@ import { ConstExportDoc } from "dgeni-packages/typescript/api-doc-types/ConstExp
 import { SymbolFlags } from "typescript";
 
 import { ExtendedClassLikeExportDoc } from "../models/ExtendedClassLikeExportDoc";
+import { ExtendedFunctionExportDoc } from "../models/ExtendedFunctionExportDoc";
 import { JSDoc } from "../models/JSDoc";
 import { OldClassLikeDoc } from "../models/OldClassLikeDoc";
+import { OldMethodDoc } from "../models/OldMethodDoc";
 import { OldModuleDoc } from "../models/OldModuleDoc";
 import { OldPropertyDoc } from "../models/OldPropertyDoc";
 import { ReexportDoc } from "../models/ReexportDoc";
@@ -76,6 +78,11 @@ export class OldDocsTree implements Processor {
 			.map( _ => this._getConst( _ as ConstExportDoc ) )
 			.sort( compareNamed );
 
+		const methods:OldMethodDoc[] = doc.exports
+			.filter( _ => _.docType === "function" )
+			.map( _ => this._getFunction( _ as ExtendedFunctionExportDoc ) )
+			.sort( compareNamed );
+
 		return {
 			...this._getSuite( doc ),
 
@@ -85,6 +92,8 @@ export class OldDocsTree implements Processor {
 
 			properties: properties.length
 				? { static: properties } : undefined,
+			methods: methods.length
+				? { static: methods } : undefined,
 		};
 	}
 
@@ -131,6 +140,38 @@ export class OldDocsTree implements Processor {
 			name: doc.name,
 			description: doc.description,
 			type: doc.variableDeclaration.type.getText(),
+		};
+	}
+
+	private _getFunction( doc:ExtendedFunctionExportDoc ):OldMethodDoc {
+		const signatures:OldMethodDoc[ "signatures" ] = [ doc, ...doc.overloads ]
+			.map( _ => ({
+				access: "static",
+				name: _.name,
+				generics: [],
+				description: _.description,
+				arguments: _.parameterDocs.map( __ => ({
+					name: __.name,
+					type: __.type,
+					description: __.description,
+					optional: __.isOptional,
+				}) ),
+				returns: {
+					type: _.type,
+					description: ! doc.returns ? undefined
+						: doc.returns.description,
+				},
+				optional: false,
+			}) );
+
+		return {
+			name: doc.name,
+			returns: {
+				type: doc.type,
+				description: ! doc.returns ? undefined
+					: doc.returns.description,
+			},
+			signatures: signatures,
 		};
 	}
 
