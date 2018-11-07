@@ -3,11 +3,11 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 /**
  * Interface to define the pair TYPE/SCHEMA of a model.
  */
-export interface ModelSchema<TYPE extends string = string> {
+export interface ModelSchema<T extends string = string> {
 	/**
 	 * The type associated to the model.
 	 */
-	TYPE:TYPE;
+	TYPE:T;
 	/**
 	 * The schema associated to the model.
 	 */
