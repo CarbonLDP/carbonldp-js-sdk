@@ -1,4 +1,4 @@
-export interface OldMethodDoc {
+export interface MethodDoc {
 	name:string;
 	signatures:Array<{
 		access:string;

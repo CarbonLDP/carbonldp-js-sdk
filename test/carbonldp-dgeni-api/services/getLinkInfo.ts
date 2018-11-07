@@ -1,5 +1,5 @@
 import { ApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
-import { IndexDocument } from "../models/IndexDocument";
+import { IndexDocument } from "../local-models/IndexDocument";
 import toURL from "../packages/handlebars/helpers/toURL";
 
 export interface LinkInfo {

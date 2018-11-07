@@ -1,4 +1,4 @@
-export interface OldPropertyDoc {
+export interface PropertyDoc {
 	access:string;
 	name:string;
 	type:string;

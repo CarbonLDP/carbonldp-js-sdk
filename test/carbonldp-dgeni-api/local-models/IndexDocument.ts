@@ -1,7 +1,7 @@
 import { ApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
-import { OldModuleDoc } from "./OldModuleDoc";
+import { ModuleDoc } from "./ModuleDoc";
 
 export interface IndexDocument {
-	modules:OldModuleDoc[];
+	modules:ModuleDoc[];
 	docs:ApiDoc[];
 }

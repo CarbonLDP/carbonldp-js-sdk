@@ -2,20 +2,22 @@ import { DocCollection, Document, Processor } from "dgeni";
 
 import { ApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
 import { ClassExportDoc } from "dgeni-packages/typescript/api-doc-types/ClassExportDoc";
-import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
-import { ModuleDoc } from "dgeni-packages/typescript/api-doc-types/ModuleDoc";
 import { ConstExportDoc } from "dgeni-packages/typescript/api-doc-types/ConstExportDoc";
+import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
+
 import { SymbolFlags } from "typescript";
 
-import { ExtendedClassLikeExportDoc } from "../models/ExtendedClassLikeExportDoc";
-import { ExtendedFunctionExportDoc } from "../models/ExtendedFunctionExportDoc";
-import { JSDoc } from "../models/JSDoc";
-import { OldClassLikeDoc } from "../models/OldClassLikeDoc";
-import { OldMethodDoc } from "../models/OldMethodDoc";
-import { OldModuleDoc } from "../models/OldModuleDoc";
-import { OldPropertyDoc } from "../models/OldPropertyDoc";
-import { ReexportDoc } from "../models/ReexportDoc";
-import { SuiteDoc } from "../models/SuiteDoc";
+import { ExtendedClassLikeExportDoc } from "../dgeni-models/ExtendedClassLikeExportDoc";
+import { ExtendedFunctionExportDoc } from "../dgeni-models/ExtendedFunctionExportDoc";
+import { ExtendedModuleDoc } from "../dgeni-models/ExtendedModuleDoc";
+
+import { ClassLikeDoc } from "../local-models/ClassLikeDoc";
+import { JSDoc } from "../local-models/JSDoc";
+import { MethodDoc } from "../local-models/MethodDoc";
+import { ModuleDoc } from "../local-models/ModuleDoc";
+import { PropertyDoc } from "../local-models/PropertyDoc";
+import { ReexportDoc } from "../local-models/ReexportDoc";
+import { SuiteDoc } from "../local-models/SuiteDoc";
 
 
 export default function oldDocsTree():Processor {
@@ -32,12 +34,12 @@ export class OldDocsTree implements Processor {
 	}
 
 	$process( docs:DocCollection ):any[] {
-		const preModules:OldModuleDoc[] = docs
+		const preModules:ModuleDoc[] = docs
 			.filter( doc => doc.docType === "module" )
 			.map( ( doc ) => this._getModule( doc ) )
 			.sort( compareSuites );
 
-		const finalModules:OldModuleDoc[] = preModules
+		const finalModules:ModuleDoc[] = preModules
 			.filter( doc => {
 				if( ! doc.id.includes( "/" ) ) return true;
 				return this._hasReexportParent( doc, preModules );
@@ -51,13 +53,13 @@ export class OldDocsTree implements Processor {
 	}
 
 
-	private _getModule( doc:ModuleDoc ):OldModuleDoc {
-		const interfaces:OldClassLikeDoc[] = doc.exports
+	private _getModule( doc:ExtendedModuleDoc ):ModuleDoc {
+		const interfaces:ClassLikeDoc[] = doc.exports
 			.filter( subDoc => subDoc.docType === "interface" )
 			.map( subDoc => this._getClassLike( subDoc as InterfaceExportDoc ) )
 			.sort( compareSuites );
 
-		const classes:OldClassLikeDoc[] = doc.exports
+		const classes:ClassLikeDoc[] = doc.exports
 			.filter( subDoc => subDoc.docType === "class" )
 			.map( subDoc => this._getClassLike( subDoc as ClassExportDoc ) )
 			.sort( compareSuites );
@@ -73,12 +75,12 @@ export class OldDocsTree implements Processor {
 			}) )
 			.sort( compareNamed );
 
-		const properties:OldPropertyDoc[] = doc.exports
+		const properties:PropertyDoc[] = doc.exports
 			.filter( _ => _.docType === "const" )
 			.map( _ => this._getConst( _ as ConstExportDoc ) )
 			.sort( compareNamed );
 
-		const methods:OldMethodDoc[] = doc.exports
+		const methods:MethodDoc[] = doc.exports
 			.filter( _ => _.docType === "function" )
 			.map( _ => this._getFunction( _ as ExtendedFunctionExportDoc ) )
 			.sort( compareNamed );
@@ -97,7 +99,7 @@ export class OldDocsTree implements Processor {
 		};
 	}
 
-	private _getClassLike( doc:ExtendedClassLikeExportDoc ):OldClassLikeDoc {
+	private _getClassLike( doc:ExtendedClassLikeExportDoc ):ClassLikeDoc {
 		return {
 			...this._getSuite( doc ),
 			description: doc.description,
@@ -114,12 +116,12 @@ export class OldDocsTree implements Processor {
 		};
 	}
 
-	private _hasReexportParent( doc:OldModuleDoc, docs:OldModuleDoc[] ):boolean {
+	private _hasReexportParent( doc:ModuleDoc, docs:ModuleDoc[] ):boolean {
 		let parentID:string = doc.id;
 		while( parentID.includes( "/" ) ) {
 			parentID = parentID.substring( 0, parentID.lastIndexOf( "/" ) );
 
-			const parentDoc:OldModuleDoc | undefined = docs.find( x => x.id === parentID );
+			const parentDoc:ModuleDoc | undefined = docs.find( x => x.id === parentID );
 			if( ! parentDoc ) continue;
 
 			const reexport:ReexportDoc | undefined = parentDoc.reexports
@@ -134,7 +136,7 @@ export class OldDocsTree implements Processor {
 		return false;
 	}
 
-	private _getConst( doc:ConstExportDoc & JSDoc ):OldPropertyDoc {
+	private _getConst( doc:ConstExportDoc & JSDoc ):PropertyDoc {
 		return {
 			access: "static",
 			name: doc.name,
@@ -143,8 +145,8 @@ export class OldDocsTree implements Processor {
 		};
 	}
 
-	private _getFunction( doc:ExtendedFunctionExportDoc ):OldMethodDoc {
-		const signatures:OldMethodDoc[ "signatures" ] = [ doc, ...doc.overloads ]
+	private _getFunction( doc:ExtendedFunctionExportDoc ):MethodDoc {
+		const signatures:MethodDoc[ "signatures" ] = [ doc, ...doc.overloads ]
 			.map( _ => ({
 				access: "static",
 				name: _.name,
