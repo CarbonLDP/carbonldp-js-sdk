@@ -148,7 +148,7 @@ export class OldDocsTree implements Processor {
 			.map( _ => ({
 				access: "static",
 				name: _.name,
-				generics: [],
+				generics: _.generics,
 				description: _.description,
 				arguments: _.parameterDocs.map( __ => ({
 					name: __.name,

@@ -7,9 +7,8 @@ export interface Generic {
 
 export function generics():TagDef {
 	return {
-		name: "typeParameters",
+		name: "generics",
 		defaultFn( doc:Document ):string[] {
-			if( doc.typeParameters ) return;
 			if( ! doc.declaration.typeParameters ) return;
 
 			return doc.declaration.typeParameters

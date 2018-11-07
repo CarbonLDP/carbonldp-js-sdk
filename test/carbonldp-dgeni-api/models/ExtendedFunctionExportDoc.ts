@@ -2,6 +2,7 @@ import { FunctionExportDoc } from "dgeni-packages/typescript/api-doc-types/Funct
 import { JSDoc } from "./JSDoc";
 
 export type FunctionJSDoc = JSDoc & {
+	generics:string[];
 	returns?:{ description:string };
 };
 
