@@ -3,7 +3,7 @@ import base from "dgeni-packages/base";
 
 import Handlebars from "handlebars";
 import Swag from "swag";
-import marked from "marked";
+import markdown from "./helpers/markdown";
 import areEqual from "./helpers/areEqual";
 import combineElements from "./helpers/combineElements";
 import concat from "./helpers/concat";
@@ -28,7 +28,7 @@ export = new Package( "handlebars", [ base ] )
 			"newLine": newLine,
 			"trim": trim,
 			"urlify": urlify,
-			"markdown": ( str:string ) => marked( str, {} ),
+			"markdown": markdown,
 			"toc-tree": tocTree,
 			"combineElements": combineElements,
 			"concat": concat,
