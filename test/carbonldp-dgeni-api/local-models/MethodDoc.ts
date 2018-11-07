@@ -1,23 +1,26 @@
+import { MemberLike } from "./MemberLike";
+
+export interface Returns {
+	type:string;
+	description?:string;
+}
+
+export interface Arguments {
+	name:string;
+	type:string;
+	description?:string;
+}
+
+export interface Signature extends MemberLike {
+	name:string;
+	generics:string[];
+	description?:string;
+	arguments:Arguments[];
+	returns:Returns;
+}
+
 export interface MethodDoc {
 	name:string;
-	signatures:Array<{
-		access:string;
-		name:string;
-		generics:string[];
-		description?:string;
-		arguments:Array<{
-			name:string;
-			type:string;
-			description?:string;
-		}>;
-		returns:{
-			type:string;
-			description?:string;
-		};
-		optional:boolean;
-	}>;
-	returns:{
-		type:string;
-		description?:string;
-	};
+	signatures:Signature[];
+	returns:Returns;
 }

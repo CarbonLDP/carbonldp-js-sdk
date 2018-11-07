@@ -3,16 +3,21 @@ import { DocCollection, Document, Processor } from "dgeni";
 import { ApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
 import { ClassExportDoc } from "dgeni-packages/typescript/api-doc-types/ClassExportDoc";
 import { ConstExportDoc } from "dgeni-packages/typescript/api-doc-types/ConstExportDoc";
+import { FunctionExportDoc } from "dgeni-packages/typescript/api-doc-types/FunctionExportDoc";
 import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
+import { MethodMemberDoc } from "dgeni-packages/typescript/api-doc-types/MethodMemberDoc";
+import { PropertyMemberDoc } from "dgeni-packages/typescript/api-doc-types/PropertyMemberDoc";
 
 import { SymbolFlags } from "typescript";
 
 import { ExtendedClassLikeExportDoc } from "../dgeni-models/ExtendedClassLikeExportDoc";
-import { ExtendedFunctionExportDoc } from "../dgeni-models/ExtendedFunctionExportDoc";
 import { ExtendedModuleDoc } from "../dgeni-models/ExtendedModuleDoc";
+import { FunctionJSDoc } from "../dgeni-models/FunctionJSDoc";
+import { JSDoc } from "../dgeni-models/JSDoc";
 
 import { ClassLikeDoc } from "../local-models/ClassLikeDoc";
-import { JSDoc } from "../local-models/JSDoc";
+import { InterfaceDoc } from "../local-models/InterfaceDoc";
+import { MemberLike } from "../local-models/MemberLike";
 import { MethodDoc } from "../local-models/MethodDoc";
 import { ModuleDoc } from "../local-models/ModuleDoc";
 import { PropertyDoc } from "../local-models/PropertyDoc";
@@ -54,9 +59,9 @@ export class OldDocsTree implements Processor {
 
 
 	private _getModule( doc:ExtendedModuleDoc ):ModuleDoc {
-		const interfaces:ClassLikeDoc[] = doc.exports
+		const interfaces:InterfaceDoc[] = doc.exports
 			.filter( subDoc => subDoc.docType === "interface" )
-			.map( subDoc => this._getClassLike( subDoc as InterfaceExportDoc ) )
+			.map( subDoc => this._getInterface( subDoc as InterfaceExportDoc ) )
 			.sort( compareSuites );
 
 		const classes:ClassLikeDoc[] = doc.exports
@@ -77,12 +82,12 @@ export class OldDocsTree implements Processor {
 
 		const properties:PropertyDoc[] = doc.exports
 			.filter( _ => _.docType === "const" )
-			.map( _ => this._getConst( _ as ConstExportDoc ) )
+			.map( _ => this._getPropertyLike( _ as ConstExportDoc ) )
 			.sort( compareNamed );
 
 		const methods:MethodDoc[] = doc.exports
 			.filter( _ => _.docType === "function" )
-			.map( _ => this._getFunction( _ as ExtendedFunctionExportDoc ) )
+			.map( _ => this._getFunctionLike( _ as FunctionExportDoc ) )
 			.sort( compareNamed );
 
 		return {
@@ -96,6 +101,24 @@ export class OldDocsTree implements Processor {
 				? { static: properties } : undefined,
 			methods: methods.length
 				? { static: methods } : undefined,
+		};
+	}
+
+	private _getInterface( doc:InterfaceExportDoc ):InterfaceDoc {
+		const properties:PropertyDoc[] = doc.members
+			.filter( _ => _ instanceof PropertyMemberDoc )
+			.map( _ => this._getPropertyLike( _ as PropertyMemberDoc ) )
+			.sort( compareNamed );
+
+		const methods:MethodDoc[] = doc.members
+			.filter( _ => _ instanceof MethodMemberDoc )
+			.map( _ => this._getFunctionLike( _ as MethodMemberDoc ) )
+			.sort( compareNamed );
+
+		return {
+			...this._getClassLike( doc ),
+			properties: properties,
+			methods: methods,
 		};
 	}
 
@@ -136,19 +159,24 @@ export class OldDocsTree implements Processor {
 		return false;
 	}
 
-	private _getConst( doc:ConstExportDoc & JSDoc ):PropertyDoc {
+	private _getPropertyLike( doc:(ConstExportDoc | PropertyMemberDoc) & JSDoc ):PropertyDoc {
 		return {
-			access: "static",
+			...this._getMemberLike( doc ),
+
 			name: doc.name,
 			description: doc.description,
-			type: doc.variableDeclaration.type.getText(),
+
+			type: "variableDeclaration" in doc
+				? doc.variableDeclaration.type.getText()
+				: doc.type,
 		};
 	}
 
-	private _getFunction( doc:ExtendedFunctionExportDoc ):MethodDoc {
+	private _getFunctionLike( doc:(FunctionExportDoc | MethodMemberDoc) & FunctionJSDoc ):MethodDoc {
 		const signatures:MethodDoc[ "signatures" ] = [ doc, ...doc.overloads ]
 			.map( _ => ({
-				access: "static",
+				...this._getMemberLike( doc ),
+
 				name: _.name,
 				generics: _.generics,
 				description: _.description,
@@ -163,7 +191,6 @@ export class OldDocsTree implements Processor {
 					description: ! doc.returns ? undefined
 						: doc.returns.description,
 				},
-				optional: false,
 			}) );
 
 		return {
@@ -174,6 +201,16 @@ export class OldDocsTree implements Processor {
 					: doc.returns.description,
 			},
 			signatures: signatures,
+		};
+	}
+
+	private _getMemberLike( doc:(ConstExportDoc | PropertyMemberDoc) | (MethodMemberDoc | FunctionExportDoc) ):MemberLike {
+		return {
+			access: ! ("isStatic" in doc) || doc.isStatic
+				? "static" : "instance",
+
+			optional: "isOptional" in doc ?
+				doc.isOptional : false,
 		};
 	}
 
