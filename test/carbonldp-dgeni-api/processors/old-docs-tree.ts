@@ -275,5 +275,7 @@ function compareSuites( a:SuiteDoc, b:SuiteDoc ):number {
 }
 
 function compareNamed( a:{ name:string }, b:{ name:string } ):number {
-	return a.name.localeCompare( b.name );
+	if( a.name < b.name ) return - 1;
+	if( a.name > b.name ) return 1;
+	return 0;
 }
