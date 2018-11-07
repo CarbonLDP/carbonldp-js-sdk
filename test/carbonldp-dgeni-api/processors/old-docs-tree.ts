@@ -111,9 +111,21 @@ export class OldDocsTree implements Processor {
 			.sort( compareNamed );
 
 		const methods:MethodDoc[] = doc.members
-			.filter( _ => _ instanceof MethodMemberDoc )
+			.filter( _ => _ instanceof MethodMemberDoc && _.name !== "__index" )
 			.map( _ => this._getFunctionLike( _ as MethodMemberDoc ) )
 			.sort( compareNamed );
+
+
+		const indexMember:MethodMemberDoc | undefined = doc.members
+			.find( ( _ ):_ is MethodMemberDoc => _.name === "__index" );
+		if( indexMember ) properties
+			.push( this._getPropertyLike( <PropertyMemberDoc> {
+				...indexMember,
+				name: `[ ${ indexMember.parameters.join() } ]`,
+				getAccessor: null,
+				setAccessor: null,
+			} ) );
+
 
 		return {
 			...this._getClassLike( doc ),
