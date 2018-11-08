@@ -1,14 +1,15 @@
-import { DocCollection, Document, Processor } from "dgeni";
+import { Document, Processor } from "dgeni";
 
 import { ApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
 import { ClassExportDoc } from "dgeni-packages/typescript/api-doc-types/ClassExportDoc";
+import { ClassLikeExportDoc, HeritageInfo } from "dgeni-packages/typescript/api-doc-types/ClassLikeExportDoc";
 import { ConstExportDoc } from "dgeni-packages/typescript/api-doc-types/ConstExportDoc";
 import { FunctionExportDoc } from "dgeni-packages/typescript/api-doc-types/FunctionExportDoc";
 import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
 import { MethodMemberDoc } from "dgeni-packages/typescript/api-doc-types/MethodMemberDoc";
 import { PropertyMemberDoc } from "dgeni-packages/typescript/api-doc-types/PropertyMemberDoc";
 
-import { SymbolFlags } from "typescript";
+import { Symbol, SymbolFlags, TypeNode } from "typescript";
 
 import { ExtendedClassLikeExportDoc } from "../dgeni-models/ExtendedClassLikeExportDoc";
 import { ExtendedModuleDoc } from "../dgeni-models/ExtendedModuleDoc";
@@ -34,15 +35,25 @@ export class OldDocsTree implements Processor {
 	$runAfter:[ "paths-computed" ];
 	$runBefore:[ "rendering-docs" ];
 
+	private exportSymbolsToDocsMap:Map<Symbol, ClassLikeExportDoc>;
+
 	constructor() {
 		this.$runAfter = [ "paths-computed" ];
 		this.$runBefore = [ "rendering-docs" ];
+
+		this.exportSymbolsToDocsMap = new Map();
 	}
 
-	$process( docs:DocCollection ):any[] {
+	$process( docs:ApiDoc[] ):any[] {
+		// Fill exports map
+		docs.forEach( doc => {
+			if( ! (doc instanceof ClassLikeExportDoc) ) return;
+			this.exportSymbolsToDocsMap.set( doc.symbol, doc );
+		} );
+
 		const preModules:ModuleDoc[] = docs
 			.filter( doc => doc.docType === "module" )
-			.map( ( doc ) => this._getModule( doc ) )
+			.map( ( doc ) => this._getModule( doc as ExtendedModuleDoc ) )
 			.sort( compareSuites );
 
 		const finalModules:ModuleDoc[] = preModules
@@ -177,8 +188,12 @@ export class OldDocsTree implements Processor {
 	private _getClassLike( doc:ExtendedClassLikeExportDoc ):ClassLikeDoc {
 		return {
 			...this._getSuite( doc ),
+
 			description: doc.description,
 			generics: doc.generics,
+
+			"super-classes": this._getHeritageNames( doc, doc.extendsClauses ),
+			interfaces: this._getHeritageNames( doc, doc.implementsClauses ),
 		};
 	}
 
@@ -268,6 +283,32 @@ export class OldDocsTree implements Processor {
 		};
 	}
 
+	private _getHeritageNames( doc:ClassLikeExportDoc, heritages:HeritageInfo[] ):string[] | undefined {
+		if( ! heritages.length ) return undefined;
+
+		return heritages.map( clause => {
+			const mainPath:string = this._getPathFromNode( doc, clause.type, clause.type.expression.getText() );
+
+			if( ! clause.type.typeArguments || ! clause.type.typeArguments.length )
+				return mainPath;
+
+			const typeArguments:string[] = clause.type.typeArguments
+				.map( _ => this._getPathFromNode( doc, _ ) );
+
+			return `${ mainPath }<${ typeArguments.join( ", " ) }>`;
+		} );
+
+	}
+
+	private _getPathFromNode( doc:ClassLikeExportDoc, node:TypeNode, text:string = node.getText() ):string {
+		const symbol:Symbol | undefined = doc.typeChecker.getTypeFromTypeNode( node ).getSymbol();
+		if( ! symbol ) return text;
+
+		const subDoc:ClassLikeExportDoc | undefined = this.exportSymbolsToDocsMap.get( symbol );
+		if( ! subDoc ) return text;
+
+		return subDoc.path;
+	}
 }
 
 function compareSuites( a:SuiteDoc, b:SuiteDoc ):number {
