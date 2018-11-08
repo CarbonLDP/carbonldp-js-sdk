@@ -1,5 +1,5 @@
 import { ApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
-import { IndexDocument } from "../local-models/IndexDocument";
+import { IndexDoc } from "../local-models/IndexDoc";
 import toURL from "../packages/handlebars/helpers/toURL";
 
 export interface LinkInfo {
@@ -20,12 +20,16 @@ export interface InvalidLink extends LinkInfo {
 }
 
 export default function getLinkInfo( encodeCodeBlock:Function ):Function {
-	function getDocFromAlias( url:string, doc:IndexDocument ):ApiDoc | undefined {
-		return doc.docs
-			.find( _ => _.aliases.some( __ => __ === url ) );
+	function getDocFromAlias( url:string, doc:IndexDoc ):ApiDoc | undefined {
+		return doc.docs.find( _ => {
+			const inAlias:boolean = _.aliases.some( __ => __ === url );
+			if( inAlias ) return inAlias;
+
+			return _.path === url;
+		} );
 	}
 
-	return function( url:string, title:string, currentDoc:IndexDocument ):LinkInfo {
+	return function( url:string, title:string, currentDoc:IndexDoc ):LinkInfo {
 		if( ! url ) throw new Error( "Invalid url" );
 
 		const doc:ApiDoc | undefined = getDocFromAlias( url, currentDoc );

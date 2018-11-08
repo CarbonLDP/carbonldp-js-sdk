@@ -1,6 +1,9 @@
-import toURL from "./toURL";
+import { IndexDoc } from "../../../local-models/IndexDoc";
 
-export default ( str, isHTML, noParagraph, options:{ data:{ root:any } } ) => {
+const LINK_TAG_REGEX:RegExp = /({@link ?[^\s]*})/;
+const PATH_REGEX:RegExp = /(CarbonLDP(?:[.\/][^\s]+?)?)([}<>|&\s,]|$)/gm;
+
+export default ( str:string, isHTML, noParagraph, options:{ data:{ root:IndexDoc } } ) => {
 	if( typeof str !== "string" )
 		throw new Error( "urlify: An string was expected, but received: " + str );
 
@@ -24,7 +27,13 @@ export default ( str, isHTML, noParagraph, options:{ data:{ root:any } } ) => {
 		str = getFirstLine( str );
 	}
 
-	// FIXME: Re-implement links creation
+	str = str
+		.split( LINK_TAG_REGEX )
+		.map( subStr => {
+			if( subStr.match( LINK_TAG_REGEX ) ) return subStr;
+			return subStr.replace( PATH_REGEX, `{@link $1 $1}$2` );
+		} )
+		.join( "" );
 
 	return str;
 };
