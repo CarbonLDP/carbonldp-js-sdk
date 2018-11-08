@@ -22,5 +22,5 @@ export interface Signature extends MemberLike {
 export interface MethodDoc extends MemberLike {
 	name:string;
 	signatures:Signature[];
-	returns:Returns;
+	returns?:Returns;
 }

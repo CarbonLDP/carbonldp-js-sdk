@@ -147,6 +147,10 @@ export class OldDocsTree implements Processor {
 	}
 
 	private _getClass( doc:ClassExportDoc ):ClassDoc {
+		const constructors:MethodDoc | undefined = ! doc.constructorDoc
+			? undefined
+			: this._getConstructor( doc.constructorDoc );
+
 		const instanceProperties:PropertyDoc[] = doc.members
 			.filter( _ => _ instanceof PropertyMemberDoc )
 			.map( _ => this._getPropertyLike( _ as PropertyMemberDoc ) )
@@ -168,14 +172,16 @@ export class OldDocsTree implements Processor {
 			.sort( compareNamed );
 
 		// Remove implementations when multiple signatures
-		[].concat( instanceMethods, staticMethods )
+		[].concat( constructors, instanceMethods, staticMethods )
 			.forEach( _ => {
-				if( _.signatures.length > 1 )
-					_.signatures = _.signatures.slice( 1 );
+				if( ! _ || _.signatures.length === 1 ) return;
+				_.signatures = _.signatures.slice( 1 );
 			} );
 
 		return {
 			...this._getClassLike( doc ),
+
+			constructors: constructors,
 
 			properties: ! (staticProperties.length || instanceProperties.length)
 				? undefined
@@ -278,6 +284,16 @@ export class OldDocsTree implements Processor {
 			},
 			signatures: signatures,
 		};
+	}
+
+	private _getConstructor( doc:MethodMemberDoc ):MethodDoc {
+		const method:MethodDoc = this._getFunctionLike( doc );
+
+		// Delete returns since constructor
+		method.returns = undefined;
+		method.signatures.forEach( _ => _.returns = undefined );
+
+		return method;
 	}
 
 	private _getMemberLike( doc:{ isStatic?:boolean, isOptional?:boolean } ):MemberLike {
