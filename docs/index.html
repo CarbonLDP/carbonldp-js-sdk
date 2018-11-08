@@ -12787,7 +12787,492 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 									</div>
 							</div>
 							<br>
-
+								
+									<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP-HTTP-HTTPMethod">
+								
+								
+										<a class="doc-header__link" href="#CarbonLDP-HTTP-HTTPMethod">
+											<div class="ui basic label doc-header__symbol symbol">
+												<i class="symbol__anchor large grey linkify icon"></i>
+											</div>
+										<span class="doc-header__main code-label">.HTTPMethod</span>
+										</a>
+										<span class="doc-header__secondary"> : 	enum
+								
+								</span>
+										
+									</h4>
+								
+								
+								<div class="doc-description">
+											<p>Enum for the HTTP/1.1 methods.</p>
+										
+									</div>
+								
+								<table class="ui celled table">
+									<thead>
+										<tr>
+											<th>Enumeration</th>
+											<th>Description</th>
+										</tr>
+									</thead>
+									<tbody>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.HTTPMethod.OPTIONS</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the OPTIONS HTTP/1.1 method, which allows the client to determine the options and/or requirements associated with a resource, or the capabilities of a server, without implying a resource action or initiating a resource retrieval.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.HTTPMethod.HEAD</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HEAD HTTP/1.1 method, which returns only the headers of a GET HTTP request.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.HTTPMethod.GET</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the GET HTTP/1.1 method, which returns whatever information is identified by the request URI.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.HTTPMethod.POST</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the POST HTTP/1.1 method, which requests to the server to create a new entity.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.HTTPMethod.PUT</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the PUT HTTP/1.1 method, which allows you to replace an entirely entity, or to send a signal to a resource.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.HTTPMethod.PATCH</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the PATCH HTTP/1.1 method, which allows you to update specified fields of an entity.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.HTTPMethod.DELETE</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the DELETE HTTP/1.1 method, which allows you to request the deletion of a resource identified by the request URI.</p>
+													
+												</td>
+											</tr>
+									</tbody>
+								</table>								
+									<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP-HTTP-StatusCode">
+								
+								
+										<a class="doc-header__link" href="#CarbonLDP-HTTP-StatusCode">
+											<div class="ui basic label doc-header__symbol symbol">
+												<i class="symbol__anchor large grey linkify icon"></i>
+											</div>
+										<span class="doc-header__main code-label">.StatusCode</span>
+										</a>
+										<span class="doc-header__secondary"> : 	enum
+								
+								</span>
+										
+									</h4>
+								
+								
+								<div class="doc-description">
+											<p>Enum with the HTTP/1.1 status codes.</p>
+										
+									</div>
+								
+								<table class="ui celled table">
+									<thead>
+										<tr>
+											<th>Enumeration</th>
+											<th>Description</th>
+										</tr>
+									</thead>
+									<tbody>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.CONTINUE</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 100 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.SWITCHING_PROTOCOLS</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 101 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.OK</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 200 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.CREATED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 201 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.ACCEPTED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 202 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.NON_AUTHORITATIVE_INFORMATION</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 203 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.NO_CONTENT</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 204 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.RESET_CONTENT</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 205 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.PARTIAL_CONTENT</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 206 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.MULTIPLE_CHOICES</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 300 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.MOVED_PERMANENTLY</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 301 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.FOUND</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 302 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.SEE_OTHER</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 303 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.NOT_MODIFIED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 304 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.USE_PROXY</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 305 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.TEMPORARY_REDIRECT</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 307 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.BAD_REQUEST</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 400 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.UNAUTHORIZED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 401 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.PAYMENT_REQUIRED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 402 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.FORBIDDEN</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 403 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.NOT_FOUND</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 404 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.METHOD_NOT_ALLOWED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 405 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.NOT_ACCEPTABLE</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 406 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.PROXY_AUTHENTICATION_REQUIRED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 407 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.REQUEST_TIME_OUT</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 408 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.CONFLICT</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 409 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.GONE</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 410 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.LENGTH_REQUIRED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 411 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.PRECONDITION_FAILED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 412 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.REQUEST_ENTITY_TOO_LARGE</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 413 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.REQUEST_URI_TOO_LARGE</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 414 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.UNSUPPORTED_MEDIA_TYPE</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 415 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.REQUESTED_RANGE_NOT_SATISFIABLE</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 416 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.EXPECTATION_FAILED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 417 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.INTERNAL_SERVER_ERROR</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 500 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.NOT_IMPLEMENTED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 501 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.BAD_GATEWAY</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 502 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.SERVICE_UNAVAILABLE</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 503 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.GATEWAY_TIME_OUT</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 504 status code.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.HTTP.StatusCode.HTTP_VERSION_NOT_SUPPORTED</code>
+												</td>
+												<td class="justified">
+														<p>Identifies the HTTP/1.1 505 status code.</p>
+													
+												</td>
+											</tr>
+									</tbody>
+								</table>
 
 					</div>
 
@@ -29033,7 +29518,73 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 
 
 
-
+								
+									<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP-Messaging-Event">
+								
+								
+										<a class="doc-header__link" href="#CarbonLDP-Messaging-Event">
+											<div class="ui basic label doc-header__symbol symbol">
+												<i class="symbol__anchor large grey linkify icon"></i>
+											</div>
+										<span class="doc-header__main code-label">.Event</span>
+										</a>
+										<span class="doc-header__secondary"> : 	enum
+								
+								</span>
+										
+									</h4>
+								
+								
+								<div class="doc-description">
+											<p>Enum with the base events in the platform.</p>
+										
+									</div>
+								
+								<table class="ui celled table">
+									<thead>
+										<tr>
+											<th>Enumeration</th>
+											<th>Description</th>
+										</tr>
+									</thead>
+									<tbody>
+								<tr>
+												<td>
+													<code>CarbonLDP.Messaging.Event.CHILD_CREATED</code>
+												</td>
+												<td class="justified">
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED</code>
+												</td>
+												<td class="justified">
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.Messaging.Event.DOCUMENT_DELETED</code>
+												</td>
+												<td class="justified">
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.Messaging.Event.MEMBER_ADDED</code>
+												</td>
+												<td class="justified">
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.Messaging.Event.MEMBER_REMOVED</code>
+												</td>
+												<td class="justified">
+												</td>
+											</tr>
+									</tbody>
+								</table>
 
 							
 								<h2 class="ui header doc-header" id="SDKDocs-Module-carbonldp-Messaging--Methods">
@@ -32727,7 +33278,104 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 
 
 
-
+								
+									<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP-ContainerType">
+								
+								
+										<a class="doc-header__link" href="#CarbonLDP-ContainerType">
+											<div class="ui basic label doc-header__symbol symbol">
+												<i class="symbol__anchor large grey linkify icon"></i>
+											</div>
+										<span class="doc-header__main code-label">.ContainerType</span>
+										</a>
+										<span class="doc-header__secondary"> : 	enum
+								
+								</span>
+										
+									</h4>
+								
+								
+								<div class="doc-description">
+											<p>Types of property with multiple values..</p>
+										
+									</div>
+								
+								<table class="ui celled table">
+									<thead>
+										<tr>
+											<th>Enumeration</th>
+											<th>Description</th>
+										</tr>
+									</thead>
+									<tbody>
+								<tr>
+												<td>
+													<code>CarbonLDP.ContainerType.SET</code>
+												</td>
+												<td class="justified">
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.ContainerType.LIST</code>
+												</td>
+												<td class="justified">
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.ContainerType.LANGUAGE</code>
+												</td>
+												<td class="justified">
+												</td>
+											</tr>
+									</tbody>
+								</table>								
+									<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP-PointerType">
+								
+								
+										<a class="doc-header__link" href="#CarbonLDP-PointerType">
+											<div class="ui basic label doc-header__symbol symbol">
+												<i class="symbol__anchor large grey linkify icon"></i>
+											</div>
+										<span class="doc-header__main code-label">.PointerType</span>
+										</a>
+										<span class="doc-header__secondary"> : 	enum
+								
+								</span>
+										
+									</h4>
+								
+								
+								<div class="doc-description">
+											<p>Types a property that refers to a resource can be.</p>
+										
+									</div>
+								
+								<table class="ui celled table">
+									<thead>
+										<tr>
+											<th>Enumeration</th>
+											<th>Description</th>
+										</tr>
+									</thead>
+									<tbody>
+								<tr>
+												<td>
+													<code>CarbonLDP.PointerType.ID</code>
+												</td>
+												<td class="justified">
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.PointerType.VOCAB</code>
+												</td>
+												<td class="justified">
+												</td>
+											</tr>
+									</tbody>
+								</table>
 
 					</div>
 
@@ -35970,7 +36618,123 @@ when creating an internal sub-property.
 
 
 
-
+								
+									<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP-QueryDocuments-QueryContainerPropertyType">
+								
+								
+										<a class="doc-header__link" href="#CarbonLDP-QueryDocuments-QueryContainerPropertyType">
+											<div class="ui basic label doc-header__symbol symbol">
+												<i class="symbol__anchor large grey linkify icon"></i>
+											</div>
+										<span class="doc-header__main code-label">.QueryContainerPropertyType</span>
+										</a>
+										<span class="doc-header__secondary"> : 	enum
+								
+								</span>
+										
+									</h4>
+								
+								
+								<div class="doc-description">
+											<p>Type of container mode retrieval.</p>
+										
+									</div>
+								
+								<table class="ui celled table">
+									<thead>
+										<tr>
+											<th>Enumeration</th>
+											<th>Description</th>
+										</tr>
+									</thead>
+									<tbody>
+								<tr>
+												<td>
+													<code>CarbonLDP.QueryDocuments.QueryContainerPropertyType.CHILD</code>
+												</td>
+												<td class="justified">
+														<p>Specifies that the children will be retrieved.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.QueryDocuments.QueryContainerPropertyType.MEMBER</code>
+												</td>
+												<td class="justified">
+														<p>Specified that the members will be retrieved.</p>
+													
+												</td>
+											</tr>
+									</tbody>
+								</table>								
+									<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP-QueryDocuments-QueryPropertyType">
+								
+								
+										<a class="doc-header__link" href="#CarbonLDP-QueryDocuments-QueryPropertyType">
+											<div class="ui basic label doc-header__symbol symbol">
+												<i class="symbol__anchor large grey linkify icon"></i>
+											</div>
+										<span class="doc-header__main code-label">.QueryPropertyType</span>
+										</a>
+										<span class="doc-header__secondary"> : 	enum
+								
+								</span>
+										
+									</h4>
+								
+								
+								<div class="doc-description">
+											<p>Types of data expected to return for a property.</p>
+										
+									</div>
+								
+								<table class="ui celled table">
+									<thead>
+										<tr>
+											<th>Enumeration</th>
+											<th>Description</th>
+										</tr>
+									</thead>
+									<tbody>
+								<tr>
+												<td>
+													<code>CarbonLDP.QueryDocuments.QueryPropertyType.PARTIAL</code>
+												</td>
+												<td class="justified">
+														<p>The property is expected to point to a partial resource (document/fragment).</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.QueryDocuments.QueryPropertyType.EMPTY</code>
+												</td>
+												<td class="justified">
+														<p>The property is expected to point to a resource with only its types but will be marked as unresolved.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.QueryDocuments.QueryPropertyType.ALL</code>
+												</td>
+												<td class="justified">
+														<p>The property is expected to point to a resource with all is properties but without related fragments resolved.</p>
+													
+												</td>
+											</tr>
+								<tr>
+												<td>
+													<code>CarbonLDP.QueryDocuments.QueryPropertyType.FULL</code>
+												</td>
+												<td class="justified">
+														<p>The property is expected to point to a fulled resolved document</p>
+													
+												</td>
+											</tr>
+									</tbody>
+								</table>
 
 					</div>
 

@@ -66,7 +66,7 @@ export = new Package( "carbonldp-dgeni-api",
 		} );
 
 		computePathsProcessor.pathTemplates.push( {
-			docTypes: [ "class", "interface", "type-alias" ],
+			docTypes: [ "class", "interface", "type-alias", "enum" ],
 			getPath( doc:any ):string {
 				// Special case for main class
 				if( doc.id === "CarbonLDP" ) return doc.id;

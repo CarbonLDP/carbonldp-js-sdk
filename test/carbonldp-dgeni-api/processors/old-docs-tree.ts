@@ -4,8 +4,10 @@ import { ApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
 import { ClassExportDoc } from "dgeni-packages/typescript/api-doc-types/ClassExportDoc";
 import { ClassLikeExportDoc, HeritageInfo } from "dgeni-packages/typescript/api-doc-types/ClassLikeExportDoc";
 import { ConstExportDoc } from "dgeni-packages/typescript/api-doc-types/ConstExportDoc";
+import { EnumExportDoc } from "dgeni-packages/typescript/api-doc-types/EnumExportDoc";
 import { FunctionExportDoc } from "dgeni-packages/typescript/api-doc-types/FunctionExportDoc";
 import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
+import { MemberDoc } from "dgeni-packages/typescript/api-doc-types/MemberDoc";
 import { MethodMemberDoc } from "dgeni-packages/typescript/api-doc-types/MethodMemberDoc";
 import { PropertyMemberDoc } from "dgeni-packages/typescript/api-doc-types/PropertyMemberDoc";
 
@@ -18,6 +20,7 @@ import { JSDoc } from "../dgeni-models/JSDoc";
 import { ClassDoc } from "../local-models/ClassDoc";
 
 import { ClassLikeDoc } from "../local-models/ClassLikeDoc";
+import { EnumDoc, EnumeralDoc } from "../local-models/EnumDoc";
 import { InterfaceDoc } from "../local-models/InterfaceDoc";
 import { MemberLike } from "../local-models/MemberLike";
 import { MethodDoc } from "../local-models/MethodDoc";
@@ -81,6 +84,11 @@ export class OldDocsTree implements Processor {
 			.map( subDoc => this._getClass( subDoc as ClassExportDoc ) )
 			.sort( compareSuites );
 
+		const enums:EnumDoc[] = doc.exports
+			.filter( _ => _.docType === "enum" )
+			.map( _ => this._getEnum( _ as EnumExportDoc ) )
+			.sort( compareSuites );
+
 		const reexports:ReexportDoc[] = doc.symbol.exportArray
 			.filter( symbol =>
 				(symbol.resolvedSymbol && symbol.resolvedSymbol.flags) & SymbolFlags.ValueModule
@@ -107,6 +115,8 @@ export class OldDocsTree implements Processor {
 
 			interfaces: interfaces,
 			classes: classes,
+			enums: enums,
+
 			reexports: reexports,
 
 			properties: properties.length
@@ -207,6 +217,22 @@ export class OldDocsTree implements Processor {
 
 			"super-classes": this._getHeritageNames( doc, doc.extendsClauses ),
 			interfaces: this._getHeritageNames( doc, doc.implementsClauses ),
+		};
+	}
+
+	private _getEnum( doc:EnumExportDoc & JSDoc ):EnumDoc {
+		return {
+			...this._getSuite( doc ),
+
+			description: doc.description,
+			enumerals: doc.members.map( _ => this._getEnumerals( _ ) ),
+		};
+	}
+
+	private _getEnumerals( doc:MemberDoc & JSDoc ):EnumeralDoc {
+		return {
+			name: doc.name,
+			description: doc.description,
 		};
 	}
 
