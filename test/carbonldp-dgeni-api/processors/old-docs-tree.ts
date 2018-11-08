@@ -167,6 +167,13 @@ export class OldDocsTree implements Processor {
 			.map( _ => this._getFunctionLike( _ as MethodMemberDoc ) )
 			.sort( compareNamed );
 
+		// Remove implementations when multiple signatures
+		[].concat( instanceMethods, staticMethods )
+			.forEach( _ => {
+				if( _.signatures.length > 1 )
+					_.signatures = _.signatures.slice( 1 );
+			} );
+
 		return {
 			...this._getClassLike( doc ),
 
