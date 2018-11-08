@@ -88,7 +88,7 @@ export = new Package( "carbonldp-dgeni-api",
 		} );
 
 		computePathsProcessor.pathTemplates.push( {
-			docTypes: [ "const" ],
+			docTypes: [ "const", "function" ],
 			getPath( doc:any ):string {
 				return doc.id.replace( /\//g, "." );
 			},
