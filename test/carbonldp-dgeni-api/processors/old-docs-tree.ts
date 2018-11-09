@@ -11,7 +11,7 @@ import { MemberDoc } from "dgeni-packages/typescript/api-doc-types/MemberDoc";
 import { MethodMemberDoc } from "dgeni-packages/typescript/api-doc-types/MethodMemberDoc";
 import { PropertyMemberDoc } from "dgeni-packages/typescript/api-doc-types/PropertyMemberDoc";
 
-import { Symbol, SymbolFlags, TypeNode } from "typescript";
+import { Symbol, SymbolFlags, TypeChecker, TypeNode } from "typescript";
 
 import { ExtendedClassLikeExportDoc } from "../dgeni-models/ExtendedClassLikeExportDoc";
 import { ExtendedModuleDoc } from "../dgeni-models/ExtendedModuleDoc";
@@ -33,6 +33,12 @@ import { SuiteDoc } from "../local-models/SuiteDoc";
 export default function oldDocsTree():Processor {
 	return new OldDocsTree();
 }
+
+interface CheckedApiDoc extends ApiDoc {
+	typeChecker:TypeChecker;
+}
+
+const TYPE_LABELS_REGEX:RegExp = /((?:&#x3D;&gt;|&#x3D;|&lt;|&amp;|extends|=>|[|=<&,:](?!gt;)|^) ?)([_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*)/g;
 
 export class OldDocsTree implements Processor {
 	$runAfter:[ "paths-computed" ];
@@ -266,15 +272,17 @@ export class OldDocsTree implements Processor {
 	}
 
 	private _getPropertyLike( doc:(ConstExportDoc | PropertyMemberDoc) & JSDoc ):PropertyDoc {
+		// Constants not having correct type
+		if( ! doc.type && "variableDeclaration" in doc )
+			doc.type = doc.variableDeclaration.type.getText();
+
 		return {
 			...this._getMemberLike( doc ),
 
 			name: doc.name,
 			description: doc.description,
 
-			type: "variableDeclaration" in doc
-				? doc.variableDeclaration.type.getText()
-				: doc.type,
+			type: this._getExpandedType( doc, doc.type ),
 		};
 	}
 
@@ -353,10 +361,35 @@ export class OldDocsTree implements Processor {
 		const symbol:Symbol | undefined = doc.typeChecker.getTypeFromTypeNode( node ).getSymbol();
 		if( ! symbol ) return text;
 
-		const subDoc:ClassLikeExportDoc | undefined = this.exportSymbolsToDocsMap.get( symbol );
-		if( ! subDoc ) return text;
+		return this._getPathFromSymbol( symbol, text );
+	}
 
-		return subDoc.path;
+	private _getPathFromName( doc:CheckedApiDoc, name:string ):string {
+		const moduleDoc:{ locals?:Map<string, Symbol> } = doc.declaration.getSourceFile() as any;
+		if( ! moduleDoc.locals ) return name;
+
+		const localSymbol:Symbol | undefined = moduleDoc.locals.get( name );
+		if( ! localSymbol ) return name;
+
+		const symbol:Symbol | undefined = localSymbol.flags & SymbolFlags.Alias
+			? doc.typeChecker.getAliasedSymbol( localSymbol )
+			: localSymbol;
+		if( ! symbol ) return name;
+
+		return this._getPathFromSymbol( symbol, name );
+	}
+
+	private _getPathFromSymbol( symbol:Symbol, text:string ):string {
+		const doc:ClassLikeExportDoc | undefined = this.exportSymbolsToDocsMap.get( symbol );
+		if( ! doc ) return text;
+
+		return doc.path;
+	}
+
+	private _getExpandedType( doc:CheckedApiDoc, type:string ):string {
+		return type.replace( TYPE_LABELS_REGEX, ( _, before, label ) =>
+			`${ before }${ this._getPathFromName( doc, label ) }`
+		);
 	}
 }
 
