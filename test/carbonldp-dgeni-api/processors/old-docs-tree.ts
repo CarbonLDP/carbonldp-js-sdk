@@ -38,26 +38,26 @@ interface CheckedApiDoc extends ApiDoc {
 	typeChecker:TypeChecker;
 }
 
-const TYPE_LABELS_REGEX:RegExp = /((?:&#x3D;&gt;|&#x3D;|&lt;|&amp;|extends|=>|[|=<&,:](?!gt;)|^) ?)([_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*)/g;
+const TYPE_LABELS_REGEX:RegExp = /((?:&#x3D;&gt;|&#x3D;|&lt;|&amp;|extends|is |=>|[|=<&,:](?!gt;)|^) ?)([_$a-zA-Z\xA0-\uFFFF][._$a-zA-Z0-9\xA0-\uFFFF]*)/g;
 
 export class OldDocsTree implements Processor {
 	$runAfter:[ "paths-computed" ];
 	$runBefore:[ "rendering-docs" ];
 
-	private exportSymbolsToDocsMap:Map<Symbol, ClassLikeExportDoc>;
+	private symbolsToDocsMap:Map<Symbol, ApiDoc>;
 
 	constructor() {
 		this.$runAfter = [ "paths-computed" ];
 		this.$runBefore = [ "rendering-docs" ];
 
-		this.exportSymbolsToDocsMap = new Map();
+		this.symbolsToDocsMap = new Map();
 	}
 
 	$process( docs:ApiDoc[] ):any[] {
 		// Fill exports map
 		docs.forEach( doc => {
-			if( ! (doc instanceof ClassLikeExportDoc) ) return;
-			this.exportSymbolsToDocsMap.set( doc.symbol, doc );
+			if( this.symbolsToDocsMap.has( doc.symbol ) ) return;
+			this.symbolsToDocsMap.set( doc.symbol, doc );
 		} );
 
 		const preModules:ModuleDoc[] = docs
@@ -312,7 +312,7 @@ export class OldDocsTree implements Processor {
 
 			name: doc.name,
 			returns: {
-				type: doc.type,
+				type: this._getExpandedType( doc, doc.type ),
 				description: ! doc.returns ? undefined
 					: doc.returns.description,
 			},
@@ -368,19 +368,36 @@ export class OldDocsTree implements Processor {
 		const moduleDoc:{ locals?:Map<string, Symbol> } = doc.declaration.getSourceFile() as any;
 		if( ! moduleDoc.locals ) return name;
 
-		const localSymbol:Symbol | undefined = moduleDoc.locals.get( name );
+		let [ fist, rest ] = name.split( /\.([^]*)/ );
+
+		const localSymbol:Symbol | undefined = moduleDoc.locals.get( fist );
 		if( ! localSymbol ) return name;
 
-		const symbol:Symbol | undefined = localSymbol.flags & SymbolFlags.Alias
+		let symbol:Symbol | undefined = localSymbol.flags & SymbolFlags.Alias
 			? doc.typeChecker.getAliasedSymbol( localSymbol )
 			: localSymbol;
+
+		while( symbol && rest ) {
+			let subName:string;
+			[ subName, rest ] = rest.split( /\.([^]*)/ );
+
+			const exportArray:Symbol[] | undefined = (symbol as any).exportArray || [];
+			const subSymbol:Symbol = exportArray.find( _ => _.name === subName );
+
+			symbol = subSymbol ? subSymbol :
+				symbol.exports && symbol.exports.get( subName as any );
+		}
+
 		if( ! symbol ) return name;
 
 		return this._getPathFromSymbol( symbol, name );
 	}
 
 	private _getPathFromSymbol( symbol:Symbol, text:string ):string {
-		const doc:ClassLikeExportDoc | undefined = this.exportSymbolsToDocsMap.get( symbol );
+		if( symbol.flags & SymbolFlags.ExportValue )
+			symbol = (symbol as any).exportSymbol;
+
+		const doc:ApiDoc | undefined = this.symbolsToDocsMap.get( symbol );
 		if( ! doc ) return text;
 
 		return doc.path;
