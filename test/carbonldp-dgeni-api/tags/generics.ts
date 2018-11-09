@@ -9,7 +9,7 @@ export function generics():TagDef {
 	return {
 		name: "generics",
 		defaultFn( doc:Document ):string[] {
-			if( ! doc.declaration.typeParameters ) return;
+			if( ! doc.declaration || ! doc.declaration.typeParameters ) return;
 
 			return doc.declaration.typeParameters
 				.map( type => type.getText() );

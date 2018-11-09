@@ -1,11 +1,21 @@
-import { DocCollection, Document, Processor } from "dgeni";
+import { DocCollection, Processor } from "dgeni";
+
+import { ApiDoc, BaseApiDoc } from "dgeni-packages/typescript/api-doc-types/ApiDoc";
+import { ConstExportDoc } from "dgeni-packages/typescript/api-doc-types/ConstExportDoc";
+import { ExportDoc } from "dgeni-packages/typescript/api-doc-types/ExportDoc";
+import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
+import { ModuleDoc } from "dgeni-packages/typescript/api-doc-types/ModuleDoc";
+import { Host } from "dgeni-packages/typescript/services/ts-host/host";
+import { getExportDocType } from "dgeni-packages/typescript/services/TsParser";
 
 import fs from "fs";
 import path from "path";
 
+import { SymbolFlags } from "typescript";
 
-export default function normalizeDocs():NormalizeDocs {
-	return new NormalizeDocs();
+
+export default function normalizeDocs( tsHost:Host, log:any ):NormalizeDocs {
+	return new NormalizeDocs( tsHost, log );
 }
 
 
@@ -24,19 +34,25 @@ const DOC_TYPE_ORDER:{ [ type:string ]:number } = {
 };
 
 export class NormalizeDocs implements Processor {
-	$runAfter:[ "processing-docs" ];
-	$runBefore:[ "docs-processed" ];
+	$runAfter:[ "readTypeScriptModules" ];
+	$runBefore:[ "parsing-tags" ];
 
-	private _indexMap:Map<string, boolean>;
+	private readonly tsHost:Host;
+	private readonly log:any;
 
-	constructor() {
-		this.$runAfter = [ "processing-docs" ];
-		this.$runBefore = [ "docs-processed" ];
+	private readonly _indexMap:Map<string, boolean>;
+
+	constructor( tsHost:Host, log:any ) {
+		this.$runAfter = [ "readTypeScriptModules" ];
+		this.$runBefore = [ "parsing-tags" ];
+
+		this.tsHost = tsHost;
+		this.log = log;
 
 		this._indexMap = new Map();
 	}
 
-	$process( docs:DocCollection ):any {
+	$process( docs:ApiDoc[] ):any {
 		docs = docs.filter( ( doc ) => {
 			if( doc.fileInfo.baseName === "index" ) return true;
 
@@ -46,7 +62,7 @@ export class NormalizeDocs implements Processor {
 			if( doc.docType === "module" ) return false;
 
 			// Filter exports from non "index" modules
-			if( doc.moduleDoc ) {
+			if( doc instanceof BaseApiDoc ) {
 				if( doc.moduleDoc.fileInfo.baseName !== "index" ) return false;
 			}
 
@@ -56,7 +72,7 @@ export class NormalizeDocs implements Processor {
 		// Normalize IDs
 		docs.forEach( doc => {
 			if( doc.docType === "module" ) return;
-			if( ! doc.moduleDoc ) return;
+			if( ! (doc instanceof BaseApiDoc) ) return;
 
 			const indexOfSameName:number = doc.moduleDoc.exports
 				.findIndex( subDoc => subDoc.name === doc.moduleDoc.name );
@@ -64,6 +80,33 @@ export class NormalizeDocs implements Processor {
 			if( indexOfSameName !== - 1 ) {
 				doc.id = doc.id.replace( doc.moduleDoc.name + "/", "" );
 			}
+		} );
+
+		// Add merged constant into only interface
+		docs.forEach( doc => {
+			if( ! (doc instanceof InterfaceExportDoc) ) return;
+
+			// Not only an interface
+			if( ! (doc.symbol.flags ^ SymbolFlags.Interface) ) return;
+
+			// Remove interface momentary
+			doc.symbol.flags = doc.symbol.flags ^ SymbolFlags.Interface;
+
+			switch( getExportDocType( doc.symbol ) ) {
+				case "const":
+					const exportDoc:ExportDoc = new ConstExportDoc( this.tsHost, doc.moduleDoc, doc.symbol );
+					this._addExportDoc( docs, doc.moduleDoc, exportDoc );
+
+					// Add correct content
+					doc.content = this.tsHost.getContent( doc.symbol.getDeclarations()![ 0 ]! );
+					break;
+				default:
+					this.log.error( `Other declaration merged for ${ doc.name }` );
+					break;
+			}
+
+			// Return interface flag
+			doc.symbol.flags = doc.symbol.flags | SymbolFlags.Interface;
 		} );
 
 		docs = docs.sort( ( a, b ) => {
@@ -82,7 +125,7 @@ export class NormalizeDocs implements Processor {
 		];
 	}
 
-	_hasIndex( doc:Document ):boolean {
+	private _hasIndex( doc:ApiDoc ):boolean {
 		const indexPath:string = path.resolve( doc.fileInfo.filePath, "../index.ts" );
 
 		if( this._indexMap.has( indexPath ) )
@@ -92,6 +135,13 @@ export class NormalizeDocs implements Processor {
 		this._indexMap.set( indexPath, exists );
 
 		return exists;
+	}
+
+	private _addExportDoc( docs:DocCollection, moduleDoc:ModuleDoc, exportDoc:ExportDoc ):void {
+		this.log.debug( `>>>> EXPORT: ${ exportDoc.name } (${ exportDoc.docType }) from ${ moduleDoc.id }` );
+
+		moduleDoc.exports.push( exportDoc );
+		docs.push( exportDoc );
 	}
 
 }

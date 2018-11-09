@@ -30,7 +30,7 @@ import { BaseDocument } from "./BaseDocument";
 
 
 /**
- * In-memory model that represents a `c:Document.
+ * In-memory model that represents a `c:Document`.
  */
 export interface TransientDocument extends Resource, $Registry<TransientFragment> {
 	/**
