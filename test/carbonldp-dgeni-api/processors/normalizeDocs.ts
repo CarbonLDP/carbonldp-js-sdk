@@ -33,6 +33,8 @@ const DOC_TYPE_ORDER:{ [ type:string ]:number } = {
 	parameter: 10,
 };
 
+const DOCS_TO_IGNORE:string[] = [ "get-accessor-info" ];
+
 export class NormalizeDocs implements Processor {
 	$runAfter:[ "readTypeScriptModules" ];
 	$runBefore:[ "parsing-tags" ];
@@ -54,6 +56,8 @@ export class NormalizeDocs implements Processor {
 
 	$process( docs:ApiDoc[] ):any {
 		docs = docs.filter( ( doc ) => {
+			if( DOCS_TO_IGNORE.indexOf( doc.docType ) !== -1 ) return false;
+
 			if( doc.fileInfo.baseName === "index" ) return true;
 
 			if( ! this._hasIndex( doc ) ) return true;
