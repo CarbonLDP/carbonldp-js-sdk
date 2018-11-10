@@ -95,6 +95,12 @@ export = new Package( "carbonldp-dgeni-api",
 			getOutputPath():void {},
 		} );
 
+		computePathsProcessor.pathTemplates.push( {
+			docTypes: [ "parameter" ],
+			pathTemplate: "${ container.path }~${ name }",
+			getOutputPath():void {},
+		} );
+
 
 		// Index Doc
 
