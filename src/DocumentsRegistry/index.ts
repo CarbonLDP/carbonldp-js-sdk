@@ -1,2 +1,2 @@
 export { BaseDocumentsRegistry } from "./BaseDocumentsRegistry";
-export { DocumentsRegistry } from "./DocumentsRegistry";
+export { DocumentsRegistry, DocumentsRegistryFactory } from "./DocumentsRegistry";

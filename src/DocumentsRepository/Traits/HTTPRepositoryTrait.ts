@@ -17,7 +17,7 @@ import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 
 
 /**
- * Trait of a {@link DocumentsRepository} with base methods of every REST repositoryØ.
+ * Trait of a {@link DocumentsRepository} with base methods of every REST repository.
  */
 export interface HTTPRepositoryTrait<MODEL extends ResolvablePointer = ResolvablePointer> extends GeneralRepository<MODEL> {
 	/**

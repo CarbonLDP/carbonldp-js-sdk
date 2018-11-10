@@ -394,7 +394,7 @@ export class OldDocsTree implements Processor {
 	}
 
 	private _getPathFromSymbol( symbol:Symbol, text:string ):string {
-		if( symbol.flags & SymbolFlags.ExportValue )
+		if( "exportSymbol" in symbol )
 			symbol = (symbol as any).exportSymbol;
 
 		const doc:ApiDoc | undefined = this.symbolsToDocsMap.get( symbol );
