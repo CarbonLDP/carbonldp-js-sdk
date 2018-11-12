@@ -1,7 +1,7 @@
 import { IndexDoc } from "../../../local-models/IndexDoc";
 
 const LINK_TAG_REGEX:RegExp = /({@link ?[^\s]*})/;
-const PATH_REGEX:RegExp = /(CarbonLDP(?:[.\/][^\s]+?)?)([()}<>|&\s,\]\[]|$)/gm;
+const PATH_REGEX:RegExp = /(^|[^\/])(CarbonLDP(?:[.\/][^\s]+?)?)([()}<>|&\s,\]\[]|$)/gm;
 const PATH_PROP_TYPE_REGEX:RegExp = /(CarbonLDP(?:[.\/][^\s]+?)?)\[&quot;([^\s]+?)&quot;]/gm;
 
 export default ( str:string, isHTML, noParagraph, options:{ data:{ root:IndexDoc } } ) => {
@@ -36,7 +36,7 @@ export default ( str:string, isHTML, noParagraph, options:{ data:{ root:IndexDoc
 			if( subStr.match( PATH_PROP_TYPE_REGEX ) )
 				return subStr.replace( PATH_PROP_TYPE_REGEX, `{@link $1.$2 $&}`);
 
-			return subStr.replace( PATH_REGEX, `{@link $1 $1}$2` );
+			return subStr.replace( PATH_REGEX, `$1{@link $2 $2}$3` );
 		} )
 		.join( "" );
 
