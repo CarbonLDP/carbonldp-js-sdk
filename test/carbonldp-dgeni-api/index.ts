@@ -5,7 +5,6 @@ import Links from "dgeni-packages/links";
 import Typescript from "dgeni-packages/typescript";
 
 import * as path from "path";
-
 // Inline tags
 import { INLINE_TAGS } from "./inline-tags";
 // Model Tags
@@ -17,6 +16,7 @@ import normalizeDocs from "./processors/normalizeDocs";
 import oldDocsTree from "./processors/old-docs-tree";
 // Services
 import getLinkInfo from "./services/getLinkInfo";
+import resolveUrl from "./services/resolveUrl";
 
 // Paths configurations
 const projectPath:string = process.cwd();
@@ -32,6 +32,7 @@ export = new Package( "carbonldp-dgeni-api",
 	] )
 
 	.factory( getLinkInfo )
+	.factory( resolveUrl )
 
 	.processor( normalizeDocs )
 	.processor( oldDocsTree )
