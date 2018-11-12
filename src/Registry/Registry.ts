@@ -89,13 +89,13 @@ export interface Registry<MODEL extends RegisteredPointer = RegisteredPointer> e
 	getPointers( local:true ):MODEL[];
 
 	/**
-	 * Removes the resource identified by the provided string ID or {@link RegisteredPointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
 	 * Returns true if the resource could be removed, false otherwise.
 	 * @param idOrPointer ID or Pointer to be removed.
 	 */
 	removePointer( idOrPointer:string | RegisteredPointer ):boolean;
 	/**
-	 * Removes the resource identified by the provided string ID or {@link RegisteredPointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
 	 * Returns true if the resource could be removed, false otherwise.
 	 * @param idOrPointer ID or Pointer to be removed.
 	 * @param local Flag to ignore hierarchy and only remove from the current registry.
@@ -192,13 +192,13 @@ export interface $Registry<MODEL extends RegisteredPointer = RegisteredPointer> 
 	$getPointers( local:true ):MODEL[];
 
 	/**
-	 * Removes the resource identified by the provided string ID or {@link RegisteredPointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
 	 * Returns true if the resource could be removed, false otherwise.
 	 * @param idOrPointer ID or Pointer to be removed.
 	 */
 	$removePointer( idOrPointer:string | RegisteredPointer ):boolean;
 	/**
-	 * Removes the resource identified by the provided string ID or {@link RegisteredPointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
 	 * Returns true if the resource could be removed, false otherwise.
 	 * @param idOrPointer ID or Pointer to be removed.
 	 * @param local Flag to ignore hierarchy and only remove from the current registry.

@@ -56,7 +56,7 @@ export class NormalizeDocs implements Processor {
 
 	$process( docs:ApiDoc[] ):any {
 		docs = docs.filter( ( doc ) => {
-			if( DOCS_TO_IGNORE.indexOf( doc.docType ) !== -1 ) return false;
+			if( DOCS_TO_IGNORE.indexOf( doc.docType ) !== - 1 ) return false;
 
 			if( doc.fileInfo.baseName === "index" ) return true;
 
@@ -66,8 +66,8 @@ export class NormalizeDocs implements Processor {
 			if( doc.docType === "module" ) return false;
 
 			// Filter exports from non "index" modules
-			if( doc instanceof BaseApiDoc ) {
-				if( doc.moduleDoc.fileInfo.baseName !== "index" ) return false;
+			if( "moduleDoc" in doc ) {
+				if( (doc as { moduleDoc:ModuleDoc }).moduleDoc.fileInfo.baseName !== "index" ) return false;
 			}
 
 			return true;

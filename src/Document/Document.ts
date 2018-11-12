@@ -152,6 +152,18 @@ export interface Document extends $Registry<Fragment>, QueryableDocumentTrait, S
 	$resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	$resolve<T extends object>( document:Document, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
+	/**
+	 * Checks if the current document exists.
+	 * @param requestOptions Customizable options for the request.
+	 */
+	$exists( requestOptions?:RequestOptions ):Promise<boolean>;
+	/**
+	 * Checks if the document of the specified URI exists.
+	 * @param uri The URI of the document to check its existence.
+	 * @param requestOptions Customizable options for the request.
+	 */
+	$exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
+
 
 	/**
 	 * Refreshes with the latest data of the current document.
@@ -192,6 +204,19 @@ export interface Document extends $Registry<Fragment>, QueryableDocumentTrait, S
 	 * @param requestOptions Customizable options for the request.
 	 */
 	$saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+
+
+	/**
+	 * Deletes the current document.
+	 * @param requestOptions Customizable options for the request.
+	 */
+	$delete( requestOptions?:RequestOptions ):Promise<void>;
+	/**
+	 * Deletes the document of the specified URI.
+	 * @param uri URI of the document to be deleted.
+	 * @param requestOptions Customizable options for the request.
+	 */
+	$delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 }
 
 

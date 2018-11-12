@@ -21,7 +21,7 @@ export interface QueryMetadata extends VolatileResource {
 
 // TODO: Change to type-alias
 /**
- * Factory, decorator and utils for {@QueryMetadata}.
+ * Factory, decorator and utils for {@link QueryMetadata}.
  */
 export interface QueryMetadataFactory extends ModelSchema {
 	TYPE:string;
