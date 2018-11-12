@@ -1,18 +1,22 @@
-import * as path from "path";
 import { Package } from "dgeni";
 
 import JsDocs from "dgeni-packages/jsdoc";
 import Links from "dgeni-packages/links";
 import Typescript from "dgeni-packages/typescript";
-import HandleBars from "./packages/handlebars";
 
-// Services
-import getLinkInfo from "./services/getLinkInfo";
+import * as path from "path";
+
+// Inline tags
+import { INLINE_TAGS } from "./inline-tags";
+// Model Tags
+import { generics } from "./model-tags/generics";
+// Packages
+import HandleBars from "./packages/handlebars";
 // Processors
 import normalizeDocs from "./processors/normalizeDocs";
 import oldDocsTree from "./processors/old-docs-tree";
-// Doc Tags
-import { generics } from "./tags/generics";
+// Services
+import getLinkInfo from "./services/getLinkInfo";
 
 // Paths configurations
 const projectPath:string = process.cwd();
@@ -137,4 +141,10 @@ export = new Package( "carbonldp-dgeni-api",
 		templateFinder.templatePatterns = [
 			"${ doc.docType }.template.hbs",
 		];
+	} )
+
+	// Extend inline tags
+	.config( function( getInjectables:Function, inlineTagProcessor:any ):void {
+		const inlineTags:any[] = getInjectables( INLINE_TAGS );
+		inlineTagProcessor.inlineTagDefinitions.push( ...inlineTags );
 	} );
