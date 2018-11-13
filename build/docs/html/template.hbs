@@ -412,6 +412,11 @@
 			}
 
 			function setActiveSection() {
+				$locationMenu
+					.find( ".dynamic-location" )
+					.removeClass( "active" )
+					.detach();
+
 				var $sidebarItem = getSidebarItem( window.location.hash );
 				if( $sidebarItem === null ) return;
 
@@ -426,12 +431,8 @@
 
 				$moduleLocation.html( module.html() );
 				$moduleLocation.attr( "href", module.attr( "href" ) );
-				$locationMenu
-					.find( ".dynamic-location" )
-					.removeClass( "active" )
-					.detach();
-				$locationMenu
-					.append( $moduleLocation );
+
+				$locationMenu.append( $moduleLocation );
 
 				if( $sidebarItem.hasClass( "item" ) ) {
 					var object = $sidebarItem
