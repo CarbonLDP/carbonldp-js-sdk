@@ -3,6 +3,7 @@ export default ( module, options ) => {
 
 	const interfaces:any[] = module[ "interfaces" ] || [];
 	const classes:any[] = module[ "classes" ] || [];
+	const typeAliases:any[] = module[ "typeAliases" ] || [];
 	const namespaces:any[] = module[ "namespaces" ] || [];
 
 	Array.prototype.push.apply( elements, interfaces.map( element => {
@@ -10,6 +11,9 @@ export default ( module, options ) => {
 	} ) );
 	Array.prototype.push.apply( elements, classes.map( element => {
 		return { element: element, isClass: true };
+	} ) );
+	Array.prototype.push.apply( elements, typeAliases.map( element => {
+		return { element: element, isTypeAlias: true };
 	} ) );
 	Array.prototype.push.apply( elements, namespaces.map( element => {
 		return { element: element, isNamespace: true };

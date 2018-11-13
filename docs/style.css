@@ -319,6 +319,11 @@ td.optional-label > .ui.horizontal.ribbon.label:after {
     background-color: #E1BEE7;
 }
 
+.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_typeAlias.active,
+.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_typeAlias.active::after {
+    background-color: #8ddba0;
+}
+
 .doc-search {
     z-index: 1006;
 }

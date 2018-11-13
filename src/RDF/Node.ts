@@ -13,7 +13,7 @@ import { RDFValue } from "./Value";
 export type RDFNodePropertyValue = string | RDFNode | RDFList | RDFValue | RDFLiteral;
 
 /**
- * Interface that represents an RDF Node.
+ * Model represents an RDF Node.
  */
 export type RDFNode = {
 	/**

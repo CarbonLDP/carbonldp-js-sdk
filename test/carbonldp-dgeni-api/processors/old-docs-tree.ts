@@ -6,6 +6,7 @@ import { ClassLikeExportDoc, HeritageInfo } from "dgeni-packages/typescript/api-
 import { ConstExportDoc } from "dgeni-packages/typescript/api-doc-types/ConstExportDoc";
 import { EnumExportDoc } from "dgeni-packages/typescript/api-doc-types/EnumExportDoc";
 import { FunctionExportDoc } from "dgeni-packages/typescript/api-doc-types/FunctionExportDoc";
+import { TypeAliasExportDoc } from "dgeni-packages/typescript/api-doc-types/TypeAliasExportDoc";
 import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
 import { MemberDoc } from "dgeni-packages/typescript/api-doc-types/MemberDoc";
 import { MethodMemberDoc } from "dgeni-packages/typescript/api-doc-types/MethodMemberDoc";
@@ -28,6 +29,8 @@ import { ModuleDoc } from "../local-models/ModuleDoc";
 import { PropertyDoc } from "../local-models/PropertyDoc";
 import { ReexportDoc } from "../local-models/ReexportDoc";
 import { SuiteDoc } from "../local-models/SuiteDoc";
+import { TypeAlias } from "../local-models/TypeAlias";
+import { Generic } from "../model-tags/generics";
 
 
 export default function oldDocsTree():Processor {
@@ -90,6 +93,11 @@ export class OldDocsTree implements Processor {
 			.map( subDoc => this._getClass( subDoc as ClassExportDoc ) )
 			.sort( compareSuites );
 
+		const typeAliases:TypeAlias[] = doc.exports
+			.filter( _ => _.docType === "type-alias" )
+			.map( _ => this._getTypeAlias( _ as TypeAliasExportDoc ) )
+			.sort( compareSuites );
+
 		const enums:EnumDoc[] = doc.exports
 			.filter( _ => _.docType === "enum" )
 			.map( _ => this._getEnum( _ as EnumExportDoc ) )
@@ -121,6 +129,7 @@ export class OldDocsTree implements Processor {
 
 			interfaces: interfaces,
 			classes: classes,
+			typeAliases: typeAliases,
 			enums: enums,
 
 			reexports: reexports,
@@ -223,6 +232,17 @@ export class OldDocsTree implements Processor {
 
 			"super-classes": this._getHeritageNames( doc, doc.extendsClauses ),
 			interfaces: this._getHeritageNames( doc, doc.implementsClauses ),
+		};
+	}
+
+	private _getTypeAlias( doc:TypeAliasExportDoc & JSDoc & Generic ):TypeAlias {
+		return {
+			...this._getSuite( doc ),
+
+			definition: this._getExpandedType( doc, doc.typeDefinition, { keepName: true } ),
+			generics: doc.generics,
+
+			description: doc.description,
 		};
 	}
 
@@ -364,7 +384,7 @@ export class OldDocsTree implements Processor {
 		return this._getPathFromSymbol( symbol, text );
 	}
 
-	private _getPathFromName( doc:CheckedApiDoc, name:string ):string {
+	private _getPathFromName( doc:CheckedApiDoc, name:string, opts?:{ keepName?:boolean } ):string {
 		const moduleDoc:{ locals?:Map<string, Symbol> } = doc.declaration.getSourceFile() as any;
 		if( ! moduleDoc.locals ) return name;
 
@@ -390,22 +410,24 @@ export class OldDocsTree implements Processor {
 
 		if( ! symbol ) return name;
 
-		return this._getPathFromSymbol( symbol, name );
+		return this._getPathFromSymbol( symbol, name, opts );
 	}
 
-	private _getPathFromSymbol( symbol:Symbol, text:string ):string {
+	private _getPathFromSymbol( symbol:Symbol, text:string, opts:{ keepName?:boolean } = {} ):string {
 		if( "exportSymbol" in symbol )
 			symbol = (symbol as any).exportSymbol;
 
 		const doc:ApiDoc | undefined = this.symbolsToDocsMap.get( symbol );
 		if( ! doc ) return text;
 
-		return doc.path;
+		return opts.keepName
+			? `{@link ${ doc.path } ${ text }}`
+			: doc.path;
 	}
 
-	private _getExpandedType( doc:CheckedApiDoc, type:string ):string {
+	private _getExpandedType( doc:CheckedApiDoc, type:string, opts?:{ keepName?:boolean } ):string {
 		return type.replace( TYPE_LABELS_REGEX, ( _, before, label ) =>
-			`${ before }${ this._getPathFromName( doc, label ) }`
+			`${ before }${ this._getPathFromName( doc, label, opts ) }`
 		);
 	}
 }
