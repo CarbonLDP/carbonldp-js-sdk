@@ -8,9 +8,6 @@ import { ModuleDoc } from "dgeni-packages/typescript/api-doc-types/ModuleDoc";
 import { Host } from "dgeni-packages/typescript/services/ts-host/host";
 import { getExportDocType } from "dgeni-packages/typescript/services/TsParser";
 
-import fs from "fs";
-import path from "path";
-
 import { SymbolFlags } from "typescript";
 
 import { ExtendedModuleDoc } from "../dgeni-models/ExtendedModuleDoc";
@@ -61,6 +58,11 @@ export class NormalizeDocs implements Processor {
 		docs.forEach( doc => {
 			if( ! (doc instanceof ModuleDoc) ) return;
 
+			// Root elements are not reexported, but mark them for future used
+			if( ! doc.id.includes( "/" ) ) {
+				(doc as ExtendedModuleDoc).reexported = true;
+			}
+
 			const reexports:ExtendedModuleDoc[] = doc.symbol.exportArray
 				.filter( symbol => ! ! ((symbol.resolvedSymbol && symbol.resolvedSymbol.flags) & SymbolFlags.ValueModule) )
 				.map( symbol => symbol.resolvedSymbol.valueDeclaration )
@@ -78,8 +80,6 @@ export class NormalizeDocs implements Processor {
 		// Filter only reexported docs
 		docs = docs.filter( doc => {
 			if( doc.docType !== "module" ) return true;
-
-			if( ! doc.id.includes( "/" ) ) return true;
 			return (doc as ExtendedModuleDoc).reexported;
 		} );
 
@@ -87,16 +87,11 @@ export class NormalizeDocs implements Processor {
 		docs = docs.filter( ( doc ) => {
 			if( DOCS_TO_IGNORE.indexOf( doc.docType ) !== - 1 ) return false;
 
-			if( doc.fileInfo.baseName === "index" ) return true;
+			if( doc.docType === "module" ) return true;
 
-			if( ! this._hasIndex( doc ) ) return true;
-
-			// Filter modules that has corresponding index module
-			if( doc.docType === "module" ) return false;
-
-			// Filter exports from non "index" modules
+			// Filter docs not exported from main modules
 			if( "moduleDoc" in doc ) {
-				if( (doc as { moduleDoc:ModuleDoc }).moduleDoc.fileInfo.baseName !== "index" ) return false;
+				return ! ! (doc as { moduleDoc:ExtendedModuleDoc }).moduleDoc.reexported;
 			}
 
 			return true;
@@ -156,18 +151,6 @@ export class NormalizeDocs implements Processor {
 			{ docType: "index" },
 			...docs,
 		];
-	}
-
-	private _hasIndex( doc:ApiDoc ):boolean {
-		const indexPath:string = path.resolve( doc.fileInfo.filePath, "../index.ts" );
-
-		if( this._indexMap.has( indexPath ) )
-			return this._indexMap.get( indexPath );
-
-		const exists:boolean = fs.existsSync( indexPath );
-		this._indexMap.set( indexPath, exists );
-
-		return exists;
 	}
 
 	private _addExportDoc( docs:DocCollection, moduleDoc:ModuleDoc, exportDoc:ExportDoc ):void {
