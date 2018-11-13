@@ -15,7 +15,7 @@ import { EventMessage } from "./EventMessage";
 import * as MessagingService from "./MessagingService";
 
 
-describe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
+fdescribe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( MessagingService ).toBeDefined();
@@ -591,6 +591,40 @@ describe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
 				let receivedData:number = 0;
 				addSubscription( 1 );
 				addSubscription( 2 );
+			} );
+
+			it( "should silently fail when no error callback in broadcasting", ( done:DoneFn ):void => {
+				const mockServer:any = new Server( "https://example.com/broker" );
+				mockServer.on( "connection", server => {
+					server.send( Frame.marshall( "CONNECTED", {
+						"server": "MockSocket-Server/**",
+						"session": "session-1",
+						"heart-beat": "0,0",
+						"version": "1.2",
+					} ) );
+				} );
+				mockServer.on( "message", ( framesString:string ) => {
+					const frames:Frame[] = Frame.unmarshall( framesString ).frames;
+					frames.forEach( frame => {
+						if( frame.command !== "SUBSCRIBE" ) return;
+						mockServer.send( Frame.marshall( "ERROR", {
+							"message": "Connection closed.",
+							"content-length": "0",
+						} ) );
+					} );
+				} );
+
+
+				try {
+					service.subscribe( `/topic/*.*.destination/`, () => {
+						done.fail( "Should not receive successfully any data." );
+					} );
+				} catch( error ) {
+					done.fail( "Should not throw an error." );
+				}
+
+				mockServer.stop();
+				done();
 			} );
 
 		} );

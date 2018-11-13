@@ -3348,6 +3348,28 @@
 													<br>
 												</div>
 												
+													<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP+Resource">
+												
+												
+														<a class="doc-header__link" href="#CarbonLDP+Resource">
+															<div class="ui basic label doc-header__symbol symbol">
+																<i class="symbol__anchor large grey linkify icon"></i>
+															</div>
+														<span class="doc-header__main code-label">#Resource</span>
+														</a>
+														<span class="doc-header__secondary"> : 	typeof Resource
+												
+												</span>
+														
+													</h4>
+												
+											
+												<!--pre><code class="typescript">Resource:typeof Resource</code></pre-->
+											
+												<div class="ui vertical segment doc-content doc-object-element__content">
+													<br>
+												</div>
+												
 													<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP+SHACL">
 												
 												
@@ -3453,28 +3475,6 @@
 												
 											
 												<!--pre><code class="typescript">TransientFragment:typeof TransientFragment</code></pre-->
-											
-												<div class="ui vertical segment doc-content doc-object-element__content">
-													<br>
-												</div>
-												
-													<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP+TransientResource">
-												
-												
-														<a class="doc-header__link" href="#CarbonLDP+TransientResource">
-															<div class="ui basic label doc-header__symbol symbol">
-																<i class="symbol__anchor large grey linkify icon"></i>
-															</div>
-														<span class="doc-header__main code-label">#TransientResource</span>
-														</a>
-														<span class="doc-header__secondary"> : 	typeof Resource
-												
-												</span>
-														
-													</h4>
-												
-											
-												<!--pre><code class="typescript">TransientResource:typeof Resource</code></pre-->
 											
 												<div class="ui vertical segment doc-content doc-object-element__content">
 													<br>
@@ -50875,7 +50875,7 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 												<div class="ui vertical segment doc-content doc-object-element__content">
 												
 														<br>
-														<pre><code class="typescript">__makeSubscription( id:string, destination:string, eventCallback:(data: EventMessage) &#x3D;&gt; void, errorCallback:(error: Error) &#x3D;&gt; void ):() &#x3D;&gt; void</code></pre>
+														<pre><code class="typescript">__makeSubscription( id:string, destination:string, eventCallback:(data: EventMessage) &#x3D;&gt; void, errorCallback?:(error: Error) &#x3D;&gt; void ):() &#x3D;&gt; void</code></pre>
 														<br>
 												
 												
@@ -50932,8 +50932,8 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 																			</td>
 																		</tr>
 												<tr>
-																			<td class="single line">
-																				
+																			<td class="single line optional-label">
+																				<label class="ui blue right ribbon horizontal label">Optional</label>
 																				<code>errorCallback</code>
 																			</td>
 																			<td class="">
@@ -51223,7 +51223,7 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 												<div class="ui vertical segment doc-content doc-object-element__content">
 												
 														<br>
-														<pre><code class="typescript">subscribe( destination:string, onEvent:(data: EventMessage) &#x3D;&gt; void, onError:(error: Error) &#x3D;&gt; void ):void</code></pre>
+														<pre><code class="typescript">subscribe( destination:string, onEvent:(data: EventMessage) &#x3D;&gt; void, onError?:(error: Error) &#x3D;&gt; void ):void</code></pre>
 														<br>
 												
 															<div class="doc-description">
@@ -51275,8 +51275,8 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 																			</td>
 																		</tr>
 												<tr>
-																			<td class="single line">
-																				
+																			<td class="single line optional-label">
+																				<label class="ui blue right ribbon horizontal label">Optional</label>
 																				<code>onError</code>
 																			</td>
 																			<td class="">

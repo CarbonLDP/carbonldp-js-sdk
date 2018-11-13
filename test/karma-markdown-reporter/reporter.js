@@ -18,7 +18,7 @@ swag.registerHelpers( Handlebars );
 		return str.replace( /\t/g, "" );
 	} );
 
-	const classRegex = /CarbonLDP([./][./#a-zA-Z0-9]*)?/gmi;
+	const classRegex = /CarbonLDP([./][./#$a-zA-Z0-9]*)?/gmi;
 
 	Handlebars.registerHelper( "urlify", function( str, isHTML, noParagraph, options ) {
 		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
@@ -109,8 +109,8 @@ swag.registerHelpers( Handlebars );
 
 
 	Handlebars.registerHelper( "concat", function( value, string ) {
-		value = "" + ( value || "" );
-		string = "" + ( string || "" );
+		value = "" + (value || "");
+		string = "" + (string || "");
 
 		return value + string;
 	} );
@@ -148,7 +148,11 @@ var MarkdownReporter = (() => {
 		return description && description.indexOf( "JSON" ) === 0;
 	}
 
-	// Parse the string data of a suite or spec
+	/**
+	 * Parse the string data of a suite or spec.
+	 * @param {string} data
+	 * @returns {{}}
+	 */
 	function parseData( data ) {
 		if( isJSON( data ) ) {
 			data = data.substring( 4 );
@@ -161,7 +165,13 @@ var MarkdownReporter = (() => {
 		return { name: data };
 	}
 
-	// Obtains or generate the object for store and arrange the specs data
+	/**
+	 * Obtains or generate the object for store and arrange the specs data.
+	 *
+	 * @param {Object} parent
+	 * @param {Object} data
+	 * @returns {*}
+	 */
 	function getContainer( parent, data ) {
 		if( "suiteType" in data ) {
 			return composeSuite( parent, data );
@@ -181,39 +191,39 @@ var MarkdownReporter = (() => {
 				break;
 
 			case "namespace":
-				parent = parent[ "namespaces" ] || ( parent[ "namespaces" ] = {} );
+				parent = parent[ "namespaces" ] || (parent[ "namespaces" ] = {});
 				suite.path = suite.name;
 				suite.name = suite.path.split( "." ).pop();
 				break;
 
 			case "class":
-				parent = parent[ "classes" ] || ( parent[ "classes" ] = {} );
+				parent = parent[ "classes" ] || (parent[ "classes" ] = {});
 				suite.path = suite.name;
 				suite.name = suite.path.split( "." ).pop();
 				break;
 
 			case "interface":
-				parent = parent[ "interfaces" ] || ( parent[ "interfaces" ] = {} );
+				parent = parent[ "interfaces" ] || (parent[ "interfaces" ] = {});
 				suite.path = suite.name;
 				suite.name = suite.path.split( "." ).pop();
 				break;
 
 			case "constructor":
-				return parent[ "constructors" ] || ( parent[ "constructors" ] = suite );
+				return parent[ "constructors" ] || (parent[ "constructors" ] = suite);
 
 			case "method":
-				parent = parent[ "methods" ] || ( parent[ "methods" ] = {} );
+				parent = parent[ "methods" ] || (parent[ "methods" ] = {});
 
 				if( suite.access !== null ) {
-					parent = parent[ suite.access ] || ( parent[ suite.access ] = {} );
+					parent = parent[ suite.access ] || (parent[ suite.access ] = {});
 				}
 				break;
 
 			case "decoratedObject":
-				return parent[ "decorated-object" ] || ( parent[ "decorated-object" ] = suite );
+				return parent[ "decorated-object" ] || (parent[ "decorated-object" ] = suite);
 
 			case "enum":
-				parent = parent[ "enums" ] || ( parent[ "enums" ] = {} );
+				parent = parent[ "enums" ] || (parent[ "enums" ] = {});
 				suite.path = suite.name;
 				suite.name = suite.path.split( "." ).pop();
 				break;
@@ -222,7 +232,7 @@ var MarkdownReporter = (() => {
 				return null;
 		}
 
-		return parent[ name ] || ( parent[ name ] = suite );
+		return parent[ name ] || (parent[ name ] = suite);
 	}
 
 	function composeSpec( parent, spec ) {
@@ -232,22 +242,22 @@ var MarkdownReporter = (() => {
 
 		switch( type ) {
 			case "constructor":
-				var constructors = parent[ "constructors" ] || ( parent[ "constructors" ] = {} );
-				signatures = constructors[ "signatures" ] || ( constructors[ "signatures" ] = [] );
+				var constructors = parent[ "constructors" ] || (parent[ "constructors" ] = {});
+				signatures = constructors[ "signatures" ] || (constructors[ "signatures" ] = []);
 
 				signatures.push( spec );
 				break;
 
 			case "method":
-				var methods = parent[ "methods" ] || ( parent[ "methods" ] = {} );
+				var methods = parent[ "methods" ] || (parent[ "methods" ] = {});
 
 				if( spec.access !== null ) {
-					methods = methods[ spec.access ] || ( methods[ spec.access ] = {} );
+					methods = methods[ spec.access ] || (methods[ spec.access ] = {});
 				}
 
 				var method = methods[ spec.name ] = { name: spec.name };
 
-				signatures = method[ "signatures" ] || ( method[ "signatures" ] = [] );
+				signatures = method[ "signatures" ] || (method[ "signatures" ] = []);
 				if( ! spec.returns )
 					spec.returns = { type: "void" };
 				if( ! method.returns )
@@ -257,17 +267,17 @@ var MarkdownReporter = (() => {
 				break;
 
 			case "property":
-				var properties = parent[ "properties" ] || ( parent[ "properties" ] = {} );
+				var properties = parent[ "properties" ] || (parent[ "properties" ] = {});
 
 				if( parent.suiteType !== "namespace" && spec.access !== null ) {
-					properties = properties[ spec.access ] || ( properties[ spec.access ] = {} );
+					properties = properties[ spec.access ] || (properties[ spec.access ] = {});
 				}
 
 				properties[ spec.name ] = spec;
 				break;
 
 			case "signature":
-				signatures = parent[ "signatures" ] || ( parent[ "signatures" ] = [] );
+				signatures = parent[ "signatures" ] || (parent[ "signatures" ] = []);
 				signatures.push( spec );
 
 				if( ! spec.description )
@@ -280,12 +290,12 @@ var MarkdownReporter = (() => {
 				break;
 
 			case "super-class":
-				var superClasses = parent[ "super-classes" ] || ( parent[ "super-classes" ] = [] );
+				var superClasses = parent[ "super-classes" ] || (parent[ "super-classes" ] = []);
 				superClasses.push( spec );
 				break;
 
 			case "reexports":
-				var reexports = parent[ "reexports" ] || ( parent[ "reexports" ] = [] );
+				var reexports = parent[ "reexports" ] || (parent[ "reexports" ] = []);
 				reexports.push( spec );
 				break;
 
@@ -294,7 +304,7 @@ var MarkdownReporter = (() => {
 				break;
 
 			case "enum":
-				var enumerals = parent[ "enumerals" ] || ( parent[ "enumerals" ] = [] );
+				var enumerals = parent[ "enumerals" ] || (parent[ "enumerals" ] = []);
 				enumerals.push( spec );
 				break;
 
@@ -306,6 +316,7 @@ var MarkdownReporter = (() => {
 
 		return spec;
 	}
+
 
 	function specSuccess() {
 
@@ -330,6 +341,29 @@ var MarkdownReporter = (() => {
 	 * @param {string[]} result.suite - Suites the spec belongs to, from top to bottom
 	 */
 	function onSpecComplete( browser, result ) {
+		const container = getParentContainer( result.suite );
+		if( container === null ) return;
+
+		const data = parseData( result.description );
+		getContainer( container, data );
+	}
+
+	/**
+	 * @param {string[]} suites
+	 * @return {{} | null}
+	 */
+	function getParentContainer( suites ) {
+		let container = docsData;
+
+		for( const suite of suites ) {
+			if( ! isJSON( suite ) ) return null;
+			const data = parseData( suite );
+
+			container = getContainer( container, data );
+			if( ! container ) return null;
+		}
+
+		return container;
 	}
 
 	function onRunStart( browsers, server ) {
@@ -345,42 +379,6 @@ var MarkdownReporter = (() => {
 	 * @param server
 	 */
 	function onBrowserStart( browser, results, server ) {
-		parseSpecs( docsData, results.specs );
-		// fs.writeFileSync( "doc/data.json", JSON.stringify( docsData ), "utf8" );
-	}
-
-	function parseSpecs( parent, specs ) {
-		for( let key of Object.keys( specs ) ) {
-			if( ! isJSON( key ) ) continue;
-			const data = parseData( key );
-
-			const container = getContainer( parent, data );
-			if( container === null ) continue;
-
-			for( let spec of specs[ key ]._ ) {
-				const subData = parseData( spec );
-				getContainer( container, subData );
-			}
-			delete specs[ key ]._;
-			parseSpecs( container, specs[ key ] );
-
-			sortObjectProperty( container, "namespaces" );
-			sortObjectProperty( container, "classes" );
-			sortObjectProperty( container, "interfaces" );
-			sortObjectProperty( container, "reexports" );
-			sortObjectProperty( container, "enums" );
-
-			let isClass;
-			isClass = sortObjectProperty( container, "methods", "instance" );
-			isClass = isClass || sortObjectProperty( container, "methods", "static" );
-			if( ! isClass )
-				sortObjectProperty( container, "methods" );
-
-			isClass = sortObjectProperty( container, "properties", "instance" );
-			isClass = isClass || sortObjectProperty( container, "properties", "static" );
-			if( ! isClass )
-				sortObjectProperty( container, "properties" );
-		}
 	}
 
 	/**
@@ -395,41 +393,76 @@ var MarkdownReporter = (() => {
 	 * @param server
 	 */
 	function onRunComplete( browsers, overallResults, server ) {
-		var data = sortObject( docsData );
-		var outData = template( { modules: data } );
+		const data = sortData( docsData );
+		const outData = template( { modules: data } );
 		fs.writeFileSync( destFile, outData, "utf8" );
 	}
 
-	function sortObjectProperty( object, property, extra ) {
-		if( ! object[ property ] ) return;
-		var propertyObject = object[ property ];
+	/**
+	 * @param {{name: string}|{name: string}[]|string[]} data
+	 * @return {{name: string}[]|string[]}
+	 */
+	function sortData( data ) {
+		const array = Array.isArray( data )
+			? sortArray( data )
+			: sortObject( data )
+		;
 
-		if( ! ! extra ) {
-			if( ! propertyObject[ extra ] ) return;
-			object = propertyObject;
-			property = extra;
+		for( const element of array ) {
+			if( typeof element !== "object" ) continue;
 
-			propertyObject = propertyObject[ extra ];
+			// Order containers by name
+			for( const key of [ "namespaces", "classes", "interfaces", "reexports", "enums" ] ) {
+				if( ! element[ key ] ) continue;
+				element[ key ] = sortData( element[ key ] );
+			}
+
+			// Order sub-containers
+			for( const key of [ "methods", "properties" ] ) {
+				if( ! element[ key ] ) continue;
+
+				if( [ "module", "class" ].includes( element.suiteType ) ) {
+					for( const subKey of [ "instance", "static" ] ) {
+						if( ! (subKey in element[ key ]) ) continue;
+						element[ key ][ subKey ] = sortObject( element[ key ][ subKey ] );
+					}
+
+				} else {
+					element[ key ] = sortObject( element[ key ] );
+				}
+			}
 		}
 
-		if( Array.isArray( propertyObject ) ) {
-			if( typeof propertyObject[ 0 ] === "string" ) return;
-			return propertyObject.sort( function( a, b ) {
-				return a.name.localeCompare( b.name )
-			} );
-		}
-
-		return object[ property ] = sortObject( propertyObject );
+		return array;
 	}
 
+	/**
+	 *
+	 * @param {{name: string}} object
+	 * @returns {{name: string}[]}
+	 */
 	function sortObject( object ) {
-		var keys = Object.keys( object ).sort();
-		var result = [];
-		for( var key of keys ) {
-			result.push( object[ key ] );
-		}
-		return result;
+		return Object
+			.keys( object )
+			.sort()
+			.map( key => object[ key ] )
+			;
 	}
+
+	/**
+	 * @param {{name: string}[]|string[]} array
+	 * @returns {{name: string}[]|string[]}
+	 */
+	function sortArray( array ) {
+		return array
+			.sort( function( a, b ) {
+				a = a.name ? a.name : a;
+				b = b.name ? b.name : b;
+
+				return a.localeCompare( b );
+			} );
+	}
+
 
 	function obtainConfig( config, name ) {
 		if( config[ name ] )
@@ -480,7 +513,7 @@ var MarkdownReporter = (() => {
 		// this.specSuccess = specSuccess;
 		// this.specSkipped = specSkipped;
 		// this.specFailure = specFailure;
-		// this.onSpecComplete = onSpecComplete;
+		this.onSpecComplete = onSpecComplete;
 		this.onRunStart = onRunStart;
 		this.onBrowserStart = onBrowserStart;
 		this.onRunComplete = onRunComplete;
