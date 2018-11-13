@@ -15,6 +15,7 @@ const notNumberError:string = "The value is not a number.";
 
 /**
  * Class that can serialize a Date object into a string literal with format `YYYY-MM-DD`.
+ *
  * Instead of instantiating this class, use the already exposed instance {@link dateSerializer}.
  */
 export class DateSerializer implements Serializer {
@@ -36,6 +37,7 @@ export let dateSerializer:DateSerializer = new DateSerializer();
 
 /**
  * Class that can serialize a Date object into a string ISO literal.
+ *
  * Instead of instantiating this class, use the already exposed instance {@link dateTimeSerializer}.
  */
 export class DateTimeSerializer implements Serializer {
@@ -57,6 +59,7 @@ export let dateTimeSerializer:DateTimeSerializer = new DateTimeSerializer();
 
 /**
  * Class that can serialize a Date object into a literal string with format `HH:mm:ss.sssZ`.
+ *
  * Instead of instantiating this class, use the already exposed instance {@link timeSerializer}.
  */
 export class TimeSerializer implements Serializer {
@@ -79,6 +82,7 @@ export let timeSerializer:TimeSerializer = new TimeSerializer();
 
 /**
  * Class that can serialize any Number value to a string literal of an integer.
+ *
  * Instead of instantiating this class, use the already exposed instance {@link integerSerializer}.
  */
 export class IntegerSerializer implements Serializer {
@@ -101,6 +105,7 @@ export let integerSerializer:IntegerSerializer = new IntegerSerializer();
 
 /**
  * Class that can serialize any Number value to a string literal of a long integer.
+ *
  * Instead of instantiating this class, use the already exposed instance {@link longSerializer}.
  */
 export class LongSerializer implements Serializer {
@@ -121,6 +126,7 @@ export const longSerializer:LongSerializer = new LongSerializer();
 
 /**
  * Class that can serialize any Number value to a string literal of an unsigned integer.
+ *
  * Instead of instantiating this class, use the already exposed instance {@link unsignedIntegerSerializer}.
  */
 export class UnsignedIntegerSerializer extends IntegerSerializer {
@@ -144,6 +150,7 @@ export let unsignedIntegerSerializer:UnsignedIntegerSerializer = new UnsignedInt
 
 /**
  * Class that can serialize any Number value to a string literal of an unsigned long integer.
+ *
  * Instead of instantiating this class, use the already exposed instance {@link unsignedLongSerializer}.
  */
 export class UnsignedLongSerializer implements Serializer {
@@ -160,6 +167,7 @@ export const unsignedLongSerializer:UnsignedLongSerializer = new UnsignedLongSer
 
 /**
  * Class that can serialize any Number value to a string literal of float.
+ *
  * Instead of instantiating this class, use the already exposed instance {@link floatSerializer}.
  */
 export class FloatSerializer implements Serializer {
@@ -183,6 +191,7 @@ export let floatSerializer:FloatSerializer = new FloatSerializer();
 
 /**
  * Class that can serialize any variable to a string literal representation its truth value.
+ *
  * Instead of instantiating this class, use the already exposed instance {@link booleanSerializer}.
  */
 export class BooleanSerializer implements Serializer {
@@ -202,6 +211,7 @@ export let booleanSerializer:BooleanSerializer = new BooleanSerializer();
 
 /**
  * Class that can serialize any variable to a string literal representation its truth value.
+ *
  * Instead of instantiating this class, use the already exposed instance {@link stringSerializer}.
  */
 export class StringSerializer implements Serializer {
