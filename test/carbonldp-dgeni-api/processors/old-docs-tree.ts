@@ -63,19 +63,13 @@ export class OldDocsTree implements Processor {
 			this.symbolsToDocsMap.set( doc.symbol, doc );
 		} );
 
-		const preModules:ModuleDoc[] = docs
+		const modules:ModuleDoc[] = docs
 			.filter( doc => doc.docType === "module" )
 			.map( ( doc ) => this._getModule( doc as ExtendedModuleDoc ) )
 			.sort( compareSuites );
 
-		const finalModules:ModuleDoc[] = preModules
-			.filter( doc => {
-				if( ! doc.id.includes( "/" ) ) return true;
-				return this._hasReexportParent( doc, preModules );
-			} );
-
 		const index:Document = docs.find( doc => doc.docType === "index" );
-		index.modules = finalModules;
+		index.modules = modules;
 		index.docs = docs;
 
 		return [ index ];
@@ -103,14 +97,12 @@ export class OldDocsTree implements Processor {
 			.map( _ => this._getEnum( _ as EnumExportDoc ) )
 			.sort( compareSuites );
 
-		const reexports:ReexportDoc[] = doc.symbol.exportArray
-			.filter( symbol =>
-				(symbol.resolvedSymbol && symbol.resolvedSymbol.flags) & SymbolFlags.ValueModule
-			)
-			.map<ReexportDoc>( symbol => ({
+		const reexports:ReexportDoc[] = doc.exports
+			.filter( _ => _.docType === "module" )
+			.map( _ => <ReexportDoc> ({
 				access: "static",
-				name: "" + symbol.escapedName,
-				originalLocation: "",
+				name: _.name,
+				originalLocation: _.path,
 			}) )
 			.sort( compareNamed );
 
@@ -269,26 +261,6 @@ export class OldDocsTree implements Processor {
 			id: doc.id,
 			path: doc.path,
 		};
-	}
-
-	private _hasReexportParent( doc:ModuleDoc, docs:ModuleDoc[] ):boolean {
-		let parentID:string = doc.id;
-		while( parentID.includes( "/" ) ) {
-			parentID = parentID.substring( 0, parentID.lastIndexOf( "/" ) );
-
-			const parentDoc:ModuleDoc | undefined = docs.find( x => x.id === parentID );
-			if( ! parentDoc ) continue;
-
-			const reexport:ReexportDoc | undefined = parentDoc.reexports
-				.find( x => x.name === doc.name );
-
-			if( reexport ) {
-				reexport.originalLocation = doc.path;
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	private _getPropertyLike( doc:(ConstExportDoc | PropertyMemberDoc) & JSDoc ):PropertyDoc {

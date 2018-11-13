@@ -13,6 +13,8 @@ import path from "path";
 
 import { SymbolFlags } from "typescript";
 
+import { ExtendedModuleDoc } from "../dgeni-models/ExtendedModuleDoc";
+
 
 export default function normalizeDocs( tsHost:Host, log:any ):NormalizeDocs {
 	return new NormalizeDocs( tsHost, log );
@@ -55,6 +57,33 @@ export class NormalizeDocs implements Processor {
 	}
 
 	$process( docs:ApiDoc[] ):any {
+		// Add reexport modules
+		docs.forEach( doc => {
+			if( ! (doc instanceof ModuleDoc) ) return;
+
+			const reexports:ExtendedModuleDoc[] = doc.symbol.exportArray
+				.filter( symbol => ! ! ((symbol.resolvedSymbol && symbol.resolvedSymbol.flags) & SymbolFlags.ValueModule) )
+				.map( symbol => symbol.resolvedSymbol.valueDeclaration )
+				.map( declaration => docs.find( ( _ ):_ is ModuleDoc => _.declaration === declaration ) )
+				.filter( moduleDoc => ! ! moduleDoc )
+			;
+
+			// Add to the exports array
+			doc.exports.push( ...reexports as any[] );
+
+			// Set as reexported module
+			reexports.forEach( _ => _.reexported = true );
+		} );
+
+		// Filter only reexported docs
+		docs = docs.filter( doc => {
+			if( doc.docType !== "module" ) return true;
+
+			if( ! doc.id.includes( "/" ) ) return true;
+			return (doc as ExtendedModuleDoc).reexported;
+		} );
+
+		// Filter repeated docs
 		docs = docs.filter( ( doc ) => {
 			if( DOCS_TO_IGNORE.indexOf( doc.docType ) !== - 1 ) return false;
 
