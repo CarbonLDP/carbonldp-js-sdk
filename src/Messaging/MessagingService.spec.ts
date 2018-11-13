@@ -15,7 +15,7 @@ import { EventMessage } from "./EventMessage";
 import * as MessagingService from "./MessagingService";
 
 
-fdescribe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
+describe( module( "carbonldp/Messaging/MessagingService" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( MessagingService ).toBeDefined();
