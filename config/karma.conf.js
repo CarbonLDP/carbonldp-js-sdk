@@ -29,7 +29,7 @@ module.exports = function( config ) {
 			"test/tests_index.js": [ "webpack", "sourcemap" ],
 		},
 
-		reporters: [ "documentation" ],
+		reporters: [ "mocha" ],
 
 		// reporter options
 		mochaReporter: {

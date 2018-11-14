@@ -56,6 +56,7 @@
     "karma-jasmine": "^1.0.2",
     "karma-jasmine-ajax": "^0.1.13",
     "karma-markdown-reporter": "file:test/karma-markdown-reporter",
+    "karma-mocha-reporter": "^2.2.5",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.4",
     "mock-socket": "^7.0.0",
