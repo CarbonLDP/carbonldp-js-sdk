@@ -16,7 +16,7 @@ describe( "TransientAccessPoint", () => {
 	} );
 
 
-	describe( "TransientAccessPointFactory", () => {
+	describe( "[[factory]]", () => {
 
 		describe( "TransientAccessPoint.is", () => {
 

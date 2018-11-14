@@ -12,7 +12,7 @@ describe( "AccessPoint", () => {
 	} );
 
 
-	describe( "AccessPointFactory", () => {
+	describe( "[[factory]]", () => {
 
 		it( "should inherit TransientAccessPointFactory", () => {
 			expect( AccessPoint ).toEqual( jasmine.objectContaining( {
