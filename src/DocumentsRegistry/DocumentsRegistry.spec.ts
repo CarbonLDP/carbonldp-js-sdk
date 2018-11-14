@@ -10,68 +10,34 @@ import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import { TypedModelDecorator } from "../GeneralRegistry/TypedModelDecorator";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelFactory } from "../Model/ModelFactory";
-import { ModelPrototype } from "../Model/ModelPrototype";
-
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
 
 import { BaseDocumentsRegistry } from "./BaseDocumentsRegistry";
-import { DocumentsRegistry, DocumentsRegistryFactory } from "./DocumentsRegistry";
+import { DocumentsRegistry } from "./DocumentsRegistry";
 
 
-describe( module( "carbonldp/DocumentsRegistry" ), () => {
+describe( "DocumentsRegistry", () => {
+
+	it( "should exists", () => {
+		expect( DocumentsRegistry ).toBeDefined();
+		expect( DocumentsRegistry ).toEqual( jasmine.any( Object ) );
+	} );
 
 	let context:DocumentsContext;
-	beforeEach( ():void => {
+	beforeEach( () => {
 		context = new DocumentsContext( "https://example.com/" );
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.DocumentsRegistry",
-		"Registry that stores Document object."
-	), () => {
+
+	describe( "[[interface]]", () => {
 
 		function createMock<T extends {}>( data?:T & Partial<DocumentsRegistry> ):DocumentsRegistry {
 			return DocumentsRegistry.decorate( Object.assign( { context: context }, data ) );
 		}
 
 
-		it( extendsClass( "CarbonLDP.GeneralRegistry" ), () => {
-			const target:GeneralRegistry = {} as DocumentsRegistry;
-			expect( target ).toBeDefined();
-		} );
+		describe( "DocumentsRegistry.registry", () => {
 
-
-		it( hasProperty(
-			OBLIGATORY,
-			"context",
-			"CarbonLDP.DocumentsContext"
-		), ():void => {
-			const target:DocumentsRegistry[ "context" ] = {} as DocumentsContext;
-			expect( target ).toBeDefined();
-		} );
-
-
-		describe( method( OBLIGATORY, "registry" ), () => {
-
-			it( hasSignature(
-				[
-					{ name: "id", type: "string", description: "ID of the document to be registered in the registry." },
-				],
-				{ type: "CarbonLDP.Document" }
-			), () => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				const registry:DocumentsRegistry = createMock();
 
 				expect( registry.register ).toBeDefined();
@@ -92,31 +58,11 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 
 	} );
 
-
-	describe( interfaze(
-		"CarbonLDP.DocumentsRegistryFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.DocumentsRegistry` objects."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.DocumentsRegistry, CarbonLDP.GeneralRegistry>" ), () => {
-			const target:ModelPrototype<DocumentsRegistry, GeneralRegistry> = {} as DocumentsRegistryFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.DocumentsRegistry, CarbonLDP.BaseDocumentsRegistry>" ), () => {
-			const target:ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry> = {} as DocumentsRegistryFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.DocumentsRegistry, CarbonLDP.BaseDocumentsRegistry>" ), () => {
-			const target:ModelFactory<DocumentsRegistry, BaseDocumentsRegistry> = {} as DocumentsRegistryFactory;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[factory]]", () => {
 
 		describe( "DocumentsRegistry.isDecorated", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( DocumentsRegistry.isDecorated ).toBeDefined();
 				expect( DocumentsRegistry.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -134,7 +80,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 
 		describe( "DocumentsRegistry.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( DocumentsRegistry.decorate ).toBeDefined();
 				expect( DocumentsRegistry.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -186,7 +132,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 
 		describe( "DocumentsRegistry.create", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( DocumentsRegistry.create ).toBeDefined();
 				expect( DocumentsRegistry.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -212,7 +158,7 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 
 		describe( "DocumentsRegistry.createFrom", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( DocumentsRegistry.createFrom ).toBeDefined();
 				expect( DocumentsRegistry.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
@@ -263,20 +209,6 @@ describe( module( "carbonldp/DocumentsRegistry" ), () => {
 				context.parentContext.registry.__modelDecorators.clear();
 			} );
 
-		} );
-
-	} );
-
-
-	describe( property(
-		STATIC,
-		"DocumentsRegistry",
-		"CarbonLDP.DocumentsRegistryFactory"
-	), () => {
-
-		it( "should exists", ():void => {
-			expect( DocumentsRegistry ).toBeDefined();
-			expect( DocumentsRegistry ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );
