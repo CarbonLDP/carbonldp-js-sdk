@@ -5,67 +5,34 @@ import { DocumentsContext } from "../../Context/DocumentsContext";
 import { QueryableDocumentsRepositoryTrait } from "../../DocumentsRepository/Traits/QueryableDocumentsRepositoryTrait";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
-import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
 import { QueryDocumentsBuilder } from "../../QueryDocuments/QueryDocumentsBuilder";
 
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../../test/JasmineExtender";
-
 import { LDPDocumentTrait } from "./LDPDocumentTrait";
+import { QueryableDocumentTrait } from "./QueryableDocumentTrait";
 
-import { BaseQueryableDocumentTrait, QueryableDocumentTrait, QueryableDocumentTraitFactory } from "./QueryableDocumentTrait";
 
+describe( "QueryableDocumentTrait", () => {
 
-describe( module( "carbonldp/Document/Traits/QueryableDocumentTrait" ), () => {
+	it( "should exists", () => {
+		expect( QueryableDocumentTrait ).toBeDefined();
+		expect( QueryableDocumentTrait ).toEqual( jasmine.any( Object ) );
+	} );
 
 	let context:DocumentsContext;
 	let $repository:QueryableDocumentsRepositoryTrait;
-	beforeEach( ():void => {
+	beforeEach( () => {
 		context = new DocumentsContext( "https://example.com/" );
 		$repository = QueryableDocumentsRepositoryTrait.decorate( { context } );
 	} );
 
 
-	describe( interfaze(
-		"CarbonLDP.Document.Traits.QueryableDocumentTrait",
-		"Documents repository with the implementation for event subscriptions."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Document.Traits.LDPDocumentTrait" ), () => {
-			const target:LDPDocumentTrait = {} as QueryableDocumentTrait;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.QueryDocuments.QueryablePointer" ), () => {
-			const target:QueryablePointer = {} as QueryableDocumentTrait;
-			expect( target ).toBeDefined();
-		} );
-
-
-		it( hasProperty(
-			OBLIGATORY,
-			"$repository",
-			"CarbonLDP.DocumentsRepository.Trait.QueryableDocumentsRepositoryTrait"
-		), ():void => {
-			const target:QueryableDocumentTrait[ "$repository" ] = {} as QueryableDocumentsRepositoryTrait;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[interface]]", () => {
 
 		const queryBuilderFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder = _ => _;
 		let resource:QueryableDocumentTrait;
-		beforeEach( ():void => {
+		beforeEach( () => {
 			resource = QueryableDocumentTrait.decorate( {
 				$repository,
 				$id: "https://example.com/resource/",
@@ -73,52 +40,16 @@ describe( module( "carbonldp/Document/Traits/QueryableDocumentTrait" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "$getChildren" ), () => {
+		describe( "QueryableDocumentTrait.$getChildren", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the children of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the children of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the children of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the children of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( resource.$getChildren ).toBeDefined();
 				expect( resource.$getChildren ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			let spy:jasmine.Spy;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				spy = spyOnDecorated( $repository, "getChildren" )
 					.and.returnValue( Promise.resolve( null ) );
 			} );
@@ -188,56 +119,16 @@ describe( module( "carbonldp/Document/Traits/QueryableDocumentTrait" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$getMembers" ), () => {
+		describe( "QueryableDocumentTrait.$getMembers", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the members of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
-				[
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the members of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
-				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the members of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the members of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( resource.$getMembers ).toBeDefined();
 				expect( resource.$getMembers ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			let spy:jasmine.Spy;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				spy = spyOnDecorated( $repository, "getMembers" )
 					.and.returnValue( Promise.resolve( null ) );
 			} );
@@ -308,35 +199,16 @@ describe( module( "carbonldp/Document/Traits/QueryableDocumentTrait" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "$listChildren" ), () => {
+		describe( "QueryableDocumentTrait.$listChildren", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the empty children of the current document",
-				[
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the empty children of the specified URI.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( resource.$listChildren ).toBeDefined();
 				expect( resource.$listChildren ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			let spy:jasmine.Spy;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				spy = spyOnDecorated( $repository, "listChildren" )
 					.and.returnValue( Promise.resolve( null ) );
 			} );
@@ -376,35 +248,16 @@ describe( module( "carbonldp/Document/Traits/QueryableDocumentTrait" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$listMembers" ), () => {
+		describe( "QueryableDocumentTrait.$listMembers", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the empty members of the current document",
-				[
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the empty members of the specified URI.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( resource.$listMembers ).toBeDefined();
 				expect( resource.$listMembers ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			let spy:jasmine.Spy;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				spy = spyOnDecorated( $repository, "listMembers" )
 					.and.returnValue( Promise.resolve( null ) );
 			} );
@@ -446,25 +299,11 @@ describe( module( "carbonldp/Document/Traits/QueryableDocumentTrait" ), () => {
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.Document.Traits.QueryableDocumentTraitFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.Document.Traits.QueryableDocumentTrait` objects."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Document.Traits.QueryableDocumentTrait, CarbonLDP.Document.Traits.LDPDocumentTrait, CarbonLDP.QueryDocuments.QueryablePointer" ), () => {
-			const target:ModelPrototype<QueryableDocumentTrait, LDPDocumentTrait & QueryablePointer> = {} as QueryableDocumentTraitFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Document.Traits.QueryableDocumentTrait<any>, CarbonLDP.Document.Traits.BaseQueryableDocumentTrait>" ), () => {
-			const target:ModelDecorator<QueryableDocumentTrait, BaseQueryableDocumentTrait> = {} as QueryableDocumentTraitFactory;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[factory]]", () => {
 
 		describe( "QueryableDocumentTrait.isDecorated", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( QueryableDocumentTrait.isDecorated ).toBeDefined();
 				expect( QueryableDocumentTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -482,7 +321,7 @@ describe( module( "carbonldp/Document/Traits/QueryableDocumentTrait" ), () => {
 
 		describe( "QueryableDocumentTrait.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( QueryableDocumentTrait.decorate ).toBeDefined();
 				expect( QueryableDocumentTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -526,19 +365,6 @@ describe( module( "carbonldp/Document/Traits/QueryableDocumentTrait" ), () => {
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"QueryableDocumentTrait",
-		"CarbonLDP.Document.Traits.QueryableDocumentTraitFactory"
-	), () => {
-
-		it( "should exists", ():void => {
-			expect( QueryableDocumentTrait ).toBeDefined();
-			expect( QueryableDocumentTrait ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );
