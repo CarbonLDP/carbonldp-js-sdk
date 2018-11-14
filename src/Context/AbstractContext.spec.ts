@@ -4,8 +4,6 @@ import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 
-import { clazz, constructor, hasProperty, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
-
 import { AbstractContext } from "./AbstractContext";
 import { ContextSettings } from "./ContextSettings";
 
@@ -38,668 +36,586 @@ function createMock<PARENT extends AbstractContext<any, any, any> = undefined>( 
 	}( data && data.parentContext );
 }
 
-describe( module( "carbonldp/Context" ), ():void => {
 
-	describe( clazz(
-		"CarbonLDP.AbstractContext",
-		[
-			"M extends CarbonLP.Pointer",
-			"P extends CarbonLP.AbstractContext<any, any>",
-		],
-		"Abstract class for defining contexts.",
-		[
-			"CarbonLDP.Context",
-		]
-	), ():void => {
+describe( "AbstractContext", () => {
 
-		it( hasProperty(
-			INSTANCE,
-			"registry",
-			"CarbonLDP.AbstractRegistry<M, CarbonLDP.AbstractContext<M, P>>",
-			"Registry that stores the pointers of the current in accordance to the its base URI.\nTo be defined by the subclass."
-		), ():void => {} );
+	it( "should exists", () => {
+		expect( AbstractContext ).toBeDefined();
+		expect( AbstractContext ).toEqual( jasmine.any( Function ) );
+	} );
 
 
-		it( hasProperty(
-			INSTANCE,
-			"parentContext",
-			"P",
-			"The parent context provided in the constructor.\nEmpty if not provided in constructor"
-		), ():void => {} );
+	describe( "AbstractContext.constructor", () => {
 
-		it( hasProperty(
-			INSTANCE,
-			"baseURI",
-			"string",
-			"The base URI of the context.\nTo be defined by the subclass."
-		), ():void => {} );
+		it( "should be instantiable", () => {
+			const context:AbstractContext<any, any> = createMock();
+			expect( context ).toEqual( jasmine.any( AbstractContext ) );
+		} );
+
+		it( "should not have a parentContext", () => {
+			const context:AbstractContext<any, any> = createMock();
+			expect( context.parentContext ).toBeUndefined();
+		} );
+
+		it( "should assign parent context if provided", () => {
+			const context:AbstractContext<any, any> = createMock();
+
+			const subContext:AbstractContext<any, any, any> = new class extends AbstractContext<any, any, any> {
+				registry:undefined;
+				repository:undefined;
+				protected _baseURI:string;
+			}( context );
+
+			expect( subContext.parentContext ).toBe( context );
+		} );
+
+	} );
 
 
-		it( "should exists", ():void => {
-			expect( AbstractContext ).toBeDefined();
-			expect( AbstractContext ).toEqual( jasmine.any( Function ) );
+	describe( "AbstractContext.resolve", () => {
+
+		it( "should exists", () => {
+			expect( AbstractContext.prototype.resolve ).toBeDefined();
+			expect( AbstractContext.prototype.resolve ).toEqual( jasmine.any( Function ) );
 		} );
 
 
-		describe( constructor(), ():void => {
-
-			it( hasSignature(
-				[
-					{ name: "parentContext", type: "P", optional: true },
-				]
-			), ():void => {} );
-
-			it( "sub class should be an instance", ():void => {
-				const context:AbstractContext<any, any> = createMock();
-				expect( context ).toEqual( jasmine.any( AbstractContext ) );
-			} );
-
-			it( "should not have a parentContext", ():void => {
-				const context:AbstractContext<any, any> = createMock();
-				expect( context.parentContext ).toBeUndefined();
-			} );
-
-			it( "should assign parent context if provided", ():void => {
-				const context:AbstractContext<any, any> = createMock();
-
-				const subContext:AbstractContext<any, any, any> = new class extends AbstractContext<any, any, any> {
-					registry:undefined;
-					repository:undefined;
-					protected _baseURI:string;
-				}( context );
-
-				expect( subContext.parentContext ).toBe( context );
-			} );
-
+		it( "should return same string when baseURI undefined", () => {
+			const context:AbstractContext<any, any> = createMock( { uri: void 0 } );
+			const returned:string = context.resolve( "a-string" );
+			expect( returned ).toBe( "a-string" );
 		} );
 
-		describe( method( INSTANCE, "resolve" ), ():void => {
+		it( "should resolve from the baseURI defined", () => {
+			const context:AbstractContext<any, any> = createMock( { uri: "https://example.com" } );
+			const returned:string = context.resolve( "a-string" );
+			expect( returned ).toBe( "https://example.com/a-string" );
+		} );
 
-			it( hasSignature(
-				"Abstract method that returns an absolute URI in accordance to the context scope.", [
-					{ name: "relativeURI", type: "string" },
-				],
-				{ type: "string" }
-			), ():void => {} );
+		it( "should return same IRI when absolute and baseURI defined", () => {
+			const context:AbstractContext<any, any> = createMock( { uri: "https://example.com" } );
+			const returned:string = context.resolve( "https://example.com/another-thing/a-string" );
+			expect( returned ).toBe( "https://example.com/another-thing/a-string" );
+		} );
 
-			it( "should exists", ():void => {
-				expect( AbstractContext.prototype.resolve ).toBeDefined();
-				expect( AbstractContext.prototype.resolve ).toEqual( jasmine.any( Function ) );
-			} );
+	} );
 
-			it( "should return same string when baseURI undefined", ():void => {
-				const context:AbstractContext<any, any> = createMock( { uri: void 0 } );
-				const returned:string = context.resolve( "a-string" );
-				expect( returned ).toBe( "a-string" );
-			} );
 
-			it( "should resolve from the baseURI defined", ():void => {
-				const context:AbstractContext<any, any> = createMock( { uri: "https://example.com" } );
-				const returned:string = context.resolve( "a-string" );
-				expect( returned ).toBe( "https://example.com/a-string" );
-			} );
+	describe( "AbstractContext.hasObjectSchema", () => {
 
-			it( "should return same IRI when absolute and baseURI defined", ():void => {
-				const context:AbstractContext<any, any> = createMock( { uri: "https://example.com" } );
-				const returned:string = context.resolve( "https://example.com/another-thing/a-string" );
-				expect( returned ).toBe( "https://example.com/another-thing/a-string" );
-			} );
-
+		it( "should exists", () => {
+			expect( AbstractContext.prototype.hasObjectSchema ).toBeDefined();
+			expect( AbstractContext.prototype.hasObjectSchema ).toEqual( jasmine.any( Function ) );
 		} );
 
 
-		describe( method( INSTANCE, "hasObjectSchema" ), ():void => {
+		it( "should return false when not existing schema in schema maps", () => {
+			const context:AbstractContext<any, any> = createMock();
 
-			it( hasSignature(
-				"Returns true if there is an ObjectSchema for the specified type.", [
-					{ name: "type", type: "string", description: "The URI of the type to look for its schema." },
-				],
-				{ type: "boolean" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
-				expect( AbstractContext.prototype.hasObjectSchema ).toBeDefined();
-				expect( AbstractContext.prototype.hasObjectSchema ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should return false when not existing schema in schema maps", ():void => {
-				const context:AbstractContext<any, any> = createMock();
-
-				expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( false );
-				expect( context.hasObjectSchema( "ex:MyType" ) ).toBe( false );
-			} );
-
-			it( "should return true when schema with absolute type", ():void => {
-				const context:AbstractContext<any, any> = createMock( {
-					schemasMap: new Map( [ [ "https://example.com/ns#MyType", new DigestedObjectSchema() ] ] ),
-				} );
-
-				expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( true );
-				expect( context.hasObjectSchema( "ex:MyType" ) ).toBe( false );
-			} );
-
-			it( "should return true when prefixed type with defined prefix in general", ():void => {
-				const context:AbstractContext<any, any> = createMock( {
-					generalSchema: createMockDigestedSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
-					schemasMap: new Map( [ [ "https://example.com/ns#MyType", new DigestedObjectSchema() ] ] ),
-				} );
-
-				expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( true );
-				expect( context.hasObjectSchema( "ex:MyType" ) ).toBe( true );
-			} );
-
-			it( "should return true when relative and default vocab schema", ():void => {
-				const context:AbstractContext<any, any> = createMock( {
-					settings: { vocabulary: "https://example.com/ns#" },
-					schemasMap: new Map( [ [ "https://example.com/ns#MyType", new DigestedObjectSchema() ] ] ),
-				} );
-
-				expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( true );
-				expect( context.hasObjectSchema( "MyType" ) ).toBe( true );
-			} );
-
+			expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( false );
+			expect( context.hasObjectSchema( "ex:MyType" ) ).toBe( false );
 		} );
 
-		describe( method( INSTANCE, "getObjectSchema" ), ():void => {
-
-			it( hasSignature(
-				"Returns the ObjectSchema for the specified type", [
-					{ name: "type", type: "string", optional: true, description: "The URI of the type to look for its schema." },
-				],
-				{ type: "CarbonLDP.DigestedObjectSchema", description: "The specified schema to look for. If no schema was found `null` will be returned." }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Returns the general object schema of the context.",
-				{ type: "CarbonLDP.DigestedObjectSchema", description: "The general schema of the context." }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
-				expect( AbstractContext.prototype.getObjectSchema ).toBeDefined();
-				expect( AbstractContext.prototype.getObjectSchema ).toEqual( jasmine.any( Function ) );
+		it( "should return true when schema with absolute type", () => {
+			const context:AbstractContext<any, any> = createMock( {
+				schemasMap: new Map( [ [ "https://example.com/ns#MyType", new DigestedObjectSchema() ] ] ),
 			} );
 
-			it( "should throw error when not existing schema in schema maps", ():void => {
-				const context:AbstractContext<any, any> = createMock();
+			expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( true );
+			expect( context.hasObjectSchema( "ex:MyType" ) ).toBe( false );
+		} );
 
-				expect( () => {
-					context.getObjectSchema( "https://example.com/ns#MyType" );
-				} ).toThrowError( IllegalArgumentError, `"https://example.com/ns#MyType" hasn't an object schema.` );
+		it( "should return true when prefixed type with defined prefix in general", () => {
+			const context:AbstractContext<any, any> = createMock( {
+				generalSchema: createMockDigestedSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
+				schemasMap: new Map( [ [ "https://example.com/ns#MyType", new DigestedObjectSchema() ] ] ),
 			} );
 
-			it( "should return schema with absolute type", ():void => {
-				const schema:DigestedObjectSchema = new DigestedObjectSchema();
-				const context:AbstractContext<any, any> = createMock( {
-					schemasMap: new Map( [ [ "https://example.com/ns#MyType", schema ] ] ),
-				} );
+			expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( true );
+			expect( context.hasObjectSchema( "ex:MyType" ) ).toBe( true );
+		} );
 
-				expect( context.getObjectSchema( "https://example.com/ns#MyType" ) ).toBe( schema );
+		it( "should return true when relative and default vocab schema", () => {
+			const context:AbstractContext<any, any> = createMock( {
+				settings: { vocabulary: "https://example.com/ns#" },
+				schemasMap: new Map( [ [ "https://example.com/ns#MyType", new DigestedObjectSchema() ] ] ),
 			} );
 
-			it( "should return schema when prefixed type with defined prefix in general", ():void => {
-				const schema:DigestedObjectSchema = new DigestedObjectSchema();
-				const context:AbstractContext<any, any> = createMock( {
-					generalSchema: createMockDigestedSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
-					schemasMap: new Map( [ [ "https://example.com/ns#MyType", schema ] ] ),
-				} );
+			expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( true );
+			expect( context.hasObjectSchema( "MyType" ) ).toBe( true );
+		} );
 
-				expect( context.getObjectSchema( "ex:MyType" ) ).toBe( schema );
+	} );
+
+	describe( "AbstractContext.getObjectSchema", () => {
+
+		it( "should exists", () => {
+			expect( AbstractContext.prototype.getObjectSchema ).toBeDefined();
+			expect( AbstractContext.prototype.getObjectSchema ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should throw error when not existing schema in schema maps", () => {
+			const context:AbstractContext<any, any> = createMock();
+
+			expect( () => {
+				context.getObjectSchema( "https://example.com/ns#MyType" );
+			} ).toThrowError( IllegalArgumentError, `"https://example.com/ns#MyType" hasn't an object schema.` );
+		} );
+
+		it( "should return schema with absolute type", () => {
+			const schema:DigestedObjectSchema = new DigestedObjectSchema();
+			const context:AbstractContext<any, any> = createMock( {
+				schemasMap: new Map( [ [ "https://example.com/ns#MyType", schema ] ] ),
 			} );
 
-			it( "should return schema when relative and default vocab schema", ():void => {
-				const schema:DigestedObjectSchema = new DigestedObjectSchema();
-				const context:AbstractContext<any, any> = createMock( {
-					settings: { vocabulary: "https://example.com/ns#" },
-					schemasMap: new Map( [ [ "https://example.com/ns#MyType", schema ] ] ),
-				} );
+			expect( context.getObjectSchema( "https://example.com/ns#MyType" ) ).toBe( schema );
+		} );
 
-				expect( context.getObjectSchema( "https://example.com/ns#MyType" ) ).toBe( schema );
-				expect( context.getObjectSchema( "MyType" ) ).toBe( schema );
+		it( "should return schema when prefixed type with defined prefix in general", () => {
+			const schema:DigestedObjectSchema = new DigestedObjectSchema();
+			const context:AbstractContext<any, any> = createMock( {
+				generalSchema: createMockDigestedSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
+				schemasMap: new Map( [ [ "https://example.com/ns#MyType", schema ] ] ),
 			} );
 
-			it( "should return general schema with base", ():void => {
-				const context:AbstractContext<any, any> = createMock( {
-					generalSchema: createMockDigestedSchema( {
-						prefixes: new Map( [
-							[ "schema", "https://schema.org/" ],
-						] ),
-					} ),
-				} );
+			expect( context.getObjectSchema( "ex:MyType" ) ).toBe( schema );
+		} );
 
-				expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
-					base: "https://example.com/",
+		it( "should return schema when relative and default vocab schema", () => {
+			const schema:DigestedObjectSchema = new DigestedObjectSchema();
+			const context:AbstractContext<any, any> = createMock( {
+				settings: { vocabulary: "https://example.com/ns#" },
+				schemasMap: new Map( [ [ "https://example.com/ns#MyType", schema ] ] ),
+			} );
+
+			expect( context.getObjectSchema( "https://example.com/ns#MyType" ) ).toBe( schema );
+			expect( context.getObjectSchema( "MyType" ) ).toBe( schema );
+		} );
+
+		it( "should return general schema with base", () => {
+			const context:AbstractContext<any, any> = createMock( {
+				generalSchema: createMockDigestedSchema( {
 					prefixes: new Map( [
 						[ "schema", "https://schema.org/" ],
 					] ),
-				} ) );
+				} ),
 			} );
 
-			it( "should not replace base in general schema when already set", ():void => {
-				const context:AbstractContext<any, any> = createMock( {
-					generalSchema: createMockDigestedSchema( {
-						base: "https://not-example.com/",
-						prefixes: new Map( [
-							[ "schema", "https://schema.org/" ],
-						] ),
-					} ),
-				} );
+			expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
+				base: "https://example.com/",
+				prefixes: new Map( [
+					[ "schema", "https://schema.org/" ],
+				] ),
+			} ) );
+		} );
 
-				expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
+		it( "should not replace base in general schema when already set", () => {
+			const context:AbstractContext<any, any> = createMock( {
+				generalSchema: createMockDigestedSchema( {
 					base: "https://not-example.com/",
 					prefixes: new Map( [
 						[ "schema", "https://schema.org/" ],
 					] ),
-				} ) );
+				} ),
 			} );
 
-			it( "should return general schema with vocab when setting set", ():void => {
-				const context:AbstractContext<any, any> = createMock( {
-					settings: { vocabulary: "https://example.com/ns#" },
-					generalSchema: createMockDigestedSchema( {
-						prefixes: new Map( [
-							[ "schema", "https://schema.org/" ],
-						] ),
-					} ),
-				} );
+			expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
+				base: "https://not-example.com/",
+				prefixes: new Map( [
+					[ "schema", "https://schema.org/" ],
+				] ),
+			} ) );
+		} );
 
-				expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
-					base: "https://example.com/",
-					vocab: "https://example.com/ns#",
+		it( "should return general schema with vocab when setting set", () => {
+			const context:AbstractContext<any, any> = createMock( {
+				settings: { vocabulary: "https://example.com/ns#" },
+				generalSchema: createMockDigestedSchema( {
 					prefixes: new Map( [
 						[ "schema", "https://schema.org/" ],
 					] ),
-				} ) );
+				} ),
 			} );
 
-			it( "should not replace vocab in general schema when already set and setting set", ():void => {
-				const context:AbstractContext<any, any> = createMock( {
-					settings: { vocabulary: "https://example.com/ns#" },
-					generalSchema: createMockDigestedSchema( {
-						vocab: "https://example.com/another-ns#",
-						prefixes: new Map( [
-							[ "schema", "https://schema.org/" ],
-						] ),
-					} ),
-				} );
+			expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
+				base: "https://example.com/",
+				vocab: "https://example.com/ns#",
+				prefixes: new Map( [
+					[ "schema", "https://schema.org/" ],
+				] ),
+			} ) );
+		} );
 
-				expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
-					base: "https://example.com/",
+		it( "should not replace vocab in general schema when already set and setting set", () => {
+			const context:AbstractContext<any, any> = createMock( {
+				settings: { vocabulary: "https://example.com/ns#" },
+				generalSchema: createMockDigestedSchema( {
 					vocab: "https://example.com/another-ns#",
 					prefixes: new Map( [
 						[ "schema", "https://schema.org/" ],
 					] ),
-				} ) );
+				} ),
 			} );
 
+			expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
+				base: "https://example.com/",
+				vocab: "https://example.com/another-ns#",
+				prefixes: new Map( [
+					[ "schema", "https://schema.org/" ],
+				] ),
+			} ) );
 		} );
 
-		describe( method( INSTANCE, "extendObjectSchema" ), ():void => {
+	} );
 
-			it( hasSignature(
-				"Extends the schema for a specified type of Resource.\nIf a schema for the type exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended.", [
-					{ name: "type", type: "string", description: "The URI of the type to extends its schema." },
-					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
-				]
-			), ():void => {} );
+	describe( "AbstractContext.extendObjectSchema", () => {
 
-			it( hasSignature(
-				"Extends the general schema of the current context.\nIf a general schema exists in the parent context, this is duplicated for the current context, but only the first time the schema is extended.", [
-					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
-				]
-			), ():void => {} );
+		it( "should exists", () => {
+			expect( AbstractContext.prototype.extendObjectSchema ).toBeDefined();
+			expect( AbstractContext.prototype.extendObjectSchema ).toEqual( jasmine.any( Function ) );
+		} );
 
-			it( "should exists", ():void => {
-				expect( AbstractContext.prototype.extendObjectSchema ).toBeDefined();
-				expect( AbstractContext.prototype.extendObjectSchema ).toEqual( jasmine.any( Function ) );
+
+		it( "should add when absolute type schema does not exists", () => {
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map();
+			const context:AbstractContext<any, any> = createMock( { schemasMap } );
+
+			context.extendObjectSchema( "https://example.com/ns#Type", {
+				"ex": "https://example.com/ns#",
 			} );
 
-			it( "should add when absolute type schema does not exists", ():void => {
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
-				const context:AbstractContext<any, any> = createMock( { schemasMap } );
+			expect( schemasMap ).toEqual( new Map( [ [
+				"https://example.com/ns#Type",
+				createMockDigestedSchema( {
+					prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ),
+				} ),
+			] ] ) );
+		} );
 
-				context.extendObjectSchema( "https://example.com/ns#Type", {
+		it( "should add when prefixed type schema does not exists", () => {
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map();
+			const context:AbstractContext<any, any> = createMock( {
+				generalSchema: createMockDigestedSchema( {
+					prefixes: new Map( [
+						[ "ex", "https://example.com/ns#" ],
+					] ),
+				} ),
+				schemasMap,
+			} );
+
+			context.extendObjectSchema( "ex:Type", {
+				"schema": "https://schema.org/",
+			} );
+
+			expect( schemasMap ).toEqual( new Map( [ [
+				"https://example.com/ns#Type",
+				createMockDigestedSchema( {
+					prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+				} ),
+			] ] ) );
+		} );
+
+		it( "should add when relative type schema does not exists and vocab is set", () => {
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map();
+			const context:AbstractContext<any, any> = createMock( {
+				settings: { vocabulary: "https://example.com/ns#" },
+				schemasMap,
+			} );
+
+			context.extendObjectSchema( "Type", {
+				"schema": "https://schema.org/",
+			} );
+
+			expect( schemasMap ).toEqual( new Map( [ [
+				"https://example.com/ns#Type",
+				createMockDigestedSchema( {
+					prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+				} ),
+			] ] ) );
+		} );
+
+		it( "should merge when type schema exists", () => {
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
+				[ "https://example.com/ns#Type", createMockDigestedSchema( {
+					prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+				} ) ],
+			] );
+			const context:AbstractContext<any, any> = createMock( { schemasMap } );
+
+			context.extendObjectSchema( "https://example.com/ns#Type", {
+				"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+			} );
+
+			expect( schemasMap ).toEqual( new Map( [ [
+				"https://example.com/ns#Type",
+				createMockDigestedSchema( {
+					prefixes: new Map( [
+						[ "schema", "https://schema.org/" ],
+						[ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" ],
+					] ),
+				} ),
+			] ] ) );
+		} );
+
+
+		it( "should add absolute model schema when does not exists", () => {
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map();
+			const context:AbstractContext<any, any> = createMock( { schemasMap } );
+
+			context.extendObjectSchema( {
+				TYPE: "https://example.com/ns#Type",
+				SCHEMA: {
 					"ex": "https://example.com/ns#",
-				} );
-
-				expect( schemasMap ).toEqual( new Map( [ [
-					"https://example.com/ns#Type",
-					createMockDigestedSchema( {
-						prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ),
-					} ),
-				] ] ) );
+				},
 			} );
 
-			it( "should add when prefixed type schema does not exists", ():void => {
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
-				const context:AbstractContext<any, any> = createMock( {
-					generalSchema: createMockDigestedSchema( {
-						prefixes: new Map( [
-							[ "ex", "https://example.com/ns#" ],
-						] ),
-					} ),
-					schemasMap,
-				} );
+			expect( schemasMap ).toEqual( new Map( [ [
+				"https://example.com/ns#Type",
+				createMockDigestedSchema( {
+					prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ),
+				} ),
+			] ] ) );
+		} );
 
-				context.extendObjectSchema( "ex:Type", {
+		it( "should add prefixed model schema when does not exists", () => {
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map();
+			const context:AbstractContext<any, any> = createMock( {
+				generalSchema: createMockDigestedSchema( {
+					prefixes: new Map( [
+						[ "ex", "https://example.com/ns#" ],
+					] ),
+				} ),
+				schemasMap,
+			} );
+
+			context.extendObjectSchema( {
+				TYPE: "ex:Type",
+				SCHEMA: {
 					"schema": "https://schema.org/",
-				} );
-
-				expect( schemasMap ).toEqual( new Map( [ [
-					"https://example.com/ns#Type",
-					createMockDigestedSchema( {
-						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
-					} ),
-				] ] ) );
+				},
 			} );
 
-			it( "should add when relative type schema does not exists and vocab is set", ():void => {
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
-				const context:AbstractContext<any, any> = createMock( {
-					settings: { vocabulary: "https://example.com/ns#" },
-					schemasMap,
-				} );
+			expect( schemasMap ).toEqual( new Map( [ [
+				"https://example.com/ns#Type",
+				createMockDigestedSchema( {
+					prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+				} ),
+			] ] ) );
+		} );
 
-				context.extendObjectSchema( "Type", {
+		it( "should add relative model schema when does not exists and vocab is set", () => {
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map();
+			const context:AbstractContext<any, any> = createMock( {
+				settings: { vocabulary: "https://example.com/ns#" },
+				schemasMap,
+			} );
+
+			context.extendObjectSchema( {
+				TYPE: "Type",
+				SCHEMA: {
 					"schema": "https://schema.org/",
-				} );
-
-				expect( schemasMap ).toEqual( new Map( [ [
-					"https://example.com/ns#Type",
-					createMockDigestedSchema( {
-						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
-					} ),
-				] ] ) );
+				},
 			} );
 
-			it( "should merge when type schema exists", ():void => {
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
-					[ "https://example.com/ns#Type", createMockDigestedSchema( {
-						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
-					} ) ],
-				] );
-				const context:AbstractContext<any, any> = createMock( { schemasMap } );
+			expect( schemasMap ).toEqual( new Map( [ [
+				"https://example.com/ns#Type",
+				createMockDigestedSchema( {
+					prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+				} ),
+			] ] ) );
+		} );
 
-				context.extendObjectSchema( "https://example.com/ns#Type", {
+		it( "should merge when type schema exists", () => {
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
+				[ "https://example.com/ns#Type", createMockDigestedSchema( {
+					prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+				} ) ],
+			] );
+			const context:AbstractContext<any, any> = createMock( { schemasMap } );
+
+			context.extendObjectSchema( {
+				TYPE: "https://example.com/ns#Type",
+				SCHEMA: {
 					"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-				} );
-
-				expect( schemasMap ).toEqual( new Map( [ [
-					"https://example.com/ns#Type",
-					createMockDigestedSchema( {
-						prefixes: new Map( [
-							[ "schema", "https://schema.org/" ],
-							[ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" ],
-						] ),
-					} ),
-				] ] ) );
+				},
 			} );
 
+			expect( schemasMap ).toEqual( new Map( [ [
+				"https://example.com/ns#Type",
+				createMockDigestedSchema( {
+					prefixes: new Map( [
+						[ "schema", "https://schema.org/" ],
+						[ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" ],
+					] ),
+				} ),
+			] ] ) );
+		} );
 
-			it( "should add absolute model schema when does not exists", ():void => {
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
-				const context:AbstractContext<any, any> = createMock( { schemasMap } );
 
-				context.extendObjectSchema( {
-					TYPE: "https://example.com/ns#Type",
-					SCHEMA: {
-						"ex": "https://example.com/ns#",
-					},
-				} );
-
-				expect( schemasMap ).toEqual( new Map( [ [
-					"https://example.com/ns#Type",
-					createMockDigestedSchema( {
-						prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ),
-					} ),
-				] ] ) );
+		it( "should merge with general schema", () => {
+			const generalSchema:DigestedObjectSchema = createMockDigestedSchema( {
+				prefixes: new Map( [
+					[ "ex", "https://example.com/ns#" ],
+				] ),
+			} );
+			const context:AbstractContext<any, any> = createMock( {
+				generalSchema,
 			} );
 
-			it( "should add prefixed model schema when does not exists", ():void => {
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
-				const context:AbstractContext<any, any> = createMock( {
-					generalSchema: createMockDigestedSchema( {
-						prefixes: new Map( [
-							[ "ex", "https://example.com/ns#" ],
-						] ),
-					} ),
-					schemasMap,
-				} );
-
-				context.extendObjectSchema( {
-					TYPE: "ex:Type",
-					SCHEMA: {
-						"schema": "https://schema.org/",
-					},
-				} );
-
-				expect( schemasMap ).toEqual( new Map( [ [
-					"https://example.com/ns#Type",
-					createMockDigestedSchema( {
-						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
-					} ),
-				] ] ) );
+			context.extendObjectSchema( {
+				"schema": "https://schema.org/",
 			} );
 
-			it( "should add relative model schema when does not exists and vocab is set", ():void => {
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
-				const context:AbstractContext<any, any> = createMock( {
-					settings: { vocabulary: "https://example.com/ns#" },
-					schemasMap,
-				} );
+			expect( generalSchema ).toEqual( createMockDigestedSchema( {
+				prefixes: new Map( [
+					[ "ex", "https://example.com/ns#" ],
+					[ "schema", "https://schema.org/" ],
+				] ),
+			} ) );
+		} );
 
-				context.extendObjectSchema( {
-					TYPE: "Type",
-					SCHEMA: {
-						"schema": "https://schema.org/",
-					},
-				} );
+		it( "should merge with parent schema when no local schema", () => {
+			const parentSchema:DigestedObjectSchema = createMockDigestedSchema( {
+				prefixes: new Map( [
+					[ "ex", "https://example.com/ns#" ],
+				] ),
+			} );
+			const parentContext:AbstractContext<any, any> = createMock( { generalSchema: parentSchema } );
 
-				expect( schemasMap ).toEqual( new Map( [ [
-					"https://example.com/ns#Type",
-					createMockDigestedSchema( {
-						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
-					} ),
-				] ] ) );
+			const context:AbstractContext<any, any, any> = createMock( { parentContext } );
+			context.extendObjectSchema( {
+				"schema": "https://schema.org/",
 			} );
 
-			it( "should merge when type schema exists", ():void => {
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
-					[ "https://example.com/ns#Type", createMockDigestedSchema( {
-						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
-					} ) ],
-				] );
-				const context:AbstractContext<any, any> = createMock( { schemasMap } );
+			expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
+				base: "https://example.com/",
+				prefixes: new Map( [
+					[ "ex", "https://example.com/ns#" ],
+					[ "schema", "https://schema.org/" ],
+				] ),
+			} ) );
+		} );
 
-				context.extendObjectSchema( {
+		it( "should not affect merge to parent schema when no local schema", () => {
+			const parentSchema:DigestedObjectSchema = createMockDigestedSchema( {
+				prefixes: new Map( [
+					[ "ex", "https://example.com/ns#" ],
+				] ),
+			} );
+			const parentContext:AbstractContext<any, any> = createMock( { generalSchema: parentSchema } );
+
+			const context:AbstractContext<any, any, any> = createMock( { parentContext } );
+			context.extendObjectSchema( {
+				"schema": "https://schema.org/",
+			} );
+
+			expect( parentSchema ).toEqual( createMockDigestedSchema( {
+				prefixes: new Map( [
+					[ "ex", "https://example.com/ns#" ],
+				] ),
+			} ) );
+		} );
+
+
+		it( "should merge general schema and model schema", () => {
+			const generalSchema:DigestedObjectSchema = createMockDigestedSchema();
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map();
+
+			const context:AbstractContext<any, any> = createMock( { generalSchema, schemasMap } );
+
+
+			context.extendObjectSchema( [
+				{
+					"schema": "https://schema.org/",
+				},
+				{
 					TYPE: "https://example.com/ns#Type",
 					SCHEMA: {
 						"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
 					},
-				} );
-
-				expect( schemasMap ).toEqual( new Map( [ [
-					"https://example.com/ns#Type",
-					createMockDigestedSchema( {
-						prefixes: new Map( [
-							[ "schema", "https://schema.org/" ],
-							[ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" ],
-						] ),
-					} ),
-				] ] ) );
-			} );
+				},
+			] );
 
 
-			it( "should merge with general schema", ():void => {
-				const generalSchema:DigestedObjectSchema = createMockDigestedSchema( {
+			expect( generalSchema ).toEqual( createMockDigestedSchema( {
+				prefixes: new Map( [
+					[ "schema", "https://schema.org/" ],
+				] ),
+			} ) );
+
+			expect( schemasMap ).toEqual( new Map( [ [
+				"https://example.com/ns#Type",
+				createMockDigestedSchema( {
 					prefixes: new Map( [
-						[ "ex", "https://example.com/ns#" ],
+						[ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" ],
 					] ),
-				} );
-				const context:AbstractContext<any, any> = createMock( {
-					generalSchema,
-				} );
-
-				context.extendObjectSchema( {
-					"schema": "https://schema.org/",
-				} );
-
-				expect( generalSchema ).toEqual( createMockDigestedSchema( {
-					prefixes: new Map( [
-						[ "ex", "https://example.com/ns#" ],
-						[ "schema", "https://schema.org/" ],
-					] ),
-				} ) );
-			} );
-
-			it( "should merge with parent schema when no local schema", ():void => {
-				const parentSchema:DigestedObjectSchema = createMockDigestedSchema( {
-					prefixes: new Map( [
-						[ "ex", "https://example.com/ns#" ],
-					] ),
-				} );
-				const parentContext:AbstractContext<any, any> = createMock( { generalSchema: parentSchema } );
-
-				const context:AbstractContext<any, any, any> = createMock( { parentContext } );
-				context.extendObjectSchema( {
-					"schema": "https://schema.org/",
-				} );
-
-				expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
-					base: "https://example.com/",
-					prefixes: new Map( [
-						[ "ex", "https://example.com/ns#" ],
-						[ "schema", "https://schema.org/" ],
-					] ),
-				} ) );
-			} );
-
-			it( "should not affect merge to parent schema when no local schema", ():void => {
-				const parentSchema:DigestedObjectSchema = createMockDigestedSchema( {
-					prefixes: new Map( [
-						[ "ex", "https://example.com/ns#" ],
-					] ),
-				} );
-				const parentContext:AbstractContext<any, any> = createMock( { generalSchema: parentSchema } );
-
-				const context:AbstractContext<any, any, any> = createMock( { parentContext } );
-				context.extendObjectSchema( {
-					"schema": "https://schema.org/",
-				} );
-
-				expect( parentSchema ).toEqual( createMockDigestedSchema( {
-					prefixes: new Map( [
-						[ "ex", "https://example.com/ns#" ],
-					] ),
-				} ) );
-			} );
-
-
-			it( "should merge general schema and model schema", ():void => {
-				const generalSchema:DigestedObjectSchema = createMockDigestedSchema();
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
-
-				const context:AbstractContext<any, any> = createMock( { generalSchema, schemasMap } );
-
-
-				context.extendObjectSchema( [
-					{
-						"schema": "https://schema.org/",
-					},
-					{
-						TYPE: "https://example.com/ns#Type",
-						SCHEMA: {
-							"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-						},
-					},
-				] );
-
-
-				expect( generalSchema ).toEqual( createMockDigestedSchema( {
-					prefixes: new Map( [
-						[ "schema", "https://schema.org/" ],
-					] ),
-				} ) );
-
-				expect( schemasMap ).toEqual( new Map( [ [
-					"https://example.com/ns#Type",
-					createMockDigestedSchema( {
-						prefixes: new Map( [
-							[ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" ],
-						] ),
-					} ),
-				] ] ) );
-			} );
-
+				} ),
+			] ] ) );
 		} );
 
-		describe( method( INSTANCE, "clearObjectSchema" ), ():void => {
+	} );
 
-			it( hasSignature(
-				"Remove the schema of the type specified, or the general schema if no type is provided.", [
-					{ name: "type", type: "string", optional: true, description: "The URI of the type to remove its schema." },
-				]
-			), ():void => {} );
+	describe( "AbstractContext.clearObjectSchema", () => {
 
-			it( "should exists", ():void => {
-				expect( AbstractContext.prototype.clearObjectSchema ).toBeDefined();
-				expect( AbstractContext.prototype.clearObjectSchema ).toEqual( jasmine.any( Function ) );
-			} );
+		it( "should exists", () => {
+			expect( AbstractContext.prototype.clearObjectSchema ).toBeDefined();
+			expect( AbstractContext.prototype.clearObjectSchema ).toEqual( jasmine.any( Function ) );
+		} );
 
-			it( "should remove absolute typed schema", ():void => {
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
-					[ "https://example.com/ns#Type", createMockDigestedSchema() ],
-				] );
-				const context:AbstractContext<any, any> = createMock( { schemasMap } );
 
-				context.clearObjectSchema( "https://example.com/ns#Type" );
-				expect( schemasMap ).toEqual( new Map() );
-			} );
+		it( "should remove absolute typed schema", () => {
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
+				[ "https://example.com/ns#Type", createMockDigestedSchema() ],
+			] );
+			const context:AbstractContext<any, any> = createMock( { schemasMap } );
 
-			it( "should remove prefixed typed schema", ():void => {
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
-					[ "https://example.com/ns#Type", createMockDigestedSchema() ],
-				] );
-				const context:AbstractContext<any, any> = createMock( {
-					generalSchema: createMockDigestedSchema( {
-						prefixes: new Map( [
-							[ "ex", "https://example.com/ns#" ],
-						] ),
-					} ),
-					schemasMap,
-				} );
+			context.clearObjectSchema( "https://example.com/ns#Type" );
+			expect( schemasMap ).toEqual( new Map() );
+		} );
 
-				context.clearObjectSchema( "ex:Type" );
-				expect( schemasMap ).toEqual( new Map() );
-			} );
-
-			it( "should remove relative typed schema with vocab set", ():void => {
-				const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
-					[ "https://example.com/ns#Type", createMockDigestedSchema() ],
-				] );
-				const context:AbstractContext<any, any> = createMock( {
-					settings: { vocabulary: "https://example.com/ns#" },
-					schemasMap,
-				} );
-
-				context.clearObjectSchema( "Type" );
-				expect( schemasMap ).toEqual( new Map() );
-			} );
-
-			it( "should clean general object schema", ():void => {
-				const generalSchema:DigestedObjectSchema = createMockDigestedSchema( {
+		it( "should remove prefixed typed schema", () => {
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
+				[ "https://example.com/ns#Type", createMockDigestedSchema() ],
+			] );
+			const context:AbstractContext<any, any> = createMock( {
+				generalSchema: createMockDigestedSchema( {
 					prefixes: new Map( [
 						[ "ex", "https://example.com/ns#" ],
 					] ),
-				} );
-				const context:AbstractContext<any, any> = createMock( { generalSchema } );
-
-				context.clearObjectSchema();
-				expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
-					base: "https://example.com/",
-				} ) );
+				} ),
+				schemasMap,
 			} );
 
+			context.clearObjectSchema( "ex:Type" );
+			expect( schemasMap ).toEqual( new Map() );
+		} );
+
+		it( "should remove relative typed schema with vocab set", () => {
+			const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
+				[ "https://example.com/ns#Type", createMockDigestedSchema() ],
+			] );
+			const context:AbstractContext<any, any> = createMock( {
+				settings: { vocabulary: "https://example.com/ns#" },
+				schemasMap,
+			} );
+
+			context.clearObjectSchema( "Type" );
+			expect( schemasMap ).toEqual( new Map() );
+		} );
+
+		it( "should clean general object schema", () => {
+			const generalSchema:DigestedObjectSchema = createMockDigestedSchema( {
+				prefixes: new Map( [
+					[ "ex", "https://example.com/ns#" ],
+				] ),
+			} );
+			const context:AbstractContext<any, any> = createMock( { generalSchema } );
+
+			context.clearObjectSchema();
+			expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {
+				base: "https://example.com/",
+			} ) );
 		} );
 
 	} );
