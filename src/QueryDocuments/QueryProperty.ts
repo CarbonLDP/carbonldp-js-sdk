@@ -152,6 +152,7 @@ export class QueryProperty implements QueryablePropertyData {
 		return this._addSubProperty( propertyName, {
 			definition,
 			pathBuilderFn: propertyDefinition.path,
+			optional: ! propertyDefinition.required,
 		} );
 	}
 

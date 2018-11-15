@@ -32,6 +32,10 @@ export interface QuerySchemaProperty {
 	 */
 	"@container"?:"@set" | "@list" | "@language";
 	/**
+	 * Flag that indicates if the property is required or optional.
+	 */
+	required?:boolean;
+	/**
 	 * Function to build a sub-query to specify sub-properties or when retrieving multiple resources to filter the resources.
 	 * @param queryBuilder The builder from where to construct the sub-query.
 	 */

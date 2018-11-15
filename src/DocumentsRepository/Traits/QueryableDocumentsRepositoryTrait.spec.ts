@@ -496,6 +496,93 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				);
 			} );
 
+			it( "should send CONSTRUCT query with required properties", async () => {
+				stubRequest( "https://example.com/resource/" );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+					.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": "integer",
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": "string",
+						},
+					} )
+				;
+
+
+				await repository.get( "https://example.com/resource/", _ => _
+					.withType( "Resource" )
+					.properties( {
+						"property1": { "required": true },
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"required": true,
+							"query": __ => __.properties( {
+								"property2": { "required": true },
+								"property3": __.inherit,
+							} ),
+						},
+					} )
+				);
+
+
+				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+				expect( request.params ).toEqual( "" +
+					"PREFIX schema: <https://schema.org/> " +
+					"CONSTRUCT {" +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/resource/>.` +
+
+					" <https://example.com/resource/> a ?document__types;" +
+					"" + ` <${ C.document }> ?document___graph;` +
+					"" + " <https://example.com/ns#property-1> ?document__property1;" +
+					"" + " schema:property-2 ?document__property2." +
+
+					" ?document__property2 a ?document__property2__types;" +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
+					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
+					"" + " schema:property-3 ?document__property2__property3 " +
+
+					"} {" +
+
+					" GRAPH ?document___graph {" +
+					"" + " <https://example.com/resource/> a" +
+					"" + "" + " <https://example.com/ns#Resource>," +
+					"" + "" + " ?document__types" +
+					" }" +
+
+					" GRAPH ?document___graph { <https://example.com/resource/> <https://example.com/ns#property-1> ?document__property1 }" +
+					" FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+
+					" GRAPH ?document___graph { <https://example.com/resource/> schema:property-2 ?document__property2 }" +
+					" OPTIONAL { GRAPH ?document__property2___graph { ?document__property2 a ?document__property2__types } }" +
+
+					" GRAPH ?document__property2___graph { ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2 }" +
+					" FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+
+					" OPTIONAL {" +
+					"" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-3 ?document__property2__property3 }" +
+					"" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					" }" +
+
+					" " +
+					"}"
+				);
+			} );
+
 
 			it( "should return queried document", async () => {
 				stubRequest( "https://example.com/resource/", {
@@ -5244,6 +5331,121 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					"" + "" + " GRAPH ?child__property2___graph { ?child__property2 schema:property-4 ?child__property2__property4 }" +
 					"" + "" + " FILTER( ! isLiteral( ?child__property2__property4 ) )" +
 					"" + " }" +
+					" }" +
+
+					" " +
+					"}"
+				);
+			} );
+
+			it( "should send partial CONSTRUCT query with required properties", async () => {
+				stubRequest( "https://example.com/" );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+						"property4": {
+							"@id": "https://schema.org/property-4",
+							"@type": "@id",
+						},
+					} )
+					.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": "integer",
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": "string",
+						},
+					} )
+				;
+
+
+				await repository.getChildren( "/", _ => _
+					.withType( "Resource" )
+					.properties( {
+						"property1": { "required": true },
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"required": true,
+							"query": __ => __.properties( {
+								"property2": { "required": true },
+								"property3": __.inherit,
+								"property4": __.inherit,
+							} ),
+						},
+					} )
+					.orderBy( "property2" )
+					.limit( 10 )
+					.offset( 5 )
+				);
+
+
+				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+				expect( request.params ).toEqual( "" +
+					"PREFIX schema: <https://schema.org/> " +
+					"CONSTRUCT {" +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?child.` +
+
+					" ?child a ?child__types;" +
+					"" + ` <${ C.document }> ?child___graph;` +
+					"" + " <https://example.com/ns#property-1> ?child__property1;" +
+					"" + " schema:property-2 ?child__property2." +
+
+					" ?child__property2 a ?child__property2__types;" +
+					"" + ` <${ C.document }> ?child__property2___graph;` +
+					"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
+					"" + " schema:property-3 ?child__property2__property3;" +
+					"" + " schema:property-4 ?child__property2__property4 " +
+
+					"} {" +
+					" {" +
+					"" + " SELECT DISTINCT ?child {" +
+					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
+
+					"" + "" + " ?child" +
+					"" + "" +  "" + " a <https://example.com/ns#Resource>;" +
+					"" + "" +  "" + " <https://example.com/ns#property-1> ?child__property1;" +
+					"" + "" +  "" + " schema:property-2 ?child__property2." +
+
+					"" + "" + " ?child__property2" +
+					"" + "" +  "" + " <https://example.com/ns#property-2> ?child__property2__property2" +
+
+					"" + " }" +
+					"" + " ORDER BY ?child__property2" +
+					"" + " LIMIT 10" +
+					"" + " OFFSET 5" +
+					" }" +
+
+					" GRAPH ?child___graph { ?child a ?child__types }" +
+
+					" GRAPH ?child___graph { ?child <https://example.com/ns#property-1> ?child__property1 }" +
+					" FILTER( datatype( ?child__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+
+					" GRAPH ?child___graph { ?child schema:property-2 ?child__property2 }" +
+
+					" OPTIONAL { GRAPH ?child__property2___graph { ?child__property2 a ?child__property2__types } }" +
+
+					" GRAPH ?child__property2___graph { ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2 }" +
+					" FILTER( datatype( ?child__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+
+					" OPTIONAL {" +
+					"" + " GRAPH ?child__property2___graph { ?child__property2 schema:property-3 ?child__property2__property3 }" +
+					"" + " FILTER( datatype( ?child__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " GRAPH ?child__property2___graph { ?child__property2 schema:property-4 ?child__property2__property4 }" +
+					"" + " FILTER( ! isLiteral( ?child__property2__property4 ) )" +
 					" }" +
 
 					" " +
