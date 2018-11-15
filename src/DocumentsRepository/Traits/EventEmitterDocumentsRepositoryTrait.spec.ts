@@ -1,130 +1,36 @@
 import { DocumentsContext } from "../../Context/DocumentsContext";
 
-import { Document } from "../../Document/Document";
-
 import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 
 import { Event } from "../../Messaging/Event";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
-import { ModelPrototype } from "../../Model/ModelPrototype";
 
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../../test/JasmineExtender";
-
-import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
-
-import {
-	EventEmitterDocumentsRepositoryTrait,
-	EventEmitterDocumentsRepositoryTraitFactory
-} from "./EventEmitterDocumentsRepositoryTrait";
+import { EventEmitterDocumentsRepositoryTrait } from "./EventEmitterDocumentsRepositoryTrait";
 
 
-describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRepositoryTrait" ), () => {
+describe( "EventEmitterDocumentsRepositoryTrait", () => {
+
+	it( "should exists", () => {
+		expect( EventEmitterDocumentsRepositoryTrait ).toBeDefined();
+		expect( EventEmitterDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
+	} );
 
 	let context:DocumentsContext;
-	beforeEach( ():void => {
+	beforeEach( () => {
 		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 
-	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTrait",
-		"Documents repository with the implementation for event subscriptions."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.GeneralRepository<CarbonLDP.Document>" ), () => {
-			const target:GeneralRepository<Document> = {} as EventEmitterDocumentsRepositoryTrait;
-			expect( target ).toBeDefined();
-		} );
-
-
-		it( hasProperty(
-			OBLIGATORY,
-			"context",
-			"CarbonLDP.DocumentsContext"
-		), ():void => {
-			const target:EventEmitterDocumentsRepositoryTrait[ "context" ] = {} as DocumentsContext;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[interface]]", () => {
 
 		function createMock():EventEmitterDocumentsRepositoryTrait {
 			return EventEmitterDocumentsRepositoryTrait.decorate( { context } );
 		}
 
-		describe( method( OBLIGATORY, "on" ), ():void => {
+		describe( "EventEmitterDocumentsRepositoryTrait.on", () => {
 
-			it( hasSignature(
-				"Subscribe to the specified uri pattern event notifications.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for its notifications." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to the specified uri pattern event notifications.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for its notifications." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to the specified uri pattern event notifications.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for its notifications." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to the specified uri pattern event notifications.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for its notifications." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to the specified uri pattern event notifications.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for its notifications." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to the specified uri pattern event notifications.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event | string", description: "The event to subscribe for its notifications." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.on ).toBeDefined();
@@ -132,7 +38,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			} );
 
 
-			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
+			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ) => {
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
@@ -145,7 +51,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 				done();
 			} );
 
-			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
+			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ) => {
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
@@ -160,69 +66,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 		} );
 
-		describe( method( OBLIGATORY, "off" ), ():void => {
+		describe( "EventEmitterDocumentsRepositoryTrait.off", () => {
 
-			it( hasSignature(
-				"Remove the subscription specified by the uri pattern, event and onEvent callback provided.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event of the subscription to remove." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Remove the subscription specified by the uri pattern, event and onEvent callback provided.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event of the subscription to remove." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Remove the subscription specified by the uri pattern, event and onEvent callback provided.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event of the subscription to remove." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Remove the subscription specified by the uri pattern, event and onEvent callback provided.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event of the subscription to remove." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Remove the subscription specified by the uri pattern, event and onEvent callback provided.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event of the subscription to remove." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Remove the subscription specified by the uri pattern, event and onEvent callback provided.",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event | string", description: "The event of the subscription to remove." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to unsubscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
-				]
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.off ).toBeDefined();
@@ -230,7 +76,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			} );
 
 
-			it( "should unsubscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
+			it( "should unsubscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ) => {
 				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
@@ -243,7 +89,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 				done();
 			} );
 
-			it( "should unsubscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
+			it( "should unsubscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ) => {
 				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
@@ -258,69 +104,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 		} );
 
-		describe( method( OBLIGATORY, "one" ), ():void => {
+		describe( "EventEmitterDocumentsRepositoryTrait.one", () => {
 
-			it( hasSignature(
-				"Subscribe to only one notification to the uri pattern and event provided",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for one notification." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to only one notification to the uri pattern and event provided",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for one notification." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to only one notification to the uri pattern and event provided",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for one notification." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to only one notification to the uri pattern and event provided",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for one notification." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to only one notification to the uri pattern and event provided",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for one notification." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to only one notification to the uri pattern and event provided",
-				[
-					{ name: "event", type: "CarbonLDP.Messaging.Event | string", description: "The event to subscribe for one notification." },
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.one ).toBeDefined();
@@ -328,7 +114,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			} );
 
 
-			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
+			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ) => {
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
@@ -344,7 +130,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 				done();
 			} );
 
-			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
+			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ) => {
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
@@ -361,7 +147,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			} );
 
 
-			it( "should call user onEvent after message", ( done:DoneFn ):void => {
+			it( "should call user onEvent after message", ( done:DoneFn ) => {
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 
@@ -381,7 +167,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 			} );
 
 
-			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
+			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ) => {
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
 
@@ -399,7 +185,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 				done();
 			} );
 
-			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
+			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ) => {
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
 
@@ -421,18 +207,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 		} );
 
 
-		describe( method( OBLIGATORY, "onChildCreated" ), ():void => {
+		describe( "EventEmitterDocumentsRepositoryTrait.onChildCreated", () => {
 
-			it( hasSignature(
-				"Subscribe to the `CarbonLDP.Messaging.Event.CHILD_CREATED` event notifications for the uri pattern specified.",
-				[
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreatedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.onChildCreated ).toBeDefined();
@@ -453,18 +230,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 		} );
 
-		describe( method( OBLIGATORY, "onDocumentModified" ), ():void => {
+		describe( "EventEmitterDocumentsRepositoryTrait.onDocumentModified", () => {
 
-			it( hasSignature(
-				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the uri pattern specified.",
-				[
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModifiedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.onDocumentModified ).toBeDefined();
@@ -485,18 +253,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 		} );
 
-		describe( method( OBLIGATORY, "onDocumentDeleted" ), ():void => {
+		describe( "EventEmitterDocumentsRepositoryTrait.onDocumentDeleted", () => {
 
-			it( hasSignature(
-				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_DELETED` event notifications for the uri pattern specified.",
-				[
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeletedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.onDocumentDeleted ).toBeDefined();
@@ -517,18 +276,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 		} );
 
-		describe( method( OBLIGATORY, "onMemberAdded" ), ():void => {
+		describe( "EventEmitterDocumentsRepositoryTrait.onMemberAdded", () => {
 
-			it( hasSignature(
-				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_ADDED` event notifications for the uri pattern specified.",
-				[
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAddedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.onMemberAdded ).toBeDefined();
@@ -549,19 +299,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 		} );
 
-		describe( method( OBLIGATORY, "onMemberRemoved" ), ():void => {
+		describe( "EventEmitterDocumentsRepositoryTrait.onMemberRemoved", () => {
 
-			it( hasSignature(
-				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_REMOVED` event notifications for the uri pattern specified.",
-				[
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemovedEvent ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.onMemberRemoved ).toBeDefined();
@@ -584,25 +324,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTraitFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTrait` objects."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTrait, CarbonLDP.GeneralRepository<CarbonLDP.Document>" ), () => {
-			const target:ModelPrototype<EventEmitterDocumentsRepositoryTrait, GeneralRepository<Document>> = {} as EventEmitterDocumentsRepositoryTraitFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTrait<any>, CarbonLDP.BaseDocumentsRepository>" ), () => {
-			const target:ModelDecorator<EventEmitterDocumentsRepositoryTrait, BaseDocumentsRepository> = {} as EventEmitterDocumentsRepositoryTraitFactory;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[factory]]", () => {
 
 		describe( "EventEmitterDocumentsRepositoryTrait.isDecorated", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( EventEmitterDocumentsRepositoryTrait.isDecorated ).toBeDefined();
 				expect( EventEmitterDocumentsRepositoryTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -620,7 +346,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 
 		describe( "EventEmitterDocumentsRepositoryTrait.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( EventEmitterDocumentsRepositoryTrait.decorate ).toBeDefined();
 				expect( EventEmitterDocumentsRepositoryTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -655,19 +381,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRep
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"EventEmitterDocumentsRepositoryTrait",
-		"CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTraitFactory"
-	), () => {
-
-		it( "should exists", ():void => {
-			expect( EventEmitterDocumentsRepositoryTrait ).toBeDefined();
-			expect( EventEmitterDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );
