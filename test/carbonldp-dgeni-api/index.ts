@@ -13,7 +13,7 @@ import { generics } from "./model-tags/generics";
 import HandleBars from "./packages/handlebars";
 // Processors
 import normalizeDocs from "./processors/normalizeDocs";
-import oldDocsTree from "./processors/old-docs-tree";
+import oldDocsTree from "./processors/oldDocsTree";
 // Services
 import getLinkInfo from "./services/getLinkInfo";
 import resolveUrl from "./services/resolveUrl";
