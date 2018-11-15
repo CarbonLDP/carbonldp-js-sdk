@@ -52,7 +52,7 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			requestOptions = requestOptions ? requestOptions : {};
-			RequestUtils.setAcceptHeader( "application/ld+json", requestOptions! );
+			RequestUtils.setAcceptHeader( "application/ld+json; q=0.9", requestOptions! );
 
 			return SPARQLService
 				.executeASKQuery( url, askQuery, requestOptions )
@@ -65,7 +65,7 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			requestOptions = requestOptions ? requestOptions : {};
-			RequestUtils.setAcceptHeader( "application/ld+json", requestOptions! );
+			RequestUtils.setAcceptHeader( "application/ld+json; q=0.9", requestOptions! );
 
 			return SPARQLService
 				.executeSELECTQuery<T>( url, selectQuery, this.context.registry, requestOptions )

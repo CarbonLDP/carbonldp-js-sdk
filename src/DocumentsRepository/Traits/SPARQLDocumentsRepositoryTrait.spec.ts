@@ -314,7 +314,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json, application/sparql-results+json",
+					"accept": "application/ld+json; q=0.9, application/sparql-results+json",
 					"content-type": "application/sparql-query",
 				} );
 			} );
@@ -485,7 +485,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json, application/sparql-results+json",
+					"accept": "application/ld+json; q=0.9, application/sparql-results+json",
 					"content-type": "application/sparql-query",
 				} );
 			} );
