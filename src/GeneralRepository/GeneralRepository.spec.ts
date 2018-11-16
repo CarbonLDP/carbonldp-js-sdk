@@ -5,77 +5,38 @@ import { Context } from "../Context/Context";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelFactory } from "../Model/ModelFactory";
-import { ModelPrototype } from "../Model/ModelPrototype";
-
-import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
 
 import { Repository } from "../Repository/Repository";
 import { ResolvablePointer } from "../Repository/ResolvablePointer";
 
-import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
-
 import { BaseGeneralRepository } from "./BaseGeneralRepository";
-import { GeneralRepository, GeneralRepositoryFactory } from "./GeneralRepository";
+import { GeneralRepository } from "./GeneralRepository";
 
 
-describe( module( "carbonldp/GeneralRepository" ), () => {
+describe( "GeneralRepository", () => {
+
+	it( "should exists", () => {
+		expect( GeneralRepository ).toBeDefined();
+		expect( GeneralRepository ).toEqual( jasmine.any( Object ) );
+	} );
 
 	let context:Context<ResolvablePointer & RegisteredPointer>;
-	beforeEach( ():void => {
+	beforeEach( () => {
 		context = createMockContext();
 	} );
 
 
-	describe( interfaze(
-		"CarbonLDP.GeneralRepository",
-		[ "MODEL extends ResolvablePointer = ResolvablePointer" ],
-		"Repository used by a context."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Repository<MODEL>" ), () => {
-			const target:Repository<ResolvablePointer> = {} as GeneralRepository<ResolvablePointer>;
-			expect( target ).toBeDefined();
-		} );
-
-
-		it( hasProperty(
-			OBLIGATORY,
-			"context",
-			"CarbonLDP.Context<MODEL & CarbonLDP.RegisteredPointer, MODEL>"
-		), ():void => {
-			const target:GeneralRepository<ResolvablePointer>[ "context" ] = {} as Context<ResolvablePointer & RegisteredPointer>;
-			expect( target ).toBeDefined();
-		} );
+	describe( "[[interface]]", () => {
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.GeneralRepositoryFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.GeneralRepository` objects."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.GeneralRepository, CarbonLDP.Repository & CarbonLDP.ObjectSchemaResolver>" ), () => {
-			const target:ModelPrototype<GeneralRepository, Repository & ObjectSchemaResolver> = {} as GeneralRepositoryFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.GeneralRepository<any>, CarbonLDP.BaseGeneralRepository>" ), () => {
-			const target:ModelDecorator<GeneralRepository, BaseGeneralRepository> = {} as GeneralRepositoryFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.GeneralRepository<any>, CarbonLDP.BaseGeneralRepository>" ), () => {
-			const target:ModelFactory<GeneralRepository, BaseGeneralRepository> = {} as GeneralRepositoryFactory;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[factory]]", () => {
 
 		describe( "GeneralRepository.isDecorated", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( GeneralRepository.isDecorated ).toBeDefined();
 				expect( GeneralRepository.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -93,7 +54,7 @@ describe( module( "carbonldp/GeneralRepository" ), () => {
 
 		describe( "GeneralRepository.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( GeneralRepository.decorate ).toBeDefined();
 				expect( GeneralRepository.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -139,7 +100,7 @@ describe( module( "carbonldp/GeneralRepository" ), () => {
 
 		describe( "GeneralRepository.create", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( GeneralRepository.create ).toBeDefined();
 				expect( GeneralRepository.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -165,7 +126,7 @@ describe( module( "carbonldp/GeneralRepository" ), () => {
 
 		describe( "GeneralRepository.createFrom", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( GeneralRepository.createFrom ).toBeDefined();
 				expect( GeneralRepository.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
@@ -187,19 +148,6 @@ describe( module( "carbonldp/GeneralRepository" ), () => {
 				expect( returned ).toBe( object );
 			} );
 
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"GeneralRepository",
-		"CarbonLDP.GeneralRepositoryFactory"
-	), () => {
-
-		it( "should exists", ():void => {
-			expect( GeneralRepository ).toBeDefined();
-			expect( GeneralRepository ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );
