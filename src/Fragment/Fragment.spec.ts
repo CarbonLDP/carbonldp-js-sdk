@@ -3,72 +3,32 @@ import { Document } from "../Document/Document";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelFactory } from "../Model/ModelFactory";
-import { ModelPrototype } from "../Model/ModelPrototype";
 
 import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
 
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-	OPTIONAL,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
-
-import { BaseResolvableFragment } from "./BaseResolvableFragment";
-import { Fragment, FragmentFactory } from "./Fragment";
+import { Fragment } from "./Fragment";
 import { TransientFragment } from "./TransientFragment";
 
-describe( module( "carbonldp/Fragment" ), ():void => {
 
-	describe( interfaze(
-		"CarbonLDP.Fragment",
-		"Interface that represents a persisted fragment of a persisted document."
-	), ():void => {
+describe( "Fragment", () => {
 
-		it( extendsClass( "CarbonLDP.TransientFragment" ), ():void => {
-			const target:TransientFragment = {} as Fragment;
-			expect( target ).toBeDefined();
-		} );
+	it( "should exists", () => {
+		expect( Fragment ).toBeDefined();
+		expect( Fragment ).toEqual( jasmine.any( Object ) );
+	} );
 
-		it( extendsClass( "CarbonLDP.QueryDocuments.QueryablePointer" ), ():void => {
-			const target:QueryablePointer = {} as Fragment;
-			expect( target ).toBeDefined();
-		} );
+
+	describe( "[[interface]]", () => {
 
 		let $registry:Document;
 		let fragment:Fragment;
-		beforeEach( ():void => {
+		beforeEach( () => {
 			$registry = Document.decorate( { $registry: null, $repository: null } );
 			fragment = Fragment
 				.decorate( { $registry } );
 		} );
 
-		it( hasProperty(
-			OPTIONAL,
-			"$registry",
-			"CarbonLDP.Document",
-			"The registry where the fragment belongs to."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"$document",
-			"CarbonLDP.Document",
-			"The document where the fragment belongs to."
-		), ():void => {} );
-
-		describe( property(
-			OBLIGATORY,
-			"$repository",
-			"CarbonLDP.Document",
-			"The repository associated where the fragment can be resolved with."
-		), ():void => {
+		describe( "Fragment.$repository", () => {
 
 			it( "should be the $registry", () => {
 				expect( fragment.$repository ).toBe( fragment.$registry );
@@ -100,30 +60,11 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.FragmentFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Fragment` object."
-	), ():void => {
+	describe( "[[factory]]", () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Fragment, CarbonLDP.TransientFragment & CarbonLDP.QueryDocuments.QueryablePointer>" ), () => {
-			const target:ModelPrototype<Fragment, TransientFragment & QueryablePointer> = {} as FragmentFactory;
-			expect( target ).toBeDefined();
-		} );
+		describe( "Fragment.isDecorated", () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Fragment, CarbonLDP.BaseResolvableFragment>" ), () => {
-			const target:ModelDecorator<Fragment, BaseResolvableFragment> = {} as FragmentFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.Fragment, CarbonLDP.BaseResolvableFragment>" ), () => {
-			const target:ModelFactory<Fragment, BaseResolvableFragment> = {} as FragmentFactory;
-			expect( target ).toBeDefined();
-		} );
-
-
-		describe( "Fragment.isDecorated", ():void => {
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( Fragment.isDecorated ).toBeDefined();
 				expect( Fragment.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -140,15 +81,15 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 		} );
 
-		describe( "Fragment.decorate", ():void => {
+		describe( "Fragment.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( Fragment.decorate ).toBeDefined();
 				expect( Fragment.decorate ).toEqual( jasmine.any( Function ) );
 			} );
 
 			let $registry:Document;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				$registry = Document.decorate( { $registry: null, $repository: null } );
 			} );
 
@@ -178,20 +119,6 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 				} ).toThrowError( IllegalArgumentError, `Property "$registry" is required.` );
 			} );
 
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"Fragment",
-		"CarbonLDP.FragmentFactory",
-		"Constant that implements the `CarbonLDP.FragmentFactory` interface."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( Fragment ).toBeDefined();
-			expect( Fragment ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );
