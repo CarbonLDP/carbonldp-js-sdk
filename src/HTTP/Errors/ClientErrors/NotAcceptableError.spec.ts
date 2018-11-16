@@ -1,102 +1,52 @@
-import {
-	clazz,
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-	STATIC,
-} from "../../../test/JasmineExtender";
 import { RequestService } from "../../Request";
 import { Response } from "../../Response";
+
 import { HTTPError } from "../HTTPError";
-import * as Utils from "./../../../Utils";
 
-import * as NotAcceptableError from "./NotAcceptableError";
+import { NotAcceptableError } from "./NotAcceptableError";
 
-describe( module( "carbonldp/HTTP/Errors/ClientErrors/NotAcceptableError" ), ():void => {
 
-	it( isDefined(), ():void => {
+describe( "NotAcceptableError", () => {
+
+	it( "should exists", () => {
 		expect( NotAcceptableError ).toBeDefined();
-		expect( NotAcceptableError ).toEqual( jasmine.any( Object ) );
+		expect( NotAcceptableError ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.HTTP.Errors.NotAcceptableError",
-		"Error class to indicate that the server cannot respond with the data type specified by the accept header of the request."
-	), ():void => {
+	let response:Response;
+	beforeAll( ( done ) => {
+		jasmine.Ajax.install();
+		jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
+			"status": 200,
+			"responseText": "A response",
+		} );
 
-		let response:Response;
-
-		beforeAll( ( done:{ ():void, fail:() => void } ) => {
-			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
-				"status": 200,
-				"responseText": "A response",
-			} );
-
-			RequestService.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+		RequestService
+			.send( "GET", "http://example.com/request/" )
+			.then( ( _response ) => {
 				response = _response;
 				done();
-			} ).catch( done.fail );
+			} )
+			.catch( done.fail );
+	} );
 
-		} );
+	afterAll( () => {
+		jasmine.Ajax.uninstall();
+	} );
 
-		afterAll( () => {
-			jasmine.Ajax.uninstall();
-		} );
 
-		it( isDefined(), ():void => {
-			expect( NotAcceptableError.NotAcceptableError ).toBeDefined();
-			expect( Utils.isFunction( NotAcceptableError.NotAcceptableError ) ).toBe( true );
-		} );
+	it( "should extend from HTTError", () => {
+		const error:NotAcceptableError = new NotAcceptableError( "Message of the error", response );
+		expect( error ).toEqual( jasmine.any( HTTPError ) );
+	} );
 
-		it( extendsClass(
-			"CarbonLDP.HTTP.Errors.HTTPError"
-		), ():void => {
-			let error:NotAcceptableError.NotAcceptableError = new NotAcceptableError.NotAcceptableError( "Message of the error", response );
+	it( "should have NotAcceptableError as name", () => {
+		const error:NotAcceptableError = new NotAcceptableError( "The message", response );
+		expect( error.name ).toEqual( "NotAcceptableError" );
+	} );
 
-			expect( error instanceof HTTPError ).toBe( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let error:NotAcceptableError.NotAcceptableError = new NotAcceptableError.NotAcceptableError( "Message of the error", response );
-
-			expect( error.toString ).toBeDefined();
-			expect( Utils.isFunction( error.toString ) );
-
-			expect( error.toString() ).toBe( "NotAcceptableError: Message of the error" );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"name",
-			"string"
-		), ():void => {
-			let error:NotAcceptableError.NotAcceptableError = new NotAcceptableError.NotAcceptableError( "Message of the error", response );
-
-			expect( error.name ).toBeDefined();
-			expect( Utils.isString( error.name ) ).toBe( true );
-
-			expect( error.name ).toBe( "NotAcceptableError" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"statusCode",
-			"number"
-		), ():void => {
-			expect( NotAcceptableError.NotAcceptableError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( NotAcceptableError.NotAcceptableError.statusCode ) );
-
-			expect( NotAcceptableError.NotAcceptableError.statusCode ).toBe( 406 );
-		} );
-
+	it( "should have statusCode as `406`", () => {
+		expect( NotAcceptableError.statusCode ).toBe( 406 );
 	} );
 
 } );

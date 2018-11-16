@@ -1,102 +1,52 @@
-import {
-	clazz,
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-	STATIC,
-} from "../../../test/JasmineExtender";
 import { RequestService } from "../../Request";
 import { Response } from "../../Response";
+
 import { HTTPError } from "../HTTPError";
-import * as Utils from "./../../../Utils";
 
-import * as MethodNotAllowedError from "./MethodNotAllowedError";
+import { MethodNotAllowedError } from "./MethodNotAllowedError";
 
-describe( module( "carbonldp/HTTP/Errors/ClientErrors/MethodNotAllowedError" ), ():void => {
 
-	it( isDefined(), ():void => {
+describe( "MethodNotAllowedError", () => {
+
+	it( "should exists", () => {
 		expect( MethodNotAllowedError ).toBeDefined();
-		expect( MethodNotAllowedError ).toEqual( jasmine.any( Object ) );
+		expect( MethodNotAllowedError ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.HTTP.Errors.MethodNotAllowedError",
-		"Error class to indicate that the method used in the request is not allowed for that URI."
-	), ():void => {
+	let response:Response;
+	beforeAll( ( done ) => {
+		jasmine.Ajax.install();
+		jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
+			"status": 200,
+			"responseText": "A response",
+		} );
 
-		let response:Response;
-
-		beforeAll( ( done:{ ():void, fail:() => void } ) => {
-			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
-				"status": 200,
-				"responseText": "A response",
-			} );
-
-			RequestService.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+		RequestService
+			.send( "GET", "http://example.com/request/" )
+			.then( ( _response ) => {
 				response = _response;
 				done();
-			} ).catch( done.fail );
+			} )
+			.catch( done.fail );
+	} );
 
-		} );
+	afterAll( () => {
+		jasmine.Ajax.uninstall();
+	} );
 
-		afterAll( () => {
-			jasmine.Ajax.uninstall();
-		} );
 
-		it( isDefined(), ():void => {
-			expect( MethodNotAllowedError.MethodNotAllowedError ).toBeDefined();
-			expect( Utils.isFunction( MethodNotAllowedError.MethodNotAllowedError ) ).toBe( true );
-		} );
+	it( "should extend from HTTError", () => {
+		const error:MethodNotAllowedError = new MethodNotAllowedError( "Message of the error", response );
+		expect( error ).toEqual( jasmine.any( HTTPError ) );
+	} );
 
-		it( extendsClass(
-			"CarbonLDP.HTTP.Errors.HTTPError"
-		), ():void => {
-			let error:MethodNotAllowedError.MethodNotAllowedError = new MethodNotAllowedError.MethodNotAllowedError( "Message of the error", response );
+	it( "should have MethodNotAllowedError as name", () => {
+		const error:MethodNotAllowedError = new MethodNotAllowedError( "The message", response );
+		expect( error.name ).toEqual( "MethodNotAllowedError" );
+	} );
 
-			expect( error instanceof HTTPError ).toBe( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let error:MethodNotAllowedError.MethodNotAllowedError = new MethodNotAllowedError.MethodNotAllowedError( "Message of the error", response );
-
-			expect( error.toString ).toBeDefined();
-			expect( Utils.isFunction( error.toString ) );
-
-			expect( error.toString() ).toBe( "MethodNotAllowedError: Message of the error" );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"name",
-			"string"
-		), ():void => {
-			let error:MethodNotAllowedError.MethodNotAllowedError = new MethodNotAllowedError.MethodNotAllowedError( "Message of the error", response );
-
-			expect( error.name ).toBeDefined();
-			expect( Utils.isString( error.name ) ).toBe( true );
-
-			expect( error.name ).toBe( "MethodNotAllowedError" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"statusCode",
-			"number"
-		), ():void => {
-			expect( MethodNotAllowedError.MethodNotAllowedError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( MethodNotAllowedError.MethodNotAllowedError.statusCode ) );
-
-			expect( MethodNotAllowedError.MethodNotAllowedError.statusCode ).toBe( 405 );
-		} );
-
+	it( "should have statusCode as `405`", () => {
+		expect( MethodNotAllowedError.statusCode ).toBe( 405 );
 	} );
 
 } );

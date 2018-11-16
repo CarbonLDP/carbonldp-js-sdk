@@ -1,102 +1,52 @@
-import {
-	clazz,
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-	STATIC,
-} from "../../../test/JasmineExtender";
 import { RequestService } from "../../Request";
 import { Response } from "../../Response";
+
 import { HTTPError } from "../HTTPError";
-import * as Utils from "./../../../Utils";
 
-import * as NotFoundError from "./NotFoundError";
+import { NotFoundError } from "./NotFoundError";
 
-describe( module( "carbonldp/HTTP/Errors/ClientErrors/NotFoundError" ), ():void => {
 
-	it( isDefined(), ():void => {
+describe( "NotFoundError", () => {
+
+	it( "should exists", () => {
 		expect( NotFoundError ).toBeDefined();
-		expect( NotFoundError ).toEqual( jasmine.any( Object ) );
+		expect( NotFoundError ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.HTTP.Errors.NotFoundError",
-		"Error class to indicate that the resource was not found."
-	), ():void => {
+	let response:Response;
+	beforeAll( ( done ) => {
+		jasmine.Ajax.install();
+		jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
+			"status": 200,
+			"responseText": "A response",
+		} );
 
-		let response:Response;
-
-		beforeAll( ( done:{ ():void, fail:() => void } ) => {
-			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
-				"status": 200,
-				"responseText": "A response",
-			} );
-
-			RequestService.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+		RequestService
+			.send( "GET", "http://example.com/request/" )
+			.then( ( _response ) => {
 				response = _response;
 				done();
-			} ).catch( done.fail );
+			} )
+			.catch( done.fail );
+	} );
 
-		} );
+	afterAll( () => {
+		jasmine.Ajax.uninstall();
+	} );
 
-		afterAll( () => {
-			jasmine.Ajax.uninstall();
-		} );
 
-		it( isDefined(), ():void => {
-			expect( NotFoundError.NotFoundError ).toBeDefined();
-			expect( Utils.isFunction( NotFoundError.NotFoundError ) ).toBe( true );
-		} );
+	it( "should extend from HTTError", () => {
+		const error:NotFoundError = new NotFoundError( "Message of the error", response );
+		expect( error ).toEqual( jasmine.any( HTTPError ) );
+	} );
 
-		it( extendsClass(
-			"CarbonLDP.HTTP.Errors.HTTPError"
-		), ():void => {
-			let error:NotFoundError.NotFoundError = new NotFoundError.NotFoundError( "Message of the error", response );
+	it( "should have NotFoundError as name", () => {
+		const error:NotFoundError = new NotFoundError( "The message", response );
+		expect( error.name ).toEqual( "NotFoundError" );
+	} );
 
-			expect( error instanceof HTTPError ).toBe( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let error:NotFoundError.NotFoundError = new NotFoundError.NotFoundError( "Message of the error", response );
-
-			expect( error.toString ).toBeDefined();
-			expect( Utils.isFunction( error.toString ) );
-
-			expect( error.toString() ).toBe( "NotFoundError: Message of the error" );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"name",
-			"string"
-		), ():void => {
-			let error:NotFoundError.NotFoundError = new NotFoundError.NotFoundError( "Message of the error", response );
-
-			expect( error.name ).toBeDefined();
-			expect( Utils.isString( error.name ) ).toBe( true );
-
-			expect( error.name ).toBe( "NotFoundError" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"statusCode",
-			"number"
-		), ():void => {
-			expect( NotFoundError.NotFoundError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( NotFoundError.NotFoundError.statusCode ) );
-
-			expect( NotFoundError.NotFoundError.statusCode ).toBe( 404 );
-		} );
-
+	it( "should have statusCode as `404`", () => {
+		expect( NotFoundError.statusCode ).toBe( 404 );
 	} );
 
 } );

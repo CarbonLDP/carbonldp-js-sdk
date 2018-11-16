@@ -1,102 +1,52 @@
 import { RequestService } from "../../Request";
 import { Response } from "../../Response";
+
 import { HTTPError } from "../HTTPError";
-import {
-	clazz,
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-	STATIC,
-} from "./../../../test/JasmineExtender";
-import * as Utils from "./../../../Utils";
 
-import * as UnsupportedMediaTypeError from "./UnsupportedMediaTypeError";
+import { UnsupportedMediaTypeError } from "./UnsupportedMediaTypeError";
 
-describe( module( "carbonldp/HTTP/Errors/ClientErrors/UnsupportedMediaTypeError" ), ():void => {
 
-	it( isDefined(), ():void => {
+describe( "UnsupportedMediaTypeError", () => {
+
+	it( "should exists", () => {
 		expect( UnsupportedMediaTypeError ).toBeDefined();
-		expect( UnsupportedMediaTypeError ).toEqual( jasmine.any( Object ) );
+		expect( UnsupportedMediaTypeError ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.HTTP.Errors.UnsupportedMediaTypeError",
-		"Error class to indicate that the request has a media-type not supported by the server."
-	), ():void => {
+	let response:Response;
+	beforeAll( ( done ) => {
+		jasmine.Ajax.install();
+		jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
+			"status": 200,
+			"responseText": "A response",
+		} );
 
-		let response:Response;
-
-		beforeAll( ( done:{ ():void, fail:() => void } ) => {
-			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
-				"status": 200,
-				"responseText": "A response",
-			} );
-
-			RequestService.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+		RequestService
+			.send( "GET", "http://example.com/request/" )
+			.then( ( _response ) => {
 				response = _response;
 				done();
-			} ).catch( done.fail );
+			} )
+			.catch( done.fail );
+	} );
 
-		} );
+	afterAll( () => {
+		jasmine.Ajax.uninstall();
+	} );
 
-		afterAll( () => {
-			jasmine.Ajax.uninstall();
-		} );
 
-		it( isDefined(), ():void => {
-			expect( UnsupportedMediaTypeError.UnsupportedMediaTypeError ).toBeDefined();
-			expect( Utils.isFunction( UnsupportedMediaTypeError.UnsupportedMediaTypeError ) ).toBe( true );
-		} );
+	it( "should extend from HTTError", () => {
+		const error:UnsupportedMediaTypeError = new UnsupportedMediaTypeError( "Message of the error", response );
+		expect( error ).toEqual( jasmine.any( HTTPError ) );
+	} );
 
-		it( extendsClass(
-			"CarbonLDP.HTTP.Errors.HTTPError"
-		), ():void => {
-			let error:UnsupportedMediaTypeError.UnsupportedMediaTypeError = new UnsupportedMediaTypeError.UnsupportedMediaTypeError( "Message of the error", response );
+	it( "should have UnsupportedMediaTypeError as name", () => {
+		const error:UnsupportedMediaTypeError = new UnsupportedMediaTypeError( "The message", response );
+		expect( error.name ).toEqual( "UnsupportedMediaTypeError" );
+	} );
 
-			expect( error instanceof HTTPError ).toBe( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let error:UnsupportedMediaTypeError.UnsupportedMediaTypeError = new UnsupportedMediaTypeError.UnsupportedMediaTypeError( "Message of the error", response );
-
-			expect( error.toString ).toBeDefined();
-			expect( Utils.isFunction( error.toString ) );
-
-			expect( error.toString() ).toBe( "UnsupportedMediaTypeError: Message of the error" );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"name",
-			"string"
-		), ():void => {
-			let error:UnsupportedMediaTypeError.UnsupportedMediaTypeError = new UnsupportedMediaTypeError.UnsupportedMediaTypeError( "Message of the error", response );
-
-			expect( error.name ).toBeDefined();
-			expect( Utils.isString( error.name ) ).toBe( true );
-
-			expect( error.name ).toBe( "UnsupportedMediaTypeError" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"statusCode",
-			"number"
-		), ():void => {
-			expect( UnsupportedMediaTypeError.UnsupportedMediaTypeError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( UnsupportedMediaTypeError.UnsupportedMediaTypeError.statusCode ) );
-
-			expect( UnsupportedMediaTypeError.UnsupportedMediaTypeError.statusCode ).toBe( 415 );
-		} );
-
+	it( "should have statusCode as `415`", () => {
+		expect( UnsupportedMediaTypeError.statusCode ).toBe( 415 );
 	} );
 
 } );

@@ -1,102 +1,52 @@
 import { RequestService } from "../../Request";
 import { Response } from "../../Response";
+
 import { HTTPError } from "../HTTPError";
-import {
-	clazz,
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-	STATIC,
-} from "./../../../test/JasmineExtender";
-import * as Utils from "./../../../Utils";
 
-import * as UnauthorizedError from "./UnauthorizedError";
+import { UnauthorizedError } from "./UnauthorizedError";
 
-describe( module( "carbonldp/HTTP/Errors/ClientErrors/UnauthorizedError" ), ():void => {
 
-	it( isDefined(), ():void => {
+describe( "UnauthorizedError", () => {
+
+	it( "should exists", () => {
 		expect( UnauthorizedError ).toBeDefined();
-		expect( UnauthorizedError ).toEqual( jasmine.any( Object ) );
+		expect( UnauthorizedError ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.HTTP.Errors.UnauthorizedError",
-		"Error class to indicate that authentication is required or has failed."
-	), ():void => {
+	let response:Response;
+	beforeAll( ( done ) => {
+		jasmine.Ajax.install();
+		jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
+			"status": 200,
+			"responseText": "A response",
+		} );
 
-		let response:Response;
-
-		beforeAll( ( done:{ ():void, fail:() => void } ) => {
-			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
-				"status": 200,
-				"responseText": "A response",
-			} );
-
-			RequestService.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+		RequestService
+			.send( "GET", "http://example.com/request/" )
+			.then( ( _response ) => {
 				response = _response;
 				done();
-			} ).catch( done.fail );
+			} )
+			.catch( done.fail );
+	} );
 
-		} );
+	afterAll( () => {
+		jasmine.Ajax.uninstall();
+	} );
 
-		afterAll( () => {
-			jasmine.Ajax.uninstall();
-		} );
 
-		it( isDefined(), ():void => {
-			expect( UnauthorizedError.UnauthorizedError ).toBeDefined();
-			expect( Utils.isFunction( UnauthorizedError.UnauthorizedError ) ).toBe( true );
-		} );
+	it( "should extend from HTTError", () => {
+		const error:UnauthorizedError = new UnauthorizedError( "Message of the error", response );
+		expect( error ).toEqual( jasmine.any( HTTPError ) );
+	} );
 
-		it( extendsClass(
-			"CarbonLDP.HTTP.Errors.HTTPError"
-		), ():void => {
-			let error:UnauthorizedError.UnauthorizedError = new UnauthorizedError.UnauthorizedError( "Message of the error", response );
+	it( "should have UnauthorizedError as name", () => {
+		const error:UnauthorizedError = new UnauthorizedError( "The message", response );
+		expect( error.name ).toEqual( "UnauthorizedError" );
+	} );
 
-			expect( error instanceof HTTPError ).toBe( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let error:UnauthorizedError.UnauthorizedError = new UnauthorizedError.UnauthorizedError( "Message of the error", response );
-
-			expect( error.toString ).toBeDefined();
-			expect( Utils.isFunction( error.toString ) );
-
-			expect( error.toString() ).toBe( "UnauthorizedError: Message of the error" );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"name",
-			"string"
-		), ():void => {
-			let error:UnauthorizedError.UnauthorizedError = new UnauthorizedError.UnauthorizedError( "Message of the error", response );
-
-			expect( error.name ).toBeDefined();
-			expect( Utils.isString( error.name ) ).toBe( true );
-
-			expect( error.name ).toBe( "UnauthorizedError" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"statusCode",
-			"number"
-		), ():void => {
-			expect( UnauthorizedError.UnauthorizedError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( UnauthorizedError.UnauthorizedError.statusCode ) );
-
-			expect( UnauthorizedError.UnauthorizedError.statusCode ).toBe( 401 );
-		} );
-
+	it( "should have statusCode as `401`", () => {
+		expect( UnauthorizedError.statusCode ).toBe( 401 );
 	} );
 
 } );
