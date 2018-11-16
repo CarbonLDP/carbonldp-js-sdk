@@ -1,54 +1,28 @@
-import { clazz, extendsClass, hasProperty, INSTANCE, isDefined, module } from "../test/JasmineExtender";
-
-import * as Utils from "./../Utils";
-
 import { AbstractError } from "./AbstractError";
+import { IDAlreadyInUseError } from "./IDAlreadyInUseError";
 
-import * as IDAlreadyInUseError from "./IDAlreadyInUseError";
 
+describe( "IDAlreadyInUseError", () => {
 
-// TODO: Refactor tests
-describe( module( "carbonldp/Errors/IDAlreadyInUseError" ), ():void => {
-
-	it( isDefined(), ():void => {
+	it( "should exists", () => {
 		expect( IDAlreadyInUseError ).toBeDefined();
-		expect( IDAlreadyInUseError ).toEqual( jasmine.any( Object ) );
+		expect( IDAlreadyInUseError ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.Errors.IDAlreadyInUseError",
-		"Error class to indicate that an identifier (ID) is already in use."
-	), ():void => {
 
-		it( isDefined(), ():void => {
-			expect( IDAlreadyInUseError.IDAlreadyInUseError ).toBeDefined();
-			expect( Utils.isFunction( IDAlreadyInUseError.IDAlreadyInUseError ) ).toBe( true );
+	it( "should be instantiable", () => {
+		const error:IDAlreadyInUseError = new IDAlreadyInUseError( "Message of the error" );
+		expect( error ).toEqual( jasmine.any( IDAlreadyInUseError ) );
+	} );
 
-			let error:IDAlreadyInUseError.IDAlreadyInUseError = new IDAlreadyInUseError.IDAlreadyInUseError( "Message of the error" );
-			expect( error instanceof IDAlreadyInUseError.IDAlreadyInUseError ).toBe( true );
-		} );
+	it( "should extends from AbstractError", () => {
+		const error:IDAlreadyInUseError = new IDAlreadyInUseError( "Message of the error" );
+		expect( error ).toEqual( jasmine.any( AbstractError ) );
+	} );
 
-		it( extendsClass(
-			"CarbonLDP.Errors.AbstractError.AbstractError"
-		), ():void => {
-			let error:IDAlreadyInUseError.IDAlreadyInUseError = new IDAlreadyInUseError.IDAlreadyInUseError( "Message of the error" );
-
-			expect( error instanceof AbstractError ).toBe( true );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"name",
-			"string"
-		), ():void => {
-			let error:IDAlreadyInUseError.IDAlreadyInUseError = new IDAlreadyInUseError.IDAlreadyInUseError( "Message of the error" );
-
-			expect( error.name ).toBeDefined();
-			expect( Utils.isString( error.name ) ).toBe( true );
-
-			expect( error.name ).toBe( "IDAlreadyInUseError" );
-		} );
-
+	it( "should have IDAlreadyInUseError as name", () => {
+		const error:IDAlreadyInUseError = new IDAlreadyInUseError( "This is the message" );
+		expect( error.name ).toEqual( "IDAlreadyInUseError" );
 	} );
 
 } );
