@@ -52,6 +52,8 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			requestOptions = requestOptions ? requestOptions : {};
+
+			// Accept optional JSONLD for error messages from the platform
 			RequestUtils.setAcceptHeader( "application/ld+json; q=0.9", requestOptions! );
 
 			return SPARQLService
@@ -65,6 +67,8 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			requestOptions = requestOptions ? requestOptions : {};
+
+			// Accept optional JSONLD for error messages from the platform
 			RequestUtils.setAcceptHeader( "application/ld+json; q=0.9", requestOptions! );
 
 			return SPARQLService
