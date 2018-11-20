@@ -1,61 +1,33 @@
-import { clazz, hasMethod, INSTANCE, isDefined, module } from "../test/JasmineExtender";
-
-import * as Utils from "./../Utils";
-
-import * as StringParser from "./StringParser";
+import { StringParser } from "./StringParser";
 
 
-describe( module( "carbonldp/HTTP/StringParser" ), ():void => {
+describe( "StringParser", () => {
 
-	it( isDefined(), ():void => {
+	it( "should exists", () => {
 		expect( StringParser ).toBeDefined();
-		expect( Utils.isObject( StringParser ) ).toEqual( true );
+		expect( StringParser ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.HTTP.StringParser",
-		"Parses the body of a `CarbonLDP.HTTP.Response` and returns a string.", [
-			"CarbonLDP.HTTP.Parser<string>",
-		]
-	), ():void => {
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"parse",
-			"Gets a string and returns a Promise with the same string.", [
-				{ name: "body", type: "string" },
-			],
-			{ type: "Promise<string>" }
-		), ( done:DoneFn ):void => {
-			let stringParser:StringParser.StringParser = new StringParser.StringParser();
+	it( "should be instantiable", () => {
+		const value:StringParser = new StringParser();
+		expect( value ).toEqual( jasmine.any( StringParser ) );
+	} );
 
-			// Property Integrity
-			(() => {
-				expect( "parse" in stringParser ).toEqual( true );
-				expect( Utils.isFunction( stringParser.parse ) ).toEqual( true );
-			})();
 
-			let promises:Promise<any>[] = [];
+	describe( "StringParser.parse", () => {
 
-			// Execution
-			(() => {
-				let body:string = "This is the body";
-				let promise:Promise<string> = stringParser.parse( body );
+		it( "should exists", () => {
+			expect( StringParser.prototype.parse ).toBeDefined();
+			expect( StringParser.prototype.parse ).toEqual( jasmine.any( Function ) );
+		} );
 
-				expect( promise ).toBeDefined();
-				expect( promise instanceof Promise ).toEqual( true );
 
-				promises.push( promise.then( ( parsedBody ):void => {
-					expect( parsedBody ).toEqual( body );
-				} ) );
-			})();
+		it( "should return same string", async () => {
+			const parser:StringParser = new StringParser();
 
-			Promise.all( promises ).then( ():void => {
-				done();
-			}, ( error:Error ):void => {
-				done.fail( error );
-			} );
+			const returned:string = await parser.parse( "This is the body" );
+			expect( returned ).toEqual( "This is the body" );
 		} );
 
 	} );
