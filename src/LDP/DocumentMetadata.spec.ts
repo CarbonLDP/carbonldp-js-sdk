@@ -1,105 +1,62 @@
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
-
 import { C } from "../Vocabularies/C";
-import { XSD } from "../Vocabularies/XSD";
-
-import * as Utils from "./../Utils";
 
 import { DocumentMetadata } from "./DocumentMetadata";
 
 
-describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
+describe( "DocumentMetadata", () => {
 
-	describe( interfaze(
-		"CarbonLDP.LDP.DocumentMetadata",
-		"Interface that represents a free node resource that contains dynamic information about an specific resource."
-	), ():void => {
-
-		it( extendsClass( "CarbonLDP.LDP.VolatileResource" ), ():void => {} );
-
-
-		it( hasProperty(
-			OBLIGATORY,
-			"relatedDocument",
-			"CarbonLDP.Pointer",
-			"Reference to the resource the metadata information refers to."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"bNodesMap",
-			"CarbonLDP.LDP.Map<CarbonLDP.Pointer, CarbonLDP.Pointer>",
-			"A `c:Map` object that contains the changes of persisted BNode IDs."
-		), ():void => {} );
-
+	it( "should exists", () => {
+		expect( DocumentMetadata ).toBeDefined();
+		expect( DocumentMetadata ).toEqual( jasmine.any( Object ) );
 	} );
 
 
-	describe( interfaze(
-		"CarbonLDP.LDP.DocumentMetadataFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.DocumentMetadata` objects."
-	), ():void => {
-
-		it( hasProperty(
-			OBLIGATORY,
-			"TYPE",
-			"string"
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"SCHEMA",
-			"CarbonLDP.ObjectSchema"
-		), ():void => {} );
-
+	describe( "[[interface]]", () => {
 	} );
 
-	describe( property(
-		STATIC,
-		"DocumentMetadata",
-		"CarbonLDP.LDP.DocumentMetadataFactory"
-	), ():void => {
+	describe( "[[factory]]", () => {
 
-		it( isDefined(), ():void => {
-			expect( DocumentMetadata ).toBeDefined();
-			expect( DocumentMetadata ).toEqual( jasmine.any( Object ) );
-		} );
+		describe( "DocumentMetadata.TYPE", () => {
 
-		// TODO: Separate in different tests
-		it( "DocumentMetadata.TYPE", ():void => {
-			expect( DocumentMetadata.TYPE ).toBeDefined();
-			expect( Utils.isString( DocumentMetadata.TYPE ) ).toBe( true );
-
-			expect( DocumentMetadata.TYPE ).toBe( C.DocumentMetadata );
-		} );
-
-		// TODO: Separate in different tests
-		it( "DocumentMetadata.SCHEMA", ():void => {
-			expect( DocumentMetadata.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( DocumentMetadata.SCHEMA ) ).toBe( true );
-
-			expect( DocumentMetadata.SCHEMA as { [key:string]:jasmine.Any } ).toEqual( {
-				relatedDocument: jasmine.any( Object ),
-				bNodesMap: jasmine.any( Object ),
+			it( "should exists", () => {
+				expect( DocumentMetadata.TYPE ).toBeDefined();
+				expect( DocumentMetadata.TYPE ).toEqual( jasmine.any( String ) );
 			} );
 
-			expect( DocumentMetadata.SCHEMA[ "relatedDocument" ] ).toEqual( {
-				"@id": C.relatedDocument,
-				"@type": "@id",
+
+			it( "should be `c:DocumentMetadata`", () => {
+				expect( DocumentMetadata.TYPE ).toBe( C.DocumentMetadata );
 			} );
 
-			expect( DocumentMetadata.SCHEMA[ "bNodesMap" ] ).toEqual( {
-				"@id": C.bNodesMap,
-				"@type": "@id",
+		} );
+
+		describe( "DocumentMetadata.SCHEMA", () => {
+
+			it( "should exists", () => {
+				expect( DocumentMetadata.SCHEMA ).toBeDefined();
+				expect( DocumentMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );
+			} );
+
+
+			it( "should have model properties", () => {
+				expect<any>( DocumentMetadata.SCHEMA ).toEqual( {
+					relatedDocument: jasmine.any( Object ),
+					bNodesMap: jasmine.any( Object ),
+				} );
+			} );
+
+			it( "should have specified `relatedDocument`", () => {
+				expect( DocumentMetadata.SCHEMA[ "relatedDocument" ] ).toEqual( {
+					"@id": C.relatedDocument,
+					"@type": "@id",
+				} );
+			} );
+
+			it( "should have specified `bNodesMap`", () => {
+				expect( DocumentMetadata.SCHEMA[ "bNodesMap" ] ).toEqual( {
+					"@id": C.bNodesMap,
+					"@type": "@id",
+				} );
 			} );
 
 		} );

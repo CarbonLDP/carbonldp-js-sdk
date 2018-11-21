@@ -3,87 +3,66 @@ import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
 import { Pointer } from "../Pointer/Pointer";
 import { Resource } from "../Resource/Resource";
 
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	isDefined,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
-
-import * as Utils from "../Utils";
-
 import { C } from "../Vocabularies/C";
 
 import { AddMemberAction, BaseAddMemberAction } from "./AddMemberAction";
 
 
-describe( module( "carbonldp/Members/AddMemberAction" ), ():void => {
+describe( "AddMemberAction", () => {
 
-	describe( interfaze(
-		"CarbonLDP.Members.BaseAddMemberAction",
-		"Interface that represents an object to be sent in a request that add members to a container."
-	), ():void => {
+	it( "should exists", () => {
+		expect( AddMemberAction ).toBeDefined();
+		expect( AddMemberAction ).toEqual( jasmine.any( Object ) );
+	} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"targetMembers",
-			"CarbonLDP.Pointer[]",
-			"The target members to add in a `addMember` request."
-		), ():void => {
+
+	describe( "[[interface]]", () => {
+	} );
+
+	describe( "[[factory]]", () => {
+
+		describe( "AddMemberAction.TYPE", () => {
+
+			it( "should exists", () => {
+				expect( AddMemberAction.TYPE ).toBeDefined();
+				expect( AddMemberAction.TYPE ).toEqual( jasmine.any( String ) );
+			} );
+
+
+			it( "should be `c:AddMemberAction`", () => {
+				expect( AddMemberAction.TYPE ).toBe( C.AddMemberAction );
+			} );
+
 		} );
 
-	} );
+		describe( "AddMemberAction.SCHEMA", () => {
+
+			it( "should exists", () => {
+				expect( AddMemberAction.SCHEMA ).toBeDefined();
+				expect( AddMemberAction.SCHEMA ).toEqual( jasmine.any( Object ) );
+			} );
 
 
-	describe( interfaze(
-		"CarbonLDP.Members.AddMemberAction",
-		"Interface that represents an object to be sent in a request that add members to a container."
-	), ():void => {
+			it( "should have model properties", () => {
+				expect<any>( AddMemberAction.SCHEMA ).toEqual( {
+					targetMembers: jasmine.any( Object ),
+				} );
+			} );
 
-		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
+			it( "should have specified `targetMembers`", () => {
+				expect( AddMemberAction.SCHEMA[ "targetMembers" ] ).toEqual( {
+					"@id": C.targetMember,
+					"@container": "@set",
+					"@type": "@id",
+				} );
+			} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"targetMembers",
-			"CarbonLDP.Pointer[]",
-			"Array with the members to be added to the container."
-		), ():void => {} );
+		} );
 
-	} );
 
-	describe( interfaze(
-		"CarbonLDP.Members.AddMemberActionFactory",
-		"Interface with the factory, decorate and utils methods of `CarbonLDP.Members.AddMemberAction` objects"
-	), ():void => {
+		describe( "AddMemberAction.is", () => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"TYPE",
-			"string"
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"SCHEMA",
-			"CarbonLDP.ObjectSchema"
-		), ():void => {} );
-
-		describe( method( OBLIGATORY, "is" ), ():void => {
-
-			it( hasSignature(
-				"Returns true if the object is considered a `CarbonLDP.Members.AddMemberAction` object.", [
-					{ name: "value", type: "any" },
-				],
-				{ type: "value is CarbonLDP.Members.AddMemberAction" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( AddMemberAction.is ).toBeDefined();
 				expect( AddMemberAction.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -91,7 +70,7 @@ describe( module( "carbonldp/Members/AddMemberAction" ), ():void => {
 
 			let isTransientResource:jasmine.Spy;
 			let mockObject:jasmine.SpyObj<Resource>;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				isTransientResource = spyOn( Resource, "is" )
 					.and.returnValue( true );
 
@@ -118,17 +97,9 @@ describe( module( "carbonldp/Members/AddMemberAction" ), ():void => {
 
 		} );
 
-		describe( method( OBLIGATORY, "create" ), ():void => {
+		describe( "AddMemberAction.create", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Creates `CarbonLDP.Members.AddMemberAction` resource for the specified targetMembers.", [
-					{ name: "data", type: "T & CarbonLDP.Members.BaseAddMemberAction", description: "Data to be used in the creation of an add member action." },
-				],
-				{ type: "CarbonLDP.Members.AddMemberAction" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( AddMemberAction.create ).toBeDefined();
 				expect( AddMemberAction.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -161,17 +132,9 @@ describe( module( "carbonldp/Members/AddMemberAction" ), ():void => {
 
 		} );
 
-		describe( method( OBLIGATORY, "createFrom" ), ():void => {
+		describe( "AddMemberAction.createFrom", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Creates `CarbonLDP.Members.AddMemberAction` resource for the specified targetMembers.", [
-					{ name: "object", type: "T & CarbonLDP.Members.BaseAddMemberAction", description: "Object to be converted into an add member action." },
-				],
-				{ type: "CarbonLDP.Members.AddMemberAction" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exists", () => {
 				expect( AddMemberAction.createFrom ).toBeDefined();
 				expect( AddMemberAction.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
@@ -200,42 +163,6 @@ describe( module( "carbonldp/Members/AddMemberAction" ), ():void => {
 				const returned:AddMemberAction = AddMemberAction.createFrom( base );
 
 				expect( base ).toBe( returned );
-			} );
-
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"AddMemberAction",
-		"CarbonLDP.Members.AddMemberActionFactory",
-		"Constant that implements the `CarbonLDP.Members.AddMemberActionFactory` instance."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( AddMemberAction ).toBeDefined();
-			expect( AddMemberAction ).toEqual( jasmine.any( Object ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( "AddMemberAction.TYPE", ():void => {
-			expect( AddMemberAction.TYPE ).toBeDefined();
-			expect( Utils.isString( AddMemberAction.TYPE ) ).toBe( true );
-
-			expect( AddMemberAction.TYPE ).toBe( C.AddMemberAction );
-		} );
-
-		// TODO: Separate in different tests
-		it( "AddMemberAction.SCHEMA", ():void => {
-			expect( AddMemberAction.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( AddMemberAction.SCHEMA ) ).toBe( true );
-
-			expect( Utils.hasProperty( AddMemberAction.SCHEMA, "targetMembers" ) ).toBe( true );
-			expect( AddMemberAction.SCHEMA[ "targetMembers" ] ).toEqual( {
-				"@id": C.targetMember,
-				"@container": "@set",
-				"@type": "@id",
 			} );
 
 		} );

@@ -34,7 +34,7 @@ export const TransientDirectContainer:TransientDirectContainerFactory = {
 	is( value:any ):value is TransientDirectContainer {
 		return TransientDocument.is( value )
 			&& value.$hasType( TransientDirectContainer.TYPE )
-			&& value.hasOwnProperty( "membershipResource" )
+			&& value.hasOwnProperty( "hasMemberRelation" )
 			;
 	},
 
