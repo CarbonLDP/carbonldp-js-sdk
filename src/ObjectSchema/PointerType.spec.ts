@@ -1,8 +1,5 @@
-import { module } from "../test/JasmineExtender";
+describe( "PointerType", () => {
 
-
-describe( module( "carbonldp/ObjectSchema" ), ():void => {
-
-	// TODO: Document
+	// TODO: Test
 
 } );
