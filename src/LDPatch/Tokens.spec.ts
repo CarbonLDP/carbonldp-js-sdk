@@ -1,553 +1,437 @@
 import { CollectionToken, IRIRefToken, LiteralToken, PrefixedNameToken, PropertyToken, SubjectToken } from "sparqler/tokens";
 
-import { clazz, constructor, hasProperty, hasSignature, INSTANCE, method, module } from "../test/JasmineExtender";
-
-import * as Module from "./Tokens";
 import { AddToken, DeleteToken, LDPatchToken, PrefixToken, SliceToken, UpdateListToken } from "./Tokens";
 
 
-describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
+describe( "LDPatchToken", () => {
 
-	it( "should exists", ():void => {
-		expect( Module ).toBeDefined();
-		expect( Module ).toEqual( jasmine.any( Object ) );
+	it( "should exists", () => {
+		expect( LDPatchToken ).toBeDefined();
+		expect( LDPatchToken ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz( "CarbonLDP.LDPatch.LDPatchToken", "An LD Patch expression.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+	describe( "LDPatchToken.constructor", () => {
 
-		it( hasProperty( INSTANCE, "token", "ldpatch" ), ():void => {
-		} );
-
-		it( hasProperty( INSTANCE, "prologues", "CarbonLDP.LDPatch.PrefixToken[]" ), ():void => {
-		} );
-
-		it( hasProperty( INSTANCE, "statements", "CarbonLDP.LDPatch.StatementToken[]" ), ():void => {
+		it( "should be instantiable", () => {
+			const token:LDPatchToken = new LDPatchToken();
+			expect( token ).toEqual( jasmine.any( LDPatchToken ) );
 		} );
 
 
-		it( "should exists", ():void => {
-			expect( LDPatchToken ).toBeDefined();
-			expect( LDPatchToken ).toEqual( jasmine.any( Function ) );
+		it( "should initialize prologues", () => {
+			const token:LDPatchToken = new LDPatchToken();
+			expect( token.prologues ).toEqual( [] );
 		} );
 
-		describe( constructor(), ():void => {
-
-			it( hasSignature(), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				const token:LDPatchToken = new LDPatchToken();
-				expect( token ).toEqual( jasmine.any( LDPatchToken ) );
-			} );
-
-			it( "should initialize prologues", ():void => {
-				const token:LDPatchToken = new LDPatchToken();
-				expect( token.prologues ).toEqual( [] );
-			} );
-
-			it( "should initialize statements", ():void => {
-				const token:LDPatchToken = new LDPatchToken();
-				expect( token.statements ).toEqual( [] );
-			} );
-
-			it( "should set token name as `ldpatch`", ():void => {
-				const token:LDPatchToken = new LDPatchToken();
-				expect( token.token ).toBe( "ldpatch" );
-			} );
-
+		it( "should initialize statements", () => {
+			const token:LDPatchToken = new LDPatchToken();
+			expect( token.statements ).toEqual( [] );
 		} );
 
-		describe( method( INSTANCE, "toString" ), ():void => {
-
-			it( hasSignature( { type: "string" } ), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				expect( LDPatchToken.prototype.toString ).toBeDefined();
-				expect( LDPatchToken.prototype.toString ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should override default toString", ():void => {
-				expect( LDPatchToken.prototype.toString ).not.toBe( Object.prototype.toString );
-			} );
-
-			it( "should return the list of actions", ():void => {
-				const token:LDPatchToken = new LDPatchToken();
-				token.prologues.push( ...[
-					new PrefixToken( "profile", new IRIRefToken( "http://ogp.me/ns/profile#" ) ),
-					new PrefixToken( "ex", new IRIRefToken( "http://example.org/vocab#" ) ),
-				] );
-
-				const resource:IRIRefToken = new IRIRefToken( "#" );
-
-				const deleteName:DeleteToken = new DeleteToken();
-				deleteName.triples.push( new SubjectToken( resource )
-					.addProperty( new PropertyToken( new PrefixedNameToken( "profile", "first_name" ) )
-						.addObject( new LiteralToken( "Tim" ) ) ) );
-
-				const addNameAndImage:AddToken = new AddToken();
-				addNameAndImage.triples.push( new SubjectToken( resource )
-					.addProperty( new PropertyToken( new PrefixedNameToken( "profile", "first_name" ) )
-						.addObject( new LiteralToken( "Timothy" ) ) )
-					.addProperty( new PropertyToken( new PrefixedNameToken( "profile", "image" ) )
-						.addObject( new IRIRefToken( "https://example.org/tim.jpg" ) ) ) );
-
-				const newLanguages:CollectionToken = new CollectionToken();
-				newLanguages.objects.push( new LiteralToken( "fr-CH" ) );
-				const updateLanguages:UpdateListToken = new UpdateListToken( resource, new PrefixedNameToken( "ex", "preferredLanguages" ), new SliceToken( 1, 2 ), newLanguages );
-
-				token.statements.push( ...[
-					deleteName,
-					addNameAndImage,
-					updateLanguages,
-				] );
-
-				expect( token.toString() ).toBe( `` +
-					`@prefix profile: <http://ogp.me/ns/profile#>. ` +
-					`@prefix ex: <http://example.org/vocab#>. ` +
-					`Delete { <#> profile:first_name "Tim". }. ` +
-					`Add { ` +
-					`<#> profile:first_name "Timothy";` +
-					` profile:image <https://example.org/tim.jpg>. ` +
-					`}. ` +
-					`UpdateList <#> ex:preferredLanguages 1..2 ( "fr-CH" ).` +
-					``
-				);
-			} );
-
+		it( "should set token name as `ldpatch`", () => {
+			const token:LDPatchToken = new LDPatchToken();
+			expect( token.token ).toBe( "ldpatch" );
 		} );
 
 	} );
 
-	describe( clazz( "CarbonLDP.LDPatch.PrefixToken", "LD Patch add action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+	describe( "LDPatchToken.toString", () => {
 
-		it( hasProperty( INSTANCE, "token", "prefix" ), ():void => {
-		} );
-
-		it( hasProperty( INSTANCE, "namespace", "string" ), ():void => {
-		} );
-
-		it( hasProperty( INSTANCE, "iri", "sparqler/tokens/IRIRefToken" ), ():void => {
+		it( "should exists", () => {
+			expect( LDPatchToken.prototype.toString ).toBeDefined();
+			expect( LDPatchToken.prototype.toString ).toEqual( jasmine.any( Function ) );
 		} );
 
 
-		it( "should exists", ():void => {
-			expect( PrefixToken ).toBeDefined();
-			expect( PrefixToken ).toEqual( jasmine.any( Function ) );
+		it( "should override default toString", () => {
+			expect( LDPatchToken.prototype.toString ).not.toBe( Object.prototype.toString );
 		} );
 
-		describe( constructor(), ():void => {
+		it( "should return the list of actions", () => {
+			const token:LDPatchToken = new LDPatchToken();
+			token.prologues.push( ...[
+				new PrefixToken( "profile", new IRIRefToken( "http://ogp.me/ns/profile#" ) ),
+				new PrefixToken( "ex", new IRIRefToken( "http://example.org/vocab#" ) ),
+			] );
 
-			it( hasSignature(
-				[
-					{ name: "namespace", type: "string", description: "The namespace of the LD Patch prefix." },
-					{ name: "iri", type: "sparqler/tokens/IRIRefToken", description: "The IRI of the LD Patch prefix." },
-				]
-			), ():void => {
-			} );
+			const resource:IRIRefToken = new IRIRefToken( "#" );
 
-			it( "should exists", ():void => {
-				const token:PrefixToken = new PrefixToken( null, null );
-				expect( token ).toEqual( jasmine.any( PrefixToken ) );
-			} );
+			const deleteName:DeleteToken = new DeleteToken();
+			deleteName.triples.push( new SubjectToken( resource )
+				.addProperty( new PropertyToken( new PrefixedNameToken( "profile", "first_name" ) )
+					.addObject( new LiteralToken( "Tim" ) ) ) );
 
-			it( "should initialize prefix namespace", ():void => {
-				const namespace:string = "prefix_name";
-				const token:PrefixToken = new PrefixToken( namespace, null );
-				expect( token.namespace ).toBe( namespace );
-			} );
+			const addNameAndImage:AddToken = new AddToken();
+			addNameAndImage.triples.push( new SubjectToken( resource )
+				.addProperty( new PropertyToken( new PrefixedNameToken( "profile", "first_name" ) )
+					.addObject( new LiteralToken( "Timothy" ) ) )
+				.addProperty( new PropertyToken( new PrefixedNameToken( "profile", "image" ) )
+					.addObject( new IRIRefToken( "https://example.org/tim.jpg" ) ) ) );
 
-			it( "should initialize iri", ():void => {
-				const iri:IRIRefToken = new IRIRefToken( "http://example.com/" );
-				const token:PrefixToken = new PrefixToken( null, iri );
-				expect( token.iri ).toBe( iri );
-			} );
+			const newLanguages:CollectionToken = new CollectionToken();
+			newLanguages.objects.push( new LiteralToken( "fr-CH" ) );
+			const updateLanguages:UpdateListToken = new UpdateListToken( resource, new PrefixedNameToken( "ex", "preferredLanguages" ), new SliceToken( 1, 2 ), newLanguages );
 
-			it( "should set token name as `prefix`", ():void => {
-				const token:PrefixToken = new PrefixToken( null, null );
-				expect( token.token ).toBe( "prefix" );
-			} );
+			token.statements.push( ...[
+				deleteName,
+				addNameAndImage,
+				updateLanguages,
+			] );
 
-		} );
-
-		describe( method( INSTANCE, "toString" ), ():void => {
-
-			it( hasSignature( { type: "string" } ), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				expect( PrefixToken.prototype.toString ).toBeDefined();
-				expect( PrefixToken.prototype.toString ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should override default toString", ():void => {
-				expect( PrefixToken.prototype.toString ).not.toBe( Object.prototype.toString );
-			} );
-
-			it( "should return the prefix", ():void => {
-				const token:PrefixToken = new PrefixToken( "ex", new IRIRefToken( "http://example.com/" ) );
-
-				expect( token.toString() ).toBe( `@prefix ex: <http://example.com/>.` );
-			} );
-
+			expect( token.toString() ).toBe( `` +
+				`@prefix profile: <http://ogp.me/ns/profile#>. ` +
+				`@prefix ex: <http://example.org/vocab#>. ` +
+				`Delete { <#> profile:first_name "Tim". }. ` +
+				`Add { ` +
+				`<#> profile:first_name "Timothy";` +
+				` profile:image <https://example.org/tim.jpg>. ` +
+				`}. ` +
+				`UpdateList <#> ex:preferredLanguages 1..2 ( "fr-CH" ).` +
+				``
+			);
 		} );
 
 	} );
 
-	describe( clazz( "CarbonLDP.LDPatch.AddToken", "LD Patch add action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+} );
 
-		it( hasProperty( INSTANCE, "token", "add" ), ():void => {
+describe( "PrefixToken", () => {
+
+	it( "should exists", () => {
+		expect( PrefixToken ).toBeDefined();
+		expect( PrefixToken ).toEqual( jasmine.any( Function ) );
+	} );
+
+	describe( "PrefixToken.constructor", () => {
+
+		it( "should be instantiable", () => {
+			const token:PrefixToken = new PrefixToken( null, null );
+			expect( token ).toEqual( jasmine.any( PrefixToken ) );
 		} );
 
-		it( hasProperty( INSTANCE, "triples", "sparqler/tokens/SubjectToken[]" ), ():void => {
+
+		it( "should initialize prefix namespace", () => {
+			const namespace:string = "prefix_name";
+			const token:PrefixToken = new PrefixToken( namespace, null );
+			expect( token.namespace ).toBe( namespace );
 		} );
 
-
-		it( "should exists", ():void => {
-			expect( AddToken ).toBeDefined();
-			expect( AddToken ).toEqual( jasmine.any( Function ) );
+		it( "should initialize iri", () => {
+			const iri:IRIRefToken = new IRIRefToken( "http://example.com/" );
+			const token:PrefixToken = new PrefixToken( null, iri );
+			expect( token.iri ).toBe( iri );
 		} );
 
-		describe( constructor(), ():void => {
-
-			it( hasSignature(), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				const token:AddToken = new AddToken();
-				expect( token ).toEqual( jasmine.any( AddToken ) );
-			} );
-
-			it( "should initialize triples", ():void => {
-				const token:AddToken = new AddToken();
-				expect( token.triples ).toEqual( [] );
-			} );
-
-			it( "should set token name as `add`", ():void => {
-				const token:AddToken = new AddToken();
-				expect( token.token ).toBe( "add" );
-			} );
-
-		} );
-
-		describe( method( INSTANCE, "toString" ), ():void => {
-
-			it( hasSignature( { type: "string" } ), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				expect( AddToken.prototype.toString ).toBeDefined();
-				expect( AddToken.prototype.toString ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should override default toString", ():void => {
-				expect( AddToken.prototype.toString ).not.toBe( Object.prototype.toString );
-			} );
-
-			it( "should return the action", ():void => {
-				const token:AddToken = new AddToken();
-				token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
-					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property" ) )
-						.addObject( new LiteralToken( "literal" ) ) ) );
-				token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
-					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property2" ) )
-						.addObject( new LiteralToken( "literal-2" ) ) ) );
-
-				expect( token.toString() ).toBe( `Add { <http://example.com/> ex:property "literal". <http://example.com/> ex:property2 "literal-2". }.` );
-			} );
-
+		it( "should set token name as `prefix`", () => {
+			const token:PrefixToken = new PrefixToken( null, null );
+			expect( token.token ).toBe( "prefix" );
 		} );
 
 	} );
 
-	describe( clazz( "CarbonLDP.LDPatch.DeleteToken", "LD Patch delete action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+	describe( "PrefixToken.toString", () => {
 
-		it( hasProperty( INSTANCE, "token", "delete" ), ():void => {
+		it( "should exists", () => {
+			expect( PrefixToken.prototype.toString ).toBeDefined();
+			expect( PrefixToken.prototype.toString ).toEqual( jasmine.any( Function ) );
 		} );
 
-		it( hasProperty( INSTANCE, "triples", "sparqler/tokens/SubjectToken[]" ), ():void => {
+
+		it( "should override default toString", () => {
+			expect( PrefixToken.prototype.toString ).not.toBe( Object.prototype.toString );
 		} );
 
+		it( "should return the prefix", () => {
+			const token:PrefixToken = new PrefixToken( "ex", new IRIRefToken( "http://example.com/" ) );
 
-		it( "should exists", ():void => {
-			expect( DeleteToken ).toBeDefined();
-			expect( DeleteToken ).toEqual( jasmine.any( Function ) );
-		} );
-
-		describe( constructor(), ():void => {
-
-			it( hasSignature(), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				const token:DeleteToken = new DeleteToken();
-				expect( token ).toEqual( jasmine.any( DeleteToken ) );
-			} );
-
-			it( "should initialize triples", ():void => {
-				const token:DeleteToken = new DeleteToken();
-				expect( token.triples ).toEqual( [] );
-			} );
-
-			it( "should set token name as `delete`", ():void => {
-				const token:DeleteToken = new DeleteToken();
-				expect( token.token ).toBe( "delete" );
-			} );
-
-		} );
-
-		describe( method( INSTANCE, "toString" ), ():void => {
-
-			it( hasSignature( { type: "string" } ), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				expect( DeleteToken.prototype.toString ).toBeDefined();
-				expect( DeleteToken.prototype.toString ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should override default toString", ():void => {
-				expect( DeleteToken.prototype.toString ).not.toBe( Object.prototype.toString );
-			} );
-
-			it( "should return the action", ():void => {
-				const token:DeleteToken = new DeleteToken();
-				token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
-					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property" ) )
-						.addObject( new LiteralToken( "literal" ) ) ) );
-				token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
-					.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property2" ) )
-						.addObject( new LiteralToken( "literal-2" ) ) ) );
-
-				expect( token.toString() ).toBe( `Delete { <http://example.com/> ex:property "literal". <http://example.com/> ex:property2 "literal-2". }.` );
-			} );
-
+			expect( token.toString() ).toBe( `@prefix ex: <http://example.com/>.` );
 		} );
 
 	} );
 
-	describe( clazz( "CarbonLDP.LDPatch.UpdateListToken", "LD Patch update list action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+} );
 
-		it( hasProperty( INSTANCE, "token", "updateList" ), ():void => {
+describe( "AddToken", () => {
+
+	it( "should exists", () => {
+		expect( AddToken ).toBeDefined();
+		expect( AddToken ).toEqual( jasmine.any( Function ) );
+	} );
+
+	describe( "AddToken.constructor", () => {
+
+		it( "should be instantiable", () => {
+			const token:AddToken = new AddToken();
+			expect( token ).toEqual( jasmine.any( AddToken ) );
 		} );
 
-		it( hasProperty( INSTANCE, "subject", "sparqler/tokens/VariableORIRI | sparqler/tokens/BlankNodeToken", ), ():void => {
+		it( "should initialize triples", () => {
+			const token:AddToken = new AddToken();
+			expect( token.triples ).toEqual( [] );
 		} );
 
-		it( hasProperty( INSTANCE, "predicate", "sparqler/tokens/IRIRefToken | sparqler/tokens/PrefixedNameToken" ), ():void => {
-		} );
-
-		it( hasProperty( INSTANCE, "slice", "CarbonLDP.LDPatch.SliceToken" ), ():void => {
-		} );
-
-		it( hasProperty( INSTANCE, "collection", "sparqler/tokens/CollectionToken" ), ():void => {
-		} );
-
-
-		it( "should exists", ():void => {
-			expect( UpdateListToken ).toBeDefined();
-			expect( UpdateListToken ).toEqual( jasmine.any( Function ) );
-		} );
-
-		describe( constructor(), ():void => {
-
-			it( hasSignature(
-				[
-					{ name: "subject", type: "sparqler/tokens/VariableORIRI | sparqler/tokens/BlankNodeToken", description: "The subject that contains the list to update." },
-					{ name: "predicate", type: "sparqler/tokens/IRIRefToken | sparqler/tokens/PrefixedNameToken", description: "The predicate relation to the list to update." },
-					{ name: "slice", type: "CarbonLDP.LDPatch.SliceToken", description: "The slice that specifies the index of the elements in the list that will be replaced." },
-					{ name: "collection", type: "sparqler/tokens/CollectionToken", description: "The collection to replace the selected elements by the slice token." },
-				]
-			), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				const token:UpdateListToken = new UpdateListToken( null, null, null, null );
-				expect( token ).toEqual( jasmine.any( UpdateListToken ) );
-			} );
-
-			it( "should set token name as `updateList`", ():void => {
-				const token:UpdateListToken = new UpdateListToken( null, null, null, null );
-				expect( token.token ).toBe( "updateList" );
-			} );
-
-		} );
-
-		describe( method( INSTANCE, "toString" ), ():void => {
-
-			it( hasSignature( { type: "string" } ), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				expect( UpdateListToken.prototype.toString ).toBeDefined();
-				expect( UpdateListToken.prototype.toString ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should print the action", ():void => {
-				const subject:IRIRefToken = new IRIRefToken( "http://example.com/" );
-				const predicate:PrefixedNameToken = new PrefixedNameToken( "ex:property" );
-				const slice:SliceToken = new SliceToken();
-				const collection:CollectionToken = new CollectionToken();
-
-				const token:UpdateListToken = new UpdateListToken( subject, predicate, slice, collection );
-				expect( token.toString() ).toBe( `UpdateList <http://example.com/> ex:property .. ().` );
-
-				collection.objects.push( new LiteralToken( "value-1" ), new LiteralToken( "value-2" ) );
-				expect( token.toString() ).toBe( `UpdateList <http://example.com/> ex:property .. ( "value-1" "value-2" ).` );
-			} );
-
+		it( "should set token name as `add`", () => {
+			const token:AddToken = new AddToken();
+			expect( token.token ).toBe( "add" );
 		} );
 
 	} );
 
-	describe( clazz( "CarbonLDP.LDPatch.SliceToken", "LD Patch list slice expression token.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+	describe( "AddToken.toString", () => {
 
-		it( hasProperty( INSTANCE, "token", "slice" ), ():void => {
-		} );
-
-		it( hasProperty( INSTANCE, "minIndex", "number" ), ():void => {
-		} );
-
-		it( hasProperty( INSTANCE, "maxIndex", "number" ), ():void => {
+		it( "should exists", () => {
+			expect( AddToken.prototype.toString ).toBeDefined();
+			expect( AddToken.prototype.toString ).toEqual( jasmine.any( Function ) );
 		} );
 
 
-		it( "should exists", ():void => {
-			expect( SliceToken ).toBeDefined();
-			expect( SliceToken ).toEqual( jasmine.any( Function ) );
+		it( "should override default toString", () => {
+			expect( AddToken.prototype.toString ).not.toBe( Object.prototype.toString );
 		} );
 
-		describe( constructor(), ():void => {
+		it( "should return the action", () => {
+			const token:AddToken = new AddToken();
+			token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
+				.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property" ) )
+					.addObject( new LiteralToken( "literal" ) ) ) );
+			token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
+				.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property2" ) )
+					.addObject( new LiteralToken( "literal-2" ) ) ) );
 
-			it( hasSignature(
-				[
-					{ name: "minIndex", type: "number", optional: true, description: "The minimum index of the list's range to update." },
-					{ name: "maxIndex", type: "number", optional: true, description: "The maximum index of the list's range to update." },
-				]
-			), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				const token:SliceToken = new SliceToken();
-				expect( token ).toBeDefined();
-				expect( token ).toEqual( jasmine.any( SliceToken ) );
-			} );
-
-			it( "should store indexes", ():void => {
-				const helper:( minIndex:number, maxIndex:number ) => void = ( minIndex, maxIndex ) => {
-					const token:SliceToken = new SliceToken( minIndex, maxIndex );
-					expect( token.minIndex ).toBe( minIndex );
-					expect( token.maxIndex ).toBe( maxIndex );
-				};
-
-				helper( 10, 10 );
-				helper( 1, 100 );
-				helper( 5, - 10 );
-			} );
-
-			it( "should ignore minIndex when null", ():void => {
-				const helper:( maxIndex:number ) => void = ( maxIndex ) => {
-					const token:SliceToken = new SliceToken( null, maxIndex );
-					expect( token.minIndex ).toBeUndefined();
-					expect( token.maxIndex ).toBe( maxIndex );
-				};
-
-				helper( 10 );
-				helper( 100 );
-				helper( - 10 );
-			} );
-
-			it( "should ignore minIndex when undefined", ():void => {
-				const helper:( maxIndex:number ) => void = ( maxIndex ) => {
-					const token:SliceToken = new SliceToken( void 0, maxIndex );
-					expect( token.minIndex ).toBeUndefined();
-					expect( token.maxIndex ).toBe( maxIndex );
-				};
-
-				helper( 10 );
-				helper( 100 );
-				helper( - 10 );
-			} );
-
-			it( "should ignore maxIndex when null", ():void => {
-				const helper:( minIndex:number ) => void = ( minIndex ) => {
-					const token:SliceToken = new SliceToken( minIndex, null );
-					expect( token.minIndex ).toBe( minIndex );
-					expect( token.maxIndex ).toBeUndefined();
-				};
-
-				helper( 10 );
-				helper( 1 );
-				helper( - 5 );
-			} );
-
-			it( "should ignore maxIndex when undefined", ():void => {
-				const helper:( minIndex:number ) => void = ( minIndex ) => {
-					const token:SliceToken = new SliceToken( minIndex );
-					expect( token.minIndex ).toBe( minIndex );
-					expect( token.maxIndex ).toBeUndefined();
-				};
-
-				helper( 10 );
-				helper( 1 );
-				helper( - 5 );
-			} );
-
-			it( "should set token name as `slice`", ():void => {
-				const token:SliceToken = new SliceToken();
-				expect( token.token ).toBe( "slice" );
-			} );
-
+			expect( token.toString() ).toBe( `Add { <http://example.com/> ex:property "literal". <http://example.com/> ex:property2 "literal-2". }.` );
 		} );
 
-		describe( method( INSTANCE, "toString" ), ():void => {
+	} );
 
-			it( hasSignature( { type: "string" } ), ():void => {
-			} );
+} );
 
-			it( "should override default", ():void => {
-				expect( SliceToken.prototype.toString ).toBeDefined();
-				expect( SliceToken.prototype.toString ).not.toBe( Object.prototype.toString );
-			} );
+describe( "DeleteToken", () => {
 
-			it( "should print empty slice", ():void => {
-				const token:SliceToken = new SliceToken();
-				expect( token.toString() ).toBe( ".." );
-			} );
+	it( "should exists", () => {
+		expect( DeleteToken ).toBeDefined();
+		expect( DeleteToken ).toEqual( jasmine.any( Function ) );
+	} );
 
-			it( "should print slice from index to last", ():void => {
-				const helper:( index:number, expected:string ) => void = ( index, expected ) => {
-					const token:SliceToken = new SliceToken( index );
-					expect( token.toString() ).toBe( expected );
-				};
+	describe( "DeleteToken.constructor", () => {
 
-				helper( 1, "1.." );
-				helper( 10, "10.." );
-				helper( - 5, "-5.." );
-			} );
+		it( "should be instantiable", () => {
+			const token:DeleteToken = new DeleteToken();
+			expect( token ).toEqual( jasmine.any( DeleteToken ) );
+		} );
 
-			it( "should print slice from start to index", ():void => {
-				const helper:( index:number, expected:string ) => void = ( index, expected ) => {
-					const token:SliceToken = new SliceToken( null, index );
-					expect( token.toString() ).toBe( expected );
-				};
 
-				helper( 1, "..1" );
-				helper( 10, "..10" );
-				helper( - 5, "..-5" );
-			} );
+		it( "should initialize triples", () => {
+			const token:DeleteToken = new DeleteToken();
+			expect( token.triples ).toEqual( [] );
+		} );
 
-			it( "should print slice from index to index", ():void => {
-				const helper:( minIndex:number, maxIndex:number, expected:string ) => void = ( minIndex, maxIndex, expected ) => {
-					const token:SliceToken = new SliceToken( minIndex, maxIndex );
-					expect( token.toString() ).toBe( expected );
-				};
+		it( "should set token name as `delete`", () => {
+			const token:DeleteToken = new DeleteToken();
+			expect( token.token ).toBe( "delete" );
+		} );
 
-				helper( 1, 1, "1..1" );
-				helper( 10, 5, "10..5" );
-				helper( - 10, - 1, "-10..-1" );
-			} );
+	} );
 
+	describe( "DeleteToken.toString", () => {
+
+		it( "should exists", () => {
+			expect( DeleteToken.prototype.toString ).toBeDefined();
+			expect( DeleteToken.prototype.toString ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should override default toString", () => {
+			expect( DeleteToken.prototype.toString ).not.toBe( Object.prototype.toString );
+		} );
+
+		it( "should return the action", () => {
+			const token:DeleteToken = new DeleteToken();
+			token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
+				.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property" ) )
+					.addObject( new LiteralToken( "literal" ) ) ) );
+			token.triples.push( new SubjectToken( new IRIRefToken( "http://example.com/" ) )
+				.addProperty( new PropertyToken( new PrefixedNameToken( "ex:property2" ) )
+					.addObject( new LiteralToken( "literal-2" ) ) ) );
+
+			expect( token.toString() ).toBe( `Delete { <http://example.com/> ex:property "literal". <http://example.com/> ex:property2 "literal-2". }.` );
+		} );
+
+	} );
+
+} );
+
+describe( "UpdateListToken", () => {
+
+	it( "should exists", () => {
+		expect( UpdateListToken ).toBeDefined();
+		expect( UpdateListToken ).toEqual( jasmine.any( Function ) );
+	} );
+
+	describe( "UpdateListToken.constructor", () => {
+
+		it( "should be instantiable", () => {
+			const token:UpdateListToken = new UpdateListToken( null, null, null, null );
+			expect( token ).toEqual( jasmine.any( UpdateListToken ) );
+		} );
+
+		it( "should set token name as `updateList`", () => {
+			const token:UpdateListToken = new UpdateListToken( null, null, null, null );
+			expect( token.token ).toBe( "updateList" );
+		} );
+
+	} );
+
+	describe( "UpdateListToken.toString", () => {
+
+		it( "should exists", () => {
+			expect( UpdateListToken.prototype.toString ).toBeDefined();
+			expect( UpdateListToken.prototype.toString ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should print the action", () => {
+			const subject:IRIRefToken = new IRIRefToken( "http://example.com/" );
+			const predicate:PrefixedNameToken = new PrefixedNameToken( "ex:property" );
+			const slice:SliceToken = new SliceToken();
+			const collection:CollectionToken = new CollectionToken();
+
+			const token:UpdateListToken = new UpdateListToken( subject, predicate, slice, collection );
+			expect( token.toString() ).toBe( `UpdateList <http://example.com/> ex:property .. ().` );
+
+			collection.objects.push( new LiteralToken( "value-1" ), new LiteralToken( "value-2" ) );
+			expect( token.toString() ).toBe( `UpdateList <http://example.com/> ex:property .. ( "value-1" "value-2" ).` );
+		} );
+
+	} );
+
+} );
+
+describe( "SliceToken", () => {
+
+	it( "should exists", () => {
+		expect( SliceToken ).toBeDefined();
+		expect( SliceToken ).toEqual( jasmine.any( Function ) );
+	} );
+
+	describe( "SliceToken.constructor", () => {
+
+		it( "should be instantiable", () => {
+			const token:SliceToken = new SliceToken();
+			expect( token ).toBeDefined();
+			expect( token ).toEqual( jasmine.any( SliceToken ) );
+		} );
+
+
+		it( "should store indexes", () => {
+			const helper:( minIndex:number, maxIndex:number ) => void = ( minIndex, maxIndex ) => {
+				const token:SliceToken = new SliceToken( minIndex, maxIndex );
+				expect( token.minIndex ).toBe( minIndex );
+				expect( token.maxIndex ).toBe( maxIndex );
+			};
+
+			helper( 10, 10 );
+			helper( 1, 100 );
+			helper( 5, - 10 );
+		} );
+
+		it( "should ignore minIndex when null", () => {
+			const helper:( maxIndex:number ) => void = ( maxIndex ) => {
+				const token:SliceToken = new SliceToken( null, maxIndex );
+				expect( token.minIndex ).toBeUndefined();
+				expect( token.maxIndex ).toBe( maxIndex );
+			};
+
+			helper( 10 );
+			helper( 100 );
+			helper( - 10 );
+		} );
+
+		it( "should ignore minIndex when undefined", () => {
+			const helper:( maxIndex:number ) => void = ( maxIndex ) => {
+				const token:SliceToken = new SliceToken( void 0, maxIndex );
+				expect( token.minIndex ).toBeUndefined();
+				expect( token.maxIndex ).toBe( maxIndex );
+			};
+
+			helper( 10 );
+			helper( 100 );
+			helper( - 10 );
+		} );
+
+		it( "should ignore maxIndex when null", () => {
+			const helper:( minIndex:number ) => void = ( minIndex ) => {
+				const token:SliceToken = new SliceToken( minIndex, null );
+				expect( token.minIndex ).toBe( minIndex );
+				expect( token.maxIndex ).toBeUndefined();
+			};
+
+			helper( 10 );
+			helper( 1 );
+			helper( - 5 );
+		} );
+
+		it( "should ignore maxIndex when undefined", () => {
+			const helper:( minIndex:number ) => void = ( minIndex ) => {
+				const token:SliceToken = new SliceToken( minIndex );
+				expect( token.minIndex ).toBe( minIndex );
+				expect( token.maxIndex ).toBeUndefined();
+			};
+
+			helper( 10 );
+			helper( 1 );
+			helper( - 5 );
+		} );
+
+		it( "should set token name as `slice`", () => {
+			const token:SliceToken = new SliceToken();
+			expect( token.token ).toBe( "slice" );
+		} );
+
+	} );
+
+	describe( "SliceToken.toString", () => {
+
+		it( "should override default", () => {
+			expect( SliceToken.prototype.toString ).toBeDefined();
+			expect( SliceToken.prototype.toString ).not.toBe( Object.prototype.toString );
+		} );
+
+		it( "should print empty slice", () => {
+			const token:SliceToken = new SliceToken();
+			expect( token.toString() ).toBe( ".." );
+		} );
+
+		it( "should print slice from index to last", () => {
+			const helper:( index:number, expected:string ) => void = ( index, expected ) => {
+				const token:SliceToken = new SliceToken( index );
+				expect( token.toString() ).toBe( expected );
+			};
+
+			helper( 1, "1.." );
+			helper( 10, "10.." );
+			helper( - 5, "-5.." );
+		} );
+
+		it( "should print slice from start to index", () => {
+			const helper:( index:number, expected:string ) => void = ( index, expected ) => {
+				const token:SliceToken = new SliceToken( null, index );
+				expect( token.toString() ).toBe( expected );
+			};
+
+			helper( 1, "..1" );
+			helper( 10, "..10" );
+			helper( - 5, "..-5" );
+		} );
+
+		it( "should print slice from index to index", () => {
+			const helper:( minIndex:number, maxIndex:number, expected:string ) => void = ( minIndex, maxIndex, expected ) => {
+				const token:SliceToken = new SliceToken( minIndex, maxIndex );
+				expect( token.toString() ).toBe( expected );
+			};
+
+			helper( 1, 1, "1..1" );
+			helper( 10, 5, "10..5" );
+			helper( - 10, - 1, "-10..-1" );
 		} );
 
 	} );
