@@ -196,7 +196,7 @@ class FakeClientRequest extends http.ClientRequest {
 	write( buffer:any, encoding:any ):boolean {
 		if( buffer && ! this.aborted ) {
 			if( ! Buffer.isBuffer( buffer ) ) {
-				buffer = new Buffer( buffer, encoding );
+				buffer = Buffer.from( buffer, encoding );
 			}
 			this.requestBodyBuffers.push( buffer );
 		}
