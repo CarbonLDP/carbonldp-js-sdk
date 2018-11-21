@@ -1,101 +1,55 @@
-import { Document } from "../Document/Document";
-
-import {
-	extendsClass,
-	hasProperty,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
-
 import { C } from "../Vocabularies/C";
 
 import { DocumentModifiedEvent } from "./DocumentModifiedEvent";
-import { EventMessage } from "./EventMessage";
 
 
-describe( module( "carbonldp/Messaging/DocumentModifiedEvent" ), ():void => {
+describe( "DocumentModifiedEvent", () => {
 
-	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentModifiedEvent",
-		"Interface with the properties of the data received in a document modified event."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			const target:DocumentModifiedEvent = {} as any;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Messaging.EventMessage" ), ():void => {
-			const target:EventMessage = {} as DocumentModifiedEvent;
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"target",
-			"CarbonLDP.Document"
-		), ():void => {
-			const target:DocumentModifiedEvent[ "target" ] = {} as Document;
-			expect( target ).toBeDefined();
-		} );
-
+	it( "should exists", () => {
+		expect( DocumentModifiedEvent ).toBeDefined();
+		expect( DocumentModifiedEvent ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentModifiedEventFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.DocumentModifiedEvent` objects."
-	), ():void => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"TYPE",
-			"string"
-		), ():void => {} );
+	describe( "[[interface]]", () => {} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"SCHEMA",
-			"CarbonLDP.ObjectSchema"
-		), ():void => {} );
+	describe( "[[factory]]", () => {
 
-	} );
+		describe( "DocumentModifiedEvent.TYPE", () => {
 
-	describe( property(
-		STATIC,
-		"DocumentModifiedEvent",
-		"CarbonLDP.Messaging.DocumentModifiedEventFactory"
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( DocumentModifiedEvent ).toBeDefined();
-			expect( DocumentModifiedEvent ).toEqual( jasmine.any( Object ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( "DocumentModifiedEvent.TYPE", ():void => {
-			expect( DocumentModifiedEvent.TYPE ).toBeDefined();
-			expect( DocumentModifiedEvent.TYPE ).toEqual( jasmine.any( String ) );
-
-			expect( DocumentModifiedEvent.TYPE ).toBe( C.DocumentModifiedEvent );
-		} );
-
-		// TODO: Separate in different tests
-		it( "DocumentModifiedEvent.SCHEMA", ():void => {
-			expect( DocumentModifiedEvent.SCHEMA ).toBeDefined();
-			expect( DocumentModifiedEvent.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-			expect( DocumentModifiedEvent.SCHEMA as {} ).toEqual( {
-				"target": jasmine.any( Object ),
+			it( "should exists", () => {
+				expect( DocumentModifiedEvent.TYPE ).toBeDefined();
+				expect( DocumentModifiedEvent.TYPE ).toEqual( jasmine.any( String ) );
 			} );
 
-			expect( DocumentModifiedEvent.SCHEMA[ "target" ] ).toEqual( {
-				"@id": C.target,
-				"@type": "@id",
+
+			it( "should be `c:DocumentModifiedEvent`", () => {
+				expect( DocumentModifiedEvent.TYPE ).toBe( C.DocumentModifiedEvent );
 			} );
+
+		} );
+
+		describe( "DocumentModifiedEvent.SCHEMA", () => {
+
+			it( "should exists", () => {
+				expect( DocumentModifiedEvent.SCHEMA ).toBeDefined();
+				expect( DocumentModifiedEvent.SCHEMA ).toEqual( jasmine.any( Object ) );
+			} );
+
+
+			it( "should have model properties", () => {
+				expect<any>( DocumentModifiedEvent.SCHEMA ).toEqual( {
+					target: jasmine.any( Object ),
+				} );
+			} );
+
+			it( "should have specified `target`", () => {
+				expect( DocumentModifiedEvent.SCHEMA[ "target" ] ).toEqual( {
+					"@id": C.target,
+					"@type": "@id",
+				} );
+			} );
+
 		} );
 
 	} );

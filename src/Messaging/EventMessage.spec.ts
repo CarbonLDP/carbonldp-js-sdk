@@ -1,121 +1,60 @@
-import { Document } from "../Document/Document";
-
 import { Resource } from "../Resource/Resource";
-
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	isDefined,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
 
 import { C } from "../Vocabularies/C";
 
 import { EventMessage } from "./EventMessage";
 
 
-describe( module( "carbonldp/Messaging/EventMessage" ), ():void => {
+describe( "EventMessage", () => {
 
-	describe( interfaze(
-		"CarbonLDP.Messaging.EventMessage",
-		"Interface with the base properties of the data received in a subscription event."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			const target:EventMessage = {} as any;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:Resource = {} as EventMessage;
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"target",
-			"CarbonLDP.Document"
-		), ():void => {
-			const target:EventMessage[ "target" ] = {} as Document;
-			expect( target ).toBeDefined();
-		} );
-
+	it( "should exists", () => {
+		expect( EventMessage ).toBeDefined();
+		expect( EventMessage ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.Messaging.EventMessageFactory",
-		"Interface with the factory, decorate and utils elements for `CarbonLDP.Messaging.EventMessage` objects."
-	), ():void => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"SCHEMA",
-			"CarbonLDP.ObjectSchema"
-		), ():void => {} );
+	describe( "[[interface]]", () => {} );
 
+	describe( "[[factory]]", () => {
 
-		describe( method(
-			OBLIGATORY,
-			"is"
-		), ():void => {
+		describe( "EventMessage.SCHEMA", () => {
 
-			it( hasSignature(
-				"Returns true if the object is considered a `CarbonLDP.Messaging.EventMessage` interface.",
-				[
-					{ name: "value", type: "any", description: "The value to be tested." },
-				],
-				{ type: "value is CarbonLDP.Messaging.EventMessage" }
-			), ():void => {} );
-
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"EventMessage",
-		"CarbonLDP.Messaging.EventMessageFactory"
-	), ():void => {
-
-		it( "should exist", ():void => {
-			expect( EventMessage ).toBeDefined();
-			expect( EventMessage ).toEqual( jasmine.any( Object ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( "EventMessage.SCHEMA", ():void => {
-			expect( EventMessage.SCHEMA ).toBeDefined();
-			expect( EventMessage.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-			expect( EventMessage.SCHEMA as {} ).toEqual( {
-				"target": jasmine.any( Object ),
+			it( "should exists", () => {
+				expect( EventMessage.SCHEMA ).toBeDefined();
+				expect( EventMessage.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );
 
-			expect( EventMessage.SCHEMA[ "target" ] ).toEqual( {
-				"@id": C.target,
-				"@type": "@id",
+
+			it( "should have model properties", () => {
+				expect<any>( EventMessage.SCHEMA ).toEqual( {
+					target: jasmine.any( Object ),
+				} );
 			} );
+
+			it( "should have specified `target`", () => {
+				expect( EventMessage.SCHEMA[ "target" ] ).toEqual( {
+					"@id": C.target,
+					"@type": "@id",
+				} );
+			} );
+
 		} );
 
-		describe( "EventMessage.is", ():void => {
 
-			it( "should exists", ():void => {
+		describe( "EventMessage.is", () => {
+
+			it( "should exists", () => {
 				expect( EventMessage.is ).toBeDefined();
 				expect( EventMessage.is ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should return false if falsy is provided", ():void => {
+
+			it( "should return false if falsy is provided", () => {
 				expect( EventMessage.is( void 0 ) ).toBe( false );
 				expect( EventMessage.is( null ) ).toBe( false );
 			} );
 
-			it( "should return false if has a missing model properties", ():void => {
+			it( "should return false if has a missing model properties", () => {
 				const object:EventMessage = Resource.create( {
 					target: null,
 				} );
