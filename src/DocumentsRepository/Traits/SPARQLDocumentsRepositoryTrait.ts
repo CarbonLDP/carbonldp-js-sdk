@@ -53,7 +53,7 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 
 			requestOptions = requestOptions ? requestOptions : {};
 
-			// Accept optional JSONLD for error messages from the platform
+			// Accept JSON-LD as secondary accepted format in case the platform returns an error message (hence the q=0.9)
 			RequestUtils.setAcceptHeader( "application/ld+json; q=0.9", requestOptions! );
 
 			return SPARQLService
@@ -68,7 +68,7 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 
 			requestOptions = requestOptions ? requestOptions : {};
 
-			// Accept optional JSONLD for error messages from the platform
+			// Accept JSON-LD as secondary accepted format in case the platform returns an error message (hence the q=0.9)
 			RequestUtils.setAcceptHeader( "application/ld+json; q=0.9", requestOptions! );
 
 			return SPARQLService
