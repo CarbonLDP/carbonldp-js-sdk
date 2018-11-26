@@ -14,6 +14,7 @@ import HandleBars from "./packages/handlebars/index";
 // Processors
 import normalizeDocs from "./processors/normalizeDocs";
 import oldDocsTree from "./processors/oldDocsTree";
+import readTypeScriptModules from "./processors/extendedReadTypeScriptModules";
 // Services
 import getLinkInfo from "./services/getLinkInfo";
 import resolveUrl from "./services/resolveUrl";
@@ -34,6 +35,7 @@ export = new Package( "carbonldp-dgeni-api",
 	.factory( getLinkInfo )
 	.factory( resolveUrl )
 
+	.processor( readTypeScriptModules )
 	.processor( normalizeDocs )
 	.processor( oldDocsTree )
 
@@ -77,7 +79,7 @@ export = new Package( "carbonldp-dgeni-api",
 				if( doc.id === "CarbonLDP" ) return doc.id;
 
 				const id:string = doc.id.replace( /\//g, "." );
-				return `CarbonLDP.${ id }`;
+				return `CarbonLDP.${id}`;
 			},
 			getOutputPath():void {},
 		} );
@@ -87,7 +89,7 @@ export = new Package( "carbonldp-dgeni-api",
 			docTypes: [ "member" ],
 			getPath( doc:any ):string {
 				const access:string = doc.isStatic ? "#" : ".";
-				return `${ doc.containerDoc.path }${ access }${ doc.name }`;
+				return `${doc.containerDoc.path}${access}${doc.name}`;
 			},
 			getOutputPath():void {},
 		} );

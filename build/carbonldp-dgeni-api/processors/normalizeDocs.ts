@@ -11,6 +11,7 @@ import { getExportDocType } from "dgeni-packages/typescript/services/TsParser";
 import { SymbolFlags } from "typescript";
 
 import { ExtendedModuleDoc } from "../dgeni-models/ExtendedModuleDoc";
+import { ExtendedModuleSymbol } from "./extendedReadTypeScriptModules";
 
 
 export default function normalizeDocs( tsHost:Host, log:any ):NormalizeDocs {
@@ -63,8 +64,10 @@ export class NormalizeDocs implements Processor {
 				(doc as ExtendedModuleDoc).reexported = true;
 			}
 
-			const reexports:ExtendedModuleDoc[] = doc.symbol.exportArray
-				.filter( symbol => ! ! ((symbol.resolvedSymbol && symbol.resolvedSymbol.flags) & SymbolFlags.ValueModule) )
+			const moduleSymbol:ExtendedModuleSymbol = doc.symbol;
+			if( ! moduleSymbol.reexportArray ) return;
+
+			const reexports:ExtendedModuleDoc[] = moduleSymbol.reexportArray
 				.map( symbol => symbol.resolvedSymbol.valueDeclaration )
 				.map( declaration => docs.find( ( _ ):_ is ModuleDoc => _.declaration === declaration ) )
 				.filter( moduleDoc => ! ! moduleDoc )
