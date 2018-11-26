@@ -35,7 +35,7 @@
     "@types/webpack": "^3.8.8",
     "@types/webpack-env": "^1.13.1",
     "awesome-typescript-loader": "^3.0.4-rc.0",
-    "carbonldp-dgeni-api": "file:test/carbonldp-dgeni-api",
+    "carbonldp-dgeni-api": "file:build/carbonldp-dgeni-api",
     "del": "^3.0.0",
     "dgeni": "^0.4.10",
     "gulp": "^3.9.1",

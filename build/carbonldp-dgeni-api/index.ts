@@ -6,11 +6,11 @@ import Typescript from "dgeni-packages/typescript";
 
 import * as path from "path";
 // Inline tags
-import { INLINE_TAGS } from "./inline-tags";
+import { INLINE_TAGS } from "./inline-tags/index";
 // Model Tags
 import { generics } from "./model-tags/generics";
 // Packages
-import HandleBars from "./packages/handlebars";
+import HandleBars from "./packages/handlebars/index";
 // Processors
 import normalizeDocs from "./processors/normalizeDocs";
 import oldDocsTree from "./processors/oldDocsTree";
