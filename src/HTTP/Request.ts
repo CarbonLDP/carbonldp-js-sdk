@@ -429,18 +429,26 @@ export class RequestUtils {
 	 * @param requestOptions The options where to look/create the header.
 	 * @param initialize Flag to create the header of not exists.
 	 */
-	static getHeader( headerName:string, requestOptions:RequestOptions, initialize:boolean = false ):Header {
-		headerName = headerName.toLowerCase();
+	static getHeader( headerName:string, requestOptions:RequestOptions, initialize?:true ):Header | undefined {
+		if( ! requestOptions.headers ) {
+			if( ! initialize ) return undefined;
 
-		if( initialize ) {
-			let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
-			if( ! headers.has( headerName ) )
-				headers.set( headerName, new Header() );
+			requestOptions.headers = new Map();
 		}
 
-		if( ! requestOptions.headers ) return undefined;
-		return requestOptions.headers.get( headerName );
+		headerName = headerName.toLowerCase();
+		let header:Header | undefined = requestOptions.headers!.get( headerName );
+
+		if( ! header ) {
+			if( ! initialize ) return undefined;
+
+			header = new Header();
+			requestOptions.headers!.set( headerName, header );
+		}
+
+		return header;
 	}
+
 
 	/**
 	 * Sets an `accept` header in the options object request.
@@ -448,8 +456,8 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setAcceptHeader( accept:string, requestOptions:RequestOptions ):RequestOptions {
-		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
-		headers.set( "accept", new Header( accept ) );
+		RequestUtils.__addHeaderValue( "accept", accept, requestOptions );
+
 		return requestOptions;
 	}
 
@@ -459,8 +467,8 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setContentTypeHeader( contentType:string, requestOptions:RequestOptions ):RequestOptions {
-		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
-		headers.set( "content-type", new Header( contentType ) );
+		RequestUtils.__addHeaderValue( "content-type", contentType, requestOptions );
+
 		return requestOptions;
 	}
 
@@ -470,10 +478,10 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setIfMatchHeader( eTag:string, requestOptions:RequestOptions ):RequestOptions {
-		if( ! eTag ) return;
+		if( ! eTag ) return requestOptions;
 
-		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
-		headers.set( "if-match", new Header( eTag ) );
+		RequestUtils.__addHeaderValue( "if-match", eTag, requestOptions );
+
 		return requestOptions;
 	}
 
@@ -483,10 +491,10 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setIfNoneMatchHeader( eTag:string, requestOptions:RequestOptions ):RequestOptions {
-		if( ! eTag ) return;
+		if( ! eTag ) return requestOptions;
 
-		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
-		headers.set( "if-none-match", new Header( eTag ) );
+		RequestUtils.__addHeaderValue( "if-none-match", eTag, requestOptions );
+
 		return requestOptions;
 	}
 
@@ -496,8 +504,8 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:RequestOptions ):RequestOptions {
-		let prefer:Header = RequestUtils.getHeader( "prefer", requestOptions, true );
-		prefer.values.push( interactionModelURI + "; rel=interaction-model" );
+		const headerValue:string = `${ interactionModelURI }; rel=interaction-model`;
+		RequestUtils.__addHeaderValue( "prefer", headerValue, requestOptions );
 
 		return requestOptions;
 	}
@@ -508,9 +516,9 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setPreferredRetrieval( retrievalType:"representation" | "minimal", requestOptions:RequestOptions ):RequestOptions {
-		const prefer:Header = RequestUtils.getHeader( "prefer", requestOptions, true );
+		const headerValue:string = `return=${ retrievalType }`;
+		RequestUtils.__addHeaderValue( "prefer", headerValue, requestOptions );
 
-		prefer.values.push( `return=${ retrievalType }` );
 		return requestOptions;
 	}
 
@@ -520,13 +528,15 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setRetrievalPreferences( preferences:RetrievalPreferences, requestOptions:RequestOptions ):RequestOptions {
-		let prefer:Header = RequestUtils.getHeader( "prefer", requestOptions, true );
+		const prefer:Header = RequestUtils.getHeader( "prefer", requestOptions, true );
 
-		let keys:string[] = [ "include", "omit" ];
-		for( let key of keys ) {
-			if( key in preferences && preferences[ key ].length > 0 ) {
-				prefer.values.push( `${ key }="${ preferences[ key ].join( " " ) }"` );
-			}
+		const keys:string[] = [ "include", "omit" ];
+		for( const key of keys ) {
+			if( ! ( key in preferences ) ) continue;
+			if( preferences[ key ].length <= 0 ) continue;
+
+			const strPreferences:string = preferences[ key ].join( " " );
+			prefer.values.push( `${ key }="${ strPreferences }"` );
 		}
 
 		return requestOptions;
@@ -538,8 +548,7 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setSlug( slug:string, requestOptions:RequestOptions ):RequestOptions {
-		let slugHeader:Header = RequestUtils.getHeader( "slug", requestOptions, true );
-		slugHeader.values.push( slug );
+		RequestUtils.__addHeaderValue( "slug", slug, requestOptions );
 
 		return requestOptions;
 	}
@@ -570,6 +579,12 @@ export class RequestUtils {
 			.forEach( ( value, key ) => clone.headers.set( key, new Header( value.values.slice() ) ) );
 
 		return clone;
+	}
+
+
+	private static __addHeaderValue( headerName:string, headerValue:string, requestOptions:RequestOptions ):void {
+		const header:Header = RequestUtils.getHeader( headerName, requestOptions, true );
+		header.addValue( headerValue );
 	}
 
 }

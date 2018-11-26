@@ -63,6 +63,15 @@ export class Header {
 	}
 
 	/**
+	 * Parse and add the string value(s) into the current header.
+	 * @param value Value or values to add.
+	 */
+	addValue( value:string ):void {
+		const newValues:string[] = Header.__parseValues( value );
+		this.values.push( ...newValues );
+	}
+
+	/**
 	 * Returns the string representation of all the values of the headers.
 	 */
 	toString():string {

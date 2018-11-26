@@ -31134,6 +31134,68 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 												
 
 												
+													<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP-HTTP-Header-addValue">
+												
+												
+														<a class="doc-header__link" href="#CarbonLDP-HTTP-Header-addValue">
+															<div class="ui basic label doc-header__symbol symbol">
+																<i class="symbol__anchor large grey linkify icon"></i>
+															</div>
+														<span class="doc-header__main code-label">.addValue()</span>
+														</a>
+														<span class="doc-header__secondary"> : 	void
+												
+												</span>
+														
+													</h4>
+												
+											
+												<div class="ui vertical segment doc-content doc-object-element__content">
+												
+														<br>
+														<pre><code class="typescript">addValue( value:string ):void</code></pre>
+														<br>
+												
+															<div class="doc-description">
+																	<p>Parse and add the string value(s) into the current header.</p>
+																
+															</div>
+															<br>
+												
+												<table class="ui celled padded tablet stackable table">
+																<thead>
+																	<tr>
+																		<th class="single line">Param</th>
+																		<th>Type</th>
+																		<th>Default</th>
+																		<th>Description</th>
+																	</tr>
+																</thead>
+																<tbody>
+												<tr>
+																			<td class="single line">
+																				
+																				<code>value</code>
+																			</td>
+																			<td class="">
+																					<code>string
+																				</code>
+																			</td>
+																			<td class="">
+																			</td>
+																			<td class="justified">
+																					<p>Value or values to add.</p>
+																				
+																			</td>
+																		</tr>
+																</tbody>
+															</table>
+														<br>
+													</div>
+												
+											
+												<br>
+												
 													<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP-HTTP-Header-hasValue">
 												
 												
@@ -33605,6 +33667,89 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 
 									<div class="ui basic segment doc-content">
 												
+													<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP-HTTP-RequestUtils+__addHeaderValue">
+												
+												
+														<a class="doc-header__link" href="#CarbonLDP-HTTP-RequestUtils+__addHeaderValue">
+															<div class="ui basic label doc-header__symbol symbol">
+																<i class="symbol__anchor large grey linkify icon"></i>
+															</div>
+														<span class="doc-header__main code-label">#__addHeaderValue()</span>
+														</a>
+														<span class="doc-header__secondary"> : 	void
+												
+												</span>
+														
+													</h4>
+												
+											
+												<div class="ui vertical segment doc-content doc-object-element__content">
+												
+														<br>
+														<pre><code class="typescript">__addHeaderValue( headerName:string, headerValue:string, requestOptions:RequestOptions ):void</code></pre>
+														<br>
+												
+												
+												<table class="ui celled padded tablet stackable table">
+																<thead>
+																	<tr>
+																		<th class="single line">Param</th>
+																		<th>Type</th>
+																		<th>Default</th>
+																		<th>Description</th>
+																	</tr>
+																</thead>
+																<tbody>
+												<tr>
+																			<td class="single line">
+																				
+																				<code>headerName</code>
+																			</td>
+																			<td class="">
+																					<code>string
+																				</code>
+																			</td>
+																			<td class="">
+																			</td>
+																			<td class="justified">
+																			</td>
+																		</tr>
+												<tr>
+																			<td class="single line">
+																				
+																				<code>headerValue</code>
+																			</td>
+																			<td class="">
+																					<code>string
+																				</code>
+																			</td>
+																			<td class="">
+																			</td>
+																			<td class="justified">
+																			</td>
+																		</tr>
+												<tr>
+																			<td class="single line">
+																				
+																				<code>requestOptions</code>
+																			</td>
+																			<td class="">
+																					<code>RequestOptions
+																				</code>
+																			</td>
+																			<td class="">
+																			</td>
+																			<td class="justified">
+																			</td>
+																		</tr>
+																</tbody>
+															</table>
+														<br>
+													</div>
+												
+											
+												<br>
+												
 													<h4 class="ui header doc-header" id="SDKDocs-CarbonLDP-HTTP-RequestUtils+cloneOptions">
 												
 												
@@ -33676,7 +33821,7 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 															</div>
 														<span class="doc-header__main code-label">#getHeader()</span>
 														</a>
-														<span class="doc-header__secondary"> : 	<a href="#CarbonLDP-HTTP-Header">CarbonLDP.HTTP.Header</a>
+														<span class="doc-header__secondary"> : 	<a href="#CarbonLDP-HTTP-Header">CarbonLDP.HTTP.Header</a> | undefined
 												
 												</span>
 														
@@ -33686,7 +33831,7 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 												<div class="ui vertical segment doc-content doc-object-element__content">
 												
 														<br>
-														<pre><code class="typescript">getHeader( headerName:string, requestOptions:RequestOptions, initialize:boolean ):Header</code></pre>
+														<pre><code class="typescript">getHeader( headerName:string, requestOptions:RequestOptions, initialize?:true ):Header | undefined</code></pre>
 														<br>
 												
 															<div class="doc-description">
@@ -33740,12 +33885,12 @@ which specifies the behaviour of a request when using an <code>ldp:Container</co
 																			</td>
 																		</tr>
 												<tr>
-																			<td class="single line">
-																				
+																			<td class="single line optional-label">
+																				<label class="ui blue right ribbon horizontal label">Optional</label>
 																				<code>initialize</code>
 																			</td>
 																			<td class="">
-																					<code>boolean
+																					<code>true
 																				</code>
 																			</td>
 																			<td class="">
