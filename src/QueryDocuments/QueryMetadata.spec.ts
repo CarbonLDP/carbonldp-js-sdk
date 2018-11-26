@@ -2,8 +2,6 @@ import { VolatileResource } from "../LDP/VolatileResource";
 
 import { Resource } from "../Resource/Resource";
 
-import { property, STATIC } from "../test/JasmineExtender";
-
 import { C } from "../Vocabularies/C";
 
 import { QueryMetadata } from "./QueryMetadata";
@@ -63,39 +61,11 @@ describe( "QueryMetadata", ():void => {
 
 		describe( "QueryMetadata.is", ():void => {
 
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"QueryMetadata",
-		"CarbonLDP.QueryDocuments.QueryMetadataFactory"
-	), ():void => {
-
-
-		// TODO: Separate in different tests
-		it( "QueryMetadata.SCHEMA", ():void => {
-			expect( QueryMetadata.SCHEMA ).toBeDefined();
-			expect( QueryMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-			expect( QueryMetadata.SCHEMA as {} ).toEqual( {
-				"targets": jasmine.any( Object ),
-			} );
-
-			expect( QueryMetadata.SCHEMA[ "targets" ] ).toEqual( {
-				"@id": C.target,
-				"@type": "@id",
-				"@container": "@set",
-			} );
-		} );
-
-		describe( "QueryMetadata.is", ():void => {
-
 			it( "should exists", ():void => {
 				expect( QueryMetadata.is ).toBeDefined();
 				expect( QueryMetadata.is ).toEqual( jasmine.any( Function ) );
 			} );
+
 
 			it( "should call to VolatileResource.is", ():void => {
 				const spy:jasmine.Spy = spyOn( VolatileResource, "is" );
