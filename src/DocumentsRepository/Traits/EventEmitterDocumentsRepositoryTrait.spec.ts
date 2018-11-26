@@ -22,7 +22,7 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		function createMock():EventEmitterDocumentsRepositoryTrait {
 			return EventEmitterDocumentsRepositoryTrait.decorate( { context } );

@@ -21,7 +21,7 @@ describe( "DocumentsRepository", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		let repository:DocumentsRepository;
 		beforeEach( () => {

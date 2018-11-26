@@ -37,7 +37,7 @@ describe( "SPARQLDocumentsRepositoryTrait", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		beforeEach( () => {
 			jasmine.Ajax.install();

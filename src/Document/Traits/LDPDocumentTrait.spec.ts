@@ -29,7 +29,7 @@ describe( "LDPDocumentTrait", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		let resource:LDPDocumentTrait;
 		beforeEach( () => {

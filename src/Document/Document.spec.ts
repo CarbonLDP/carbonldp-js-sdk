@@ -26,7 +26,7 @@ describe( "Document", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		function createMock<T extends object>( data?:T & Partial<Document> ):T & Document {
 			const mock:T & Document = Document.decorate( Object.assign<BaseResolvableDocument, typeof data>( {

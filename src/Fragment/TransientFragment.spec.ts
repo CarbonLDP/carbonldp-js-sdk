@@ -18,7 +18,7 @@ describe( "TransientFragment", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		let fragment:TransientFragment;
 		beforeEach( () => {

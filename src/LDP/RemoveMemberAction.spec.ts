@@ -17,7 +17,7 @@ describe( "RemoveMemberAction", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 	} );
 
 	describe( "[[factory]]", () => {

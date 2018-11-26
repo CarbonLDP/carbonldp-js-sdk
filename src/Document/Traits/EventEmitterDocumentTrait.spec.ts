@@ -32,7 +32,7 @@ describe( "EventEmitterDocumentTrait", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		let resource:EventEmitterDocumentTrait;
 		beforeEach( () => {

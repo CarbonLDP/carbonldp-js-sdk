@@ -28,7 +28,7 @@ describe( "SPARQLDocumentTrait", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		let resource:SPARQLDocumentTrait;
 		beforeEach( () => {

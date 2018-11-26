@@ -11,7 +11,7 @@ describe( "MemberEventDetails", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {} );
+	describe( "[[interface impl]]", () => {} );
 
 	describe( "[[factory]]", () => {
 

@@ -28,7 +28,7 @@ describe( "DocumentsRegistry", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		function createMock<T extends {}>( data?:T & Partial<DocumentsRegistry> ):DocumentsRegistry {
 			return DocumentsRegistry.decorate( Object.assign( { context: context }, data ) );

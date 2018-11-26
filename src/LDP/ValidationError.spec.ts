@@ -11,7 +11,7 @@ describe( "ValidationError", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {} );
+	describe( "[[interface impl]]", () => {} );
 
 	describe( "[[factory]]", () => {
 

@@ -17,7 +17,7 @@ describe( "QueryMetadata", ():void => {
 	} );
 
 
-	describe( "[[interface]]", ():void => {
+	describe( "[[interface impl]]", ():void => {
 	} );
 
 	describe( "[[factory]]", ():void => {

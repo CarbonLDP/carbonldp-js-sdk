@@ -28,7 +28,7 @@ describe( "QueryableDocumentTrait", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		const queryBuilderFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder = _ => _;
 		let resource:QueryableDocumentTrait;

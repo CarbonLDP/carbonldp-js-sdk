@@ -21,7 +21,7 @@ describe( "ObjectSchemaResolver", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		describe( "ObjectSchemaResolver.getGeneralSchema", () => {
 

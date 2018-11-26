@@ -3,7 +3,7 @@ import { ModelDecorator } from "./ModelDecorator";
 
 describe( "ModelDecorator", ():void => {
 
-	describe( "[[interface]]", () => {} );
+	describe( "[[interface impl]]", () => {} );
 
 
 	describe( "[[factory]]", () => {

@@ -11,7 +11,7 @@ describe( "MemberRemovedEvent", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {} );
+	describe( "[[interface impl]]", () => {} );
 
 	describe( "[[factory]]", () => {
 

@@ -26,7 +26,7 @@ describe( "FreeResources", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		let freeResources:FreeResources;
 		beforeEach( () => {

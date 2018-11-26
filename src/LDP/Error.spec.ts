@@ -4,18 +4,18 @@ import { XSD } from "../Vocabularies/XSD";
 import { Error } from "./Error";
 
 
-describe( "Error", ():void => {
+describe( "Error", () => {
 
-	it( "should exists", ():void => {
+	it( "should exists", () => {
 		expect( Error ).toBeDefined();
 		expect( Error ).toEqual( jasmine.any( Object ) );
 	} );
 
 
-	describe( "[[interface]]", ():void => {
+	describe( "[[interface impl]]", () => {
 	} );
 
-	describe( "[[factory]]", ():void => {
+	describe( "[[factory]]", () => {
 
 		describe( "Error.TYPE", () => {
 

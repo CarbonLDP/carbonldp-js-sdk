@@ -18,7 +18,7 @@ describe( "Fragment", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		let $registry:Document;
 		let fragment:Fragment;

@@ -41,7 +41,7 @@ describe( "TransientDocument", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 
 		describe( "TransientDocument.$_normalize", () => {

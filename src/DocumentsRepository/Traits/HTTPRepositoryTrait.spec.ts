@@ -9,7 +9,7 @@ describe( "HTTPRepositoryTrait", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		// TODO: Test .get
 		// TODO: Test .resolve

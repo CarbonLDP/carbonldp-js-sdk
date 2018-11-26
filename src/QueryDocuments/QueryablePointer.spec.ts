@@ -18,7 +18,7 @@ describe( "QueryablePointer", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		let $repository:Repository;
 		beforeEach( () => {

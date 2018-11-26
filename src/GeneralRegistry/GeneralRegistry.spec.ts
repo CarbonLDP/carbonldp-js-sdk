@@ -34,7 +34,7 @@ describe( "GeneralRegistry", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 		function createMock<T extends {}>( data?:T & Partial<GeneralRegistry> ):T & GeneralRegistry {
 			return GeneralRegistry.createFrom( Object.assign( {

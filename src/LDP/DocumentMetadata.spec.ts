@@ -11,7 +11,7 @@ describe( "DocumentMetadata", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 	} );
 
 	describe( "[[factory]]", () => {

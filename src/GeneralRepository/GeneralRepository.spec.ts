@@ -28,7 +28,7 @@ describe( "GeneralRepository", () => {
 	} );
 
 
-	describe( "[[interface]]", () => {
+	describe( "[[interface impl]]", () => {
 
 	} );
 
