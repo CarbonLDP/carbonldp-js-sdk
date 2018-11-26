@@ -2,66 +2,66 @@ import { VolatileResource } from "../LDP/VolatileResource";
 
 import { Resource } from "../Resource/Resource";
 
-import { hasProperty, hasSignature, interfaze, method, module, OBLIGATORY, property, STATIC } from "../test/JasmineExtender";
+import { property, STATIC } from "../test/JasmineExtender";
 
 import { C } from "../Vocabularies/C";
 
-import { QueryablePointer } from "./QueryablePointer";
 import { QueryMetadata } from "./QueryMetadata";
 
 
-describe( module( "carbonldp/QueryDocuments/QueryMetadata" ), ():void => {
+describe( "QueryMetadata", ():void => {
 
 	it( "should exists", ():void => {
 		expect( QueryMetadata ).toBeDefined();
 		expect( QueryMetadata ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( interfaze( "CarbonLDP.QueryDocuments.QueryMetadata", "Interface of the volatile resource created by the SDK in the partial query request." ), ():void => {
 
-		it( "should exists", ():void => {
-			const target:QueryMetadata = {} as QueryMetadata;
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"targets",
-			"CarbonLDP.QueryDocuments.QueryablePointer[]",
-			"The pointers to one of the targeted resources requested in the partial query."
-		), ():void => {
-			const target:QueryMetadata[ "targets" ] = [] as QueryablePointer[];
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[interface]]", ():void => {
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.QueryDocuments.QueryMetadataFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.QueryDocuments.QueryMetadata` objects."
-	), ():void => {
+	describe( "[[factory]]", ():void => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"TYPE",
-			"string"
-		), ():void => {} );
+		describe( "QueryMetadata.TYPE", () => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"SCHEMA",
-			"CarbonLDP.ObjectSchema"
-		), ():void => {} );
+			it( "should exists", () => {
+				expect( QueryMetadata.TYPE ).toBeDefined();
+				expect( QueryMetadata.TYPE ).toEqual( jasmine.any( String ) );
+			} );
 
-		describe( method( OBLIGATORY, "is" ), ():void => {
 
-			it( hasSignature(
-				"Asserts if the provided object can be defined as a QueryMetadata resource.",
-				[
-					{ name: "value", type: "any", description: "The value to check." },
-				],
-				{ type: "value is CarbonLDP.QueryDocuments.QueryMetadata" }
-			), ():void => {} );
+			it( "should be `c:QueryMetadata`", () => {
+				expect( QueryMetadata.TYPE ).toBe( C.QueryMetadata );
+			} );
+
+		} );
+
+		describe( "QueryMetadata.SCHEMA", () => {
+
+			it( "should exists", () => {
+				expect( QueryMetadata.SCHEMA ).toBeDefined();
+				expect( QueryMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );
+			} );
+
+
+			it( "should have model properties", () => {
+				expect<any>( QueryMetadata.SCHEMA ).toEqual( {
+					targets: jasmine.any( Object ),
+				} );
+			} );
+
+			it( "should have specified `targets`", () => {
+				expect( QueryMetadata.SCHEMA[ "targets" ] ).toEqual( {
+					"@id": C.target,
+					"@type": "@id",
+					"@container": "@set",
+				} );
+			} );
+
+		} );
+
+
+		describe( "QueryMetadata.is", ():void => {
 
 		} );
 
@@ -73,15 +73,6 @@ describe( module( "carbonldp/QueryDocuments/QueryMetadata" ), ():void => {
 		"CarbonLDP.QueryDocuments.QueryMetadataFactory"
 	), ():void => {
 
-		it( "should exist", ():void => {
-			expect( QueryMetadata ).toBeDefined();
-			expect( QueryMetadata ).toEqual( jasmine.any( Object ) );
-		} );
-
-		it( "QueryMetadata.TYPE", ():void => {
-			expect( QueryMetadata.TYPE ).toBeDefined();
-			expect( QueryMetadata.TYPE ).toBe( C.QueryMetadata );
-		} );
 
 		// TODO: Separate in different tests
 		it( "QueryMetadata.SCHEMA", ():void => {
