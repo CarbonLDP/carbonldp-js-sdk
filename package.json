@@ -73,7 +73,8 @@
     "webpack-merge": "^4.1.0"
   },
   "scripts": {
-    "preinstall": "rimraf ./node_modules/carbonldp-dgeni-api",
+    "preinstall": "rm -f ./node_modules/carbonldp-dgeni-api",
+    "postinstall": "npm install carbonldp-dgeni-api",
     "start": "./node_modules/.bin/gulp build",
     "lint": "./node_modules/.bin/gulp lint",
     "test": "./node_modules/.bin/gulp test"
