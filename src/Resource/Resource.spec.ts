@@ -574,7 +574,7 @@ describe( "Resource", () => {
 
 			it( "should return same reference", () => {
 				const object:object = {};
-				const resource:Resource = Resource.create( object );
+				const resource:Resource = Resource.createFrom( object );
 
 				expect( object ).toBe( resource );
 			} );

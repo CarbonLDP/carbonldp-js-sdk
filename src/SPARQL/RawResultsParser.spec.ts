@@ -1,52 +1,32 @@
-import { clazz, hasMethod, INSTANCE, isDefined, module } from "../test/JasmineExtender";
-
-import * as Utils from "./../Utils";
 import { SPARQLRawResults } from "./RawResults";
+import { SPARQLRawResultsParser } from "./RawResultsParser";
 
-import * as RawResultsParser from "./RawResultsParser";
 
+describe( "SPARQLRawResultsParser", () => {
 
-describe( module( "carbonldp/SPARQL/RawResultsParser" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( RawResultsParser ).toBeDefined();
-		expect( Utils.isObject( RawResultsParser ) ).toBe( true );
+	it( "should exist", () => {
+		expect( SPARQLRawResultsParser ).toBeDefined();
+		expect( SPARQLRawResultsParser ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.SPARQL.SPARQLRawResultsParser",
-		"Class to parse SPARQL Query result to a `CarbonLDP.SPARQL.SPARQLRawResults` object.", [
-			"CarbonLDP.HTTP.Parser<CarbonLDP.SPARQL.SPARQLRawResults>",
-		]
-	), ():void => {
+	it( "should be instantiable", () => {
+		const parser:SPARQLRawResultsParser = new SPARQLRawResultsParser();
+		expect( parser ).toEqual( jasmine.any( SPARQLRawResultsParser ) );
+	} );
 
-		// TODO: Separate in different tests
-		it( isDefined(), ():void => {
-			expect( RawResultsParser.SPARQLRawResultsParser ).toBeDefined();
-			expect( Utils.isFunction( RawResultsParser.SPARQLRawResultsParser ) ).toBe( true );
 
-			let parser:RawResultsParser.SPARQLRawResultsParser = new RawResultsParser.SPARQLRawResultsParser();
-			expect( parser ).toBeTruthy();
-			expect( parser instanceof RawResultsParser.SPARQLRawResultsParser ).toBe( true );
+	describe( "SPARQLRawResultsParser.parse", () => {
+
+		it( "should exist", () => {
+			expect( SPARQLRawResultsParser.prototype.parse ).toBeDefined();
+			expect( SPARQLRawResultsParser.prototype.parse ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"parse",
-			"Parse the SPARQL Query string result to a `CarbonLDP.SPARQL.SPARQLRawResults` object.", [
-				{ name: "input", type: "string" },
-			],
-			{ type: "Promise<CarbonLDP.SPARQL.SPARQLRawResults>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			let parser:RawResultsParser.SPARQLRawResultsParser = new RawResultsParser.SPARQLRawResultsParser();
 
-			expect( parser.parse ).toBeDefined();
-			expect( Utils.isFunction( parser.parse ) ).toBe( true );
-
-			let querySelectObject:any = {
+		it( "should parse query SELECT result", async () => {
+			const data:SPARQLRawResults = {
 				"head": {
-					"link": [
+					"links": [
 						"http://www.w3.org/TR/rdf-sparql-XMLres/example.rq",
 					],
 					"vars": [
@@ -92,51 +72,33 @@ describe( module( "carbonldp/SPARQL/RawResultsParser" ), ():void => {
 					],
 				},
 			};
-			let querySelectString:string = JSON.stringify( querySelectObject );
 
-			let queryAskObject:any = {
+			const parser:SPARQLRawResultsParser = new SPARQLRawResultsParser();
+			const result:SPARQLRawResults = await parser.parse( JSON.stringify( data ) );
+
+			expect( result ).toEqual( data );
+		} );
+
+		it( "should parse query ASK result", async () => {
+			const data:SPARQLRawResults = {
 				"head": {},
 				"boolean": true,
 			};
-			let queryAskString:string = JSON.stringify( queryAskObject );
 
-			let spies:any = {
-				successSelect: ( result ) => {
-					expect( result ).toEqual( querySelectObject );
-				},
-				successAsk: ( result ) => {
-					expect( result ).toEqual( queryAskObject );
-				},
-				fail: ( error ) => {
-					expect( error ).toBeTruthy();
-					expect( error instanceof Error ).toBe( true );
-				},
-			};
-			let spySuccessSelect:jasmine.Spy = spyOn( spies, "successSelect" ).and.callThrough();
-			let spySuccessAsk:jasmine.Spy = spyOn( spies, "successAsk" ).and.callThrough();
-			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+			const parser:SPARQLRawResultsParser = new SPARQLRawResultsParser();
+			const result:SPARQLRawResults = await parser.parse( JSON.stringify( data ) );
 
-			let promises:Promise<any>[] = [];
-			let promise:Promise<SPARQLRawResults>;
+			expect( result ).toEqual( data );
+		} );
 
-			promise = parser.parse( querySelectString );
-			expect( promise instanceof Promise );
-			promises.push( promise.then( spies.successSelect, spies.fail ) );
+		it( "should throw error when invalid data", async () => {
+			const parser:SPARQLRawResultsParser = new SPARQLRawResultsParser();
 
-			promise = parser.parse( queryAskString );
-			expect( promise instanceof Promise );
-			promises.push( promise.then( spies.successAsk, spies.fail ) );
-
-			promise = parser.parse( "something that is not a valid JSON !@#$%^&*()_+¡™£¢∞§¶•ªº–" );
-			expect( promise instanceof Promise );
-			promises.push( promise.then( spies.successSelect, spies.fail ) );
-
-			Promise.all( promises ).then( () => {
-				expect( spySuccessSelect.calls.count() ).toBe( 1 );
-				expect( spySuccessAsk.calls.count() ).toBe( 1 );
-				expect( spyFail.calls.count() ).toBe( 1 );
-				done();
-			}, done.fail );
+			await parser
+				.parse( "something that is not a valid JSON !@#$%^&*()_+¡™£¢∞§¶•ªº–" )
+				.catch( error => {
+					expect( error ).toEqual( jasmine.any( Error ) );
+				} );
 		} );
 
 	} );
