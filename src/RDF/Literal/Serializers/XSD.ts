@@ -40,7 +40,7 @@ export class TimeSerializer implements Serializer {
 		return pad( value.getUTCHours() )
 			+ ":" + pad( value.getUTCMinutes() )
 			+ ":" + pad( value.getUTCSeconds() )
-			+ "." + String( ( value.getUTCMilliseconds() / 1000 ).toFixed( 3 ) ).slice( 2, 5 )
+			+ "." + String( (value.getUTCMilliseconds() / 1000).toFixed( 3 ) ).slice( 2, 5 )
 			+ "Z"
 			;
 	}
@@ -53,7 +53,7 @@ export class IntegerSerializer implements Serializer {
 		if( ! Utils.isNumber( value ) ) throw new IllegalArgumentError( notNumberError );
 
 		// Negative truncate
-		return ( ~ ~ value ).toString();
+		return (~ ~ value).toString();
 	}
 }
 
@@ -62,6 +62,11 @@ export let integerSerializer:IntegerSerializer = new IntegerSerializer();
 export class LongSerializer implements Serializer {
 	serialize( value:any ):string {
 		if( ! Utils.isNumber( value ) ) throw new IllegalArgumentError( notNumberError );
+
+		if( value === Number.POSITIVE_INFINITY ) return "0";
+		if( value === Number.NEGATIVE_INFINITY ) return "0";
+		if( Number.isNaN( value ) ) return "0";
+
 		return Math.trunc( value ).toString();
 	}
 }
@@ -83,6 +88,11 @@ export let unsignedIntegerSerializer:UnsignedIntegerSerializer = new UnsignedInt
 export class UnsignedLongSerializer implements Serializer {
 	serialize( value:any ):string {
 		if( ! Utils.isNumber( value ) ) throw new IllegalArgumentError( notNumberError );
+
+		if( value === Number.POSITIVE_INFINITY ) return "0";
+		if( value === Number.NEGATIVE_INFINITY ) return "0";
+		if( Number.isNaN( value ) ) return "0";
+
 		return Math.trunc( Math.abs( value ) ).toString();
 	}
 }
@@ -103,7 +113,7 @@ export let floatSerializer:FloatSerializer = new FloatSerializer();
 
 export class BooleanSerializer implements Serializer {
 	serialize( value:any ):string {
-		return ( ! ! value ).toString();
+		return (! ! value).toString();
 	}
 }
 
