@@ -3,7 +3,7 @@ import { AbstractError } from "./AbstractError";
 
 describe( "AbstractError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( AbstractError ).toBeDefined();
 		expect( AbstractError ).toEqual( jasmine.any( Function ) );
 	} );

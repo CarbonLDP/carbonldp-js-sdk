@@ -8,7 +8,7 @@ import { UnsupportedMediaTypeError } from "./UnsupportedMediaTypeError";
 
 describe( "UnsupportedMediaTypeError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( UnsupportedMediaTypeError ).toBeDefined();
 		expect( UnsupportedMediaTypeError ).toEqual( jasmine.any( Function ) );
 	} );

@@ -12,7 +12,7 @@ import { TransientDirectContainer } from "./TransientDirectContainer";
 
 describe( "DirectContainer", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( TransientDirectContainer ).toBeDefined();
 		expect( TransientDirectContainer ).toEqual( jasmine.any( Object ) );
 	} );
@@ -39,7 +39,7 @@ describe( "DirectContainer", () => {
 
 		describe( "TransientDirectContainer.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientDirectContainer.is ).toBeDefined();
 				expect( TransientDirectContainer.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -82,7 +82,7 @@ describe( "DirectContainer", () => {
 
 		describe( "TransientDirectContainer.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientDirectContainer.create ).toBeDefined();
 				expect( TransientDirectContainer.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -114,7 +114,7 @@ describe( "DirectContainer", () => {
 
 		describe( "TransientDirectContainer.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientDirectContainer.createFrom ).toBeDefined();
 				expect( TransientDirectContainer.createFrom ).toEqual( jasmine.any( Function ) );
 			} );

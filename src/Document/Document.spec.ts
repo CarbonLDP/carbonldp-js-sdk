@@ -15,7 +15,7 @@ import { TransientDocument } from "./TransientDocument";
 
 describe( "Document", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( Document ).toBeDefined();
 		expect( Document ).toEqual( jasmine.any( Object ) );
 	} );
@@ -43,7 +43,7 @@ describe( "Document", () => {
 
 		describe( "Document.$_syncSavedFragments", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:Document = createMock();
 
 				expect( resource.$_syncSavedFragments ).toBeDefined();
@@ -60,7 +60,7 @@ describe( "Document", () => {
 
 		describe( "Document.$isDirty", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:Document = createMock();
 
 				expect( resource.$isDirty ).toBeDefined();
@@ -125,7 +125,7 @@ describe( "Document", () => {
 
 		describe( "Document.$revert", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:Document = createMock( {} );
 
 				expect( resource.$revert ).toBeDefined();
@@ -197,7 +197,7 @@ describe( "Document", () => {
 
 		describe( "Document.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( Document.isDecorated ).toBeDefined();
 				expect( Document.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -285,7 +285,7 @@ describe( "Document", () => {
 
 		describe( "Document.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( Document.is ).toBeDefined();
 				expect( Document.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -380,7 +380,7 @@ describe( "Document", () => {
 
 		describe( "Document.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( Document.decorate ).toBeDefined();
 				expect( Document.decorate ).toEqual( jasmine.any( Function ) );
 			} );

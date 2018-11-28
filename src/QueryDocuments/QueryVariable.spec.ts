@@ -5,7 +5,7 @@ import { QueryVariable } from "./QueryVariable";
 
 describe( "QueryVariable", ():void => {
 
-	it( "should exists", ():void => {
+	it( "should exist", ():void => {
 		expect( QueryVariable ).toBeDefined();
 		expect( QueryVariable ).toEqual( jasmine.any( Function ) );
 	} );

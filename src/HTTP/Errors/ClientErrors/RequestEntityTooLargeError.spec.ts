@@ -8,7 +8,7 @@ import { RequestEntityTooLargeError } from "./RequestEntityTooLargeError";
 
 describe( "RequestEntityTooLargeError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( RequestEntityTooLargeError ).toBeDefined();
 		expect( RequestEntityTooLargeError ).toEqual( jasmine.any( Function ) );
 	} );

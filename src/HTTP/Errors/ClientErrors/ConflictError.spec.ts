@@ -8,7 +8,7 @@ import { ConflictError } from "./ConflictError";
 
 describe( "ConflictError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( ConflictError ).toBeDefined();
 		expect( ConflictError ).toEqual( jasmine.any( Function ) );
 	} );

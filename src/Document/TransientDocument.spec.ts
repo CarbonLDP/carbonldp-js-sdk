@@ -35,7 +35,7 @@ function createMock<T extends {}>( origin:T & Partial<TransientDocument> = {} as
 
 describe( "TransientDocument", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( TransientDocument ).toBeDefined();
 		expect( TransientDocument ).toEqual( jasmine.any( Object ) );
 	} );
@@ -46,7 +46,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.$_normalize", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const document:TransientDocument = createMock();
 
 				expect( document.$_normalize ).toBeDefined();
@@ -115,7 +115,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.$getPointer", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const document:TransientDocument = createMock();
 
 				expect( document.$getPointer ).toBeDefined();
@@ -242,7 +242,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.$_getLocalID", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const document:TransientDocument = createMock();
 
 				expect( document.$_getLocalID ).toBeDefined();
@@ -297,7 +297,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.$hasFragment", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const document:TransientDocument = createMock();
 
 				expect( document.$hasFragment ).toBeDefined();
@@ -381,7 +381,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.$getFragment", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const document:TransientDocument = createMock();
 
 				expect( document.$getFragment ).toBeDefined();
@@ -461,7 +461,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.$getFragments", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const document:TransientDocument = createMock();
 
 				expect( document.$getFragments ).toBeDefined();
@@ -496,7 +496,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.$createFragment", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const document:TransientDocument = createMock();
 
 				expect( document.$createFragment ).toBeDefined();
@@ -663,7 +663,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.$removeFragment", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const document:TransientDocument = createMock();
 
 				expect( document.$removeFragment ).toBeDefined();
@@ -737,7 +737,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.toJSON", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const document:TransientDocument = createMock();
 
 				expect( document.toJSON ).toBeDefined();
@@ -869,7 +869,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientDocument.is ).toBeDefined();
 				expect( TransientDocument.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -936,7 +936,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientDocument.isDecorated ).toBeDefined();
 				expect( TransientDocument.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -1054,7 +1054,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientDocument.create ).toBeDefined();
 				expect( TransientDocument.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -1069,7 +1069,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientDocument.createFrom ).toBeDefined();
 				expect( TransientDocument.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
@@ -1091,7 +1091,7 @@ describe( "TransientDocument", () => {
 
 		describe( "TransientDocument.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientDocument.decorate ).toBeDefined();
 				expect( TransientDocument.decorate ).toEqual( jasmine.any( Function ) );
 			} );

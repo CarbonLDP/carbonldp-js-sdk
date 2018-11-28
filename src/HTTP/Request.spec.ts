@@ -14,7 +14,7 @@ describe( "Request", () => {
 
 	describe( "RequestService", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( RequestService ).toBeDefined();
 			expect( RequestService ).toEqual( jasmine.any( Function ) );
 		} );
@@ -80,7 +80,7 @@ describe( "Request", () => {
 		// TODO: Test `RequestService.send`
 		describe( "RequestService.send", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestService.send ).toBeDefined();
 				expect( RequestService.send ).toEqual( jasmine.any( Function ) );
 			} );
@@ -90,7 +90,7 @@ describe( "Request", () => {
 
 		describe( "RequestService.head", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestService.head ).toBeDefined();
 				expect( RequestService.head ).toEqual( jasmine.any( Function ) );
 			} );
@@ -127,7 +127,7 @@ describe( "Request", () => {
 
 		describe( "RequestService.options", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestService.options ).toBeDefined();
 				expect( RequestService.options ).toEqual( jasmine.any( Function ) );
 			} );
@@ -164,7 +164,7 @@ describe( "Request", () => {
 
 		describe( "RequestService.get", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestService.get ).toBeDefined();
 				expect( RequestService.get ).toEqual( jasmine.any( Function ) );
 			} );
@@ -220,7 +220,7 @@ describe( "Request", () => {
 
 		describe( "RequestService.post", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestService.post ).toBeDefined();
 				expect( RequestService.post ).toEqual( jasmine.any( Function ) );
 			} );
@@ -276,7 +276,7 @@ describe( "Request", () => {
 
 		describe( "RequestService.put", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestService.put ).toBeDefined();
 				expect( RequestService.put ).toEqual( jasmine.any( Function ) );
 			} );
@@ -332,7 +332,7 @@ describe( "Request", () => {
 
 		describe( "RequestService.patch", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestService.patch ).toBeDefined();
 				expect( RequestService.patch ).toEqual( jasmine.any( Function ) );
 			} );
@@ -388,7 +388,7 @@ describe( "Request", () => {
 
 		describe( "RequestService.delete", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestService.delete ).toBeDefined();
 				expect( RequestService.delete ).toEqual( jasmine.any( Function ) );
 			} );
@@ -524,7 +524,7 @@ describe( "Request", () => {
 		}
 
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( RequestUtils ).toBeDefined();
 			expect( RequestUtils ).toEqual( jasmine.any( Function ) );
 		} );
@@ -532,7 +532,7 @@ describe( "Request", () => {
 
 		describe( "RequestUtils.getHeader", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestUtils.getHeader ).toBeDefined();
 				expect( RequestUtils.getHeader ).toEqual( jasmine.any( Function ) );
 			} );
@@ -562,7 +562,7 @@ describe( "Request", () => {
 
 		describe( "RequestUtils.setAcceptHeader", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestUtils.setAcceptHeader ).toBeDefined();
 				expect( RequestUtils.setAcceptHeader ).toEqual( jasmine.any( Function ) );
 			} );
@@ -583,7 +583,7 @@ describe( "Request", () => {
 
 		describe( "RequestUtils.setContentTypeHeader", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestUtils.setContentTypeHeader ).toBeDefined();
 				expect( RequestUtils.setContentTypeHeader ).toEqual( jasmine.any( Function ) );
 			} );
@@ -604,7 +604,7 @@ describe( "Request", () => {
 
 		describe( "RequestUtils.setIfMatchHeader", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestUtils.setIfMatchHeader ).toBeDefined();
 				expect( RequestUtils.setIfMatchHeader ).toEqual( jasmine.any( Function ) );
 			} );
@@ -625,7 +625,7 @@ describe( "Request", () => {
 
 		describe( "RequestUtils.setIfNoneMatchHeader", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestUtils.setIfNoneMatchHeader ).toBeDefined();
 				expect( RequestUtils.setIfNoneMatchHeader ).toEqual( jasmine.any( Function ) );
 			} );
@@ -646,7 +646,7 @@ describe( "Request", () => {
 
 		describe( "RequestUtils.setPreferredInteractionModel", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestUtils.setPreferredInteractionModel ).toBeDefined();
 				expect( RequestUtils.setPreferredInteractionModel ).toEqual( jasmine.any( Function ) );
 			} );
@@ -667,7 +667,7 @@ describe( "Request", () => {
 
 		describe( "RequestUtils.setPreferredRetrieval", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestUtils.setPreferredRetrieval ).toBeDefined();
 				expect( RequestUtils.setPreferredRetrieval ).toEqual( jasmine.any( Function ) );
 			} );
@@ -698,7 +698,7 @@ describe( "Request", () => {
 
 		describe( "RequestUtils.setSlug", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestUtils.setSlug ).toBeDefined();
 				expect( RequestUtils.setSlug ).toEqual( jasmine.any( Function ) );
 			} );
@@ -719,7 +719,7 @@ describe( "Request", () => {
 
 		describe( "RequestUtils.setRetrievalPreferences", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestUtils.setRetrievalPreferences ).toBeDefined();
 				expect( RequestUtils.setRetrievalPreferences ).toEqual( jasmine.any( Function ) );
 			} );
@@ -787,7 +787,7 @@ describe( "Request", () => {
 
 		describe( "RequestUtils.isOptions", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RequestUtils.isOptions ).toBeDefined();
 				expect( RequestUtils.isOptions ).toEqual( jasmine.any( Function ) );
 			} );

@@ -10,7 +10,7 @@ import { QueryObject } from "./QueryObject";
 
 describe( "QueryObject", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( QueryObject ).toBeDefined();
 		expect( QueryObject ).toEqual( jasmine.any( Function ) );
 	} );
@@ -77,7 +77,7 @@ describe( "QueryObject", () => {
 
 	describe( "QueryObject.getToken", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryObject.prototype.getToken ).toBeDefined();
 			expect( QueryObject.prototype.getToken ).toEqual( jasmine.any( Function ) );
 		} );

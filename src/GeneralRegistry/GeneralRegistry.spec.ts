@@ -23,7 +23,7 @@ import { TypedModelDecorator } from "./TypedModelDecorator";
 
 describe( "GeneralRegistry", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( GeneralRegistry ).toBeDefined();
 		expect( GeneralRegistry ).toEqual( jasmine.any( Object ) );
 	} );
@@ -73,7 +73,7 @@ describe( "GeneralRegistry", () => {
 
 		describe( "GeneralRegistry.addDecorator", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const registry:GeneralRegistry = createMock();
 
 				expect( registry.addDecorator ).toBeDefined();
@@ -135,7 +135,7 @@ describe( "GeneralRegistry", () => {
 
 		describe( "GeneralRegistry.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const registry:GeneralRegistry = createMock();
 
 				expect( registry.decorate ).toBeDefined();
@@ -278,7 +278,7 @@ describe( "GeneralRegistry", () => {
 
 		describe( "GeneralRegistry.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( GeneralRegistry.isDecorated ).toBeDefined();
 				expect( GeneralRegistry.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -296,7 +296,7 @@ describe( "GeneralRegistry", () => {
 
 		describe( "GeneralRegistry.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( GeneralRegistry.decorate ).toBeDefined();
 				expect( GeneralRegistry.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -352,7 +352,7 @@ describe( "GeneralRegistry", () => {
 
 		describe( "GeneralRegistry.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( GeneralRegistry.create ).toBeDefined();
 				expect( GeneralRegistry.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -378,7 +378,7 @@ describe( "GeneralRegistry", () => {
 
 		describe( "GeneralRegistry.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( GeneralRegistry.createFrom ).toBeDefined();
 				expect( GeneralRegistry.createFrom ).toEqual( jasmine.any( Function ) );
 			} );

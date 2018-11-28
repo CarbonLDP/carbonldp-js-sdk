@@ -8,7 +8,7 @@ import { QueryRootProperty } from "./QueryRootProperty";
 
 describe( "QueryContainer", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( QueryContainer ).toBeDefined();
 		expect( QueryContainer ).toEqual( jasmine.any( Function ) );
 	} );
@@ -38,7 +38,7 @@ describe( "QueryContainer", () => {
 
 	describe( "QueryContainer.serializeLiteral", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryContainer.prototype.serializeLiteral ).toBeDefined();
 			expect( QueryContainer.prototype.serializeLiteral ).toEqual( jasmine.any( Function ) );
 		} );

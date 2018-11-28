@@ -6,7 +6,7 @@ import { VolatileResource } from "./VolatileResource";
 
 describe( "ResponseMetadata", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( ResponseMetadata ).toBeDefined();
 		expect( ResponseMetadata ).toEqual( jasmine.any( Object ) );
 	} );
@@ -19,7 +19,7 @@ describe( "ResponseMetadata", () => {
 
 		describe( "ResponseMetadata.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( ResponseMetadata.TYPE ).toBeDefined();
 				expect( ResponseMetadata.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -33,7 +33,7 @@ describe( "ResponseMetadata", () => {
 
 		describe( "ResponseMetadata.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( ResponseMetadata.SCHEMA ).toBeDefined();
 				expect( ResponseMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );
@@ -58,7 +58,7 @@ describe( "ResponseMetadata", () => {
 
 		describe( "ResponseMetadata.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( ResponseMetadata.is ).toBeDefined();
 				expect( ResponseMetadata.is ).toEqual( jasmine.any( Function ) );
 			} );

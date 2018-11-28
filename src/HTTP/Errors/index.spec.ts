@@ -26,7 +26,7 @@ import { ServiceUnavailableError } from "./ServerErrors/ServiceUnavailableError"
 
 describe( "Errors", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( Errors ).toBeDefined();
 		expect( Errors ).toEqual( jasmine.any( Object ) );
 	} );
@@ -62,7 +62,7 @@ describe( "Errors", () => {
 
 	describe( "statusCodeMap", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( Errors.statusCodeMap ).toBeDefined();
 			expect( Errors.statusCodeMap ).toEqual( jasmine.any( Map ) );
 		} );

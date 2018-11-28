@@ -7,7 +7,7 @@ import { HTTPError } from "./HTTPError";
 
 describe( "HTTPError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( HTTPError ).toBeDefined();
 		expect( HTTPError ).toEqual( jasmine.any( Function ) );
 	} );

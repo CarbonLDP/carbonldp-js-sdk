@@ -12,7 +12,7 @@ import { QueryDocumentsOrder } from "./QueryDocumentsOrder";
 
 describe( "QueryDocumentsBuilder", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( QueryDocumentsBuilder ).toBeDefined();
 		expect( QueryDocumentsBuilder ).toEqual( jasmine.any( Function ) );
 	} );
@@ -51,7 +51,7 @@ describe( "QueryDocumentsBuilder", () => {
 
 	describe( "QueryDocumentsBuilder.orderBy", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryDocumentsBuilder.prototype.orderBy ).toBeDefined();
 			expect( QueryDocumentsBuilder.prototype.orderBy ).toEqual( jasmine.any( Function ) );
 		} );
@@ -113,7 +113,7 @@ describe( "QueryDocumentsBuilder", () => {
 
 	describe( "QueryDocumentsBuilder.limit", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryDocumentsBuilder.prototype.limit ).toBeDefined();
 			expect( QueryDocumentsBuilder.prototype.limit ).toEqual( jasmine.any( Function ) );
 		} );
@@ -140,7 +140,7 @@ describe( "QueryDocumentsBuilder", () => {
 
 	describe( "QueryDocumentsBuilder.offset", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryDocumentsBuilder.prototype.offset ).toBeDefined();
 			expect( QueryDocumentsBuilder.prototype.offset ).toEqual( jasmine.any( Function ) );
 		} );

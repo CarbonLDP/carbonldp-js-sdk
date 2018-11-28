@@ -8,7 +8,7 @@ import { BadResponseError } from "./BadResponseError";
 
 describe( "BadResponseError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( BadResponseError ).toBeDefined();
 		expect( BadResponseError ).toEqual( jasmine.any( Function ) );
 	} );

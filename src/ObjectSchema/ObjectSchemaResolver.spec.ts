@@ -15,7 +15,7 @@ function createMock<T extends {}>( data?:T & Partial<ObjectSchemaResolver> ):Obj
 
 describe( "ObjectSchemaResolver", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( ObjectSchemaResolver ).toBeDefined();
 		expect( ObjectSchemaResolver ).toEqual( jasmine.any( Object ) );
 	} );
@@ -25,7 +25,7 @@ describe( "ObjectSchemaResolver", () => {
 
 		describe( "ObjectSchemaResolver.getGeneralSchema", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resolver:ObjectSchemaResolver = createMock();
 
 				expect( resolver.getGeneralSchema ).toBeDefined();
@@ -59,7 +59,7 @@ describe( "ObjectSchemaResolver", () => {
 
 		describe( "ObjectSchemaResolver.hasSchemaFor", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resolver:ObjectSchemaResolver = createMock();
 
 				expect( resolver.hasSchemaFor ).toBeDefined();
@@ -85,7 +85,7 @@ describe( "ObjectSchemaResolver", () => {
 
 		describe( "ObjectSchemaResolver.getSchemaFor", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resolver:ObjectSchemaResolver = createMock();
 
 				expect( resolver.getSchemaFor ).toBeDefined();

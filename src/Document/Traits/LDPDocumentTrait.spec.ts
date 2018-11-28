@@ -15,7 +15,7 @@ import { LDPDocumentTrait } from "./LDPDocumentTrait";
 
 describe( "LDPDocumentTrait", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( LDPDocumentTrait ).toBeDefined();
 		expect( LDPDocumentTrait ).toEqual( jasmine.any( Object ) );
 	} );
@@ -42,7 +42,7 @@ describe( "LDPDocumentTrait", () => {
 
 		describe( "LDPDocumentTrait.$create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$create ).toBeDefined();
 				expect( resource.$create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -181,7 +181,7 @@ describe( "LDPDocumentTrait", () => {
 
 		describe( "LDPDocumentTrait.$createAndRetrieve", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$createAndRetrieve ).toBeDefined();
 				expect( resource.$createAndRetrieve ).toEqual( jasmine.any( Function ) );
 			} );
@@ -321,7 +321,7 @@ describe( "LDPDocumentTrait", () => {
 
 		describe( "LDPDocumentTrait.$addMember", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$addMember ).toBeDefined();
 				expect( resource.$addMember ).toEqual( jasmine.any( Function ) );
 			} );
@@ -400,7 +400,7 @@ describe( "LDPDocumentTrait", () => {
 
 		describe( "LDPDocumentTrait.$addMembers", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$addMembers ).toBeDefined();
 				expect( resource.$addMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -510,7 +510,7 @@ describe( "LDPDocumentTrait", () => {
 
 		describe( "LDPDocumentTrait.$removeMember", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$removeMember ).toBeDefined();
 				expect( resource.$removeMember ).toEqual( jasmine.any( Function ) );
 			} );
@@ -589,7 +589,7 @@ describe( "LDPDocumentTrait", () => {
 
 		describe( "LDPDocumentTrait.$removeMembers", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$removeMembers ).toBeDefined();
 				expect( resource.$removeMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -732,7 +732,7 @@ describe( "LDPDocumentTrait", () => {
 
 		describe( "LDPDocumentTrait.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( LDPDocumentTrait.isDecorated ).toBeDefined();
 				expect( LDPDocumentTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -750,7 +750,7 @@ describe( "LDPDocumentTrait", () => {
 
 		describe( "LDPDocumentTrait.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( LDPDocumentTrait.decorate ).toBeDefined();
 				expect( LDPDocumentTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );

@@ -31,7 +31,7 @@ import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
 
 describe( "LDPDocumentsRepositoryTrait", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( LDPDocumentsRepositoryTrait ).toBeDefined();
 		expect( LDPDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
 	} );
@@ -142,7 +142,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.get", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.get ).toBeDefined();
 				expect( repository.get ).toEqual( jasmine.any( Function ) );
 			} );
@@ -483,7 +483,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.resolve", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.resolve ).toBeDefined();
 				expect( repository.resolve ).toEqual( jasmine.any( Function ) );
 			} );
@@ -738,7 +738,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.exists", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.exists ).toBeDefined();
 				expect( repository.exists ).toEqual( jasmine.any( Function ) );
 			} );
@@ -917,7 +917,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.create ).toBeDefined();
 				expect( repository.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -1542,7 +1542,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.createAndRetrieve", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.createAndRetrieve ).toBeDefined();
 				expect( repository.createAndRetrieve ).toEqual( jasmine.any( Function ) );
 			} );
@@ -2391,7 +2391,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.save", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.save ).toBeDefined();
 				expect( repository.save ).toEqual( jasmine.any( Function ) );
 			} );
@@ -2760,7 +2760,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.saveAndRefresh", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.saveAndRefresh ).toBeDefined();
 				expect( repository.saveAndRefresh ).toEqual( jasmine.any( Function ) );
 			} );
@@ -3202,7 +3202,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.refresh", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.refresh ).toBeDefined();
 				expect( repository.refresh ).toEqual( jasmine.any( Function ) );
 			} );
@@ -3572,7 +3572,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.delete", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.delete ).toBeDefined();
 				expect( repository.delete ).toEqual( jasmine.any( Function ) );
 			} );
@@ -3728,7 +3728,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.addMember", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.addMember ).toBeDefined();
 				expect( repository.addMember ).toEqual( jasmine.any( Function ) );
 			} );
@@ -3951,7 +3951,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.addMembers", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.addMembers ).toBeDefined();
 				expect( repository.addMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -4212,7 +4212,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.removeMember", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.removeMember ).toBeDefined();
 				expect( repository.removeMember ).toEqual( jasmine.any( Function ) );
 			} );
@@ -4437,7 +4437,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.removeMembers", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.removeMembers ).toBeDefined();
 				expect( repository.removeMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -4866,7 +4866,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( LDPDocumentsRepositoryTrait.isDecorated ).toBeDefined();
 				expect( LDPDocumentsRepositoryTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -4884,7 +4884,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( LDPDocumentsRepositoryTrait.decorate ).toBeDefined();
 				expect( LDPDocumentsRepositoryTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );

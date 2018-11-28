@@ -39,7 +39,7 @@ function createMock<PARENT extends AbstractContext<any, any, any> = undefined>( 
 
 describe( "AbstractContext", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( AbstractContext ).toBeDefined();
 		expect( AbstractContext ).toEqual( jasmine.any( Function ) );
 	} );
@@ -74,7 +74,7 @@ describe( "AbstractContext", () => {
 
 	describe( "AbstractContext.resolve", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( AbstractContext.prototype.resolve ).toBeDefined();
 			expect( AbstractContext.prototype.resolve ).toEqual( jasmine.any( Function ) );
 		} );
@@ -103,7 +103,7 @@ describe( "AbstractContext", () => {
 
 	describe( "AbstractContext.hasObjectSchema", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( AbstractContext.prototype.hasObjectSchema ).toBeDefined();
 			expect( AbstractContext.prototype.hasObjectSchema ).toEqual( jasmine.any( Function ) );
 		} );
@@ -149,7 +149,7 @@ describe( "AbstractContext", () => {
 
 	describe( "AbstractContext.getObjectSchema", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( AbstractContext.prototype.getObjectSchema ).toBeDefined();
 			expect( AbstractContext.prototype.getObjectSchema ).toEqual( jasmine.any( Function ) );
 		} );
@@ -271,7 +271,7 @@ describe( "AbstractContext", () => {
 
 	describe( "AbstractContext.extendObjectSchema", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( AbstractContext.prototype.extendObjectSchema ).toBeDefined();
 			expect( AbstractContext.prototype.extendObjectSchema ).toEqual( jasmine.any( Function ) );
 		} );
@@ -558,7 +558,7 @@ describe( "AbstractContext", () => {
 
 	describe( "AbstractContext.clearObjectSchema", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( AbstractContext.prototype.clearObjectSchema ).toBeDefined();
 			expect( AbstractContext.prototype.clearObjectSchema ).toEqual( jasmine.any( Function ) );
 		} );

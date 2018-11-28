@@ -5,7 +5,7 @@ import { AddToken, DeleteToken, LDPatchToken, PrefixToken, SliceToken, UpdateLis
 
 describe( "LDPatchToken", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( LDPatchToken ).toBeDefined();
 		expect( LDPatchToken ).toEqual( jasmine.any( Function ) );
 	} );
@@ -37,7 +37,7 @@ describe( "LDPatchToken", () => {
 
 	describe( "LDPatchToken.toString", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( LDPatchToken.prototype.toString ).toBeDefined();
 			expect( LDPatchToken.prototype.toString ).toEqual( jasmine.any( Function ) );
 		} );
@@ -97,7 +97,7 @@ describe( "LDPatchToken", () => {
 
 describe( "PrefixToken", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( PrefixToken ).toBeDefined();
 		expect( PrefixToken ).toEqual( jasmine.any( Function ) );
 	} );
@@ -131,7 +131,7 @@ describe( "PrefixToken", () => {
 
 	describe( "PrefixToken.toString", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( PrefixToken.prototype.toString ).toBeDefined();
 			expect( PrefixToken.prototype.toString ).toEqual( jasmine.any( Function ) );
 		} );
@@ -153,7 +153,7 @@ describe( "PrefixToken", () => {
 
 describe( "AddToken", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( AddToken ).toBeDefined();
 		expect( AddToken ).toEqual( jasmine.any( Function ) );
 	} );
@@ -179,7 +179,7 @@ describe( "AddToken", () => {
 
 	describe( "AddToken.toString", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( AddToken.prototype.toString ).toBeDefined();
 			expect( AddToken.prototype.toString ).toEqual( jasmine.any( Function ) );
 		} );
@@ -207,7 +207,7 @@ describe( "AddToken", () => {
 
 describe( "DeleteToken", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( DeleteToken ).toBeDefined();
 		expect( DeleteToken ).toEqual( jasmine.any( Function ) );
 	} );
@@ -234,7 +234,7 @@ describe( "DeleteToken", () => {
 
 	describe( "DeleteToken.toString", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( DeleteToken.prototype.toString ).toBeDefined();
 			expect( DeleteToken.prototype.toString ).toEqual( jasmine.any( Function ) );
 		} );
@@ -262,7 +262,7 @@ describe( "DeleteToken", () => {
 
 describe( "UpdateListToken", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( UpdateListToken ).toBeDefined();
 		expect( UpdateListToken ).toEqual( jasmine.any( Function ) );
 	} );
@@ -283,7 +283,7 @@ describe( "UpdateListToken", () => {
 
 	describe( "UpdateListToken.toString", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( UpdateListToken.prototype.toString ).toBeDefined();
 			expect( UpdateListToken.prototype.toString ).toEqual( jasmine.any( Function ) );
 		} );
@@ -308,7 +308,7 @@ describe( "UpdateListToken", () => {
 
 describe( "SliceToken", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( SliceToken ).toBeDefined();
 		expect( SliceToken ).toEqual( jasmine.any( Function ) );
 	} );

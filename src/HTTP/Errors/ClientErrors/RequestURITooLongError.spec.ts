@@ -8,7 +8,7 @@ import { RequestURITooLongError } from "./RequestURITooLongError";
 
 describe( "RequestURITooLongError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( RequestURITooLongError ).toBeDefined();
 		expect( RequestURITooLongError ).toEqual( jasmine.any( Function ) );
 	} );

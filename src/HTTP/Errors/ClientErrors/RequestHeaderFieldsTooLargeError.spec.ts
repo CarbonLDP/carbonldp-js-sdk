@@ -8,7 +8,7 @@ import { RequestHeaderFieldsTooLargeError } from "./RequestHeaderFieldsTooLargeE
 
 describe( "RequestHeaderFieldsTooLargeError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( RequestHeaderFieldsTooLargeError ).toBeDefined();
 		expect( RequestHeaderFieldsTooLargeError ).toEqual( jasmine.any( Function ) );
 	} );

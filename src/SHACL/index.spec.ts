@@ -8,7 +8,7 @@ import { ValidationResult, ValidationResultFactory } from "./ValidationResult";
 
 describe( module( "carbonldp/SHACL" ), ():void => {
 
-	it( "should exists", ():void => {
+	it( "should exist", ():void => {
 		expect( SHACL ).toBeDefined();
 		expect( SHACL ).toEqual( jasmine.any( Object ) );
 	} );

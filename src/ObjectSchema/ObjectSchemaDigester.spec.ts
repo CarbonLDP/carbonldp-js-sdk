@@ -19,7 +19,7 @@ describe( "ObjectSchemaDigester", () => {
 
 	describe( "ObjectSchemaDigester.digestSchema", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( ObjectSchemaDigester.digestSchema ).toBeDefined();
 			expect( ObjectSchemaDigester.digestSchema ).toEqual( jasmine.any( Function ) );
 		} );
@@ -186,7 +186,7 @@ describe( "ObjectSchemaDigester", () => {
 
 	describe( "ObjectSchemaDigester.digestProperty", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( ObjectSchemaDigester.digestProperty ).toBeDefined();
 			expect( ObjectSchemaDigester.digestProperty ).toEqual( jasmine.any( Function ) );
 		} );
@@ -287,7 +287,7 @@ describe( "ObjectSchemaDigester", () => {
 
 	describe( "ObjectSchemaDigester.combineDigestedObjectSchemas", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( ObjectSchemaDigester.combineDigestedObjectSchemas ).toBeDefined();
 			expect( ObjectSchemaDigester.combineDigestedObjectSchemas ).toEqual( jasmine.any( Function ) );
 		} );

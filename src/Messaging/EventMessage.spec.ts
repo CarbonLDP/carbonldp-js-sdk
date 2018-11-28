@@ -7,7 +7,7 @@ import { EventMessage } from "./EventMessage";
 
 describe( "EventMessage", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( EventMessage ).toBeDefined();
 		expect( EventMessage ).toEqual( jasmine.any( Object ) );
 	} );
@@ -19,7 +19,7 @@ describe( "EventMessage", () => {
 
 		describe( "EventMessage.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( EventMessage.SCHEMA ).toBeDefined();
 				expect( EventMessage.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );
@@ -43,7 +43,7 @@ describe( "EventMessage", () => {
 
 		describe( "EventMessage.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( EventMessage.is ).toBeDefined();
 				expect( EventMessage.is ).toEqual( jasmine.any( Function ) );
 			} );

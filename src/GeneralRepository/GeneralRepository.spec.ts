@@ -17,7 +17,7 @@ import { GeneralRepository } from "./GeneralRepository";
 
 describe( "GeneralRepository", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( GeneralRepository ).toBeDefined();
 		expect( GeneralRepository ).toEqual( jasmine.any( Object ) );
 	} );
@@ -36,7 +36,7 @@ describe( "GeneralRepository", () => {
 
 		describe( "GeneralRepository.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( GeneralRepository.isDecorated ).toBeDefined();
 				expect( GeneralRepository.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -54,7 +54,7 @@ describe( "GeneralRepository", () => {
 
 		describe( "GeneralRepository.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( GeneralRepository.decorate ).toBeDefined();
 				expect( GeneralRepository.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -100,7 +100,7 @@ describe( "GeneralRepository", () => {
 
 		describe( "GeneralRepository.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( GeneralRepository.create ).toBeDefined();
 				expect( GeneralRepository.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -126,7 +126,7 @@ describe( "GeneralRepository", () => {
 
 		describe( "GeneralRepository.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( GeneralRepository.createFrom ).toBeDefined();
 				expect( GeneralRepository.createFrom ).toEqual( jasmine.any( Function ) );
 			} );

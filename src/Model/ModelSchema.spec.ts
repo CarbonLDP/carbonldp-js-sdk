@@ -7,7 +7,7 @@ import { ModelSchema } from "./ModelSchema";
 
 describe( "ModelSchema", ():void => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( ModelSchema ).toBeDefined();
 		expect( ModelSchema ).toEqual( jasmine.any( Object ) );
 	} );

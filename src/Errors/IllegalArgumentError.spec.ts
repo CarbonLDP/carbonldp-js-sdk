@@ -4,7 +4,7 @@ import { IllegalArgumentError } from "./IllegalArgumentError";
 
 describe( "IllegalArgumentError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( IllegalArgumentError ).toBeDefined();
 		expect( IllegalArgumentError ).toEqual( jasmine.any( Function ) );
 	} );

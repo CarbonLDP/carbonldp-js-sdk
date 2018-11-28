@@ -8,7 +8,7 @@ import { NotFoundError } from "./NotFoundError";
 
 describe( "NotFoundError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( NotFoundError ).toBeDefined();
 		expect( NotFoundError ).toEqual( jasmine.any( Function ) );
 	} );

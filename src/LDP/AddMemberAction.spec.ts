@@ -10,7 +10,7 @@ import { AddMemberAction, BaseAddMemberAction } from "./AddMemberAction";
 
 describe( "AddMemberAction", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( AddMemberAction ).toBeDefined();
 		expect( AddMemberAction ).toEqual( jasmine.any( Object ) );
 	} );
@@ -23,7 +23,7 @@ describe( "AddMemberAction", () => {
 
 		describe( "AddMemberAction.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( AddMemberAction.TYPE ).toBeDefined();
 				expect( AddMemberAction.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -37,7 +37,7 @@ describe( "AddMemberAction", () => {
 
 		describe( "AddMemberAction.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( AddMemberAction.SCHEMA ).toBeDefined();
 				expect( AddMemberAction.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );
@@ -62,7 +62,7 @@ describe( "AddMemberAction", () => {
 
 		describe( "AddMemberAction.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( AddMemberAction.is ).toBeDefined();
 				expect( AddMemberAction.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -99,7 +99,7 @@ describe( "AddMemberAction", () => {
 
 		describe( "AddMemberAction.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( AddMemberAction.create ).toBeDefined();
 				expect( AddMemberAction.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -134,7 +134,7 @@ describe( "AddMemberAction", () => {
 
 		describe( "AddMemberAction.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( AddMemberAction.createFrom ).toBeDefined();
 				expect( AddMemberAction.createFrom ).toEqual( jasmine.any( Function ) );
 			} );

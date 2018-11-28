@@ -23,7 +23,7 @@ import { QueryValue } from "./QueryValue";
 
 describe( "QueryDocumentBuilder", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( QueryDocumentBuilder ).toBeDefined();
 		expect( QueryDocumentBuilder ).toEqual( jasmine.any( Function ) );
 	} );
@@ -53,7 +53,7 @@ describe( "QueryDocumentBuilder", () => {
 
 	describe( "QueryDocumentBuilder.constructor", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 			expect( builder ).toBeDefined();
 			expect( builder ).toEqual( jasmine.any( QueryDocumentBuilder ) );
@@ -69,7 +69,7 @@ describe( "QueryDocumentBuilder", () => {
 
 	describe( "QueryDocumentBuilder.inherit", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 			expect( builder.inherit ).toBeDefined();
 			expect( builder.inherit ).toEqual( jasmine.any( Object ) );
@@ -96,7 +96,7 @@ describe( "QueryDocumentBuilder", () => {
 
 	describe( "QueryDocumentBuilder.all", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContainer, baseProperty );
 			expect( builder.all ).toBeDefined();
 			expect( builder.all ).toEqual( jasmine.any( Object ) );
@@ -124,7 +124,7 @@ describe( "QueryDocumentBuilder", () => {
 
 	describe( "QueryDocumentBuilder.property", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryDocumentBuilder.prototype.property ).toBeDefined();
 			expect( QueryDocumentBuilder.prototype.property ).toEqual( jasmine.any( Function ) );
 		} );
@@ -275,7 +275,7 @@ describe( "QueryDocumentBuilder", () => {
 
 	describe( "QueryDocumentBuilder.value", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryDocumentBuilder.prototype.value ).toBeDefined();
 			expect( QueryDocumentBuilder.prototype.value ).toEqual( jasmine.any( Function ) );
 		} );
@@ -311,7 +311,7 @@ describe( "QueryDocumentBuilder", () => {
 
 	describe( "QueryDocumentBuilder.object", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryDocumentBuilder.prototype.object ).toBeDefined();
 			expect( QueryDocumentBuilder.prototype.object ).toEqual( jasmine.any( Function ) );
 		} );
@@ -340,7 +340,7 @@ describe( "QueryDocumentBuilder", () => {
 
 	describe( "QueryDocumentBuilder.withType", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryDocumentBuilder.prototype.withType ).toBeDefined();
 			expect( QueryDocumentBuilder.prototype.withType ).toEqual( jasmine.any( Function ) );
 		} );
@@ -383,7 +383,7 @@ describe( "QueryDocumentBuilder", () => {
 
 	describe( "QueryDocumentBuilder.properties", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryDocumentBuilder.prototype.properties ).toBeDefined();
 			expect( QueryDocumentBuilder.prototype.properties ).toEqual( jasmine.any( Function ) );
 		} );
@@ -489,7 +489,7 @@ describe( "QueryDocumentBuilder", () => {
 
 describe( "SubQueryDocumentsBuilder", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( SubQueryDocumentsBuilder ).toBeDefined();
 		expect( SubQueryDocumentsBuilder ).toEqual( jasmine.any( Function ) );
 	} );
@@ -510,7 +510,7 @@ describe( "SubQueryDocumentsBuilder", () => {
 
 	describe( "SubQueryDocumentsBuilder.constructor", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, baseProperty );
 			expect( builder ).toBeDefined();
 			expect( builder ).toEqual( jasmine.any( SubQueryDocumentsBuilder ) );
@@ -527,7 +527,7 @@ describe( "SubQueryDocumentsBuilder", () => {
 
 	describe(  "SubQueryDocumentsBuilder.filter", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( SubQueryDocumentsBuilder.prototype.filter ).toBeDefined();
 			expect( SubQueryDocumentsBuilder.prototype.filter ).toEqual( jasmine.any( Function ) );
 		} );
@@ -574,7 +574,7 @@ describe( "SubQueryDocumentsBuilder", () => {
 
 	describe(  "SubQueryDocumentsBuilder.values", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( SubQueryDocumentsBuilder.prototype.values ).toBeDefined();
 			expect( SubQueryDocumentsBuilder.prototype.values ).toEqual( jasmine.any( Function ) );
 		} );

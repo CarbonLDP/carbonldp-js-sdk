@@ -14,7 +14,7 @@ import { QueryValue } from "./QueryValue";
 
 describe( "QueryValue", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( QueryValue ).toBeDefined();
 		expect( QueryValue ).toEqual( jasmine.any( Function ) );
 	} );
@@ -29,7 +29,7 @@ describe( "QueryValue", () => {
 
 	describe( "QueryValue.constructor", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			const queryValue:QueryValue = new QueryValue( queryContainer, "value" );
 			expect( queryValue ).toEqual( jasmine.any( QueryValue ) );
 		} );
@@ -62,7 +62,7 @@ describe( "QueryValue", () => {
 
 	describe( "QueryValue.withType", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryValue.prototype.withType ).toBeDefined();
 			expect( QueryValue.prototype.withType ).toEqual( jasmine.any( Function ) );
 		} );
@@ -128,7 +128,7 @@ describe( "QueryValue", () => {
 
 	describe( "QueryValue.withLanguage", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryValue.prototype.withLanguage ).toBeDefined();
 			expect( QueryValue.prototype.withLanguage ).toEqual( jasmine.any( Function ) );
 		} );
@@ -152,7 +152,7 @@ describe( "QueryValue", () => {
 
 	describe( "QueryValue.getToken", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryValue.prototype.getToken ).toBeDefined();
 			expect( QueryValue.prototype.getToken ).toEqual( jasmine.any( Function ) );
 		} );

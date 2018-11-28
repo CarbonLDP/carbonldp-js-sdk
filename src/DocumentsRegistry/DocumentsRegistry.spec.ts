@@ -17,7 +17,7 @@ import { DocumentsRegistry } from "./DocumentsRegistry";
 
 describe( "DocumentsRegistry", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( DocumentsRegistry ).toBeDefined();
 		expect( DocumentsRegistry ).toEqual( jasmine.any( Object ) );
 	} );
@@ -37,7 +37,7 @@ describe( "DocumentsRegistry", () => {
 
 		describe( "DocumentsRegistry.registry", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const registry:DocumentsRegistry = createMock();
 
 				expect( registry.register ).toBeDefined();
@@ -62,7 +62,7 @@ describe( "DocumentsRegistry", () => {
 
 		describe( "DocumentsRegistry.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentsRegistry.isDecorated ).toBeDefined();
 				expect( DocumentsRegistry.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -80,7 +80,7 @@ describe( "DocumentsRegistry", () => {
 
 		describe( "DocumentsRegistry.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentsRegistry.decorate ).toBeDefined();
 				expect( DocumentsRegistry.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -132,7 +132,7 @@ describe( "DocumentsRegistry", () => {
 
 		describe( "DocumentsRegistry.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentsRegistry.create ).toBeDefined();
 				expect( DocumentsRegistry.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -158,7 +158,7 @@ describe( "DocumentsRegistry", () => {
 
 		describe( "DocumentsRegistry.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentsRegistry.createFrom ).toBeDefined();
 				expect( DocumentsRegistry.createFrom ).toEqual( jasmine.any( Function ) );
 			} );

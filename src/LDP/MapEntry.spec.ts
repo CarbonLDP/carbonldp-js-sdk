@@ -18,7 +18,7 @@ describe( "MapEntry", () => {
 
 		describe( "MapEntry.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( MapEntry.SCHEMA ).toBeDefined();
 				expect( MapEntry.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );

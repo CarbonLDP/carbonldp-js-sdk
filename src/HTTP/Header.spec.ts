@@ -2,7 +2,7 @@ import { Header } from "./Header";
 
 describe( "Header", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( Header ).toBeDefined();
 		expect( Header ).toEqual( jasmine.any( Function ) );
 	} );
@@ -50,7 +50,7 @@ describe( "Header", () => {
 
 	describe( "Header.hasValue", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( Header.prototype.hasValue ).toBeDefined();
 			expect( Header.prototype.hasValue ).toEqual( jasmine.any( Function ) );
 		} );
@@ -74,7 +74,7 @@ describe( "Header", () => {
 
 	describe( "Header.toString", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( Header.prototype.toString ).toBeDefined();
 			expect( Header.prototype.toString ).toEqual( jasmine.any( Function ) );
 		} );
@@ -105,7 +105,7 @@ describe( "Header", () => {
 
 	describe( "Header.parseHeaders", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( Header.parseHeaders ).toBeDefined();
 			expect( Header.parseHeaders ).toEqual( jasmine.any( Function ) );
 		} );

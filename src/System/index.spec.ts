@@ -7,7 +7,7 @@ import { PlatformMetadata, PlatformMetadataFactory } from "./PlatformMetadata";
 
 describe( module( "carbonldp/System" ), () => {
 
-	it( "should exists", ():void => {
+	it( "should exist", ():void => {
 		expect( System ).toBeDefined();
 		expect( System ).toEqual( jasmine.any( Object ) );
 	} );

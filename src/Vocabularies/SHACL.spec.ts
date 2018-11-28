@@ -144,7 +144,7 @@ describe( module( "carbonldp/Vocabularies/SHACL" ), ():void => {
 		"Constant that implements the used vocabulary of the Shapes Constraint Language (SHACL) specification."
 	), ():void => {
 
-		it( "should exists", ():void => {
+		it( "should exist", ():void => {
 			expect( SHACL ).toEqual( jasmine.any( Object ) );
 		} );
 

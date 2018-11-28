@@ -8,7 +8,7 @@ import { TooManyRequestsError } from "./TooManyRequestsError";
 
 describe( "TooManyRequestsError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( TooManyRequestsError ).toBeDefined();
 		expect( TooManyRequestsError ).toEqual( jasmine.any( Function ) );
 	} );

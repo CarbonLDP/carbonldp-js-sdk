@@ -15,7 +15,7 @@ import { FreeResources } from "./FreeResources";
 
 describe( "FreeResources", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( FreeResources ).toBeDefined();
 		expect( FreeResources ).toEqual( jasmine.any( Object ) );
 	} );
@@ -36,7 +36,7 @@ describe( "FreeResources", () => {
 
 		describe( "FreeResources.toJSON", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( freeResources.toJSON ).toBeDefined();
 				expect( freeResources.toJSON ).toEqual( jasmine.any( Function ) );
 			} );
@@ -108,7 +108,7 @@ describe( "FreeResources", () => {
 
 		describe( "FreeResources.hasPointer", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( freeResources.hasPointer ).toBeDefined();
 				expect( freeResources.hasPointer ).toEqual( jasmine.any( Function ) );
 			} );
@@ -136,7 +136,7 @@ describe( "FreeResources", () => {
 
 		describe( "FreeResources.getPointer", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( freeResources.getPointer ).toBeDefined();
 				expect( freeResources.getPointer ).toEqual( jasmine.any( Function ) );
 			} );
@@ -199,7 +199,7 @@ describe( "FreeResources", () => {
 
 		describe( "FreeResources.parseFreeNodes", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( FreeResources.parseFreeNodes ).toBeDefined();
 				expect( FreeResources.parseFreeNodes ).toEqual( jasmine.any( Function ) );
 			} );
@@ -250,7 +250,7 @@ describe( "FreeResources", () => {
 
 		describe( "FreeResources.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( FreeResources.is ).toBeDefined();
 				expect( FreeResources.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -286,7 +286,7 @@ describe( "FreeResources", () => {
 
 		describe( "FreeResources.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( FreeResources.create ).toBeDefined();
 				expect( FreeResources.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -310,7 +310,7 @@ describe( "FreeResources", () => {
 
 		describe( "FreeResources.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( FreeResources.createFrom ).toBeDefined();
 				expect( FreeResources.createFrom ).toEqual( jasmine.any( Function ) );
 			} );

@@ -5,7 +5,7 @@ import { DocumentMetadata } from "./DocumentMetadata";
 
 describe( "DocumentMetadata", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( DocumentMetadata ).toBeDefined();
 		expect( DocumentMetadata ).toEqual( jasmine.any( Object ) );
 	} );
@@ -18,7 +18,7 @@ describe( "DocumentMetadata", () => {
 
 		describe( "DocumentMetadata.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentMetadata.TYPE ).toBeDefined();
 				expect( DocumentMetadata.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -32,7 +32,7 @@ describe( "DocumentMetadata", () => {
 
 		describe( "DocumentMetadata.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentMetadata.SCHEMA ).toBeDefined();
 				expect( DocumentMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );

@@ -52,7 +52,7 @@ describe( "TransientFragment", () => {
 
 		describe( "TransientFragment.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientFragment.isDecorated ).toBeDefined();
 				expect( TransientFragment.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -68,7 +68,7 @@ describe( "TransientFragment", () => {
 
 		describe( "TransientFragment.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientFragment.create ).toBeDefined();
 				expect( TransientFragment.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -106,7 +106,7 @@ describe( "TransientFragment", () => {
 
 		describe( "TransientFragment.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientFragment.createFrom ).toBeDefined();
 				expect( TransientFragment.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
@@ -144,7 +144,7 @@ describe( "TransientFragment", () => {
 
 		describe( "TransientFragment.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientFragment.decorate ).toBeDefined();
 				expect( TransientFragment.decorate ).toEqual( jasmine.any( Function ) );
 			} );

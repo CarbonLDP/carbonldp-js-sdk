@@ -37,7 +37,7 @@ describe( module( "carbonldp/Vocabularies/RDF" ), ():void => {
 		"Constant that implements the used vocabulary defined in the RDF Syntax Specification."
 	), ():void => {
 
-		it( "should exists", ():void => {
+		it( "should exist", ():void => {
 			expect( RDF ).toBeDefined();
 			expect( RDF ).toEqual( jasmine.any( Object ) );
 		} );

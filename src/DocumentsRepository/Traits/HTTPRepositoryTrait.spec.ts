@@ -3,7 +3,7 @@ import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
 
 describe( "HTTPRepositoryTrait", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( HTTPRepositoryTrait ).toBeDefined();
 		expect( HTTPRepositoryTrait ).toEqual( jasmine.any( Object ) );
 	} );

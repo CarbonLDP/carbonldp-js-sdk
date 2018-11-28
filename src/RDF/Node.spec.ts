@@ -18,7 +18,7 @@ describe( "RDFNode", () => {
 
 		describe( "RDFNode.getID", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RDFNode.getID ).toBeDefined();
 				expect( RDFNode.getID ).toEqual( jasmine.any( Function ) );
 			} );
@@ -32,7 +32,7 @@ describe( "RDFNode", () => {
 
 		describe( "RDFNode.getRelativeID", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RDFNode.getRelativeID ).toBeDefined();
 				expect( RDFNode.getRelativeID ).toEqual( jasmine.any( Function ) );
 			} );

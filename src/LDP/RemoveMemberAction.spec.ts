@@ -11,7 +11,7 @@ import { BaseRemoveMemberAction, RemoveMemberAction } from "./RemoveMemberAction
 
 describe( "RemoveMemberAction", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( RemoveMemberAction ).toBeDefined();
 		expect( RemoveMemberAction ).toEqual( jasmine.any( Object ) );
 	} );
@@ -24,7 +24,7 @@ describe( "RemoveMemberAction", () => {
 
 		describe( "RemoveMemberAction.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RemoveMemberAction.TYPE ).toBeDefined();
 				expect( RemoveMemberAction.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -38,7 +38,7 @@ describe( "RemoveMemberAction", () => {
 
 		describe( "RemoveMemberAction.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RemoveMemberAction.SCHEMA ).toBeDefined();
 				expect( RemoveMemberAction.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );
@@ -63,7 +63,7 @@ describe( "RemoveMemberAction", () => {
 
 		describe( "RemoveMemberAction.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RemoveMemberAction.is ).toBeDefined();
 				expect( RemoveMemberAction.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -100,7 +100,7 @@ describe( "RemoveMemberAction", () => {
 
 		describe( "RemoveMemberAction.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RemoveMemberAction.create ).toBeDefined();
 				expect( RemoveMemberAction.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -135,7 +135,7 @@ describe( "RemoveMemberAction", () => {
 
 		describe( "RemoveMemberAction.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( RemoveMemberAction.createFrom ).toBeDefined();
 				expect( RemoveMemberAction.createFrom ).toEqual( jasmine.any( Function ) );
 			} );

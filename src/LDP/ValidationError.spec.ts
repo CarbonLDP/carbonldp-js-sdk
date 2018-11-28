@@ -5,7 +5,7 @@ import { ValidationError } from "./ValidationError";
 
 describe( "ValidationError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( ValidationError ).toBeDefined();
 		expect( ValidationError ).toEqual( jasmine.any( Object ) );
 	} );
@@ -17,7 +17,7 @@ describe( "ValidationError", () => {
 
 		describe( "ValidationError.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( ValidationError.TYPE ).toBeDefined();
 				expect( ValidationError.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -31,7 +31,7 @@ describe( "ValidationError", () => {
 
 		describe( "ValidationError.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( ValidationError.SCHEMA ).toBeDefined();
 				expect( ValidationError.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );

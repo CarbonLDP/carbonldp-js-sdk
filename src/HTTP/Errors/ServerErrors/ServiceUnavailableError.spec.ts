@@ -8,7 +8,7 @@ import { ServiceUnavailableError } from "./ServiceUnavailableError";
 
 describe( "ServiceUnavailableError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( ServiceUnavailableError ).toBeDefined();
 		expect( ServiceUnavailableError ).toEqual( jasmine.any( Function ) );
 	} );

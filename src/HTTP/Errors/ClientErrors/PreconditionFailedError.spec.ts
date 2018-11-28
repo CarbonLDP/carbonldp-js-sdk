@@ -8,7 +8,7 @@ import { PreconditionFailedError } from "./PreconditionFailedError";
 
 describe( "PreconditionFailedError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( PreconditionFailedError ).toBeDefined();
 		expect( PreconditionFailedError ).toEqual( jasmine.any( Function ) );
 	} );

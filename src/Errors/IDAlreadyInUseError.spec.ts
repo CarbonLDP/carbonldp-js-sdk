@@ -4,7 +4,7 @@ import { IDAlreadyInUseError } from "./IDAlreadyInUseError";
 
 describe( "IDAlreadyInUseError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( IDAlreadyInUseError ).toBeDefined();
 		expect( IDAlreadyInUseError ).toEqual( jasmine.any( Function ) );
 	} );

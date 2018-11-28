@@ -12,7 +12,7 @@ import { QueryablePointer } from "./QueryablePointer";
 
 describe( "QueryablePointer", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( QueryablePointer ).toBeDefined();
 		expect( QueryablePointer ).toEqual( jasmine.any( Object ) );
 	} );
@@ -32,7 +32,7 @@ describe( "QueryablePointer", () => {
 
 		describe( "QueryablePointer.isQueried", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:QueryablePointer = createMock();
 
 				expect( resource.$isQueried ).toBeDefined();
@@ -58,7 +58,7 @@ describe( "QueryablePointer", () => {
 
 		describe( "QueryablePointer.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( QueryablePointer.isDecorated ).toBeDefined();
 				expect( QueryablePointer.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -78,7 +78,7 @@ describe( "QueryablePointer", () => {
 
 		describe( "QueryablePointer.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( QueryablePointer.decorate ).toBeDefined();
 				expect( QueryablePointer.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -125,7 +125,7 @@ describe( "QueryablePointer", () => {
 
 		describe( "QueryablePointer.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( QueryablePointer.is ).toBeDefined();
 				expect( QueryablePointer.is ).toEqual( jasmine.any( Function ) );
 			} );

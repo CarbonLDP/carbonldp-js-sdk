@@ -28,7 +28,7 @@ describe( "QueryResultCompacter", () => {
 	} );
 
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( QueryResultCompacter ).toBeDefined();
 		expect( QueryResultCompacter ).toEqual( jasmine.any( Function ) );
 	} );
@@ -45,7 +45,7 @@ describe( "QueryResultCompacter", () => {
 
 	describe( "QueryResultCompacter.compactDocuments", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryResultCompacter.prototype.compactDocuments ).toBeDefined();
 			expect( QueryResultCompacter.prototype.compactDocuments ).toEqual( jasmine.any( Function ) );
 		} );

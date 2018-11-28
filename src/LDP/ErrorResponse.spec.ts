@@ -6,7 +6,7 @@ import { ErrorResponse } from "./ErrorResponse";
 
 describe( "ErrorResponse", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( ErrorResponse ).toBeDefined();
 		expect( ErrorResponse ).toEqual( jasmine.any( Object ) );
 	} );
@@ -19,7 +19,7 @@ describe( "ErrorResponse", () => {
 
 		describe( "ErrorResponse.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( ErrorResponse.TYPE ).toBeDefined();
 				expect( ErrorResponse.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -33,7 +33,7 @@ describe( "ErrorResponse", () => {
 
 		describe( "ErrorResponse.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( ErrorResponse.SCHEMA ).toBeDefined();
 				expect( ErrorResponse.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );
@@ -73,7 +73,7 @@ describe( "ErrorResponse", () => {
 
 		describe( "ErrorResponse.getMessage", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( ErrorResponse.getMessage ).toBeDefined();
 				expect( ErrorResponse.getMessage ).toEqual( jasmine.any( Function ) );
 			} );

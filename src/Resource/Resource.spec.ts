@@ -141,7 +141,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 		describe( "Resource.isDecorated", ():void => {
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				expect( Resource.isDecorated ).toBeDefined();
 				expect( Resource.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -369,7 +369,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 			describe( "Resource.addType", ():void => {
 
-				it( "should exists", ():void => {
+				it( "should exist", ():void => {
 					expect( resource.$addType ).toBeDefined();
 					expect( resource.$addType ).toEqual( jasmine.any( Function ) );
 				} );
@@ -507,7 +507,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 			describe( "Resource.hasType", ():void => {
 
-				it( "should exists", ():void => {
+				it( "should exist", ():void => {
 					expect( resource.$hasType ).toBeDefined();
 					expect( resource.$hasType ).toEqual( jasmine.any( Function ) );
 				} );
@@ -563,7 +563,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 			describe( "Resource.removeType", ():void => {
 
-				it( "should exists", ():void => {
+				it( "should exist", ():void => {
 					expect( resource.$removeType ).toBeDefined();
 					expect( resource.$removeType ).toEqual( jasmine.any( Function ) );
 				} );

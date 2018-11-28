@@ -26,7 +26,7 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 		"Interface of a result that reports individual SHACL validation failure."
 	), ():void => {
 
-		it( "should exists", ():void => {
+		it( "should exist", ():void => {
 			const target:ValidationResult = {} as any;
 			expect( target ).toBeDefined();
 		} );

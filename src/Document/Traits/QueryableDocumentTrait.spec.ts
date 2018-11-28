@@ -15,7 +15,7 @@ import { QueryableDocumentTrait } from "./QueryableDocumentTrait";
 
 describe( "QueryableDocumentTrait", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( QueryableDocumentTrait ).toBeDefined();
 		expect( QueryableDocumentTrait ).toEqual( jasmine.any( Object ) );
 	} );
@@ -42,7 +42,7 @@ describe( "QueryableDocumentTrait", () => {
 
 		describe( "QueryableDocumentTrait.$getChildren", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$getChildren ).toBeDefined();
 				expect( resource.$getChildren ).toEqual( jasmine.any( Function ) );
 			} );
@@ -121,7 +121,7 @@ describe( "QueryableDocumentTrait", () => {
 
 		describe( "QueryableDocumentTrait.$getMembers", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$getMembers ).toBeDefined();
 				expect( resource.$getMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -201,7 +201,7 @@ describe( "QueryableDocumentTrait", () => {
 
 		describe( "QueryableDocumentTrait.$listChildren", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$listChildren ).toBeDefined();
 				expect( resource.$listChildren ).toEqual( jasmine.any( Function ) );
 			} );
@@ -250,7 +250,7 @@ describe( "QueryableDocumentTrait", () => {
 
 		describe( "QueryableDocumentTrait.$listMembers", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$listMembers ).toBeDefined();
 				expect( resource.$listMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -303,7 +303,7 @@ describe( "QueryableDocumentTrait", () => {
 
 		describe( "QueryableDocumentTrait.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( QueryableDocumentTrait.isDecorated ).toBeDefined();
 				expect( QueryableDocumentTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -321,7 +321,7 @@ describe( "QueryableDocumentTrait", () => {
 
 		describe( "QueryableDocumentTrait.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( QueryableDocumentTrait.decorate ).toBeDefined();
 				expect( QueryableDocumentTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );

@@ -7,7 +7,7 @@ import { Map } from "./Map";
 
 describe( "Map", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( Map ).toBeDefined();
 		expect( Map ).toEqual( jasmine.any( Object ) );
 	} );
@@ -19,7 +19,7 @@ describe( "Map", () => {
 
 		describe( "Map.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( Map.TYPE ).toBeDefined();
 				expect( Map.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -33,7 +33,7 @@ describe( "Map", () => {
 
 		describe( "Map.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( Map.SCHEMA ).toBeDefined();
 				expect( Map.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );
@@ -58,7 +58,7 @@ describe( "Map", () => {
 
 		describe( "Map.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( Map.is ).toBeDefined();
 				expect( Map.is ).toEqual( jasmine.any( Function ) );
 			} );

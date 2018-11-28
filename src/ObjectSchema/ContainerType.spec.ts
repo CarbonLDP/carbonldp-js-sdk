@@ -3,7 +3,7 @@ import { ContainerType } from "./ContainerType";
 
 describe( "ContainerType", ():void => {
 
-	it( "should exists", ():void => {
+	it( "should exist", ():void => {
 		expect( ContainerType ).toBeDefined();
 		expect( ContainerType ).toEqual( jasmine.any( Object ) );
 	} );

@@ -18,7 +18,7 @@ import { EventEmitterDocumentTrait } from "./EventEmitterDocumentTrait";
 
 describe( "EventEmitterDocumentTrait", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( EventEmitterDocumentTrait ).toBeDefined();
 		expect( EventEmitterDocumentTrait ).toEqual( jasmine.any( Object ) );
 	} );
@@ -44,7 +44,7 @@ describe( "EventEmitterDocumentTrait", () => {
 
 		describe( "EventEmitterDocumentTrait.$on", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$on ).toBeDefined();
 				expect( resource.$on ).toEqual( jasmine.any( Function ) );
 			} );
@@ -84,7 +84,7 @@ describe( "EventEmitterDocumentTrait", () => {
 
 		describe( "EventEmitterDocumentTrait.$off", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$off ).toBeDefined();
 				expect( resource.$off ).toEqual( jasmine.any( Function ) );
 			} );
@@ -125,7 +125,7 @@ describe( "EventEmitterDocumentTrait", () => {
 
 		describe( "EventEmitterDocumentTrait.$one", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$one ).toBeDefined();
 				expect( resource.$one ).toEqual( jasmine.any( Function ) );
 			} );
@@ -167,7 +167,7 @@ describe( "EventEmitterDocumentTrait", () => {
 
 		describe( "EventEmitterDocumentTrait.$onChildCreated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$onChildCreated ).toBeDefined();
 				expect( resource.$onChildCreated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -207,7 +207,7 @@ describe( "EventEmitterDocumentTrait", () => {
 
 		describe( "EventEmitterDocumentTrait.$onDocumentModified", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$onDocumentModified ).toBeDefined();
 				expect( resource.$onDocumentModified ).toEqual( jasmine.any( Function ) );
 			} );
@@ -247,7 +247,7 @@ describe( "EventEmitterDocumentTrait", () => {
 
 		describe( "EventEmitterDocumentTrait.$onDocumentDeleted", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$onDocumentDeleted ).toBeDefined();
 				expect( resource.$onDocumentDeleted ).toEqual( jasmine.any( Function ) );
 			} );
@@ -287,7 +287,7 @@ describe( "EventEmitterDocumentTrait", () => {
 
 		describe( "EventEmitterDocumentTrait.$onMemberAdded", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$onMemberAdded ).toBeDefined();
 				expect( resource.$onMemberAdded ).toEqual( jasmine.any( Function ) );
 			} );
@@ -327,7 +327,7 @@ describe( "EventEmitterDocumentTrait", () => {
 
 		describe( "EventEmitterDocumentTrait.$onMemberRemoved", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$onMemberRemoved ).toBeDefined();
 				expect( resource.$onMemberRemoved ).toEqual( jasmine.any( Function ) );
 			} );
@@ -371,7 +371,7 @@ describe( "EventEmitterDocumentTrait", () => {
 
 		describe( "EventEmitterDocumentTrait.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( EventEmitterDocumentTrait.isDecorated ).toBeDefined();
 				expect( EventEmitterDocumentTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -389,7 +389,7 @@ describe( "EventEmitterDocumentTrait", () => {
 
 		describe( "EventEmitterDocumentTrait.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( EventEmitterDocumentTrait.decorate ).toBeDefined();
 				expect( EventEmitterDocumentTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );

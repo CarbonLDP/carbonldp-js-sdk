@@ -4,7 +4,7 @@ import { InvalidJSONLDSyntaxError } from "./InvalidJSONLDSyntaxError";
 
 describe( "InvalidJSONLDSyntaxError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( InvalidJSONLDSyntaxError ).toBeDefined();
 		expect( InvalidJSONLDSyntaxError ).toEqual( jasmine.any( Function ) );
 	} );

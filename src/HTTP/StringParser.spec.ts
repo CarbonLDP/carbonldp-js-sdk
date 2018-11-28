@@ -3,7 +3,7 @@ import { StringParser } from "./StringParser";
 
 describe( "StringParser", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( StringParser ).toBeDefined();
 		expect( StringParser ).toEqual( jasmine.any( Function ) );
 	} );
@@ -17,7 +17,7 @@ describe( "StringParser", () => {
 
 	describe( "StringParser.parse", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( StringParser.prototype.parse ).toBeDefined();
 			expect( StringParser.prototype.parse ).toEqual( jasmine.any( Function ) );
 		} );

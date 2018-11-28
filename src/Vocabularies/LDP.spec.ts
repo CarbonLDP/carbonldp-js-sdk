@@ -271,7 +271,7 @@ describe( module( "carbonldp/Vocabularies/LDP" ), ():void => {
 		"Constant that implements the used vocabulary defined for the W3C Linked Data Platform (LDP)"
 	), ():void => {
 
-		it( "should exists", ():void => {
+		it( "should exist", ():void => {
 			expect( LDP ).toEqual( jasmine.any( Object ) );
 		} );
 

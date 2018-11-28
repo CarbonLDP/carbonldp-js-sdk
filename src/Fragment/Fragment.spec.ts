@@ -12,7 +12,7 @@ import { TransientFragment } from "./TransientFragment";
 
 describe( "Fragment", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( Fragment ).toBeDefined();
 		expect( Fragment ).toEqual( jasmine.any( Object ) );
 	} );
@@ -64,7 +64,7 @@ describe( "Fragment", () => {
 
 		describe( "Fragment.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( Fragment.isDecorated ).toBeDefined();
 				expect( Fragment.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -83,7 +83,7 @@ describe( "Fragment", () => {
 
 		describe( "Fragment.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( Fragment.decorate ).toBeDefined();
 				expect( Fragment.decorate ).toEqual( jasmine.any( Function ) );
 			} );

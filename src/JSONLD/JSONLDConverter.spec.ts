@@ -11,7 +11,7 @@ import { JSONLDConverter } from "./JSONLDConverter";
 
 describe( "JSONLDConverter", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( JSONLDConverter ).toBeDefined();
 		expect( JSONLDConverter ).toEqual( jasmine.any( Function ) );
 	} );
@@ -53,7 +53,7 @@ describe( "JSONLDConverter", () => {
 
 	describe( "JSONLDConverter.compact", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( JSONLDConverter.prototype.compact ).toBeDefined();
 			expect( JSONLDConverter.prototype.compact ).toEqual( jasmine.any( Function ) );
 		} );
@@ -199,7 +199,7 @@ describe( "JSONLDConverter", () => {
 
 	describe( "JSONLDConverter.expand", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( JSONLDConverter.prototype.expand ).toBeDefined();
 			expect( JSONLDConverter.prototype.expand ).toEqual( jasmine.any( Function ) );
 		} );

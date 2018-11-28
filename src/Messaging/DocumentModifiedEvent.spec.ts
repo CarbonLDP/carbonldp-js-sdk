@@ -5,7 +5,7 @@ import { DocumentModifiedEvent } from "./DocumentModifiedEvent";
 
 describe( "DocumentModifiedEvent", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( DocumentModifiedEvent ).toBeDefined();
 		expect( DocumentModifiedEvent ).toEqual( jasmine.any( Object ) );
 	} );
@@ -17,7 +17,7 @@ describe( "DocumentModifiedEvent", () => {
 
 		describe( "DocumentModifiedEvent.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentModifiedEvent.TYPE ).toBeDefined();
 				expect( DocumentModifiedEvent.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -31,7 +31,7 @@ describe( "DocumentModifiedEvent", () => {
 
 		describe( "DocumentModifiedEvent.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentModifiedEvent.SCHEMA ).toBeDefined();
 				expect( DocumentModifiedEvent.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );

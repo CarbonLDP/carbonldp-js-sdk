@@ -28,7 +28,7 @@ function createMock( data?:{
 
 describe( "DocumentsContext", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( DocumentsContext ).toBeDefined();
 		expect( DocumentsContext ).toEqual( jasmine.any( Function ) );
 	} );
@@ -62,7 +62,7 @@ describe( "DocumentsContext", () => {
 
 	describe( "DocumentsContext._resolvePath", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( DocumentsContext.prototype._resolvePath ).toBeDefined();
 			expect( DocumentsContext.prototype._resolvePath ).toEqual( jasmine.any( Function ) );
 		} );

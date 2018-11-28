@@ -5,7 +5,7 @@ import { MemberRemovedEvent } from "./MemberRemovedEvent";
 
 describe( "MemberRemovedEvent", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( MemberRemovedEvent ).toBeDefined();
 		expect( MemberRemovedEvent ).toEqual( jasmine.any( Object ) );
 	} );
@@ -17,7 +17,7 @@ describe( "MemberRemovedEvent", () => {
 
 		describe( "MemberRemovedEvent.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( MemberRemovedEvent.TYPE ).toBeDefined();
 				expect( MemberRemovedEvent.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -31,7 +31,7 @@ describe( "MemberRemovedEvent", () => {
 
 		describe( "MemberRemovedEvent.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( MemberRemovedEvent.SCHEMA ).toBeDefined();
 				expect( MemberRemovedEvent.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );

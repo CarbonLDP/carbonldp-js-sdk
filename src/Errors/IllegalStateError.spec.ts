@@ -4,7 +4,7 @@ import { IllegalStateError } from "./IllegalStateError";
 
 describe( "IllegalStateError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( IllegalStateError ).toBeDefined();
 		expect( IllegalStateError ).toEqual( jasmine.any( Function ) );
 	} );

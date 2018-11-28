@@ -8,7 +8,7 @@ import { GatewayTimeoutError } from "./GatewayTimeoutError";
 
 describe( "GatewayTimeoutError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( GatewayTimeoutError ).toBeDefined();
 		expect( GatewayTimeoutError ).toEqual( jasmine.any( Function ) );
 	} );

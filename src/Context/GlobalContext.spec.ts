@@ -4,7 +4,7 @@ import { GlobalContext } from "./GlobalContext";
 
 describe( "GlobalContext", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( GlobalContext ).toBeDefined();
 		expect( GlobalContext ).toEqual( jasmine.any( Function ) );
 	} );
@@ -12,7 +12,7 @@ describe( "GlobalContext", () => {
 
 	describe( "GlobalContext.instance", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( GlobalContext.instance ).toBeDefined();
 			expect( GlobalContext.instance ).toEqual( jasmine.any( GlobalContext ) );
 		} );

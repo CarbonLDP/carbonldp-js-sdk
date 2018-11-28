@@ -3,7 +3,7 @@ import { JSONParser } from "./JSONParser";
 
 describe( "JSONParser", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( JSONParser ).toBeDefined();
 		expect( JSONParser ).toEqual( jasmine.any( Function ) );
 	} );
@@ -17,7 +17,7 @@ describe( "JSONParser", () => {
 
 	describe( "JSONParser.parse", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( JSONParser.prototype.parse ).toBeDefined();
 			expect( JSONParser.prototype.parse ).toEqual( jasmine.any( Function ) );
 		} );

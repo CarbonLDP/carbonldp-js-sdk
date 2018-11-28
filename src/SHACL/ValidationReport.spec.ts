@@ -14,7 +14,7 @@ describe( module( "carbonldp/SHACL/ValidationReport" ), ():void => {
 		"Interface that represents the results of a validation process."
 	), ():void => {
 
-		it( "should exists", ():void => {
+		it( "should exist", ():void => {
 			const target:ValidationReport = {} as any;
 			expect( target ).toBeDefined();
 		} );

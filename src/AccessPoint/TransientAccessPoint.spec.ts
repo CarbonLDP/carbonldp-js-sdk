@@ -10,7 +10,7 @@ import { TransientAccessPoint } from "./TransientAccessPoint";
 
 describe( "TransientAccessPoint", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( TransientAccessPoint ).toBeDefined();
 		expect( TransientAccessPoint ).toEqual( jasmine.any( Object ) );
 	} );
@@ -20,7 +20,7 @@ describe( "TransientAccessPoint", () => {
 
 		describe( "TransientAccessPoint.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientAccessPoint.is ).toBeDefined();
 				expect( TransientAccessPoint.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -46,7 +46,7 @@ describe( "TransientAccessPoint", () => {
 
 		describe( "TransientAccessPoint.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientAccessPoint.TYPE ).toBeDefined();
 				expect( TransientAccessPoint.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -59,7 +59,7 @@ describe( "TransientAccessPoint", () => {
 
 		describe( "TransientAccessPoint.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientAccessPoint.create ).toBeDefined();
 				expect( TransientAccessPoint.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -90,7 +90,7 @@ describe( "TransientAccessPoint", () => {
 
 		describe( "TransientAccessPoint.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( TransientAccessPoint.createFrom ).toBeDefined();
 				expect( TransientAccessPoint.createFrom ).toEqual( jasmine.any( Function ) );
 			} );

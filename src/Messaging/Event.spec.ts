@@ -3,7 +3,7 @@ import { Event } from "./Event";
 
 describe( "Event", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( Event ).toBeDefined();
 		expect( Event ).toEqual( jasmine.any( Object ) );
 	} );

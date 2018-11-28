@@ -5,7 +5,7 @@ import { _areDifferentType, _getPathProperty } from "./Utils";
 
 describe( "_getPathProperty", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( _getPathProperty ).toBeDefined();
 		expect( _getPathProperty ).toEqual( jasmine.any( Function ) );
 	} );
@@ -48,7 +48,7 @@ describe( "_getPathProperty", () => {
 
 describe( "_areDifferentType", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( _areDifferentType ).toBeDefined();
 		expect( _areDifferentType ).toEqual( jasmine.any( Function ) );
 	} );

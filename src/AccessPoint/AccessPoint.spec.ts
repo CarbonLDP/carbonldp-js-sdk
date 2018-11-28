@@ -6,7 +6,7 @@ import { TransientAccessPoint } from "./TransientAccessPoint";
 
 describe( "AccessPoint", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( AccessPoint ).toBeDefined();
 		expect( AccessPoint ).toEqual( jasmine.any( Object ) );
 	} );
@@ -24,7 +24,7 @@ describe( "AccessPoint", () => {
 
 		describe( "AccessPoint.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( AccessPoint.is ).toBeDefined();
 				expect( AccessPoint.is ).toEqual( jasmine.any( Function ) );
 			} );

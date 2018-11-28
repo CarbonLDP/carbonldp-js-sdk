@@ -356,7 +356,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				{ name: "settings", type: "CarbonLDP.SettingsCarbonSettings", description: "A settings object to fully configure the Carbon instance." },
 			] ), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				expect( CarbonLDP.CarbonLDP.constructor ).toBeDefined();
 				expect( CarbonLDP.CarbonLDP.constructor ).toEqual( jasmine.any( Function ) );
 			} );
@@ -600,7 +600,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				{ type: "string", description: "The absolute URI that has been resolved." }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				expect( CarbonLDP.CarbonLDP.prototype.resolve ).toBeDefined();
 				expect( CarbonLDP.CarbonLDP.prototype.resolve ).toEqual( jasmine.any( Function ) );
 			} );
@@ -636,7 +636,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				{ type: "Promise<CarbonLDP.System.PlatformMetadata>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				expect( CarbonLDP.CarbonLDP.prototype.getPlatformMetadata ).toBeDefined();
 				expect( CarbonLDP.CarbonLDP.prototype.getPlatformMetadata ).toEqual( jasmine.any( Function ) );
 			} );

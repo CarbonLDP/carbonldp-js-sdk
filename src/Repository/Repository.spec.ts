@@ -44,7 +44,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:Repository = createMock();
 
 				expect( repository.get ).toBeDefined();
@@ -75,7 +75,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:Repository = createMock();
 
 				expect( repository.resolve ).toBeDefined();
@@ -106,7 +106,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:Repository = createMock();
 
 				expect( repository.exists ).toBeDefined();
@@ -138,7 +138,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:Repository = createMock();
 
 				expect( repository.save ).toBeDefined();
@@ -169,7 +169,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:Repository = createMock();
 
 				expect( repository.refresh ).toBeDefined();
@@ -200,7 +200,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:Repository = createMock();
 
 				expect( repository.saveAndRefresh ).toBeDefined();
@@ -232,7 +232,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:Repository = createMock();
 
 				expect( repository.delete ).toBeDefined();
@@ -281,7 +281,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$get ).toBeDefined();
@@ -312,7 +312,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$resolve ).toBeDefined();
@@ -343,7 +343,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$exists ).toBeDefined();
@@ -375,7 +375,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$save ).toBeDefined();
@@ -406,7 +406,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$refresh ).toBeDefined();
@@ -437,7 +437,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$saveAndRefresh ).toBeDefined();
@@ -469,7 +469,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "Promise<MODEL>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$delete ).toBeDefined();
@@ -521,7 +521,7 @@ describe( module( "carbonldp/Repository" ), () => {
 		"CarbonLDP.RepositoryFactory"
 	), () => {
 
-		it( "should exists", ():void => {
+		it( "should exist", ():void => {
 			expect( Repository ).toBeDefined();
 			expect( Repository ).toEqual( jasmine.any( Object ) );
 		} );

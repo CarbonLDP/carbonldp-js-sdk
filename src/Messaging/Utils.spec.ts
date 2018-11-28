@@ -5,7 +5,7 @@ import { _createDestination, _parseURIPattern, _validateEventType } from "./Util
 
 describe( "_validaEventType", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( _validateEventType ).toBeDefined();
 		expect( _validateEventType ).toEqual( jasmine.any( Function ) );
 	} );
@@ -75,7 +75,7 @@ describe( "_validaEventType", () => {
 
 describe( "_parseURIPattern", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( _parseURIPattern ).toBeDefined();
 		expect( _parseURIPattern ).toEqual( jasmine.any( Function ) );
 	} );
@@ -132,7 +132,7 @@ describe( "_parseURIPattern", () => {
 
 describe( "_createDestination", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( _createDestination ).toBeDefined();
 		expect( _createDestination ).toEqual( jasmine.any( Function ) );
 	} );

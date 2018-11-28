@@ -15,7 +15,7 @@ function createMockProperty( values:Partial<DigestedObjectSchemaProperty> ):Dige
 
 describe( "DigestedObjectSchema", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( DigestedObjectSchema ).toBeDefined();
 		expect( DigestedObjectSchema ).toEqual( jasmine.any( Function ) );
 	} );
@@ -64,7 +64,7 @@ describe( "DigestedObjectSchema", () => {
 
 	describe( "DigestedObjectSchema.resolveURI", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			const digestedSchema:DigestedObjectSchema = createMock();
 
 			expect( digestedSchema.resolveURI ).toBeDefined();

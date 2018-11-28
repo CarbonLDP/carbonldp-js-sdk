@@ -5,7 +5,7 @@ import { DocumentDeletedEvent } from "./DocumentDeletedEvent";
 
 describe( "DocumentDeletedEvent", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( DocumentDeletedEvent ).toBeDefined();
 		expect( DocumentDeletedEvent ).toEqual( jasmine.any( Object ) );
 	} );
@@ -17,7 +17,7 @@ describe( "DocumentDeletedEvent", () => {
 
 		describe( "DocumentDeletedEvent.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentDeletedEvent.TYPE ).toBeDefined();
 				expect( DocumentDeletedEvent.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -31,7 +31,7 @@ describe( "DocumentDeletedEvent", () => {
 
 		describe( "DocumentDeletedEvent.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentDeletedEvent.SCHEMA ).toBeDefined();
 				expect( DocumentDeletedEvent.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );

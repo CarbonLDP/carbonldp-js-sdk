@@ -3,7 +3,7 @@ import { QueryPropertyType } from "./QueryPropertyType";
 
 describe( "QueryPropertyType", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( QueryPropertyType ).toBeDefined();
 		expect( QueryPropertyType ).toEqual( jasmine.any( Object ) );
 	} );

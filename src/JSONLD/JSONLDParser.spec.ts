@@ -11,7 +11,7 @@ describe( "JSONLDParser", () => {
 		jasmine.Ajax.uninstall();
 	} );
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( JSONLDParser ).toBeDefined();
 		expect( JSONLDParser ).toEqual( jasmine.any( Function ) );
 	} );
@@ -25,7 +25,7 @@ describe( "JSONLDParser", () => {
 
 	describe( "JSONLDParser.parse", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( JSONLDParser.prototype.parse ).toBeDefined();
 			expect( JSONLDParser.prototype.parse ).toEqual( jasmine.any( Function ) );
 		} );

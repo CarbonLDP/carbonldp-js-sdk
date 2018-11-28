@@ -15,7 +15,7 @@ import { MessagingService } from "./MessagingService";
 
 describe( "MessagingService", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( MessagingService ).toBeDefined();
 		expect( MessagingService ).toEqual( jasmine.any( Function ) );
 	} );
@@ -51,7 +51,7 @@ describe( "MessagingService", () => {
 
 	describe( "MessagingService.setOptions", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( service.setOptions ).toBeDefined();
 			expect( service.setOptions ).toEqual( jasmine.any( Function ) );
 		} );
@@ -101,7 +101,7 @@ describe( "MessagingService", () => {
 
 	describe( "MessagingService.connect", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( service.connect ).toBeDefined();
 			expect( service.connect ).toEqual( jasmine.any( Function ) );
 		} );
@@ -183,7 +183,7 @@ describe( "MessagingService", () => {
 
 	describe( "MessagingService.reconnect", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( service.reconnect ).toBeDefined();
 			expect( service.reconnect ).toEqual( jasmine.any( Function ) );
 		} );
@@ -385,7 +385,7 @@ describe( "MessagingService", () => {
 
 	describe( "MessagingService.subscribe", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( service.subscribe ).toBeDefined();
 			expect( service.subscribe ).toEqual( jasmine.any( Function ) );
 		} );
@@ -575,7 +575,7 @@ describe( "MessagingService", () => {
 
 	describe( "MessagingService.unsubscribe", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( service.unsubscribe ).toBeDefined();
 			expect( service.unsubscribe ).toEqual( jasmine.any( Function ) );
 		} );

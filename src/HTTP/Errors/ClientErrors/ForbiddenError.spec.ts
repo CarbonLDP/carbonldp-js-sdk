@@ -8,7 +8,7 @@ import { ForbiddenError } from "./ForbiddenError";
 
 describe( "ForbiddenError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( ForbiddenError ).toBeDefined();
 		expect( ForbiddenError ).toEqual( jasmine.any( Function ) );
 	} );

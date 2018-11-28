@@ -26,7 +26,7 @@ import { SPARQLDocumentsRepositoryTrait } from "./SPARQLDocumentsRepositoryTrait
 
 describe( "SPARQLDocumentsRepositoryTrait", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( SPARQLDocumentsRepositoryTrait ).toBeDefined();
 		expect( SPARQLDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
 	} );
@@ -130,7 +130,7 @@ describe( "SPARQLDocumentsRepositoryTrait", () => {
 
 		describe( "SPARQLDocumentsRepositoryTrait.executeASKQuery", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.executeASKQuery ).toBeDefined();
 				expect( repository.executeASKQuery ).toEqual( jasmine.any( Function ) );
 			} );
@@ -277,7 +277,7 @@ describe( "SPARQLDocumentsRepositoryTrait", () => {
 				], { type: "Promise<CarbonLDP.SPARQL.SPARQLSelectResults<T>>" }
 			), () => {} );
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.executeSELECTQuery ).toBeDefined();
 				expect( repository.executeSELECTQuery ).toEqual( jasmine.any( Function ) );
 			} );
@@ -423,7 +423,7 @@ describe( "SPARQLDocumentsRepositoryTrait", () => {
 				], { type: "Promise<void>" }
 			), () => {} );
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.executeUPDATE ).toBeDefined();
 				expect( repository.executeUPDATE ).toEqual( jasmine.any( Function ) );
 			} );
@@ -570,7 +570,7 @@ describe( "SPARQLDocumentsRepositoryTrait", () => {
 				{ type: "SPARQLER/Clauses/QueryClause<CarbonLDP.SPARQL.Builder.FinishSPARQLSelect>" }
 			), () => {} );
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.sparql ).toBeDefined();
 				expect( repository.sparql ).toEqual( jasmine.any( Function ) );
 			} );
@@ -642,7 +642,7 @@ describe( "SPARQLDocumentsRepositoryTrait", () => {
 
 		describe( "SPARQLDocumentsRepositoryTrait.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( SPARQLDocumentsRepositoryTrait.isDecorated ).toBeDefined();
 				expect( SPARQLDocumentsRepositoryTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -660,7 +660,7 @@ describe( "SPARQLDocumentsRepositoryTrait", () => {
 
 		describe( "SPARQLDocumentsRepositoryTrait.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( SPARQLDocumentsRepositoryTrait.decorate ).toBeDefined();
 				expect( SPARQLDocumentsRepositoryTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );

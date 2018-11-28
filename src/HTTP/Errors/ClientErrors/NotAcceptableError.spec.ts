@@ -8,7 +8,7 @@ import { NotAcceptableError } from "./NotAcceptableError";
 
 describe( "NotAcceptableError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( NotAcceptableError ).toBeDefined();
 		expect( NotAcceptableError ).toEqual( jasmine.any( Function ) );
 	} );

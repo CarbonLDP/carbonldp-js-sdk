@@ -15,7 +15,7 @@ import { QueryPropertyType } from "./QueryPropertyType";
 
 describe( "QueryProperty", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( QueryProperty ).toBeDefined();
 		expect( QueryProperty ).toEqual( jasmine.any( Function ) );
 	} );
@@ -29,7 +29,7 @@ describe( "QueryProperty", () => {
 
 	describe( "QueryProperty.constructor", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			const queryProperty:QueryProperty = new QueryProperty( {
 				queryContainer: queryContainer,
 				name: "name",
@@ -130,7 +130,7 @@ describe( "QueryProperty", () => {
 
 	describe( "QueryProperty.getSearchPatterns", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryProperty.prototype.getSearchPatterns ).toBeDefined();
 			expect( QueryProperty.prototype.getSearchPatterns ).toEqual( jasmine.any( Function ) );
 		} );
@@ -184,7 +184,7 @@ describe( "QueryProperty", () => {
 
 	describe( "QueryProperty.getSchemaFor", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( QueryProperty.prototype.getSchemaFor ).toBeDefined();
 			expect( QueryProperty.prototype.getSchemaFor ).toEqual( jasmine.any( Function ) );
 		} );

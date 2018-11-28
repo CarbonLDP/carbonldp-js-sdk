@@ -5,7 +5,7 @@ import { JSONLDProcessor } from "./JSONLDProcessor";
 
 describe( "JSONLDProcessor", ():void => {
 
-	it( "should exists", ():void => {
+	it( "should exist", ():void => {
 		expect( JSONLDProcessor ).toBeDefined();
 		expect( JSONLDProcessor ).toEqual( jasmine.any( Function ) );
 	} );
@@ -21,7 +21,7 @@ describe( "JSONLDProcessor", ():void => {
 
 	describe( "JSONLDProcessor.expand", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( JSONLDProcessor.expand ).toBeDefined();
 			expect( JSONLDProcessor.expand ).toEqual( jasmine.any( Function ) );
 		} );

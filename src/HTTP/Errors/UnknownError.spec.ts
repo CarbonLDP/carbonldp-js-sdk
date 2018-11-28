@@ -7,7 +7,7 @@ import { UnknownError } from "./UnknownError";
 
 describe( "UnknownError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( UnknownError ).toBeDefined();
 		expect( UnknownError ).toEqual( jasmine.any( Function ) );
 	} );

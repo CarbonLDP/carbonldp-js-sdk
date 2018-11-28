@@ -8,7 +8,7 @@ import { InternalServerErrorError } from "./InternalServerErrorError";
 
 describe( "InternalServerErrorError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( InternalServerErrorError ).toBeDefined();
 		expect( InternalServerErrorError ).toEqual( jasmine.any( Function ) );
 	} );

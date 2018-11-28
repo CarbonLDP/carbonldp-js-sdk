@@ -280,7 +280,7 @@ describe( module( "carbonldp/Vocabularies/XSD" ), ():void => {
 		"Constant that implements the used vocabulary of the data-types defined in the XML Schema Definition Language (XSD)."
 	), ():void => {
 
-		it( "should exists", ():void => {
+		it( "should exist", ():void => {
 			expect( XSD ).toBeDefined();
 			expect( XSD ).toEqual( jasmine.any( Object ) );
 		} );

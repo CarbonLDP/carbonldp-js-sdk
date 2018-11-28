@@ -7,7 +7,7 @@ import { RDFLiteral } from "./Literal";
 
 describe( "RDFLiteral", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( RDFLiteral ).toBeDefined();
 		expect( RDFLiteral ).toEqual( jasmine.any( Object ) );
 	} );

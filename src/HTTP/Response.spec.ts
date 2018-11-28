@@ -24,7 +24,7 @@ describe( "Response", () => {
 		jasmine.Ajax.uninstall();
 	} );
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( Response ).toBeDefined();
 		expect( Response ).toEqual( jasmine.any( Function ) );
 	} );
@@ -120,7 +120,7 @@ describe( "Response", () => {
 
 	describe( "Response.getHeader", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( Response.prototype.getHeader ).toBeDefined();
 			expect( Response.prototype.getHeader ).toEqual( jasmine.any( Function ) );
 		} );
@@ -137,7 +137,7 @@ describe( "Response", () => {
 
 	describe( "Response.getETag", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( Response.prototype.getETag ).toBeDefined();
 			expect( Response.prototype.getETag ).toEqual( jasmine.any( Function ) );
 		} );

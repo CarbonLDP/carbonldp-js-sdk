@@ -11,7 +11,7 @@ import { EventEmitterDocumentsRepositoryTrait } from "./EventEmitterDocumentsRep
 
 describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( EventEmitterDocumentsRepositoryTrait ).toBeDefined();
 		expect( EventEmitterDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
 	} );
@@ -30,7 +30,7 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
 		describe( "EventEmitterDocumentsRepositoryTrait.on", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.on ).toBeDefined();
@@ -68,7 +68,7 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
 		describe( "EventEmitterDocumentsRepositoryTrait.off", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.off ).toBeDefined();
@@ -106,7 +106,7 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
 		describe( "EventEmitterDocumentsRepositoryTrait.one", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.one ).toBeDefined();
@@ -209,7 +209,7 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
 		describe( "EventEmitterDocumentsRepositoryTrait.onChildCreated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.onChildCreated ).toBeDefined();
@@ -232,7 +232,7 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
 		describe( "EventEmitterDocumentsRepositoryTrait.onDocumentModified", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.onDocumentModified ).toBeDefined();
@@ -255,7 +255,7 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
 		describe( "EventEmitterDocumentsRepositoryTrait.onDocumentDeleted", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.onDocumentDeleted ).toBeDefined();
@@ -278,7 +278,7 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
 		describe( "EventEmitterDocumentsRepositoryTrait.onMemberAdded", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.onMemberAdded ).toBeDefined();
@@ -301,7 +301,7 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
 		describe( "EventEmitterDocumentsRepositoryTrait.onMemberRemoved", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
 
 				expect( resource.onMemberRemoved ).toBeDefined();
@@ -328,7 +328,7 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
 		describe( "EventEmitterDocumentsRepositoryTrait.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( EventEmitterDocumentsRepositoryTrait.isDecorated ).toBeDefined();
 				expect( EventEmitterDocumentsRepositoryTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -346,7 +346,7 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
 		describe( "EventEmitterDocumentsRepositoryTrait.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( EventEmitterDocumentsRepositoryTrait.decorate ).toBeDefined();
 				expect( EventEmitterDocumentsRepositoryTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );

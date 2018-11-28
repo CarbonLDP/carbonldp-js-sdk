@@ -10,7 +10,7 @@ import { SPARQLDocumentsRepositoryTrait } from "./Traits/SPARQLDocumentsReposito
 
 describe( "DocumentsRepository", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( DocumentsRepository ).toBeDefined();
 		expect( DocumentsRepository ).toEqual( jasmine.any( Object ) );
 	} );
@@ -34,7 +34,7 @@ describe( "DocumentsRepository", () => {
 
 		describe( "DocumentsRepository.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentsRepository.create ).toBeDefined();
 				expect( DocumentsRepository.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -60,7 +60,7 @@ describe( "DocumentsRepository", () => {
 
 		describe( "DocumentsRepository.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( DocumentsRepository.createFrom ).toBeDefined();
 				expect( DocumentsRepository.createFrom ).toEqual( jasmine.any( Function ) );
 			} );

@@ -8,7 +8,7 @@ import { MethodNotAllowedError } from "./MethodNotAllowedError";
 
 describe( "MethodNotAllowedError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( MethodNotAllowedError ).toBeDefined();
 		expect( MethodNotAllowedError ).toEqual( jasmine.any( Function ) );
 	} );

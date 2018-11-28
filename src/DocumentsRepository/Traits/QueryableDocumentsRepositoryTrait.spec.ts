@@ -58,7 +58,7 @@ import { QueryableDocumentsRepositoryTrait } from "./QueryableDocumentsRepositor
 
 describe( "QueryableDocumentsRepositoryTrait", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( QueryableDocumentsRepositoryTrait ).toBeDefined();
 		expect( QueryableDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
 	} );
@@ -211,7 +211,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 		describe( "QueryableDocumentsRepositoryTrait.get", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.get ).toBeDefined();
 				expect( repository.get ).toEqual( jasmine.any( Function ) );
 			} );
@@ -2120,7 +2120,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 		describe( "QueryableDocumentsRepositoryTrait.resolve", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.resolve ).toBeDefined();
 				expect( repository.resolve ).toEqual( jasmine.any( Function ) );
 			} );
@@ -3329,7 +3329,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 		describe( "QueryableDocumentsRepositoryTrait.saveAndRefresh", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.saveAndRefresh ).toBeDefined();
 				expect( repository.saveAndRefresh ).toEqual( jasmine.any( Function ) );
 			} );
@@ -3844,7 +3844,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 		describe( "QueryableDocumentsRepositoryTrait.refresh", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.refresh ).toBeDefined();
 				expect( repository.refresh ).toEqual( jasmine.any( Function ) );
 			} );
@@ -4875,7 +4875,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 		describe( "QueryableDocumentsRepositoryTrait.getChildren", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.getChildren ).toBeDefined();
 				expect( repository.getChildren ).toEqual( jasmine.any( Function ) );
 			} );
@@ -6219,7 +6219,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 		describe( "QueryableDocumentsRepositoryTrait.getMembers", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.getMembers ).toBeDefined();
 				expect( repository.getMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -7590,7 +7590,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 		describe( "QueryableDocumentsRepositoryTrait.listChildren", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.listChildren ).toBeDefined();
 				expect( repository.listChildren ).toEqual( jasmine.any( Function ) );
 			} );
@@ -7954,7 +7954,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 		describe( "QueryableDocumentsRepositoryTrait.listMembers", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.listMembers ).toBeDefined();
 				expect( repository.listMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -8329,7 +8329,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 		describe( "QueryableDocumentsRepositoryTrait.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( QueryableDocumentsRepositoryTrait.isDecorated ).toBeDefined();
 				expect( QueryableDocumentsRepositoryTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -8347,7 +8347,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 		describe( "QueryableDocumentsRepositoryTrait.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( QueryableDocumentsRepositoryTrait.decorate ).toBeDefined();
 				expect( QueryableDocumentsRepositoryTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );

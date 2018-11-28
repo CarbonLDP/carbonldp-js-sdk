@@ -9,7 +9,7 @@ import { QueryMetadata } from "./QueryMetadata";
 
 describe( "QueryMetadata", ():void => {
 
-	it( "should exists", ():void => {
+	it( "should exist", ():void => {
 		expect( QueryMetadata ).toBeDefined();
 		expect( QueryMetadata ).toEqual( jasmine.any( Object ) );
 	} );
@@ -22,7 +22,7 @@ describe( "QueryMetadata", ():void => {
 
 		describe( "QueryMetadata.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( QueryMetadata.TYPE ).toBeDefined();
 				expect( QueryMetadata.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -36,7 +36,7 @@ describe( "QueryMetadata", ():void => {
 
 		describe( "QueryMetadata.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( QueryMetadata.SCHEMA ).toBeDefined();
 				expect( QueryMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );
@@ -61,7 +61,7 @@ describe( "QueryMetadata", ():void => {
 
 		describe( "QueryMetadata.is", ():void => {
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				expect( QueryMetadata.is ).toBeDefined();
 				expect( QueryMetadata.is ).toEqual( jasmine.any( Function ) );
 			} );

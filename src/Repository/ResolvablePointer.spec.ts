@@ -91,7 +91,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				{ type: "boolean" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const resource:ResolvablePointer = createMock();
 
 				expect( resource.$isResolved ).toBeDefined();
@@ -129,7 +129,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				"Updates the snapshot with the data of the resource."
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const resource:ResolvablePointer = createMock();
 
 				expect( resource.$_syncSnapshot ).toBeDefined();
@@ -197,7 +197,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			), ():void => {} );
 
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const resource:ResolvablePointer = createMock();
 
 				expect( resource.$isDirty ).toBeDefined();
@@ -304,7 +304,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				"Revert the changes made to the resource into the state of the snapshot."
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const resource:ResolvablePointer = createMock( {} );
 
 				expect( resource.$revert ).toBeDefined();
@@ -1326,7 +1326,7 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		describe( "ResolvablePointer.isDecorated", ():void => {
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				expect( ResolvablePointer.isDecorated ).toBeDefined();
 				expect( ResolvablePointer.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -1345,7 +1345,7 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		describe( "ResolvablePointer.decorate", ():void => {
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				expect( ResolvablePointer.decorate ).toBeDefined();
 				expect( ResolvablePointer.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -1401,7 +1401,7 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		describe( "ResolvablePointer.is", ():void => {
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				expect( ResolvablePointer.is ).toBeDefined();
 				expect( ResolvablePointer.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -1458,7 +1458,7 @@ describe( module( "carbonldp/Repository" ), () => {
 		"CarbonLDP.ResolvablePointerFactory"
 	), () => {
 
-		it( "should exists", ():void => {
+		it( "should exist", ():void => {
 			expect( ResolvablePointer ).toBeDefined();
 			expect( ResolvablePointer ).toEqual( jasmine.any( Object ) );
 		} );

@@ -9,7 +9,7 @@ import { VolatileResource } from "./VolatileResource";
 
 describe( "VolatileResource", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( VolatileResource ).toBeDefined();
 		expect( VolatileResource ).toEqual( jasmine.any( Object ) );
 	} );
@@ -21,7 +21,7 @@ describe( "VolatileResource", () => {
 
 		describe( "VolatileResource.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( VolatileResource.TYPE ).toBeDefined();
 				expect( VolatileResource.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -36,7 +36,7 @@ describe( "VolatileResource", () => {
 
 		describe( "VolatileResource.is", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( VolatileResource.is ).toBeDefined();
 				expect( VolatileResource.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -71,7 +71,7 @@ describe( "VolatileResource", () => {
 
 		describe( "VolatileResource.create", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( VolatileResource.create ).toBeDefined();
 				expect( VolatileResource.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -98,7 +98,7 @@ describe( "VolatileResource", () => {
 
 		describe( "VolatileResource.createFrom", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( VolatileResource.createFrom ).toBeDefined();
 				expect( VolatileResource.createFrom ).toEqual( jasmine.any( Function ) );
 			} );

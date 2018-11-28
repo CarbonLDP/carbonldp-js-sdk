@@ -15,7 +15,7 @@ import { SPARQLDocumentTrait } from "./SPARQLDocumentTrait";
 
 describe( "SPARQLDocumentTrait", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( SPARQLDocumentTrait ).toBeDefined();
 		expect( SPARQLDocumentTrait ).toEqual( jasmine.any( Object ) );
 	} );
@@ -41,7 +41,7 @@ describe( "SPARQLDocumentTrait", () => {
 
 		describe( "SPARQLDocumentTrait.$executeASKQuery", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$executeASKQuery ).toBeDefined();
 				expect( resource.$executeASKQuery ).toEqual( jasmine.any( Function ) );
 			} );
@@ -90,7 +90,7 @@ describe( "SPARQLDocumentTrait", () => {
 
 		describe( "SPARQLDocumentTrait.$executeSELECTQuery", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$executeSELECTQuery ).toBeDefined();
 				expect( resource.$executeSELECTQuery ).toEqual( jasmine.any( Function ) );
 			} );
@@ -139,7 +139,7 @@ describe( "SPARQLDocumentTrait", () => {
 
 		describe( "SPARQLDocumentTrait.$executeUPDATE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$executeUPDATE ).toBeDefined();
 				expect( resource.$executeUPDATE ).toEqual( jasmine.any( Function ) );
 			} );
@@ -190,7 +190,7 @@ describe( "SPARQLDocumentTrait", () => {
 
 		describe( "SPARQLDocumentTrait.$sparql", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( resource.$sparql ).toBeDefined();
 				expect( resource.$sparql ).toEqual( jasmine.any( Function ) );
 			} );
@@ -229,7 +229,7 @@ describe( "SPARQLDocumentTrait", () => {
 
 		describe( "SPARQLDocumentTrait.isDecorated", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( SPARQLDocumentTrait.isDecorated ).toBeDefined();
 				expect( SPARQLDocumentTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -247,7 +247,7 @@ describe( "SPARQLDocumentTrait", () => {
 
 		describe( "SPARQLDocumentTrait.decorate", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( SPARQLDocumentTrait.decorate ).toBeDefined();
 				expect( SPARQLDocumentTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );

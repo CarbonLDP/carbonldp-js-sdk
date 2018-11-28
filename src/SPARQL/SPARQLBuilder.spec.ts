@@ -42,7 +42,7 @@ describe( module( "carbonldp/SPARQL/SPARQLBuilder", "Module that reexports the c
 				{ type: "Promise<CarbonLDP.SPARAL.SPARQLSelectResults>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const target:FinishSPARQLSelect[ "execute" ] = ():any => {};
 				expect( target ).toBeDefined();
 			} );
@@ -68,7 +68,7 @@ describe( module( "carbonldp/SPARQL/SPARQLBuilder", "Module that reexports the c
 				{ type: "Promise<boolean>" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const target:FinishSPARQLAsk[ "execute" ] = ():Promise<boolean> => Promise.resolve( true );
 				expect( target ).toBeDefined();
 			} );

@@ -93,7 +93,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "string" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:Registry<RegisteredPointer> = createMock( {} );
 
 				expect( registry._getLocalID ).toBeDefined();
@@ -205,7 +205,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "boolean" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:Registry<RegisteredPointer> = createMock( {} );
 
 				expect( registry.inScope ).toBeDefined();
@@ -361,7 +361,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "boolean" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:Registry<RegisteredPointer> = createMock( {} );
 
 				expect( registry.hasPointer ).toBeDefined();
@@ -563,7 +563,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "M" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:Registry<RegisteredPointer> = createMock( {} );
 
 				expect( registry.getPointer ).toBeDefined();
@@ -751,7 +751,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "M[]" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:Registry<RegisteredPointer> = createMock( {} );
 
 				expect( registry.getPointers ).toBeDefined();
@@ -892,7 +892,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "boolean" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:Registry<RegisteredPointer> = createMock( {} );
 
 				expect( registry.removePointer ).toBeDefined();
@@ -1118,7 +1118,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "string" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( {} );
 
 				expect( registry.$_getLocalID ).toBeDefined();
@@ -1230,7 +1230,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "boolean" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( {} );
 
 				expect( registry.$inScope ).toBeDefined();
@@ -1386,7 +1386,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "boolean" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( {} );
 
 				expect( registry.$hasPointer ).toBeDefined();
@@ -1588,7 +1588,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "M" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( {} );
 
 				expect( registry.$getPointer ).toBeDefined();
@@ -1776,7 +1776,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "M[]" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( {} );
 
 				expect( registry.$getPointers ).toBeDefined();
@@ -1917,7 +1917,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "boolean" }
 			), () => {} );
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( {} );
 
 				expect( registry.$removePointer ).toBeDefined();
@@ -2115,7 +2115,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 		describe( "Registry.isDecorated", ():void => {
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				expect( Registry.isDecorated ).toBeDefined();
 				expect( Registry.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -2142,7 +2142,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 		describe( "Registry.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", ():void => {
 				expect( Registry.decorate ).toBeDefined();
 				expect( Registry.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -2197,7 +2197,7 @@ describe( module( "carbonldp/Registry" ), () => {
 		"CarbonLDP.RegistryFactory"
 	), () => {
 
-		it( "should exists", ():void => {
+		it( "should exist", ():void => {
 			expect( Registry ).toBeDefined();
 			expect( Registry ).toEqual( jasmine.any( Object ) );
 		} );

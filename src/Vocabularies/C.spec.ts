@@ -570,7 +570,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		"Constant that implements the vocabulary of Carbon LDP."
 	), ():void => {
 
-		it( "should exists", ():void => {
+		it( "should exist", ():void => {
 			expect( C ).toEqual( jasmine.any( Object ) );
 		} );
 

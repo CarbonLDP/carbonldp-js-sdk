@@ -27,7 +27,7 @@ import { AddToken, DeleteToken, PrefixToken, SliceToken, UpdateListToken } from 
 
 describe( "DeltaCreator", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( DeltaCreator ).toBeDefined();
 		expect( DeltaCreator ).toEqual( jasmine.any( Function ) );
 	} );
@@ -39,7 +39,7 @@ describe( "DeltaCreator", () => {
 
 	describe( "DeltaCreator.constructor", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			const delta:DeltaCreator = new DeltaCreator( null );
 			expect( delta ).toBeDefined();
 			expect( delta ).toEqual( jasmine.any( DeltaCreator ) );
@@ -65,7 +65,7 @@ describe( "DeltaCreator", () => {
 
 	describe( "DeltaCreator.addResource", () => {
 
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( DeltaCreator.prototype.addResource ).toBeDefined();
 			expect( DeltaCreator.prototype.addResource ).toEqual( jasmine.any( Function ) );
 		} );
@@ -2344,7 +2344,7 @@ describe( "DeltaCreator", () => {
 	} );
 
 	describe( "DeltaCreator.getPatch", () => {
-		it( "should exists", () => {
+		it( "should exist", () => {
 			expect( DeltaCreator.prototype.getPatch ).toBeDefined();
 			expect( DeltaCreator.prototype.getPatch ).toEqual( jasmine.any( Function ) );
 		} );

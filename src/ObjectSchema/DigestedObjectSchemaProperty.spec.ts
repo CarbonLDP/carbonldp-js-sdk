@@ -3,7 +3,7 @@ import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";
 
 describe( "DigestedObjectSchemaProperty", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( DigestedObjectSchemaProperty ).toBeDefined();
 		expect( DigestedObjectSchemaProperty ).toEqual( jasmine.any( Function ) );
 	} );

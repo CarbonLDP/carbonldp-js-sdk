@@ -8,7 +8,7 @@ import { BadGatewayError } from "./BadGatewayError";
 
 describe( "BadGatewayError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( BadGatewayError ).toBeDefined();
 		expect( BadGatewayError ).toEqual( jasmine.any( Function ) );
 	} );

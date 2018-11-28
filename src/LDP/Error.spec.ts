@@ -6,7 +6,7 @@ import { Error } from "./Error";
 
 describe( "Error", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( Error ).toBeDefined();
 		expect( Error ).toEqual( jasmine.any( Object ) );
 	} );
@@ -19,7 +19,7 @@ describe( "Error", () => {
 
 		describe( "Error.TYPE", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( Error.TYPE ).toBeDefined();
 				expect( Error.TYPE ).toEqual( jasmine.any( String ) );
 			} );
@@ -33,7 +33,7 @@ describe( "Error", () => {
 
 		describe( "Error.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( Error.SCHEMA ).toBeDefined();
 				expect( Error.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );

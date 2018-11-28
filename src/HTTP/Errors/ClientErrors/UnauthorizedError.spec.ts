@@ -8,7 +8,7 @@ import { UnauthorizedError } from "./UnauthorizedError";
 
 describe( "UnauthorizedError", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( UnauthorizedError ).toBeDefined();
 		expect( UnauthorizedError ).toEqual( jasmine.any( Function ) );
 	} );

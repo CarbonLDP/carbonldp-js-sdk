@@ -5,7 +5,7 @@ import { ChildCreatedEvent } from "./ChildCreatedEvent";
 
 describe( "ChildCreatedEvent", () => {
 
-	it( "should exists", () => {
+	it( "should exist", () => {
 		expect( ChildCreatedEvent ).toBeDefined();
 		expect( ChildCreatedEvent ).toEqual( jasmine.any( Object ) );
 	} );
@@ -17,7 +17,7 @@ describe( "ChildCreatedEvent", () => {
 
 		describe( "ChildCreatedEvent.SCHEMA", () => {
 
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( ChildCreatedEvent.SCHEMA ).toBeDefined();
 				expect( ChildCreatedEvent.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );
