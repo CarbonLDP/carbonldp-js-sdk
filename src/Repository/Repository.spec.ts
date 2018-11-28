@@ -1,50 +1,26 @@
 import { NotImplementedError } from "../Errors/NotImplementedError";
 
-import { BiModelDecorator } from "../Model/BiModelDecorator";
-import { ModelPrototype } from "../Model/ModelPrototype";
-
-import { Pointer } from "../Pointer/Pointer";
-
-import {
-	extendsClass,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
-
-import { $BaseRepository, BaseRepository } from "./BaseRepository";
-import { $Repository, Repository, RepositoryFactory } from "./Repository";
+import { $Repository, Repository } from "./Repository";
 import { ResolvablePointer } from "./ResolvablePointer";
 
 
-describe( module( "carbonldp/Repository" ), () => {
+describe( "Repository", () => {
 
-	describe( interfaze(
-		"CarbonLDP.Repository",
-		[ "MODEL extends ResolvablePointer = ResolvablePointer" ],
-		"Interface that describes a generic repository."
-	), () => {
+	it( "should exist", () => {
+		expect( Repository ).toBeDefined();
+		expect( Repository ).toEqual( jasmine.any( Object ) );
+	} );
 
+
+	describe( "[[interface impl]]", () => {
 
 		function createMock():Repository {
 			return Repository.decorate( {} );
 		}
 
-		describe( method( OBLIGATORY, "get" ), ():void => {
+		describe( "Repository.get", () => {
 
-			it( hasSignature(
-				[
-					{ name: "uri", type: "string" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:Repository = createMock();
 
 				expect( repository.get ).toBeDefined();
@@ -65,17 +41,9 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "resolve" ), ():void => {
+		describe( "Repository.resolve", () => {
 
-			it( hasSignature(
-				[
-					{ name: "resource", type: "MODEL" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:Repository = createMock();
 
 				expect( repository.resolve ).toBeDefined();
@@ -96,17 +64,9 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "exists" ), ():void => {
+		describe( "Repository.exists", () => {
 
-			it( hasSignature(
-				[
-					{ name: "uri", type: "string" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:Repository = createMock();
 
 				expect( repository.exists ).toBeDefined();
@@ -128,17 +88,9 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "save" ), ():void => {
+		describe( "Repository.save", () => {
 
-			it( hasSignature(
-				[
-					{ name: "resource", type: "MODEL" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:Repository = createMock();
 
 				expect( repository.save ).toBeDefined();
@@ -159,17 +111,9 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "refresh" ), ():void => {
+		describe( "Repository.refresh", () => {
 
-			it( hasSignature(
-				[
-					{ name: "resource", type: "MODEL" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:Repository = createMock();
 
 				expect( repository.refresh ).toBeDefined();
@@ -190,17 +134,9 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "saveAndRefresh" ), ():void => {
+		describe( "Repository.saveAndRefresh", () => {
 
-			it( hasSignature(
-				[
-					{ name: "resource", type: "MODEL" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:Repository = createMock();
 
 				expect( repository.saveAndRefresh ).toBeDefined();
@@ -222,17 +158,9 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "delete" ), ():void => {
+		describe( "Repository.delete", () => {
 
-			it( hasSignature(
-				[
-					{ name: "uri", type: "string" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:Repository = createMock();
 
 				expect( repository.delete ).toBeDefined();
@@ -255,33 +183,27 @@ describe( module( "carbonldp/Repository" ), () => {
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.$Repository",
-		[ "MODEL extends ResolvablePointer = ResolvablePointer" ],
-		"Interface that describes a generic repository with pointer base."
-	), () => {
+	describe( "[[factory]]", () => {
 
-		it( extendsClass( "CarbonLDP.Pointer" ), () => {
-			const target:Pointer = {} as $Repository;
-			expect( target ).toBeDefined();
-		} );
+		// TODO: Test .isDecorated
+		// TODO: Test .decorate
 
+	} );
+
+} );
+
+
+describe( "$Repository", () => {
+
+	describe( "[[interface impl]]", () => {
 
 		function createMock():$Repository {
 			return Repository.decorate( { $id: "" } );
 		}
 
-		describe( method( OBLIGATORY, "$get" ), ():void => {
+		describe( "$Repository.$get", () => {
 
-			it( hasSignature(
-				[
-					{ name: "uri", type: "string" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$get ).toBeDefined();
@@ -302,17 +224,9 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$resolve" ), ():void => {
+		describe( "$Repository.$resolve", () => {
 
-			it( hasSignature(
-				[
-					{ name: "resource", type: "MODEL" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$resolve ).toBeDefined();
@@ -333,17 +247,9 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$exists" ), ():void => {
+		describe( "$Repository.$exists", () => {
 
-			it( hasSignature(
-				[
-					{ name: "uri", type: "string" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$exists ).toBeDefined();
@@ -365,17 +271,9 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "$save" ), ():void => {
+		describe( "$Repository.$save", () => {
 
-			it( hasSignature(
-				[
-					{ name: "resource", type: "MODEL" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$save ).toBeDefined();
@@ -396,17 +294,9 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$refresh" ), ():void => {
+		describe( "$Repository.$refresh", () => {
 
-			it( hasSignature(
-				[
-					{ name: "resource", type: "MODEL" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$refresh ).toBeDefined();
@@ -427,17 +317,9 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$saveAndRefresh" ), ():void => {
+		describe( "$Repository.$saveAndRefresh", () => {
 
-			it( hasSignature(
-				[
-					{ name: "resource", type: "MODEL" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$saveAndRefresh ).toBeDefined();
@@ -459,17 +341,9 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "$delete" ), ():void => {
+		describe( "$Repository.$delete", () => {
 
-			it( hasSignature(
-				[
-					{ name: "uri", type: "string" },
-					{ name: "...params", type: "any[]" },
-				],
-				{ type: "Promise<MODEL>" }
-			), ():void => {} );
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				const repository:$Repository = createMock();
 
 				expect( repository.$delete ).toBeDefined();
@@ -488,42 +362,6 @@ describe( module( "carbonldp/Repository" ), () => {
 					} );
 			} );
 
-		} );
-
-	} );
-
-
-	describe( interfaze(
-		"CarbonLDP.RepositoryFactory",
-		"Interface with the factory and utils for `CarbonLDP.Repository` objects."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Repository>" ), () => {
-			const target:ModelPrototype<Repository> = {} as RepositoryFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.BiModelDecorator<CarbonLDP.Repository, CarbonLDP.BaseRepository, CarbonLDP.$Repository, CarbonLDP.$BaseRepository>" ), () => {
-			const target:BiModelDecorator<Repository, $Repository, BaseRepository, $BaseRepository> = {} as RepositoryFactory;
-			expect( target ).toBeDefined();
-		} );
-
-
-		// TODO: Test .isDecorated
-		// TODO: Test .decorate
-
-	} );
-
-
-	describe( property(
-		STATIC,
-		"Repository",
-		"CarbonLDP.RepositoryFactory"
-	), () => {
-
-		it( "should exist", ():void => {
-			expect( Repository ).toBeDefined();
-			expect( Repository ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );
