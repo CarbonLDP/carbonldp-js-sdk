@@ -188,7 +188,6 @@ export function _getPointer<T extends RegisteredPointer>( registry:Registry<T> |
 		registry.getPointer( id, local );
 }
 
-// TODO: Use unknown
 export type RegistryFactory =
 	& ModelPrototype<Registry<any>>
 	& BiModelDecorator<Registry<any>, $Registry<any>, BaseRegistry, $BaseRegistry>
