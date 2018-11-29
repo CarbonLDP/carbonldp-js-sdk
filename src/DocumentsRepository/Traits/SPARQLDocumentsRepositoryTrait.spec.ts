@@ -16,8 +16,6 @@ import { ModelDecorator } from "../../Model/ModelDecorator";
 import { FinishSPARQLSelect } from "../../SPARQL/SPARQLBuilder";
 import { SPARQLService } from "../../SPARQL/SPARQLService";
 
-import { hasSignature } from "../../test/JasmineExtender";
-
 import { C } from "../../Vocabularies/C";
 import { XSD } from "../../Vocabularies/XSD";
 
@@ -268,15 +266,6 @@ describe( "SPARQLDocumentsRepositoryTrait", () => {
 
 		describe( "SPARQLDocumentsRepositoryTrait.executeSELECTQuery", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Executes a SELECT query on a document and returns a parsed response object.", [
-					{ name: "uri", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<CarbonLDP.SPARQL.SPARQLSelectResults<T>>" }
-			), () => {} );
-
 			it( "should exist", () => {
 				expect( repository.executeSELECTQuery ).toBeDefined();
 				expect( repository.executeSELECTQuery ).toEqual( jasmine.any( Function ) );
@@ -414,14 +403,6 @@ describe( "SPARQLDocumentsRepositoryTrait", () => {
 		} );
 
 		describe( "SPARQLDocumentsRepositoryTrait.executeUPDATE", () => {
-
-			it( hasSignature(
-				"Executes a DESCRIBE query on a document and returns a string with the resulting model.", [
-					{ name: "uri", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-					{ name: "update", type: "string", description: "UPDATE query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<void>" }
-			), () => {} );
 
 			it( "should exist", () => {
 				expect( repository.executeUPDATE ).toBeDefined();
@@ -561,14 +542,6 @@ describe( "SPARQLDocumentsRepositoryTrait", () => {
 
 
 		describe( "SPARQLDocumentsRepositoryTrait.sparql", () => {
-
-			it( hasSignature(
-				"Method that creates an instance of SPARQLER for the specified document URI.",
-				[
-					{ name: "uri", type: "string", description: "URI of the document where to execute the SPARQL query." },
-				],
-				{ type: "SPARQLER/Clauses/QueryClause<CarbonLDP.SPARQL.Builder.FinishSPARQLSelect>" }
-			), () => {} );
 
 			it( "should exist", () => {
 				expect( repository.sparql ).toBeDefined();

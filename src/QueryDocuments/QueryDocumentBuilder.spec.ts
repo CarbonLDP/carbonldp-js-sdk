@@ -9,8 +9,6 @@ import { IllegalStateError } from "../Errors/IllegalStateError";
 
 import { Pointer } from "../Pointer/Pointer";
 
-import { clazz, constructor, extendsClass, hasSignature, INSTANCE, method, module, property } from "../test/JasmineExtender";
-
 import { QueryContainer } from "./QueryContainer";
 import { QueryDocumentBuilder, SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
 import * as QueryObject2Module from "./QueryObject";
@@ -517,15 +515,15 @@ describe( "SubQueryDocumentsBuilder", () => {
 		} );
 
 		it( "should extend from QueryDocumentBuilder", () => {
-		const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, baseProperty );
-		expect( builder ).toBeDefined();
-		expect( builder ).toEqual( jasmine.any( QueryDocumentBuilder ) );
-	} );
+			const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( queryContainer, baseProperty );
+			expect( builder ).toBeDefined();
+			expect( builder ).toEqual( jasmine.any( QueryDocumentBuilder ) );
+		} );
 
 	} );
 
 
-	describe(  "SubQueryDocumentsBuilder.filter", () => {
+	describe( "SubQueryDocumentsBuilder.filter", () => {
 
 		it( "should exist", () => {
 			expect( SubQueryDocumentsBuilder.prototype.filter ).toBeDefined();
@@ -572,7 +570,7 @@ describe( "SubQueryDocumentsBuilder", () => {
 
 	} );
 
-	describe(  "SubQueryDocumentsBuilder.values", () => {
+	describe( "SubQueryDocumentsBuilder.values", () => {
 
 		it( "should exist", () => {
 			expect( SubQueryDocumentsBuilder.prototype.values ).toBeDefined();
