@@ -8,6 +8,8 @@ export interface QuerySchemaProperty {
 	"@type"?:"@id" | string;
 	"@language"?:string;
 	"@container"?:"@set" | "@list" | "@language";
+
+	required?:boolean;
 	query?:( queryBuilder:SubQueryDocumentsBuilder ) => SubQueryDocumentsBuilder;
 	path?:( pathBuilder:PathBuilder ) => Path;
 }
