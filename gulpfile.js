@@ -255,10 +255,10 @@ gulp.task( "compile:documentation|dgeni", () => {
 	require( "ts-node/register/transpile-only" );
 
 	const dgeni = new Dgeni( [
-		require( "carbonldp-dgeni-api" )
+		require( "docs-generator" )
 			.config( function( templateFinder, templateEngine ) {
 				// Configure pattern for Handlebars templates
-				templateFinder.templateFolders = [ "build/docs/html/" ];
+				templateFinder.templateFolders = [ "build/docs/templates/html/" ];
 				templateFinder.templatePatterns = [ "template.hbs" ];
 				templateEngine.partials = [ "partials/*.hbs" ];
 			} ),
@@ -280,8 +280,8 @@ gulp.task( "compile:documentation|compile", ( done ) => {
 		configFile: __dirname + "/karma.conf.js",
 		reporters: [ "markdown" ],
 		markdownReporter: {
-			src: "build/docs/html/template.hbs",
-			partials: "build/docs/html/partials/*.hbs",
+			src: "build/docs/templates/html/template.hbs",
+			partials: "build/docs/templates/html/partials/*.hbs",
 			dest: "docs/index.html"
 		},
 		singleRun: true
@@ -304,8 +304,8 @@ gulp.task( "compile:documentation:markdown", ( done ) => {
 		configFile: __dirname + "/karma.conf.js",
 		reporters: [ "markdown" ],
 		markdownReporter: {
-			src: "build/docs/markdown/template.hbs",
-			partials: "build/docs/markdown/partials/*.hbs",
+			src: "build/docs/templates/markdown/template.hbs",
+			partials: "build/docs/templates/markdown/partials/*.hbs",
 			dest: "docs/README.md"
 		},
 		singleRun: true

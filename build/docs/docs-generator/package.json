@@ -1,6 +1,7 @@
 {
-	"name": "carbonldp-dgeni-api",
-	"version": "0.0.1",
+	"name": "docs-generator",
+	"version": "1.0.0",
+	"private": true,
 	"dependencies": {
 		"dgeni": "^0.4.10",
 		"dgeni-packages": "^0.26.12",

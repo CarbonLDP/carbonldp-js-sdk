@@ -35,9 +35,9 @@
     "@types/webpack": "^3.8.8",
     "@types/webpack-env": "^1.13.1",
     "awesome-typescript-loader": "^3.0.4-rc.0",
-    "carbonldp-dgeni-api": "file:build/carbonldp-dgeni-api",
     "del": "^3.0.0",
     "dgeni": "^0.4.10",
+    "docs-generator": "file:build/docs/docs-generator",
     "gulp": "^3.9.1",
     "gulp-filter": "^5.0.0",
     "gulp-htmlmin": "^3.0.0",
@@ -73,8 +73,8 @@
     "webpack-merge": "^4.1.0"
   },
   "scripts": {
-    "preinstall": "rm -f ./node_modules/carbonldp-dgeni-api",
-    "postinstall": "npm install carbonldp-dgeni-api",
+    "preinstall": "rm -f ./node_modules/docs-generator",
+    "postinstall": "npm install docs-generator",
     "start": "./node_modules/.bin/gulp build",
     "lint": "./node_modules/.bin/gulp lint",
     "test": "./node_modules/.bin/gulp test"

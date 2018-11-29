@@ -24,7 +24,7 @@ const projectPath:string = process.cwd();
 const srcPath:string = path.resolve( projectPath, "src/" );
 const distPath:string = path.resolve( projectPath, "docs/" );
 
-export = new Package( "carbonldp-dgeni-api",
+export = new Package( "docs-generator",
 	[
 		JsDocs,
 		HandleBars,

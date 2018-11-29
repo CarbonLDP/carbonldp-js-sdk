@@ -17,8 +17,8 @@ test/mock-sockjs/*.js
 test/mock-sockjs/*.map
 
 # Dgeni
-build/carbonldp-dgeni-api/**/*.js
-build/carbonldp-dgeni-api/**/*.map
+build/docs/docs-generator/**/*.js
+build/docs/docs-generator/**/*.map
 
 # JSPM
 **/jspm_packages/
