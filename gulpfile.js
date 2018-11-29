@@ -243,9 +243,15 @@ gulp.task( "clean:src", ( done ) => {
 	}
 } );
 
-gulp.task( "compile:documentation", [ "compile:documentation:dgeni" ] );
+gulp.task( "compile:documentation", ( done ) => {
+	runSequence(
+		"compile:documentation|dgeni",
+		"compile:documentation|minify",
+		done
+	);
+} );
 
-gulp.task( "compile:documentation:dgeni", () => {
+gulp.task( "compile:documentation|dgeni", () => {
 	require( "ts-node/register/transpile-only" );
 
 	const dgeni = new Dgeni( [
