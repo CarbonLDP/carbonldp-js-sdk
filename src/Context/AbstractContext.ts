@@ -67,7 +67,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 			if( this._typeObjectSchemaMap.has( type ) ) return this._typeObjectSchemaMap.get( type );
 			if( this.parentContext && this.parentContext.hasObjectSchema( type ) ) return this.parentContext.getObjectSchema( type );
 
-			throw new IllegalArgumentError( `"${ type }" hasn't an object schema.` );
+			throw new IllegalArgumentError( `"${type}" hasn't an object schema.` );
 		} else {
 			// General schema
 			const generalSchema:DigestedObjectSchema = ! this._generalObjectSchema ?
@@ -117,7 +117,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 			this._typeObjectSchemaMap.delete( type );
 		}
 	}
-                                      
+
 	_getTypeObjectSchemas( excepts:string[] = [] ):DigestedObjectSchema[] {
 		const exceptsSet:Set<string> = new Set( excepts );
 
@@ -125,7 +125,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 			.__getObjectSchemasTypes()
 			.filter( type => ! exceptsSet.has( type ) )
 		;
-                                      
+
 		return types.map( this.getObjectSchema, this );
 	}
 

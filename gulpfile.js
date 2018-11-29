@@ -241,27 +241,8 @@ gulp.task( "clean:src", ( done ) => {
 	}
 } );
 
-gulp.task( "compile:documentation", [ "compile:documentation:html" ] );
-
-gulp.task( "compile:documentation:html", ( done ) => {
-	runSequence(
-		"compile:documentation|compile",
-		"compile:documentation|minify",
-		done
-	);
-} );
-
-gulp.task( "compile:documentation|compile", ( done ) => {
-	new karma.Server( {
-		configFile: __dirname + "/karma.conf.js",
-		reporters: [ "markdown" ],
-		markdownReporter: {
-			src: "build/docs/html/template.hbs",
-			partials: "build/docs/html/partials/*.hbs",
-			dest: "docs/index.html"
-		},
-		singleRun: true
-	}, done ).start();
+gulp.task( "compile:documentation", ( done ) => {
+	done( "Not implemented." );
 } );
 
 gulp.task( "compile:documentation|minify", () => {
@@ -273,19 +254,6 @@ gulp.task( "compile:documentation|minify", () => {
 		} ) )
 		.pipe( gulp.dest( "docs" ) )
 		;
-} );
-
-gulp.task( "compile:documentation:markdown", ( done ) => {
-	new karma.Server( {
-		configFile: __dirname + "/karma.conf.js",
-		reporters: [ "markdown" ],
-		markdownReporter: {
-			src: "build/docs/markdown/template.hbs",
-			partials: "build/docs/markdown/partials/*.hbs",
-			dest: "docs/README.md"
-		},
-		singleRun: true
-	}, done ).start();
 } );
 
 gulp.task( "compile:typescript", () => {
