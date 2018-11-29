@@ -1,950 +1,1176 @@
-import { clazz, hasMethod, hasProperty, isDefined, module, STATIC } from "./test/JasmineExtender";
+import {
+	ArrayUtils,
+	forEachOwnProperty,
+	hasFunction,
+	hasProperty,
+	hasPropertyDefined,
+	isArray,
+	isBoolean,
+	isDate,
+	isDefined,
+	isDouble,
+	isFunction,
+	isInteger,
+	isMap,
+	isNull,
+	isNumber,
+	isObject,
+	isString,
+	MapUtils,
+	ObjectUtils,
+	parseBoolean,
+	StringUtils,
+	UUIDUtils
+} from "./Utils";
 
-import * as Utils from "./Utils";
 
-interface Dummy {
-	something?:any;
+describe( "hasFunction", ():void => {
 
-	doSomething?():void;
-}
-
-describe( module( "carbonldp/Utils", "Class with useful functions used in the SDK." ), ():void => {
-
-	it( isDefined(), function():void {
-		expect( Utils ).toBeDefined();
-		expect( Utils ).not.toBeNull();
+	it( "should exist", () => {
+		expect( hasFunction ).toBeDefined();
+		expect( hasFunction ).toEqual( jasmine.any( Function ) );
 	} );
 
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "hasFunction", "Checks if the object has a property with that name and if it that property is a function.", [
-		{ name: "object", type: "Object" },
-		{ name: "name", type: "string" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.hasFunction ).toBeDefined();
 
-		let myObject:Dummy = {};
-		expect( Utils.hasFunction( myObject, "hasOwnProperty" ) ).toBe( true );
-		expect( Utils.hasFunction( myObject, "doSomething" ) ).toBe( false );
-
-		myObject.doSomething = ():void => {};
-		expect( Utils.hasFunction( myObject, "doSomething" ) ).toBe( true );
-
-		myObject.something = "something";
-		expect( Utils.hasFunction( myObject, "something" ) ).toBe( false );
+	it( "should return true when has function exists", () => {
+		const object:object = { property: () => {} };
+		expect( hasFunction( object, "property" ) ).toBe( true );
 	} );
 
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "hasProperty", "Checks if the object has a property with that name.", [
-		{ name: "object", type: "Object" },
-		{ name: "name", type: "string" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.hasProperty ).toBeDefined();
-
-		let postPrototype:any = {};
-		let post:any = Object.create( postPrototype );
-		expect( Utils.hasProperty( post, "ownProperty" ) ).toBe( false );
-		expect( Utils.hasProperty( post, "prototypeProperty" ) ).toBe( false );
-
-		post.ownProperty = "something";
-		postPrototype.prototypeProperty = "something-else";
-
-		expect( Utils.hasProperty( post, "ownProperty" ) ).toBe( true );
-		expect( Utils.hasProperty( post, "prototypeProperty" ) ).toBe( true );
+	it( "should return false if property is not function", () => {
+		const object:object = { property: null };
+		expect( hasFunction( object, "property" ) ).toBe( false );
 	} );
 
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "hasPropertyDefined", "Checks if an object has a property defined under that name (even if its value is undefined).", [
-		{ name: "object", type: "Object" },
-		{ name: "name", type: "string" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.hasPropertyDefined ).toBeDefined();
+} );
 
-		let postPrototype:any = {};
-		let post:any = Object.create( postPrototype );
+describe( "hasProperty", ():void => {
 
-		expect( Utils.hasPropertyDefined( post, "protoOnlyDefined" ) ).toBe( false );
-		expect( Utils.hasPropertyDefined( post, "protoWithValue" ) ).toBe( false );
-		expect( Utils.hasPropertyDefined( post, "onlyDefined" ) ).toBe( false );
-		expect( Utils.hasPropertyDefined( post, "withValue" ) ).toBe( false );
+	it( "should exist", () => {
+		expect( hasProperty ).toBeDefined();
+		expect( hasProperty ).toEqual( jasmine.any( Function ) );
+	} );
 
-		Object.defineProperty( postPrototype, "protoOnlyDefined", {
-			enumerable: false,
-			writable: true,
+
+	it( "should return true when property exists", () => {
+		const object:object = { property: null };
+		expect( hasProperty( object, "property" ) ).toBe( true );
+	} );
+
+	it( "should return true whe property in prototype", () => {
+		const object:object = Object.create( { property: null } );
+		expect( hasProperty( object, "property" ) ).toBe( true );
+	} );
+
+	it( "should return false if property doesn't exist", () => {
+		const object:object = {};
+		expect( hasProperty( object, "property" ) ).toBe( false );
+	} );
+
+} );
+
+describe( "hasPropertyDefined", ():void => {
+
+	it( "should exist", () => {
+		expect( hasPropertyDefined ).toBeDefined();
+		expect( hasPropertyDefined ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true when property exists", () => {
+		const object:object = { property: null };
+		expect( hasPropertyDefined( object, "property" ) ).toBe( true );
+	} );
+
+	it( "should return false when property in prototype", () => {
+		const object:object = Object.create( { property: null } );
+		expect( hasPropertyDefined( object, "property" ) ).toBe( false );
+	} );
+
+	it( "should return false if property doesn't exist", () => {
+		const object:object = {};
+		expect( hasPropertyDefined( object, "property" ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isDefined", ():void => {
+
+	it( "should exist", () => {
+		expect( isDefined ).toBeDefined();
+		expect( isDefined ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if null", () => {
+		expect( isDefined( null ) ).toBe( true );
+	} );
+
+	it( "should return true if string", () => {
+		expect( isDefined( "a string" ) ).toBe( true );
+	} );
+
+	it( "should return true if boolean", () => {
+		expect( isDefined( true ) ).toBe( true );
+	} );
+
+	it( "should return true if number", () => {
+		expect( isDefined( 10 ) ).toBe( true );
+	} );
+
+	it( "should return true if object", () => {
+		expect( isDefined( {} ) ).toBe( true );
+	} );
+
+	it( "should return true if array", () => {
+		expect( isDefined( [] ) ).toBe( true );
+	} );
+
+
+	it( "should return false if undefined", () => {
+		expect( isDefined( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isNull", ():void => {
+
+	it( "should exist", () => {
+		expect( isNull ).toBeDefined();
+		expect( isNull ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if null", () => {
+		expect( isNull( null ) ).toBe( true );
+	} );
+
+
+	it( "should return false if string", () => {
+		expect( isNull( "a string" ) ).toBe( false );
+	} );
+
+	it( "should return false if boolean", () => {
+		expect( isNull( false ) ).toBe( false );
+	} );
+
+	it( "should return false if number", () => {
+		expect( isNull( 10 ) ).toBe( false );
+	} );
+
+	it( "should return false if object", () => {
+		expect( isNull( {} ) ).toBe( false );
+	} );
+
+	it( "should return false if array", () => {
+		expect( isNull( [] ) ).toBe( false );
+	} );
+
+	it( "should return false if undefined", () => {
+		expect( isNull( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isArray", ():void => {
+
+	it( "should exist", () => {
+		expect( isArray ).toBeDefined();
+		expect( isArray ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if array", () => {
+		expect( isArray( [] ) ).toBe( true );
+	} );
+
+
+	it( "should return false if string", () => {
+		expect( isArray( "a string" ) ).toBe( false );
+	} );
+
+	it( "should return false if boolean", () => {
+		expect( isArray( false ) ).toBe( false );
+	} );
+
+	it( "should return false if number", () => {
+		expect( isArray( 10 ) ).toBe( false );
+	} );
+
+	it( "should return false if object", () => {
+		expect( isArray( {} ) ).toBe( false );
+	} );
+
+	it( "should return false if null", () => {
+		expect( isArray( null ) ).toBe( false );
+	} );
+
+	it( "should return false if undefined", () => {
+		expect( isArray( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isString", ():void => {
+
+	it( "should exist", () => {
+		expect( isString ).toBeDefined();
+		expect( isString ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if string", () => {
+		expect( isString( "a string" ) ).toBe( true );
+	} );
+
+
+	it( "should return false if array", () => {
+		expect( isString( [] ) ).toBe( false );
+	} );
+
+	it( "should return false if boolean", () => {
+		expect( isString( false ) ).toBe( false );
+	} );
+
+	it( "should return false if number", () => {
+		expect( isString( 10 ) ).toBe( false );
+	} );
+
+	it( "should return false if object", () => {
+		expect( isString( {} ) ).toBe( false );
+	} );
+
+	it( "should return false if null", () => {
+		expect( isString( null ) ).toBe( false );
+	} );
+
+	it( "should return false if undefined", () => {
+		expect( isString( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isBoolean", ():void => {
+
+	it( "should exist", () => {
+		expect( isBoolean ).toBeDefined();
+		expect( isBoolean ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if boolean", () => {
+		expect( isBoolean( true ) ).toBe( true );
+		expect( isBoolean( false ) ).toBe( true );
+	} );
+
+
+	it( "should return false if array", () => {
+		expect( isBoolean( [] ) ).toBe( false );
+	} );
+
+	it( "should return false if string", () => {
+		expect( isBoolean( "a string" ) ).toBe( false );
+	} );
+
+	it( "should return false if number", () => {
+		expect( isBoolean( 10 ) ).toBe( false );
+	} );
+
+	it( "should return false if object", () => {
+		expect( isBoolean( {} ) ).toBe( false );
+	} );
+
+	it( "should return false if null", () => {
+		expect( isBoolean( null ) ).toBe( false );
+	} );
+
+	it( "should return false if undefined", () => {
+		expect( isBoolean( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isNumber", ():void => {
+
+	it( "should exist", () => {
+		expect( isNumber ).toBeDefined();
+		expect( isNumber ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if positive integer", () => {
+		expect( isNumber( 10 ) ).toBe( true );
+	} );
+
+	it( "should return true if positive float", () => {
+		expect( isNumber( 10.01 ) ).toBe( true );
+	} );
+
+	it( "should return true if negative integer", () => {
+		expect( isNumber( - 10 ) ).toBe( true );
+	} );
+
+	it( "should return true if negative float", () => {
+		expect( isNumber( - 10.01 ) ).toBe( true );
+	} );
+
+
+	it( "should return false if array", () => {
+		expect( isNumber( [] ) ).toBe( false );
+	} );
+
+	it( "should return false if string", () => {
+		expect( isNumber( "a string" ) ).toBe( false );
+	} );
+
+	it( "should return false if boolean", () => {
+		expect( isNumber( true ) ).toBe( false );
+	} );
+
+	it( "should return false if object", () => {
+		expect( isNumber( {} ) ).toBe( false );
+	} );
+
+	it( "should return false if null", () => {
+		expect( isNumber( null ) ).toBe( false );
+	} );
+
+	it( "should return false if undefined", () => {
+		expect( isNumber( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isInteger", ():void => {
+
+	it( "should exist", () => {
+		expect( isInteger ).toBeDefined();
+		expect( isInteger ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if positive integer", () => {
+		expect( isInteger( 10 ) ).toBe( true );
+	} );
+
+	it( "should return true if negative integer", () => {
+		expect( isInteger( - 10 ) ).toBe( true );
+	} );
+
+
+	it( "should return false if positive float", () => {
+		expect( isInteger( 10.01 ) ).toBe( false );
+	} );
+
+	it( "should return false if negative float", () => {
+		expect( isInteger( - 10.01 ) ).toBe( false );
+	} );
+
+
+	it( "should return false if array", () => {
+		expect( isInteger( [] ) ).toBe( false );
+	} );
+
+	it( "should return false if string", () => {
+		expect( isInteger( "a string" ) ).toBe( false );
+	} );
+
+	it( "should return false if boolean", () => {
+		expect( isInteger( true ) ).toBe( false );
+	} );
+
+	it( "should return false if object", () => {
+		expect( isInteger( {} ) ).toBe( false );
+	} );
+
+	it( "should return false if null", () => {
+		expect( isInteger( null ) ).toBe( false );
+	} );
+
+	it( "should return false if undefined", () => {
+		expect( isInteger( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isDouble", ():void => {
+
+	it( "should exist", () => {
+		expect( isDouble ).toBeDefined();
+		expect( isDouble ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if positive float", () => {
+		expect( isDouble( 10.01 ) ).toBe( true );
+	} );
+
+	it( "should return true if negative float", () => {
+		expect( isDouble( - 10.01 ) ).toBe( true );
+	} );
+
+
+	it( "should return false if positive integer", () => {
+		expect( isDouble( 10 ) ).toBe( false );
+	} );
+
+	it( "should return false if negative integer", () => {
+		expect( isDouble( - 10 ) ).toBe( false );
+	} );
+
+	it( "should return false if array", () => {
+		expect( isDouble( [] ) ).toBe( false );
+	} );
+
+	it( "should return false if string", () => {
+		expect( isDouble( "a string" ) ).toBe( false );
+	} );
+
+	it( "should return false if boolean", () => {
+		expect( isDouble( true ) ).toBe( false );
+	} );
+
+	it( "should return false if object", () => {
+		expect( isDouble( {} ) ).toBe( false );
+	} );
+
+	it( "should return false if null", () => {
+		expect( isDouble( null ) ).toBe( false );
+	} );
+
+	it( "should return false if undefined", () => {
+		expect( isDouble( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isDate", ():void => {
+
+	it( "should exist", () => {
+		expect( isDate ).toBeDefined();
+		expect( isDate ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if Date object", () => {
+		expect( isDate( new Date() ) ).toBe( true );
+	} );
+
+
+	it( "should return false if number", () => {
+		expect( isDate( 10 ) ).toBe( false );
+	} );
+
+	it( "should return false if array", () => {
+		expect( isDate( [] ) ).toBe( false );
+	} );
+
+	it( "should return false if string", () => {
+		expect( isDate( "a string" ) ).toBe( false );
+	} );
+
+	it( "should return false if boolean", () => {
+		expect( isDate( true ) ).toBe( false );
+	} );
+
+	it( "should return false if object", () => {
+		expect( isDate( {} ) ).toBe( false );
+	} );
+
+	it( "should return false if null", () => {
+		expect( isDate( null ) ).toBe( false );
+	} );
+
+	it( "should return false if undefined", () => {
+		expect( isDate( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isObject", ():void => {
+
+	it( "should exist", () => {
+		expect( isObject ).toBeDefined();
+		expect( isObject ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if object", () => {
+		expect( isObject( {} ) ).toBe( true );
+	} );
+
+	it( "should return true if array", () => {
+		expect( isObject( [] ) ).toBe( true );
+	} );
+
+
+	it( "should return false if number", () => {
+		expect( isObject( 10 ) ).toBe( false );
+	} );
+
+	it( "should return false if string", () => {
+		expect( isObject( "a string" ) ).toBe( false );
+	} );
+
+	it( "should return false if boolean", () => {
+		expect( isObject( true ) ).toBe( false );
+	} );
+
+	it( "should return false if null", () => {
+		expect( isObject( null ) ).toBe( false );
+	} );
+
+	it( "should return false if undefined", () => {
+		expect( isObject( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isFunction", ():void => {
+
+	it( "should exist", () => {
+		expect( isFunction ).toBeDefined();
+		expect( isFunction ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if function", () => {
+		expect( isFunction( ():void => {} ) ).toBe( true );
+	} );
+
+
+	it( "should return false if number", () => {
+		expect( isFunction( 10 ) ).toBe( false );
+	} );
+
+	it( "should return false if string", () => {
+		expect( isFunction( "a string" ) ).toBe( false );
+	} );
+
+	it( "should return false if boolean", () => {
+		expect( isFunction( true ) ).toBe( false );
+	} );
+
+	it( "should return false if object", () => {
+		expect( isFunction( {} ) ).toBe( false );
+	} );
+
+	it( "should return false if array", () => {
+		expect( isFunction( [] ) ).toBe( false );
+	} );
+
+	it( "should return false if null", () => {
+		expect( isFunction( null ) ).toBe( false );
+	} );
+
+	it( "should return false if undefined", () => {
+		expect( isFunction( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+describe( "isMap", ():void => {
+
+	it( "should exist", () => {
+		expect( isMap ).toBeDefined();
+		expect( isMap ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true if Map object", () => {
+		expect( isMap( new Map<any, any>() ) ).toBe( true );
+	} );
+
+
+	it( "should return false if number", () => {
+		expect( isMap( 10 ) ).toBe( false );
+	} );
+
+	it( "should return false if string", () => {
+		expect( isMap( "a string" ) ).toBe( false );
+	} );
+
+	it( "should return false if boolean", () => {
+		expect( isMap( true ) ).toBe( false );
+	} );
+
+	it( "should return false if object", () => {
+		expect( isMap( {} ) ).toBe( false );
+	} );
+
+	it( "should return false if array", () => {
+		expect( isMap( [] ) ).toBe( false );
+	} );
+
+	it( "should return false if null", () => {
+		expect( isMap( null ) ).toBe( false );
+	} );
+
+	it( "should return false if undefined", () => {
+		expect( isMap( void 0 ) ).toBe( false );
+	} );
+
+} );
+
+
+describe( "parseBoolean", ():void => {
+
+	it( "should exist", () => {
+		expect( parseBoolean ).toBeDefined();
+		expect( parseBoolean ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should return true when `true`", () => {
+		expect( parseBoolean( "true" ) ).toBe( true );
+	} );
+
+	it( "should return true when `yes`", () => {
+		expect( parseBoolean( "yes" ) ).toBe( true );
+	} );
+
+	it( "should return true when `y`", () => {
+		expect( parseBoolean( "y" ) ).toBe( true );
+	} );
+
+	it( "should return true when `1`", () => {
+		expect( parseBoolean( "1" ) ).toBe( true );
+	} );
+
+
+	it( "should return false when `false`", () => {
+		expect( parseBoolean( "false" ) ).toBe( false );
+	} );
+
+	it( "should return false when `no`", () => {
+		expect( parseBoolean( "no" ) ).toBe( false );
+	} );
+
+	it( "should return false when `n`", () => {
+		expect( parseBoolean( "n" ) ).toBe( false );
+	} );
+
+	it( "should return false when `0`", () => {
+		expect( parseBoolean( "0" ) ).toBe( false );
+	} );
+
+
+	it( "should return false when invalid string", () => {
+		expect( parseBoolean( "An invalid string" ) ).toBe( false );
+	} );
+
+} );
+
+describe( "forEachOwnProperty", ():void => {
+
+	it( "should exist", () => {
+		expect( forEachOwnProperty ).toBeDefined();
+		expect( forEachOwnProperty ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should call function for each property", () => {
+		const spy:jasmine.Spy = jasmine.createSpy();
+
+		const object:object = {
+			one: "value 1",
+			two: "value 2",
+			three: "value 3",
+		};
+
+		forEachOwnProperty( object, spy );
+
+		expect( spy ).toHaveBeenCalledWith( "one", "value 1" );
+		expect( spy ).toHaveBeenCalledWith( "two", "value 2" );
+		expect( spy ).toHaveBeenCalledWith( "three", "value 3" );
+	} );
+
+} );
+
+
+describe( "ObjectUtils", ():void => {
+
+	it( "should exist", () => {
+		expect( ObjectUtils ).toBeDefined();
+		expect( ObjectUtils ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	describe( "ObjectUtils.extend", () => {
+
+		it( "should exist", () => {
+			expect( ObjectUtils.extend ).toBeDefined();
+			expect( ObjectUtils.extend ).toEqual( jasmine.any( Function ) );
 		} );
-		postPrototype.protoWithValue = "something";
-		Object.defineProperty( post, "onlyDefined", {
-			enumerable: false,
-			writable: true,
-		} );
-		post.withValue = "something";
 
-		expect( Utils.hasPropertyDefined( post, "protoOnlyDefined" ) ).toBe( false );
-		expect( Utils.hasPropertyDefined( post, "protoWithValue" ) ).toBe( false );
-		expect( Utils.hasPropertyDefined( post, "onlyDefined" ) ).toBe( true );
-		expect( Utils.hasPropertyDefined( post, "withValue" ) ).toBe( true );
 
-	} );
+		it( "should return return target", () => {
+			const target:object = {};
+			const extended:object = ObjectUtils.extend( target, {} );
 
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isDefined", "Checks if the value passed is defined.", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), function():void {
-		expect( Utils.isDefined ).toBeDefined();
-
-		expect( Utils.isDefined( void 0 ) ).toBe( false );
-		expect( Utils.isDefined( null ) ).toBe( true );
-		expect( Utils.isDefined( "something" ) ).toBe( true );
-		expect( Utils.isDefined( true ) ).toBe( true );
-		expect( Utils.isDefined( false ) ).toBe( true );
-		expect( Utils.isDefined( 9 ) ).toBe( true );
-		expect( Utils.isDefined( {} ) ).toBe( true );
-		expect( Utils.isDefined( [] ) ).toBe( true );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isNull", "Checks if the value passed is null.", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.isNull ).toBeDefined();
-
-		expect( Utils.isNull( null ) ).toBe( true );
-		expect( Utils.isNull( "something" ) ).toBe( false );
-		expect( Utils.isNull( true ) ).toBe( false );
-		expect( Utils.isNull( false ) ).toBe( false );
-		expect( Utils.isNull( 9 ) ).toBe( false );
-		expect( Utils.isNull( {} ) ).toBe( false );
-		expect( Utils.isNull( [] ) ).toBe( false );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isArray", "Checks if the value passed is an array.", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.isArray ).toBeDefined();
-
-		expect( Utils.isArray( null ) ).toBe( false );
-		expect( Utils.isArray( "something" ) ).toBe( false );
-		expect( Utils.isArray( true ) ).toBe( false );
-		expect( Utils.isArray( false ) ).toBe( false );
-		expect( Utils.isArray( 9 ) ).toBe( false );
-		expect( Utils.isArray( {} ) ).toBe( false );
-		expect( Utils.isArray( [] ) ).toBe( true );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isString", "Checks if the value passed is a string.", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.isString ).toBeDefined();
-
-		expect( Utils.isString( null ) ).toBe( false );
-		expect( Utils.isString( "something" ) ).toBe( true );
-		expect( Utils.isString( true ) ).toBe( false );
-		expect( Utils.isString( false ) ).toBe( false );
-		expect( Utils.isString( 9 ) ).toBe( false );
-		expect( Utils.isString( {} ) ).toBe( false );
-		expect( Utils.isString( [] ) ).toBe( false );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isBoolean", "Checks if the value passed is a boolean.", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.isBoolean ).toBeDefined();
-
-		expect( Utils.isBoolean( null ) ).toBe( false );
-		expect( Utils.isBoolean( "something" ) ).toBe( false );
-		expect( Utils.isBoolean( true ) ).toBe( true );
-		expect( Utils.isBoolean( false ) ).toBe( true );
-		expect( Utils.isBoolean( 9 ) ).toBe( false );
-		expect( Utils.isBoolean( {} ) ).toBe( false );
-		expect( Utils.isBoolean( [] ) ).toBe( false );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isNumber", "Checks if the value passed is a number.", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.isNumber ).toBeDefined();
-
-		expect( Utils.isNumber( null ) ).toBe( false );
-		expect( Utils.isNumber( "something" ) ).toBe( false );
-		expect( Utils.isNumber( true ) ).toBe( false );
-		expect( Utils.isNumber( false ) ).toBe( false );
-		expect( Utils.isNumber( 9 ) ).toBe( true );
-		expect( Utils.isNumber( 9.9 ) ).toBe( true );
-		expect( Utils.isNumber( 0.1 ) ).toBe( true );
-		expect( Utils.isNumber( - 1 ) ).toBe( true );
-		expect( Utils.isNumber( {} ) ).toBe( false );
-		expect( Utils.isNumber( [] ) ).toBe( false );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isInteger", "Checks if the value passed is an integer.", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.isInteger ).toBeDefined();
-
-		expect( Utils.isInteger( null ) ).toBe( false );
-		expect( Utils.isInteger( "something" ) ).toBe( false );
-		expect( Utils.isInteger( true ) ).toBe( false );
-		expect( Utils.isInteger( false ) ).toBe( false );
-		expect( Utils.isInteger( 9 ) ).toBe( true );
-		expect( Utils.isInteger( 9.9 ) ).toBe( false );
-		expect( Utils.isInteger( 0.1 ) ).toBe( false );
-		expect( Utils.isInteger( - 1 ) ).toBe( true );
-		expect( Utils.isInteger( {} ) ).toBe( false );
-		expect( Utils.isInteger( [] ) ).toBe( false );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isDouble", "Checks if the value passed is a double.", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.isNumber ).toBeDefined();
-
-		expect( Utils.isNumber( null ) ).toBe( false );
-		expect( Utils.isNumber( "something" ) ).toBe( false );
-		expect( Utils.isNumber( true ) ).toBe( false );
-		expect( Utils.isNumber( false ) ).toBe( false );
-		expect( Utils.isNumber( 9 ) ).toBe( true );
-		expect( Utils.isNumber( 9.9 ) ).toBe( true );
-		expect( Utils.isNumber( 0.1 ) ).toBe( true );
-		expect( Utils.isNumber( - 1 ) ).toBe( true );
-		expect( Utils.isNumber( {} ) ).toBe( false );
-		expect( Utils.isNumber( [] ) ).toBe( false );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isDate", "Checks if the value passed is a Date object.", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.isDate ).toBeDefined();
-
-		expect( Utils.isDate( null ) ).toBe( false );
-		expect( Utils.isDate( "something" ) ).toBe( false );
-		expect( Utils.isDate( true ) ).toBe( false );
-		expect( Utils.isDate( false ) ).toBe( false );
-		expect( Utils.isDate( 9 ) ).toBe( false );
-		expect( Utils.isDate( {} ) ).toBe( false );
-		expect( Utils.isDate( [] ) ).toBe( false );
-		expect( Utils.isDate( new Date() ) ).toBe( true );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isObject", "Checks if the value passed is an object (doesn't include null).", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.isObject ).toBeDefined();
-
-		expect( Utils.isObject( null ) ).toBe( false );
-		expect( Utils.isObject( "something" ) ).toBe( false );
-		expect( Utils.isObject( true ) ).toBe( false );
-		expect( Utils.isObject( false ) ).toBe( false );
-		expect( Utils.isObject( 9 ) ).toBe( false );
-		expect( Utils.isObject( {} ) ).toBe( true );
-		expect( Utils.isObject( [] ) ).toBe( true );
-		expect( Utils.isObject( new Date() ) ).toBe( true );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isFunction", "Checks if the value passed is a function.", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.isFunction ).toBeDefined();
-
-		expect( Utils.isFunction( null ) ).toBe( false );
-		expect( Utils.isFunction( "something" ) ).toBe( false );
-		expect( Utils.isFunction( true ) ).toBe( false );
-		expect( Utils.isFunction( false ) ).toBe( false );
-		expect( Utils.isFunction( 9 ) ).toBe( false );
-		expect( Utils.isFunction( {} ) ).toBe( false );
-		expect( Utils.isFunction( [] ) ).toBe( false );
-		expect( Utils.isFunction( new Date() ) ).toBe( false );
-		expect( Utils.isFunction( ():void => {} ) ).toBe( true );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "isMap", "Checks if the value passed is an ES6 Map.", [
-		{ name: "value", type: "any" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.isMap ).toBeDefined();
-
-		expect( Utils.isMap( null ) ).toBe( false );
-		expect( Utils.isMap( "something" ) ).toBe( false );
-		expect( Utils.isMap( true ) ).toBe( false );
-		expect( Utils.isMap( false ) ).toBe( false );
-		expect( Utils.isMap( 9 ) ).toBe( false );
-		expect( Utils.isMap( {} ) ).toBe( false );
-		expect( Utils.isMap( [] ) ).toBe( false );
-		expect( Utils.isMap( new Date() ) ).toBe( false );
-		expect( Utils.isMap( ():void => {} ) ).toBe( false );
-		expect( Utils.isMap( new Map<any, any>() ) ).toBe( true );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "parseBoolean", "Parses a string into a boolean.", [
-		{ name: "value", type: "string" },
-	], { type: "boolean" } ), ():void => {
-		expect( Utils.parseBoolean ).toBeDefined();
-
-		expect( Utils.parseBoolean( "true" ) ).toBe( true );
-		expect( Utils.parseBoolean( "yes" ) ).toBe( true );
-		expect( Utils.parseBoolean( "y" ) ).toBe( true );
-		expect( Utils.parseBoolean( "1" ) ).toBe( true );
-
-		expect( Utils.parseBoolean( "false" ) ).toBe( false );
-		expect( Utils.parseBoolean( "no" ) ).toBe( false );
-		expect( Utils.parseBoolean( "n" ) ).toBe( false );
-		expect( Utils.parseBoolean( "0" ) ).toBe( false );
-
-		expect( Utils.parseBoolean( "an invalid string" ) ).toBe( false );
-	} );
-
-	// TODO: Separate in different tests
-	it( hasMethod( STATIC, "forEachOwnProperty", "Executes an action for each own property of the object.", [
-		{ name: "object", type: "Object", description: "The object to iterate over its properties." },
-		{ name: "action", type: "( name:string, value:any ) => boolean", description: "A function that will be called for every property own property in the object. The loop will break if the action function returns `false`." },
-	] ), ():void => {
-		expect( Utils.forEachOwnProperty ).toBeDefined();
-
-		let postPrototype:any = {};
-		let post:any = Object.create( postPrototype );
-
-		postPrototype.prototypeProperty = "something";
-		post.one = 1;
-		post.two = 2;
-		post.three = 3;
-
-		let anotherPost:any = {};
-		Utils.forEachOwnProperty( post, function( name:string, value:any ):void {
-			anotherPost[ name ] = value;
-		} );
-
-		expect( anotherPost.prototypeProperty ).not.toBeDefined();
-		expect( anotherPost.one ).toBe( 1 );
-		expect( anotherPost.two ).toBe( 2 );
-		expect( anotherPost.three ).toBe( 3 );
-	} );
-
-	describe( clazz( "CarbonLDP.Utils.ObjectUtils", "Utility functions related to objects." ), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( Utils.ObjectUtils ).toBeDefined();
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"extend",
-			[ "T extends Object, W extends Object" ],
-			"Extends the target element making a shallow or deep copy of the properties in the source object, depending of the configuration specified.", [
-				{ name: "target", type: "T", description: "The object to extend." },
-				{ name: "source", type: "W", description: "The object to copy." },
-				{ name: "config", type: "{arrays?:boolean, objects?:boolean}", optional: true, description: "Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied." },
-			],
-			{ type: "T & W", description: "The copy of the object provided." }
-		), ():void => {
-			expect( Utils.ObjectUtils.extend ).toBeDefined();
-			expect( Utils.isFunction( Utils.ObjectUtils.extend ) ).toBe( true );
-
-			let target:Object & { targetProperty?:string };
-			let source:Object;
-			let extended:Object;
-
-			target = {};
-			source = {};
-			extended = Utils.ObjectUtils.extend( target, source );
 			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
+		} );
+
+		it( "should return empty when empty", () => {
+			const extended:object = ObjectUtils.extend( {}, {} );
+
 			expect( extended ).toEqual( {} );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1" };
-			extended = Utils.ObjectUtils.extend( target, source );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1", property2: [ 1, 2, 3 ] };
-			extended = Utils.ObjectUtils.extend( target, source );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
-			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1", property2: [ 1, 2, 3 ] };
-			extended = Utils.ObjectUtils.extend( target, source, { arrays: true } );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
-			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			extended = Utils.ObjectUtils.extend( target, source );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).toEqual( { nestedProperty: "Nested Property" } );
-			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			extended = Utils.ObjectUtils.extend( target, source, { objects: true } );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).toEqual( { nestedProperty: "Nested Property" } );
-			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			extended = Utils.ObjectUtils.extend( target, source );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
-			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
-			expect( extended[ "property3" ] ).toEqual( { nestedProperty: "Nested Property" } );
-			expect( extended[ "property3" ] ).toBe( source[ "property3" ] );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			extended = Utils.ObjectUtils.extend( target, source, { arrays: true } );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
-			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
-			expect( extended[ "property3" ] ).toEqual( { nestedProperty: "Nested Property" } );
-			expect( extended[ "property3" ] ).toBe( source[ "property3" ] );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			extended = Utils.ObjectUtils.extend( target, source, { arrays: true, objects: true } );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
-			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
-			expect( extended[ "property3" ] ).toEqual( { nestedProperty: "Nested Property" } );
-			expect( extended[ "property3" ] ).not.toBe( source[ "property3" ] );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1", property2: [ { nestedProperty: "Nested Property of 1" }, { nestedProperty: "Nested Property of 2" } ] };
-			extended = Utils.ObjectUtils.extend( target, source, { arrays: true, objects: true } );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
-			expect( extended[ "property2" ].length ).toBe( 2 );
-			expect( extended[ "property2" ][ 0 ] ).toEqual( { nestedProperty: "Nested Property of 1" } );
-			expect( extended[ "property2" ][ 0 ] ).not.toBe( source[ "property2" ][ 0 ] );
-			expect( extended[ "property2" ][ 1 ] ).toEqual( { nestedProperty: "Nested Property of 2" } );
-			expect( extended[ "property2" ][ 1 ] ).not.toBe( source[ "property2" ][ 1 ] );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1" };
-			source[ "property2" ] = source;
-			extended = Utils.ObjectUtils.extend( target, source );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
-			expect( extended[ "property2" ] ).toBe( source );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1" };
-			source[ "property2" ] = source;
-			extended = Utils.ObjectUtils.extend( target, source, { objects: true } );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
-			expect( extended[ "property2" ] ).toBe( extended );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1" };
-			source[ "property2" ] = [ source ];
-			extended = Utils.ObjectUtils.extend( target, source );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
-			expect( extended[ "property2" ].length ).toBe( 1 );
-			expect( extended[ "property2" ][ 0 ] ).toBe( source );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1" };
-			source[ "property2" ] = [ source ];
-			extended = Utils.ObjectUtils.extend( target, source, { objects: true } );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).toBe( source[ "property2" ] );
-			expect( extended[ "property2" ].length ).toBe( 1 );
-			expect( extended[ "property2" ][ 0 ] ).toBe( source );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1" };
-			source[ "property2" ] = [ source ];
-			extended = Utils.ObjectUtils.extend( target, source, { arrays: true } );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
-			expect( extended[ "property2" ].length ).toBe( 1 );
-			expect( extended[ "property2" ][ 0 ] ).toBe( source );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1" };
-			source[ "property2" ] = [ source ];
-			extended = Utils.ObjectUtils.extend( target, source, { arrays: true, objects: true } );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Target Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
-			expect( extended[ "property2" ].length ).toBe( 1 );
-			expect( extended[ "property2" ][ 0 ] ).toBe( extended );
-
-			target = { targetProperty: "Target Property" };
-			source = { property1: "Property 1", targetProperty: "Source Property" };
-			source[ "property2" ] = [ source ];
-			extended = Utils.ObjectUtils.extend( target, source, { arrays: true, objects: true } );
-			expect( extended ).toBe( target );
-			expect( extended ).not.toBe( source );
-			expect( extended[ "targetProperty" ] ).toBe( "Source Property" );
-			expect( extended[ "property1" ] ).toBe( "Property 1" );
-			expect( extended[ "property2" ] ).not.toBe( source[ "property2" ] );
-			expect( extended[ "property2" ].length ).toBe( 1 );
-			expect( extended[ "property2" ][ 0 ] ).toBe( extended );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"clone",
-			[ "T extends Object" ],
-			"Makes a shallow or deep clone of the object provided depending of the configuration specified.", [
-				{ name: "object", type: "T", description: "The object to copy." },
-				{ name: "config", type: "{arrays?:boolean, objects?:boolean}", optional: true, description: "Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied." },
-			],
-			{ type: "T", description: "The copy of the object provided." }
-		), ():void => {
-			expect( Utils.ObjectUtils.clone ).toBeDefined();
-			expect( Utils.isFunction( Utils.ObjectUtils.clone ) ).toBe( true );
 
-			let object:Object;
-			let clone:Object;
+		it( "should maintain target properties", () => {
+			const extended:object = ObjectUtils.extend( { inTarget: true }, {} );
 
-			object = {};
-			clone = Utils.ObjectUtils.clone( object );
-			expect( clone ).not.toBe( object );
-			expect( clone ).toEqual( {} );
-
-			object = { property1: "Property 1" };
-			clone = Utils.ObjectUtils.clone( object );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-
-			object = { property1: "Property 1", property2: [ 1, 2, 3 ] };
-			clone = Utils.ObjectUtils.clone( object );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
-			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
-
-			object = { property1: "Property 1", property2: [ 1, 2, 3 ] };
-			clone = Utils.ObjectUtils.clone( object, { arrays: true } );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
-			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
-
-			object = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			clone = Utils.ObjectUtils.clone( object );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).toEqual( { nestedProperty: "Nested Property" } );
-			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
-
-			object = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			clone = Utils.ObjectUtils.clone( object, { objects: true } );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).toEqual( { nestedProperty: "Nested Property" } );
-			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
-
-			object = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			clone = Utils.ObjectUtils.clone( object );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
-			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
-			expect( clone[ "property3" ] ).toEqual( { nestedProperty: "Nested Property" } );
-			expect( clone[ "property3" ] ).toBe( object[ "property3" ] );
-
-			object = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			clone = Utils.ObjectUtils.clone( object, { arrays: true } );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
-			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
-			expect( clone[ "property3" ] ).toEqual( { nestedProperty: "Nested Property" } );
-			expect( clone[ "property3" ] ).toBe( object[ "property3" ] );
-
-			object = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			clone = Utils.ObjectUtils.clone( object, { arrays: true, objects: true } );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).toEqual( [ 1, 2, 3 ] );
-			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
-			expect( clone[ "property3" ] ).toEqual( { nestedProperty: "Nested Property" } );
-			expect( clone[ "property3" ] ).not.toBe( object[ "property3" ] );
-
-			object = { property1: "Property 1", property2: [ { nestedProperty: "Nested Property of 1" }, { nestedProperty: "Nested Property of 2" } ] };
-			clone = Utils.ObjectUtils.clone( object, { arrays: true, objects: true } );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
-			expect( clone[ "property2" ].length ).toBe( 2 );
-			expect( clone[ "property2" ][ 0 ] ).toEqual( { nestedProperty: "Nested Property of 1" } );
-			expect( clone[ "property2" ][ 0 ] ).not.toBe( object[ "property2" ][ 0 ] );
-			expect( clone[ "property2" ][ 1 ] ).toEqual( { nestedProperty: "Nested Property of 2" } );
-			expect( clone[ "property2" ][ 1 ] ).not.toBe( object[ "property2" ][ 1 ] );
-
-			object = { property1: "Property 1" };
-			object[ "property2" ] = object;
-			clone = Utils.ObjectUtils.clone( object );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
-			expect( clone[ "property2" ] ).toBe( object );
-
-			object = { property1: "Property 1" };
-			object[ "property2" ] = object;
-			clone = Utils.ObjectUtils.clone( object, { objects: true } );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
-			expect( clone[ "property2" ] ).toBe( clone );
-
-			object = { property1: "Property 1" };
-			object[ "property2" ] = [ object ];
-			clone = Utils.ObjectUtils.clone( object );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
-			expect( clone[ "property2" ].length ).toBe( 1 );
-			expect( clone[ "property2" ][ 0 ] ).toBe( object );
-
-			object = { property1: "Property 1" };
-			object[ "property2" ] = [ object ];
-			clone = Utils.ObjectUtils.clone( object, { objects: true } );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).toBe( object[ "property2" ] );
-			expect( clone[ "property2" ].length ).toBe( 1 );
-			expect( clone[ "property2" ][ 0 ] ).toBe( object );
-
-			object = { property1: "Property 1" };
-			object[ "property2" ] = [ object ];
-			clone = Utils.ObjectUtils.clone( object, { arrays: true } );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
-			expect( clone[ "property2" ].length ).toBe( 1 );
-			expect( clone[ "property2" ][ 0 ] ).toBe( object );
-
-			object = { property1: "Property 1" };
-			object[ "property2" ] = [ object ];
-			clone = Utils.ObjectUtils.clone( object, { arrays: true, objects: true } );
-			expect( clone ).not.toBe( object );
-			expect( clone[ "property1" ] ).toBe( "Property 1" );
-			expect( clone[ "property2" ] ).not.toBe( object[ "property2" ] );
-			expect( clone[ "property2" ].length ).toBe( 1 );
-			expect( clone[ "property2" ][ 0 ] ).toBe( clone );
-
+			expect( extended ).toEqual( {
+				inTarget: true,
+			} );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"areEqual",
-			"Makes a shallow or deep comparison, between all the enumerable properties of the provided objects, depending of the configuration specified.", [
-				{ name: "object1", type: "Object", description: "First object to compare." },
-				{ name: "object2", type: "Object", description: "Second object to compare." },
-				{ name: "config", type: "{arrays?:boolean, objects?:boolean}", optional: true, description: "Object that indicates if the arrays or the objects must have a deep comparison or not. By default the comparison is shallow." },
-				{ name: "ignore", type: "{[ key:string ]:boolean}", optional: true, description: "Object that indicates there is any property to ignore." },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( Utils.ObjectUtils.areEqual ).toBeDefined();
-			expect( Utils.isFunction( Utils.ObjectUtils.areEqual ) ).toBe( true );
+		it( "should merge source properties", () => {
+			const extended:object = ObjectUtils.extend( { inTarget: true }, { inSource: true } );
 
-			let firstObject:Object;
-			let secondObject:Object;
-			let result:boolean;
-
-			firstObject = {};
-			secondObject = {};
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject );
-			expect( result ).toBe( true );
-
-			firstObject = { property1: "Property 1" };
-			secondObject = { property1: "Property 1" };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject );
-			expect( result ).toBe( true );
-
-			firstObject = { property1: new Date( "2016/01/01" ) };
-			secondObject = { property1: new Date( "2016/01/01" ) };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject );
-			expect( result ).toBe( true );
-
-			firstObject = { property1: "Property 1", property2: [ 1, 2, 3 ] };
-			secondObject = { property1: "Property 1", property2: [ 1, 2, 3 ] };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject );
-			expect( result ).toBe( false );
-
-			firstObject = { property1: "Property 1", property2: [ 1, 2, 3 ] };
-			secondObject = { property1: "Property 1", property2: [ 1, 2, 3 ] };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject, { arrays: true } );
-			expect( result ).toBe( true );
-
-			firstObject = { property1: "Property 1", property2: [ 1, new Date( "2016/01/01" ), 3 ] };
-			secondObject = { property1: "Property 1", property2: [ 1, new Date( "2016/01/01" ), 3 ] };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject, { arrays: true } );
-			expect( result ).toBe( true );
-
-			firstObject = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			secondObject = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject );
-			expect( result ).toBe( false );
-
-			firstObject = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			secondObject = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject, { objects: true } );
-			expect( result ).toBe( true );
-
-			firstObject = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			secondObject = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject );
-			expect( result ).toBe( false );
-
-			firstObject = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			secondObject = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject, { arrays: true } );
-			expect( result ).toBe( false );
-
-			firstObject = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			secondObject = { property1: "Property 1", property2: [ 1, 2, 3 ], property3: { nestedProperty: "Nested Property" } };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject, { arrays: true, objects: true } );
-			expect( result ).toBe( true );
-
-			firstObject = { property1: "Property 1", property2: [ 1, new Date( "2016/01/01" ), 3 ] };
-			secondObject = { property1: "Property 1", property2: [ 1, new Date( "2016/01/01" ), 3 ] };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject, { arrays: true, objects: true } );
-			expect( result ).toBe( true );
-
-			firstObject = { property1: "Property 1", property2: [ { nestedProperty: "Nested Property of 1" }, { nestedProperty: "Nested Property of 2" } ] };
-			secondObject = { property1: "Property 1", property2: [ { nestedProperty: "Nested Property of 1" }, { nestedProperty: "Nested Property of 2" } ] };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject, { arrays: true } );
-			expect( result ).toBe( false );
-
-			firstObject = { property1: "Property 1", property2: [ { nestedProperty: "Nested Property of 1" }, { nestedProperty: "Nested Property of 2" } ] };
-			secondObject = { property1: "Property 1", property2: [ { nestedProperty: "Nested Property of 1" }, { nestedProperty: "Nested Property of 2" } ] };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject, { objects: true } );
-			expect( result ).toBe( false );
-
-			firstObject = { property1: "Property 1", property2: [ { nestedProperty: "Nested Property of 1" }, { nestedProperty: "Nested Property of 2" } ] };
-			secondObject = { property1: "Property 1", property2: [ { nestedProperty: "Nested Property of 1" }, { nestedProperty: "Nested Property of 2" } ] };
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject, { arrays: true, objects: true } );
-			expect( result ).toBe( true );
-
-			firstObject = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			firstObject[ "property3" ] = firstObject;
-
-			secondObject = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			secondObject[ "property3" ] = firstObject;
-
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject, { objects: true } );
-			expect( result ).toBe( false );
-
-			firstObject = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			firstObject[ "property3" ] = firstObject;
-
-			secondObject = { property1: "Property 1", property2: { nestedProperty: "Nested Property" } };
-			secondObject[ "property3" ] = secondObject;
-
-			result = Utils.ObjectUtils.areEqual( firstObject, secondObject, { objects: true } );
-			expect( result ).toBe( true );
+			expect( extended ).toEqual( {
+				inTarget: true,
+				inSource: true,
+			} );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod( STATIC, "areShallowlyEqual", "Checks if an object has the same enumerable properties with the same values as another object.", [
-			{ name: "object1", type: "Object", description: "First object to compare." },
-			{ name: "object2", type: "Object", description: "Second object to compare." },
-		], { type: "boolean" } ), ():void => {
-			expect( Utils.ObjectUtils.areShallowlyEqual ).toBeDefined();
+		it( "should keep reference of object properties", () => {
+			const source:object = { inSource: {} };
+			const extended:object = ObjectUtils.extend( { inTarget: true }, source );
 
-			let sharedObject:Object = {};
+			expect( extended[ "inSource" ] ).toBe( source[ "inSource" ] );
+		} );
 
-			expect( Utils.ObjectUtils.areShallowlyEqual( sharedObject, sharedObject ) ).toBe( true );
-			expect( Utils.ObjectUtils.areShallowlyEqual( {}, {} ) ).toBe( true );
-			expect( Utils.ObjectUtils.areShallowlyEqual( {
-				stringProperty: "something",
-				numberProperty: 1,
-				objectProperty: sharedObject,
-				functionProperty: ():void => {},
-			}, {
-				stringProperty: "something",
-				numberProperty: 1,
-				objectProperty: sharedObject,
-				functionProperty: ():void => {},
-			} ) ).toBe( true );
-			// Object values not the same reference
-			expect( Utils.ObjectUtils.areShallowlyEqual( {
-				stringProperty: "something",
-				numberProperty: 1,
-				objectProperty: {},
-			}, {
-				stringProperty: "something",
-				numberProperty: 1,
-				objectProperty: {},
-			} ) ).toBe( false );
-			// Missing property object1
-			expect( Utils.ObjectUtils.areShallowlyEqual( {
-				stringProperty: "something",
-				numberProperty: 1,
-			}, {
-				stringProperty: "something",
-				numberProperty: 1,
-				objectProperty: sharedObject,
-			} ) ).toBe( false );
-			// Missing property object2
-			expect( Utils.ObjectUtils.areShallowlyEqual( {
-				stringProperty: "something",
-				numberProperty: 1,
-				objectProperty: sharedObject,
-			}, {
-				stringProperty: "something",
-				objectProperty: sharedObject,
-			} ) ).toBe( false );
+		it( "should keep reference of array properties", () => {
+			const source:object = { inSource: [] };
+			const extended:object = ObjectUtils.extend( { inTarget: true }, source );
+
+			expect( extended[ "inSource" ] ).toBe( source[ "inSource" ] );
+		} );
+
+		it( "should copy of object properties when option set", () => {
+			const source:object = { inSource: { inSubProperty: true } };
+			const extended:object = ObjectUtils.extend( { inTarget: true }, source, { objects: true } );
+
+			expect( extended[ "inSource" ] ).not.toBe( source[ "inSource" ] );
+			expect( extended[ "inSource" ] ).toEqual( source[ "inSource" ] );
+		} );
+
+		it( "should copy of array properties when option set", () => {
+			const source:object = { inSource: [ "in sub-property" ] };
+			const extended:object = ObjectUtils.extend( { inTarget: true }, source, { arrays: true } );
+
+			expect( extended[ "inSource" ] ).not.toBe( source[ "inSource" ] );
+			expect( extended[ "inSource" ] ).toEqual( source[ "inSource" ] );
+		} );
+
+		it( "should copy of array and object properties when options set", () => {
+			const source:object = { inSource1: { inSubProperty: true }, inSource2: [ "in sub-property" ] };
+			const extended:object = ObjectUtils.extend( { inTarget: true }, source, { objects: true, arrays: true } );
+
+			expect( extended[ "inSource1" ] ).not.toBe( source[ "inSource1" ] );
+			expect( extended[ "inSource1" ] ).toEqual( source[ "inSource1" ] );
+
+			expect( extended[ "inSource2" ] ).not.toBe( source[ "inSource2" ] );
+			expect( extended[ "inSource2" ] ).toEqual( source[ "inSource2" ] );
 		} );
 
 	} );
 
-	describe( clazz( "CarbonLDP.Utils.StringUtils", "Utility functions related to strings." ), ():void => {
+	describe( "ObjectUtils.clone", () => {
 
-		it( isDefined(), ():void => {
-			expect( Utils.StringUtils ).toBeDefined();
+		it( "should exist", () => {
+			expect( ObjectUtils.clone ).toBeDefined();
+			expect( ObjectUtils.clone ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod( STATIC, "startsWith", "Checks if a string starts with a substring.", [
-			{ name: "string", type: "string" },
-			{ name: "substring", type: "string" },
-		], { type: "boolean" } ), ():void => {
-			expect( Utils.StringUtils.startsWith ).toBeDefined();
 
-			expect( Utils.StringUtils.startsWith( "hello", "he" ) ).toBe( true );
-			expect( Utils.StringUtils.startsWith( "hello", "h" ) ).toBe( true );
-			expect( Utils.StringUtils.startsWith( "hello", "hello" ) ).toBe( true );
-			expect( Utils.StringUtils.startsWith( "536345", "53" ) ).toBe( true );
-			expect( Utils.StringUtils.startsWith( "eeeee", "e" ) ).toBe( true );
+		it( "should return not return source", () => {
+			const source:object = {};
+			const extended:object = ObjectUtils.clone( source );
 
-			expect( Utils.StringUtils.startsWith( "hello", "lo" ) ).toBe( false );
-			expect( Utils.StringUtils.startsWith( "hello", "llo" ) ).toBe( false );
-			expect( Utils.StringUtils.startsWith( "hello", "el" ) ).toBe( false );
-			expect( Utils.StringUtils.startsWith( "536345", "3" ) ).toBe( false );
-			expect( Utils.StringUtils.startsWith( "eeeee", "f" ) ).toBe( false );
+			expect( extended ).not.toBe( source );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod( STATIC, "endsWith", "Checks if a string ends with a substring.", [
-			{ name: "string", type: "string" },
-			{ name: "substring", type: "string" },
-		], { type: "boolean" } ), ():void => {
-			expect( Utils.StringUtils.endsWith ).toBeDefined();
+		it( "should copy source properties", () => {
+			const extended:object = ObjectUtils.clone( { inSource: true } );
 
-			expect( Utils.StringUtils.endsWith( "hello", "he" ) ).toBe( false );
-			expect( Utils.StringUtils.endsWith( "hello", "h" ) ).toBe( false );
-			expect( Utils.StringUtils.endsWith( "536345", "53" ) ).toBe( false );
-			expect( Utils.StringUtils.endsWith( "eeeee", "f" ) ).toBe( false );
-
-			expect( Utils.StringUtils.endsWith( "hello", "" ) ).toBe( true );
-			expect( Utils.StringUtils.endsWith( "hello", "hello" ) ).toBe( true );
-			expect( Utils.StringUtils.endsWith( "hello", "lo" ) ).toBe( true );
-			expect( Utils.StringUtils.endsWith( "hello", "o" ) ).toBe( true );
-			expect( Utils.StringUtils.endsWith( "536345", "5" ) ).toBe( true );
-			expect( Utils.StringUtils.endsWith( "eeeee", "e" ) ).toBe( true );
+			expect( extended ).toEqual( {
+				inSource: true,
+			} );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod( STATIC, "contains", "Checks if a string contains a substring (in any part).", [
-			{ name: "string", type: "string" },
-			{ name: "substring", type: "string" },
-		], { type: "boolean" } ), ():void => {
-			expect( Utils.StringUtils.contains ).toBeDefined();
+		it( "should keep reference of object properties", () => {
+			const source:object = { inSource: {} };
+			const extended:object = ObjectUtils.clone( source );
 
-			expect( Utils.StringUtils.contains( "hello", "he" ) ).toBe( true );
-			expect( Utils.StringUtils.contains( "hello", "ll" ) ).toBe( true );
-			expect( Utils.StringUtils.contains( "hello", "lo" ) ).toBe( true );
-			expect( Utils.StringUtils.contains( "536345", "53" ) ).toBe( true );
-			expect( Utils.StringUtils.contains( "eeeee", "e" ) ).toBe( true );
-			expect( Utils.StringUtils.contains( "hello", "hello" ) ).toBe( true );
-			expect( Utils.StringUtils.contains( "hello", "" ) ).toBe( true );
+			expect( extended[ "inSource" ] ).toBe( source[ "inSource" ] );
+		} );
 
-			expect( Utils.StringUtils.contains( "hello", "er" ) ).toBe( false );
-			expect( Utils.StringUtils.contains( "hello", "t" ) ).toBe( false );
-			expect( Utils.StringUtils.contains( "hello", " " ) ).toBe( false );
+		it( "should keep reference of array properties", () => {
+			const source:object = { inSource: [] };
+			const extended:object = ObjectUtils.clone( source );
+
+			expect( extended[ "inSource" ] ).toBe( source[ "inSource" ] );
+		} );
+
+		it( "should copy of object properties when option set", () => {
+			const source:object = { inSource: { inSubProperty: true } };
+			const extended:object = ObjectUtils.clone( source, { objects: true } );
+
+			expect( extended[ "inSource" ] ).not.toBe( source[ "inSource" ] );
+			expect( extended[ "inSource" ] ).toEqual( source[ "inSource" ] );
+		} );
+
+		it( "should copy of array properties when option set", () => {
+			const source:object = { inSource: [ "in sub-property" ] };
+			const extended:object = ObjectUtils.clone( source, { arrays: true } );
+
+			expect( extended[ "inSource" ] ).not.toBe( source[ "inSource" ] );
+			expect( extended[ "inSource" ] ).toEqual( source[ "inSource" ] );
+		} );
+
+		it( "should copy of array and object properties when options set", () => {
+			const source:object = { inSource1: { inSubProperty: true }, inSource2: [ "in sub-property" ] };
+			const extended:object = ObjectUtils.clone( source, { objects: true, arrays: true } );
+
+			expect( extended[ "inSource1" ] ).not.toBe( source[ "inSource1" ] );
+			expect( extended[ "inSource1" ] ).toEqual( source[ "inSource1" ] );
+
+			expect( extended[ "inSource2" ] ).not.toBe( source[ "inSource2" ] );
+			expect( extended[ "inSource2" ] ).toEqual( source[ "inSource2" ] );
 		} );
 
 	} );
 
-	describe( clazz( "CarbonLDP.Utils.ArrayUtils", "Utility functions related to Arrays." ), ():void => {
+	describe( "ObjectUtils.areEqual", ():void => {
 
-		it( isDefined(), ():void => {
-			expect( Utils.ArrayUtils ).toBeDefined();
+		it( "should exist", () => {
+			expect( ObjectUtils.areEqual ).toBeDefined();
+			expect( ObjectUtils.areEqual ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod( STATIC, "from", "Collects the values of an ES6 iterator and returns an array.", [
-			{ name: "iterator", type: "iterator" },
-		], { type: "array" } ), ():void => {
-			expect( Utils.ArrayUtils.from ).toBeDefined();
 
-			let iterator:Iterator<string> & { current:number, values:Array<string> } = {
+		it( "should return true when both empty", () => {
+			const result:boolean = ObjectUtils.areEqual( {}, {} );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return true when both have same properties", () => {
+			const firstObject:object = { property: "Property 1" };
+			const secondObject:object = { property: "Property 1" };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return false when equal array but different reference", () => {
+			const firstObject:object = { property: [ 1, 2, 3 ] };
+			const secondObject:object = { property: [ 1, 2, 3 ] };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject );
+			expect( result ).toBe( false );
+		} );
+
+		it( "should return true when equal array but different reference and option set", () => {
+			const firstObject:object = { property: [ 1, 2, 3 ] };
+			const secondObject:object = { property: [ 1, 2, 3 ] };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { arrays: true } );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return false when equal object but different reference", () => {
+			const firstObject:object = { property: { inSubProperty: true } };
+			const secondObject:object = { property: { inSubProperty: true } };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject );
+			expect( result ).toBe( false );
+		} );
+
+		it( "should return true when equal object but different reference and option set", () => {
+			const firstObject:object = { property: { inSubProperty: true } };
+			const secondObject:object = { property: { inSubProperty: true } };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { objects: true } );
+			expect( result ).toBe( true );
+		} );
+
+
+		it( "should return true when equal object and array but different reference and options set", () => {
+			const firstObject:object = { property1: [ 1, 2, 3 ], property2: { inSubProperty: true } };
+			const secondObject:object = { property1: [ 1, 2, 3 ], property2: { inSubProperty: true } };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { arrays: true, objects: true } );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return false when equal object and array but different reference and only array set", () => {
+			const firstObject:object = { property1: [ 1, 2, 3 ], property2: { inSubProperty: true } };
+			const secondObject:object = { property1: [ 1, 2, 3 ], property2: { inSubProperty: true } };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { arrays: true } );
+			expect( result ).toBe( false );
+		} );
+
+		it( "should return false when equal object and array but different reference and only object set", () => {
+			const firstObject:object = { property1: [ 1, 2, 3 ], property2: { inSubProperty: true } };
+			const secondObject:object = { property1: [ 1, 2, 3 ], property2: { inSubProperty: true } };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { objects: true } );
+			expect( result ).toBe( false );
+		} );
+
+	} );
+
+	describe( "ObjectUtils.areShallowlyEqual", ():void => {
+
+		it( "should exist", () => {
+			expect( ObjectUtils.areShallowlyEqual ).toBeDefined();
+			expect( ObjectUtils.areShallowlyEqual ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should return true when both empty", () => {
+			expect( ObjectUtils.areShallowlyEqual( {}, {} ) ).toBe( true );
+		} );
+
+		it( "should return true when both have same reference properties", () => {
+			const sharedObject:object = {};
+
+			expect( ObjectUtils.areShallowlyEqual( {
+					stringProperty: "something",
+					numberProperty: 1,
+					objectProperty: sharedObject,
+				}, {
+					stringProperty: "something",
+					numberProperty: 1,
+					objectProperty: sharedObject,
+				} )
+			).toBe( true );
+		} );
+
+		it( "should return true by ignoring functions", () => {
+			expect( ObjectUtils.areShallowlyEqual( {
+					functionProperty: () => "different function 1",
+				}, {
+					functionProperty: () => "different function 2",
+				} )
+			).toBe( true );
+		} );
+
+		it( "should return false when different reference properties", () => {
+			expect( ObjectUtils.areShallowlyEqual( {
+					objectProperty: {},
+				}, {
+					objectProperty: {},
+				} )
+			).toBe( false );
+		} );
+
+		it( "should return false when missing property in first object", () => {
+			expect( ObjectUtils.areShallowlyEqual( {
+					numberProperty: 1,
+				}, {
+					stringProperty: "something",
+					numberProperty: 1,
+				} )
+			).toBe( false );
+		} );
+
+		it( "should return false when missing property in second object", () => {
+			expect( ObjectUtils.areShallowlyEqual( {
+					stringProperty: "something",
+					numberProperty: 1,
+				}, {
+					numberProperty: 1,
+				} )
+			).toBe( false );
+		} );
+
+	} );
+
+} );
+
+describe( "StringUtils", ():void => {
+
+	it( "should exist", () => {
+		expect( StringUtils ).toBeDefined();
+		expect( StringUtils ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	describe( "StringUtils.startsWith", ():void => {
+
+		it( "should exist", () => {
+			expect( StringUtils.startsWith ).toBeDefined();
+			expect( StringUtils.startsWith ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should return true when first letter", () => {
+			expect( StringUtils.startsWith( "hello", "h" ) ).toBe( true );
+		} );
+
+		it( "should return true when first two letters", () => {
+			expect( StringUtils.startsWith( "hello", "he" ) ).toBe( true );
+		} );
+
+		it( "should return true when same string", () => {
+			expect( StringUtils.startsWith( "hello", "hello" ) ).toBe( true );
+		} );
+
+
+		it( "should return false when last letter", () => {
+			expect( StringUtils.startsWith( "hello", "o" ) ).toBe( false );
+		} );
+
+		it( "should return false when last two letters", () => {
+			expect( StringUtils.startsWith( "hello", "lo" ) ).toBe( false );
+		} );
+
+		it( "should return false when second letter", () => {
+			expect( StringUtils.startsWith( "hello", "e" ) ).toBe( false );
+		} );
+
+		it( "should return false when second and third letters", () => {
+			expect( StringUtils.startsWith( "hello", "el" ) ).toBe( false );
+		} );
+
+		it( "should return false when any different letter", () => {
+			expect( StringUtils.startsWith( "hello", "a" ) ).toBe( false );
+		} );
+
+	} );
+
+	describe( "StringUtils.endsWith", ():void => {
+
+		it( "should exist", () => {
+			expect( StringUtils.endsWith ).toBeDefined();
+			expect( StringUtils.endsWith ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should return true when last letter", () => {
+			expect( StringUtils.endsWith( "hello", "o" ) ).toBe( true );
+		} );
+
+		it( "should return true when last two letters", () => {
+			expect( StringUtils.endsWith( "hello", "lo" ) ).toBe( true );
+		} );
+
+		it( "should return true when same string", () => {
+			expect( StringUtils.endsWith( "hello", "hello" ) ).toBe( true );
+		} );
+
+
+		it( "should return false when first letter", () => {
+			expect( StringUtils.endsWith( "hello", "h" ) ).toBe( false );
+		} );
+
+		it( "should return false when first two letters", () => {
+			expect( StringUtils.endsWith( "hello", "he" ) ).toBe( false );
+		} );
+
+		it( "should return false when last second letter", () => {
+			expect( StringUtils.endsWith( "hello", "l" ) ).toBe( false );
+		} );
+
+		it( "should return false when last second and third letters", () => {
+			expect( StringUtils.endsWith( "hello", "ll" ) ).toBe( false );
+		} );
+
+		it( "should return false when any different letter", () => {
+			expect( StringUtils.endsWith( "hello", "a" ) ).toBe( false );
+		} );
+
+	} );
+
+	describe( "StringUtils.contains", ():void => {
+
+		it( "should exist", () => {
+			expect( StringUtils.contains ).toBeDefined();
+			expect( StringUtils.contains ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should return true when last letter", () => {
+			expect( StringUtils.contains( "hello", "o" ) ).toBe( true );
+		} );
+
+		it( "should return true when last two letters", () => {
+			expect( StringUtils.contains( "hello", "lo" ) ).toBe( true );
+		} );
+
+		it( "should return true when first letter", () => {
+			expect( StringUtils.contains( "hello", "h" ) ).toBe( true );
+		} );
+
+		it( "should return true when first two letters", () => {
+			expect( StringUtils.contains( "hello", "he" ) ).toBe( true );
+		} );
+
+		it( "should return true when second letter", () => {
+			expect( StringUtils.contains( "hello", "e" ) ).toBe( true );
+		} );
+
+		it( "should return true when second and third letters", () => {
+			expect( StringUtils.contains( "hello", "el" ) ).toBe( true );
+		} );
+
+		it( "should return true when last second letter", () => {
+			expect( StringUtils.contains( "hello", "l" ) ).toBe( true );
+		} );
+
+		it( "should return true when last second and third letters", () => {
+			expect( StringUtils.contains( "hello", "ll" ) ).toBe( true );
+		} );
+
+		it( "should return true when same string", () => {
+			expect( StringUtils.contains( "hello", "hello" ) ).toBe( true );
+		} );
+
+
+		it( "should return false when any different letter", () => {
+			expect( StringUtils.contains( "hello", "a" ) ).toBe( false );
+		} );
+
+		it( "should return false when only one different letter", () => {
+			expect( StringUtils.contains( "hello", "hallo" ) ).toBe( false );
+		} );
+
+	} );
+
+} );
+
+describe( "ArrayUtils", ():void => {
+
+	it( "should exist", () => {
+		expect( ArrayUtils ).toBeDefined();
+		expect( ArrayUtils ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	describe( "ArrayUtils.from", ():void => {
+
+		it( "should exist", () => {
+			expect( ArrayUtils.from ).toBeDefined();
+			expect( ArrayUtils.from ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should return array from mock iterator", () => {
+			const values:string[] = [ "one", "two", "three", "four", "five" ];
+
+			const iterator:Iterator<string> & { current:number } = {
 				current: 0,
-				values: [
-					"one", "two", "three", "four", "five",
-				],
 				next: function():IteratorResult<string> {
 					let value:IteratorResult<string>;
-					if( this.current < this.values.length ) {
+					if( this.current < values.length ) {
 						value = {
 							done: false,
-							value: this.values[ this.current ],
+							value: values[ this.current ],
 						};
 						this.current ++;
 					} else {
@@ -957,230 +1183,299 @@ describe( module( "carbonldp/Utils", "Class with useful functions used in the SD
 				},
 			};
 
-			let array:Array<string> = Utils.ArrayUtils.from<string>( iterator );
-			expect( Utils.isArray( array ) ).toBe( true );
-			expect( array.length ).toBe( 5 );
-		} );
+			const array:string[] = ArrayUtils.from<string>( iterator );
 
-		// TODO: Separate in different tests
-		it( hasMethod( STATIC, "joinWithoutDuplicates", "Takes two or more arrays and joins them while removing duplicates.", [
-			{ name: "...arrays", type: "Array<Array<T>>", description: "Every array parameter to merge." },
-		], { type: "Array<T>" } ), ():void => {
-			expect( Utils.ArrayUtils.joinWithoutDuplicates ).toBeDefined();
-
-			let array1:Array<number> = [ 5, 3, 1 ];
-			let array2:Array<number> = [ 45, 3, 9 ];
-			let array3:Array<number> = [ 6, 4, 9 ];
-
-			let result:Array<number> = Utils.ArrayUtils.joinWithoutDuplicates( array1, array2, array3 );
-			expect( Utils.isArray( result ) ).toBe( true );
-			expect( result.length ).toBe( 7 );
-			expect( result.indexOf( 5 ) ).not.toBe( - 1 );
-			expect( result.indexOf( 3 ) ).not.toBe( - 1 );
-			expect( result.indexOf( 1 ) ).not.toBe( - 1 );
-			expect( result.indexOf( 45 ) ).not.toBe( - 1 );
-			expect( result.indexOf( 9 ) ).not.toBe( - 1 );
-			expect( result.indexOf( 6 ) ).not.toBe( - 1 );
-			expect( result.indexOf( 4 ) ).not.toBe( - 1 );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"indexOf",
-			[ "T", "W" ],
-			"Returns the index of a element searched in an array with a custom comparator function.\n" +
-			"If the element was not found `-1` is returned", [
-				{ name: "array", type: "Array<T>", description: "The array were to search the element." },
-				{ name: "searchedElement", type: "W", description: "The element searched" },
-				{ name: "comparator", type: "( element:T, searchedElement:W ) => boolean", optional: true, description: "The function that must compare if the two elements provided are de same." },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( Utils.ArrayUtils.indexOf ).toBeDefined();
-			expect( Utils.isFunction( Utils.ArrayUtils.indexOf ) ).toBe( true );
-
-			// Test if the default comparator works
-			(() => {
-				let result:number;
-				let array:Array<number> = [ 5, 3, 1 ];
-
-				result = Utils.ArrayUtils.indexOf<number, number>( array, 1 );
-				expect( result ).toBe( 2 );
-				result = Utils.ArrayUtils.indexOf<number, number>( array, 5 );
-				expect( result ).toBe( 0 );
-				result = Utils.ArrayUtils.indexOf<number, number>( array, 4 );
-				expect( result ).toBe( - 1 );
-			})();
-
-			// Test if the default comparator works
-			(() => {
-				let result:number;
-				let array:Array<number> = [ 5, 3, 1 ];
-
-				result = Utils.ArrayUtils.indexOf<number, string>( array, "1" );
-				expect( result ).toBe( - 1 );
-				result = Utils.ArrayUtils.indexOf<number, string>( array, "5" );
-				expect( result ).toBe( - 1 );
-				result = Utils.ArrayUtils.indexOf<number, string>( array, "4" );
-				expect( result ).toBe( - 1 );
-			})();
-
-			// Test using a custom function
-			(() => {
-				interface NoNumber {
-					value:number;
-				}
-
-				function comparator( a:number, b:NoNumber ):boolean {
-					return a === b.value;
-				}
-
-				let result:number;
-				let array:Array<number> = [ 5, 3, 1 ];
-				let searched:NoNumber;
-
-				searched = { value: 1 };
-				result = Utils.ArrayUtils.indexOf<number, NoNumber>( array, searched, comparator );
-				expect( result ).toBe( 2 );
-
-				searched = <NoNumber> { value: 5, another: "thing" };
-				result = Utils.ArrayUtils.indexOf<number, NoNumber>( array, searched, comparator );
-				expect( result ).toBe( 0 );
-
-				searched = { value: 4 };
-				result = Utils.ArrayUtils.indexOf<number, NoNumber>( array, searched, comparator );
-				expect( result ).toBe( - 1 );
-			})();
-
+			expect( array ).not.toBe( values );
+			expect( array ).toEqual( values );
 		} );
 
 	} );
 
-	describe( clazz( "CarbonLDP.Utils.MapUtils", "Utility functions related to ES6 Maps." ), ():void => {
+	describe( "ArrayUtils.joinWithoutDuplicates", ():void => {
 
-		it( isDefined(), ():void => {
-			expect( Utils.MapUtils ).toBeDefined();
+		it( "should exist", () => {
+			expect( ArrayUtils.joinWithoutDuplicates ).toBeDefined();
+			expect( ArrayUtils.joinWithoutDuplicates ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod( STATIC, "from", "Takes an object and creates a map from its properties.", [
-			{ name: "object", type: "Object" },
-		], { type: "map" } ), ():void => {
-			expect( Utils.MapUtils.from ).toBeDefined();
 
-			let post:Object = {
+		it( "should remove duplicated from three arrays", () => {
+			const array1:number[] = [ 5, 3, 1 ];
+			const array2:number[] = [ 45, 3, 9 ];
+			const array3:number[] = [ 6, 4, 9 ];
+
+			const result:number[] = ArrayUtils.joinWithoutDuplicates( array1, array2, array3 );
+
+			expect( result ).toEqual( [ 5, 3, 1, 45, 9, 6, 4 ] );
+		} );
+
+	} );
+
+	describe( "ArrayUtils.indexOf", ():void => {
+
+		it( "should exist", () => {
+			expect( ArrayUtils.indexOf ).toBeDefined();
+			expect( ArrayUtils.indexOf ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should return index of last element with default comparator", () => {
+			const result:number = ArrayUtils.indexOf<number, number>( [ 5, 3, 1 ], 1 );
+			expect( result ).toBe( 2 );
+		} );
+
+		it( "should return index of first element with default comparator", () => {
+			const result:number = ArrayUtils.indexOf<number, number>( [ 5, 3, 1 ], 5 );
+			expect( result ).toBe( 0 );
+		} );
+
+		it( "should return -1 of non element with default comparator", () => {
+			const result:number = ArrayUtils.indexOf<number, number>( [ 5, 3, 1 ], 4 );
+			expect( result ).toBe( - 1 );
+		} );
+
+		it( "should return -1 of element in string format with default comparator", () => {
+			const result:number = ArrayUtils.indexOf<number, string>( [ 5, 3, 1 ], "5" );
+			expect( result ).toBe( - 1 );
+		} );
+
+
+		it( "should return index of last element with custom comparator", () => {
+			function comparator( a:number, b:{ value:number } ):boolean {
+				return a === b.value;
+			}
+
+			const result:number = ArrayUtils
+				.indexOf<number, { value:number }>(
+					[ 5, 3, 1 ],
+					{ value: 1 },
+					comparator
+				);
+
+			expect( result ).toBe( 2 );
+		} );
+
+		it( "should return index of first element with custom comparator", () => {
+			function comparator( a:number, b:{ value:number } ):boolean {
+				return a === b.value;
+			}
+
+			const result:number = ArrayUtils
+				.indexOf<number, { value:number }>(
+					[ 5, 3, 1 ],
+					{ value: 5 },
+					comparator
+				);
+
+			expect( result ).toBe( 0 );
+		} );
+
+		it( "should return -1 of non element with default comparator", () => {
+			function comparator( a:number, b:{ value:number } ):boolean {
+				return a === b.value;
+			}
+
+			const result:number = ArrayUtils
+				.indexOf<number, { value:number }>(
+					[ 5, 3, 1 ],
+					{ value: 4 },
+					comparator
+				);
+
+			expect( result ).toBe( - 1 );
+		} );
+
+	} );
+
+} );
+
+describe( "MapUtils", ():void => {
+
+	it( "should exist", () => {
+		expect( MapUtils ).toBeDefined();
+		expect( MapUtils ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	describe( "MapUtils.from", ():void => {
+
+		it( "should exist", () => {
+			expect( MapUtils.from ).toBeDefined();
+			expect( MapUtils.from ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should return Map from object", () => {
+			const returned:Map<string, number> = MapUtils.from( {
 				one: 1,
 				two: 2,
 				three: 3,
-			};
+			} );
 
-			let result:Map<string, any> = Utils.MapUtils.from( post );
-			expect( Utils.isMap( result ) ).toBe( true );
-			expect( result.size ).toBe( 3 );
-			expect( result.get( "one" ) ).toBe( 1 );
-			expect( result.get( "two" ) ).toBe( 2 );
-			expect( result.get( "three" ) ).toBe( 3 );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"extend",
-			"Adds to a target Map all the entries of the subsequents Maps provided. If entries with the same key exists between Maps, the entry's value of the last Map is set to the target Map.", [
-				{ name: "toExtend", type: "Map<K, V>", description: "Target Map to extend." },
-				{ name: "...extenders", type: "Map<K, V>[]", description: "Every other Map parameter, from which the entries to be added to the target Map will be taken." },
-			],
-			{ type: "Map<K, V>", description: "Returns the target map provided." }
-		), ():void => {
-			expect( Utils.MapUtils.extend ).toBeDefined();
-			expect( Utils.isFunction( Utils.MapUtils.extend ) ).toBe( true );
-
-			let target:Map<string, number>;
-			let result:Map<string, number>;
-
-			target = new Map();
-			result = Utils.MapUtils.extend<string, number>( target );
-			expect( result ).toBe( target );
-			expect( result.size ).toBe( 0 );
-
-			target = new Map();
-			result = Utils.MapUtils.extend<string, number>( target, new Map() );
-			expect( result ).toBe( target );
-			expect( result.size ).toBe( 0 );
-
-			target = new Map();
-			result = Utils.MapUtils.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry1", 1 ] ] ) );
-			expect( result ).toBe( target );
-			expect( result.size ).toBe( 1 );
-			expect( result.get( "entry1" ) ).toBe( 1 );
-
-			target = new Map();
-			result = Utils.MapUtils.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry1", 1 ], [ "entry3", 3 ] ] ), new Map<string, number>( <any> [ [ "entry2", 2 ] ] ) );
-			expect( result ).toBe( target );
-			expect( result.size ).toBe( 3 );
-			expect( result.get( "entry1" ) ).toBe( 1 );
-			expect( result.get( "entry2" ) ).toBe( 2 );
-			expect( result.get( "entry3" ) ).toBe( 3 );
-
-			target = new Map<string, number>( <any> [ [ "entry0", 0 ] ] );
-			result = Utils.MapUtils.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry1", 1 ], [ "entry3", 3 ] ] ), new Map<string, number>( <any> [ [ "entry2", 2 ] ] ) );
-			expect( result ).toBe( target );
-			expect( result.size ).toBe( 4 );
-			expect( result.get( "entry0" ) ).toBe( 0 );
-			expect( result.get( "entry1" ) ).toBe( 1 );
-			expect( result.get( "entry2" ) ).toBe( 2 );
-			expect( result.get( "entry3" ) ).toBe( 3 );
-
-			target = new Map<string, number>( <any> [ [ "entry0", 0 ] ] );
-			result = Utils.MapUtils.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry0", 10 ], [ "entry3", 3 ] ] ) );
-			expect( result ).toBe( target );
-			expect( result.size ).toBe( 2 );
-			expect( result.get( "entry0" ) ).toBe( 10 );
-			expect( result.get( "entry3" ) ).toBe( 3 );
-
-			target = new Map<string, number>( <any> [ [ "entry0", 0 ] ] );
-			result = Utils.MapUtils.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry0", 10 ], [ "entry3", 3 ] ] ), new Map<string, number>( <any> [ [ "entry0", 100 ] ] ) );
-			expect( result ).toBe( target );
-			expect( result.size ).toBe( 2 );
-			expect( result.get( "entry0" ) ).toBe( 100 );
-			expect( result.get( "entry3" ) ).toBe( 3 );
-
-			target = new Map();
-			result = Utils.MapUtils.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry0", 10 ], [ "entry3", 3 ] ] ), new Map<string, number>( <any> [ [ "entry0", 100 ] ] ) );
-			expect( result ).toBe( target );
-			expect( result.size ).toBe( 2 );
-			expect( result.get( "entry0" ) ).toBe( 100 );
-			expect( result.get( "entry3" ) ).toBe( 3 );
+			expect( returned ).toEqual( new Map( [
+				[ "one", 1 ],
+				[ "two", 2 ],
+				[ "three", 3 ],
+			] ) );
 		} );
 
 	} );
 
-	describe( clazz( "CarbonLDP.Utils.UUIDUtils", "Utility functions related to UUIDs." ), ():void => {
+	describe( "MapUtils.extend", ():void => {
 
-		it( isDefined(), ():void => {
-			expect( Utils.UUIDUtils ).toBeDefined();
+		it( "should exist", () => {
+			expect( MapUtils.extend ).toBeDefined();
+			expect( MapUtils.extend ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod( STATIC, "is", "Returns true if the string provided is a UUID (version 1 to 5).", [
-			{ name: "uuid", type: "string" },
-		], { type: "string" } ), ():void => {
-			expect( Utils.UUIDUtils.is ).toBeDefined();
 
-			expect( Utils.UUIDUtils.is( null ) ).toEqual( false );
-			expect( Utils.UUIDUtils.is( "13123123123" ) ).toEqual( false );
-			expect( Utils.UUIDUtils.is( "asdfasdfasdfasdfagawerq" ) ).toEqual( false );
-			expect( Utils.UUIDUtils.is( "asdfasdfasdfasdfagawerq" ) ).toEqual( false );
-			expect( Utils.UUIDUtils.is( "8cef9ec9-32b6-4beb-ba11-fb8a1d8f67cd" ) ).toEqual( true );
+		it( "should return target when no sources", () => {
+			const target:Map<string, number> = new Map();
+			const result:Map<string, number> = MapUtils.extend<string, number>( target );
+
+			expect( result ).toBe( target );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod( STATIC, "generate", "Generates a new, version 4, UUID.", { type: "string" } ), ():void => {
-			expect( Utils.UUIDUtils.generate ).toBeDefined();
+		it( "should return target when one source", () => {
+			const target:Map<string, number> = new Map();
+			const result:Map<string, number> = MapUtils.extend<string, number>( target, new Map() );
 
-			let uuid:string = Utils.UUIDUtils.generate();
-			expect( uuid ).not.toBeNull();
+			expect( result ).toBe( target );
+		} );
+
+		it( "should return target when one source", () => {
+			const target:Map<string, number> = new Map();
+			const result:Map<string, number> = MapUtils.extend<string, number>( target, new Map() );
+
+			expect( result ).toBe( target );
+		} );
+
+
+		it( "should return empty when empty target and source", () => {
+			const result:Map<string, number> = MapUtils.extend<string, number>(
+				new Map(),
+				new Map()
+			);
+
+			expect( result ).toEqual( new Map() );
+		} );
+
+		it( "should return extended when source has values", () => {
+			const result:Map<string, number> = MapUtils.extend<string, number>(
+				new Map(),
+				new Map( [ [ "source", 1 ] ] )
+			);
+
+			expect( result ).toEqual( new Map( [
+				[ "source", 1 ],
+			] ) );
+		} );
+
+		it( "should return extended when two sources have values", () => {
+			const result:Map<string, number> = MapUtils.extend<string, number>(
+				new Map(),
+				new Map( [ [ "source-1", 1 ], [ "source-2", 2 ] ] ),
+				new Map( [ [ "source-3", 3 ] ] )
+			);
+
+			expect( result ).toEqual( new Map( [
+				[ "source-1", 1 ],
+				[ "source-2", 2 ],
+				[ "source-3", 3 ],
+			] ) );
+		} );
+
+		it( "should return extended when target and two sources have values", () => {
+			const result:Map<string, number> = MapUtils.extend<string, number>(
+				new Map( [ [ "target-0", 0 ] ] ),
+				new Map( [ [ "source-1", 1 ], [ "source-2", 2 ] ] ),
+				new Map( [ [ "source-3", 3 ] ] )
+			);
+
+			expect( result ).toEqual( new Map( [
+				[ "target-0", 0 ],
+				[ "source-1", 1 ],
+				[ "source-2", 2 ],
+				[ "source-3", 3 ],
+			] ) );
+		} );
+
+		it( "should return replace values when target and source have same values", () => {
+			const result:Map<string, number> = MapUtils.extend<string, number>(
+				new Map( [ [ "target-0", 0 ] ] ),
+				new Map( [ [ "target-0", 100 ], [ "source-1", 1 ] ] )
+			);
+
+			expect( result ).toEqual( new Map( [
+				[ "target-0", 100 ],
+				[ "source-1", 1 ],
+			] ) );
+		} );
+
+		it( "should return replace last values when target and sources have same values", () => {
+			const result:Map<string, number> = MapUtils.extend<string, number>(
+				new Map( [ [ "target-0", 0 ] ] ),
+				new Map( [ [ "target-0", 100 ], [ "source-1", 1 ] ] ),
+				new Map( [ [ "target-0", 10000 ], [ "source-2", 2 ] ] )
+			);
+
+			expect( result ).toEqual( new Map( [
+				[ "target-0", 10000 ],
+				[ "source-1", 1 ],
+				[ "source-2", 2 ],
+			] ) );
+		} );
+
+	} );
+
+} );
+
+describe( "UUIDUtils", ():void => {
+
+	it( "should exist", () => {
+		expect( UUIDUtils ).toBeDefined();
+		expect( UUIDUtils ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	describe( "UUIDUtils.is", ():void => {
+
+		it( "should exist", () => {
+			expect( UUIDUtils.is ).toBeDefined();
+			expect( UUIDUtils.is ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should false when null", () => {
+			expect( UUIDUtils.is( null ) ).toEqual( false );
+		} );
+
+		it( "should false when string without separations", () => {
+			expect( UUIDUtils.is( "8cef9ec932b64bebba11fb8a1d8f67cd" ) ).toEqual( false );
+		} );
+
+		it( "should true when string with correct separations", () => {
+			expect( UUIDUtils.is( "8cef9ec9-32b6-4beb-ba11-fb8a1d8f67cd" ) ).toEqual( true );
+		} );
+
+	} );
+
+	describe( "UUIDUtils.generate", ():void => {
+
+		it( "should exist", () => {
+			expect( UUIDUtils.generate ).toBeDefined();
+			expect( UUIDUtils.generate ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should return a string", () => {
+			const uuid:string = UUIDUtils.generate();
+			expect( uuid ).toEqual( jasmine.any( String ) );
+		} );
+
+		it( "should return a format working with UUIDUtils.is", () => {
+			const uuid:string = UUIDUtils.generate();
+			expect( UUIDUtils.is( uuid ) ).toBe( true );
 		} );
 
 	} );
