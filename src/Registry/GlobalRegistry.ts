@@ -8,21 +8,39 @@ import { ModelFactory } from "../Model/ModelFactory";
 import { RegisteredPointer } from "./RegisteredPointer";
 
 
+/**
+ * Base properties to create a {@link GlobalRegistry}.
+ */
 export interface BaseGlobalRegistry {
+	/**
+	 * Global context where the registry will belong to.
+	 */
 	context:GlobalContext;
 }
 
 
 export interface GlobalRegistry extends GeneralRegistry<RegisteredPointer> {
+	/**
+	 * Global context where the registry belongs to.
+	 */
 	context:GlobalContext;
+	/**
+	 * Been the global registry, it cannot have a parent registry.
+	 */
 	registry:undefined;
 }
 
 
+/**
+ * Factory, decorator and utils for {@link GlobalRegistry}.
+ */
 export type GlobalRegistryFactory =
 	& ModelFactory<GlobalRegistry, BaseGlobalRegistry>
 	;
 
+/**
+ * Constant that implements {@link GlobalRegistryFactory}
+ */
 export const GlobalRegistry:GlobalRegistryFactory = {
 	create<T extends object>( data:T & BaseGlobalRegistry ):T & GlobalRegistry {
 		// FIXME: TS 3.0

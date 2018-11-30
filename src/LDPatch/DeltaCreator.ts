@@ -57,6 +57,9 @@ typesDefinition.containerType = ContainerType.SET;
 type TargetResource = Partial<Pick<Resource, "types"> & Pick<QueryablePointer, "$_queryableMetadata">>;
 
 
+/**
+ * Creates a LD Patch delta for the resources provided.
+ */
 export class DeltaCreator {
 
 	private prefixesMap:Map<string, PrefixToken>;
@@ -66,6 +69,10 @@ export class DeltaCreator {
 	private readonly deleteToken:DeleteToken;
 	private readonly updateLists:UpdateListToken[];
 
+	/**
+	 * Creates the instant with the provided context as the addition data source.
+	 * @param context The context of the resources to create its LD Patch delta.
+	 */
 	constructor( context:Context ) {
 		this.prefixesMap = new Map();
 		this.context = context;
@@ -75,6 +82,9 @@ export class DeltaCreator {
 		this.updateLists = [];
 	}
 
+	/**
+	 * Returns the LD Patch string of the resources set in {@link DeltaCreator.addResource()}.
+	 */
 	getPatch():string {
 		const patch:LDPatchToken = new LDPatchToken();
 
@@ -87,6 +97,12 @@ export class DeltaCreator {
 		return `${ patch }`;
 	}
 
+	/**
+	 * Add the resources states ({@param previousResource} and {@param currentResource}) from where to create the delta.
+	 * @param id The URI of the resource been added.
+	 * @param previousResource The previous state of the resource to compare for its delta.
+	 * @param currentResource The current state of the resource to compare for its delta.
+	 */
 	addResource( id:string, previousResource:object, currentResource:object ):void {
 		const schema:DigestedObjectSchema = this.__getSchema( id, previousResource, currentResource );
 

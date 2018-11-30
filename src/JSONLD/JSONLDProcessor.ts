@@ -21,8 +21,16 @@ import * as Utils from "./../Utils";
 const MAX_CONTEXT_URLS:number = 10;
 const LINK_HEADER_REL:string = "http://www.w3.org/ns/json-ld#context";
 
+/**
+ * Service that has methods to process JSON-LD objects.
+ */
 export class JSONLDProcessor {
 
+	/**
+	 * Expands a compact JSON-LD object.
+	 * This expansion understands local or remotes `@context` entities.
+	 * @param input The JSON-LD object to expand.
+	 */
 	static expand( input:object ):Promise<object[]> {
 		// Find and resolve context URLs
 		return JSONLDProcessor.__retrieveContexts( input, <{ [ index:string ]:boolean }> Object.create( null ), "" ).then( () => {

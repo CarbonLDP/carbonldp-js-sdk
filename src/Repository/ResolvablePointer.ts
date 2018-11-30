@@ -13,45 +13,146 @@ import { BaseResolvablePointer } from "./BaseResolvablePointer";
 import { $Repository, Repository } from "./Repository";
 
 
+/**
+ * Interface that represents the base to any model that can be fetched by any {@link Repository}/{@link $Repository}.
+ */
 export interface ResolvablePointer extends Pointer, $Repository {
+	/**
+	 * Repository with request methods associated to the resource.
+	 */
 	$repository:Repository | $Repository;
+	/**
+	 * Identifier that describes the state of the last data retrieved.
+	 */
 	$eTag:string | undefined;
 
 	$_resolved:boolean;
+	/**
+	 * Shallow copy of the pointer, which is used to track its changes.
+	 */
 	$_snapshot:object;
 
 
+	/**
+	 * Returns true when the pointer has been retrieved.
+	 */
 	$isResolved():boolean;
 
 
+	/**
+	 * Updates the snapshot with the current data of the resource.
+	 */
 	$_syncSnapshot():void;
 
+	/**
+	 * Returns true if the resource presents differences from its snapshot.
+	 */
 	$isDirty():boolean;
 
+	/**
+	 * Reverts the changes made to the resource into the state of the snapshot.
+	 */
 	$revert():void;
 
 
+	/**
+	 * Calls the `get` method of the associated repository,
+	 * except the URI since it will be taken from the current resource.
+	 * @param params Rest params required by the respective repository method.
+	 */
 	$get( ...params:any[] ):Promise<ResolvablePointer>;
+	/**
+	 * Calls the `get` method of the associated repository,
+	 * with the specified URI.
+	 * @param uri URI of the specific document.
+	 * @param params Rest params required by the respective repository method.
+	 */
 	$get( uri:string, ...params:any[] ):Promise<ResolvablePointer>;
 
+	/**
+	 * Calls the `resolve` method of the associated repository,
+	 * except the resource since it will be taken as the current resource.
+	 * @param params Rest params required by the respective repository method.
+	 */
 	$resolve( ...params:any[] ):Promise<ResolvablePointer>;
+	/**
+	 * Calls the `resolve` method of the associated repository,
+	 * with the specified resource.
+	 * @param resource The specific resource.
+	 * @param params The params required by the respective repository method.
+	 */
 	$resolve( resource:ResolvablePointer, ...params:any[] ):Promise<ResolvablePointer>;
 
+	/**
+	 * Calls the `exists` method of the associated repository,
+	 * except the URI since it will be taken from the current resource.
+	 * @param params Rest params required by the respective repository method.
+	 */
 	$exists( ...params:any[] ):Promise<boolean>;
+	/**
+	 * Calls the `exists` method of the associated repository,
+	 * with the specified URI.
+	 * @param uri URI of the specific document.
+	 * @param params Rest params required by the respective repository method.
+	 */
 	$exists( uri:string, ...params:any[] ):Promise<boolean>;
 
 
+	/**
+	 * Calls the `refresh` method of the associated repository,
+	 * except the resource since it will be taken as the current resource.
+	 * @param params Rest params required by the respective repository method.
+	 */
 	$refresh( ...params:any[] ):Promise<ResolvablePointer>;
+	/**
+	 * Calls the `refresh` method of the associated repository,
+	 * with the specified resource.
+	 * @param resource The specific resource.
+	 * @param params The params required by the respective repository method.
+	 */
 	$refresh( resource:ResolvablePointer, ...params:any[] ):Promise<ResolvablePointer>;
 
+	/**
+	 * Calls the `save` method of the associated repository,
+	 * except the resource since it will be taken as the current resource.
+	 * @param params Rest params required by the respective repository method.
+	 */
 	$save( ...params:any[] ):Promise<ResolvablePointer>;
+	/**
+	 * Calls the `save` method of the associated repository,
+	 * with the specified resource.
+	 * @param resource The specific resource.
+	 * @param params The params required by the respective repository method.
+	 */
 	$save( resource:ResolvablePointer, ...params:any[] ):Promise<ResolvablePointer>;
 
+	/**
+	 * Calls the `saveAndRefresh` method of the associated repository,
+	 * except the resource since it will be taken as the current resource.
+	 * @param params Rest params required by the respective repository method.
+	 */
 	$saveAndRefresh( ...params:any[] ):Promise<ResolvablePointer>;
+	/**
+	 * Calls the `saveAndRefresh` method of the associated repository,
+	 * with the specified resource.
+	 * @param resource The specific resource.
+	 * @param params The params required by the respective repository method.
+	 */
 	$saveAndRefresh( resource:ResolvablePointer, ...params:any[] ):Promise<ResolvablePointer>;
 
 
+	/**
+	 * Calls the `delete` method of the associated repository,
+	 * except the URI since it will be taken from the current resource.
+	 * @param params Rest params required by the respective repository method.
+	 */
 	$delete( ...params:any[] ):Promise<void>;
+	/**
+	 * Calls the `delete` method of the associated repository,
+	 * with the specified URI.
+	 * @param uri URI of the specific document.
+	 * @param params Rest params required by the respective repository method.
+	 */
 	$delete( uri:string, ...params:any[] ):Promise<void>;
 }
 
@@ -78,12 +179,18 @@ function __internalRevert( target:any, source:any ):void {
 }
 
 
+/**
+ * Factory, decorator and utils for {@link ResolvablePointer}.
+ */
 export type ResolvablePointerFactory =
 	& ModelPrototype<ResolvablePointer, Pointer>
 	& ModelDecorator<ResolvablePointer, BaseResolvablePointer>
 	& ModelTypeGuard<ResolvablePointer>
 	;
 
+/**
+ * Constant that implements {@link ResolvablePointerFactory}.
+ */
 export const ResolvablePointer:ResolvablePointerFactory = {
 	PROTOTYPE: {
 		get $repository():Repository | $Repository {

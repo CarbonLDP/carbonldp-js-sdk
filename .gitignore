@@ -16,6 +16,10 @@ test/helpers/**/*.map
 test/mock-sockjs/*.js
 test/mock-sockjs/*.map
 
+# Dgeni
+build/docs/docs-generator/**/*.js
+build/docs/docs-generator/**/*.map
+
 # JSPM
 **/jspm_packages/
 

@@ -181,6 +181,8 @@ describe( "DigestedObjectSchema", () => {
 			expect( schema.resolveURI( "Brewery" ) ).toBe( "https://example.com/ns#Brewery" );
 		} );
 
+		// TODO: Test .getProperty
+
 	} );
 
 } );

@@ -5,11 +5,23 @@ import { SPARQLDocumentsRepositoryTrait } from "../DocumentsRepository/Traits/SP
 import { SPARQLSelectResults } from "./SelectResults";
 
 
+/**
+ * Clause that extends the query builder allowing to execute the request for the SELECT built query.
+ */
 export interface FinishSPARQLSelect extends FinishClause {
+	/**
+	 * Executes the SPARQL query.
+	 */
 	execute<T extends object>():Promise<SPARQLSelectResults<T>>;
 }
 
+/**
+ * Clause that extends the query builder allowing to execute the request for the ASK built query.
+ */
 export interface FinishSPARQLAsk extends FinishClause {
+	/**
+	 * Executes the SPARQL query.
+	 */
 	execute():Promise<boolean>;
 }
 
@@ -35,10 +47,17 @@ function getFinishAskFactory( resource:SPARQLDocumentsRepositoryTrait, entryPoin
 }
 
 
+/**
+ * Customized SPARQLER class to be used by the SDK.
+ */
 export class SPARQLBuilder extends SPARQLER<FinishSPARQLSelect, FinishSPARQLAsk> {
-	constructor( resource:SPARQLDocumentsRepositoryTrait, entryPoint:string ) {
-		const finishSelectFactory:FinishFactory<FinishSPARQLSelect> = getFinishSelectFactory( resource, entryPoint );
-		const finishAskFactory:FinishFactory<FinishSPARQLAsk> = getFinishAskFactory( resource, entryPoint );
+	/**
+	 * @param repository The repository where the builder is been constructed from.
+	 * @param entryPoint The entry point URI where the query can be executed from.
+	 */
+	constructor( repository:SPARQLDocumentsRepositoryTrait, entryPoint:string ) {
+		const finishSelectFactory:FinishFactory<FinishSPARQLSelect> = getFinishSelectFactory( repository, entryPoint );
+		const finishAskFactory:FinishFactory<FinishSPARQLAsk> = getFinishAskFactory( repository, entryPoint );
 
 		super( finishSelectFactory, finishAskFactory );
 	}

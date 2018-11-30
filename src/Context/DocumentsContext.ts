@@ -16,12 +16,25 @@ import { DocumentPaths, DocumentsContextSettings, Paths } from "./DocumentsConte
 import { GlobalContext } from "./GlobalContext";
 
 
+/**
+ * Context to manage {@link Document}'s.
+ */
 export class DocumentsContext extends AbstractContext<Document, Document, GlobalContext> {
 
 	protected _baseURI:string;
 
+	/**
+	 * Registry that can only stores {@link Document}'s.
+	 */
 	readonly registry:DocumentsRegistry;
+	/**
+	 * Repository to fetch the {@link Document}'s data.
+	 */
 	readonly repository:DocumentsRepository;
+	/**
+	 * Messaging service with the raw methods to configure and connect a
+	 * notification broker by Sock.js using the STOMP and AMQP protocols.
+	 */
 	readonly messaging:MessagingService;
 
 	protected _settings?:DocumentsContextSettings;
@@ -69,6 +82,10 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	}
 
 
+	/**
+	 * Create an instance of the document context with the URL as the base URI.
+	 * @param url URL to be set as the base URI of the context.
+	 */
 	constructor( url:string ) {
 		super( GlobalContext.instance );
 		this._baseURI = url;
@@ -83,18 +100,22 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 
 	/**
 	 * Resolves the path provided into an URL using the `path` settings of the context.
-	 * If such path does hasn't been declared an IllegalStateError will be thrown.
+	 * If such path does hasn't been declared an {@link IllegalStateError} will be thrown.
 	 *
-	 * Example: The path `system.platform` with the default setting:
+	 * Example:
+	 * The path `system.platform` with the default setting:
+	 *
 	 * ```javascript
 	 * {
-	 *  paths: {
-	 *      system: {
-	 *          slug: ".system/",
-	 *          paths: { platform: "platform/" }
-	 *      }
-	 *  }
-	 * }```,
+	 *     paths: {
+	 *         system: {
+	 *             slug: ".system/",
+	 *             paths: { platform: "platform/" }
+	 *         }
+	 *     }
+	 * }
+	 * ```
+	 *
 	 * This should resolve to something like `https://example.com/.system/platform/`.
 	 *
 	 * @param path The dot notation string that refers the path declared in the settings

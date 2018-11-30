@@ -11,6 +11,11 @@ import { QueryPropertyType } from "./QueryPropertyType";
 import { _getBestType } from "./Utils";
 
 
+/**
+ * Metadata of a resource that has been queried.
+ *
+ * It is used in {@link QueryablePointer.$_queryableMetadata}.
+ */
 export class QueryableProperty {
 	readonly definition:DigestedObjectSchemaProperty;
 	readonly pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
@@ -39,15 +44,30 @@ export class QueryableProperty {
 	}
 
 
+	/**
+	 * Sets the type of content of the property.
+	 * @param type
+	 */
 	setType( type:QueryPropertyType ):void {
 		this.propertyType = _getBestType( this.propertyType, type );
 	}
 
 
+	/**
+	 * Stores the property with the specified name.
+	 * @param propertyName Name of the property to store.
+	 * @param property The property to be stored.
+	 */
 	setProperty( propertyName:string, property:QueryableProperty ):void {
 		this.subProperties.set( propertyName, property );
 	}
 
+	/**
+	 * Gets an existing property identified by the specified name, optionally merging with a {@param data} provided.
+	 * If the property doesn't exists, one will be created using the suggested {@param data}.
+	 * @param propertyName Name of the property to get/create.
+	 * @param data The optional data of the property to create.
+	 */
 	getProperty( propertyName:string, data?:QueryablePropertyData ):QueryableProperty {
 		if( ! this.subProperties.has( propertyName ) ) {
 			if( ! data )
@@ -69,6 +89,11 @@ export class QueryableProperty {
 	}
 
 
+	/**
+	 * Merge the provided {@param data} into the current property.
+	 * @param propertyName Name of the current property.
+	 * @param data Data to be merged.
+	 */
 	mergeData( propertyName:string, data:QueryablePropertyData ):void {
 		if( this === data ) return;
 
@@ -92,6 +117,9 @@ export class QueryableProperty {
 	}
 
 
+	/**
+	 * Returns the schema generated with the definitions of the stored properties.
+	 */
 	getSchema():DigestedObjectSchema {
 		const schema:DigestedObjectSchema = new DigestedObjectSchema();
 

@@ -1,2 +1,2 @@
 export { BaseFreeResources } from "./BaseFreeResources";
-export { FreeResources } from "./FreeResources";
+export { FreeResources, FreeResourcesFactory, FreeResourcesUtils } from "./FreeResources";

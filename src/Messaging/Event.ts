@@ -1,3 +1,6 @@
+/**
+ * Enum with the base events in the platform.
+ */
 export enum Event {
 	CHILD_CREATED = "child.created",
 	DOCUMENT_MODIFIED = "document.modified",

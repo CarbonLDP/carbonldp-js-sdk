@@ -16,9 +16,20 @@ import { ObjectSchemaUtils } from "./ObjectSchemaUtils";
 import { PointerType } from "./PointerType";
 
 
+/**
+ * Service with static methods to standardize a JSON-LD Context Schema.
+ */
 export class ObjectSchemaDigester {
 
+	/**
+	 * Processes a schema to standardize it before using it.
+	 * @param schema The object schema to process.
+	 */
 	static digestSchema( schema:ObjectSchema ):DigestedObjectSchema;
+	/**
+	 * Processes multiple schemas into a single one to standardize it before using it.
+	 * @param schemas The object schemas to process.
+	 */
 	static digestSchema( schemas:ObjectSchema[] ):DigestedObjectSchema;
 	static digestSchema( schemas:ObjectSchema | ObjectSchema[] ):DigestedObjectSchema {
 		if( ! Array.isArray( schemas ) ) return ObjectSchemaDigester._digestSchema( schemas );
@@ -29,6 +40,12 @@ export class ObjectSchemaDigester {
 		return ObjectSchemaDigester._combineSchemas( digestedSchemas );
 	}
 
+	/**
+	 * Processes a schema property definition before using it.
+	 * @param name The name of the property.
+	 * @param definition The definition object of the property.
+	 * @param digestedSchema Optional schema used to resolve relative URIs in the definition.
+	 */
 	static digestProperty( name:string, definition:ObjectSchemaProperty, digestedSchema?:DigestedObjectSchema ):DigestedObjectSchemaProperty {
 		const digestedDefinition:DigestedObjectSchemaProperty = new DigestedObjectSchemaProperty();
 
@@ -92,6 +109,10 @@ export class ObjectSchemaDigester {
 			digestedDefinition;
 	}
 
+	/**
+	 * Combines several standardized schemas into one.
+	 * @param digestedSchemas The schemas to combine.
+	 */
 	static combineDigestedObjectSchemas( digestedSchemas:DigestedObjectSchema[] ):DigestedObjectSchema {
 		if( digestedSchemas.length === 0 ) throw new IllegalArgumentError( "At least one DigestedObjectSchema needs to be specified." );
 
@@ -99,6 +120,10 @@ export class ObjectSchemaDigester {
 		return ObjectSchemaDigester._combineSchemas( digestedSchemas );
 	}
 
+	/**
+	 * Actual implementation of the standardization of a schema.
+	 * @param schema The schema to process.
+	 */
 	static _digestSchema( schema:ObjectSchema ):DigestedObjectSchema {
 		const digestedSchema:DigestedObjectSchema = new DigestedObjectSchema();
 
@@ -146,6 +171,12 @@ export class ObjectSchemaDigester {
 		return digestedSchema;
 	}
 
+	/**
+	 * Actual implementation of the schema combination.
+	 * This method uses the first schema as the target schema where to combine the data.
+	 *
+	 * @param digestedSchemas The schemas to combine.
+	 */
 	static _combineSchemas( digestedSchemas:DigestedObjectSchema[] ):DigestedObjectSchema {
 		const [ targetSchema, ...restSchemas ] = digestedSchemas;
 

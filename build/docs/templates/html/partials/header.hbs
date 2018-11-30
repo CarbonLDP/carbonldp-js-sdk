@@ -19,11 +19,11 @@
 
 {{else}}
 
-	<div class="ui basic inverted {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}}{{#if isNamespace}}purple{{/if}} segment">
+	<div class="ui basic inverted {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}}{{#if isNamespace}}purple{{/if}}{{#if isTypeAlias}}green{{/if}} segment">
 		<h1 class="ui header doc-header{{#if isModule}} doc-header_main{{else}} doc-header_main{{/if}}" id="SDKDocs-{{toURL path}}">
 			<a class="doc-header__link doc-header__main" href="#{{toURL path}}">{{name}}</a>
 			<div class="doc-header__label">
-				<span class="ui large {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}}{{#if isNamespace}}purple{{/if}} horizontal basic label">{{#if isModule}}Module{{/if}}{{#if isClass}}Class{{/if}}{{#if isInterface}}Interface{{/if}}{{#if isNamespace}}Namespace{{/if}}</span>
+				<span class="ui large {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}}{{#if isNamespace}}purple{{/if}}{{#if isTypeAlias}}green{{/if}} horizontal basic label">{{#if isModule}}Module{{/if}}{{#if isClass}}Class{{/if}}{{#if isInterface}}Interface{{/if}}{{#if isNamespace}}Namespace{{/if}}{{#if isTypeAlias}}Type Alias{{/if}}</span>
 			</div>
 		</h1>
 	</div>

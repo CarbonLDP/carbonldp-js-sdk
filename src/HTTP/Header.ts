@@ -1,6 +1,16 @@
+/**
+ * Class to manage the values in an HTTP header.
+ */
 export class Header {
+	/**
+	 * Array with each value of the header.
+	 */
 	readonly values:string[];
 
+	/**
+	 * Returns a Map which relates all header names with a {@link Header} object containing their values.
+	 * @param headersString The string to be parsed into a map of name -> Header.
+	 */
 	static parseHeaders( headersString:string ):Map<string, Header> {
 		const headers:Map<string, Header> = new Map<string, Header>();
 
@@ -34,20 +44,36 @@ export class Header {
 			;
 	}
 
+	/**
+	 * Create an instance with an array of values or a string that will be parsed
+	 * into the multiple values that may contain.
+	 * @param values The array of values of the string to be parsed.
+	 */
 	constructor( values?:(string | string[]) ) {
 		this.values = Array.isArray( values ) ?
 			values : Header.__parseValues( values );
 	}
 
+	/**
+	 * Returns true when the specified value exists in the values stored.
+	 * @param value The value to check if is stored.
+	 */
 	hasValue( value:string ):boolean {
 		return this.values.indexOf( value ) !== - 1;
 	}
 
+	/**
+	 * Parse and add the string value(s) into the current header.
+	 * @param value Value or values to add.
+	 */
 	addValue( value:string ):void {
 		const newValues:string[] = Header.__parseValues( value );
 		this.values.push( ...newValues );
 	}
 
+	/**
+	 * Returns the string representation of all the values of the headers.
+	 */
 	toString():string {
 		return this.values.join( ", " );
 	}

@@ -27,6 +27,9 @@ interface Subscription {
 	errorCallback?:( error:Error ) => void;
 }
 
+/**
+ * Service that manages the messaging client, connecting and subscriptions.
+ */
 export class MessagingService {
 	readonly context:DocumentsContext;
 
@@ -42,6 +45,19 @@ export class MessagingService {
 		this._options = DEFAULT_OPTIONS;
 	}
 
+	/**
+	 * Updates the messaging service options.
+	 *
+	 * If any property is no defined the default is used:
+	 * ```typescript
+	 * {
+	 *     maxReconnectAttempts: 10,
+	 *     reconnectDelay: 1000
+	 * }
+	 * ```
+	 *
+	 * @param options The options to be updated.
+	 */
 	setOptions( options:MessagingOptions ):void {
 		this._options = {
 			...DEFAULT_OPTIONS,
@@ -49,6 +65,12 @@ export class MessagingService {
 		};
 	}
 
+	/**
+	 * Connects to the platform's messaging broker.
+	 * If the service is already connected, an error will be thrown.
+	 * @param onConnect Callback to be invoked when the client has established a connection. It will be invoked again when a reconnection is been executed.
+	 * @param onError Callback to be invoked when a error has occurred in the connection or server. If none is provided, the errors will be broadcasted to every connected subscription.
+	 */
 	connect( onConnect?:() => void, onError?:( error:Error ) => void ):void {
 		if( this._client ) {
 			const error:Error = new IllegalStateError( `The messaging service is already connect${ this._client.connected ? "ed" : "ing"}.` );
@@ -60,6 +82,12 @@ export class MessagingService {
 		this.reconnect( onConnect, onError );
 	}
 
+	/**
+	 * Reconnects the service to the platform broker.
+	 * If the service is already connected, it will be closed and opened again.
+	 * @param onConnect Callback to be invoked when the client has established a connection. It will be invoked again when a reconnection is been executed.
+	 * @param onError Callback to be invoked when a error has occurred in the connection or server. If none is provided, the errors will be broadcasted to every connected subscription.
+	 */
 	reconnect( onConnect?:() => void, onError:( error:Error ) => void = this.__broadcastError.bind( this ) ):void {
 		if( ! this._client ) this._attempts = 0;
 		else if( this._client.connected ) this._client.disconnect();
@@ -99,6 +127,12 @@ export class MessagingService {
 		} );
 	}
 
+	/**
+	 * Subscribes to the destination provided.
+	 * @param destination The destination to subscribe.
+	 * @param onEvent Callback to be invoked in every notification and will be provided with the data message of the notification.
+	 * @param onError Callback to be invoked when a error has occurred in the subscription.
+	 */
 	subscribe( destination:string, onEvent:( data:EventMessage ) => void, onError?:( error:Error ) => void ):void {
 		if( ! this._client ) this.connect();
 		if( ! this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
@@ -116,6 +150,11 @@ export class MessagingService {
 		this._subscriptionsQueue.push( subscribeTo );
 	}
 
+	/**
+	 * Removes the subscription set for the specific destination and onEvent callback.
+	 * @param destination The destination of the subscription to remove.
+	 * @param onEvent Callback used in the subscription to remove.
+	 */
 	unsubscribe( destination:string, onEvent:( data:EventMessage ) => void ):void {
 		if( ! this._client || ! this._subscriptionsMap || ! this._subscriptionsMap.has( destination ) ) return;
 

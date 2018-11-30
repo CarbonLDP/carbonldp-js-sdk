@@ -15,19 +15,50 @@ import { Parser } from "./Parser";
 import { Response } from "./Response";
 
 
+/**
+ * Customizable options that can change the behaviour of a request.
+ */
 export interface RequestOptions {
+	/**
+	 * Map that contains the headers to include in the request.
+	 */
 	headers?:Map<string, Header>;
+	/**
+	 * Flag that enables Cross-Origin Resource Sharing (CORS).
+	 */
 	sendCredentialsOnCORS?:boolean;
+	/**
+	 * Timeout of the request.
+	 */
 	timeout?:number;
+	/**
+	 * Specific XMLHttpRequest to be used for the request.
+	 */
 	request?:XMLHttpRequest;
 }
 
+/**
+ * Customizable options for a `GET` request.
+ */
 export interface GETOptions extends RequestOptions {
+	/**
+	 * Flag that ignores the cache of the SDK and ensures to make a request.
+	 */
 	ensureLatest?:boolean;
 }
 
+/**
+ * Object used by {@link RequestUtils.setRetrievalPreferences()}
+ * which specifies the behaviour of a request when using an `ldp:Container` interaction model.
+ */
 export interface RetrievalPreferences {
+	/**
+	 * Prefer URIs that indicates some specific information should be returned in the request's response.
+	 */
 	include?:string[];
+	/**
+	 * Prefer URIs that indicates some specific information should NOT be included in the request's response.
+	 */
 	omit?:string[];
 }
 
@@ -137,15 +168,45 @@ function __isBody( data:string | Blob | Buffer ):boolean {
 		|| typeof Buffer !== "undefined" && data instanceof Buffer;
 }
 
+/**
+ * Service with static methods to send HTTP request.
+ */
 export class RequestService {
 	private static defaultOptions:RequestOptions = {
 		sendCredentialsOnCORS: true,
 	};
 
+	/**
+	 * Generic send method, to be used by the others methods in the class.
+	 * @param method The method of the request to be sent.
+	 * @param url URL of the request to be sent.
+	 * @param options Customizable options for the request.
+	 */
 	static send( method:(HTTPMethod | string), url:string, options?:RequestOptions ):Promise<Response>;
+	/**
+	 * Generic send method, to be used by the others methods in the class.
+	 * @param method The method of the request to be sent.
+	 * @param url URL of the request to be sent.
+	 * @param body Body to be sent int he request.
+	 * @param options Customizable options for the request.
+	 */
 	static send( method:(HTTPMethod | string), url:string, body:string | Blob | Buffer, options?:RequestOptions ):Promise<Response>;
-	static send( method:(HTTPMethod | string), url:string, body:string | Blob | Buffer, options?:RequestOptions ):Promise<Response>;
+	/**
+	 * Generic send method, to be used by the others methods in the class.
+	 * @param method The method of the request to be sent.
+	 * @param url URL of the request to be sent.
+	 * @param options Customizable options for the request.
+	 * @param parser Parser to be used in the response body of the request.
+	 */
 	static send<T>( method:(HTTPMethod | string), url:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	/**
+	 * Generic send method, to be used by the others methods in the class.
+	 * @param method The method of the request to be sent.
+	 * @param url URL of the request to be sent.
+	 * @param body Body to be sent int he request.
+	 * @param options Customizable options for the request.
+	 * @param parser Parser to be used in the response body of the request.
+	 */
 	static send<T>( method:(HTTPMethod | string), url:string, body:string | Blob | Buffer, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static send<T>( method:any, url:string, bodyOrOptions:any = RequestService.defaultOptions, optionsOrParser:any = RequestService.defaultOptions, parser:Parser<T> = null ):any {
 		let body:string | Blob | Buffer = null;
@@ -178,53 +239,133 @@ export class RequestService {
 		} );
 	}
 
+	/**
+	 * Sends an `OPTIONS` request.
+	 * @param url URL of the request to be sent.
+	 * @param options Customizable options for the request.
+	 */
 	static options( url:string, options:RequestOptions = RequestService.defaultOptions ):Promise<Response> {
 		return RequestService.send( HTTPMethod.OPTIONS, url, options );
 	}
 
+	/**
+	 * Sends an `HEAD` request.
+	 * @param url URL of the request to be sent.
+	 * @param options Customizable options for the request.
+	 */
 	static head( url:string, options:RequestOptions = RequestService.defaultOptions ):Promise<Response> {
 		return RequestService.send( HTTPMethod.HEAD, url, options );
 	}
 
+	/**
+	 * Sends an `GET` request.
+	 * @param url URL of the request to be sent.
+	 * @param options Customizable options for the request.
+	 */
 	static get( url:string, options?:RequestOptions ):Promise<Response>;
+	/**
+	 * Sends an `GET` request and parses its response data.
+	 * @param url URL of the request to be sent.
+	 * @param options Customizable options for the request.
+	 * @param parser Parser to be used in the response body of the request.
+	 */
 	static get<T>( url:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static get<T>( url:string, options:RequestOptions = RequestService.defaultOptions, parser:Parser<T> = null ):any {
 		return RequestService.send( HTTPMethod.GET, url, null, options, parser );
 	}
 
-	static post( url:string, body:Buffer, options?:RequestOptions ):Promise<Response>;
-	static post<T>( url:string, body:Buffer, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static post( url:string, body:Blob, options?:RequestOptions ):Promise<Response>;
-	static post<T>( url:string, body:Blob, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static post( url:string, body:string, options?:RequestOptions ):Promise<Response>;
-	static post<T>( url:string, body:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	/**
+	 * Sends an `POST` request.
+	 * @param url URL of the request to be sent.
+	 * @param body Body to be sent int he request.
+	 * @param options Customizable options for the request.
+	 */
+	static post( url:string, body:string | Blob | Buffer, options?:RequestOptions ):Promise<Response>;
+	/**
+	 * Sends an `POST` request and parses its response data.
+	 * @param url URL of the request to be sent.
+	 * @param body Body to be sent int he request.
+	 * @param options Customizable options for the request.
+	 * @param parser Parser to be used in the response body of the request.
+	 */
+	static post<T>( url:string, body:string | Blob | Buffer, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static post<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, options:RequestOptions = RequestService.defaultOptions, parser:Parser<T> = null ):any {
 		return RequestService.send( HTTPMethod.POST, url, bodyOrOptions, options, parser );
 	}
 
+	/**
+	 * Sends an `PUT` request.
+	 * @param url URL of the request to be sent.
+	 * @param body Body to be sent int he request.
+	 * @param options Customizable options for the request.
+	 */
 	static put( url:string, body:string, options?:RequestOptions ):Promise<Response>;
+	/**
+	 * Sends an `PUT` request and parses its response data.
+	 * @param url URL of the request to be sent.
+	 * @param body Body to be sent int he request.
+	 * @param options Customizable options for the request.
+	 * @param parser Parser to be used in the response body of the request.
+	 */
 	static put<T>( url:string, body:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static put<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, options:RequestOptions = RequestService.defaultOptions, parser:Parser<T> = null ):any {
 		return RequestService.send( HTTPMethod.PUT, url, bodyOrOptions, options, parser );
 	}
 
+	/**
+	 * Sends an `PATCH` request.
+	 * @param url URL of the request to be sent.
+	 * @param body Body to be sent int he request.
+	 * @param options Customizable options for the request.
+	 */
 	static patch( url:string, body:string, options?:RequestOptions ):Promise<Response>;
+	/**
+	 * Sends an `PATCH` request and parses its response data.
+	 * @param url URL of the request to be sent.
+	 * @param body Body to be sent int he request.
+	 * @param options Customizable options for the request.
+	 * @param parser Parser to be used in the response body of the request.
+	 */
 	static patch<T>( url:string, body:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static patch<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, options:RequestOptions = RequestService.defaultOptions, parser:Parser<T> = null ):any {
 		return RequestService.send( HTTPMethod.PATCH, url, bodyOrOptions, options, parser );
 	}
 
+	/**
+	 * Sends an `DELETE` request.
+	 * @param url URL of the request to be sent.
+	 * @param options Customizable options for the request.
+	 */
 	static delete( url:string, options?:RequestOptions ):Promise<Response>;
+	/**
+	 * Sends an `DELETE` request.
+	 * @param url URL of the request to be sent.
+	 * @param body Body to be sent int he request.
+	 * @param options Customizable options for the request.
+	 */
 	static delete( url:string, body:string, options?:RequestOptions ):Promise<Response>;
+	/**
+	 * Sends an `DELETE` request and parses its response data.
+	 * @param url URL of the request to be sent.
+	 * @param options Customizable options for the request.
+	 * @param parser Parser to be used in the response body of the request.
+	 */
 	static delete<T>( url:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	/**
+	 * Sends an `DELETE` request and parses its response data.
+	 * @param url URL of the request to be sent.
+	 * @param body Body to be sent int he request.
+	 * @param options Customizable options for the request.
+	 * @param parser Parser to be used in the response body of the request.
+	 */
 	static delete<T>( url:string, body:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static delete<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, optionsOrParser:any = RequestService.defaultOptions, parser:Parser<T> = null ):any {
 		return RequestService.send( HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser );
 	}
 
 	/**
-	 * GET requests can be affected by previously cached resources that were originally requested with a different Accept header. This method identifies that
-	 * and retries the request with headers that force browsers to ignore cache.
+	 * GET requests can be affected by previously cached resources that were originally requested with a different Accept header.
+	 * This method identifies that and retries the request with headers that force browsers to ignore cache.
 	 */
 	private static __handleGETResponse( url:string, requestOptions:RequestOptions, response:Response ):Promise<Response> {
 		return Promise.resolve()
@@ -275,10 +416,19 @@ export class RequestService {
 	}
 }
 
+/**
+ * Service with static utils methods for elements related to requests.
+ */
 export class RequestUtils {
 
-	static getHeader( headerName:string, requestOptions:RequestOptions ):Header | undefined;
-	static getHeader( headerName:string, requestOptions:RequestOptions, initialize:true ):Header;
+	/**
+	 * Returns the header object inside an options object.
+	 * Returns `undefined` if the header doesn't exists.
+	 * If `initialize` flag is provided with true, an empty header will be created if not exits.
+	 * @param headerName The name of the header to return/create.
+	 * @param requestOptions The options where to look/create the header.
+	 * @param initialize Flag to create the header of not exists.
+	 */
 	static getHeader( headerName:string, requestOptions:RequestOptions, initialize?:true ):Header | undefined {
 		if( ! requestOptions.headers ) {
 			if( ! initialize ) return undefined;
@@ -300,18 +450,33 @@ export class RequestUtils {
 	}
 
 
+	/**
+	 * Sets an `accept` header in the options object request.
+	 * @param accept The `accept` header value to be set.
+	 * @param requestOptions The options where to set the header.
+	 */
 	static setAcceptHeader( accept:string, requestOptions:RequestOptions ):RequestOptions {
 		RequestUtils.__addHeaderValue( "accept", accept, requestOptions );
 
 		return requestOptions;
 	}
 
+	/**
+	 * Sets a `content-type` header in the options object request.
+	 * @param contentType The `content-type` header value to be set.
+	 * @param requestOptions The options where to set the header.
+	 */
 	static setContentTypeHeader( contentType:string, requestOptions:RequestOptions ):RequestOptions {
 		RequestUtils.__addHeaderValue( "content-type", contentType, requestOptions );
 
 		return requestOptions;
 	}
 
+	/**
+	 * Sets an `if-match` header in the options object request.
+	 * @param eTag The `if-match` header value to be set.
+	 * @param requestOptions The options where to set the header.
+	 */
 	static setIfMatchHeader( eTag:string, requestOptions:RequestOptions ):RequestOptions {
 		if( ! eTag ) return requestOptions;
 
@@ -320,6 +485,11 @@ export class RequestUtils {
 		return requestOptions;
 	}
 
+	/**
+	 * Sets an `if-none` header in the options object request.
+	 * @param eTag The `if-none` header value to be set.
+	 * @param requestOptions The options where to set the header.
+	 */
 	static setIfNoneMatchHeader( eTag:string, requestOptions:RequestOptions ):RequestOptions {
 		if( ! eTag ) return requestOptions;
 
@@ -328,6 +498,11 @@ export class RequestUtils {
 		return requestOptions;
 	}
 
+	/**
+	 * Sets a `prefer` header with `rel=interaction-model` in the options object request.
+	 * @param interactionModelURI The `interaction-model` value to be set.
+	 * @param requestOptions The options where to set the header.
+	 */
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:RequestOptions ):RequestOptions {
 		const headerValue:string = `${ interactionModelURI }; rel=interaction-model`;
 		RequestUtils.__addHeaderValue( "prefer", headerValue, requestOptions );
@@ -335,6 +510,11 @@ export class RequestUtils {
 		return requestOptions;
 	}
 
+	/**
+	 * Sets a `prefer` header with `return` in the options object request.
+	 * @param retrievalType The `return` value to be set.
+	 * @param requestOptions The options where to set the header.
+	 */
 	static setPreferredRetrieval( retrievalType:"representation" | "minimal", requestOptions:RequestOptions ):RequestOptions {
 		const headerValue:string = `return=${ retrievalType }`;
 		RequestUtils.__addHeaderValue( "prefer", headerValue, requestOptions );
@@ -342,6 +522,11 @@ export class RequestUtils {
 		return requestOptions;
 	}
 
+	/**
+	 * Sets a `prefer` header with `include/omit` preferences in the options object request.
+	 * @param preferences The preferences to be set.
+	 * @param requestOptions The options where to set the header.
+	 */
 	static setRetrievalPreferences( preferences:RetrievalPreferences, requestOptions:RequestOptions ):RequestOptions {
 		const prefer:Header = RequestUtils.getHeader( "prefer", requestOptions, true );
 
@@ -357,6 +542,11 @@ export class RequestUtils {
 		return requestOptions;
 	}
 
+	/**
+	 * Sets an `slug` header in the options object request.
+	 * @param slug The `slug` header value to be set.
+	 * @param requestOptions The options where to set the header.
+	 */
 	static setSlug( slug:string, requestOptions:RequestOptions ):RequestOptions {
 		RequestUtils.__addHeaderValue( "slug", slug, requestOptions );
 
@@ -364,13 +554,21 @@ export class RequestUtils {
 	}
 
 
-	static isOptions( object:Object ):object is RequestOptions {
-		return hasPropertyDefined( object, "headers" )
-			|| hasPropertyDefined( object, "sendCredentialsOnCORS" )
-			|| hasPropertyDefined( object, "timeout" )
-			|| hasPropertyDefined( object, "request" );
+	/**
+	 * Checks if the value provided can be considered a {@link RequestOptions}.
+	 * @param value The value to be checked.
+	 */
+	static isOptions( value:any ):value is RequestOptions {
+		return hasPropertyDefined( value, "headers" )
+			|| hasPropertyDefined( value, "sendCredentialsOnCORS" )
+			|| hasPropertyDefined( value, "timeout" )
+			|| hasPropertyDefined( value, "request" );
 	}
 
+	/**
+	 * Clones the options into a new object including coping the headers map into a different map.
+	 * @param options The options to be clones.
+	 */
 	static cloneOptions( options:RequestOptions ):RequestOptions {
 		const clone:RequestOptions = {
 			...options,

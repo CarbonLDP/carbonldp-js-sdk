@@ -26,6 +26,9 @@ import { QueryProperty } from "./QueryProperty";
 import { QueryPropertyType } from "./QueryPropertyType";
 
 
+/**
+ * Base data for a {@link QueryContainerProperty} creation.
+ */
 export interface QueryContainerPropertyData {
 	queryContainer:QueryContainer;
 
@@ -33,6 +36,10 @@ export interface QueryContainerPropertyData {
 	containerPropertyType:QueryContainerPropertyType;
 }
 
+/**
+ * Property that defines a retrieval mode of a container.
+ * This retrieval can be made for `children` or `members`.
+ */
 export class QueryContainerProperty extends QueryProperty {
 	readonly parent:undefined;
 
@@ -216,14 +223,26 @@ export class QueryContainerProperty extends QueryProperty {
 	protected __addTypesTo( pattern:SubjectToken ):void {}
 
 
+	/**
+	 * Sets the order for the sub-select of the contained resources.
+	 * @param order Object with the order specification.
+	 */
 	setOrder( order:QueryDocumentsOrder ):void {
 		this.order = order;
 	}
 
+	/**
+	 * Sets the limit for the sub-select of the contained resources.
+	 * @param limit The limit to set.
+	 */
 	setLimit( limit:number ):void {
 		this._limit = limit;
 	}
 
+	/**
+	 * Sets the offset for the sub-select of the contained resources.
+	 * @param offset The offset to set.
+	 */
 	setOffset( offset:number ):void {
 		this._offset = offset;
 	}

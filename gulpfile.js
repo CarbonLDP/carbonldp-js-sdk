@@ -31,6 +31,8 @@ const htmlMinifier = require( "gulp-htmlmin" );
 
 const moduleAlias = require( "module-alias" );
 
+const { Dgeni } = require( "dgeni" );
+
 let config = {
 	source: {
 		typescript: [
@@ -65,7 +67,7 @@ gulp.task( "build", ( done ) => {
 	runSequence(
 		"version",
 		"clean:dist",
-		[ "compile:typescript", "bundle:sfx" ],
+		[ "compile:typescript", "bundle:sfx", "compile:documentation" ],
 		"prepare:npm-package",
 		"finish",
 		done
@@ -242,7 +244,48 @@ gulp.task( "clean:src", ( done ) => {
 } );
 
 gulp.task( "compile:documentation", ( done ) => {
-	done( "Not implemented." );
+	runSequence(
+		"compile:documentation|dgeni",
+		"compile:documentation|minify",
+		done
+	);
+} );
+
+gulp.task( "compile:documentation|dgeni", () => {
+	require( "ts-node/register/transpile-only" );
+
+	const dgeni = new Dgeni( [
+		require( "docs-generator" )
+			.config( function( templateFinder, templateEngine ) {
+				// Configure pattern for Handlebars templates
+				templateFinder.templateFolders = [ "build/docs/templates/html/" ];
+				templateFinder.templatePatterns = [ "template.hbs" ];
+				templateEngine.partials = [ "partials/*.hbs" ];
+			} ),
+	] );
+
+	return dgeni.generate();
+} );
+
+gulp.task( "compile:documentation:html", ( done ) => {
+	runSequence(
+		"compile:documentation|compile",
+		"compile:documentation|minify",
+		done
+	);
+} );
+
+gulp.task( "compile:documentation|compile", ( done ) => {
+	new karma.Server( {
+		configFile: __dirname + "/karma.conf.js",
+		reporters: [ "markdown" ],
+		markdownReporter: {
+			src: "build/docs/templates/html/template.hbs",
+			partials: "build/docs/templates/html/partials/*.hbs",
+			dest: "docs/index.html"
+		},
+		singleRun: true
+	}, done ).start();
 } );
 
 gulp.task( "compile:documentation|minify", () => {

@@ -14,14 +14,35 @@ import { DigestedObjectSchema } from "./DigestedObjectSchema";
 import { ObjectSchemaDigester } from "./ObjectSchemaDigester";
 
 
+/**
+ * Interface that defines the methods needed for an element that can provide object schemas.
+ */
 export interface ObjectSchemaResolver {
+	/**
+	 * Optional context where to obtain the contexts.
+	 */
 	context?:Context;
 
 
+	/**
+	 * Returns the general object schema that applies to all the resources.
+	 */
 	getGeneralSchema():DigestedObjectSchema;
 
+	// TODO: Remove path param
+	/**
+	 * Returns true if the object provided has an specific schema for.
+	 * @param object The object to check if it has any associated schema.
+	 * @param path
+	 */
 	hasSchemaFor( object:object, path?:string ):boolean;
 
+	// TODO: Remove path param
+	/**
+	 * Returns the specific object schema that applies to the object provided.
+	 * @param object The object to look for its associated schema.
+	 * @param path
+	 */
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema;
 }
 

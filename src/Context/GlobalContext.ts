@@ -36,10 +36,26 @@ import { PlatformMetadata } from "../System/PlatformMetadata";
 import { AbstractContext } from "./AbstractContext";
 
 
+/**
+ * Shared context used by every {@link CarbonLDP} context as its parent.
+ *
+ * This context contains the shared schemas of the Platform and all the
+ * references to external resources.
+ */
 export class GlobalContext extends AbstractContext<RegisteredPointer, undefined, undefined> {
+	/**
+	 * Singleton instance of the {@link GlobalContext}.
+	 * This exact instance is used as parent by every {@link CarbonLDP} instance.
+	 */
 	static readonly instance:GlobalContext = new GlobalContext();
 
+	/**
+	 * Registry that stores the external resources of any {@link CarbonLDP} instance.
+	 */
 	readonly registry:GeneralRegistry<RegisteredPointer>;
+	/**
+	 * Undefined repository since external resources cannot be fetched.
+	 */
 	readonly repository:undefined;
 
 	protected _baseURI:"" = "";

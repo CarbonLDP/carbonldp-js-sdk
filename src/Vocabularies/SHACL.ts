@@ -1,3 +1,6 @@
+/**
+ * Interface that describes the used vocabulary of the Shapes Constraint Language (SHACL) specification.
+ */
 export interface SHACL {
 	namespace:"http://www.w3.org/ns/shacl#";
 
@@ -17,6 +20,9 @@ export interface SHACL {
 	value:"http://www.w3.org/ns/shacl#value";
 }
 
+/**
+ * Constant that implements the used vocabulary of the Shapes Constraint Language (SHACL) specification.
+ */
 export const SHACL:SHACL = {
 	namespace: "http://www.w3.org/ns/shacl#",
 

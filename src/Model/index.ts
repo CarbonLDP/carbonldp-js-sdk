@@ -1,4 +1,4 @@
-export { ModelDecorator } from "./ModelDecorator";
+export { ModelDecorator, ModelDecoratorFactory } from "./ModelDecorator";
 export { ModelFactory } from "./ModelFactory";
 export { ModelFactoryOptional } from "./ModelFactoryOptional";
 export { ModelPrototype } from "./ModelPrototype";
