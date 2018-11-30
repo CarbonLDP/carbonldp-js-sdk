@@ -5209,6 +5209,97 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				);
 			} );
 
+			it( "should send partial CONSTRUCT query when no schemas", async () => {
+				stubRequest( "https://example.com/" );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+				;
+
+
+				await repository.getChildren( "/", _ => _
+					.withType( "Resource" )
+					.properties( {
+						"property1": _.inherit,
+						"property2": {
+							"query": __ => __.properties( {
+								"property2": __.inherit,
+								"property3": __.inherit,
+								"property4": __.inherit,
+							} ),
+						},
+					} )
+					.orderBy( "property2" )
+					.limit( 10 )
+					.offset( 5 )
+				);
+
+
+				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+				expect( request.params ).toEqual( "" +
+					"CONSTRUCT {" +
+					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
+					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
+					"" + ` <${C.target}> ?child.` +
+
+					" ?child a ?child__types;" +
+					"" + ` <${C.document}> ?child___graph;` +
+					"" + " <https://example.com/ns#property1> ?child__property1;" +
+					"" + " <https://example.com/ns#property2> ?child__property2." +
+
+					" ?child__property2 a ?child__property2__types;" +
+					"" + ` <${C.document}> ?child__property2___graph;` +
+					"" + " <https://example.com/ns#property2> ?child__property2__property2;" +
+					"" + " <https://example.com/ns#property3> ?child__property2__property3;" +
+					"" + " <https://example.com/ns#property4> ?child__property2__property4 " +
+
+					"} {" +
+					" {" +
+					"" + " SELECT DISTINCT ?child {" +
+					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
+
+					"" + "" + " ?child a <https://example.com/ns#Resource>." +
+
+					"" + "" + " OPTIONAL { ?child <https://example.com/ns#property2> ?child__property2 }" +
+
+					"" + " }" +
+					"" + " ORDER BY ?child__property2" +
+					"" + " LIMIT 10" +
+					"" + " OFFSET 5" +
+					" }" +
+
+					" GRAPH ?child___graph { ?child a ?child__types }" +
+
+					" OPTIONAL {" +
+					"" + " GRAPH ?child___graph { ?child <https://example.com/ns#property1> ?child__property1 }" +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " GRAPH ?child___graph { ?child <https://example.com/ns#property2> ?child__property2 }" +
+
+					"" + " OPTIONAL { GRAPH ?child__property2___graph { ?child__property2 a ?child__property2__types } }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " GRAPH ?child__property2___graph { ?child__property2 <https://example.com/ns#property2> ?child__property2__property2 }" +
+					"" + " }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " GRAPH ?child__property2___graph { ?child__property2 <https://example.com/ns#property3> ?child__property2__property3 }" +
+					"" + " }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " GRAPH ?child__property2___graph { ?child__property2 <https://example.com/ns#property4> ?child__property2__property4 }" +
+					"" + " }" +
+					" }" +
+
+					" " +
+					"}"
+				);
+			} );
+
 			it( "should send partial CONSTRUCT query with required properties", async () => {
 				stubRequest( "https://example.com/" );
 
@@ -5905,6 +5996,154 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 					done();
 				} ).catch( done.fail );
+			} );
+
+			it( "should return children with nested when no schemas", async () => {
+				jasmine.Ajax
+					.stubRequest( "https://example.com/resource/" )
+					.andReturn( {
+						status: 200,
+						responseText: JSON.stringify( [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/resource/child1/",
+								} ],
+							},
+							{
+								"@id": "_:2",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/resource/child2/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/resource/child1/",
+								"@graph": [ {
+									"@id": "https://example.com/resource/child1/",
+									"@type": [
+										C.Document,
+										"https://example.com/ns#Resource",
+										LDP.BasicContainer,
+										LDP.RDFSource,
+									],
+									[ C.checksum ]: [ {
+										"@value": "1-12345",
+									} ],
+									[ C.document ]: [ {
+										"@id": "https://example.com/resource/child1/",
+									} ],
+									"https://example.com/ns#property1": [ {
+										"@value": "value 1",
+									} ],
+									"https://example.com/ns#property2": [ {
+										"@id": "https://example.com/resource/child2/",
+									} ],
+									"https://example.com/ns#property3": [ {
+										"@value": "another value 1",
+									} ],
+									"https://example.com/ns#property4": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+								} ],
+							},
+							{
+								"@id": "https://example.com/resource/child2/",
+								"@graph": [ {
+									"@id": "https://example.com/resource/child2/",
+									"@type": [
+										C.Document,
+										"https://example.com/ns#Resource",
+										LDP.BasicContainer,
+										LDP.RDFSource,
+									],
+									[ C.checksum ]: [ {
+										"@value": "2-12345",
+									} ],
+									[ C.document ]: [ {
+										"@id": "https://example.com/resource/child2/",
+									} ],
+									"https://example.com/ns#property1": [ {
+										"@value": "value 2",
+									} ],
+									"https://example.com/ns#property2": [ {
+										"@id": "https://example.com/resource/child1/",
+									} ],
+									"https://example.com/ns#property3": [ {
+										"@value": "another value 2",
+									} ],
+									"https://example.com/ns#property4": [ {
+										"@value": "67890",
+										"@type": XSD.integer,
+									} ],
+								} ],
+							},
+						] ),
+					} );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+				;
+
+
+				interface MyDocument {
+					property1:string;
+					property2:MyDocument;
+					property3:string;
+					property4:number;
+				}
+
+				const myDocuments:(Document & MyDocument)[] = await repository
+					.getChildren<MyDocument>( "https://example.com/resource/", _ => _
+						.properties( {
+							"property2": {
+								"query": __ => __
+									.properties( {
+										"property1": _.inherit,
+										"property3": _.inherit,
+										"property4": _.inherit,
+									} ),
+							},
+						} )
+					);
+
+				expect( myDocuments ).toEqual( jasmine.any( Array ) );
+				expect( myDocuments.length ).toBe( 2 );
+
+				expect( myDocuments[ 0 ].$isQueried() ).toBe( true );
+				expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+					$eTag: "\"1-12345\"",
+					$_resolved: true,
+				} ) );
+				expect<MyDocument>( myDocuments[ 0 ] ).toEqual( {
+					property1: "value 1",
+					property2: myDocuments[ 1 ],
+					property3: "another value 1",
+					property4: 12345,
+				} );
+
+				expect( myDocuments[ 1 ].$isQueried() ).toBe( true );
+				expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+					$eTag: "\"2-12345\"",
+					$_resolved: true,
+				} ) );
+				expect<MyDocument>( myDocuments[ 1 ] ).toEqual( {
+					property1: "value 2",
+					property2: myDocuments[ 0 ],
+					property3: "another value 2",
+					property4: 67890,
+				} );
 			} );
 
 			it( "should return full children", ( done:DoneFn ) => {
