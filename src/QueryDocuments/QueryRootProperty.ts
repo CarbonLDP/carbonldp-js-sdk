@@ -7,6 +7,9 @@ import { QueryPropertyType } from "./QueryPropertyType";
 import { QueryRootPropertyData } from "./QueryRootPropertyData";
 
 
+/**
+ * Property that represents the target resource of single fetch query.
+ */
 export class QueryRootProperty extends QueryProperty {
 
 	constructor( data:QueryRootPropertyData ) {

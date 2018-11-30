@@ -24,14 +24,30 @@ import { Resource } from "../Resource/Resource";
 import { BaseFreeResources } from "./BaseFreeResources";
 
 
+/**
+ * Model that represents resources that doesn't have a context.
+ */
 export interface FreeResources extends Registry<Resource> {
-	registry:GeneralRegistry<any>;
+	/**
+	 * Registry where the {@link FreeResources} scope is in.
+	 */
+	readonly registry:GeneralRegistry<any>;
 
+	/**
+	 * @see {@link Registry._getLocalID}
+	 */
 	_getLocalID( id:string ):string;
 
+	/**
+	 * @see {@link Registry._addPointer}
+	 */
 	_addPointer<T extends object>( base:T & Partial<Pointer> ):T & Resource;
 
 
+	/**
+	 * Returns the JSON-LD representation of the every resources inside an array.
+	 * @param contextOrKey A specific context to use for expand the data into JSON-LD instead of the internal one.
+	 */
 	toJSON( contextOrKey?:Context | string ):RDFNode[];
 }
 
@@ -42,10 +58,16 @@ export type OverriddenMembers =
 	| "_addPointer"
 	;
 
+/**
+ * Utils for {@link FreeResources}.
+ */
 export interface FreeResourcesUtils {
 	parseFreeNodes( registry:GeneralRegistry<any>, freeNodes:RDFNode[] ):FreeResources;
 }
 
+/**
+ * Factory, decorator and utils for {@link FreeResources}.
+ */
 export type FreeResourcesFactory =
 	& ModelPrototype<FreeResources, Registry, OverriddenMembers>
 	& ModelDecorator<FreeResources, BaseFreeResources>
@@ -54,6 +76,9 @@ export type FreeResourcesFactory =
 	& FreeResourcesUtils
 	;
 
+/**
+ * Constant that implements {@link FreeResourcesFactory}.
+ */
 export const FreeResources:FreeResourcesFactory = {
 	PROTOTYPE: {
 		registry: void 0,

@@ -11,27 +11,69 @@ export * from "./Literal/Serializer";
 export { Serializers };
 
 
+/**
+ * Interface that represents an RDF Literal Value.
+ */
 export interface RDFLiteral {
+	/**
+	 * The URI of the XSD type of the literal.
+	 */
 	"@type"?:string;
+	/**
+	 * The actual string value if the literal.
+	 */
 	"@value":string;
+	/**
+	 * The specific language of the string value.
+	 */
 	"@language"?:string;
 }
 
 
+/**
+ * Factory and utils for {@link RDFLiteral}.
+ */
 export interface RDFLiteralFactory {
+	/**
+	 * Convert the value provided to a {@link RDFLiteral} object.
+	 * @param value
+	 */
 	from( value:any ):RDFLiteral;
 
 
+	/**
+	 * Parses the value string into the respective type specified.
+	 * If no type provided, the same string will be returned.
+	 * @param value
+	 * @param type
+	 */
 	parse( value:string, type?:string ):any;
+	/**
+	 * Parses the {@link RDFLiteral} object to the respective JavaScript type.
+	 * Returns `null` if the Literal can't be parsed.
+	 * @param literal
+	 */
 	parse( literal:RDFLiteral ):any;
 
 
+	/**
+	 * Returns true if the object provided is considered a {@link RDFLiteral} object.
+	 * @param value
+	 */
 	is( value:any ):value is RDFLiteral;
 
 
+	/**
+	 * Returns true if the {@link RDFLiteral} has the type specified.
+	 * @param value
+	 * @param type
+	 */
 	hasType( value:RDFLiteral, type:string ):boolean;
 }
 
+/**
+ * Constant that implements {@link RDFLiteralFactory}.
+ */
 export const RDFLiteral:RDFLiteralFactory = {
 	from( value:any ):RDFLiteral {
 		if( Utils.isNull( value ) )

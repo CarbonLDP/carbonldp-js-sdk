@@ -8,14 +8,26 @@ import { XSD } from "../Vocabularies/XSD";
 import { PlatformMetadata } from "./PlatformMetadata";
 
 
+/**
+ * Model that represents a `c:PlatformInstance`.
+ * The model contains the actual data of a platform instance.
+ */
 export interface PlatformInstance extends VolatileResource {
-	$registry:PlatformMetadata;
-
+	/**
+	 * The datetime when the platform was built.
+	 */
 	buildDate:Date;
+	/**
+	 * The version the platform instance.
+	 */
 	version:string;
 }
 
 
+// TODO: Change to type-alias
+/**
+ * Factory and utils for {@link PlatformInstance}.
+ */
 export interface PlatformInstanceFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
@@ -32,6 +44,9 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link PlatformInstanceFactory}.
+ */
 export const PlatformInstance:PlatformInstanceFactory = {
 	TYPE: C.PlatformInstance,
 	SCHEMA,

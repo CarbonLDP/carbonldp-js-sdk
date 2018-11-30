@@ -14,61 +14,209 @@ import { $BaseRegistry, BaseRegistry } from "./BaseRegistry";
 import { RegisteredPointer } from "./RegisteredPointer";
 
 
+/**
+ * Interface with the base methods of a service that stores and manages an specific type of resources.
+ */
 export interface Registry<MODEL extends RegisteredPointer = RegisteredPointer> extends PointerLibrary, PointerValidator {
+	/**
+	 * Parent registry of the registry.
+	 */
 	readonly registry:Registry<any> | $Registry<any> | undefined;
 
+	/**
+	 * Decorator object to personalize the pointers of the registry.
+	 */
 	readonly __modelDecorator:ModelDecorator<MODEL, BaseRegisteredPointer>;
+	/**
+	 * Map where the resources of the registry are stored.
+	 */
 	readonly __resourcesMap:Map<string, MODEL>;
 
 
+	/**
+	 * Returns if the provided ID string or pointer can be stored in any of the registry hierarchy.
+	 * @param idOrPointer The id or pointer to be checked.
+	 */
 	inScope( idOrPointer:string | Pointer ):boolean;
+	/**
+	 * Returns if the provided ID string or pointer can be only stored in the current registry.
+	 * @param idOrPointer The id or pointer to be checked.
+	 * @param local Flag to ignore hierarchy and only check in the current registry.
+	 */
 	inScope( idOrPointer:string | Pointer, local:true ):boolean;
 
 
+	/**
+	 * Returns true if a resource identified by the provided ID exists in the registry hierarchy.
+	 * @param id ID to check its existence.
+	 */
 	hasPointer( id:string ):boolean;
+	/**
+	 * Returns true if a resource identified by the provided ID exists in the registry hierarchy.
+	 * @param id ID to check its existence.
+	 * @param local Flag to ignore hierarchy and only check in the current registry.
+	 */
 	hasPointer( id:string, local:true ):boolean;
 
+	/**
+	 * Returns the resource identified by the provided ID from the first existence in the registry hierarchy.
+	 * If non exists, a pointer is created in the first register where the ID in scope of.
+	 *
+	 * A error is thrown when no pointer could be returned or created in any registry.
+	 *
+	 * @param id ID to return its pointer representation.
+	 */
 	getPointer( id:string ):RegisteredPointer;
+	/**
+	 * Returns the resource identified by the provided ID from the current registry.
+	 * If non exists, a resource is created from the current registry model.
+	 *
+	 * A error is thrown when no pointer could be returned or created.
+	 *
+	 * @param id ID to check its existence.
+	 * @param local Flag to ignore hierarchy and only return pointers from the current registry.
+	 */
 	getPointer( id:string, local:true ):MODEL;
 
+	/**
+	 * Returns all the pointers stored the registry hierarchy.
+	 */
 	getPointers():RegisteredPointer[];
+	/**
+	 * Returns all the pointers stored in the current registry.
+	 * @param local Flag to ignore hierarchy and only return pointers from the current registry.
+	 */
 	getPointers( local:true ):MODEL[];
 
+	/**
+	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Returns true if the resource could be removed, false otherwise.
+	 * @param idOrPointer ID or Pointer to be removed.
+	 */
 	removePointer( idOrPointer:string | RegisteredPointer ):boolean;
+	/**
+	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Returns true if the resource could be removed, false otherwise.
+	 * @param idOrPointer ID or Pointer to be removed.
+	 * @param local Flag to ignore hierarchy and only remove from the current registry.
+	 */
 	removePointer( idOrPointer:string | RegisteredPointer, local:true ):boolean;
 
 
+	/**
+	 * Adds the provided object as a resource of the registry.
+	 * @param pointer The base object to be added as a resource of the registry.
+	 */
 	_addPointer<T extends object>( pointer:T & Pointer ):T & MODEL;
 
+	/**
+	 * Returns the local identifier for the ID provided.
+	 * Throws and error if the ID cannot be converted into a local one.
+	 * @param id The ID to be converted.
+	 */
 	_getLocalID( id:string ):string;
 }
 
+/**
+ * Interface with the base methods of a model that stores and manages an specific type of resources.
+ */
 export interface $Registry<MODEL extends RegisteredPointer = RegisteredPointer> extends Pointer, $PointerLibrary, $PointerValidator {
+	/**
+	 * Parent registry of the registry.
+	 */
 	readonly $registry:Registry<any> | $Registry<any> | undefined;
 
+	/**
+	 * Decorator object to personalize the pointers of the registry.
+	 */
 	readonly $__modelDecorator:ModelDecorator<MODEL, BaseRegisteredPointer>;
+	/**
+	 * Map where the resources of the registry are stored.
+	 */
 	readonly $__resourcesMap:Map<string, MODEL>;
 
 
+	/**
+	 * Returns if the provided ID string or pointer can be stored in any of the registry hierarchy.
+	 * @param idOrPointer The id or pointer to be checked.
+	 */
 	$inScope( idOrPointer:string | Pointer ):boolean;
+	/**
+	 * Returns if the provided ID string or pointer can be only stored in the current registry.
+	 * @param idOrPointer The id or pointer to be checked.
+	 * @param local Flag to ignore hierarchy and only check in the current registry.
+	 */
 	$inScope( idOrPointer:string | Pointer, local:true ):boolean;
 
 
+	/**
+	 * Returns true if a resource identified by the provided ID exists in the registry hierarchy.
+	 * @param id ID to check its existence.
+	 */
 	$hasPointer( id:string ):boolean;
+	/**
+	 * Returns true if a resource identified by the provided ID exists in the registry hierarchy.
+	 * @param id ID to check its existence.
+	 * @param local Flag to ignore hierarchy and only check in the current registry.
+	 */
 	$hasPointer( id:string, local:true ):boolean;
 
+	/**
+	 * Returns the resource identified by the provided ID from the first existence in the registry hierarchy.
+	 * If non exists, a pointer is created in the first register where the ID in scope of.
+	 *
+	 * A error is thrown when no pointer could be returned or created in any registry.
+	 *
+	 * @param id ID to return its pointer representation.
+	 */
 	$getPointer( id:string ):RegisteredPointer;
+	/**
+	 * Returns the resource identified by the provided ID from the current registry.
+	 * If non exists, a resource is created from the current registry model.
+	 *
+	 * A error is thrown when no pointer could be returned or created.
+	 *
+	 * @param id ID to check its existence.
+	 * @param local Flag to ignore hierarchy and only return pointers from the current registry.
+	 */
 	$getPointer( id:string, local:true ):MODEL;
 
+	/**
+	 * Returns all the pointers stored the registry hierarchy.
+	 */
 	$getPointers():RegisteredPointer[];
+	/**
+	 * Returns all the pointers stored in the current registry.
+	 * @param local Flag to ignore hierarchy and only return pointers from the current registry.
+	 */
 	$getPointers( local:true ):MODEL[];
 
+	/**
+	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Returns true if the resource could be removed, false otherwise.
+	 * @param idOrPointer ID or Pointer to be removed.
+	 */
 	$removePointer( idOrPointer:string | RegisteredPointer ):boolean;
+	/**
+	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Returns true if the resource could be removed, false otherwise.
+	 * @param idOrPointer ID or Pointer to be removed.
+	 * @param local Flag to ignore hierarchy and only remove from the current registry.
+	 */
 	$removePointer( idOrPointer:string | RegisteredPointer, local:true ):boolean;
 
 
+	/**
+	 * Returns the local identifier for the ID provided.
+	 * Throws and error if the ID cannot be converted into a local one.
+	 * @param id The ID to be converted.
+	 */
 	$_getLocalID( id:string ):string;
 
+	/**
+	 * Adds the provided object as a resource of the registry.
+	 * @param pointer The base object to be added as a resource of the registry.
+	 */
 	$_addPointer<T extends object>( pointer:T & Pointer ):T & MODEL;
 }
 
@@ -182,18 +330,17 @@ function __removePointer( this:AnyRegistry | undefined, idOrPointer:string | Reg
 }
 
 
-export function _getPointer<T extends RegisteredPointer>( registry:Registry<T> | $Registry<T>, id:string, local?:true ):T {
-	return "$id" in registry ?
-		registry.$getPointer( id, local ) :
-		registry.getPointer( id, local );
-}
-
-// TODO: Use unknown
+/**
+ * Factory, decorator and utils for {@link Registry} and {@link $Registry}.
+ */
 export type RegistryFactory =
 	& ModelPrototype<Registry<any>>
 	& BiModelDecorator<Registry<any>, $Registry<any>, BaseRegistry, $BaseRegistry>
 	;
 
+/**
+ * Constant that implements for {@link RegistryFactory}.
+ */
 export const Registry:RegistryFactory = {
 	PROTOTYPE: {
 		registry: void 0,

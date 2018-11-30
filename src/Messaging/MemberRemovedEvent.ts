@@ -6,11 +6,21 @@ import { EventMessage } from "./EventMessage";
 import { MemberRemovedEventDetails } from "./MemberRemovedEventDetails";
 
 
+/**
+ * Model that represents a `c:MemberRemovedEvent`.
+ */
 export interface MemberRemovedEvent extends EventMessage {
+	/**
+	 * Object with the members removed.
+	 */
 	details:MemberRemovedEventDetails;
 }
 
 
+// TODO: Change to type-alias
+/**
+ * Factory, decorator and utils form {@link MemberRemovedEvent}.
+ */
 export interface MemberRemovedEventFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
@@ -25,6 +35,9 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link MemberRemovedEventFactory}.
+ */
 export const MemberRemovedEvent:MemberRemovedEventFactory = {
 	TYPE,
 	SCHEMA,

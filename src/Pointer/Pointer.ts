@@ -8,26 +8,56 @@ import { isObject } from "../Utils";
 import { BasePointer } from "./BasePointer";
 
 
+/**
+ * Interface that represents the base to any model that can be referenced by a URI.
+ */
 export interface Pointer {
+	/**
+	 * The URI that identifies the pointer.
+	 */
 	$id:string;
 }
 
 
+// TODO: Change to type-alias
+/**
+ * Factory, decorator and utils for {@link Pointer}.
+ */
 export interface PointerFactory extends ModelPrototype<Pointer>
 	, ModelDecorator<Pointer, BasePointer>
 	, ModelTypeGuard<Pointer>
 	, ModelFactory<Pointer, BasePointer> {
 
+	/**
+	 * Creates a pointer object with the ID provided.
+	 * @param data The optional data to use in the pointer creation.
+	 */
 	create<T extends object>( data?:T & BasePointer ):T & Pointer;
 
 
+	/**
+	 * Checks if the objects refer to the same resource by its ID.
+	 * @param pointer1
+	 * @param pointer2
+	 */
 	areEqual( pointer1:Pointer, pointer2:Pointer ):boolean;
 
+	/**
+	 * Extracts the IDs of all the pointers provided.
+	 * @param pointers The array of pointers to obtain their IDs.
+	 */
 	getIDs( pointers:Pointer[] ):string[];
 
+	/**
+	 * Extract the IF of the pointer provided.
+	 * @param pointerOrIRI Pointer to extract its ID, or the URI that will be immediately returned.
+	 */
 	getID( pointerOrIRI:Pointer | string ):string;
 }
 
+/**
+ * Constant that implements {@link PointerFactory}.
+ */
 export const Pointer:PointerFactory = {
 	PROTOTYPE: {
 		get $id():string { return ""; },
@@ -77,4 +107,3 @@ export const Pointer:PointerFactory = {
 		return isObject( pointerOrIRI ) ? pointerOrIRI.$id : pointerOrIRI;
 	},
 };
-

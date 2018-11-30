@@ -16,38 +16,122 @@ import { BaseTransientFragment } from "./BaseTransientFragment";
 import { TransientFragment } from "./TransientFragment";
 
 
+/**
+ * Model that represents a fragment of a persisted `c:Document`.
+ */
 export interface Fragment extends TransientFragment, QueryablePointer {
+	/**
+	 * The document the fragment belongs to.
+	 */
 	$document:Document;
+	/**
+	 * Registry where the fragment belongs to.
+	 */
 	$registry:Document;
+	/**
+	 * Repository where the fragment can make requests.
+	 */
 	$repository:Document;
 
 
+	/**
+	 * Accessor to the {@link Document.$get()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$get()}
+	 */
 	$get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	/**
+	 * Accessor to the {@link Document.$get()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$get()}
+	 */
 	$get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	/**
+	 * Accessor to the {@link Document.$get()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$get()}
+	 */
 	$get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	/**
+	 * Accessor to the {@link Document.$get()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$get()}
+	 */
 	$get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
+	/**
+	 * Accessor to the {@link Document.$resolve()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$resolve()}
+	 */
 	$resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	/**
+	 * Accessor to the {@link Document.$resolve()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$resolve()}
+	 */
 	$resolve<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	/**
+	 * Accessor to the {@link Document.$resolve()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$resolve()}
+	 */
 	$resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	/**
+	 * Accessor to the {@link Document.$resolve()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$resolve()}
+	 */
 	$resolve<T extends object>( document:Document, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 
+	/**
+	 * Accessor to the {@link Document.$exists()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$exists()}
+	 */
 	$exists( requestOptions?:RequestOptions ):Promise<boolean>;
+	/**
+	 * Accessor to the {@link Document.$exists()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$exists()}
+	 */
 	$exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
 
+	/**
+	 * Accessor to the {@link Document.$refresh()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$refresh()}
+	 */
 	$refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	/**
+	 * Accessor to the {@link Document.$refresh()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$refresh()}
+	 */
 	$refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
+	/**
+	 * Accessor to the {@link Document.$save()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$save()}
+	 */
 	$save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	/**
+	 * Accessor to the {@link Document.$save()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$save()}
+	 */
 	$save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
+	/**
+	 * Accessor to the {@link Document.$saveAndRefresh()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$saveAndRefresh()}
+	 */
 	$saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	/**
+	 * Accessor to the {@link Document.$saveAndRefresh()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$saveAndRefresh()}
+	 */
 	$saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
+	/**
+	 * Accessor to the {@link Document.$delete()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$delete()}
+	 */
 	$delete( requestOptions?:RequestOptions ):Promise<void>;
+	/**
+	 * Accessor to the {@link Document.$delete()} method of the document where the fragment belongs to.
+	 * @see {@link Document.$delete()}
+	 */
 	$delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 }
 
@@ -57,12 +141,18 @@ export type OverriddenMembers =
 	| "$_resolved"
 	;
 
+/**
+ * Factory, decorator and utils for {@link Fragment}.
+ */
 export type FragmentFactory =
 	& ModelPrototype<Fragment, TransientFragment & QueryablePointer, OverriddenMembers>
 	& ModelDecorator<Fragment, BaseResolvableFragment>
 	& ModelFactory<TransientFragment, BaseTransientFragment>
 	;
 
+/**
+ * Constant that implements {@link FragmentFactory}.
+ */
 export const Fragment:FragmentFactory = {
 	PROTOTYPE: {
 		get $repository( this:Fragment ):Document {

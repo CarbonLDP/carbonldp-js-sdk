@@ -10,16 +10,33 @@ import { Resource } from "../Resource/Resource";
 import { C } from "../Vocabularies/C";
 
 
+/**
+ * Base properties for a {@link RemoveMemberAction}.
+ */
 export interface BaseRemoveMemberAction extends BaseResource {
+	/**
+	 * The resources to be removed as members.
+	 */
 	targetMembers:Pointer[];
 }
 
 
+/**
+ * Model that represents a `c:RemoveMemberAction`.
+ * This model is used as a request body for removing members.
+ */
 export interface RemoveMemberAction extends Resource {
+	/**
+	 * The resources to remove as members.
+	 */
 	targetMembers:Pointer[];
 }
 
 
+/**
+ * Factory, decorator and utils for {@link RemoveMemberAction}.
+ */
+// TODO: Change to type-alias
 export interface RemoveMemberActionFactory extends ModelFactory<RemoveMemberAction> {
 	TYPE:C[ "RemoveMemberAction" ];
 	SCHEMA:ObjectSchema;
@@ -39,6 +56,9 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link RemoveMemberActionFactory}.
+ */
 export const RemoveMemberAction:RemoveMemberActionFactory = {
 	TYPE: C.RemoveMemberAction,
 	SCHEMA,

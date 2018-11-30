@@ -1,3 +1,6 @@
+/**
+ * Interface that defines the vocabulary of the data-types defined in the XML Schema Definition Language (XSD).
+ */
 export interface XSD {
 	namespace:"http://www.w3.org/2001/XMLSchema#";
 
@@ -31,6 +34,9 @@ export interface XSD {
 	unsignedShort:"http://www.w3.org/2001/XMLSchema#unsignedShort";
 }
 
+/**
+ * Constant the implements the vocabulary of the data-types defined in the XML Schema Definition Language (XSD).
+ */
 export const XSD:XSD = {
 	namespace: "http://www.w3.org/2001/XMLSchema#",
 

@@ -24,9 +24,15 @@ import { _guessXSDType } from "./Utils";
 
 
 // TODO: Use Literal.Parsers to parse literals
+/**
+ * Service with that can convert expanded JSON-LD objects to compacted resources and viceversa.
+ */
 export class JSONLDConverter {
 	private readonly _literalSerializers:Map<string, Serializer>;
 
+	/**
+	 * Map object with data-type/serializer pairs for stringify the data of a resource when expanding it.
+	 */
 	get literalSerializers():Map<string, Serializer> { return this._literalSerializers; }
 
 	private static getDefaultSerializers():Map<string, Serializer> {
@@ -48,6 +54,10 @@ export class JSONLDConverter {
 		return literalSerializers;
 	}
 
+	/**
+	 * Creates a JSONLD Converter from optional literal serializers.
+	 * @param literalSerializers Serializers to be set in the instance.
+	 */
 	constructor( literalSerializers?:Map<string, Serializer> ) {
 		this._literalSerializers = literalSerializers ?
 			MapUtils.extend( new Map(), literalSerializers ) :
@@ -55,10 +65,41 @@ export class JSONLDConverter {
 		;
 	}
 
-	compact( expandedObjects:Object[], targetObjects:Object[], digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):Object[];
-	compact( expandedObject:Object, targetObject:Object, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary, strict?:boolean ):Object;
-	compact( expandedObjects:Object[], digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):Object[];
-	compact( expandedObject:Object, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):Object;
+	/**
+	 * Assigns the data of the expanded JSON-LD objects to the target objects in a friendly mode.
+	 * i.e. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.
+	 * @param expandedObjects The JSON-LD objects to compact.
+	 * @param targetObjects The target objects where will be added the compact data of the expanded object.
+	 * @param digestedSchema The schema that describes how compact the expanded object.
+	 * @param pointerLibrary An object from where one can obtain the pointers of resources.
+	 */
+	compact( expandedObjects:object[], targetObjects:object[], digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):object[];
+	/**
+	 * Assigns the data of the expanded JSON-LD object to the target object in a friendly mode.
+	 * i.e. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.
+	 * @param expandedObject The JSON-LD object to compact.
+	 * @param targetObject The target object where will be added the compact data of the expanded object.
+	 * @param digestedSchema The schema that describes how compact the expanded object.
+	 * @param pointerLibrary An object from where one can obtain the pointers of resources.
+	 * @param strict Flag to ignore the compaction of properties that are not defined in the schema.
+	 */
+	compact( expandedObject:object, targetObject:object, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary, strict?:boolean ):object;
+	/**
+	 * Assigns the data of the expanded JSON-LD objects into new objects in a friendly mode.
+	 * i.e. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.
+	 * @param expandedObjects The JSON-LD objects to compact.
+	 * @param digestedSchema The schema that describes how compact the expanded object.
+	 * @param pointerLibrary An object from where one can obtain the pointers of resources.
+	 */
+	compact( expandedObjects:object[], digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):object[];
+	/**
+	 * Assigns the data of the expanded JSON-LD object into a new object in a friendly mode.
+	 * i.e. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.
+	 * @param expandedObject The JSON-LD object to compact.
+	 * @param digestedSchema The schema that describes how compact the expanded object.
+	 * @param pointerLibrary An object from where one can obtain the pointers of resources.
+	 */
+	compact( expandedObject:object, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):object;
 	compact( expandedObjectOrObjects:any, targetObjectOrObjectsOrDigestedContext:any, digestedSchemaOrPointerLibrary:any, pointerLibrary:PointerLibrary | $PointerLibrary = null, strict?:boolean ):any {
 		let targetObjectOrObjects:any = ! pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
 		let digestedSchema:any = ! pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
@@ -78,13 +119,34 @@ export class JSONLDConverter {
 		return targetObjects;
 	}
 
-	expand( compactedObjects:Object[], generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):RDFNode[];
-	expand( compactedObject:Object, generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):RDFNode;
-	expand( compactedObjectOrObjects:Object[], generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):any {
+	/**
+	 * Creates an expanded JSON-LD object from the compacted objects in accordance to the schema provided.
+	 * @param compactedObjects The compacted resources to expand.
+	 * @param generalSchema The general schema that applies to any compacted resource.
+	 * @param digestedSchema The specific schema that applies to the compacted resources.
+	 */
+	expand( compactedObjects:object[], generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):RDFNode[];
+	/**
+	 * Creates an expanded JSON-LD object from the compacted object in accordance to the schema provided.
+	 * @param compactedObject The compacted resource to expand.
+	 * @param generalSchema The general schema that applies to any compacted resource.
+	 * @param digestedSchema The specific schema that applies to the compacted resource.
+	 */
+	expand( compactedObject:object, generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):RDFNode;
+	expand( compactedObjectOrObjects:object[], generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):any {
 		if( ! Array.isArray( compactedObjectOrObjects ) ) return this.__expandSingle( compactedObjectOrObjects, generalSchema, digestedSchema );
 	}
 
 
+	/**
+	 * Compacts and updates the data of the expanded JSON-LD object into the target object.
+	 * i.e. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.
+	 * @param target Object to be updated from the expanded one.
+	 * @param node The expanded object to be compacted and updated into the target
+	 * @param digestedSchema The schema that describes how compact the expanded object.
+	 * @param pointerLibrary An object from where one can obtain the pointers of resources.
+	 * @param strict Flag to ignore the compaction of properties that are not defined in the schema.
+	 */
 	update( target:object, node:RDFNode, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary, strict?:boolean ):void {
 		const compactedData:object = this.compact( node, {}, digestedSchema, pointerLibrary, strict );
 

@@ -1,0 +1,17 @@
+{
+	"name": "docs-generator",
+	"version": "1.0.0",
+	"private": true,
+	"dependencies": {
+		"dgeni": "^0.4.10",
+		"dgeni-packages": "^0.26.12",
+		"glob": "^7.1.3",
+		"handlebars": "^4.0.12",
+		"marked": "^0.5.1",
+		"swag": "^0.7.0",
+		"typescript": "~2.7.1"
+	},
+	"devDependencies": {
+		"@types/handlebars": "^4.0.39"
+	}
+}

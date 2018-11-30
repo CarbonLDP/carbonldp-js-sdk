@@ -10,16 +10,33 @@ import { Resource } from "../Resource/Resource";
 import { C } from "../Vocabularies/C";
 
 
+/**
+ * Base properties for a {@link AddMemberAction}.
+ */
 export interface BaseAddMemberAction extends BaseResource {
+	/**
+	 * The resources to be added as members.
+	 */
 	targetMembers:Pointer[];
 }
 
 
+/**
+ * Model that represents a `c:AddMemberAction`.
+ * This model is used as a request body for adding members.
+ */
 export interface AddMemberAction extends Resource {
+	/**
+	 * Resources to add as members.
+	 */
 	targetMembers:Pointer[];
 }
 
 
+/**
+ * Factory, decorator and utils for {@link AddMemberAction}.
+ */
+// TODO: Change to type-alias
 export interface AddMemberActionFactory extends ModelFactory<AddMemberAction> {
 	TYPE:C[ "AddMemberAction" ];
 	SCHEMA:ObjectSchema;
@@ -40,6 +57,9 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link AddMemberActionFactory}.
+ */
 export const AddMemberAction:AddMemberActionFactory = {
 	TYPE: C.AddMemberAction,
 	SCHEMA,

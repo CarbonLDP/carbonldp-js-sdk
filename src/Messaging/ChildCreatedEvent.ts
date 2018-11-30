@@ -6,11 +6,20 @@ import { DocumentCreatedEventDetails } from "./DocumentCreatedEventDetails";
 import { EventMessage } from "./EventMessage";
 
 
+/**
+ * Model that represents a `c:ChildCreatedEvent`.
+ */
 export interface ChildCreatedEvent extends EventMessage {
+	/**
+	 * Object with the child that was created.
+	 */
 	details:DocumentCreatedEventDetails;
 }
 
-
+// TODO: Change to type-alias
+/**
+ * Factory, decorator and utils for {@link ChildCreatedEvent}.
+ */
 export interface ChildCreatedEventFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
@@ -25,6 +34,9 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link ChildCreatedEventFactory}.
+ */
 export const ChildCreatedEvent:ChildCreatedEventFactory = {
 	TYPE,
 	SCHEMA,

@@ -426,7 +426,6 @@ describe( module( "carbonldp/Repository" ), () => {
 
 
 		describe( method( OBLIGATORY, "$get" ), () => {
-			// TODO: Document
 
 			describe( "when Repository", () => {
 
@@ -561,7 +560,6 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 		describe( method( OBLIGATORY, "$resolve" ), () => {
-			// TODO: Document
 
 			describe( "when Repository", () => {
 
@@ -678,7 +676,6 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 		describe( method( OBLIGATORY, "$exists" ), () => {
-			// TODO: Document
 
 			describe( "when Repository", () => {
 
@@ -814,7 +811,6 @@ describe( module( "carbonldp/Repository" ), () => {
 
 
 		describe( method( OBLIGATORY, "$refresh" ), () => {
-			// TODO: Document
 
 			describe( "when Repository", () => {
 
@@ -871,7 +867,6 @@ describe( module( "carbonldp/Repository" ), () => {
 				} );
 
 			} );
-			// TODO: Document
 
 			describe( "when $Repository", () => {
 
@@ -932,7 +927,6 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 		describe( method( OBLIGATORY, "$save" ), () => {
-			// TODO: Document
 
 			describe( "when Repository", () => {
 
@@ -1049,7 +1043,6 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 		describe( method( OBLIGATORY, "$saveAndRefresh" ), () => {
-			// TODO: Document
 
 			describe( "when Repository", () => {
 
@@ -1167,7 +1160,6 @@ describe( module( "carbonldp/Repository" ), () => {
 
 
 		describe( method( OBLIGATORY, "$delete" ), () => {
-			// TODO: Document
 
 			describe( "when Repository", () => {
 

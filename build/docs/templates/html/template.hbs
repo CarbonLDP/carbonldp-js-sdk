@@ -46,7 +46,7 @@
 					<a class="header" href="#{{toURL path}}">{{path}}</a>
 					<div class="menu">
 						{{#combineElements this}}
-							<a class="item{{#if isClass}} item-class{{/if}}{{#if isInterface}} item-interface{{/if}}{{#if isNamespace}} item-namespace{{/if}}" href="#{{toURL element.path}}">{{element.path}}</a>
+							<a class="item{{#if isClass}} item-class{{/if}}{{#if isInterface}} item-interface{{/if}}{{#if isNamespace}} item-namespace{{/if}}{{#if isTypeAlias}} item-typeAlias{{/if}}" href="#{{toURL element.path}}">{{element.path}}</a>
 						{{/combineElements}}
 					</div>
 				</div>
@@ -57,7 +57,7 @@
 	<div class="ui top fixed menu doc-menu doc-menu-location">
 		<a class="item doc-menu-location__launch-item js-sidebar-toggler"><i class="large content icon"></i>Menu</a>
 		<div class="left menu">
-			<a class="item doc-menu-location__item" href="/">JS SDK Docs</a>
+			<a class="item doc-menu-location__item" href="#-">JS SDK Docs</a>
 		</div>
 		<div class="right menu">
 			<!--<div class="ui right aligned search item doc-search">
@@ -80,7 +80,7 @@
 				<div class="ui list elements-list elements-list_single">
 					{{#toc-tree modules}}
 						<div class="item">
-							<span class="ui {{#is type "I"}}orange{{else}}{{#is type "C"}}blue{{else}}purple{{/is}}{{/is}} label icon elements-list__item-type">{{type}}</span>
+							<span class="ui {{#is type "I"}}orange{{/is}}{{#is type "C"}}blue{{/is}}{{#is type "N"}}purple{{/is}}{{#is type "T"}}green{{/is}} label icon elements-list__item-type">{{type}}</span>
 							<a class="content" href="#{{toURL path}}">{{path}}</a>
 						</div>
 					{{/toc-tree}}
@@ -129,6 +129,24 @@
 								{{#each this.interfaces}}
 									<div class="item">
 										<span class="ui orange label icon elements-list__item-type">I</span>
+										<div class="content">
+											<a class="header" href="#{{toURL this.path}}">{{this.path}}</a>
+											{{#with this.description}}
+												<div class="description">{{>text-markdown element=(trim this) noParagraph=true}}</div>
+											{{/with}}
+										</div>
+									</div>
+								{{/each}}
+							</div>
+							<br>
+						{{/if}}
+
+						{{#if this.typeAliases }}
+							{{>header level=2 path=(concat path "--Type Aliases") name="Type Aliases" }}
+							<div class="ui list elements-list">
+								{{#each this.typeAliases}}
+									<div class="item">
+										<span class="ui green label icon elements-list__item-type">T</span>
 										<div class="content">
 											<a class="header" href="#{{toURL this.path}}">{{this.path}}</a>
 											{{#with this.description}}
@@ -252,6 +270,10 @@
 										{{/if}}
 									</div>
 								{{/with}}
+
+								{{#if definition}}
+									<pre><code class="typescript">type {{ name }} = {{urlify definition true}}</code></pre>
+								{{/if}}
 							</div>
 						{{/with}}
 					</div>
@@ -364,7 +386,7 @@
 
 			function scrollToHash() {
 				if( ! window.location.hash ) return;
-				var $sectionItem = $( "#SDKDocs-" + window.location.hash.slice( 1 ).replace( /([+@.])/g, "\\$1" ) );
+				var $sectionItem = $( "#SDKDocs-" + $.escapeSelector( decodeURI( window.location.hash.slice( 1 ) ) ) );
 				if( $sectionItem.length ) {
 					$( "html, body" ).animate( {
 						scrollTop: $sectionItem.offset().top - 170
@@ -390,6 +412,11 @@
 			}
 
 			function setActiveSection() {
+				$locationMenu
+					.find( ".dynamic-location" )
+					.removeClass( "active" )
+					.detach();
+
 				var $sidebarItem = getSidebarItem( window.location.hash );
 				if( $sidebarItem === null ) return;
 
@@ -404,18 +431,20 @@
 
 				$moduleLocation.html( module.html() );
 				$moduleLocation.attr( "href", module.attr( "href" ) );
-				$locationMenu
-					.find( ".dynamic-location" )
-					.removeClass( "active" )
-					.detach();
-				$locationMenu
-					.append( $moduleLocation );
+
+				$locationMenu.append( $moduleLocation );
 
 				if( $sidebarItem.hasClass( "item" ) ) {
 					var object = $sidebarItem
 						.addClass( "active" );
 
-					$objectLocation.removeClass( "dynamic-location_class" ).removeClass( "dynamic-location_interface" );
+					$objectLocation
+						.removeClass( "dynamic-location_class" )
+						.removeClass( "dynamic-location_interface" )
+						.removeClass( "dynamic-location_namespace" )
+						.removeClass( "dynamic-location_typeAlias" )
+					;
+
 					$objectLocation.html( object.html() );
 					$objectLocation.attr( "href", object.attr( "href" ) );
 					$locationMenu
@@ -424,6 +453,7 @@
 					if( $sidebarItem.hasClass( "item-class" ) ) $objectLocation.addClass( "dynamic-location_class" );
 					if( $sidebarItem.hasClass( "item-interface" ) ) $objectLocation.addClass( "dynamic-location_interface" );
 					if( $sidebarItem.hasClass( "item-namespace" ) ) $objectLocation.addClass( "dynamic-location_namespace" );
+					if( $sidebarItem.hasClass( "item-typeAlias" ) ) $objectLocation.addClass( "dynamic-location_typeAlias" );
 				}
 
 				$locationMenu
@@ -438,7 +468,7 @@
 					{{#combineElements this}}
 						{
 							"title": "{{element.path}}",
-							"type": "{{#if isClass}}class{{else}}interface{{/if}}",
+							"type": "{{#if isClass}}class{{/if}}{{#if isInterface}}interface{{/if}}{{#if isTypeAlias}}type-alias{{/if}}",
 							"hash": "#{{toURL element.path}}"
 						},
 					{{/combineElements}}

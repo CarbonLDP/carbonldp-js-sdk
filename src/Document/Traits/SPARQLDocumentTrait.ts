@@ -19,23 +19,73 @@ import { isObject } from "../../Utils";
 import { TransientDocument } from "../TransientDocument";
 
 
+/**
+ * Properties for creating a {@link SPARQLDocumentTrait}
+ */
 export interface BaseSPARQLDocumentTrait {
+	/**
+	 * Repository trait that will to execute requests of the trait to create.
+	 */
 	$repository:SPARQLDocumentsRepositoryTrait;
 }
 
+/**
+ * Trait of a {@link Document} with methods for SPARQL requests.
+ */
 export interface SPARQLDocumentTrait extends TransientDocument, ResolvablePointer {
+	/**
+	 * Repository trait that actually executes the request of the current trait.
+	 */
 	$repository:SPARQLDocumentsRepositoryTrait;
 
+	/**
+	 * Executes an ASK query on the document of the specified URI.
+	 * @param uri URI of the document where to execute the query.
+	 * @param askQuery ASK query to be executed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$executeASKQuery( uri:string, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean>;
+	/**
+	 * Execute an ASK query on the current document.
+	 * @param askQuery ASK query to be executed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$executeASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
+	/**
+	 * Executes a SELECT query on the document of the specified URI.
+	 * @param uri URI of the document where to execute the query.
+	 * @param selectQuery SELECT query to be executed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$executeSELECTQuery<T extends object>( uri:string, selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLSelectResults<T>>;
+	/**
+	 * Executes a SELECT query in the current document.
+	 * @param selectQuery SELECT query to be executed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$executeSELECTQuery<T extends object>( selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLSelectResults<T>>;
 
+	/**
+	 * Executes an UPDATE in the document of the specified URI.
+	 * @param uri URI of the document where to execute the update.
+	 * @param update UPDATE to be executed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$executeUPDATE( uri:string, update:string, requestOptions?:RequestOptions ):Promise<void>;
+	/**
+	 * Executes an UPDATE in the current document.
+	 * @param update UPDATE to be executed.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$executeUPDATE( update:string, requestOptions?:RequestOptions ):Promise<void>;
 
 
+	/**
+	 * Creates an instance of [SPARQLER](https://github.com/CarbonLDP/sparqler) builder
+	 * for the current document or the one specified by the URI.
+	 * @param uri URI of the document from where to create the query builder.
+	 */
 	$sparql( uri?:string ):QueryClause<FinishSPARQLSelect, FinishSPARQLAsk>;
 }
 
@@ -55,11 +105,17 @@ function __parseParams( this:void, resource:SPARQLDocumentTrait, uriOrQuery:stri
 	return { uri, query, options };
 }
 
+/**
+ * Factory, decorator and utils for {@link SPARQLDocumentTrait}.
+ */
 export type SPARQLDocumentTraitFactory =
 	& ModelPrototype<SPARQLDocumentTrait, TransientDocument & ResolvablePointer>
 	& ModelDecorator<SPARQLDocumentTrait, BaseSPARQLDocumentTrait>
 	;
 
+/**
+ * Constant that implements {@link SPARQLDocumentTraitFactory}.
+ */
 export const SPARQLDocumentTrait:SPARQLDocumentTraitFactory = {
 	PROTOTYPE: {
 		$executeASKQuery( this:SPARQLDocumentTrait, uriOrQuery:string, queryOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<boolean> {

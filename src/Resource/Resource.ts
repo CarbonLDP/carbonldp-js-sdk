@@ -24,21 +24,53 @@ import { isObject } from "../Utils";
 import { BaseResource } from "./BaseResource";
 
 
+/**
+ * Interface that represents any resource in the SDK.
+ */
 export interface Resource extends RegisteredPointer {
+	/**
+	 * Types of the resource.
+	 */
 	types:string[];
 
+	/**
+	 * Optional associated registry of the resource.
+	 */
 	$registry:Registry<RegisteredPointer> | $Registry<RegisteredPointer> | undefined;
+	/**
+	 * Slug of the URI of the resource.
+	 * Depending of the URI, the value returned would be:
+	 * 1. For blank nodes the same $id of the resource would be returned
+	 * 2. For named fragments, the content after the `#` symbol would be returned
+	 * 3. For documents, it's the last part URI e.g. `https://example.com/resource-1/` => `resource-1`
+	 */
 	$slug:string;
 
 
+	/**
+	 * Adds a type to the current resource.
+	 * @param type The type to be added.
+	 */
 	$addType( type:string ):void;
 
+	/**
+	 * Returns true if the current resource contains the type specified.
+	 * @param type The type to look for.
+	 */
 	$hasType( type:string ):boolean;
 
+	/**
+	 * Remove the type specified from the current resource.
+	 * @param type The type to be removed.
+	 */
 	$removeType( type:string ):void;
 
 
-	toJSON( contextOrKey:Context | string ):RDFNode;
+	/**
+	 * Returns the JSON-LD Node representation of the current resource.
+	 * @param contextOrKey A specific context to use for expand the data into JSON-LD Node instead of the internal one.
+	 */
+	toJSON( contextOrKey?:Context | string ):RDFNode;
 }
 
 
@@ -60,6 +92,9 @@ function __resolveURI( resource:Resource, uri:string ):string {
 		.resolveURI( uri, { vocab: true } );
 }
 
+/**
+ * Factory, decorator and utils for {@link Resource}.
+ */
 export type ResourceFactory =
 	& ModelPrototype<Resource, RegisteredPointer>
 	& ModelDecorator<Resource, BaseResource>
@@ -67,6 +102,9 @@ export type ResourceFactory =
 	& ModelTypeGuard<Resource>
 	;
 
+/**
+ * Constant that implements {@link ResourceFactory}.
+ */
 export const Resource:ResourceFactory = {
 	PROTOTYPE: {
 		get types():string[] { return []; },

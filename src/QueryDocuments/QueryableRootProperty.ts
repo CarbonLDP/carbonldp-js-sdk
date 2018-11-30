@@ -5,6 +5,9 @@ import { QueryableProperty } from "./QueryableProperty";
 import { QueryPropertyType } from "./QueryPropertyType";
 
 
+/**
+ * Metadata of a resource that can be directly queried.
+ */
 export class QueryableRootProperty extends QueryableProperty {
 
 	constructor( { uri, propertyType }:{ uri:string, propertyType?:QueryPropertyType } ) {

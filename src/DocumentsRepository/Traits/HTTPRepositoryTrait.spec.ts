@@ -27,17 +27,17 @@ describe( module( "carbonldp/DocumentsRepository/Traits/HTTPRepositoryTrait" ), 
 		} );
 
 
-		// TODO: Document & Test .get
-		// TODO: Document & Test .resolve
-		// TODO: Document & Test .exists
+		// TODO: Test .get
+		// TODO: Test .resolve
+		// TODO: Test .exists
 
-		// TODO: Document & Test .refresh
-		// TODO: Document & Test .save
-		// TODO: Document & Test .saveAndRefresh
+		// TODO: Test .refresh
+		// TODO: Test .save
+		// TODO: Test .saveAndRefresh
 
-		// TODO: Document & Test .delete
+		// TODO: Test .delete
 
-		// TODO: Document & Test ._parseResponseData
+		// TODO: Test ._parseResponseData
 
 	} );
 
@@ -46,7 +46,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/HTTPRepositoryTrait" ), 
 		"Interface with the factory for `CarbonLDP.DocumentsRepository.Traits.HTTPRepositoryTrait` objects."
 	), () => {
 
-		// TODO: Document & Test
+		// TODO: Test
 
 	} );
 

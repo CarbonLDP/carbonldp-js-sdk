@@ -7,11 +7,21 @@ import { Resource } from "../Resource/Resource";
 import { C } from "../Vocabularies/C";
 
 
+/**
+ * Base model for every notification message in a subscription event.
+ */
 export interface EventMessage extends Resource {
+	/**
+	 * Target document where the event occurred.
+	 */
 	target:Document;
 }
 
 
+// TODO: Change to type-alias
+/**
+ * Factory, decorator and utils for {@link EventMessage}.
+ */
 export interface EventMessageFactory {
 	SCHEMA:ObjectSchema;
 
@@ -25,6 +35,9 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link EventMessageFactory}.
+ */
 export const EventMessage:EventMessageFactory = {
 	SCHEMA,
 

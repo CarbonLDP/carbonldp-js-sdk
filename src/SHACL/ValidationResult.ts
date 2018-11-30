@@ -8,18 +8,50 @@ import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 
 
+/**
+ * Model that represents a `shacl:ValidationResource`.
+ * This model contains the report of an individual SHACL validation failure.
+ */
 export interface ValidationResult extends Resource {
+	/**
+	 * The focus node that has caused the result.
+	 */
 	focusNode:Pointer;
+	/**
+	 * The SHACL shape property path that where tested.
+	 */
 	resultPath?:Pointer;
+	/**
+	 * The value of the previous SHACL property path that raised the validation violation.
+	 */
 	value?:any;
+	/**
+	 * Pointer to the source SHACL shape used in the validation.
+	 */
 	sourceShape?:Pointer;
+	/**
+	 * Pointer to the constraint that caused the resource.
+	 */
 	sourceConstraintComponent?:Pointer;
+	/**
+	 * Pointer to the possible parent wih one or more SHACL results.
+	 */
 	detail?:Pointer;
+	/**
+	 * The message string taken from the SHACL shape message property.
+	 */
 	resultMessage?:string;
+	/**
+	 * The severity described by the SHACL shape severity property.
+	 */
 	resultSeverity?:Pointer;
 }
 
 
+// TODO: Change to type-alias.
+/**
+ * Factory and utils for {@link ValidationResult}.
+ */
 export interface ValidationResultFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
@@ -59,6 +91,9 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link ValidationResultFactory}.
+ */
 export const ValidationResult:ValidationResultFactory = {
 	TYPE: SHACL.ValidationResult,
 	SCHEMA,

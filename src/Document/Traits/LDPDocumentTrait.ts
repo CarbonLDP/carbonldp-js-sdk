@@ -17,45 +17,208 @@ import { Document } from "../Document";
 import { TransientDocument } from "../TransientDocument";
 
 
+/**
+ * Properties for creating a {@link LDPDocumentTrait}
+ */
 export interface BaseLDPDocumentTrait {
+	/**
+	 * Repository trait that will to execute requests of the trait to create.
+	 */
 	$repository:LDPDocumentsRepositoryTrait;
 }
 
+/**
+ * Trait of a {@link Document} with methods for LDP related requests.
+ */
 export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
+	/**
+	 * Repository trait that actually executes the request of the current trait.
+	 */
 	$repository:LDPDocumentsRepositoryTrait;
 
+	/**
+	 * Persists multiple objects as children of the current document.
+	 * @param children Objects to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$create<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists multiple objects as children of the current document.
+	 * @param children Objects to be persisted.
+	 * @param slugs Suggested slugs for every child URI of the {@param children} provided. The slug will be assigned in the order they are provided.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$create<T extends object>( children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists the object as a child of the current document.
+	 * @param child Object to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$create<T extends object>( child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
+	/**
+	 * Persists the object as a child of the current document.
+	 * @param child Object to be persisted.
+	 * @param slug Suggested slug for the child URI.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$create<T extends object>( child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
+	/**
+	 * Persists multiple objects as children of the document of the specified URI.
+	 * @param uri URI of the document where to create the children.
+	 * @param children Objects to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$create<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists multiple objects as children of the document of the specified URI.
+	 * @param uri URI of the document where to create the children.
+	 * @param children Objects to be persisted.
+	 * @param slugs Suggested slugs for every child URI of the {@param children} provided. The slug will be assigned in the order they are provided.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$create<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists the object as a child of the document of the specified URI.
+	 * @param uri URI of the document where to create the child.
+	 * @param child Object to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$create<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
+	/**
+	 * Persists the object as a child of the document of the specified URI.
+	 * @param uri URI of the document where to create the child.
+	 * @param child Object to be persisted.
+	 * @param slug Suggested slug for the child URI.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$create<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 
+	/**
+	 * Persists multiple objects as children of the current document and retrieves the updated data from the server.
+	 * @param children Objects to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$createAndRetrieve<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists multiple objects as children of the current document and retrieves the updated data from the server.
+	 * @param children Objects to be persisted.
+	 * @param slugs Suggested slugs for every child URI of the {@param children} provided. The slug will be assigned in the order they are provided.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$createAndRetrieve<T extends object>( children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists the object as a child of the current document and retrieves the updated data from the server.
+	 * @param child Object to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$createAndRetrieve<T extends object>( child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
+	/**
+	 * Persists the object as a child of the current document and retrieves the updated data from the server.
+	 * @param child Object to be persisted.
+	 * @param slug Suggested slug for the child URI.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$createAndRetrieve<T extends object>( child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
+	/**
+	 * Persists multiple objects as children of the document of the specified URI and retrieves the updated data from the server.
+	 * @param uri URI of the document where to create the children.
+	 * @param children Objects to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$createAndRetrieve<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists multiple objects as children of the document of the specified URI and retrieves the updated data from the server.
+	 * @param uri URI of the document where to create the children.
+	 * @param children Objects to be persisted.
+	 * @param slugs Suggested slugs for every child URI of the {@param children} provided. The slug will be assigned in the order they are provided.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$createAndRetrieve<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Persists the object as a child of the document of the specified URI and retrieves the updated data from the server.
+	 * @param uri URI of the document where to create the child.
+	 * @param child Object to be persisted.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$createAndRetrieve<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
+	/**
+	 * Persists the object as a child of the document of the specified URI and retrieves the updated data from the server.
+	 * @param uri URI of the document where to create the child.
+	 * @param child Object to be persisted.
+	 * @param slug Suggested slug for the child URI.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$createAndRetrieve<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
+	/**
+	 * Adds the provided resource as member of the current document.
+	 * @param member Resource to be added as member.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$addMember( member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
+	/**
+	 * Adds the provided resource as member of the document of the specified URI.
+	 * @param uri URI of the document to add the member.
+	 * @param member Resource to be added as member.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$addMember( uri:string, member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
 
+	/**
+	 * Adds the provided resources as members of the current document.
+	 * @param members Resources to be added as members.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$addMembers( members:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	/**
+	 * Adds the provided resources as members of the document of the specified URI.
+	 * @param uri URI of the document to add the members.
+	 * @param members Resources to be added as members.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$addMembers( uri:string, members:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
 
 
+	/**
+	 * Removes the provided resource as member of the current document.
+	 * @param member Resource to be removed as member.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$removeMember( member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
+	/**
+	 * Removes the provided resource as member of the document of the specified URI.
+	 * @param uri URI of the document to remove the member.
+	 * @param member Resource to be removed as member.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$removeMember( uri:string, member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
 
+	/**
+	 * Removes the provided resources as members of the current document.
+	 * IF no {@param members} is provided all the members of the current document will be removed.
+	 * @param members Resources to be removed as members.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$removeMembers( members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	/**
+	 * Removes all the members of the current document.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$removeMembers( requestOptions?:RequestOptions ):Promise<void>;
+	/**
+	 * Removes the provided resources as members of the document of the specified URI.
+	 * IF no {@param members} is provided all the members of the specified document will be removed.
+	 * @param uri URI of the document to remove the members.
+	 * @param members Resources to be removed as members.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$removeMembers( uri:string, members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	/**
+	 * Removes all the members of the document of the specified URI.
+	 * @param uri URI of the document to remove its members.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$removeMembers( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 }
 
@@ -69,11 +232,17 @@ function __parseMemberParams( this:void, resource:Pointer, args:IArguments ):{ u
 	return { uri, params };
 }
 
+/**
+ * Factory, decorator and utils for {@link LDPDocumentTrait}.
+ */
 export type LDPDocumentTraitFactory =
 	& ModelPrototype<LDPDocumentTrait, TransientDocument & ResolvablePointer>
 	& ModelDecorator<LDPDocumentTrait, BaseLDPDocumentTrait>
 	;
 
+/**
+ * Constant that implements {@link LDPDocumentTraitFactory}.
+ */
 export const LDPDocumentTrait:LDPDocumentTraitFactory = {
 	PROTOTYPE: {
 		$create<T extends object>( this:LDPDocumentTrait, uriOrChildren:string | T | T[], childrenOrSlugsOrRequestOptions?:T | T[] | string | string[] | RequestOptions, slugsOrRequestOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {

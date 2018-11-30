@@ -11,7 +11,6 @@ import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
 import { Pointer } from "../Pointer/Pointer";
 
 import { URI } from "../RDF/URI";
-import { BaseRegistry } from "../Registry/BaseRegistry";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
 import { Registry } from "../Registry/Registry";
@@ -24,20 +23,46 @@ import { BaseGeneralRegistry } from "./BaseGeneralRegistry";
 import { TypedModelDecorator } from "./TypedModelDecorator";
 
 
+/**
+ * Base registry used by {@link Context}.
+ */
 export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer> extends Registry<M>, ObjectSchemaResolver {
+	/**
+	 * Context where the registry belongs to.
+	 */
 	readonly context:Context<M>;
+	/**
+	 * Parent registry used to inherit resources and more data.
+	 */
 	readonly registry:GeneralRegistry | undefined;
 
 
+	/**
+	 * Map that stores the decorators in the registry.
+	 */
 	__modelDecorators:Map<string, TypedModelDecorator>;
 
+	/**
+	 * Stores a decorator in the current registry.
+	 * @param decorator The information of the decorator to store.
+	 */
 	addDecorator( decorator:TypedModelDecorator ):this;
 
+	/**
+	 * Applies the corresponding decorators in the entire registry tree.
+	 * @param object with an array of types used to match the decorator to be applied.
+	 */
 	decorate( object:{ types?:string[] } ):void;
 
 
+	/**
+	 * @see {@link Registry._addPointer}
+	 */
 	_addPointer<T extends object>( pointer:T & Pointer ):T & M;
 
+	/**
+	 * @see {@link Registry._getLocalID}
+	 */
 	_getLocalID( id:string ):string;
 }
 
@@ -49,12 +74,18 @@ export type OverloadedFns =
 	| "_getLocalID"
 	;
 
+/**
+ * Factory, decorator and utils for {@link GeneralRegistry}.
+ */
 export type GeneralRegistryFactory =
 	& ModelPrototype<GeneralRegistry, Registry & ObjectSchemaResolver, OverloadedFns>
 	& ModelDecorator<GeneralRegistry<any>, BaseGeneralRegistry>
 	& ModelFactory<GeneralRegistry<any>, BaseGeneralRegistry>
 	;
 
+/**
+ * Constant that implements {@link GeneralRegistryFactory}.
+ */
 export const GeneralRegistry:GeneralRegistryFactory = {
 	PROTOTYPE: {
 		get context():Context {

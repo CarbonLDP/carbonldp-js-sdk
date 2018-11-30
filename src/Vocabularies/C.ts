@@ -1,3 +1,6 @@
+/**
+ * Interface that describes the used vocabulary of the Carbon LDP Platform.
+ */
 export interface C {
 	namespace:"https://carbonldp.com/ns/v1/platform#";
 
@@ -65,6 +68,9 @@ export interface C {
 	version:"https://carbonldp.com/ns/v1/platform#version";
 }
 
+/**
+ * Constant that implements the used vocabulary of the Carbon LDP Platform.
+ */
 export const C:C = {
 	namespace: "https://carbonldp.com/ns/v1/platform#",
 

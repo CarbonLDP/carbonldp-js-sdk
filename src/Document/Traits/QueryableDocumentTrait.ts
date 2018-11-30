@@ -15,51 +15,167 @@ import { Document } from "../Document";
 import { LDPDocumentTrait } from "./LDPDocumentTrait";
 
 
+/**
+ * Properties for creating a {@link QueryableDocumentTrait}
+ */
 export interface BaseQueryableDocumentTrait {
+	/**
+	 * Repository trait that will to execute requests of the trait to create.
+	 */
 	$repository:QueryableDocumentsRepositoryTrait;
 }
 
+/**
+ * Trait of a {@link Document} with methods for advanced reading requests.
+ */
 export interface QueryableDocumentTrait extends LDPDocumentTrait, QueryablePointer {
+	/**
+	 * Repository trait that actually executes the request of the current trait.
+	 */
 	$repository:QueryableDocumentsRepositoryTrait;
 
 
+	/**
+	 * Retrieves the specific properties of the current document set by the query function.
+	 * @param queryBuilderFn Function that specify the structure of the document to be retrieved.
+	 */
 	$get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	/**
+	 * Retrieves the entire current document or only the properties set by the query function when provided.
+	 * @param requestOptions Customizable options for the request.
+	 * @param queryBuilderFn Function that specify the structure of the document to be retrieved.
+	 */
 	$get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	/**
+	 * Retrieves the properties of the document of the URI specified set by the query function.
+	 * @param uri URI of the document to be retrieved.
+	 * @param queryBuilderFn Function that specify the structure of the document to be retrieved.
+	 */
 	$get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	/**
+	 * Retrieves the entire document of the URI specified or only the properties set by the query function when provided.
+	 * @param uri URI of the document to be retrieved.
+	 * @param requestOptions Customizable options for the request.
+	 * @param queryBuilderFn Function that specify the structure of the document to be retrieved.
+	 */
 	$get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
+	/**
+	 * Resolves the specific properties of the current document set by the query function.
+	 * @param queryBuilderFn Function that specify the structure of the document to be resolved.
+	 */
 	$resolve<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	/**
+	 * Resolves the entire current document or only the properties set by the query function when provided.
+	 * @param requestOptions Customizable options for the request.
+	 * @param queryBuilderFn Function that specify the structure of the document to be resolved.
+	 */
 	$resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	/**
+	 * Resolves the properties of the document of the URI specified set by the query function.
+	 * @param document Document to be resolved.
+	 * @param queryBuilderFn Function that specify the structure of the document to be resolved.
+	 */
 	$resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	/**
+	 * Resolves the entire document of the URI specified or only the properties set by the query function when provided.
+	 * @param document Document to be resolved.
+	 * @param requestOptions Customizable options for the request.
+	 * @param queryBuilderFn Function that specify the structure of the document to be resolved.
+	 */
 	$resolve<T extends object>( document:Document, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 
+	/**
+	 * Retrieves the entire children of the current document or only the properties set by the query function.
+	 * @param requestOptions Customizable options for the request.
+	 * @param queryBuilderFn Function that specify the structure of the children to be retrieved.
+	 */
 	$getChildren<T extends object>( requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	/**
+	 * Retrieves the entry children of the current document or only the properties set by the query function.
+	 * @param queryBuilderFn Function that specify the structure of the children to be retrieved.
+	 */
 	$getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	/**
+	 * Retrieves the entire children of the document of the specified URI or only the properties set by the query function.
+	 * @param uri URI of the document to retrieve its children.
+	 * @param requestOptions Customizable options for the request.
+	 * @param queryBuilderFn Function that specify the structure of the children to be retrieved.
+	 */
 	$getChildren<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	/**
+	 * Retrieved the entire children of the document of the specified URI or only the properties set by the query function.
+	 * @param uri URI of the document to retrieve its children.
+	 * @param queryBuilderFn Function that specify the structure of the children to be retrieved.
+	 */
 	$getChildren<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
+	/**
+	 * Retrieves the entire members of the current document or only the properties set by the query function.
+	 * @param requestOptions Customizable options for the request.
+	 * @param queryBuilderFn Function that specify the structure of the members to be retrieved.
+	 */
 	$getMembers<T extends object>( requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	/**
+	 * Retrieves the entry members of the current document or only the properties set by the query function.
+	 * @param queryBuilderFn Function that specify the structure of the members to be retrieved.
+	 */
 	$getMembers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	/**
+	 * Retrieves the entire members of the document of the specified URI or only the properties set by the query function.
+	 * @param uri URI of the document to retrieve its members.
+	 * @param requestOptions Customizable options for the request.
+	 * @param queryBuilderFn Function that specify the structure of the members to be retrieved.
+	 */
 	$getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	/**
+	 * Retrieved the entire members of the document of the specified URI or only the properties set by the query function.
+	 * @param uri URI of the document to retrieve its members.
+	 * @param queryBuilderFn Function that specify the structure of the members to be retrieved.
+	 */
 	$getMembers<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
 
+	/**
+	 * Retrieves the shallow children of the current document.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$listChildren<T extends object>( requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Retrieves the shallow children of the document of the specified URI.
+	 * @param uri URI of the document to retrieve its shallow children.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$listChildren<T extends object>( uri:string, requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 
+	/**
+	 * Retrieves the shallow members of the current document.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$listMembers<T extends object>( requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
+	/**
+	 * Retrieves the shallow members of the document of the specified URI
+	 * @param uri URI of the document to retrieve its shallow members.
+	 * @param requestOptions Customizable options for the request.
+	 */
 	$listMembers<T extends object>( uri:string, requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 }
 
 
 type QueryDocsBuilderFn = Function & (( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder);
 
+/**
+ * Factory, decorator and utils for {@link QueryableDocumentTrait}.
+ */
 export type QueryableDocumentTraitFactory =
 	& ModelPrototype<QueryableDocumentTrait, LDPDocumentTrait & QueryablePointer>
 	& ModelDecorator<QueryableDocumentTrait, BaseQueryableDocumentTrait>
 	;
 
+/**
+ * Constant that implements {@link QueryableDocumentTraitFactory}.
+ */
 export const QueryableDocumentTrait:QueryableDocumentTraitFactory = {
 	PROTOTYPE: {
 		$getChildren<T extends object>( this:QueryableDocumentTrait, uriOrQueryBuilderFnOrOptions:string | QueryDocsBuilderFn | RequestOptions, queryBuilderFnOrOptions?:QueryDocsBuilderFn | RequestOptions, queryBuilderFn?:QueryDocsBuilderFn ):Promise<(T & Document)[]> {

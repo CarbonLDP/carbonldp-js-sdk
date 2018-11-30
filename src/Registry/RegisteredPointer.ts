@@ -11,11 +11,20 @@ import { BaseRegisteredPointer } from "./BaseRegisteredPointer";
 import { $Registry, Registry } from "./Registry";
 
 
+/**
+ * Interface that represents the base to any model that can be registered in any {@link Registry}/{@link $Registry}.
+ */
 export interface RegisteredPointer extends Pointer {
+	/**
+	 * Registry the current pointer belongs to.
+	 */
 	$registry:Registry<RegisteredPointer> | $Registry<RegisteredPointer>;
 }
 
 
+/**
+ * Factory, decorator and utils for {@link RegisteredPointer}.
+ */
 export type RegisteredPointerFactory =
 	& ModelPrototype<RegisteredPointer, Pointer>
 	& ModelDecorator<RegisteredPointer, BaseRegisteredPointer>
@@ -23,6 +32,9 @@ export type RegisteredPointerFactory =
 	& ModelTypeGuard<RegisteredPointer>
 	;
 
+/**
+ * Constant that implements {@link RegisteredPointerFactory}
+ */
 export const RegisteredPointer:RegisteredPointerFactory = {
 	PROTOTYPE: {
 		get $registry():Registry {

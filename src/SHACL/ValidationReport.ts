@@ -6,13 +6,31 @@ import { XSD } from "../Vocabularies/XSD";
 import { ValidationResult } from "./ValidationResult";
 
 
+/**
+ * Model that represents a `shacl:ValidationReport`.
+ * This model contains the results of a validation process.
+ */
 export interface ValidationReport {
+	/**
+	 * Indicates if the validation conforms the given shape.
+	 * If that's the case, no results data will be returned.
+	 */
 	conforms:boolean;
+	/**
+	 * The results of a failure validation process.
+	 */
 	results?:ValidationResult[];
+	/**
+	 * The `shapesGraphWellFormed` of a failure validation process.
+	 */
 	shapesGraphWellFormed?:boolean;
 }
 
 
+// TODO: Change to type-alias
+/**
+ * Factory and utils for {@link ValidationReport}.
+ */
 export interface ValidationReportFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
@@ -34,6 +52,9 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
+/**
+ * Constant that implements {@link ValidationReport}.
+ */
 export const ValidationReport:ValidationReportFactory = {
 	TYPE: SHACL.ValidationReport,
 	SCHEMA,
