@@ -6145,7 +6145,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					property4: 67890,
 				} );
 			} );
-
+    
 			it( "should return full children", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
@@ -6758,7 +6758,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					property4: 67890,
 				} );
 			} );
-
+    
 			it( "should return partial children", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
