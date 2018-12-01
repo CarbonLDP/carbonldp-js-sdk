@@ -165,7 +165,6 @@ export class QueryResultCompacter {
 		const { node, document, resource } = compactionNode;
 		compactionNode.isCompacted = true;
 
-		const isPartial:boolean = queryProperty._isPartial();
 		const targetSchema:DigestedObjectSchema = queryProperty.getSchemaFor( node );
 		const pointerLibrary:PointerLibrary = __createPointerLibrary( compactionMap, document );
 
@@ -178,9 +177,9 @@ export class QueryResultCompacter {
 		};
 
 		this.jsonldConverter
-			.update( resource, targetNode, targetSchema, pointerLibrary, isPartial );
+			.update( resource, targetNode, targetSchema, pointerLibrary, ! queryProperty._isComplete() );
 
-		if( ! isPartial ) {
+		if( ! queryProperty._isPartial() ) {
 			resource.$_queryableMetadata = void 0;
 			return;
 		}

@@ -108,6 +108,9 @@ export class QueryDocumentBuilder {
 			return this;
 		}
 
+		// If no special schema, then the property must be a partial
+		this._queryProperty.setType( QueryPropertyType.PARTIAL );
+
 		for( const propertyName in propertiesSchema ) {
 			const queryPropertySchema:QuerySchemaProperty | string = propertiesSchema[ propertyName ];
 			const querySchemaProperty:QuerySchemaProperty = isObject( queryPropertySchema )
@@ -118,9 +121,6 @@ export class QueryDocumentBuilder {
 
 			const subQuery:QuerySchemaProperty[ "query" ] | undefined = querySchemaProperty.query;
 			if( ! subQuery ) continue;
-
-			if( property.definition.literal === false )
-				property.setType( QueryPropertyType.PARTIAL );
 
 			const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( this._queryContainer, property );
 			if( builder !== subQuery.call( void 0, builder ) )
