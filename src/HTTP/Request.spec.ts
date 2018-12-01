@@ -1,108 +1,22 @@
-import {
-	clazz,
-	hasMethod,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	isDefined,
-	method,
-	module,
-	OPTIONAL,
-	STATIC,
-} from "../test/JasmineExtender";
-
 import { C } from "../Vocabularies/C";
 import { LDP } from "../Vocabularies/LDP";
 
-import * as Utils from "./../Utils";
-
-import { NotFoundError } from "./Errors/ClientErrors/NotFoundError";
 import { HTTPError } from "./Errors/HTTPError";
 import { InternalServerErrorError } from "./Errors/ServerErrors/InternalServerErrorError";
 
 import { Header } from "./Header";
 import { JSONParser } from "./JSONParser";
-import { RequestOptions, RequestService, RequestUtils, RetrievalPreferences } from "./Request";
+import { RequestOptions, RequestService, RequestUtils } from "./Request";
 import { Response } from "./Response";
 
-describe( module( "carbonldp/HTTP/Request" ), function():void {
 
-	describe( interfaze(
-		"CarbonLDP.HTTP.RequestOptions",
-		"Customizable options that can change the behaviour of the request."
-	), ():void => {
+describe( "Request", () => {
 
-		it( hasProperty(
-			OPTIONAL,
-			"headers",
-			"Map<string, CarbonLDP.HTTP.Header>",
-			"Map that contains the references to the headers to include in the request."
-		), ():void => {
-			let headers:Map<string, Header> = new Map();
-			let options:RequestOptions = {};
+	describe( "RequestService", () => {
 
-			options.headers = headers;
-			expect( options.headers ).toEqual( jasmine.any( Map ) );
-		} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"sendCredentialsOnCORS",
-			"boolean",
-			"Flag that enables Cross-Origin Resource Sharing (CORS)."
-		), ():void => {
-			let enableCORS:boolean = true;
-			let options:RequestOptions = {};
-
-			options.sendCredentialsOnCORS = enableCORS;
-			expect( options.sendCredentialsOnCORS ).toEqual( jasmine.any( Boolean ) );
-		} );
-
-	} );
-
-	describe( interfaze(
-		"CarbonLDP.HTTP.RetrievalPreferences",
-		"Object used at `CarbonLDP.HTTP.RequestUtils#setRetrievalPreferences()` method, which specifies the behaviour of the of the requested document as a ldp:container."
-	), ():void => {
-
-		it( hasProperty(
-			OPTIONAL,
-			"include",
-			"string[]",
-			"Prefer URIs that indicates some specific information should be returned in the request's response."
-		), ():void => {
-			let include:string[] = [ "http://example.com/ns#Some-Prefer" ];
-			let preferences:RetrievalPreferences = {};
-
-			preferences.include = include;
-			expect( preferences.include ).toEqual( jasmine.any( Array ) );
-			expect( preferences.include[ 0 ] ).toEqual( jasmine.any( String ) );
-		} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"omit",
-			"string[]",
-			"Prefer URIs that indicates some specific information should NOT be included in the request's response."
-		), ():void => {
-			let omit:string[] = [ "http://example.com/ns#Some-Prefer" ];
-			let preferences:RetrievalPreferences = {};
-
-			preferences.omit = omit;
-			expect( preferences.omit ).toEqual( jasmine.any( Array ) );
-			expect( preferences.omit[ 0 ] ).toEqual( jasmine.any( String ) );
-		} );
-
-	} );
-
-	describe( clazz(
-		"CarbonLDP.HTTP.RequestService",
-		"Class with functions to easily manage HTTP requests."
-	), ():void => {
-
-		it( isDefined(), ():void => {
+		it( "should exist", () => {
 			expect( RequestService ).toBeDefined();
-			expect( Utils.isFunction( RequestService ) ).toBe( true );
+			expect( RequestService ).toEqual( jasmine.any( Function ) );
 		} );
 
 		let responseHeaders:JasmineAjaxRequestStubReturnOptions = {
@@ -145,7 +59,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 		};
 		let parser:JSONParser = new JSONParser();
 
-		beforeEach( ():void => {
+		beforeEach( () => {
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/200", null, "OPTIONS" ).andReturn( responseOptions );
 			jasmine.Ajax.stubRequest( "http://example.com/200", null, "HEAD" ).andReturn( responseHeaders );
@@ -158,958 +72,408 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			jasmine.Ajax.stubRequest( "http://example.com/500", null ).andReturn( { status: 500 } );
 		} );
 
-		afterEach( function():void {
+		afterEach( () => {
 			jasmine.Ajax.uninstall();
 		} );
 
-		// TODO: Test `Request.send`
-		describe( method(
-			STATIC,
-			"send"
-		), ():void => {
 
-			it( hasSignature(
-				"Generic send method, to be used by the others methods in the class.",
-				[
-					{ name: "url", type: "string" },
-					{ name: "body", type: "string" },
-					{ name: "options", type: "object" },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ():void => {} );
+		// TODO: Test `RequestService.send`
+		describe( "RequestService.send", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( RequestService.send ).toBeDefined();
 				expect( RequestService.send ).toEqual( jasmine.any( Function ) );
 			} );
 
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"head", [
-				{ name: "url", type: "string" },
-				{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-			],
-			{ type: "Promise<CarbonLDP.HTTP.Response>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( RequestService.head ).toBeDefined();
-			expect( Utils.isFunction( RequestService.head ) ).toBe( true );
 
-			let promises:Promise<any>[] = [];
-			let promise:Promise<any>;
+		describe( "RequestService.head", () => {
 
-			promise = RequestService.head( "http://example.com/200" );
-			testPromise( promise );
-			promises.push( promise.then( function( response:Response ):void {
-				testHTTPResponse( response );
-				expect( response.status ).toEqual( 200 );
-				expect( response.data ).toEqual( "" );
-				testHTTPResponseHeaders( response, responseHeaders.responseHeaders );
-			} ) );
-
-			promise = RequestService.head( "http://example.com/200", options );
-			testPromise( promise );
-			promises.push( promise.then( function( response:Response ):void {
-				testHTTPResponse( response );
-				expect( response.status ).toEqual( 200 );
-				expect( response.data ).toEqual( "" );
-				testHTTPResponseHeaders( response, responseHeaders.responseHeaders );
-			} ) );
-
-			promise = RequestService.head( "http://example.com/404" );
-			testPromise( promise );
-			promise = promise.catch( function( error:HTTPError ):void {
-				expect( error ).toEqual( jasmine.any( HTTPError ) );
-				expect( error ).toEqual( jasmine.any( NotFoundError ) );
-
-				testHTTPResponse( error.response );
-				expect( error.response.data ).toEqual( "" );
-				testHTTPResponseHeaders( error.response, {} );
+			it( "should exist", () => {
+				expect( RequestService.head ).toBeDefined();
+				expect( RequestService.head ).toEqual( jasmine.any( Function ) );
 			} );
-			promises.push( promise );
 
-			promise = RequestService.head( "http://example.com/500", options );
-			testPromise( promise );
-			promise = promise.catch( function( error:HTTPError ):void {
-				expect( error ).toEqual( jasmine.any( HTTPError ) );
-				expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
 
-				testHTTPResponse( error.response );
-				expect( error.response.data ).toEqual( "" );
-				testHTTPResponseHeaders( error.response, {} );
+			it( "should make a HEAD request", async () => {
+				await RequestService
+					.head( "http://example.com/200" )
+					.then( ( response:Response ) => {
+						testHTTPResponse( response );
+
+						expect( response.status ).toEqual( 200 );
+						expect( response.data ).toEqual( "" );
+
+						testHTTPResponseHeaders( response, responseHeaders.responseHeaders );
+					} );
 			} );
-			promises.push( promise );
 
-			Promise.all( promises ).then( done ).catch( done.fail );
+			it( "should reject promise", async () => {
+				await RequestService
+					.head( "http://example.com/500", options )
+					.catch( function( error:HTTPError ):void {
+						expect( error ).toEqual( jasmine.any( HTTPError ) );
+						expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+						expect( error.response.data ).toEqual( "" );
+
+						testHTTPResponse( error.response );
+						testHTTPResponseHeaders( error.response, {} );
+					} );
+			} );
+
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"options", [
-				{ name: "url", type: "string" },
-				{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-			],
-			{ type: "Promise<CarbonLDP.HTTP.Response>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( RequestService.head ).toBeDefined();
-			expect( Utils.isFunction( RequestService.head ) ).toBe( true );
+		describe( "RequestService.options", () => {
 
-			let promises:Promise<any>[] = [];
-			let promise:Promise<any>;
-
-			promise = RequestService.options( "http://example.com/200" );
-			testPromise( promise );
-			promises.push( promise.then( function( response:Response ):void {
-				testHTTPResponse( response );
-				expect( response.status ).toEqual( 200 );
-				testHTTPResponseData( response, responseOptions.responseText );
-				testHTTPResponseHeaders( response, responseOptions.responseHeaders );
-			} ) );
-
-			promise = RequestService.options( "http://example.com/200", options );
-			testPromise( promise );
-			promises.push( promise.then( function( response:Response ):void {
-				testHTTPResponse( response );
-				expect( response.status ).toEqual( 200 );
-				testHTTPResponseData( response, responseOptions.responseText );
-				testHTTPResponseHeaders( response, responseOptions.responseHeaders );
-			} ) );
-
-			promise = RequestService.options( "http://example.com/404" );
-			testPromise( promise );
-			promise = promise.catch( function( error:HTTPError ):void {
-				expect( error ).toEqual( jasmine.any( HTTPError ) );
-				expect( error ).toEqual( jasmine.any( NotFoundError ) );
-
-				testHTTPResponse( error.response );
-				expect( error.response.data ).toEqual( "" );
-				testHTTPResponseHeaders( error.response, {} );
+			it( "should exist", () => {
+				expect( RequestService.options ).toBeDefined();
+				expect( RequestService.options ).toEqual( jasmine.any( Function ) );
 			} );
-			promises.push( promise );
 
-			promise = RequestService.options( "http://example.com/500", options );
-			testPromise( promise );
-			promise = promise.catch( function( error:HTTPError ):void {
-				expect( error ).toEqual( jasmine.any( HTTPError ) );
-				expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
 
-				testHTTPResponse( error.response );
-				expect( error.response.data ).toEqual( "" );
-				testHTTPResponseHeaders( error.response, {} );
+			it( "should make a OPTIONS request", async () => {
+				await RequestService
+					.options( "http://example.com/200" )
+					.then( ( response:Response ) => {
+						testHTTPResponse( response );
+
+						expect( response.status ).toEqual( 200 );
+
+						testHTTPResponseData( response, responseOptions.responseText );
+						testHTTPResponseHeaders( response, responseOptions.responseHeaders );
+					} );
 			} );
-			promises.push( promise );
 
-			Promise.all( promises ).then( done ).catch( done.fail );
+			it( "should reject promise", async () => {
+				await RequestService
+					.options( "http://example.com/500", options )
+					.catch( ( error:HTTPError ) => {
+						expect( error ).toEqual( jasmine.any( HTTPError ) );
+						expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+						expect( error.response.data ).toEqual( "" );
+
+						testHTTPResponse( error.response );
+						testHTTPResponseHeaders( error.response, {} );
+					} );
+			} );
+
 		} );
 
-		describe( method(
-			STATIC,
-			"get"
-		), ():void => {
+		describe( "RequestService.get", () => {
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Simple get request.", [
-					{ name: "url", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			it( "should exist", () => {
 				expect( RequestService.get ).toBeDefined();
-				expect( Utils.isFunction( RequestService.get ) ).toBe( true );
-
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-
-				promise = RequestService.get( "http://example.com/200" );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
-
-				promise = RequestService.get( "http://example.com/200", options );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
-
-
-				promise = RequestService.get( "http://example.com/404" );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.get( "http://example.com/500", options );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+				expect( RequestService.get ).toEqual( jasmine.any( Function ) );
 			} );
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Get request with specified response parser.", [
-					{ name: "url", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
-				],
-				{ type: "Promise<[Object, CarbonLDP.HTTP.Response]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( RequestService.get ).toBeDefined();
-				expect( Utils.isFunction( RequestService.get ) ).toBe( true );
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
+			it( "should make a GET request", async () => {
+				await RequestService
+					.get( "http://example.com/200" )
+					.then( ( response:Response ) => {
+						testHTTPResponse( response );
 
-				promise = RequestService.get( "http://example.com/200", null, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
+						expect( response.status ).toEqual( 200 );
+
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
 					} );
-				} ) );
+			} );
 
-				promise = RequestService.get( "http://example.com/200", options, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
+			it( "should make a GET request with parser", async () => {
+				await RequestService
+					.get( "http://example.com/200", null, parser )
+					.then( ( [ object, response ]:[ Object, Response ] ) => {
+						testHTTPResponse( response );
+
+						expect( response.status ).toEqual( 200 );
+
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
+
+						return parser
+							.parse( responseFull.responseText )
+							.then( ( parsedObject:object ) => {
+								testDataParsed( object, parsedObject );
+							} );
 					} );
-				} ) );
+			} );
 
+			it( "should reject promise", async () => {
+				await RequestService
+					.get( "http://example.com/500", options )
+					.catch( ( error:HTTPError ) => {
+						expect( error ).toEqual( jasmine.any( HTTPError ) );
+						expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
 
-				promise = RequestService.get( "http://example.com/404", null, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+						expect( error.response.data ).toEqual( "" );
 
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.get( "http://example.com/500", options, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+						testHTTPResponse( error.response );
+						testHTTPResponseHeaders( error.response, {} );
+					} );
 			} );
 
 		} );
 
-		describe( method(
-			STATIC,
-			"post"
-		), ():void => {
+		describe( "RequestService.post", () => {
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Simple post request.", [
-					{ name: "url", type: "string" },
-					{ name: "body", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			it( "should exist", () => {
 				expect( RequestService.post ).toBeDefined();
-				expect( Utils.isFunction( RequestService.post ) ).toBe( true );
-
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-
-				promise = RequestService.post( "http://example.com/200", "some body data" );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
-
-				promise = RequestService.post( "http://example.com/200", "some body data", options );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
-
-
-				promise = RequestService.post( "http://example.com/404", "some body data" );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.post( "http://example.com/500", "some body data", options );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+				expect( RequestService.post ).toEqual( jasmine.any( Function ) );
 			} );
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Post request with specified response parser.", [
-					{ name: "url", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( RequestService.post ).toBeDefined();
-				expect( Utils.isFunction( RequestService.post ) ).toBe( true );
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
+			it( "should make a POST request", async () => {
+				await RequestService
+					.post( "http://example.com/200", "some body" )
+					.then( ( response:Response ) => {
+						testHTTPResponse( response );
 
-				promise = RequestService.post( "http://example.com/200", "some body data", null, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
+						expect( response.status ).toEqual( 200 );
+
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
 					} );
-				} ) );
+			} );
 
-				promise = RequestService.post( "http://example.com/200", "some body data", options, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
+			it( "should make a POST request with parser", async () => {
+				await RequestService
+					.post( "http://example.com/200", "some body", null, parser )
+					.then( ( [ object, response ]:[ Object, Response ] ) => {
+						testHTTPResponse( response );
+
+						expect( response.status ).toEqual( 200 );
+
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
+
+						return parser
+							.parse( responseFull.responseText )
+							.then( ( parsedObject:object ) => {
+								testDataParsed( object, parsedObject );
+							} );
 					} );
-				} ) );
+			} );
 
+			it( "should reject promise", async () => {
+				await RequestService
+					.post( "http://example.com/500", "some boy", options )
+					.catch( ( error:HTTPError ) => {
+						expect( error ).toEqual( jasmine.any( HTTPError ) );
+						expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
 
-				promise = RequestService.post( "http://example.com/404", "some body data", null, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+						expect( error.response.data ).toEqual( "" );
 
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.post( "http://example.com/500", "some body data", options, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+						testHTTPResponse( error.response );
+						testHTTPResponseHeaders( error.response, {} );
+					} );
 			} );
 
 		} );
 
-		describe( method(
-			STATIC,
-			"put"
-		), ():void => {
+		describe( "RequestService.put", () => {
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Simple put request.", [
-					{ name: "url", type: "string" },
-					{ name: "body", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			it( "should exist", () => {
 				expect( RequestService.put ).toBeDefined();
-				expect( Utils.isFunction( RequestService.put ) ).toBe( true );
-
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-
-				promise = RequestService.put( "http://example.com/200", "some body data" );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
-
-				promise = RequestService.put( "http://example.com/200", "some body data", options );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
-
-
-				promise = RequestService.put( "http://example.com/404", "some body data" );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.put( "http://example.com/500", "some body data", options );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+				expect( RequestService.put ).toEqual( jasmine.any( Function ) );
 			} );
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Put request with specified response parser.", [
-					{ name: "url", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( RequestService.put ).toBeDefined();
-				expect( Utils.isFunction( RequestService.put ) ).toBe( true );
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
+			it( "should make a PUT request", async () => {
+				await RequestService
+					.put( "http://example.com/200", "some body" )
+					.then( ( response:Response ) => {
+						testHTTPResponse( response );
 
-				promise = RequestService.put( "http://example.com/200", "some body data", null, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
+						expect( response.status ).toEqual( 200 );
+
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
 					} );
-				} ) );
+			} );
 
-				promise = RequestService.put( "http://example.com/200", "some body data", options, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
+			it( "should make a PUT request with parser", async () => {
+				await RequestService
+					.put( "http://example.com/200", "some body", null, parser )
+					.then( ( [ object, response ]:[ Object, Response ] ) => {
+						testHTTPResponse( response );
+
+						expect( response.status ).toEqual( 200 );
+
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
+
+						return parser
+							.parse( responseFull.responseText )
+							.then( ( parsedObject:object ) => {
+								testDataParsed( object, parsedObject );
+							} );
 					} );
-				} ) );
+			} );
 
+			it( "should reject promise", async () => {
+				await RequestService
+					.put( "http://example.com/500", "some boy", options )
+					.catch( ( error:HTTPError ) => {
+						expect( error ).toEqual( jasmine.any( HTTPError ) );
+						expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
 
-				promise = RequestService.put( "http://example.com/404", "some body data", null, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+						expect( error.response.data ).toEqual( "" );
 
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.put( "http://example.com/500", "some body data", options, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+						testHTTPResponse( error.response );
+						testHTTPResponseHeaders( error.response, {} );
+					} );
 			} );
 
 		} );
 
-		describe( method(
-			STATIC,
-			"patch"
-		), ():void => {
+		describe( "RequestService.patch", () => {
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Simple patch request.", [
-					{ name: "url", type: "string" },
-					{ name: "body", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			it( "should exist", () => {
 				expect( RequestService.patch ).toBeDefined();
-				expect( Utils.isFunction( RequestService.patch ) ).toBe( true );
-
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-
-				promise = RequestService.patch( "http://example.com/200", "some body data" );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
-
-				promise = RequestService.patch( "http://example.com/200", "some body data", options );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
-
-
-				promise = RequestService.patch( "http://example.com/404", "some body data" );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.patch( "http://example.com/500", "some body data", options );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+				expect( RequestService.patch ).toEqual( jasmine.any( Function ) );
 			} );
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Patch request with specified response parser.", [
-					{ name: "url", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( RequestService.patch ).toBeDefined();
-				expect( Utils.isFunction( RequestService.patch ) ).toBe( true );
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
+			it( "should make a PATCH request", async () => {
+				await RequestService
+					.patch( "http://example.com/200", "some body" )
+					.then( ( response:Response ) => {
+						testHTTPResponse( response );
 
-				promise = RequestService.patch( "http://example.com/200", "some body data", null, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
+						expect( response.status ).toEqual( 200 );
+
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
 					} );
-				} ) );
+			} );
 
-				promise = RequestService.patch( "http://example.com/200", "some body data", options, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
+			it( "should make a PATCH request with parser", async () => {
+				await RequestService
+					.patch( "http://example.com/200", "some body", null, parser )
+					.then( ( [ object, response ]:[ Object, Response ] ) => {
+						testHTTPResponse( response );
+
+						expect( response.status ).toEqual( 200 );
+
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
+
+						return parser
+							.parse( responseFull.responseText )
+							.then( ( parsedObject:object ) => {
+								testDataParsed( object, parsedObject );
+							} );
 					} );
-				} ) );
+			} );
 
+			it( "should reject promise", async () => {
+				await RequestService
+					.patch( "http://example.com/500", "some boy", options )
+					.catch( ( error:HTTPError ) => {
+						expect( error ).toEqual( jasmine.any( HTTPError ) );
+						expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
 
-				promise = RequestService.patch( "http://example.com/404", "some body data", null, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+						expect( error.response.data ).toEqual( "" );
 
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.patch( "http://example.com/500", "some body data", options, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+						testHTTPResponse( error.response );
+						testHTTPResponseHeaders( error.response, {} );
+					} );
 			} );
 
 		} );
 
-		describe( method(
-			STATIC,
-			"delete"
-		), ():void => {
+		describe( "RequestService.delete", () => {
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Simple delete request.", [
-					{ name: "url", type: "string" },
-					{ name: "body", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			it( "should exist", () => {
 				expect( RequestService.delete ).toBeDefined();
-				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
-
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-
-				promise = RequestService.delete( "http://example.com/200", "some body data" );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
-
-				promise = RequestService.delete( "http://example.com/200", "some body data", options );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
-
-
-				promise = RequestService.delete( "http://example.com/404", "some body data" );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.delete( "http://example.com/500", "some body data", options );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+				expect( RequestService.delete ).toEqual( jasmine.any( Function ) );
 			} );
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Delete request with specified response parser.", [
-					{ name: "url", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( RequestService.delete ).toBeDefined();
-				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
+			it( "should make a PATCH request", async () => {
+				await RequestService
+					.delete( "http://example.com/200" )
+					.then( ( response:Response ) => {
+						testHTTPResponse( response );
 
-				promise = RequestService.delete( "http://example.com/200", "some body data", null, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
+						expect( response.status ).toEqual( 200 );
+
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
 					} );
-				} ) );
-
-				promise = RequestService.delete( "http://example.com/200", "some body data", options, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
-					} );
-				} ) );
-
-
-				promise = RequestService.delete( "http://example.com/404", "some body data", null, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.delete( "http://example.com/500", "some body data", options, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Simple delete request.", [
-					{ name: "url", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( RequestService.delete ).toBeDefined();
-				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
+			it( "should make a PATCH request with parser", async () => {
+				await RequestService
+					.delete( "http://example.com/200", null, parser )
+					.then( ( [ object, response ]:[ Object, Response ] ) => {
+						testHTTPResponse( response );
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
+						expect( response.status ).toEqual( 200 );
 
-				promise = RequestService.delete( "http://example.com/200" );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
 
-				promise = RequestService.delete( "http://example.com/200", options );
-				testPromise( promise );
-				promises.push( promise.then( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-				} ) );
-
-
-				promise = RequestService.delete( "http://example.com/404" );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.delete( "http://example.com/500", options );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+						return parser
+							.parse( responseFull.responseText )
+							.then( ( parsedObject:object ) => {
+								testDataParsed( object, parsedObject );
+							} );
+					} );
 			} );
 
-			// TODO: Separate in different tests
-			it( hasSignature(
-				"Delete request with specified response parser.", [
-					{ name: "url", type: "string" },
-					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
-				],
-				{ type: "Promise<CarbonLDP.HTTP.Response>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( RequestService.delete ).toBeDefined();
-				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
+			it( "should make a PATCH request with data", async () => {
+				await RequestService
+					.delete( "http://example.com/200", "some body" )
+					.then( ( response:Response ) => {
+						testHTTPResponse( response );
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
+						expect( response.status ).toEqual( 200 );
 
-				promise = RequestService.delete( "http://example.com/200", null, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
 					} );
-				} ) );
+			} );
 
-				promise = RequestService.delete( "http://example.com/200", options, parser );
-				testPromise( promise );
-				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 200 );
-					testHTTPResponseHeaders( response, responseFull.responseHeaders );
-					testHTTPResponseData( response, responseFull.responseText );
-					return parser.parse( responseFull.responseText ).then( ( parsedObject:Object ) => {
-						testDataParsed( object, parsedObject );
+			it( "should make a PATCH request with data and parser", async () => {
+				await RequestService
+					.delete( "http://example.com/200", "some body", null, parser )
+					.then( ( [ object, response ]:[ Object, Response ] ) => {
+						testHTTPResponse( response );
+
+						expect( response.status ).toEqual( 200 );
+
+						testHTTPResponseHeaders( response, responseFull.responseHeaders );
+						testHTTPResponseData( response, responseFull.responseText );
+
+						return parser
+							.parse( responseFull.responseText )
+							.then( ( parsedObject:object ) => {
+								testDataParsed( object, parsedObject );
+							} );
 					} );
-				} ) );
+			} );
 
+			it( "should reject promise", async () => {
+				await RequestService
+					.delete( "http://example.com/500", "some boy", options )
+					.catch( ( error:HTTPError ) => {
+						expect( error ).toEqual( jasmine.any( HTTPError ) );
+						expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
 
-				promise = RequestService.delete( "http://example.com/404", null, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+						expect( error.response.data ).toEqual( "" );
 
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				promise = RequestService.delete( "http://example.com/500", options, parser );
-				testPromise( promise );
-				promise = promise.catch( function( error:HTTPError ):void {
-					expect( error ).toEqual( jasmine.any( HTTPError ) );
-					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
-
-					testHTTPResponse( error.response );
-					expect( error.response.data ).toEqual( "" );
-					testHTTPResponseHeaders( error.response, {} );
-				} );
-				promises.push( promise );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+						testHTTPResponse( error.response );
+						testHTTPResponseHeaders( error.response, {} );
+					} );
 			} );
 
 		} );
 
-		function testPromise( promise:any ):void {
-			expect( promise ).toBeDefined();
-			expect( promise instanceof Promise ).toBeTruthy();
-		}
 
 		function testHTTPResponse( response:any ):void {
 			expect( response ).not.toBeNull();
@@ -1137,14 +501,11 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 	} );
 
-	describe( clazz(
-		"CarbonLDP.HTTP.RequestUtils",
-		"Class with useful functions to manage the options object of a request."
-	), ():void => {
-		let options:RequestOptions,
-			optionsWithHeaders:RequestOptions;
+	describe( "RequestUtils", () => {
 
-		beforeEach( ():void => {
+		let options:RequestOptions;
+		let optionsWithHeaders:RequestOptions;
+		beforeEach( () => {
 			options = newOptionsObject();
 			optionsWithHeaders = {
 				headers: new Map()
@@ -1155,300 +516,310 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			};
 		} );
 
-		it( isDefined(), ():void => {
-			expect( RequestUtils ).toBeDefined();
-			expect( Utils.isFunction( RequestUtils ) ).toBe( true );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"getHeader",
-			"Returns the header object of a header-name inside an options object request. Returns `undefined` if the header doesn't exists. If `initialize` flag is provided with true, an empty header will be created even if it already exits.", [
-				{ name: "headerName", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
-				{ name: "initialize", type: "boolean", optional: true, defaultValue: "false" },
-			],
-			{ type: "CarbonLDP.HTTP.Header" }
-		), ():void => {
-			expect( RequestUtils.getHeader ).toBeDefined();
-			expect( Utils.isFunction( RequestUtils.getHeader ) ).toBe( true );
-
-			expect( RequestUtils.getHeader( "Authorization", optionsWithHeaders ) ).toEqual( new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
-			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
-
-			expect( RequestUtils.getHeader( "Other-header", optionsWithHeaders ) ).toBeUndefined();
-			expect( RequestUtils.getHeader( "Authorization", options ) ).toBeUndefined();
-
-			expect( RequestUtils.getHeader( "Other-header", optionsWithHeaders, true ) ).toEqual( new Header() );
-			expect( RequestUtils.getHeader( "Authorization", options, true ) ).toEqual( new Header() );
-			expect( RequestUtils.getHeader( "Authorization", optionsWithHeaders, true ) ).toEqual( new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"setAcceptHeader",
-			"Set an Accept header in an options object request.", [
-				{ name: "accept", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
-			],
-			{ type: "CarbonLDP.HTTP.RequestOptions" }
-		), ():void => {
-			expect( RequestUtils.setAcceptHeader ).toBeDefined();
-			expect( Utils.isFunction( RequestUtils.setAcceptHeader ) ).toBe( true );
-
-			options = RequestUtils.setAcceptHeader( "application/json", options );
-			expect( RequestUtils.getHeader( "Accept", options ) ).toEqual( new Header( "application/json" ) );
-
-			optionsWithHeaders = RequestUtils.setAcceptHeader( "application/json", optionsWithHeaders );
-			expect( RequestUtils.getHeader( "Accept", optionsWithHeaders ) ).toEqual( new Header( "application/json" ) );
-			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"setContentTypeHeader",
-			"Set a Content-Type header in an options object request.", [
-				{ name: "contentType", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
-			],
-			{ type: "CarbonLDP.HTTP.RequestOptions" }
-		), ():void => {
-			expect( RequestUtils.setContentTypeHeader ).toBeDefined();
-			expect( Utils.isFunction( RequestUtils.setContentTypeHeader ) ).toBe( true );
-
-			options = RequestUtils.setContentTypeHeader( "application/json", options );
-			expect( RequestUtils.getHeader( "Content-Type", options ) ).toEqual( new Header( "application/json" ) );
-
-			optionsWithHeaders = RequestUtils.setContentTypeHeader( "application/json", optionsWithHeaders );
-			expect( RequestUtils.getHeader( "Content-Type", optionsWithHeaders ) ).toEqual( new Header( "application/json" ) );
-			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"setIfMatchHeader",
-			"Set an If-Match header in an options object request.", [
-				{ name: "eTag", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
-			],
-			{ type: "CarbonLDP.HTTP.RequestOptions" }
-		), ():void => {
-			expect( RequestUtils.setIfMatchHeader ).toBeDefined();
-			expect( Utils.isFunction( RequestUtils.setIfMatchHeader ) ).toBe( true );
-
-			options = RequestUtils.setIfMatchHeader( 'W/"123456789"', options );
-			expect( RequestUtils.getHeader( "If-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
-
-			optionsWithHeaders = RequestUtils.setIfMatchHeader( 'W/"123456789"', optionsWithHeaders );
-			expect( RequestUtils.getHeader( "If-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
-			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"setIfNoneMatchHeader",
-			"Set an If-None-Match header in an options object request.", [
-				{ name: "eTag", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
-			],
-			{ type: "Object" }
-		), ():void => {
-			expect( RequestUtils.setIfNoneMatchHeader ).toBeDefined();
-			expect( Utils.isFunction( RequestUtils.setIfNoneMatchHeader ) ).toBe( true );
-
-			options = RequestUtils.setIfNoneMatchHeader( 'W/"123456789"', options );
-			expect( RequestUtils.getHeader( "If-None-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
-
-			optionsWithHeaders = RequestUtils.setIfNoneMatchHeader( 'W/"123456789"', optionsWithHeaders );
-			expect( RequestUtils.getHeader( "If-None-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
-			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"setPreferredInteractionModel",
-			"Set a Prefer header with `rel=interaction-model` in an options object request.", [
-				{ name: "interactionModelURI", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
-			],
-			{ type: "CarbonLDP.HTTP.RequestOptions" }
-		), ():void => {
-			expect( RequestUtils.setPreferredInteractionModel ).toBeDefined();
-			expect( Utils.isFunction( RequestUtils.setPreferredInteractionModel ) ).toBe( true );
-
-			options = RequestUtils.setPreferredInteractionModel( "http://www.w3.org/ns/ldp#RDFSource", options );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
-
-			optionsWithHeaders = RequestUtils.setPreferredInteractionModel( "http://www.w3.org/ns/ldp#RDFSource", optionsWithHeaders );
-			expect( RequestUtils.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
-			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"setPreferredRetrieval",
-			"Set a Prefer header which indicates to the platform to type of retrieval to make.", [
-				{ name: "retrievalType", type: `"representation" | "minimal"`, description: `If "representation" is chosen the platform must retrieve the entire resource; otherwise when "minimal" is sent the minimal data will be returned generally an empty one.` },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
-			],
-			{ type: "CarbonLDP.HTTP.RequestOptions" }
-		), ():void => {
-			expect( RequestUtils.setPreferredRetrieval ).toBeDefined();
-			expect( Utils.isFunction( RequestUtils.setPreferredRetrieval ) ).toBe( true );
-
-			options = newOptionsObject();
-			options = RequestUtils.setPreferredRetrieval( "representation", options );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header( "return=representation" ) );
-
-			options = newOptionsObject();
-			options = RequestUtils.setPreferredRetrieval( "minimal", options );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header( "return=minimal" ) );
-
-			options = {
-				headers: new Map()
-					.set( "prefer", new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) ),
-			};
-			options = RequestUtils.setPreferredRetrieval( "representation", options );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual(
-				new Header(
-					"http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model," +
-					"return=representation"
-				)
-			);
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"setSlug",
-			"Set a Slug header in an options object request.", [
-				{ name: "slug", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
-			],
-			{ type: "CarbonLDP.HTTP.RequestOptions" }
-		), ():void => {
-			expect( RequestUtils.setSlug ).toBeDefined();
-			expect( Utils.isFunction( RequestUtils.setSlug ) ).toBe( true );
-
-			options = RequestUtils.setSlug( "a-slug-name", options );
-			expect( RequestUtils.getHeader( "Slug", options ) ).toEqual( new Header( "a-slug-name" ) );
-
-			optionsWithHeaders = RequestUtils.setSlug( "a-slug-name", optionsWithHeaders );
-			expect( RequestUtils.getHeader( "Slug", optionsWithHeaders ) ).toEqual( new Header( "a-slug-name" ) );
-			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"setRetrievalPreferences",
-			"Set a Prefer header with `return=representation` in an options object request.", [
-				{ name: "preference", type: "CarbonLDP.HTTP.RetrievalPreferences" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
-			],
-			{ type: "CarbonLDP.HTTP.RequestOptions" }
-		), ():void => {
-			expect( RequestUtils.setRetrievalPreferences ).toBeDefined();
-			expect( Utils.isFunction( RequestUtils.setRetrievalPreferences ) ).toBe( true );
-
-			options = RequestUtils.setRetrievalPreferences( {}, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
-
-			options = RequestUtils.setRetrievalPreferences( { include: [] }, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
-
-			options = RequestUtils.setRetrievalPreferences( { omit: [] }, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
-
-			options = RequestUtils.setRetrievalPreferences( { include: [], omit: [] }, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
-
-
-			options = RequestUtils.setRetrievalPreferences( {
-				include: [
-					LDP.PreferMinimalContainer,
-					LDP.PreferMembership,
-				],
-			}, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}"` );
-
-			options = RequestUtils.setRetrievalPreferences( {
-				omit: [
-					LDP.PreferContainment,
-					C.PreferContainmentResources,
-					C.PreferMembershipResources,
-				],
-			}, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
-
-			options = RequestUtils.setRetrievalPreferences( {
-				include: [
-					LDP.PreferMinimalContainer,
-					LDP.PreferMembership,
-				],
-				omit: [
-					LDP.PreferContainment,
-					C.PreferContainmentResources,
-					C.PreferMembershipResources,
-				],
-			}, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}", omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			STATIC,
-			"isOptions",
-			"Returns `true` if the object provided has at least a property of a `CarbonLDP.HTTP.Request.Option` object.", [
-				{ name: "object", type: "Object", description: "The object to evaluate." },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( RequestUtils.isOptions ).toBeDefined();
-			expect( Utils.isFunction( RequestUtils.isOptions ) ).toBe( true );
-
-			let anotherOptions:RequestOptions = {
-				headers: null,
-				sendCredentialsOnCORS: null,
-				timeout: null,
-				request: null,
-			};
-			expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
-
-			delete anotherOptions.headers;
-			expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
-			anotherOptions.headers = null;
-
-			delete anotherOptions.sendCredentialsOnCORS;
-			expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
-			anotherOptions.sendCredentialsOnCORS = null;
-
-			delete anotherOptions.timeout;
-			expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
-			anotherOptions.timeout = null;
-
-			delete anotherOptions.request;
-			expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
-			anotherOptions.request = null;
-
-			expect( RequestUtils.isOptions( {} ) ).toBe( false );
-			expect( RequestUtils.isOptions( null ) ).toBe( false );
-			expect( RequestUtils.isOptions( undefined ) ).toBe( false );
-		} );
-
 		function newOptionsObject():RequestOptions {
 			return {
 				timeout: 5000,
 				sendCredentialsOnCORS: false,
 			};
 		}
+
+
+		it( "should exist", () => {
+			expect( RequestUtils ).toBeDefined();
+			expect( RequestUtils ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		describe( "RequestUtils.getHeader", () => {
+
+			it( "should exist", () => {
+				expect( RequestUtils.getHeader ).toBeDefined();
+				expect( RequestUtils.getHeader ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return undefined when no headers", () => {
+				expect( RequestUtils.getHeader( "Authorization", options ) ).toBeUndefined();
+			} );
+
+			it( "should return Header when headers", () => {
+				expect( RequestUtils.getHeader( "Authorization", optionsWithHeaders ) )
+					.toEqual( new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
+			} );
+
+
+			it( "should return init when no headers", () => {
+				expect( RequestUtils.getHeader( "Authorization", options, true ) )
+					.toEqual( new Header() );
+			} );
+
+			it( "should return Header when headers and init", () => {
+				expect( RequestUtils.getHeader( "Authorization", optionsWithHeaders, true ) )
+					.toEqual( new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
+			} );
+
+		} );
+
+		describe( "RequestUtils.setAcceptHeader", () => {
+
+			it( "should exist", () => {
+				expect( RequestUtils.setAcceptHeader ).toBeDefined();
+				expect( RequestUtils.setAcceptHeader ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should add header with empty options", () => {
+				options = RequestUtils.setAcceptHeader( "application/json", options );
+				expect( RequestUtils.getHeader( "Accept", options ) ).toEqual( new Header( "application/json" ) );
+			} );
+
+			it( "should add header with options with headers", () => {
+				optionsWithHeaders = RequestUtils.setAcceptHeader( "application/json", optionsWithHeaders );
+				expect( RequestUtils.getHeader( "Accept", optionsWithHeaders ) ).toEqual( new Header( "application/json" ) );
+				expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			} );
+
+		} );
+
+		describe( "RequestUtils.setContentTypeHeader", () => {
+
+			it( "should exist", () => {
+				expect( RequestUtils.setContentTypeHeader ).toBeDefined();
+				expect( RequestUtils.setContentTypeHeader ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should add header with empty options", () => {
+				options = RequestUtils.setContentTypeHeader( "application/json", options );
+				expect( RequestUtils.getHeader( "Content-Type", options ) ).toEqual( new Header( "application/json" ) );
+			} );
+
+			it( "should add header with options with headers", () => {
+				optionsWithHeaders = RequestUtils.setContentTypeHeader( "application/json", optionsWithHeaders );
+				expect( RequestUtils.getHeader( "Content-Type", optionsWithHeaders ) ).toEqual( new Header( "application/json" ) );
+				expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			} );
+
+		} );
+
+		describe( "RequestUtils.setIfMatchHeader", () => {
+
+			it( "should exist", () => {
+				expect( RequestUtils.setIfMatchHeader ).toBeDefined();
+				expect( RequestUtils.setIfMatchHeader ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should add header with empty options", () => {
+				options = RequestUtils.setIfMatchHeader( 'W/"123456789"', options );
+				expect( RequestUtils.getHeader( "If-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
+			} );
+
+			it( "should add header with options with headers", () => {
+				optionsWithHeaders = RequestUtils.setIfMatchHeader( 'W/"123456789"', optionsWithHeaders );
+				expect( RequestUtils.getHeader( "If-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
+				expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			} );
+
+		} );
+
+		describe( "RequestUtils.setIfNoneMatchHeader", () => {
+
+			it( "should exist", () => {
+				expect( RequestUtils.setIfNoneMatchHeader ).toBeDefined();
+				expect( RequestUtils.setIfNoneMatchHeader ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should add header with empty options", () => {
+				options = RequestUtils.setIfNoneMatchHeader( 'W/"123456789"', options );
+				expect( RequestUtils.getHeader( "If-None-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
+			} );
+
+			it( "should add header with options with headers", () => {
+				optionsWithHeaders = RequestUtils.setIfNoneMatchHeader( 'W/"123456789"', optionsWithHeaders );
+				expect( RequestUtils.getHeader( "If-None-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
+				expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			} );
+
+		} );
+
+		describe( "RequestUtils.setPreferredInteractionModel", () => {
+
+			it( "should exist", () => {
+				expect( RequestUtils.setPreferredInteractionModel ).toBeDefined();
+				expect( RequestUtils.setPreferredInteractionModel ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should add header with empty options", () => {
+				options = RequestUtils.setPreferredInteractionModel( "http://www.w3.org/ns/ldp#RDFSource", options );
+				expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
+			} );
+
+			it( "should add header with options with headers", () => {
+				optionsWithHeaders = RequestUtils.setPreferredInteractionModel( "http://www.w3.org/ns/ldp#RDFSource", optionsWithHeaders );
+				expect( RequestUtils.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
+				expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			} );
+
+		} );
+
+		describe( "RequestUtils.setPreferredRetrieval", () => {
+
+			it( "should exist", () => {
+				expect( RequestUtils.setPreferredRetrieval ).toBeDefined();
+				expect( RequestUtils.setPreferredRetrieval ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should add header with empty options", () => {
+				options = newOptionsObject();
+				options = RequestUtils.setPreferredRetrieval( "representation", options );
+				expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header( "return=representation" ) );
+			} );
+
+			it( "should add header with options with headers", () => {
+				options = {
+					headers: new Map()
+						.set( "prefer", new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) ),
+				};
+
+				options = RequestUtils.setPreferredRetrieval( "representation", options );
+				expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual(
+					new Header(
+						"http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model," +
+						"return=representation"
+					)
+				);
+			} );
+
+		} );
+
+		describe( "RequestUtils.setSlug", () => {
+
+			it( "should exist", () => {
+				expect( RequestUtils.setSlug ).toBeDefined();
+				expect( RequestUtils.setSlug ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should add header with empty options", () => {
+				options = RequestUtils.setSlug( "a-slug-name", options );
+				expect( RequestUtils.getHeader( "Slug", options ) ).toEqual( new Header( "a-slug-name" ) );
+			} );
+
+			it( "should add header with options with headers", () => {
+				optionsWithHeaders = RequestUtils.setSlug( "a-slug-name", optionsWithHeaders );
+				expect( RequestUtils.getHeader( "Slug", optionsWithHeaders ) ).toEqual( new Header( "a-slug-name" ) );
+				expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			} );
+
+		} );
+
+		describe( "RequestUtils.setRetrievalPreferences", () => {
+
+			it( "should exist", () => {
+				expect( RequestUtils.setRetrievalPreferences ).toBeDefined();
+				expect( RequestUtils.setRetrievalPreferences ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should add header with empty options", () => {
+				options = RequestUtils.setRetrievalPreferences( {}, newOptionsObject() );
+				expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
+			} );
+
+			it( "should add header when empty include with empty options", () => {
+				options = RequestUtils.setRetrievalPreferences( { include: [] }, newOptionsObject() );
+				expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
+			} );
+
+			it( "should add header when empty omit with empty options", () => {
+				options = RequestUtils.setRetrievalPreferences( { omit: [] }, newOptionsObject() );
+				expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
+			} );
+
+			it( "should add header when empty include & omit with empty options", () => {
+				options = RequestUtils.setRetrievalPreferences( { include: [], omit: [] }, newOptionsObject() );
+				expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
+			} );
+
+
+			it( "should add header when includes with empty options", () => {
+				options = RequestUtils.setRetrievalPreferences( {
+					include: [
+						LDP.PreferMinimalContainer,
+						LDP.PreferMembership,
+					],
+				}, newOptionsObject() );
+				expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}"` );
+			} );
+
+			it( "should add header when omits with empty options", () => {
+				options = RequestUtils.setRetrievalPreferences( {
+					omit: [
+						LDP.PreferContainment,
+						C.PreferContainmentResources,
+						C.PreferMembershipResources,
+					],
+				}, newOptionsObject() );
+				expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
+			} );
+
+			it( "should add header when includes & omits with empty options", () => {
+				options = RequestUtils.setRetrievalPreferences( {
+					include: [
+						LDP.PreferMinimalContainer,
+						LDP.PreferMembership,
+					],
+					omit: [
+						LDP.PreferContainment,
+						C.PreferContainmentResources,
+						C.PreferMembershipResources,
+					],
+				}, newOptionsObject() );
+				expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}", omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
+			} );
+
+		} );
+
+
+		describe( "RequestUtils.isOptions", () => {
+
+			it( "should exist", () => {
+				expect( RequestUtils.isOptions ).toBeDefined();
+				expect( RequestUtils.isOptions ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return true when all properties", () => {
+				const anotherOptions:RequestOptions = {
+					headers: null,
+					sendCredentialsOnCORS: null,
+					timeout: null,
+					request: null,
+				};
+				expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
+			} );
+
+			it( "should return true when any property", () => {
+				expect( RequestUtils.isOptions( { headers: null } ) ).toBe( true );
+				expect( RequestUtils.isOptions( { sendCredentialsOnCORS: null } ) ).toBe( true );
+				expect( RequestUtils.isOptions( { timeout: null } ) ).toBe( true );
+				expect( RequestUtils.isOptions( { request: null } ) ).toBe( true );
+			} );
+
+			it( "should return false when empty object", () => {
+				expect( RequestUtils.isOptions( {} ) ).toBe( false );
+			} );
+
+			it( "should return false when undefined", () => {
+				expect( RequestUtils.isOptions( null ) ).toBe( false );
+				expect( RequestUtils.isOptions( undefined ) ).toBe( false );
+			} );
+
+		} );
 
 	} );
 

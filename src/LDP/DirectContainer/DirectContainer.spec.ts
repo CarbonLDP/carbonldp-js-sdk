@@ -1,35 +1,31 @@
 import { Document } from "../../Document/Document";
 
-import { hasSignature, interfaze, method, module, OBLIGATORY, property, STATIC } from "../../test/JasmineExtender";
-
 import { LDP } from "../../Vocabularies/LDP";
 
 import { DirectContainer } from "./DirectContainer";
 import { TransientDirectContainer } from "./TransientDirectContainer";
 
 
-describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
+describe( "DirectContainer", () => {
 
-	describe( interfaze(
-		"CarbonLDP.LDP.DirectContainer",
-		"Interface of a persisted direct container."
-	), ():void => {} );
+	it( "should exist", () => {
+		expect( DirectContainer ).toBeDefined();
+		expect( DirectContainer ).toEqual( jasmine.any( Object ) );
+	} );
 
-	describe( interfaze(
-		"CarbonLDP.LDP.DirectContainerFactory",
-		"Interface with the factory, utils for `CarbonLDP.LDP.DirectContainer` objects."
-	), ():void => {
 
-		describe( property(
-			OBLIGATORY,
-			"TYPE",
-			"CarbonLDP.Vocabularies.C.DirectContainer"
-		), ():void => {
+	describe( "[[interface impl]]", () => {
+	} );
 
-			it( "should exists", ():void => {
+	describe( "[[factory]]", () => {
+
+		describe( "DirectContainer.TYPE", () => {
+
+			it( "should exist", () => {
 				expect( DirectContainer.TYPE ).toBeDefined();
 				expect( DirectContainer.TYPE ).toEqual( jasmine.any( String ) );
 			} );
+
 
 			it( "should be ldp:DirectContainer", () => {
 				expect( DirectContainer.TYPE ).toBe( LDP.DirectContainer );
@@ -37,16 +33,9 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 		} );
 
-		describe( method( OBLIGATORY, "is" ), () => {
+		describe( "DirectContainer.is", () => {
 
-			it( hasSignature(
-				"Returns true if the object provided is considered a `CarbonLDP.LDP.DirectContainer` object.", [
-					{ name: "value", type: "any" },
-				],
-				{ type: "value is CarbonLDP.LDP.DirectContainer" }
-			), () => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( DirectContainer.is ).toBeDefined();
 				expect( DirectContainer.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -54,7 +43,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 			let isTransientDirectContainer:jasmine.Spy;
 			let isDocument:jasmine.Spy;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				isTransientDirectContainer = spyOn( TransientDirectContainer, "is" )
 					.and.returnValue( true );
 				isDocument = spyOn( Document, "is" )
@@ -78,17 +67,9 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 		} );
 
-		describe( method( OBLIGATORY, "create" ), ():void => {
+		describe( "DirectContainer.create", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Creates a `CarbonLDP.LDP.TransientDirectContainer` object with the parameters specified.", [
-					{ name: "data", type: "T & carbonLDP.LDP.BaseDirectContainer", description: "Data for creating a direct container." },
-				],
-				{ type: "T & CarbonLDP.LDP.TransientDirectContainer" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( DirectContainer.create ).toBeDefined();
 				expect( DirectContainer.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -100,17 +81,9 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 		} );
 
-		describe( method( OBLIGATORY, "createFrom" ), ():void => {
+		describe( "DirectContainer.createFrom", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Creates a `CarbonLDP.LDP.TransientDirectContainer` object with the object provided and the parameters specified.", [
-					{ name: "object", type: "T & CarbonLDP.LDP.BaseDirectContainer", description: "Object to be converted into a direct container." },
-				],
-				{ type: "T & CarbonLDP.LDP.TransientDirectContainer" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( DirectContainer.createFrom ).toBeDefined();
 				expect( DirectContainer.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
@@ -120,19 +93,6 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 				expect( DirectContainer.createFrom ).toBe( TransientDirectContainer.createFrom );
 			} );
 
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"DirectContainer",
-		"CarbonLDP.LDP.DirectContainerFactory"
-	), ():void => {
-
-		it( "should exists", ():void => {
-			expect( DirectContainer ).toBeDefined();
-			expect( DirectContainer ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );

@@ -38,66 +38,38 @@ import { Header } from "../../HTTP/Header";
 import { ErrorResponse } from "../../LDP/ErrorResponse";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
-import { ModelPrototype } from "../../Model/ModelPrototype";
+
 import { PointerType } from "../../ObjectSchema/PointerType";
+
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
 import { QueryPropertyType } from "../../QueryDocuments/QueryPropertyType";
 
 import { BaseResource } from "../../Resource/BaseResource";
 
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../../test/JasmineExtender";
 import { UUIDUtils } from "../../Utils";
 
 import { C } from "../../Vocabularies/C";
 import { LDP } from "../../Vocabularies/LDP";
 import { XSD } from "../../Vocabularies/XSD";
 
-import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
-import {
-	QueryableDocumentsRepositoryTrait,
-	QueryableDocumentsRepositoryTraitFactory
-} from "./QueryableDocumentsRepositoryTrait";
+import { QueryableDocumentsRepositoryTrait } from "./QueryableDocumentsRepositoryTrait";
 
 
-describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsRepositoryTrait" ), () => {
+describe( "QueryableDocumentsRepositoryTrait", () => {
+
+	it( "should exist", () => {
+		expect( QueryableDocumentsRepositoryTrait ).toBeDefined();
+		expect( QueryableDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
+	} );
 
 	let context:DocumentsContext;
-	beforeEach( ():void => {
+	beforeEach( () => {
 		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 
-	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.QueryableDocumentsRepositoryTrait",
-		"Documents repository with the implementation for sparql queries."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.GeneralRepository<CarbonLDP.Document>" ), () => {
-			const target:GeneralRepository<Document> = {} as QueryableDocumentsRepositoryTrait;
-			expect( target ).toBeDefined();
-		} );
-
-
-		it( hasProperty(
-			OBLIGATORY,
-			"context",
-			"CarbonLDP.DocumentsContext"
-		), ():void => {
-			const target:QueryableDocumentsRepositoryTrait[ "context" ] = {} as DocumentsContext;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[interface impl]]", () => {
 
 		beforeEach( () => {
 			jasmine.Ajax.install();
@@ -237,40 +209,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		};
 
 
-		describe( method( OBLIGATORY, "get" ), ():void => {
+		describe( "QueryableDocumentsRepositoryTrait.get", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the entire specified document.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the specified properties and sub-properties of the URI specified by the function provided.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the selected properties and sub-properties of a query builder function provided.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.get ).toBeDefined();
 				expect( repository.get ).toEqual( jasmine.any( Function ) );
 			} );
@@ -2264,40 +2205,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "resolve" ), () => {
+		describe( "QueryableDocumentsRepositoryTrait.resolve", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Resolves the entire specified document.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Resolves the specified properties and sub-properties of the URI specified by the function provided.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Resolves the selected properties and sub-properties of a query builder function provided.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.resolve ).toBeDefined();
 				expect( repository.resolve ).toEqual( jasmine.any( Function ) );
 			} );
@@ -3504,19 +3414,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		} );
 
 
-		describe( method( OBLIGATORY, "saveAndRefresh" ), () => {
+		describe( "QueryableDocumentsRepositoryTrait.saveAndRefresh", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Send the changes of the document and retrieves the updated data from the server.",
-				[
-					{ name: "document", type: "CarbonLDP.Document", description: "The document to be saved." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), () => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.saveAndRefresh ).toBeDefined();
 				expect( repository.saveAndRefresh ).toEqual( jasmine.any( Function ) );
 			} );
@@ -4029,19 +3929,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "refresh" ), () => {
+		describe( "QueryableDocumentsRepositoryTrait.refresh", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Refresh the full or partial document.",
-				[
-					{ name: "document", type: "CarbonLDP.Document", description: "The document to be refreshed." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), () => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.refresh ).toBeDefined();
 				expect( repository.refresh ).toEqual( jasmine.any( Function ) );
 			} );
@@ -5070,28 +4960,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		} );
 
 
-		describe( method( OBLIGATORY, "getChildren" ), () => {
+		describe( "QueryableDocumentsRepositoryTrait.getChildren", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the children of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the children of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.getChildren ).toBeDefined();
 				expect( repository.getChildren ).toEqual( jasmine.any( Function ) );
 			} );
@@ -5746,7 +5617,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 
-			it( "should order returned children", ( done:DoneFn ):void => {
+			it( "should order returned children", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -5888,7 +5759,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return full children", ( done:DoneFn ):void => {
+			it( "should return full children", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -6055,7 +5926,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return .ALL children", ( done:DoneFn ):void => {
+			it( "should return .ALL children", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -6191,7 +6062,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.catch( done.fail );
 			} );
 
-			it( "should return partial children", ( done:DoneFn ):void => {
+			it( "should return partial children", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -6342,7 +6213,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return partial children with partial relations", ( done:DoneFn ):void => {
+			it( "should return partial children with partial relations", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -6548,30 +6419,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "getMembers" ), () => {
+		describe( "QueryableDocumentsRepositoryTrait.getMembers", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the members of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the members of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.getMembers ).toBeDefined();
 				expect( repository.getMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -7143,7 +6993,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 
-			it( "should order returned members", ( done:DoneFn ):void => {
+			it( "should order returned members", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -7285,7 +7135,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return full members", ( done:DoneFn ):void => {
+			it( "should return full members", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -7450,7 +7300,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return .ALL members", ( done:DoneFn ):void => {
+			it( "should return .ALL members", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -7585,7 +7435,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 					.catch( done.fail );
 			} );
 
-			it( "should return partial members", ( done:DoneFn ):void => {
+			it( "should return partial members", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -7735,7 +7585,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should return partial members with partial relations", ( done:DoneFn ):void => {
+			it( "should return partial members with partial relations", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -7940,19 +7790,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 		} );
 
 
-		describe( method( OBLIGATORY, "listChildren" ), () => {
+		describe( "QueryableDocumentsRepositoryTrait.listChildren", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the empty children of the specified URI.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.listChildren ).toBeDefined();
 				expect( repository.listChildren ).toEqual( jasmine.any( Function ) );
 			} );
@@ -8134,7 +7974,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 
-			it( "should return documents", ( done:DoneFn ):void => {
+			it( "should return documents", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -8213,7 +8053,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should NOT return partial documents", ( done:DoneFn ):void => {
+			it( "should NOT return partial documents", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -8314,19 +8154,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-		describe( method( OBLIGATORY, "listMembers" ), () => {
+		describe( "QueryableDocumentsRepositoryTrait.listMembers", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the empty members of the specified URI.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.listMembers ).toBeDefined();
 				expect( repository.listMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -8515,7 +8345,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 			} );
 
 
-			it( "should return documents", ( done:DoneFn ):void => {
+			it( "should return documents", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -8594,7 +8424,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				} ).catch( done.fail );
 			} );
 
-			it( "should NOT return partial documents", ( done:DoneFn ):void => {
+			it( "should NOT return partial documents", ( done:DoneFn ) => {
 				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
@@ -8695,28 +8525,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		} );
 
-
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.QueryableDocumentsRepositoryTraitFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.DocumentsRepository.Traits.QueryableDocumentsRepositoryTrait` objects."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.DocumentsRepository.Traits.QueryableDocumentsRepositoryTrait, CarbonLDP.DocumentsRepository.Traits.LDPDocumentsRepositoryTrait, \"get\" | \"resolve\" | \"refresh\" | \"saveAndRefresh\">" ), () => {
-			const target:ModelPrototype<QueryableDocumentsRepositoryTrait, LDPDocumentsRepositoryTrait, "get" | "resolve" | "refresh" | "saveAndRefresh"> = {} as QueryableDocumentsRepositoryTraitFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.DocumentsRepository.Traits.QueryableDocumentsRepositoryTrait<any>, CarbonLDP.BaseDocumentsRepository>" ), () => {
-			const target:ModelDecorator<QueryableDocumentsRepositoryTrait, BaseDocumentsRepository> = {} as QueryableDocumentsRepositoryTraitFactory;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[factory]]", () => {
 
 		describe( "QueryableDocumentsRepositoryTrait.isDecorated", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( QueryableDocumentsRepositoryTrait.isDecorated ).toBeDefined();
 				expect( QueryableDocumentsRepositoryTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -8734,7 +8549,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 
 		describe( "QueryableDocumentsRepositoryTrait.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( QueryableDocumentsRepositoryTrait.decorate ).toBeDefined();
 				expect( QueryableDocumentsRepositoryTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -8769,19 +8584,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/QueryableDocumentsReposi
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"QueryableDocumentsRepositoryTrait",
-		"CarbonLDP.DocumentsRepository.Traits.QueryableDocumentsRepositoryTraitFactory"
-	), () => {
-
-		it( "should exists", ():void => {
-			expect( QueryableDocumentsRepositoryTrait ).toBeDefined();
-			expect( QueryableDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );

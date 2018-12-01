@@ -1,103 +1,51 @@
 import { RequestService } from "../Request";
 import { Response } from "../Response";
-import {
-	clazz,
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-	STATIC,
-} from "./../../test/JasmineExtender";
-import * as Utils from "./../../Utils";
+
 import { HTTPError } from "./HTTPError";
+import { UnknownError } from "./UnknownError";
 
-import * as UnknownError from "./UnknownError";
 
-describe( module(
-	"carbonldp/HTTP/Errors/UnknownError"
-), ():void => {
+describe( "UnknownError", () => {
 
-	it( isDefined(), ():void => {
+	it( "should exist", () => {
 		expect( UnknownError ).toBeDefined();
-		expect( UnknownError ).toEqual( jasmine.any( Object ) );
+		expect( UnknownError ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.HTTP.Errors.UnknownError",
-		"Error class that defines any error that could not be identified."
-	), ():void => {
+	let response:Response;
+	beforeAll( ( done ) => {
+		jasmine.Ajax.install();
+		jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
+			"status": 200,
+			"responseText": "A response",
+		} );
 
-		let response:Response;
-
-		beforeAll( ( done:{ ():void, fail:() => void } ) => {
-			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
-				"status": 200,
-				"responseText": "A response",
-			} );
-
-			RequestService.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+		RequestService
+			.send( "GET", "http://example.com/request/" )
+			.then( ( _response ) => {
 				response = _response;
 				done();
-			} ).catch( done.fail );
+			} )
+			.catch( done.fail );
+	} );
 
-		} );
+	afterAll( () => {
+		jasmine.Ajax.uninstall();
+	} );
 
-		afterAll( () => {
-			jasmine.Ajax.uninstall();
-		} );
 
-		it( isDefined(), ():void => {
-			expect( UnknownError.UnknownError ).toBeDefined();
-			expect( Utils.isFunction( UnknownError.UnknownError ) ).toBe( true );
-		} );
+	it( "should extend from HTTError", () => {
+		const error:UnknownError = new UnknownError( "Message of the error", response );
+		expect( error ).toEqual( jasmine.any( HTTPError ) );
+	} );
 
-		it( extendsClass(
-			"CarbonLDP.HTTP.Errors.HTTPError"
-		), ():void => {
-			let error:UnknownError.UnknownError = new UnknownError.UnknownError( "Message of the error", response );
+	it( "should have UnknownError as name", () => {
+		const error:UnknownError = new UnknownError( "This is the message", response );
+		expect( error.name ).toEqual( "UnknownError" );
+	} );
 
-			expect( error instanceof HTTPError ).toBe( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let error:UnknownError.UnknownError = new UnknownError.UnknownError( "Message of the error", response );
-
-			expect( error.toString ).toBeDefined();
-			expect( Utils.isFunction( error.toString ) );
-
-			expect( error.toString() ).toBe( "UnknownError: Message of the error" );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"name",
-			"string"
-		), ():void => {
-			let error:UnknownError.UnknownError = new UnknownError.UnknownError( "Message of the error", response );
-
-			expect( error.name ).toBeDefined();
-			expect( Utils.isString( error.name ) ).toBe( true );
-
-			expect( error.name ).toBe( "UnknownError" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"statusCode",
-			"number"
-		), ():void => {
-			expect( UnknownError.UnknownError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( UnknownError.UnknownError.statusCode ) );
-			expect( UnknownError.UnknownError.statusCode ).toBeNull();
-		} );
-
+	it( "should have statusCode as `null`", () => {
+		expect( UnknownError.statusCode ).toBeNull();
 	} );
 
 } );

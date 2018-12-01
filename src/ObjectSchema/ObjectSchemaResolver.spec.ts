@@ -2,46 +2,30 @@ import { createMockContext } from "../../test/helpers/mocks";
 
 import { Context } from "../Context/Context";
 
-import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelPrototype } from "../Model/ModelPrototype";
-
-import {
-	extendsClass,
-	hasSignature,
-	INSTANCE,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property
-} from "../test/JasmineExtender";
-
 import { C } from "../Vocabularies/C";
 
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
 import { ObjectSchemaDigester } from "./ObjectSchemaDigester";
-import { ObjectSchemaResolver, ObjectSchemaResolverFactory } from "./ObjectSchemaResolver";
+import { ObjectSchemaResolver } from "./ObjectSchemaResolver";
 
 
 function createMock<T extends {}>( data?:T & Partial<ObjectSchemaResolver> ):ObjectSchemaResolver {
 	return ObjectSchemaResolver.decorate( Object.assign( {}, data ) );
 }
 
-describe( module( "carbonldp/ObjectSchema" ), ():void => {
+describe( "ObjectSchemaResolver", () => {
 
-	describe( interfaze(
-		"CarbonLDP.ObjectSchemaResolver",
-		"Interface that defines the methods needed for an element that can provide object schemas."
-	), ():void => {
+	it( "should exist", () => {
+		expect( ObjectSchemaResolver ).toBeDefined();
+		expect( ObjectSchemaResolver ).toEqual( jasmine.any( Object ) );
+	} );
 
-		describe( method( OBLIGATORY, "getGeneralSchema" ), ():void => {
 
-			it( hasSignature(
-				"Returns the general object schema that applies to all the objects.",
-				{ type: "CarbonLDP.DigestedObjectSchema" }
-			), ():void => {} );
+	describe( "[[interface impl]]", () => {
 
-			it( "should exists", ():void => {
+		describe( "ObjectSchemaResolver.getGeneralSchema", () => {
+
+			it( "should exist", () => {
 				const resolver:ObjectSchemaResolver = createMock();
 
 				expect( resolver.getGeneralSchema ).toBeDefined();
@@ -73,17 +57,9 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 		} );
 
 
-		describe( method( OBLIGATORY, "hasSchemaFor" ), ():void => {
+		describe( "ObjectSchemaResolver.hasSchemaFor", () => {
 
-			it( hasSignature(
-				"Returns true if the object provided has an specific schema for.",
-				[
-					{ name: "object", type: "object", description: "The object to look for if it has an schema." },
-				],
-				{ type: "boolean" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const resolver:ObjectSchemaResolver = createMock();
 
 				expect( resolver.hasSchemaFor ).toBeDefined();
@@ -107,17 +83,9 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 		} );
 
-		describe( method( OBLIGATORY, "getSchemaFor" ), ():void => {
+		describe( "ObjectSchemaResolver.getSchemaFor", () => {
 
-			it( hasSignature(
-				"Returns the specific object schema that applies to the object provided.",
-				[
-					{ name: "object", type: "object", description: "The object to look for its schema." },
-				],
-				{ type: "CarbonLDP.DigestedObjectSchema" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const resolver:ObjectSchemaResolver = createMock();
 
 				expect( resolver.getSchemaFor ).toBeDefined();
@@ -273,36 +241,10 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.ObjectSchemaResolverFactory",
-		"Interface with the factory and utils for `CarbonLDP.ObjectSchemaResolver` objects."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.ObjectSchemaResolver>" ), () => {
-			const target:ModelPrototype<ObjectSchemaResolver> = {} as ObjectSchemaResolverFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.ObjectSchemaResolver>" ), () => {
-			const target:ModelDecorator<ObjectSchemaResolver> = {} as ObjectSchemaResolverFactory;
-			expect( target ).toBeDefined();
-		} );
+	describe( "[[factory]]", () => {
 
 		// TODO: Test .isDecorated
 		// TODO: Test .decorate
-
-	} );
-
-	describe( property(
-		INSTANCE,
-		"ObjectSchemaResolver",
-		"CarbonLDP.ObjectSchemaResolverFactory"
-	), () => {
-
-		it( "should exists", ():void => {
-			expect( ObjectSchemaResolver ).toBeDefined();
-			expect( ObjectSchemaResolver ).toEqual( jasmine.any( Object ) );
-		} );
 
 	} );
 

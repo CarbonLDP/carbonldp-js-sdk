@@ -1,66 +1,32 @@
-import { clazz, extendsClass, hasConstructor, hasProperty, INSTANCE, isDefined, module } from "../test/JasmineExtender";
-
-import * as Utils from "./../Utils";
-
 import { AbstractError } from "./AbstractError";
+import { NotImplementedError } from "./NotImplementedError";
 
-import * as NotImplementedError from "./NotImplementedError";
 
+describe( "NotImplementedError", () => {
 
-// TODO: Refactor tests
-describe( module( "carbonldp/Errors/NotImplementedError" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( NotImplementedError ).toBeDefined();
-		expect( NotImplementedError ).toEqual( jasmine.any( Object ) );
+	it( "should exist", () => {
+		expect( NotImplementedError ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.Errors.NotImplementedError",
-		"Error class to indicate that an action is not yet implemented."
-	), ():void => {
 
-		it( isDefined(), ():void => {
-			expect( NotImplementedError.NotImplementedError ).toBeDefined();
-			expect( Utils.isFunction( NotImplementedError.NotImplementedError ) ).toBe( true );
-		} );
+	it( "should be instantiable", () => {
+		const error:NotImplementedError = new NotImplementedError( "Message of the error" );
+		expect( error ).toEqual( jasmine.any( NotImplementedError ) );
+	} );
 
-		it( extendsClass(
-			"CarbonLDP.Errors.AbstractError.AbstractError"
-		), ():void => {
-			let error:NotImplementedError.NotImplementedError = new NotImplementedError.NotImplementedError( "Message of the error" );
+	it( "should extends from AbstractError", () => {
+		const error:NotImplementedError = new NotImplementedError( "Message of the error" );
+		expect( error ).toEqual( jasmine.any( AbstractError ) );
+	} );
 
-			expect( error instanceof AbstractError ).toBe( true );
-		} );
+	it( "should have NotImplementedError as name", () => {
+		const error:NotImplementedError = new NotImplementedError( "This is the message" );
+		expect( error.name ).toEqual( "NotImplementedError" );
+	} );
 
-		it( hasConstructor( [
-			{ name: "message", type: "string", optional: true },
-		] ), ():void => {
-			let error:NotImplementedError.NotImplementedError = new NotImplementedError.NotImplementedError( "Message of the error" );
-
-			expect( error ).toBeTruthy();
-			expect( error instanceof NotImplementedError.NotImplementedError ).toBe( true );
-
-			error = new NotImplementedError.NotImplementedError();
-
-			expect( error ).toBeTruthy();
-			expect( error instanceof NotImplementedError.NotImplementedError ).toBe( true );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"name",
-			"string"
-		), ():void => {
-			let error:NotImplementedError.NotImplementedError = new NotImplementedError.NotImplementedError( "Message of the error" );
-
-			expect( error.name ).toBeDefined();
-			expect( Utils.isString( error.name ) ).toBe( true );
-
-			expect( error.name ).toBe( "NotImplementedError" );
-		} );
-
+	it( "should initialize empty message when no provided", () => {
+		const error:NotImplementedError = new NotImplementedError();
+		expect( error.message ).toBe( "" );
 	} );
 
 } );
-

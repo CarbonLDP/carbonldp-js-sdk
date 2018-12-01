@@ -4,38 +4,25 @@ import { createNonEnumerable } from "../../test/helpers/miscellaneous";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelPrototype } from "../Model/ModelPrototype";
-import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { Pointer } from "../Pointer/Pointer";
 
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
-
-import { BaseResolvablePointer } from "./BaseResolvablePointer";
 import { $Repository, Repository } from "./Repository";
-import { ResolvablePointer, ResolvablePointerFactory } from "./ResolvablePointer";
+import { ResolvablePointer } from "./ResolvablePointer";
 
 
-describe( module( "carbonldp/Repository" ), () => {
+describe( "ResolvablePointer", () => {
 
-	describe( interfaze(
-		"CarbonLDP.ResolvablePointer",
-		"Interface that describes the basic methods of any resolvable pointer."
-	), () => {
+	it( "should exist", () => {
+		expect( ResolvablePointer ).toBeDefined();
+		expect( ResolvablePointer ).toEqual( jasmine.any( Object ) );
+	} );
 
+
+	describe( "[[interface impl]]", () => {
 
 		let $repository:Repository | $Repository;
-		beforeEach( ():void => {
+		beforeEach( () => {
 			$repository = Repository.decorate( {} );
 		} );
 
@@ -44,54 +31,9 @@ describe( module( "carbonldp/Repository" ), () => {
 		}
 
 
-		it( hasProperty(
-			OBLIGATORY,
-			"$repository",
-			"CarbonLDP.Repository",
-			"The repository associated which the pointer can be resolved with."
-		), () => {
-			const target:ResolvablePointer[ "$repository" ] = {} as Repository;
-			expect( target ).toBeDefined();
-		} );
+		describe( "ResolvablePointer.$isResolved", () => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"$eTag",
-			"string | undefined",
-			"The identifier that describes the state of the last data retrieved for the current pointer."
-		), () => {
-			const target:ResolvablePointer[ "$eTag" ] = "" as string | undefined;
-			expect( target ).toBeDefined();
-		} );
-
-
-		it( hasProperty(
-			OBLIGATORY,
-			"$_resolved",
-			"boolean | undefined"
-		), ():void => {
-			const target:ResolvablePointer[ "$_resolved" ] = true as boolean | undefined;
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"$_snapshot",
-			"object",
-			"The shallow copy of the pointer, which is used to track its changes."
-		), ():void => {
-			const target:ResolvablePointer[ "$_snapshot" ] = {} as object;
-			expect( target ).toBeDefined();
-		} );
-
-
-		describe( method( OBLIGATORY, "$isResolved" ), ():void => {
-
-			it( hasSignature(
-				{ type: "boolean" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const resource:ResolvablePointer = createMock();
 
 				expect( resource.$isResolved ).toBeDefined();
@@ -99,21 +41,21 @@ describe( module( "carbonldp/Repository" ), () => {
 			} );
 
 
-			it( "should return false when _resolved undefined", ():void => {
+			it( "should return false when _resolved undefined", () => {
 				const resource:ResolvablePointer = createMock();
 
 				const returned:boolean = resource.$isResolved();
 				expect( returned ).toBe( false );
 			} );
 
-			it( "should return false when _resolved false", ():void => {
+			it( "should return false when _resolved false", () => {
 				const resource:ResolvablePointer = createMock( { $_resolved: false } );
 
 				const returned:boolean = resource.$isResolved();
 				expect( returned ).toBe( false );
 			} );
 
-			it( "should return true when _resolved true", ():void => {
+			it( "should return true when _resolved true", () => {
 				const resource:ResolvablePointer = createMock( { $_resolved: true } );
 
 				const returned:boolean = resource.$isResolved();
@@ -123,13 +65,9 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "$_syncSnapshot" ), ():void => {
+		describe( "ResolvablePointer.$_syncSnapshot", () => {
 
-			it( hasSignature(
-				"Updates the snapshot with the data of the resource."
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const resource:ResolvablePointer = createMock();
 
 				expect( resource.$_syncSnapshot ).toBeDefined();
@@ -137,7 +75,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			} );
 
 
-			it( "should not alter previous snapshot", ():void => {
+			it( "should not alter previous snapshot", () => {
 				const resource:ResolvablePointer = createMock();
 
 				const previous:{} = resource.$_snapshot;
@@ -148,14 +86,14 @@ describe( module( "carbonldp/Repository" ), () => {
 				expect( resource.$_snapshot ).not.toBe( previous );
 			} );
 
-			it( "should not assign itself as snapshot", ():void => {
+			it( "should not assign itself as snapshot", () => {
 				const resource:ResolvablePointer = createMock();
 				resource.$_syncSnapshot();
 
 				expect( resource.$_snapshot ).not.toBe( resource );
 			} );
 
-			it( "should sync new property", ():void => {
+			it( "should sync new property", () => {
 				const resource:ResolvablePointer = createMock();
 
 				Object.assign( resource, { the: "new property" } );
@@ -164,7 +102,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				expect( resource.$_snapshot ).toEqual( jasmine.objectContaining( { the: "new property" } ) );
 			} );
 
-			it( "should sync types (non-enumerable)", ():void => {
+			it( "should sync types (non-enumerable)", () => {
 				const resource:ResolvablePointer & { types:string[] } = createMock( { types: [] } );
 				createNonEnumerable( resource );
 
@@ -176,7 +114,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				} ) );
 			} );
 
-			it( "should not sync ID", ():void => {
+			it( "should not sync ID", () => {
 				const resource:ResolvablePointer = createMock();
 
 				resource.$id = "https://example.com/resource/";
@@ -189,15 +127,9 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$isDirty" ), ():void => {
+		describe( "ResolvablePointer.$isDirty", () => {
 
-			it( hasSignature(
-				"Returns true if the resource presents differences from its snapshot.",
-				{ type: "boolean" }
-			), ():void => {} );
-
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const resource:ResolvablePointer = createMock();
 
 				expect( resource.$isDirty ).toBeDefined();
@@ -205,14 +137,14 @@ describe( module( "carbonldp/Repository" ), () => {
 			} );
 
 
-			it( "should return false if synced", ():void => {
+			it( "should return false if synced", () => {
 				const resource:ResolvablePointer = createMock( { the: "resource" } );
 				resource.$_syncSnapshot();
 
 				expect( resource.$isDirty() ).toBe( false );
 			} );
 
-			it( "should return true if new property", ():void => {
+			it( "should return true if new property", () => {
 				const resource:ResolvablePointer = createMock();
 				resource.$_syncSnapshot();
 
@@ -221,7 +153,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				expect( resource.$isDirty() ).toBe( true );
 			} );
 
-			it( "should return true if deleted property", ():void => {
+			it( "should return true if deleted property", () => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property" } );
 				resource.$_syncSnapshot();
 
@@ -230,7 +162,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				expect( resource.$isDirty() ).toBe( true );
 			} );
 
-			it( "should return true if null property", ():void => {
+			it( "should return true if null property", () => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property" } );
 				resource.$_syncSnapshot();
 
@@ -239,7 +171,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				expect( resource.$isDirty() ).toBe( true );
 			} );
 
-			it( "should return true if altered property", ():void => {
+			it( "should return true if altered property", () => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property value" } );
 				resource.$_syncSnapshot();
 
@@ -249,7 +181,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			} );
 
 
-			it( "should return true if new type", ():void => {
+			it( "should return true if new type", () => {
 				const resource:ResolvablePointer & { types:string[] } = createMock( { types: [] } );
 				createNonEnumerable( resource );
 				resource.$_syncSnapshot();
@@ -259,7 +191,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				expect( resource.$isDirty() ).toBe( true );
 			} );
 
-			it( "should return true if deleted type", ():void => {
+			it( "should return true if deleted type", () => {
 				const resource:ResolvablePointer & { types:string[] } = createMock( {
 					types: [ "https://example.com/ns#Type", "https://example.com/ns#Type-2" ],
 				} );
@@ -272,7 +204,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			} );
 
 
-			it( "should return false even if ID changed", ():void => {
+			it( "should return false even if ID changed", () => {
 				const resource:ResolvablePointer = createMock( {
 					id: "https://example.com/resource/",
 				} );
@@ -283,7 +215,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				expect( resource.$isDirty() ).toBe( false );
 			} );
 
-			it( "should return false if related resource content altered", ():void => {
+			it( "should return false if related resource content altered", () => {
 				const relatedResource:ResolvablePointer = createMock( { $id: "https://example.com/realted/resource/" } );
 
 				const resource:ResolvablePointer = createMock( {
@@ -298,13 +230,9 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$revert" ), ():void => {
+		describe( "ResolvablePointer.$revert", () => {
 
-			it( hasSignature(
-				"Revert the changes made to the resource into the state of the snapshot."
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const resource:ResolvablePointer = createMock( {} );
 
 				expect( resource.$revert ).toBeDefined();
@@ -312,7 +240,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			} );
 
 
-			it( "should revert change in property", ():void => {
+			it( "should revert change in property", () => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property value" } );
 				resource.$_syncSnapshot();
 
@@ -324,7 +252,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				} ) );
 			} );
 
-			it( "should revert add deleted property", ():void => {
+			it( "should revert add deleted property", () => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property" } );
 				resource.$_syncSnapshot();
 
@@ -336,7 +264,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				} ) );
 			} );
 
-			it( "should revert add null-ed property", ():void => {
+			it( "should revert add null-ed property", () => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property" } );
 				resource.$_syncSnapshot();
 
@@ -348,7 +276,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				} ) );
 			} );
 
-			it( "should revert remove new property", ():void => {
+			it( "should revert remove new property", () => {
 				const resource:ResolvablePointer & { the?:string } = createMock( {} );
 				resource.$_syncSnapshot();
 
@@ -361,7 +289,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			} );
 
 
-			it( "should remove new type", ():void => {
+			it( "should remove new type", () => {
 				const resource:ResolvablePointer & { types:string[] } = createMock( {
 					types: [ "https://example.com/ns#Type" ],
 				} );
@@ -376,7 +304,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				} ) );
 			} );
 
-			it( "should add deleted type", ():void => {
+			it( "should add deleted type", () => {
 				const resource:ResolvablePointer & { types:string[] } = createMock( {
 					types: [ "https://example.com/ns#Type", "https://example.com/ns#Type-2" ],
 				} );
@@ -392,7 +320,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			} );
 
 
-			it( "should not revert changed ID", ():void => {
+			it( "should not revert changed ID", () => {
 				const resource:ResolvablePointer = createMock( {
 					id: "https://example.com/resource/",
 				} );
@@ -406,7 +334,7 @@ describe( module( "carbonldp/Repository" ), () => {
 				} ) );
 			} );
 
-			it( "should revert related resource content altered", ():void => {
+			it( "should revert related resource content altered", () => {
 				const relatedResource:ResolvablePointer & { the?:string } = createMock( { $id: "https://example.com/realted/resource/" } );
 
 				const resource:ResolvablePointer = createMock( {
@@ -425,12 +353,12 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "$get" ), () => {
+		describe( "ResolvablePointer.$get", () => {
 
 			describe( "when Repository", () => {
 
 				let repository:Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( {} );
 				} );
 
@@ -495,7 +423,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			describe( "when $Repository", () => {
 
 				let repository:$Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( { $id: "" } );
 				} );
 
@@ -559,12 +487,12 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$resolve" ), () => {
+		describe( "ResolvablePointer.$resolve", () => {
 
 			describe( "when Repository", () => {
 
 				let repository:Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( {} );
 				} );
 
@@ -620,7 +548,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			describe( "when $Repository", () => {
 
 				let repository:$Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( { $id: "" } );
 				} );
 
@@ -675,12 +603,12 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$exists" ), () => {
+		describe( "ResolvablePointer.$exists", () => {
 
 			describe( "when Repository", () => {
 
 				let repository:Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( {} );
 				} );
 
@@ -745,7 +673,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			describe( "when $Repository", () => {
 
 				let repository:$Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( { $id: "" } );
 				} );
 
@@ -810,12 +738,12 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "$refresh" ), () => {
+		describe( "ResolvablePointer.$refresh", () => {
 
 			describe( "when Repository", () => {
 
 				let repository:Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( {} );
 				} );
 
@@ -871,7 +799,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			describe( "when $Repository", () => {
 
 				let repository:$Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( { $id: "" } );
 				} );
 
@@ -926,12 +854,12 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$save" ), () => {
+		describe( "ResolvablePointer.$save", () => {
 
 			describe( "when Repository", () => {
 
 				let repository:Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( {} );
 				} );
 
@@ -987,7 +915,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			describe( "when $Repository", () => {
 
 				let repository:$Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( { $id: "" } );
 				} );
 
@@ -1042,12 +970,12 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "$saveAndRefresh" ), () => {
+		describe( "ResolvablePointer.$saveAndRefresh", () => {
 
 			describe( "when Repository", () => {
 
 				let repository:Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( {} );
 				} );
 
@@ -1103,7 +1031,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			describe( "when $Repository", () => {
 
 				let repository:$Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( { $id: "" } );
 				} );
 
@@ -1159,12 +1087,12 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( method( OBLIGATORY, "$delete" ), () => {
+		describe( "ResolvablePointer.$delete", () => {
 
 			describe( "when Repository", () => {
 
 				let repository:Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( {} );
 				} );
 
@@ -1229,7 +1157,7 @@ describe( module( "carbonldp/Repository" ), () => {
 			describe( "when $Repository", () => {
 
 				let repository:$Repository;
-				beforeEach( ():void => {
+				beforeEach( () => {
 					$repository = repository = Repository.decorate( { $id: "" } );
 				} );
 
@@ -1295,30 +1223,11 @@ describe( module( "carbonldp/Repository" ), () => {
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.ResolvablePointerFactory",
-		"Interface with the factory, decorate and utils of a `CarbonLDP.ResolvablePointer` object."
-	), ():void => {
+	describe( "[[factory]]", () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.ResolvablePointer, CarbonLDP.Pointer>" ), () => {
-			const target:ModelPrototype<ResolvablePointer, Pointer> = {} as ResolvablePointerFactory;
-			expect( target ).toBeDefined();
-		} );
+		describe( "ResolvablePointer.isDecorated", () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.ResolvablePointer, CarbonLDP.BaseResolvablePointer>" ), () => {
-			const target:ModelDecorator<ResolvablePointer, BaseResolvablePointer> = {} as ResolvablePointerFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelTypeGuard<CarbonLDP.ResolvablePointer>" ), () => {
-			const target:ModelTypeGuard<ResolvablePointer> = {} as ResolvablePointerFactory;
-			expect( target ).toBeDefined();
-		} );
-
-
-		describe( "ResolvablePointer.isDecorated", ():void => {
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( ResolvablePointer.isDecorated ).toBeDefined();
 				expect( ResolvablePointer.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -1335,15 +1244,15 @@ describe( module( "carbonldp/Repository" ), () => {
 
 		} );
 
-		describe( "ResolvablePointer.decorate", ():void => {
+		describe( "ResolvablePointer.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( ResolvablePointer.decorate ).toBeDefined();
 				expect( ResolvablePointer.decorate ).toEqual( jasmine.any( Function ) );
 			} );
 
 			let $repository:Repository;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				$repository = Repository.decorate( {} );
 			} );
 
@@ -1391,9 +1300,9 @@ describe( module( "carbonldp/Repository" ), () => {
 		} );
 
 
-		describe( "ResolvablePointer.is", ():void => {
+		describe( "ResolvablePointer.is", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( ResolvablePointer.is ).toBeDefined();
 				expect( ResolvablePointer.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -1401,7 +1310,7 @@ describe( module( "carbonldp/Repository" ), () => {
 
 			let isPointer:jasmine.Spy;
 			let isSelfDecorated:jasmine.Spy;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				isPointer = spyOn( Pointer, "is" )
 					.and.returnValue( true );
 				isSelfDecorated = spyOn( ResolvablePointer, "isDecorated" )
@@ -1439,20 +1348,6 @@ describe( module( "carbonldp/Repository" ), () => {
 				expect( returned ).toBe( false );
 			} );
 
-		} );
-
-	} );
-
-
-	describe( property(
-		STATIC,
-		"ResolvablePointer",
-		"CarbonLDP.ResolvablePointerFactory"
-	), () => {
-
-		it( "should exists", ():void => {
-			expect( ResolvablePointer ).toBeDefined();
-			expect( ResolvablePointer ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );

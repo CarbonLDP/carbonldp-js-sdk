@@ -1,103 +1,30 @@
 import { Document } from "../Document/Document";
 
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
-
-import { AccessPoint } from "./AccessPoint";
+import { AccessPoint, AccessPointFactory } from "./AccessPoint";
 import { TransientAccessPoint } from "./TransientAccessPoint";
 
 
-describe( module( "carbonldp/AccessPoint" ), ():void => {
+describe( "AccessPoint", () => {
 
-	describe( interfaze(
-		"CarbonLDP.AccessPoint",
-		"Interface that represents a persisted Carbon LDP AccessPoint."
-	), ():void => {
-
-		it( extendsClass( "CarbonLDP.TransientAccessPoint" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"membershipResource",
-			"CarbonLDP.Document",
-			"The membership resource the access point belongs to."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"hasMemberRelation",
-			"CarbonLDP.Pointer",
-			"The member relation of the access point manages."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"isMemberOfRelation",
-			"CarbonLDP.Pointer",
-			"The inverted relation of the access point."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"insertedContentRelation",
-			"CarbonLDP.Pointer",
-			"The inserted content relation of the access point."
-		), ():void => {} );
-
+	it( "should exist", () => {
+		expect( AccessPoint ).toBeDefined();
+		expect( AccessPoint ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.AccessPointFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.AccessPointFactory` object."
-	), ():void => {
 
-		describe( "AccessPoint.TYPE", ():void => {
+	describe( "[[factory]]", () => {
 
-			it( "should be TransientAccessPoint.TYPE", ():void => {
-				expect( TransientAccessPoint.TYPE ).toBeDefined();
-				expect( TransientAccessPoint.TYPE ).toBe( TransientAccessPoint.TYPE );
-			} );
-
+		it( "should inherit TransientAccessPointFactory", () => {
+			expect( AccessPoint ).toEqual( jasmine.objectContaining( {
+				TYPE: TransientAccessPoint.TYPE,
+				create: TransientAccessPoint.create,
+				createFrom: TransientAccessPoint.createFrom,
+			} ) );
 		} );
 
-		describe( "AccessPoint.create", ():void => {
+		describe( "AccessPoint.is", () => {
 
-			it( "should be TransientAccessPoint.create", ():void => {
-				expect( TransientAccessPoint.create ).toBeDefined();
-				expect( TransientAccessPoint.create ).toBe( TransientAccessPoint.create );
-			} );
-
-		} );
-
-		describe( "AccessPoint.createFrom", ():void => {
-
-			it( "should be TransientAccessPoint.createFrom", ():void => {
-				expect( TransientAccessPoint.createFrom ).toBeDefined();
-				expect( TransientAccessPoint.createFrom ).toBe( TransientAccessPoint.createFrom );
-			} );
-
-		} );
-
-		describe( method( OBLIGATORY, "is" ), ():void => {
-
-			it( hasSignature(
-				"Returns true if the object provided is considered a `CarbonLDP.AccessPoint` object", [
-					{ name: "value", type: "any" },
-				],
-				{ type: "value is CarbonLDP.AccessPoint" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( AccessPoint.is ).toBeDefined();
 				expect( AccessPoint.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -105,7 +32,7 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 
 			let isTransientAccessPoint:jasmine.Spy;
 			let isDocument:jasmine.Spy;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				isTransientAccessPoint = spyOn( TransientAccessPoint, "is" )
 					.and.returnValue( true );
 				isDocument = spyOn( Document, "is" )
@@ -131,19 +58,4 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 
 	} );
 
-	describe( property(
-		STATIC,
-		"AccessPoint",
-		"CarbonLDP.AccessPointFactory",
-		"Constant that implements the `CarbonLDP.AccessPointFactory` interface."
-	), ():void => {
-
-		it( "should exists", ():void => {
-			expect( AccessPoint ).toBeDefined();
-			expect( AccessPoint ).toEqual( jasmine.any( Object ) );
-		} );
-
-	} );
-
 } );
-

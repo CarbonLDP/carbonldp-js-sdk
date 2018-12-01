@@ -200,7 +200,7 @@ export const URI:URIFactory = {
 
 	getDocumentURI( uri:string ):string {
 		let parts:string[] = uri.split( "#" );
-		if( parts.length > 2 ) throw new Error( "IllegalArgument: The URI provided has more than one # sign." );
+		if( parts.length > 2 ) throw new IllegalArgumentError( "The URI provided has more than one # sign." );
 
 		return parts[ 0 ];
 	},
@@ -208,7 +208,7 @@ export const URI:URIFactory = {
 	getFragment( uri:string ):string {
 		let parts:string[] = uri.split( "#" );
 		if( parts.length < 2 ) return null;
-		if( parts.length > 2 ) throw new Error( "IllegalArgument: The URI provided has more than one # sign." );
+		if( parts.length > 2 ) throw new IllegalArgumentError( "The URI provided has more than one # sign." );
 
 		return parts[ 1 ];
 	},
@@ -287,7 +287,7 @@ export const URI:URIFactory = {
 
 		if( URI.isPrefixed( uri ) || ! uri.startsWith( prefixURI ) ) return uri;
 
-		return `${ prefix }:${ uri.substring( prefixURI.length ) }`;
+		return `${prefix}:${uri.substring( prefixURI.length )}`;
 	},
 };
 

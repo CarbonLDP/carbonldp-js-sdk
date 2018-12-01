@@ -1,54 +1,34 @@
-import { clazz, hasConstructor, hasProperty, INSTANCE, isDefined, module } from "../test/JasmineExtender";
+import { AbstractError } from "./AbstractError";
 
-import * as Utils from "./../Utils";
 
-import * as AbstractError from "./AbstractError";
+describe( "AbstractError", () => {
 
-// TODO: Refactor tests
-describe( module( "carbonldp/Errors/AbstractError" ), function():void {
-
-	it( isDefined(), ():void => {
+	it( "should exist", () => {
 		expect( AbstractError ).toBeDefined();
-		expect( AbstractError ).toEqual( jasmine.any( Object ) );
+		expect( AbstractError ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.Errors.AbstractError",
-		"Class that works as template for the custom errors in the SDK."
-	), function():void {
+	class DummyError extends AbstractError {}
 
-		class DummyError extends AbstractError.AbstractError {}
 
-		it( isDefined(), function():void {
-			expect( AbstractError.AbstractError ).toBeDefined();
-			expect( AbstractError.AbstractError ).not.toBeNull();
-			expect( Utils.isFunction( AbstractError.AbstractError ) ).toBe( true );
-		} );
+	it( "should instantiate", () => {
+		const error:AbstractError = new DummyError( "This is the message" );
+		expect( error ).toEqual( jasmine.any( AbstractError ) );
+	} );
 
-		it( hasConstructor( [
-			{ name: "message", type: "string" },
-		] ), function():void {
-			let exception:AbstractError.AbstractError = new DummyError( "This is the message" );
-			expect( exception instanceof Error ).toBe( true );
-			expect( exception instanceof AbstractError.AbstractError ).toBe( true );
-		} );
+	it( "should extend from Error", () => {
+		const error:AbstractError = new DummyError( "This is the message" );
+		expect( error ).toEqual( jasmine.any( Error ) );
+	} );
 
-		it( hasProperty( INSTANCE, "name", "string" ), function():void {
-			let exception:AbstractError.AbstractError = new DummyError( "This is the message" );
+	it( "should have AbstractError as name", () => {
+		const error:AbstractError = new DummyError( "This is the message" );
+		expect( error.name ).toEqual( "AbstractError" );
+	} );
 
-			expect( exception.name ).toBeDefined();
-			expect( Utils.isString( exception.name ) ).toBe( true );
-			expect( exception.name ).toEqual( "AbstractError" );
-		} );
-
-		it( hasProperty( INSTANCE, "message", "string" ), function():void {
-			let exception:AbstractError.AbstractError = new DummyError( "This is the message" );
-
-			expect( exception.message ).toBeDefined();
-			expect( Utils.isString( exception.message ) ).toBe( true );
-			expect( exception.message ).toEqual( "This is the message" );
-		} );
-
+	it( "should initialize the message", () => {
+		const error:AbstractError = new DummyError( "This is the message" );
+		expect( error.message ).toEqual( "This is the message" );
 	} );
 
 } );

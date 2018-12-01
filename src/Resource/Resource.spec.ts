@@ -3,152 +3,430 @@ import { createMockContext } from "../../test/helpers/mocks/core";
 
 import { AbstractContext } from "../Context/AbstractContext";
 
-import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
-import { ModelPrototype } from "../Model/ModelPrototype";
-import { ModelTypeGuard } from "../Model/ModelTypeGuard";
-
 import { Pointer } from "../Pointer/Pointer";
-import { RegisteredPointer } from "../Registry/RegisteredPointer";
 
 import { Registry } from "../Registry/Registry";
 
-import {
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
-
 import { LDP } from "../Vocabularies/LDP";
 
-import { BaseResource } from "./BaseResource";
 import { Resource, ResourceFactory } from "./Resource";
 
 
-describe( module( "carbonldp/Resource" ), ():void => {
+describe( "Resource", () => {
 
-	describe( interfaze(
-		"CarbonLDP.Resource",
-		"Interface that represents a persisted blank node of a persisted document."
-	), ():void => {
-
-		it( extendsClass( "CarbonLDP.RegisteredPointer" ), ():void => {} );
+	it( "should exist", () => {
+		expect( Resource ).toBeDefined();
+		expect( Resource ).toEqual( jasmine.any( Object ) );
+	} );
 
 
-		it( hasProperty(
-			OBLIGATORY,
-			"$registry",
-			"CarbonLDP.Registry<CarbonLDP.RegisteredPointer> | undefined",
-			"Associated registry where the current resource may be stored."
-		), ():void => {
-			const target:Resource[ "$registry" ] = {} as Registry<RegisteredPointer> | undefined;
-			expect( target ).toBeDefined();
+	describe( "[[interface impl]]", () => {
+
+		let resource:Resource;
+		beforeEach( () => {
+			resource = Resource.create();
+
+			const context:AbstractContext<any, any> = createMockContext();
+			context.extendObjectSchema( {
+				"@vocab": "http://example.com/ns#",
+				"exTypes": "http://example.com/types#",
+			} );
+
+			resource.$registry = context.registry;
 		} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"$slug",
-			"string",
-			"Slug if the URI of the resource. Depending of the URI type would be returned:\n" +
-			"1. For blank nodes the same $id of the resource would be returned\n" +
-			"2. For named fragments, the content after the `#` symbol would be returned\n" +
-			"3. For documents, it's the last part URI e.g. `https://example.com/resource-1/` => `resource-1`"
-		), ():void => {
-			const target:Resource[ "$slug" ] = {} as "";
-			expect( target ).toBeDefined();
+		describe( "Resource.addType", () => {
+
+			it( "should exist", () => {
+				expect( resource.$addType ).toBeDefined();
+				expect( resource.$addType ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should add type", () => {
+				resource.$addType( "http://example.com/types#Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should append type", () => {
+				resource.types = [ "http://example.com/types#Type-1" ];
+
+				resource.$addType( "http://example.com/types#Type-2" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+					"http://example.com/types#Type-2",
+				] );
+			} );
+
+			it( "should not add if type already exists", () => {
+				resource.types = [
+					"http://example.com/types#Type-1",
+					"http://example.com/types#Type-2",
+				];
+
+				resource.$addType( "http://example.com/types#Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+					"http://example.com/types#Type-2",
+				] );
+			} );
+
+			it( "should add resolved type from prefixed provided", () => {
+				resource.$addType( "exTypes:Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should add un-resolved type from prefixed provided when no registry", () => {
+				delete resource.$registry;
+
+				resource.$addType( "exTypes:Type-1" );
+				expect( resource.types ).toEqual( [
+					"exTypes:Type-1",
+				] );
+			} );
+
+			it( "should add un-resolved type from prefixed provided when no registry's context", () => {
+				resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
+
+				resource.$addType( "exTypes:Type-1" );
+				expect( resource.types ).toEqual( [
+					"exTypes:Type-1",
+				] );
+			} );
+
+			it( "should add un-resolved type from prefixed provided when no $registry's context", () => {
+				resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
+
+				resource.$addType( "exTypes:Type-1" );
+				expect( resource.types ).toEqual( [
+					"exTypes:Type-1",
+				] );
+			} );
+
+			it( "should add resolved type from prefixed provided when parent from registry has a context", () => {
+				resource.$registry = Registry.decorate( { registry: resource.$registry, __modelDecorator: Resource } );
+
+				resource.$addType( "exTypes:Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should add resolved type from prefixed provided when parent from $registry has a context", () => {
+				resource.$registry = Registry.decorate( { $id: "", $registry: resource.$registry, $__modelDecorator: Resource } );
+
+				resource.$addType( "exTypes:Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should not add if already exists type when prefixed provided", () => {
+				resource.types = [
+					"http://example.com/types#Type-1",
+					"http://example.com/types#Type-2",
+				];
+
+				resource.$addType( "exTypes:Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+					"http://example.com/types#Type-2",
+				] );
+			} );
+
+			it( "should add resolved type with @vocab from relative provided", () => {
+				resource.$addType( "Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/ns#Type-1",
+				] );
+			} );
+
+			it( "should add un-resolved type from relative provided when no registry", () => {
+				resource.$registry = void 0;
+
+				resource.$addType( "Type-1" );
+				expect( resource.types ).toEqual( [
+					"Type-1",
+				] );
+			} );
+
+			it( "should add un-resolved type from relative provided when no registry's context", () => {
+				resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
+
+				resource.$addType( "Type-1" );
+				expect( resource.types ).toEqual( [
+					"Type-1",
+				] );
+			} );
+
+			it( "should add un-resolved type from relative provided when no $registry's context", () => {
+				resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
+
+				resource.$addType( "Type-1" );
+				expect( resource.types ).toEqual( [
+					"Type-1",
+				] );
+			} );
+
 		} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"types",
-			"string",
-			"An array with the types of the resource."
-		), ():void => {} );
+		describe( "Resource.hasType", () => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"$addType",
-			"Adds a type to the current resource.", [
-				{ name: "type", type: "string", description: "The type to be added." },
-			]
-		), ():void => {} );
+			it( "should exist", () => {
+				expect( resource.$hasType ).toBeDefined();
+				expect( resource.$hasType ).toEqual( jasmine.any( Function ) );
+			} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"$hasType",
-			"Returns true if the current resource contains the type specified.", [
-				{ name: "type", type: "string", description: "The type to look for." },
-			]
-		), ():void => {} );
+			it( "should return false when non-existent type", () => {
+				const returned:boolean = resource.$hasType( "http://example.com/types#Type-1" );
+				expect( returned ).toEqual( false );
+			} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"$removeType",
-			"Remove the type specified from the current resource.", [
-				{ name: "type", type: "string", description: "The type to be removed." },
-			]
-		), ():void => {} );
+			it( "should return true when exists type", () => {
+				resource.types = [ "http://example.com/types#Type-1" ];
 
+				const returned:boolean = resource.$hasType( "http://example.com/types#Type-1" );
+				expect( returned ).toEqual( true );
+			} );
+
+			it( "should return true when exists type with more", () => {
+				resource.types = [
+					"http://example.com/types#Type-1",
+					"http://example.com/types#Type-2",
+				];
+
+				const returned:boolean = resource.$hasType( "http://example.com/types#Type-1" );
+				expect( returned ).toEqual( true );
+			} );
+
+			it( "should return false when non-existent type from a prefixed one", () => {
+				const returned:boolean = resource.$hasType( "exTypes:Type-1" );
+				expect( returned ).toEqual( false );
+			} );
+
+			it( "should return true when type exists from a prefixed one", () => {
+				resource.types = [
+					"http://example.com/types#Type-1",
+					"http://example.com/types#Type-2",
+				];
+
+				const returned:boolean = resource.$hasType( "exTypes:Type-1" );
+				expect( returned ).toEqual( true );
+			} );
+
+			it( "should return true when type exists from relative one", () => {
+				resource.types = [
+					"http://example.com/ns#Type-1",
+					"http://example.com/ns#Type-2",
+				];
+
+				const returned:boolean = resource.$hasType( "Type-1" );
+				expect( returned ).toEqual( true );
+			} );
+
+		} );
+
+		describe( "Resource.removeType", () => {
+
+			it( "should exist", () => {
+				expect( resource.$removeType ).toBeDefined();
+				expect( resource.$removeType ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should remove type when exists", () => {
+				resource.types = [
+					"http://example.com/types#Type-1",
+					"http://example.com/types#Type-2",
+				];
+
+				resource.$removeType( "http://example.com/types#Type-2" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should not remove type when non-existent", () => {
+				resource.types = [
+					"http://example.com/types#Type-1",
+				];
+
+				resource.$removeType( "http://example.com/types#Type-2" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should remove resolved prefixed type when exists", () => {
+				resource.types = [
+					"http://example.com/types#Type-1",
+					"http://example.com/types#Type-2",
+				];
+
+				resource.$removeType( "exTypes:Type-2" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should not remove resolved prefixed type when non-existent", () => {
+				resource.types = [
+					"http://example.com/types#Type-1",
+				];
+
+				resource.$removeType( "exTypes:Type-2" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should not remove prefixed type when no registry", () => {
+				resource.$registry = void 0;
+				resource.types = [
+					"http://example.com/types#Type-1",
+				];
+
+				resource.$removeType( "exTypes:Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should not remove prefixed type when no registry's context", () => {
+				resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
+
+				resource.types = [
+					"http://example.com/types#Type-1",
+				];
+
+				resource.$removeType( "exTypes:Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should not remove prefixed type when no $registry's context", () => {
+				resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
+
+				resource.types = [
+					"http://example.com/types#Type-1",
+				];
+
+				resource.$removeType( "exTypes:Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should remove resolved prefixed type when exists & registry parent has a context", () => {
+				resource.$registry = Registry.decorate( { registry: resource.$registry, __modelDecorator: Resource } );
+
+				resource.types = [
+					"http://example.com/types#Type-1",
+					"http://example.com/types#Type-2",
+				];
+
+				resource.$removeType( "exTypes:Type-2" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should remove resolved prefixed type when exists & $registry parent has a context", () => {
+				resource.$registry = Registry.decorate( { $id: "", $registry: resource.$registry, $__modelDecorator: Resource } );
+
+				resource.types = [
+					"http://example.com/types#Type-1",
+					"http://example.com/types#Type-2",
+				];
+
+				resource.$removeType( "exTypes:Type-2" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/types#Type-1",
+				] );
+			} );
+
+			it( "should remove resolved relative type when exists", () => {
+				resource.types = [
+					"http://example.com/ns#Type-1",
+					"http://example.com/ns#Type-2",
+				];
+
+				resource.$removeType( "Type-2" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/ns#Type-1",
+				] );
+			} );
+
+			it( "should not remove resolved relative type when non-existent", () => {
+				resource.types = [
+					"http://example.com/ns#Type-1",
+				];
+
+				resource.$removeType( "Type-2" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/ns#Type-1",
+				] );
+			} );
+
+			it( "should not remove relative type when no registry", () => {
+				resource.$registry = void 0;
+				resource.types = [
+					"http://example.com/ns#Type-1",
+				];
+
+				resource.$removeType( "Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/ns#Type-1",
+				] );
+			} );
+
+			it( "should not remove relative type when no registry's context", () => {
+				resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
+
+				resource.types = [
+					"http://example.com/ns#Type-1",
+				];
+
+				resource.$removeType( "Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/ns#Type-1",
+				] );
+			} );
+
+			it( "should not remove relative type when no $registry's context", () => {
+				resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
+
+				resource.types = [
+					"http://example.com/ns#Type-1",
+				];
+
+				resource.$removeType( "Type-1" );
+				expect( resource.types ).toEqual( [
+					"http://example.com/ns#Type-1",
+				] );
+			} );
+
+		} );
 
 		// TODO: Test .toJSON
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.ResourceFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Resource` object."
-	), ():void => {
+	describe( "[[factory]]", () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Resource, CarbonLDP.Pointer>" ), () => {
-			const target:ModelPrototype<Resource, Pointer> = {} as ResourceFactory;
-			expect( target ).toBeDefined();
-		} );
+		describe( "Resource.isDecorated", () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Resource, CarbonLDP.BaseResource>" ), () => {
-			const target:ModelDecorator<Resource, BaseResource> = {} as ResourceFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelTypeGuard<CarbonLDP.Resource>" ), () => {
-			const target:ModelTypeGuard<Resource> = {} as ResourceFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelFactoryOptional<CarbonLDP.Resource, CarbonLDP.BaseResource>" ), () => {
-			const target:ModelFactoryOptional<Resource, BaseResource> = {} as ResourceFactory;
-			expect( target ).toBeDefined();
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"Resource",
-		"CarbonLDP.ResourceFactory",
-		"Constant that implements the `CarbonLDP.ResourceFactory` interface."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( Resource ).toBeDefined();
-			expect( Resource ).toEqual( jasmine.any( Object ) );
-		} );
-
-		describe( "Resource.isDecorated", ():void => {
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( Resource.isDecorated ).toBeDefined();
 				expect( Resource.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			let object:ResourceFactory[ "PROTOTYPE" ];
-			beforeEach( ():void => {
+			beforeEach( () => {
 				object = createNonEnumerable<ResourceFactory[ "PROTOTYPE" ]>( {
 					types: [],
 
@@ -197,7 +475,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 		} );
 
-		describe( "Resource.is", ():void => {
+		describe( "Resource.is", () => {
 
 			it( "should return false when undefined", () => {
 				expect( Resource.is( void 0 ) ).toBe( false );
@@ -205,7 +483,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 
 			let object:ResourceFactory[ "PROTOTYPE" ];
-			beforeEach( ():void => {
+			beforeEach( () => {
 				object = createNonEnumerable<ResourceFactory[ "PROTOTYPE" ]>( {
 					types: [],
 
@@ -229,518 +507,106 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 		} );
 
-		// TODO: Separate in different tests
-		it( "Resource.create", ():void => {
-			expect( Resource.create ).toBeDefined();
-			expect( Resource.create ).toEqual( jasmine.any( Function ) );
+		describe( "Resource.create", () => {
 
-			let resource:Resource;
-
-			resource = Resource.create();
-			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.$id ).toBe( "" );
-			expect( resource.types ).toEqual( jasmine.any( Array ) );
-			expect( resource.types.length ).toBe( 0 );
-
-			resource = Resource.create( { $id: "http://example.com/resource/" } );
-			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.$id ).toBe( "http://example.com/resource/" );
-			expect( resource.types ).toEqual( jasmine.any( Array ) );
-			expect( resource.types.length ).toBe( 0 );
-
-			resource = Resource.create( { $id: "http://example.com/resource/", types: [ LDP.RDFSource ] } );
-			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.$id ).toBe( "http://example.com/resource/" );
-			expect( resource.types ).toEqual( jasmine.any( Array ) );
-			expect( resource.types.length ).toBe( 1 );
-			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
-
-			resource = Resource.create( { $id: null, types: [ LDP.RDFSource, LDP.Container ] } );
-			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.$id ).toBeNull();
-			expect( resource.types ).toEqual( jasmine.any( Array ) );
-			expect( resource.types.length ).toBe( 2 );
-			expect( resource.types ).toEqual( [ LDP.RDFSource, LDP.Container ] );
-		} );
-
-		// TODO: Separate in different tests
-		it( "Resource.createFrom", ():void => {
-			expect( Resource.createFrom ).toBeDefined();
-			expect( Resource.createFrom ).toEqual( jasmine.any( Function ) );
-
-			let simpleResource:Resource = Resource.createFrom( { $id: "http://example.com/simple-resource/" } );
-			expect( simpleResource ).toBeTruthy();
-			expect( Resource.isDecorated( simpleResource ) ).toBe( true );
-			expect( simpleResource.$id ).toBe( "http://example.com/simple-resource/" );
-			expect( simpleResource.types ).toEqual( jasmine.any( Array ) );
-			expect( simpleResource.types.length ).toBe( 0 );
-
-			interface MyResource extends BaseResource {
-				myProperty:string;
-			}
-
-			let resource:Resource & MyResource;
-
-			resource = Resource.createFrom<MyResource>( { myProperty: "a property" } );
-			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.$id ).toBe( "" );
-			expect( resource.types ).toEqual( jasmine.any( Array ) );
-			expect( resource.types.length ).toBe( 0 );
-			expect( resource.myProperty ).toBeDefined();
-			expect( resource.myProperty ).toBe( "a property" );
-
-			resource = Resource.createFrom<MyResource>( { myProperty: "a property", $id: "http://example.com/resource/" } );
-			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.$id ).toBe( "http://example.com/resource/" );
-			expect( resource.types ).toEqual( jasmine.any( Array ) );
-			expect( resource.types.length ).toBe( 0 );
-			expect( resource.myProperty ).toBeDefined();
-			expect( resource.myProperty ).toBe( "a property" );
-
-			resource = Resource.createFrom<MyResource>( { myProperty: "a property", $id: "http://example.com/resource/", types: [ LDP.RDFSource ] } );
-			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.$id ).toBe( "http://example.com/resource/" );
-			expect( resource.types ).toEqual( jasmine.any( Array ) );
-			expect( resource.types.length ).toBe( 1 );
-			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
-			expect( resource.myProperty ).toBeDefined();
-			expect( resource.myProperty ).toBe( "a property" );
-
-			resource = Resource.createFrom<MyResource>( { myProperty: "a property", $id: null, types: [ LDP.RDFSource, LDP.Container ] } );
-			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.$id ).toBeNull();
-			expect( resource.types ).toEqual( jasmine.any( Array ) );
-			expect( resource.types.length ).toBe( 2 );
-			expect( resource.types ).toEqual( [ LDP.RDFSource, LDP.Container ] );
-			expect( resource.myProperty ).toBeDefined();
-			expect( resource.myProperty ).toBe( "a property" );
-		} );
-
-		// TODO: Separate in different tests
-		it( "Resource.decorate", ():void => {
-			expect( Resource.decorate ).toBeDefined();
-			expect( Resource.decorate ).toEqual( jasmine.any( Function ) );
-
-
-			interface MyResource {
-				myProperty?:string;
-			}
-
-			let resource:Resource & MyResource;
-
-			resource = Resource.decorate<MyResource>( {} );
-			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.types ).toEqual( [] );
-
-			resource = Resource.decorate<MyResource>( { myProperty: "a property" } );
-			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.myProperty ).toBeDefined();
-			expect( resource.myProperty ).toBe( "a property" );
-			expect( resource.types ).toEqual( [] );
-
-
-			resource.types = [ LDP.RDFSource ];
-			resource = Resource.decorate<MyResource>( resource );
-			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
-		} );
-
-		describe( "Decorated `Resource`", ():void => {
-
-			let resource:Resource;
-			beforeEach( ():void => {
-				resource = Resource.create();
-
-				const context:AbstractContext<any, any> = createMockContext();
-				context.extendObjectSchema( {
-					"@vocab": "http://example.com/ns#",
-					"exTypes": "http://example.com/types#",
-				} );
-
-				resource.$registry = context.registry;
+			it( "should exist", () => {
+				expect( Resource.create ).toBeDefined();
+				expect( Resource.create ).toEqual( jasmine.any( Function ) );
 			} );
 
-			describe( "Resource.addType", ():void => {
 
-				it( "should exists", ():void => {
-					expect( resource.$addType ).toBeDefined();
-					expect( resource.$addType ).toEqual( jasmine.any( Function ) );
-				} );
+			it( "should call .createFrom with empty when no provided", () => {
+				const spy:jasmine.Spy = spyOn( Resource, "createFrom" )
+					.and.callThrough();
 
-				it( "should add type", ():void => {
-					resource.$addType( "http://example.com/types#Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
-
-				it( "should append type", ():void => {
-					resource.types = [ "http://example.com/types#Type-1" ];
-
-					resource.$addType( "http://example.com/types#Type-2" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-						"http://example.com/types#Type-2",
-					] );
-				} );
-
-				it( "should not add if type already exists", ():void => {
-					resource.types = [
-						"http://example.com/types#Type-1",
-						"http://example.com/types#Type-2",
-					];
-
-					resource.$addType( "http://example.com/types#Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-						"http://example.com/types#Type-2",
-					] );
-				} );
-
-				it( "should add resolved type from prefixed provided", ():void => {
-					resource.$addType( "exTypes:Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
-
-				it( "should add un-resolved type from prefixed provided when no registry", ():void => {
-					delete resource.$registry;
-
-					resource.$addType( "exTypes:Type-1" );
-					expect( resource.types ).toEqual( [
-						"exTypes:Type-1",
-					] );
-				} );
-
-				it( "should add un-resolved type from prefixed provided when no registry's context", ():void => {
-					resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
-
-					resource.$addType( "exTypes:Type-1" );
-					expect( resource.types ).toEqual( [
-						"exTypes:Type-1",
-					] );
-				} );
-
-				it( "should add un-resolved type from prefixed provided when no $registry's context", ():void => {
-					resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
-
-					resource.$addType( "exTypes:Type-1" );
-					expect( resource.types ).toEqual( [
-						"exTypes:Type-1",
-					] );
-				} );
-
-				it( "should add resolved type from prefixed provided when parent from registry has a context", ():void => {
-					resource.$registry = Registry.decorate( { registry: resource.$registry, __modelDecorator: Resource } );
-
-					resource.$addType( "exTypes:Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
-
-				it( "should add resolved type from prefixed provided when parent from $registry has a context", ():void => {
-					resource.$registry = Registry.decorate( { $id: "", $registry: resource.$registry, $__modelDecorator: Resource } );
-
-					resource.$addType( "exTypes:Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
-
-				it( "should not add if already exists type when prefixed provided", ():void => {
-					resource.types = [
-						"http://example.com/types#Type-1",
-						"http://example.com/types#Type-2",
-					];
-
-					resource.$addType( "exTypes:Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-						"http://example.com/types#Type-2",
-					] );
-				} );
-
-				it( "should add resolved type with @vocab from relative provided", ():void => {
-					resource.$addType( "Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/ns#Type-1",
-					] );
-				} );
-
-				it( "should add un-resolved type from relative provided when no registry", ():void => {
-					resource.$registry = void 0;
-
-					resource.$addType( "Type-1" );
-					expect( resource.types ).toEqual( [
-						"Type-1",
-					] );
-				} );
-
-				it( "should add un-resolved type from relative provided when no registry's context", ():void => {
-					resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
-
-					resource.$addType( "Type-1" );
-					expect( resource.types ).toEqual( [
-						"Type-1",
-					] );
-				} );
-
-				it( "should add un-resolved type from relative provided when no $registry's context", ():void => {
-					resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
-
-					resource.$addType( "Type-1" );
-					expect( resource.types ).toEqual( [
-						"Type-1",
-					] );
-				} );
-
+				Resource.create();
+				expect( spy ).toHaveBeenCalledWith( {} );
 			} );
 
-			describe( "Resource.hasType", ():void => {
+			it( "should call .createFrom with data provided", () => {
+				const spy:jasmine.Spy = spyOn( Resource, "createFrom" )
+					.and.callThrough();
 
-				it( "should exists", ():void => {
-					expect( resource.$hasType ).toBeDefined();
-					expect( resource.$hasType ).toEqual( jasmine.any( Function ) );
-				} );
-
-				it( "should return false when non-existent type", ():void => {
-					const returned:boolean = resource.$hasType( "http://example.com/types#Type-1" );
-					expect( returned ).toEqual( false );
-				} );
-
-				it( "should return true when exists type", ():void => {
-					resource.types = [ "http://example.com/types#Type-1" ];
-
-					const returned:boolean = resource.$hasType( "http://example.com/types#Type-1" );
-					expect( returned ).toEqual( true );
-				} );
-
-				it( "should return true when exists type with more", ():void => {
-					resource.types = [
-						"http://example.com/types#Type-1",
-						"http://example.com/types#Type-2",
-					];
-
-					const returned:boolean = resource.$hasType( "http://example.com/types#Type-1" );
-					expect( returned ).toEqual( true );
-				} );
-
-				it( "should return false when non-existent type from a prefixed one", ():void => {
-					const returned:boolean = resource.$hasType( "exTypes:Type-1" );
-					expect( returned ).toEqual( false );
-				} );
-
-				it( "should return true when type exists from a prefixed one", ():void => {
-					resource.types = [
-						"http://example.com/types#Type-1",
-						"http://example.com/types#Type-2",
-					];
-
-					const returned:boolean = resource.$hasType( "exTypes:Type-1" );
-					expect( returned ).toEqual( true );
-				} );
-
-				it( "should return true when type exists from relative one", ():void => {
-					resource.types = [
-						"http://example.com/ns#Type-1",
-						"http://example.com/ns#Type-2",
-					];
-
-					const returned:boolean = resource.$hasType( "Type-1" );
-					expect( returned ).toEqual( true );
-				} );
-
+				Resource.create( { the: "data" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "data" } );
 			} );
 
-			describe( "Resource.removeType", ():void => {
+			it( "should return different reference", () => {
+				const object:object = {};
+				const resource:Resource = Resource.create( object );
 
-				it( "should exists", ():void => {
-					expect( resource.$removeType ).toBeDefined();
-					expect( resource.$removeType ).toEqual( jasmine.any( Function ) );
-				} );
+				expect( object ).not.toBe( resource );
+			} );
 
-				it( "should remove type when exists", ():void => {
-					resource.types = [
-						"http://example.com/types#Type-1",
-						"http://example.com/types#Type-2",
-					];
+		} );
 
-					resource.$removeType( "http://example.com/types#Type-2" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
+		describe( "Resource.createFrom", () => {
 
-				it( "should not remove type when non-existent", ():void => {
-					resource.types = [
-						"http://example.com/types#Type-1",
-					];
+			it( "should exist", () => {
+				expect( Resource.createFrom ).toBeDefined();
+				expect( Resource.createFrom ).toEqual( jasmine.any( Function ) );
+			} );
 
-					resource.$removeType( "http://example.com/types#Type-2" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
 
-				it( "should remove resolved prefixed type when exists", ():void => {
-					resource.types = [
-						"http://example.com/types#Type-1",
-						"http://example.com/types#Type-2",
-					];
+			it( "should return empty resource when no parameters", () => {
+				const resource:Resource = Resource.createFrom( {} );
+				expect( resource ).toEqual( jasmine.objectContaining( {
+					$id: "",
+					types: [],
+				} ) );
+			} );
 
-					resource.$removeType( "exTypes:Type-2" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
+			it( "should return resource with $id when $id provided", () => {
+				const resource:Resource = Resource.createFrom( { $id: "http://example.com/resource/" } );
+				expect( resource ).toEqual( jasmine.objectContaining( {
+					$id: "http://example.com/resource/",
+					types: [],
+				} ) );
+			} );
 
-				it( "should not remove resolved prefixed type when non-existent", ():void => {
-					resource.types = [
-						"http://example.com/types#Type-1",
-					];
+			it( "should return resource with $id & types when $id & types provided", () => {
+				const resource:Resource = Resource.createFrom( { $id: "http://example.com/resource/", types: [ LDP.RDFSource, LDP.Container ] } );
+				expect( resource ).toEqual( jasmine.objectContaining( {
+					$id: "http://example.com/resource/",
+					types: [ LDP.RDFSource, LDP.Container ],
+				} ) );
+			} );
 
-					resource.$removeType( "exTypes:Type-2" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
+			it( "should return same reference", () => {
+				const object:object = {};
+				const resource:Resource = Resource.createFrom( object );
 
-				it( "should not remove prefixed type when no registry", ():void => {
-					resource.$registry = void 0;
-					resource.types = [
-						"http://example.com/types#Type-1",
-					];
+				expect( object ).toBe( resource );
+			} );
 
-					resource.$removeType( "exTypes:Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
+		} );
 
-				it( "should not remove prefixed type when no registry's context", ():void => {
-					resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
+		describe( "Resource.decorate", () => {
 
-					resource.types = [
-						"http://example.com/types#Type-1",
-					];
+			it( "should exist", () => {
+				expect( Resource.decorate ).toBeDefined();
+				expect( Resource.decorate ).toEqual( jasmine.any( Function ) );
+			} );
 
-					resource.$removeType( "exTypes:Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
 
-				it( "should not remove prefixed type when no $registry's context", ():void => {
-					resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
+			it( "should work with .isDecorated", () => {
+				const resource:Resource = Resource.decorate( {} );
+				expect( Resource.isDecorated( resource ) ).toBe( true );
+			} );
 
-					resource.types = [
-						"http://example.com/types#Type-1",
-					];
+			it( "should work with .isDecorated", () => {
+				const resource:Resource = Resource.decorate( {} );
+				expect( Resource.isDecorated( resource ) ).toBe( true );
+			} );
 
-					resource.$removeType( "exTypes:Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
+			it( "should init types", () => {
+				const resource:Resource = Resource.decorate( {} );
+				expect( resource.types ).toEqual( [] );
+			} );
 
-				it( "should remove resolved prefixed type when exists & registry parent has a context", ():void => {
-					resource.$registry = Registry.decorate( { registry: resource.$registry, __modelDecorator: Resource } );
-
-					resource.types = [
-						"http://example.com/types#Type-1",
-						"http://example.com/types#Type-2",
-					];
-
-					resource.$removeType( "exTypes:Type-2" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
-
-				it( "should remove resolved prefixed type when exists & $registry parent has a context", ():void => {
-					resource.$registry = Registry.decorate( { $id: "", $registry: resource.$registry, $__modelDecorator: Resource } );
-
-					resource.types = [
-						"http://example.com/types#Type-1",
-						"http://example.com/types#Type-2",
-					];
-
-					resource.$removeType( "exTypes:Type-2" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/types#Type-1",
-					] );
-				} );
-
-				it( "should remove resolved relative type when exists", ():void => {
-					resource.types = [
-						"http://example.com/ns#Type-1",
-						"http://example.com/ns#Type-2",
-					];
-
-					resource.$removeType( "Type-2" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/ns#Type-1",
-					] );
-				} );
-
-				it( "should not remove resolved relative type when non-existent", ():void => {
-					resource.types = [
-						"http://example.com/ns#Type-1",
-					];
-
-					resource.$removeType( "Type-2" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/ns#Type-1",
-					] );
-				} );
-
-				it( "should not remove relative type when no registry", ():void => {
-					resource.$registry = void 0;
-					resource.types = [
-						"http://example.com/ns#Type-1",
-					];
-
-					resource.$removeType( "Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/ns#Type-1",
-					] );
-				} );
-
-				it( "should not remove relative type when no registry's context", ():void => {
-					resource.$registry = Registry.decorate( { __modelDecorator: Resource } );
-
-					resource.types = [
-						"http://example.com/ns#Type-1",
-					];
-
-					resource.$removeType( "Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/ns#Type-1",
-					] );
-				} );
-
-				it( "should not remove relative type when no $registry's context", ():void => {
-					resource.$registry = Registry.decorate( { $id: "", $__modelDecorator: Resource } );
-
-					resource.types = [
-						"http://example.com/ns#Type-1",
-					];
-
-					resource.$removeType( "Type-1" );
-					expect( resource.types ).toEqual( [
-						"http://example.com/ns#Type-1",
-					] );
-				} );
-
+			it( "should maintain types", () => {
+				const resource:Resource = Resource.decorate( { types: [ LDP.RDFSource ] } );
+				expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 			} );
 
 		} );

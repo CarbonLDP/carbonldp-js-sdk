@@ -1,102 +1,52 @@
 import { RequestService } from "../../Request";
 import { Response } from "../../Response";
+
 import { HTTPError } from "../HTTPError";
-import {
-	clazz,
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	INSTANCE,
-	isDefined,
-	module,
-	STATIC,
-} from "./../../../test/JasmineExtender";
-import * as Utils from "./../../../Utils";
 
-import * as ServiceUnavailableError from "./ServiceUnavailableError";
+import { ServiceUnavailableError } from "./ServiceUnavailableError";
 
-describe( module( "carbonldp/HTTP/Errors/ServerErrors/ServiceUnavailableError" ), ():void => {
 
-	it( isDefined(), ():void => {
+describe( "ServiceUnavailableError", () => {
+
+	it( "should exist", () => {
 		expect( ServiceUnavailableError ).toBeDefined();
-		expect( ServiceUnavailableError ).toEqual( jasmine.any( Object ) );
+		expect( ServiceUnavailableError ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.HTTP.Errors.ServiceUnavailableError",
-		"Error class to indicate that the server is currently unavailable (because it's overloaded or down for maintenance)."
-	), ():void => {
+	let response:Response;
+	beforeAll( ( done ) => {
+		jasmine.Ajax.install();
+		jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
+			"status": 200,
+			"responseText": "A response",
+		} );
 
-		let response:Response;
-
-		beforeAll( ( done:{ ():void, fail:() => void } ) => {
-			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
-				"status": 200,
-				"responseText": "A response",
-			} );
-
-			RequestService.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+		RequestService
+			.send( "GET", "http://example.com/request/" )
+			.then( ( _response ) => {
 				response = _response;
 				done();
-			} ).catch( done.fail );
+			} )
+			.catch( done.fail );
+	} );
 
-		} );
+	afterAll( () => {
+		jasmine.Ajax.uninstall();
+	} );
 
-		afterAll( () => {
-			jasmine.Ajax.uninstall();
-		} );
 
-		it( isDefined(), ():void => {
-			expect( ServiceUnavailableError.ServiceUnavailableError ).toBeDefined();
-			expect( Utils.isFunction( ServiceUnavailableError.ServiceUnavailableError ) ).toBe( true );
-		} );
+	it( "should extend from HTTError", () => {
+		const error:ServiceUnavailableError = new ServiceUnavailableError( "Message of the error", response );
+		expect( error ).toEqual( jasmine.any( HTTPError ) );
+	} );
 
-		it( extendsClass(
-			"CarbonLDP.HTTP.Errors.HTTPError"
-		), ():void => {
-			let error:ServiceUnavailableError.ServiceUnavailableError = new ServiceUnavailableError.ServiceUnavailableError( "Message of the error", response );
+	it( "should have ServiceUnavailableError as name", () => {
+		const error:ServiceUnavailableError = new ServiceUnavailableError( "The message", response );
+		expect( error.name ).toEqual( "ServiceUnavailableError" );
+	} );
 
-			expect( error instanceof HTTPError ).toBe( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let error:ServiceUnavailableError.ServiceUnavailableError = new ServiceUnavailableError.ServiceUnavailableError( "Message of the error", response );
-
-			expect( error.toString ).toBeDefined();
-			expect( Utils.isFunction( error.toString ) );
-
-			expect( error.toString() ).toBe( "ServiceUnavailableError: Message of the error" );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"name",
-			"string"
-		), ():void => {
-			let error:ServiceUnavailableError.ServiceUnavailableError = new ServiceUnavailableError.ServiceUnavailableError( "Message of the error", response );
-
-			expect( error.name ).toBeDefined();
-			expect( Utils.isString( error.name ) ).toBe( true );
-
-			expect( error.name ).toBe( "ServiceUnavailableError" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"statusCode",
-			"number"
-		), ():void => {
-			expect( ServiceUnavailableError.ServiceUnavailableError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( ServiceUnavailableError.ServiceUnavailableError.statusCode ) );
-
-			expect( ServiceUnavailableError.ServiceUnavailableError.statusCode ).toBe( 503 );
-		} );
-
+	it( "should have statusCode as `503`", () => {
+		expect( ServiceUnavailableError.statusCode ).toBe( 503 );
 	} );
 
 } );

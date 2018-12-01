@@ -1,130 +1,103 @@
 import { Resource } from "../Resource/Resource";
 
-import {
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
-
 import { C } from "../Vocabularies/C";
-
-import * as Utils from "./../Utils";
 
 import { Map } from "./Map";
 
 
-describe( module( "carbonldp/LDP/Map" ), ():void => {
+describe( "Map", () => {
 
-	describe( interfaze(
-		"CarbonLDP.LDP.Map",
-		[ "K", "V" ],
-		"Interface that contains a set entries with a close relation in the form of a key/value pair."
-	), ():void => {
-
-		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"entries",
-			"CarbonLDP.LDP.MapEntry<K,V>[]",
-			"An array of entries' pair relations."
-		), ():void => {} );
-
+	it( "should exist", () => {
+		expect( Map ).toBeDefined();
+		expect( Map ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.LDP.MapFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.Map` objects."
-	), ():void => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"TYPE",
-			"string"
-		), ():void => {} );
+	describe( "[[interface impl]]", () => {} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"SCHEMA",
-			"CarbonLDP.ObjectSchema"
-		), ():void => {} );
+	describe( "[[factory]]", () => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Return true if the object provided is considered a `CarbonLDP.LDP.Map` object.", [
-				{ name: "object", type: "object", description: "Object to check" },
-			],
-			{ type: "object is CarbonLDP.LDP.Map<any, any>" }
-		), ():void => {} );
+		describe( "Map.TYPE", () => {
 
-	} );
-
-	describe( property(
-		STATIC,
-		"CarbonMap",
-		"CarbonLDP.LDP.MapFactory"
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( Map ).toBeDefined();
-			expect( Map ).toEqual( jasmine.any( Object ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( "CarbonMap.TYPE", ():void => {
-			expect( Map.TYPE ).toBeDefined();
-			expect( Utils.isString( Map.TYPE ) ).toBe( true );
-
-			expect( Map.TYPE ).toBe( C.Map );
-		} );
-
-		// TODO: Separate in different tests
-		it( "CarbonMap.SCHEMA", ():void => {
-			expect( Map.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( Map.SCHEMA ) ).toBe( true );
-
-			expect( Map.SCHEMA as { [key:string]:object } ).toEqual( {
-				entries: jasmine.any( Object ),
+			it( "should exist", () => {
+				expect( Map.TYPE ).toBeDefined();
+				expect( Map.TYPE ).toEqual( jasmine.any( String ) );
 			} );
 
-			expect( Map.SCHEMA[ "entries" ] ).toEqual( {
-				"@id": C.entry,
-				"@type": "@id",
-				"@container": "@set",
+
+			it( "should be `c:Map`", () => {
+				expect( Map.TYPE ).toBe( C.Map );
 			} );
 
 		} );
 
-		// TODO: Separate in different tests
-		it( "CarbonMap.is", ():void => {
-			expect( Map.is ).toBeDefined();
-			expect( Utils.isFunction( Map.is ) ).toBe( true );
+		describe( "Map.SCHEMA", () => {
 
-			let object:Map<any, any> = void 0;
-			expect( Map.is( object ) ).toBe( false );
-			object = null;
-			expect( Map.is( object ) ).toBe( false );
-
-			object = Resource.decorate( {
-				types: [ C.Map ],
-				entries: null,
+			it( "should exist", () => {
+				expect( Map.SCHEMA ).toBeDefined();
+				expect( Map.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );
-			expect( Map.is( object ) ).toBe( true );
 
-			object.$removeType( C.Map );
-			expect( Map.is( object ) ).toBe( false );
-			object.$addType( C.Map );
 
-			delete object.entries;
-			expect( Map.is( object ) ).toBe( false );
-			object.entries = null;
+			it( "should have model properties", () => {
+				expect<any>( Map.SCHEMA ).toEqual( {
+					entries: jasmine.any( Object ),
+				} );
+			} );
+
+			it( "should have specified `entries`", () => {
+				expect( Map.SCHEMA[ "entries" ] ).toEqual( {
+					"@id": C.entry,
+					"@type": "@id",
+					"@container": "@set",
+				} );
+			} );
+
+		} );
+
+
+		describe( "Map.is", () => {
+
+			it( "should exist", () => {
+				expect( Map.is ).toBeDefined();
+				expect( Map.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let isResource:jasmine.Spy;
+			let mockObject:jasmine.SpyObj<Map<any, any>>;
+			beforeEach( () => {
+				isResource = spyOn( Resource, "is" )
+					.and.returnValue( true );
+
+				mockObject = jasmine.createSpyObj( {
+					$hasType: true,
+				} );
+
+				mockObject.entries = null;
+			} );
+
+
+			it( "should be a Resource", () => {
+				Map.is( mockObject );
+				expect( isResource ).toHaveBeenCalledWith( mockObject );
+			} );
+
+			it( "should have type c:Map", () => {
+				Map.is( mockObject );
+				expect( mockObject.$hasType ).toHaveBeenCalledWith( C.Map );
+			} );
+
+			it( "should return true when all assertions", () => {
+				const returned:boolean = Map.is( mockObject );
+				expect( returned ).toBe( true );
+			} );
+
+			it( "should return false whe no `entries`", () => {
+				delete mockObject.entries;
+				expect( Map.is( mockObject ) ).toBe( false );
+			} );
+
 		} );
 
 	} );

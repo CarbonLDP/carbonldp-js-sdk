@@ -3,43 +3,25 @@ import { createMockQueryableMetadata } from "../../test/helpers/mocks";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelPrototype } from "../Model/ModelPrototype";
-import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
-import { BaseResolvablePointer } from "../Repository/BaseResolvablePointer";
 import { Repository } from "../Repository/Repository";
 import { ResolvablePointer } from "../Repository/ResolvablePointer";
 
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
-
-import { QueryablePointer, QueryablePointerFactory } from "./QueryablePointer";
+import { QueryablePointer } from "./QueryablePointer";
 
 
-describe( module( "carbonldp/QueryDocuments" ), () => {
+describe( "QueryablePointer", () => {
 
-	describe( interfaze(
-		"CarbonLDP.QueryDocuments.QueryablePointer",
-		"Interface that describes extra properties for a pointer that can be queried."
-	), () => {
+	it( "should exist", () => {
+		expect( QueryablePointer ).toBeDefined();
+		expect( QueryablePointer ).toEqual( jasmine.any( Object ) );
+	} );
 
-		it( extendsClass( "CarbonLDP.QueryDocuments.QueryablePointer" ), () => {
-			const target:QueryablePointer = {} as QueryablePointer;
-			expect( target ).toBeDefined();
-		} );
 
+	describe( "[[interface impl]]", () => {
 
 		let $repository:Repository;
-		beforeEach( ():void => {
+		beforeEach( () => {
 			$repository = Repository.decorate( {} );
 		} );
 
@@ -48,22 +30,9 @@ describe( module( "carbonldp/QueryDocuments" ), () => {
 		}
 
 
-		it( hasProperty(
-			OBLIGATORY,
-			"_queryableMetadata",
-			"CarbonLDP.QueryDocuments.QueryableProperty | undefined",
-			"Metadata for documents that are partial documents."
-		), ():void => {} );
+		describe( "QueryablePointer.isQueried", () => {
 
-
-		describe( method( OBLIGATORY, "isQueried" ), () => {
-
-			it( hasSignature(
-				"Returns true if the resource is a partial representation of the one stored in Carbon LDP.",
-				{ type: "boolean" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const resource:QueryablePointer = createMock();
 
 				expect( resource.$isQueried ).toBeDefined();
@@ -85,33 +54,15 @@ describe( module( "carbonldp/QueryDocuments" ), () => {
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.QueryDocuments.QueryablePointerFactory",
-		"Interface with the factory, decorate and utils of a `CarbonLDP.QueryDocuments.QueryablePointer` object."
-	), ():void => {
+	describe( "[[factory]]", () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.QueryDocuments.QueryablePointer, CarbonLDP.BaseResolvablePointer>" ), () => {
-			const target:ModelPrototype<QueryablePointer, BaseResolvablePointer> = {} as QueryablePointerFactory;
-			expect( target ).toBeDefined();
-		} );
+		describe( "QueryablePointer.isDecorated", () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.QueryDocuments.QueryablePointer, CarbonLDP.BaseResolvablePointer>" ), () => {
-			const target:ModelDecorator<QueryablePointer, BaseResolvablePointer> = {} as QueryablePointerFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelTypeGuard<CarbonLDP.QueryDocuments.QueryablePointer>" ), () => {
-			const target:ModelTypeGuard<QueryablePointer> = {} as QueryablePointerFactory;
-			expect( target ).toBeDefined();
-		} );
-
-
-		describe( "QueryablePointer.isDecorated", ():void => {
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( QueryablePointer.isDecorated ).toBeDefined();
 				expect( QueryablePointer.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
+
 
 			it( "should verify members from PROTOTYPE", () => {
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "hasPropertiesFrom" )
@@ -125,15 +76,16 @@ describe( module( "carbonldp/QueryDocuments" ), () => {
 
 		} );
 
-		describe( "QueryablePointer.decorate", ():void => {
+		describe( "QueryablePointer.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( QueryablePointer.decorate ).toBeDefined();
 				expect( QueryablePointer.decorate ).toEqual( jasmine.any( Function ) );
 			} );
 
+
 			let $repository:Repository;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				$repository = Repository.decorate( {} );
 			} );
 
@@ -171,9 +123,9 @@ describe( module( "carbonldp/QueryDocuments" ), () => {
 		} );
 
 
-		describe( "QueryablePointer.is", ():void => {
+		describe( "QueryablePointer.is", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( QueryablePointer.is ).toBeDefined();
 				expect( QueryablePointer.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -181,7 +133,7 @@ describe( module( "carbonldp/QueryDocuments" ), () => {
 
 			let isResolvablePointer:jasmine.Spy;
 			let isSelfDecorated:jasmine.Spy;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				isResolvablePointer = spyOn( ResolvablePointer, "is" )
 					.and.returnValue( true );
 				isSelfDecorated = spyOn( QueryablePointer, "isDecorated" )
@@ -219,20 +171,6 @@ describe( module( "carbonldp/QueryDocuments" ), () => {
 				expect( returned ).toBe( false );
 			} );
 
-		} );
-
-	} );
-
-
-	describe( property(
-		STATIC,
-		"QueryablePointer",
-		"CarbonLDP.QueryDocuments.QueryablePointerFactory"
-	), () => {
-
-		it( "should exists", ():void => {
-			expect( QueryablePointer ).toBeDefined();
-			expect( QueryablePointer ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );

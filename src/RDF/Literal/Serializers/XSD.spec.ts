@@ -1,533 +1,888 @@
 import { IllegalArgumentError } from "../../../Errors/IllegalArgumentError";
+import {
+	BooleanSerializer,
+	booleanSerializer,
+	dateSerializer,
+	DateSerializer,
+	dateTimeSerializer,
+	DateTimeSerializer,
+	floatSerializer,
+	FloatSerializer,
+	integerSerializer,
+	IntegerSerializer,
+	LongSerializer,
+	longSerializer,
+	StringSerializer,
+	stringSerializer,
+	TimeSerializer,
+	timeSerializer,
+	UnsignedIntegerSerializer,
+	unsignedIntegerSerializer,
+	UnsignedLongSerializer,
+	unsignedLongSerializer
+} from "./XSD";
 
-import { clazz, hasMethod, hasProperty, INSTANCE, isDefined, module, STATIC } from "../../../test/JasmineExtender";
 
-import * as Utils from "./../../../Utils";
+describe( "DateSerializer", () => {
 
-import * as XSD from "./XSD";
-
-
-describe( module(
-	"carbonldp/RDF/Literal/Serializers/XSD"
-), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( XSD ).toBeDefined();
-		expect( Utils.isObject( XSD ) ).toBe( true );
+	it( "should exist", () => {
+		expect( DateSerializer ).toBeDefined();
+		expect( DateSerializer ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializers.DateSerializer",
-		"Class that can serialize a Date object into a string literal with format `YYYY-MM-DD`.\n" +
-		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#dateSerializer`."
-	), ():void => {
 
-		// TODO: Separate in different tests
-		it( isDefined(), ():void => {
-			expect( XSD.DateSerializer ).toBeDefined();
-			expect( Utils.isFunction( XSD.DateSerializer ) ).toBe( true );
+	it( "should be instantiable", () => {
+		const serializer:DateSerializer = new DateSerializer();
+		expect( serializer ).toEqual( jasmine.any( DateSerializer ) );
+	} );
 
-			let serializer:XSD.DateSerializer = new XSD.DateSerializer();
-			expect( serializer ).toBeTruthy();
-			expect( serializer instanceof XSD.DateSerializer ).toBe( true );
+	describe( "DateSerializer.serialize", () => {
+
+		it( "should exist", () => {
+			expect( DateSerializer.prototype.serialize ).toBeDefined();
+			expect( DateSerializer.prototype.serialize ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"serialize",
-			"Returns the string with format `YYYY-MM-DD`, of the Date object", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "string" }
-		), ():void => {
-			let serializer:XSD.DateSerializer = new XSD.DateSerializer();
 
-			expect( serializer.serialize ).toBeDefined();
-			expect( Utils.isFunction( serializer.serialize ) ).toBe( true );
+		it( "should return date string", () => {
+			const serializer:DateSerializer = new DateSerializer();
 
-			let date:Date = new Date( "05 October 2011 14:48 UTC" );
+			const date:Date = new Date( "05 October 2011 14:48 UTC" );
 			expect( serializer.serialize( date ) ).toBe( "2011-10-05" );
+		} );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "2011-10-05" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
+		it( "should throw error when plain object", () => {
+			const serializer:DateSerializer = new DateSerializer();
+			expect( () => serializer.serialize( {} ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when string", () => {
+			const serializer:DateSerializer = new DateSerializer();
+			expect( () => serializer.serialize( "a string" ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when none existent value", () => {
+			const serializer:DateSerializer = new DateSerializer();
+			expect( () => serializer.serialize( null ) ).toThrowError( IllegalArgumentError );
+			expect( () => serializer.serialize( undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"dateSerializer",
-		"CarbonLDP.RDF.Literal.Serializers.DateSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.DateSerializer`."
-	), ():void => {
-		expect( XSD.dateSerializer ).toBeDefined();
-		expect( XSD.dateSerializer instanceof XSD.DateSerializer ).toBe( true );
+} );
+
+describe( "dateSerializer", () => {
+
+	it( "should exist", () => {
+		expect( dateSerializer ).toBeDefined();
+		expect( dateSerializer ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializers.DateTimeSerializer",
-		"Class that can serialize a Date object into a string ISO literal.\n" +
-		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#dateTimeSerializer`."
-	), ():void => {
+	it( "should be instance fo DateSerializer", () => {
+		expect( dateSerializer ).toEqual( jasmine.any( DateSerializer ) );
+	} );
 
-		// TODO: Separate in different tests
-		it( isDefined(), ():void => {
-			expect( XSD.DateTimeSerializer ).toBeDefined();
-			expect( Utils.isFunction( XSD.DateTimeSerializer ) ).toBe( true );
+} );
 
-			let serializer:XSD.DateTimeSerializer = new XSD.DateTimeSerializer();
-			expect( serializer ).toBeTruthy();
-			expect( serializer instanceof XSD.DateTimeSerializer ).toBe( true );
+
+describe( "DateTimeSerializer", () => {
+
+	it( "should exist", () => {
+		expect( DateTimeSerializer ).toBeDefined();
+		expect( DateTimeSerializer ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should be instantiable", () => {
+		const serializer:DateTimeSerializer = new DateTimeSerializer();
+		expect( serializer ).toEqual( jasmine.any( DateTimeSerializer ) );
+	} );
+
+	describe( "DateTimeSerializer.serialize", () => {
+
+		it( "should exist", () => {
+			expect( DateTimeSerializer.prototype.serialize ).toBeDefined();
+			expect( DateTimeSerializer.prototype.serialize ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"serialize",
-			"Returns the simplified extended ISO format (ISO 8601) of the Date object.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "string" }
-		), ():void => {
-			let serializer:XSD.DateTimeSerializer = new XSD.DateTimeSerializer();
 
-			expect( serializer.serialize ).toBeDefined();
-			expect( Utils.isFunction( serializer.serialize ) ).toBe( true );
+		it( "should return date-time string", () => {
+			const serializer:DateTimeSerializer = new DateTimeSerializer();
 
-			let date:Date = new Date( "05 October 2011 14:48 UTC" );
+			const date:Date = new Date( "05 October 2011 14:48 UTC" );
 			expect( serializer.serialize( date ) ).toBe( "2011-10-05T14:48:00.000Z" );
+		} );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "2011-10-05T14:48:00.000Z" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
+		it( "should throw error when plain object", () => {
+			const serializer:DateTimeSerializer = new DateTimeSerializer();
+			expect( () => serializer.serialize( {} ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when string", () => {
+			const serializer:DateTimeSerializer = new DateTimeSerializer();
+			expect( () => serializer.serialize( "a string" ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when none existent value", () => {
+			const serializer:DateTimeSerializer = new DateTimeSerializer();
+			expect( () => serializer.serialize( null ) ).toThrowError( IllegalArgumentError );
+			expect( () => serializer.serialize( undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"dateTimeSerializer",
-		"CarbonLDP.RDF.Literal.Serializers.DateTimeSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.DateTimeSerializer`."
-	), ():void => {
-		expect( XSD.dateTimeSerializer ).toBeDefined();
-		expect( XSD.dateTimeSerializer instanceof XSD.DateTimeSerializer ).toBe( true );
+} );
+
+describe( "dateTimeSerializer", () => {
+
+	it( "should exist", () => {
+		expect( dateTimeSerializer ).toBeDefined();
+		expect( dateTimeSerializer ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializers.TimeSerializer",
-		"Class that can serialize a Date object into a literal string with format `HH:mm:ss.sssZ`.\n" +
-		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#timeSerializer`."
-	), ():void => {
+	it( "should be instance fo DateTimeSerializer", () => {
+		expect( dateTimeSerializer ).toEqual( jasmine.any( DateTimeSerializer ) );
+	} );
 
-		// TODO: Separate in different tests
-		it( isDefined(), ():void => {
-			expect( XSD.TimeSerializer ).toBeDefined();
-			expect( Utils.isFunction( XSD.TimeSerializer ) ).toBe( true );
+} );
 
-			let serializer:XSD.TimeSerializer = new XSD.TimeSerializer();
-			expect( serializer ).toBeTruthy();
-			expect( serializer instanceof XSD.TimeSerializer ).toBe( true );
+
+describe( "TimeSerializer", () => {
+
+	it( "should exist", () => {
+		expect( TimeSerializer ).toBeDefined();
+		expect( TimeSerializer ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should be instantiable", () => {
+		const serializer:TimeSerializer = new TimeSerializer();
+		expect( serializer ).toEqual( jasmine.any( TimeSerializer ) );
+	} );
+
+	describe( "TimeSerializer.serialize", () => {
+
+		it( "should exist", () => {
+			expect( TimeSerializer.prototype.serialize ).toBeDefined();
+			expect( TimeSerializer.prototype.serialize ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"serialize",
-			"Returns a string representing the Date object with format `HH:mm:ss.sssZ`.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "string" }
-		), ():void => {
-			let serializer:XSD.TimeSerializer = new XSD.TimeSerializer();
 
-			expect( serializer.serialize ).toBeDefined();
-			expect( Utils.isFunction( serializer.serialize ) ).toBe( true );
+		it( "should return time string", () => {
+			const serializer:TimeSerializer = new TimeSerializer();
 
-			let date:Date = new Date( "05 October 2011 14:48 UTC" );
+			const date:Date = new Date( "05 October 2011 14:48 UTC" );
 			expect( serializer.serialize( date ) ).toBe( "14:48:00.000Z" );
+		} );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "14:48:00.000Z" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
+		it( "should throw error when plain object", () => {
+			const serializer:TimeSerializer = new TimeSerializer();
+			expect( () => serializer.serialize( {} ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when string", () => {
+			const serializer:TimeSerializer = new TimeSerializer();
+			expect( () => serializer.serialize( "a string" ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when none existent value", () => {
+			const serializer:TimeSerializer = new TimeSerializer();
+			expect( () => serializer.serialize( null ) ).toThrowError( IllegalArgumentError );
+			expect( () => serializer.serialize( undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"timeSerializer",
-		"CarbonLDP.RDF.Literal.Serializers.TimeSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.TimeSerializer`."
-	), ():void => {
-		expect( XSD.timeSerializer ).toBeDefined();
-		expect( XSD.timeSerializer instanceof XSD.TimeSerializer ).toBe( true );
+} );
+
+describe( "timeSerializer", () => {
+
+	it( "should exist", () => {
+		expect( timeSerializer ).toBeDefined();
+		expect( timeSerializer ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializers.IntegerSerializer",
-		"Class that can serialize any Number value to a string literal of an integer.\n" +
-		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#integerSerializer`."
-	), ():void => {
+	it( "should be instance fo TimeSerializer", () => {
+		expect( timeSerializer ).toEqual( jasmine.any( TimeSerializer ) );
+	} );
 
-		// TODO: Separate in different tests
-		it( isDefined(), ():void => {
-			expect( XSD.IntegerSerializer ).toBeDefined();
-			expect( Utils.isFunction( XSD.IntegerSerializer ) ).toBe( true );
+} );
 
-			let serializer:XSD.IntegerSerializer = new XSD.IntegerSerializer();
-			expect( serializer ).toBeTruthy();
-			expect( serializer instanceof XSD.IntegerSerializer ).toBe( true );
+
+describe( "IntegerSerializer", () => {
+
+	it( "should exist", () => {
+		expect( IntegerSerializer ).toBeDefined();
+		expect( IntegerSerializer ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should be instantiable", () => {
+		const serializer:IntegerSerializer = new IntegerSerializer();
+		expect( serializer ).toEqual( jasmine.any( IntegerSerializer ) );
+	} );
+
+	describe( "IntegerSerializer.serialize", () => {
+
+		it( "should exist", () => {
+			expect( IntegerSerializer.prototype.serialize ).toBeDefined();
+			expect( IntegerSerializer.prototype.serialize ).toEqual( jasmine.any( Function ) );
 		} );
 
-		it( "should overflow if larger than 2^32 - 1", ():void => {
-			const serializer:XSD.IntegerSerializer = new XSD.IntegerSerializer();
-			expect( serializer.serialize( Math.pow( 2, 32 ) ) ).not.toBe( "4294967296" );
-			expect( serializer.serialize( Math.pow( 2, 40 ) ) ).not.toBe( "1099511627776" );
-		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"serialize",
-			"Returns a string representing a integer from the Number provided.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "string" }
-		), ():void => {
-			let serializer:XSD.IntegerSerializer = new XSD.IntegerSerializer();
-
-			expect( serializer.serialize ).toBeDefined();
-			expect( Utils.isFunction( serializer.serialize ) ).toBe( true );
+		it( "should return string from integer", () => {
+			const serializer:IntegerSerializer = new IntegerSerializer();
 
 			expect( serializer.serialize( 100 ) ).toBe( "100" );
 			expect( serializer.serialize( - 100 ) ).toBe( "-100" );
+		} );
+
+		it( "should truncate float", () => {
+			const serializer:IntegerSerializer = new IntegerSerializer();
+
 			expect( serializer.serialize( 100.123456789 ) ).toBe( "100" );
 			expect( serializer.serialize( - 100.123456789 ) ).toBe( "-100" );
+		} );
+
+		it( "should truncate zero float", () => {
+			const serializer:IntegerSerializer = new IntegerSerializer();
+
 			expect( serializer.serialize( 0.123456789 ) ).toBe( "0" );
 			expect( serializer.serialize( - 0.123456789 ) ).toBe( "0" );
+		} );
+
+		it( "should return zero string when NaN", () => {
+			const serializer:IntegerSerializer = new IntegerSerializer();
+
 			expect( serializer.serialize( NaN ) ).toBe( "0" );
+		} );
+
+		it( "should return zero string when Infinity", () => {
+			const serializer:IntegerSerializer = new IntegerSerializer();
+
 			expect( serializer.serialize( Infinity ) ).toBe( "0" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "0" );
+		} );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
+		it( "should overflow if larger than 2^32 - 1", () => {
+			const serializer:IntegerSerializer = new IntegerSerializer();
+			expect( serializer.serialize( Math.pow( 2, 32 ) ) ).not.toBe( "4294967296" );
+		} );
+
+
+		it( "should throw error when plain object", () => {
+			const serializer:IntegerSerializer = new IntegerSerializer();
+			expect( () => serializer.serialize( {} ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when string", () => {
+			const serializer:IntegerSerializer = new IntegerSerializer();
+			expect( () => serializer.serialize( "a string" ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when none existent value", () => {
+			const serializer:IntegerSerializer = new IntegerSerializer();
+			expect( () => serializer.serialize( null ) ).toThrowError( IllegalArgumentError );
+			expect( () => serializer.serialize( undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"integerSerializer",
-		"CarbonLDP.RDF.Literal.Serializers.IntegerSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.IntegerSerializer`."
-	), ():void => {
-		expect( XSD.integerSerializer ).toBeDefined();
-		expect( XSD.integerSerializer instanceof XSD.IntegerSerializer ).toBe( true );
+} );
+
+describe( "integerSerializer", () => {
+
+	it( "should exist", () => {
+		expect( integerSerializer ).toBeDefined();
+		expect( integerSerializer ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializers.UnsignedIntegerSerializer",
-		"Class that can serialize any Number value to a string literal of an unsigned integer.\n" +
-		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#unsignedIntegerSerializer`."
-	), ():void => {
+	it( "should be instance fo IntegerSerializer", () => {
+		expect( integerSerializer ).toEqual( jasmine.any( IntegerSerializer ) );
+	} );
 
-		// TODO: Separate in different tests
-		it( isDefined(), ():void => {
-			expect( XSD.UnsignedIntegerSerializer ).toBeDefined();
-			expect( Utils.isFunction( XSD.UnsignedIntegerSerializer ) ).toBe( true );
+} );
 
-			let serializer:XSD.UnsignedIntegerSerializer = new XSD.UnsignedIntegerSerializer();
-			expect( serializer ).toBeTruthy();
-			expect( serializer instanceof XSD.UnsignedIntegerSerializer ).toBe( true );
+
+describe( "UnsignedIntegerSerializer", () => {
+
+	it( "should exist", () => {
+		expect( UnsignedIntegerSerializer ).toBeDefined();
+		expect( UnsignedIntegerSerializer ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should be instantiable", () => {
+		const serializer:UnsignedIntegerSerializer = new UnsignedIntegerSerializer();
+		expect( serializer ).toEqual( jasmine.any( UnsignedIntegerSerializer ) );
+	} );
+
+	describe( "UnsignedIntegerSerializer.serialize", () => {
+
+		it( "should exist", () => {
+			expect( UnsignedIntegerSerializer.prototype.serialize ).toBeDefined();
+			expect( UnsignedIntegerSerializer.prototype.serialize ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"serialize",
-			"Returns a string representing an unsigned integer from the Number provided.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "string" }
-		), ():void => {
-			let serializer:XSD.UnsignedIntegerSerializer = new XSD.UnsignedIntegerSerializer();
 
-			expect( serializer.serialize ).toBeDefined();
-			expect( Utils.isFunction( serializer.serialize ) ).toBe( true );
+		it( "should return string from integer", () => {
+			const serializer:UnsignedIntegerSerializer = new UnsignedIntegerSerializer();
 
 			expect( serializer.serialize( 100 ) ).toBe( "100" );
 			expect( serializer.serialize( - 100 ) ).toBe( "100" );
+		} );
+
+		it( "should truncate float", () => {
+			const serializer:UnsignedIntegerSerializer = new UnsignedIntegerSerializer();
+
 			expect( serializer.serialize( 100.123456789 ) ).toBe( "100" );
 			expect( serializer.serialize( - 100.123456789 ) ).toBe( "100" );
+		} );
+
+		it( "should truncate zero float", () => {
+			const serializer:UnsignedIntegerSerializer = new UnsignedIntegerSerializer();
+
 			expect( serializer.serialize( 0.123456789 ) ).toBe( "0" );
 			expect( serializer.serialize( - 0.123456789 ) ).toBe( "0" );
+		} );
+
+		it( "should return zero string when NaN", () => {
+			const serializer:UnsignedIntegerSerializer = new UnsignedIntegerSerializer();
+
 			expect( serializer.serialize( NaN ) ).toBe( "0" );
+		} );
+
+		it( "should return zero string when Infinity", () => {
+			const serializer:UnsignedIntegerSerializer = new UnsignedIntegerSerializer();
+
 			expect( serializer.serialize( Infinity ) ).toBe( "0" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "0" );
+		} );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
+		it( "should overflow if larger than 2^32 - 1", () => {
+			const serializer:UnsignedIntegerSerializer = new UnsignedIntegerSerializer();
+			expect( serializer.serialize( Math.pow( 2, 32 ) ) ).not.toBe( "4294967296" );
+		} );
+
+
+		it( "should throw error when plain object", () => {
+			const serializer:UnsignedIntegerSerializer = new UnsignedIntegerSerializer();
+			expect( () => serializer.serialize( {} ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when string", () => {
+			const serializer:UnsignedIntegerSerializer = new UnsignedIntegerSerializer();
+			expect( () => serializer.serialize( "a string" ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when none existent value", () => {
+			const serializer:UnsignedIntegerSerializer = new UnsignedIntegerSerializer();
+			expect( () => serializer.serialize( null ) ).toThrowError( IllegalArgumentError );
+			expect( () => serializer.serialize( undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
 
-	describe( "LongSerializer", ():void => {
+} );
 
-		describe( "LongSerializer.serialize", ():void => {
+describe( "unsignedIntegerSerializer", () => {
 
-			it( "should accept numbers larger than 2^32 - 1", ():void => {
-				const serializer:XSD.LongSerializer = new XSD.LongSerializer();
-				expect( serializer.serialize( Math.pow( 2, 32 ) ) ).toBe( "4294967296" );
-				expect( serializer.serialize( - Math.pow( 2, 32 ) ) ).toBe( "-4294967296" );
-
-				expect( serializer.serialize( Math.pow( 2, 40 ) ) ).toBe( "1099511627776" );
-				expect( serializer.serialize( - Math.pow( 2, 40 ) ) ).toBe( "-1099511627776" );
-			} );
-
-			it( "should remove decimals", ():void => {
-				const serializer:XSD.LongSerializer = new XSD.LongSerializer();
-				expect( serializer.serialize( 4294967296.45 ) ).toBe( "4294967296" );
-				expect( serializer.serialize( 1099511627776.7632 ) ).toBe( "1099511627776" );
-			} );
-
-		} );
-
+	it( "should exist", () => {
+		expect( unsignedIntegerSerializer ).toBeDefined();
+		expect( unsignedIntegerSerializer ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( "UnsignedLongSerializer", ():void => {
-
-		describe( "UnsignedLongSerializer.serialize", ():void => {
-
-			it( "should accept numbers larger than 2^32 - 1", ():void => {
-				const serializer:XSD.UnsignedLongSerializer = new XSD.UnsignedLongSerializer();
-				expect( serializer.serialize( Math.pow( 2, 32 ) ) ).toBe( "4294967296" );
-				expect( serializer.serialize( - Math.pow( 2, 32 ) ) ).toBe( "4294967296" );
-
-				expect( serializer.serialize( Math.pow( 2, 40 ) ) ).toBe( "1099511627776" );
-				expect( serializer.serialize( - Math.pow( 2, 40 ) ) ).toBe( "1099511627776" );
-			} );
-
-			it( "should remove decimals", ():void => {
-				const serializer:XSD.UnsignedLongSerializer = new XSD.UnsignedLongSerializer();
-				expect( serializer.serialize( - 4294967296.45 ) ).toBe( "4294967296" );
-				expect( serializer.serialize( - 1099511627776.7632 ) ).toBe( "1099511627776" );
-			} );
-
-		} );
-
+	it( "should be instance fo UnsignedIntegerSerializer", () => {
+		expect( unsignedIntegerSerializer ).toEqual( jasmine.any( UnsignedIntegerSerializer ) );
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"unsignedIntegerSerializer",
-		"CarbonLDP.RDF.Literal.Serializers.UnsignedIntegerSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.UnsignedIntegerSerializer`."
-	), ():void => {
-		expect( XSD.unsignedIntegerSerializer ).toBeDefined();
-		expect( XSD.unsignedIntegerSerializer instanceof XSD.UnsignedIntegerSerializer ).toBe( true );
+} );
+
+
+describe( "LongSerializer", () => {
+
+	it( "should exist", () => {
+		expect( LongSerializer ).toBeDefined();
+		expect( LongSerializer ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializers.FloatSerializer",
-		"Class that can serialize any Number value to a string literal of float.\n" +
-		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#floatSerializer`."
-	), ():void => {
 
-		// TODO: Separate in different tests
-		it( isDefined(), ():void => {
-			expect( XSD.FloatSerializer ).toBeDefined();
-			expect( Utils.isFunction( XSD.FloatSerializer ) ).toBe( true );
+	it( "should be instantiable", () => {
+		const serializer:LongSerializer = new LongSerializer();
+		expect( serializer ).toEqual( jasmine.any( LongSerializer ) );
+	} );
 
-			let serializer:XSD.FloatSerializer = new XSD.FloatSerializer();
-			expect( serializer ).toBeTruthy();
-			expect( serializer instanceof XSD.FloatSerializer ).toBe( true );
+	describe( "LongSerializer.serialize", () => {
+
+		it( "should exist", () => {
+			expect( LongSerializer.prototype.serialize ).toBeDefined();
+			expect( LongSerializer.prototype.serialize ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"serialize",
-			"Returns a string representing a float from the Number provided.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "string" }
-		), ():void => {
-			let serializer:XSD.FloatSerializer = new XSD.FloatSerializer();
 
-			expect( serializer.serialize ).toBeDefined();
-			expect( Utils.isFunction( serializer.serialize ) ).toBe( true );
+		it( "should return string from integer", () => {
+			const serializer:LongSerializer = new LongSerializer();
 
 			expect( serializer.serialize( 100 ) ).toBe( "100" );
 			expect( serializer.serialize( - 100 ) ).toBe( "-100" );
+		} );
+
+		it( "should truncate float", () => {
+			const serializer:LongSerializer = new LongSerializer();
+			expect( serializer.serialize( 4294967296.45 ) ).toBe( "4294967296" );
+			expect( serializer.serialize( 1099511627776.7632 ) ).toBe( "1099511627776" );
+		} );
+
+		it( "should truncate zero float", () => {
+			const serializer:LongSerializer = new LongSerializer();
+
+			expect( serializer.serialize( 0.123456789 ) ).toBe( "0" );
+			expect( serializer.serialize( - 0.123456789 ) ).toBe( "0" );
+		} );
+
+		it( "should return zero string when NaN", () => {
+			const serializer:LongSerializer = new LongSerializer();
+
+			expect( serializer.serialize( NaN ) ).toBe( "0" );
+		} );
+
+		it( "should return zero string when Infinity", () => {
+			const serializer:LongSerializer = new LongSerializer();
+
+			expect( serializer.serialize( Infinity ) ).toBe( "0" );
+			expect( serializer.serialize( - Infinity ) ).toBe( "0" );
+		} );
+
+		it( "should accept numbers larger than 2^32 - 1", () => {
+			const serializer:LongSerializer = new LongSerializer();
+			expect( serializer.serialize( Math.pow( 2, 32 ) ) ).toBe( "4294967296" );
+			expect( serializer.serialize( - Math.pow( 2, 32 ) ) ).toBe( "-4294967296" );
+		} );
+
+
+		it( "should throw error when plain object", () => {
+			const serializer:LongSerializer = new LongSerializer();
+			expect( () => serializer.serialize( {} ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when string", () => {
+			const serializer:LongSerializer = new LongSerializer();
+			expect( () => serializer.serialize( "a string" ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when none existent value", () => {
+			const serializer:LongSerializer = new LongSerializer();
+			expect( () => serializer.serialize( null ) ).toThrowError( IllegalArgumentError );
+			expect( () => serializer.serialize( undefined ) ).toThrowError( IllegalArgumentError );
+		} );
+
+	} );
+
+} );
+
+describe( "longSerializer", () => {
+
+	it( "should exist", () => {
+		expect( longSerializer ).toBeDefined();
+		expect( longSerializer ).toEqual( jasmine.any( Object ) );
+	} );
+
+	it( "should be instance fo LongSerializer", () => {
+		expect( longSerializer ).toEqual( jasmine.any( LongSerializer ) );
+	} );
+
+} );
+
+
+describe( "UnsignedLongSerializer", () => {
+
+	it( "should exist", () => {
+		expect( UnsignedLongSerializer ).toBeDefined();
+		expect( UnsignedLongSerializer ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should be instantiable", () => {
+		const serializer:UnsignedLongSerializer = new UnsignedLongSerializer();
+		expect( serializer ).toEqual( jasmine.any( UnsignedLongSerializer ) );
+	} );
+
+	describe( "UnsignedLongSerializer.serialize", () => {
+
+		it( "should exist", () => {
+			expect( UnsignedLongSerializer.prototype.serialize ).toBeDefined();
+			expect( UnsignedLongSerializer.prototype.serialize ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should return string from integer", () => {
+			const serializer:UnsignedLongSerializer = new UnsignedLongSerializer();
+
+			expect( serializer.serialize( 100 ) ).toBe( "100" );
+			expect( serializer.serialize( - 100 ) ).toBe( "100" );
+		} );
+
+		it( "should truncate float", () => {
+			const serializer:UnsignedLongSerializer = new UnsignedLongSerializer();
+			expect( serializer.serialize( 4294967296.45 ) ).toBe( "4294967296" );
+			expect( serializer.serialize( 1099511627776.7632 ) ).toBe( "1099511627776" );
+		} );
+
+		it( "should truncate zero float", () => {
+			const serializer:UnsignedLongSerializer = new UnsignedLongSerializer();
+
+			expect( serializer.serialize( 0.123456789 ) ).toBe( "0" );
+			expect( serializer.serialize( - 0.123456789 ) ).toBe( "0" );
+		} );
+
+		it( "should return zero string when NaN", () => {
+			const serializer:UnsignedLongSerializer = new UnsignedLongSerializer();
+
+			expect( serializer.serialize( NaN ) ).toBe( "0" );
+		} );
+
+		it( "should return zero string when Infinity", () => {
+			const serializer:UnsignedLongSerializer = new UnsignedLongSerializer();
+
+			expect( serializer.serialize( Infinity ) ).toBe( "0" );
+			expect( serializer.serialize( - Infinity ) ).toBe( "0" );
+		} );
+
+		it( "should accept numbers larger than 2^32 - 1", () => {
+			const serializer:UnsignedLongSerializer = new UnsignedLongSerializer();
+			expect( serializer.serialize( Math.pow( 2, 32 ) ) ).toBe( "4294967296" );
+			expect( serializer.serialize( - Math.pow( 2, 32 ) ) ).toBe( "4294967296" );
+		} );
+
+
+		it( "should throw error when plain object", () => {
+			const serializer:UnsignedLongSerializer = new UnsignedLongSerializer();
+			expect( () => serializer.serialize( {} ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when string", () => {
+			const serializer:UnsignedLongSerializer = new UnsignedLongSerializer();
+			expect( () => serializer.serialize( "a string" ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when none existent value", () => {
+			const serializer:UnsignedLongSerializer = new UnsignedLongSerializer();
+			expect( () => serializer.serialize( null ) ).toThrowError( IllegalArgumentError );
+			expect( () => serializer.serialize( undefined ) ).toThrowError( IllegalArgumentError );
+		} );
+
+	} );
+
+} );
+
+describe( "unsignedLongSerializer", () => {
+
+	it( "should exist", () => {
+		expect( unsignedLongSerializer ).toBeDefined();
+		expect( unsignedLongSerializer ).toEqual( jasmine.any( Object ) );
+	} );
+
+	it( "should be instance fo UnsignedLongSerializer", () => {
+		expect( unsignedLongSerializer ).toEqual( jasmine.any( UnsignedLongSerializer ) );
+	} );
+
+} );
+
+
+describe( "FloatSerializer", () => {
+
+	it( "should exist", () => {
+		expect( FloatSerializer ).toBeDefined();
+		expect( FloatSerializer ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should be instantiable", () => {
+		const serializer:FloatSerializer = new FloatSerializer();
+		expect( serializer ).toEqual( jasmine.any( FloatSerializer ) );
+	} );
+
+	describe( "FloatSerializer.serialize", () => {
+
+		it( "should exist", () => {
+			expect( FloatSerializer.prototype.serialize ).toBeDefined();
+			expect( FloatSerializer.prototype.serialize ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should return string from integer", () => {
+			const serializer:FloatSerializer = new FloatSerializer();
+
+			expect( serializer.serialize( 100 ) ).toBe( "100" );
+			expect( serializer.serialize( - 100 ) ).toBe( "-100" );
+		} );
+
+		it( "should not truncate float", () => {
+			const serializer:FloatSerializer = new FloatSerializer();
+
 			expect( serializer.serialize( 100.123456789 ) ).toBe( "100.123456789" );
 			expect( serializer.serialize( - 100.123456789 ) ).toBe( "-100.123456789" );
+		} );
+
+		it( "should truncate zero float", () => {
+			const serializer:FloatSerializer = new FloatSerializer();
+
 			expect( serializer.serialize( 0.123456789 ) ).toBe( "0.123456789" );
 			expect( serializer.serialize( - 0.123456789 ) ).toBe( "-0.123456789" );
+		} );
+
+		it( "should return NaN string when NaN", () => {
+			const serializer:FloatSerializer = new FloatSerializer();
+
 			expect( serializer.serialize( NaN ) ).toBe( "NaN" );
+		} );
+
+		it( "should return INF string when Infinity", () => {
+			const serializer:FloatSerializer = new FloatSerializer();
+
 			expect( serializer.serialize( Infinity ) ).toBe( "INF" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "-INF" );
+		} );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
+
+		it( "should throw error when plain object", () => {
+			const serializer:FloatSerializer = new FloatSerializer();
+			expect( () => serializer.serialize( {} ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when string", () => {
+			const serializer:FloatSerializer = new FloatSerializer();
+			expect( () => serializer.serialize( "a string" ) ).toThrowError( IllegalArgumentError );
+		} );
+
+		it( "should throw error when none existent value", () => {
+			const serializer:FloatSerializer = new FloatSerializer();
+			expect( () => serializer.serialize( null ) ).toThrowError( IllegalArgumentError );
+			expect( () => serializer.serialize( undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"floatSerializer",
-		"CarbonLDP.RDF.Literal.Serializers.FloatSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.FloatSerializer`."
-	), ():void => {
-		expect( XSD.floatSerializer ).toBeDefined();
-		expect( XSD.floatSerializer instanceof XSD.FloatSerializer ).toBe( true );
+} );
+
+describe( "floatSerializer", () => {
+
+	it( "should exist", () => {
+		expect( floatSerializer ).toBeDefined();
+		expect( floatSerializer ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializers.BooleanSerializer",
-		"Class that can serialize any variable to a string literal representation its truth value.\n" +
-		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#booleanSerializer`."
-	), ():void => {
+	it( "should be instance fo FloatSerializer", () => {
+		expect( floatSerializer ).toEqual( jasmine.any( FloatSerializer ) );
+	} );
 
-		// TODO: Separate in different tests
-		it( isDefined(), ():void => {
-			expect( XSD.BooleanSerializer ).toBeDefined();
-			expect( Utils.isFunction( XSD.BooleanSerializer ) ).toBe( true );
+} );
 
-			let serializer:XSD.BooleanSerializer = new XSD.BooleanSerializer();
-			expect( serializer ).toBeTruthy();
-			expect( serializer instanceof XSD.BooleanSerializer ).toBe( true );
+
+describe( "BooleanSerializer", () => {
+
+	it( "should exist", () => {
+		expect( BooleanSerializer ).toBeDefined();
+		expect( BooleanSerializer ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should be instantiable", () => {
+		const serializer:BooleanSerializer = new BooleanSerializer();
+		expect( serializer ).toEqual( jasmine.any( BooleanSerializer ) );
+	} );
+
+	describe( "BooleanSerializer.serialize", () => {
+
+		it( "should exist", () => {
+			expect( BooleanSerializer.prototype.serialize ).toBeDefined();
+			expect( BooleanSerializer.prototype.serialize ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"serialize",
-			"Returns a string representing the truth value from the variable provided.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "string" }
-		), ():void => {
-			let serializer:XSD.BooleanSerializer = new XSD.BooleanSerializer();
 
-			expect( serializer.serialize ).toBeDefined();
-			expect( Utils.isFunction( serializer.serialize ) ).toBe( true );
-
+		it( "should return true string from true", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
 			expect( serializer.serialize( true ) ).toBe( "true" );
-			expect( serializer.serialize( 1 ) ).toBe( "true" );
+		} );
+
+		it( "should return true string from non zero integer", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
 			expect( serializer.serialize( 100 ) ).toBe( "true" );
 			expect( serializer.serialize( - 100 ) ).toBe( "true" );
-			expect( serializer.serialize( 100.123456789 ) ).toBe( "true" );
-			expect( serializer.serialize( - 100.123456789 ) ).toBe( "true" );
-			expect( serializer.serialize( 0.123456789 ) ).toBe( "true" );
-			expect( serializer.serialize( - 0.123456789 ) ).toBe( "true" );
+		} );
+
+		it( "should return true string from non zero float", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
+			expect( serializer.serialize( 100 ) ).toBe( "true" );
+			expect( serializer.serialize( - 100 ) ).toBe( "true" );
+		} );
+
+		it( "should return true string from non Infinity", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
 			expect( serializer.serialize( Infinity ) ).toBe( "true" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "true" );
-			expect( serializer.serialize( { another: "object", that: "is", not: "a Boolean" } ) ).toBe( "true" );
-			expect( serializer.serialize( "another object that: is not a Boolean" ) ).toBe( "true" );
-			expect( serializer.serialize( {} ) ).toBe( "true" );
-			expect( serializer.serialize( [] ) ).toBe( "true" );
+		} );
 
+		it( "should return true string from plain object", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
+			expect( serializer.serialize( {} ) ).toBe( "true" );
+		} );
+
+		it( "should return true string from string with content", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
+			expect( serializer.serialize( "a string" ) ).toBe( "true" );
+		} );
+
+		it( "should return true string from empty array", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
+			expect( serializer.serialize( [] ) ).toBe( "true" );
+		} );
+
+
+		it( "should return false string from false", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
+			expect( serializer.serialize( false ) ).toBe( "false" );
+		} );
+
+		it( "should return false string from zero integer", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
 			expect( serializer.serialize( - 0 ) ).toBe( "false" );
 			expect( serializer.serialize( 0 ) ).toBe( "false" );
+		} );
+
+		it( "should return false string from non existent value", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
 			expect( serializer.serialize( null ) ).toBe( "false" );
 			expect( serializer.serialize( undefined ) ).toBe( "false" );
+		} );
+
+		it( "should return false string from empty string", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
 			expect( serializer.serialize( "" ) ).toBe( "false" );
+		} );
+
+		it( "should return false string from NaN", () => {
+			const serializer:BooleanSerializer = new BooleanSerializer();
 			expect( serializer.serialize( NaN ) ).toBe( "false" );
-			expect( serializer.serialize( false ) ).toBe( "false" );
 		} );
 
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"booleanSerializer",
-		"CarbonLDP.RDF.Literal.Serializers.BooleanSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.BooleanSerializer`"
-	), ():void => {
-		expect( XSD.booleanSerializer ).toBeDefined();
-		expect( XSD.booleanSerializer instanceof XSD.BooleanSerializer ).toBe( true );
+} );
+
+describe( "booleanSerializer", () => {
+
+	it( "should exist", () => {
+		expect( booleanSerializer ).toBeDefined();
+		expect( booleanSerializer ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializers.StringSerializer",
-		"Class that can serialize any variable to a string literal representation its truth value.\n" +
-		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#stringSerializer`."
-	), ():void => {
+	it( "should be instance fo BooleanSerializer", () => {
+		expect( booleanSerializer ).toEqual( jasmine.any( BooleanSerializer ) );
+	} );
 
-		// TODO: Separate in different tests
-		it( isDefined(), ():void => {
-			expect( XSD.StringSerializer ).toBeDefined();
-			expect( Utils.isFunction( XSD.StringSerializer ) ).toBe( true );
+} );
 
-			let serializer:XSD.StringSerializer = new XSD.StringSerializer();
-			expect( serializer ).toBeTruthy();
-			expect( serializer instanceof XSD.StringSerializer ).toBe( true );
+
+describe( "StringSerializer", () => {
+
+	it( "should exist", () => {
+		expect( StringSerializer ).toBeDefined();
+		expect( StringSerializer ).toEqual( jasmine.any( Function ) );
+	} );
+
+
+	it( "should be instantiable", () => {
+		const serializer:StringSerializer = new StringSerializer();
+		expect( serializer ).toEqual( jasmine.any( StringSerializer ) );
+	} );
+
+	describe( "StringSerializer.serialize", () => {
+
+		it( "should exist", () => {
+			expect( StringSerializer.prototype.serialize ).toBeDefined();
+			expect( StringSerializer.prototype.serialize ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"serialize",
-			"Returns a string representing the truth value from the variable provided.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "string" }
-		), ():void => {
-			let serializer:XSD.StringSerializer = new XSD.StringSerializer();
 
-			expect( serializer.serialize ).toBeDefined();
-			expect( Utils.isFunction( serializer.serialize ) ).toBe( true );
-
+		it( "should return string from zero float", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( - 0.0 ) ).toBe( "0" );
 			expect( serializer.serialize( 0.0 ) ).toBe( "0" );
-			expect( serializer.serialize( 1 ) ).toBe( "1" );
+		} );
+
+		it( "should return string from integer", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( 100 ) ).toBe( "100" );
 			expect( serializer.serialize( - 100 ) ).toBe( "-100" );
+		} );
+
+		it( "should return string from float", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( 100.123456789 ) ).toBe( "100.123456789" );
 			expect( serializer.serialize( - 100.123456789 ) ).toBe( "-100.123456789" );
+		} );
+
+		it( "should return string from NaN", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( NaN ) ).toBe( "NaN" );
+		} );
+
+		it( "should return string from Infinity", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( Infinity ) ).toBe( "Infinity" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "-Infinity" );
+		} );
+
+		it( "should return string from plain object", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( { an: "object" } ) ).toBe( "[object Object]" );
+		} );
+
+		it( "should return string from plain array", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( [ "an", "array" ] ) ).toBe( "an,array" );
+		} );
+
+		it( "should return string from string", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( "a string" ) ).toBe( "a string" );
-			expect( serializer.serialize( "" ) ).toBe( "" );
+		} );
+
+		it( "should return string from boolean", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( true ) ).toBe( "true" );
 			expect( serializer.serialize( false ) ).toBe( "false" );
+		} );
+
+		it( "should return string from function", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( function():string { return "some"; } ) ).toMatch( /function[^]*return.*some/ );
+		} );
+
+		it( "should return string from undefined", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( undefined ) ).toBe( "undefined" );
+		} );
+
+		it( "should return string from null", () => {
+			const serializer:StringSerializer = new StringSerializer();
 			expect( serializer.serialize( null ) ).toBe( "null" );
 		} );
 
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"stringSerializer",
-		"CarbonLDP.RDF.Literal.Serializers.StringSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.StringSerializer`."
-	), ():void => {
-		expect( XSD.stringSerializer ).toBeDefined();
-		expect( XSD.stringSerializer instanceof XSD.StringSerializer ).toBe( true );
+} );
+
+describe( "stringSerializer", () => {
+
+	it( "should exist", () => {
+		expect( stringSerializer ).toBeDefined();
+		expect( stringSerializer ).toEqual( jasmine.any( Object ) );
+	} );
+
+	it( "should be instance fo StringSerializer", () => {
+		expect( stringSerializer ).toEqual( jasmine.any( StringSerializer ) );
 	} );
 
 } );

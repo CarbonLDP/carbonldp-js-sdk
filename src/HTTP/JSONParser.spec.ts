@@ -1,43 +1,32 @@
-import { clazz, hasMethod, INSTANCE, isDefined, module } from "../test/JasmineExtender";
+import { JSONParser } from "./JSONParser";
 
-import * as Utils from "./../Utils";
 
-import * as JSONParser from "./JSONParser";
+describe( "JSONParser", () => {
 
-describe( module( "carbonldp/HTTP/JSONParser" ), ():void => {
-
-	it( isDefined(), ():void => {
+	it( "should exist", () => {
 		expect( JSONParser ).toBeDefined();
-		expect( Utils.isObject( JSONParser ) ).toBe( true );
+		expect( JSONParser ).toEqual( jasmine.any( Function ) );
 	} );
 
-	describe( clazz(
-		"CarbonLDP.HTTP.JSONParser",
-		"Wrapper class for the native `JSON.parse()` function using the `Promise` pattern.", [
-			"CarbonLDP.HTTP.Parser<object>",
-		]
-	), ():void => {
 
-		// TODO: Separate in different tests
-		it( isDefined(), ():void => {
-			expect( JSONParser.JSONParser ).toBeDefined();
-			expect( Utils.isFunction( JSONParser.JSONParser ) ).toBe( true );
-			let value:JSONParser.JSONParser = new JSONParser.JSONParser();
+	it( "should be instantiable", () => {
+		const value:JSONParser = new JSONParser();
+		expect( value ).toEqual( jasmine.any( JSONParser ) );
+	} );
 
-			expect( value ).toBeTruthy();
-			expect( value instanceof JSONParser.JSONParser ).toBe( true );
+
+	describe( "JSONParser.parse", () => {
+
+		it( "should exist", () => {
+			expect( JSONParser.prototype.parse ).toBeDefined();
+			expect( JSONParser.prototype.parse ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"parse", [
-				{ name: "body", type: "string", description: "A JSON string to parse." },
-			],
-			{ type: "Promise<object>" }
-		), ( done:DoneFn ):void => {
-			let parser:JSONParser.JSONParser = new JSONParser.JSONParser();
-			let jsonString:string = `{
+
+		it( "should return object from JSON string", async () => {
+			const parser:JSONParser = new JSONParser();
+
+			const returned:object = await parser.parse( `{
 				"anObject": {
 					"numericProperty": -122,
 					"nullProperty": null,
@@ -62,8 +51,9 @@ describe( module( "carbonldp/HTTP/JSONParser" ), ():void => {
 					4,
 					5
 				]
-			}`;
-			let jsonObject:Object = {
+			}` );
+
+			expect( returned ).toEqual( {
 				anObject: {
 					numericProperty: - 122,
 					nullProperty: null,
@@ -88,32 +78,17 @@ describe( module( "carbonldp/HTTP/JSONParser" ), ():void => {
 					4,
 					5,
 				],
-			};
+			} );
 
-			expect( parser.parse ).toBeDefined();
-			expect( Utils.isFunction( parser.parse ) ).toBe( true );
+		} );
 
-			let spy:any = {
-				success: ( resultObject ):void => {
-					expect( resultObject ).toEqual( jsonObject );
-				},
-				error: ( errorObject ):void => {
-					expect( errorObject instanceof Error ).toBe( true );
-				},
-			};
-			let success:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
-			let error:jasmine.Spy = spyOn( spy, "error" ).and.callThrough();
-
-			let promises:Promise<any>[] = [];
-
-			promises.push( parser.parse( jsonString ).then( spy.success, spy.error ) );
-			promises.push( parser.parse( "some String /12121/ that is not JSON ))(*&^%$#@!" ).then( spy.success, spy.error ) );
-
-			Promise.all( promises ).then( ():void => {
-				expect( success.calls.count() ).toBe( 1 );
-				expect( error.calls.count() ).toBe( 1 );
-				done();
-			}, done.fail );
+		it( "should throw error when invalid string", async () => {
+			const parser:JSONParser = new JSONParser();
+			await parser
+				.parse( "some String /12121/ that is not JSON ))(*&^%$#@!" )
+				.catch( error => {
+					expect( error ).toEqual( jasmine.any( Error ) );
+				} );
 		} );
 
 	} );

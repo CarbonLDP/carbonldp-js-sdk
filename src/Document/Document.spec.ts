@@ -5,29 +5,7 @@ import { DocumentsContext } from "../Context/DocumentsContext";
 import { Fragment } from "../Fragment/Fragment";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelFactory } from "../Model/ModelFactory";
-import { ModelPrototype } from "../Model/ModelPrototype";
-import { ModelSchema } from "../Model/ModelSchema";
-import { ModelTypeGuard } from "../Model/ModelTypeGuard";
-
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	isDefined,
-	method,
-	module,
-	OBLIGATORY,
-	OPTIONAL,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
-
-import { C } from "../Vocabularies/C";
-
-import { BaseDocument } from "./BaseDocument";
-import { BaseResolvableDocument, Document, DocumentFactory } from "./Document";
+import { BaseResolvableDocument, Document } from "./Document";
 
 import { EventEmitterDocumentTrait } from "./Traits/EventEmitterDocumentTrait";
 import { QueryableDocumentTrait } from "./Traits/QueryableDocumentTrait";
@@ -35,18 +13,20 @@ import { SPARQLDocumentTrait } from "./Traits/SPARQLDocumentTrait";
 import { TransientDocument } from "./TransientDocument";
 
 
-describe( module( "carbonldp/Document" ), ():void => {
+describe( "Document", () => {
+
+	it( "should exist", () => {
+		expect( Document ).toBeDefined();
+		expect( Document ).toEqual( jasmine.any( Object ) );
+	} );
 
 	let context:DocumentsContext;
-	beforeEach( ():void => {
+	beforeEach( () => {
 		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 
-	describe( interfaze(
-		"CarbonLDP.Document",
-		"Interface that represents a c:Document of a Carbon LDP instance."
-	), ():void => {
+	describe( "[[interface impl]]", () => {
 
 		function createMock<T extends object>( data?:T & Partial<Document> ):T & Document {
 			const mock:T & Document = Document.decorate( Object.assign<BaseResolvableDocument, typeof data>( {
@@ -61,344 +41,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 		}
 
 
-		it( extendsClass( "CarbonLDP.Document.Traits.QueryableDocumentTrait" ), ():void => {
-			const target:QueryableDocumentTrait = {} as Document;
-			expect( target ).toBeDefined();
-		} );
+		describe( "Document.$_syncSavedFragments", () => {
 
-		it( extendsClass( "CarbonLDP.Document.Traits.SPARQLDocumentTrait" ), ():void => {
-			const target:SPARQLDocumentTrait = {} as Document;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Document.Traits.EventEmitterDocumentTrait" ), ():void => {
-			const target:EventEmitterDocumentTrait = {} as Document;
-			expect( target ).toBeDefined();
-		} );
-
-
-		it( hasProperty(
-			OBLIGATORY,
-			"__modelDecorator",
-			"CarbonLDP.Model.ModelDecorator<CarbonLDP.Fragment>"
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"__resourcesMap",
-			"Map<string, CarbonLDP.Fragment>"
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"__savedFragments",
-			"CarbonLDP.Fragment[]",
-			"Array with a copy of every fragment that that is currently persisted in the server."
-		), ():void => {} );
-
-
-		it( hasProperty(
-			OPTIONAL,
-			"created",
-			"Date",
-			"The time when the document was persisted."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"modified",
-			"Date",
-			"The last time the document was saved."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"defaultInteractionModel",
-			"CarbonLDP.Pointer",
-			"A Pointer representing the default interaction model of the document."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"isMemberOfRelation",
-			"CarbonLDP.Pointer",
-			"A Pointer with the member of relation of the document."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"hasMemberRelation",
-			"CarbonLDP.Pointer",
-			"A Pointer with the inverted relation the document."
-		), ():void => {} );
-
-
-		it( hasProperty(
-			OPTIONAL,
-			"accessPoints",
-			"CarbonLDP.Document[]",
-			"Array with the access points of the document."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"contains",
-			"CarbonLDP.Document",
-			"Array with the children of the document."
-		), ():void => {} );
-
-
-		describe( method( OBLIGATORY, "getPointer" ), () => {
-
-			it( hasSignature(
-				[
-					{ name: "id", type: "string", description: "ID to return its pointer representation." },
-				],
-				{ type: "CarbonLDP.RegisteredPointer" }
-			), () => {} );
-
-			it( hasSignature(
-				[
-					{ name: "id", type: "string", description: "ID to check its existence." },
-					{ name: "local", type: "true", description: "Flag to ignore hierarchy and only return pointers from the current registry." },
-				],
-				{ type: "CarbonLDP.Fragment" }
-			), () => {} );
-
-			it( "should exists", ():void => {
-				const registry:Document = createMock();
-
-				expect( registry.$getPointer ).toBeDefined();
-				expect( registry.$getPointer ).toEqual( jasmine.any( Function ) );
-			} );
-
-		} );
-
-		describe( method( OBLIGATORY, "getPointers" ), () => {
-
-			it( hasSignature(
-				"Returns all the pointers stored the registry hierarchy.",
-				{ type: "CarbonLDP.RegisteredPointer[]" }
-			), () => {} );
-
-			it( hasSignature(
-				"Returns all the pointers stored in the current registry.",
-				[
-					{ name: "local", type: "true", description: "Flag to ignore hierarchy and only return pointers from the current registry." },
-				],
-				{ type: "CarbonLDP.Fragment[]" }
-			), () => {} );
-
-			it( "should exists", ():void => {
-				const registry:Document = createMock();
-
-				expect( registry.$getPointers ).toBeDefined();
-				expect( registry.$getPointers ).toEqual( jasmine.any( Function ) );
-			} );
-
-		} );
-
-
-		describe( method( OBLIGATORY, "$getFragment" ), () => {
-
-			it( hasSignature(
-				[ "T" ],
-				{ type: "T & CarbonLDP.Fragment" }
-			), () => {} );
-
-			it( "should exists", ():void => {
-				const document:Document = createMock();
-
-				expect( document.$getFragment ).toBeDefined();
-				expect( document.$getFragment ).toEqual( jasmine.any( Function ) );
-			} );
-
-		} );
-
-		describe( method( OBLIGATORY, "$getFragments" ), () => {
-
-			it( hasSignature(
-				"Returns an array with all the fragments in the Document.",
-				{ type: "CarbonLDP.Fragment[]" }
-			), () => {} );
-
-			it( "should exists", ():void => {
-				const document:Document = createMock();
-
-				expect( document.$getFragments ).toBeDefined();
-				expect( document.$getFragments ).toEqual( jasmine.any( Function ) );
-			} );
-
-		} );
-
-		describe( method( OBLIGATORY, "$createFragment" ), () => {
-
-			it( hasSignature(
-				[ "T" ],
-				"Creates a `CarbonLDP.Fragment` from the object provided and the id if specified.", [
-					{ name: "object", type: "T" },
-					{ name: "id", type: "string", optional: true },
-				],
-				{ type: "T & CarbonLDP.Fragment" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Creates an empty `CarbonLDP.Fragment` with the id specified.", [
-					{ name: "id", type: "string" },
-				],
-				{ type: "CarbonLDP.Fragment" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
-				const document:Document = createMock();
-
-				expect( document.$createFragment ).toBeDefined();
-				expect( document.$createFragment ).toEqual( jasmine.any( Function ) );
-			} );
-
-		} );
-
-		describe( method( OBLIGATORY, "$removeFragment" ), ():void => {
-
-			it( hasSignature(
-				"Remove the fragment referenced by the `CarbonLDP.Fragment` provided from the Document.", [
-					{ name: "fragment", type: "CarbonLDP.Fragment" },
-				],
-				{ type: "boolean" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Remove the fragment referenced by the Slug provided from the Document.", [
-					{ name: "slug", type: "string" },
-				],
-				{ type: "boolean" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
-				const document:Document = createMock();
-
-				expect( document.$removeFragment ).toBeDefined();
-				expect( document.$removeFragment ).toEqual( jasmine.any( Function ) );
-			} );
-
-		} );
-
-
-		describe( method( OBLIGATORY, "$get" ), () => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the specified properties and sub-properties of the document specified by the function provided.",
-				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the entire current document or just the selected properties and sub-properties of a query builder function provided.",
-				[
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the specified properties and sub-properties of the URI specified by the function provided.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the entire specified document or just the selected properties and sub-properties of a query builder function provided.",
-				[
-					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-		} );
-
-		describe( method( OBLIGATORY, "$resolve" ), () => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Resolves the specified properties and sub-properties of the current document.",
-				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Resolves the specified properties and sub-properties of the current document.",
-				[
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-		} );
-
-
-		describe( method( OBLIGATORY, "$refresh" ), () => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Refresh the full or partial document.",
-				[
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & this>" }
-			), ():void => {} );
-
-		} );
-
-		describe( method( OBLIGATORY, "$save" ), () => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Save the full or partial changes of the document.",
-				[
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & this>" }
-			), ():void => {} );
-
-		} );
-
-		describe( method( OBLIGATORY, "$saveAndRefresh" ), () => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Save the full or partial changes of the document and refreshes with the latest changes from the server of the full of partial data of the document.",
-				[
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & this>" }
-			), ():void => {} );
-
-		} );
-
-
-		describe( method( OBLIGATORY, "$_syncSavedFragments" ), () => {
-
-			it( hasSignature(
-				"Set all the current fragments in the document as fragments that has been saved in the server."
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const resource:Document = createMock();
 
 				expect( resource.$_syncSavedFragments ).toBeDefined();
@@ -415,7 +60,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		describe( "Document.$isDirty", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const resource:Document = createMock();
 
 				expect( resource.$isDirty ).toBeDefined();
@@ -480,7 +125,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		describe( "Document.$revert", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const resource:Document = createMock( {} );
 
 				expect( resource.$revert ).toBeDefined();
@@ -548,61 +193,18 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.DocumentFactory",
-		"Interface with factory, decorate and utils methods for `CarbonLDP.Document` objects."
-	), ():void => {
+	describe( "[[factory]]", () => {
 
+		describe( "Document.isDecorated", () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelSchema<CarbonLDP.Vocabularies.C.Document>" ), () => {
-			const target:ModelSchema<C[ "Document" ]> = {} as DocumentFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Document, CarbonLDP.Document.Traits.SPARQLDocumentTrait & CarbonLDP.Document.Traits.EventEmitterDocumentTrait & CarbonLDP.Document.Traits.QueryableDocumentTrait, \"$_syncSnapshot\" | \"$isDirty\" | \"$revert\">" ), () => {
-			const target:ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, "$_syncSnapshot" | "$isDirty" | "$revert"> = {} as DocumentFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Document, CarbonLDP.BaseResolvableDocument>" ), () => {
-			const target:ModelDecorator<Document, BaseResolvableDocument> = {} as DocumentFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelTypeGuard<CarbonLDP.Document>" ), () => {
-			const target:ModelTypeGuard<Document> = {} as DocumentFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.TransientDocument, CarbonLDP.BaseDocument>" ), () => {
-			const target:ModelFactory<TransientDocument, BaseDocument> = {} as DocumentFactory;
-			expect( target ).toBeDefined();
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"Document",
-		"CarbonLDP.DocumentFactory",
-		"Constant that implements the `CarbonLDP.DocumentFactory` interface."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( Document ).toBeDefined();
-			expect( Document ).toEqual( jasmine.any( Object ) );
-		} );
-
-		describe( "Document.isDecorated", ():void => {
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( Document.isDecorated ).toBeDefined();
 				expect( Document.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			let object:typeof Document.PROTOTYPE;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				object = createNonEnumerable<typeof Document.PROTOTYPE>( {
 					created: null,
 					modified: null,
@@ -619,71 +221,71 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should return false when `undefined`", ():void => {
+			it( "should return false when `undefined`", () => {
 				expect( Document.isDecorated( void 0 ) ).toBe( false );
 			} );
 
-			it( "should return false when `null`", ():void => {
+			it( "should return false when `null`", () => {
 				expect( Document.isDecorated( null ) ).toBe( false );
 			} );
 
-			it( "should return true when prototype properties", ():void => {
+			it( "should return true when prototype properties", () => {
 				expect( Document.isDecorated( object ) ).toBe( true );
 			} );
 
 
-			it( "should return true when no accessPoints", ():void => {
+			it( "should return true when no accessPoints", () => {
 				delete object.accessPoints;
 				expect( Document.isDecorated( object ) ).toBe( true );
 			} );
 
-			it( "should return true when no contains", ():void => {
+			it( "should return true when no contains", () => {
 				delete object.contains;
 				expect( Document.isDecorated( object ) ).toBe( true );
 			} );
 
-			it( "should return true when no created", ():void => {
+			it( "should return true when no created", () => {
 				delete object.created;
 				expect( Document.isDecorated( object ) ).toBe( true );
 			} );
 
-			it( "should return true when no modified", ():void => {
+			it( "should return true when no modified", () => {
 				delete object.modified;
 				expect( Document.isDecorated( object ) ).toBe( true );
 			} );
 
 
-			it( "should return false when no $__savedFragments", ():void => {
+			it( "should return false when no $__savedFragments", () => {
 				delete object.$__savedFragments;
 				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
-			it( "should return false when no $_syncSavedFragments", ():void => {
+			it( "should return false when no $_syncSavedFragments", () => {
 				delete object.$_syncSavedFragments;
 				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
 
-			it( "should return false when no $_syncSnapshot", ():void => {
+			it( "should return false when no $_syncSnapshot", () => {
 				delete object.$_syncSnapshot;
 				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
-			it( "should return false when no $isDirty", ():void => {
+			it( "should return false when no $isDirty", () => {
 				delete object.$isDirty;
 				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
-			it( "should return false when no $revert", ():void => {
+			it( "should return false when no $revert", () => {
 				delete object.$revert;
 				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
 		} );
 
-		describe( "Document.is", ():void => {
+		describe( "Document.is", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( Document.is ).toBeDefined();
 				expect( Document.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -694,7 +296,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			let isSPARQLDocumentTrait:jasmine.Spy;
 			let isEventEmitterDocumentTrait:jasmine.Spy;
 			let isSelfDecorated:jasmine.Spy;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				isTransientDocument = spyOn( TransientDocument, "is" )
 					.and.returnValue( true );
 				isQueryableDocumentTrait = spyOn( QueryableDocumentTrait, "isDecorated" )
@@ -708,66 +310,66 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.and.returnValue( true );
 			} );
 
-			it( "should assert that is a TransientDocument", ():void => {
+			it( "should assert that is a TransientDocument", () => {
 				Document.is( { the: "document" } );
 				expect( isTransientDocument ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
-			it( "should assert that is a QueryableDocumentTrait", ():void => {
+			it( "should assert that is a QueryableDocumentTrait", () => {
 				Document.is( { the: "document" } );
 				expect( isQueryableDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
-			it( "should assert that is a SPARQLDocumentTrait", ():void => {
+			it( "should assert that is a SPARQLDocumentTrait", () => {
 				Document.is( { the: "document" } );
 				expect( isSPARQLDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
-			it( "should assert that is a EventEmitterDocumentTrait", ():void => {
+			it( "should assert that is a EventEmitterDocumentTrait", () => {
 				Document.is( { the: "document" } );
 				expect( isEventEmitterDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
-			it( "should assert is decorated", ():void => {
+			it( "should assert is decorated", () => {
 				Document.is( { the: "document" } );
 				expect( isSelfDecorated ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
 
-			it( "should return true when all assertions", ():void => {
+			it( "should return true when all assertions", () => {
 				const returned:boolean = Document.is( { the: "document" } );
 				expect( returned ).toBe( true );
 			} );
 
-			it( "should return false if not a TransientDocument", ():void => {
+			it( "should return false if not a TransientDocument", () => {
 				isTransientDocument.and.returnValue( false );
 
 				const returned:boolean = Document.is( { the: "document" } );
 				expect( returned ).toBe( false );
 			} );
 
-			it( "should return false if not a QueryableDocumentTrait", ():void => {
+			it( "should return false if not a QueryableDocumentTrait", () => {
 				isQueryableDocumentTrait.and.returnValue( false );
 
 				const returned:boolean = Document.is( { the: "document" } );
 				expect( returned ).toBe( false );
 			} );
 
-			it( "should return false if not a SPARQLDocumentTrait", ():void => {
+			it( "should return false if not a SPARQLDocumentTrait", () => {
 				isSPARQLDocumentTrait.and.returnValue( false );
 
 				const returned:boolean = Document.is( { the: "document" } );
 				expect( returned ).toBe( false );
 			} );
 
-			it( "should return false if not a EventEmitterDocumentTrait", ():void => {
+			it( "should return false if not a EventEmitterDocumentTrait", () => {
 				isEventEmitterDocumentTrait.and.returnValue( false );
 
 				const returned:boolean = Document.is( { the: "document" } );
 				expect( returned ).toBe( false );
 			} );
 
-			it( "should return false if not decorated", ():void => {
+			it( "should return false if not decorated", () => {
 				isSelfDecorated.and.returnValue( false );
 
 				const returned:boolean = Document.is( { the: "document" } );
@@ -776,9 +378,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		} );
 
-		describe( "Document.decorate", ():void => {
+		describe( "Document.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( Document.decorate ).toBeDefined();
 				expect( Document.decorate ).toEqual( jasmine.any( Function ) );
 			} );

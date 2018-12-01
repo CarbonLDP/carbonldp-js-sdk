@@ -299,19 +299,6 @@ gulp.task( "compile:documentation|minify", () => {
 		;
 } );
 
-gulp.task( "compile:documentation:markdown", ( done ) => {
-	new karma.Server( {
-		configFile: __dirname + "/karma.conf.js",
-		reporters: [ "markdown" ],
-		markdownReporter: {
-			src: "build/docs/templates/markdown/template.hbs",
-			partials: "build/docs/templates/markdown/partials/*.hbs",
-			dest: "docs/README.md"
-		},
-		singleRun: true
-	}, done ).start();
-} );
-
 gulp.task( "compile:typescript", () => {
 	let tsProject = ts.createProject( "tsconfig.json", {
 		"declaration": true,

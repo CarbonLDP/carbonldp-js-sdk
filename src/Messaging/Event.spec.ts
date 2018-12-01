@@ -1,47 +1,37 @@
-import { enumeration, hasEnumeral, isDefined, module } from "../test/JasmineExtender";
-
-import * as MessagingEvent from "./Event";
+import { Event } from "./Event";
 
 
-describe( module( "carbonldp/Messaging/Event" ), ():void => {
+describe( "Event", () => {
 
-	it( isDefined(), ():void => {
-		expect( MessagingEvent ).toBeDefined();
-		expect( MessagingEvent ).toEqual( jasmine.any( Object ) );
+	it( "should exist", () => {
+		expect( Event ).toBeDefined();
+		expect( Event ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( enumeration( "CarbonLDP.Messaging.Event" ), ():void => {
 
-		it( isDefined(), ():void => {
-			expect( MessagingEvent.Event ).toBeDefined();
-			expect( MessagingEvent.Event ).toEqual( jasmine.any( Object ) );
-		} );
+	it( "Event.CHILD_CREATED", () => {
+		expect( Event.CHILD_CREATED ).toBeDefined();
+		expect( Event.CHILD_CREATED ).toBe( "child.created" );
+	} );
 
-		it( hasEnumeral( "CHILD_CREATED" ), ():void => {
-			expect( MessagingEvent.Event.CHILD_CREATED ).toBeDefined();
-			expect( MessagingEvent.Event.CHILD_CREATED ).toBe( "child.created" );
-		} );
+	it( "Event.DOCUMENT_MODIFIED", () => {
+		expect( Event.DOCUMENT_MODIFIED ).toBeDefined();
+		expect( Event.DOCUMENT_MODIFIED ).toBe( "document.modified" );
+	} );
 
-		it( hasEnumeral( "DOCUMENT_MODIFIED" ), ():void => {
-			expect( MessagingEvent.Event.DOCUMENT_MODIFIED ).toBeDefined();
-			expect( MessagingEvent.Event.DOCUMENT_MODIFIED ).toBe( "document.modified" );
-		} );
+	it( "Event.DOCUMENT_DELETED", () => {
+		expect( Event.DOCUMENT_DELETED ).toBeDefined();
+		expect( Event.DOCUMENT_DELETED ).toBe( "document.deleted" );
+	} );
 
-		it( hasEnumeral( "DOCUMENT_DELETED" ), ():void => {
-			expect( MessagingEvent.Event.DOCUMENT_DELETED ).toBeDefined();
-			expect( MessagingEvent.Event.DOCUMENT_DELETED ).toBe( "document.deleted" );
-		} );
+	it( "Event.MEMBER_ADDED", () => {
+		expect( Event.MEMBER_ADDED ).toBeDefined();
+		expect( Event.MEMBER_ADDED ).toBe( "member.added" );
+	} );
 
-		it( hasEnumeral( "MEMBER_ADDED" ), ():void => {
-			expect( MessagingEvent.Event.MEMBER_ADDED ).toBeDefined();
-			expect( MessagingEvent.Event.MEMBER_ADDED ).toBe( "member.added" );
-		} );
-
-		it( hasEnumeral( "MEMBER_REMOVED" ), ():void => {
-			expect( MessagingEvent.Event.MEMBER_REMOVED ).toBeDefined();
-			expect( MessagingEvent.Event.MEMBER_REMOVED ).toBe( "member.removed" );
-		} );
-
+	it( "Event.MEMBER_REMOVED", () => {
+		expect( Event.MEMBER_REMOVED ).toBeDefined();
+		expect( Event.MEMBER_REMOVED ).toBe( "member.removed" );
 	} );
 
 } );

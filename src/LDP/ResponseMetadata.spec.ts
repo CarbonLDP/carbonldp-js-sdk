@@ -1,109 +1,51 @@
-import { Resource } from "../Resource/Resource";
-
-import {
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
-
 import { C } from "../Vocabularies/C";
 
-import * as Utils from "./../Utils";
-
 import { ResponseMetadata } from "./ResponseMetadata";
+import { VolatileResource } from "./VolatileResource";
 
 
-describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
+describe( "ResponseMetadata", () => {
 
-	it( isDefined(), ():void => {
+	it( "should exist", () => {
 		expect( ResponseMetadata ).toBeDefined();
-		expect( Utils.isObject( ResponseMetadata ) ).toBe( true );
+		expect( ResponseMetadata ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.LDP.ResponseMetadata",
-		"Interface that represents the main resource of a set of metadata resources, which references everyone resource related to an specific dynamic response of tha server."
-	), ():void => {
 
-		it( extendsClass( "CarbonLDP.LDP.VolatileResource" ), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"documentsMetadata",
-			"CarbonLDP.LDP.DocumentMetadata[]",
-			"An array with all the metadata resources of the dynamic response."
-		), ():void => {} );
-
+	describe( "[[interface impl]]", () => {
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.LDP.ResponseMetadataFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.ResponseMetadata` objects."
-	), ():void => {
+	describe( "[[factory]]", () => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"TYPE",
-			"string"
-		), ():void => {} );
+		describe( "ResponseMetadata.TYPE", () => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"SCHEMA",
-			"CarbonLDP.ObjectSchema"
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Return true if the object provided is considered a `CarbonLDP.LDP.ResponseMetadata` object.", [
-				{ name: "object", type: "object", description: "Object to check" },
-			],
-			{ type: "object is CarbonLDP.LDP.ResponseMetadata" }
-		), ():void => {} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"ResponseMetadata",
-		"CarbonLDP.LDP.ResponseMetadataFactory"
-	), ():void => {
-
-		it( "should exist", ():void => {
-			expect( ResponseMetadata ).toBeDefined();
-			expect( ResponseMetadata ).toEqual( jasmine.any( Object ) );
-		} );
-
-		// TODO: Separate in different tests
-		it( "ResponseMetadata.TYPE", ():void => {
-			expect( ResponseMetadata.TYPE ).toBeDefined();
-			expect( Utils.isString( ResponseMetadata.TYPE ) ).toBe( true );
-
-			expect( ResponseMetadata.TYPE ).toBe( C.ResponseMetadata );
-		} );
-
-		// TODO: Separate in different tests
-		describe( "ResponseMetadata.SCHEMA", ():void => {
-
-			it( "should exists", ():void => {
-				expect( ResponseMetadata ).toBeDefined();
-				expect( ResponseMetadata ).toEqual( jasmine.any( Object ) );
+			it( "should exist", () => {
+				expect( ResponseMetadata.TYPE ).toBeDefined();
+				expect( ResponseMetadata.TYPE ).toEqual( jasmine.any( String ) );
 			} );
 
-			it( "should have the model properties", ():void => {
-				expect( ResponseMetadata.SCHEMA as { [ key:string ]:object } ).toEqual( {
+
+			it( "should be `c:ResponseMetadata`", () => {
+				expect( ResponseMetadata.TYPE ).toBe( C.ResponseMetadata );
+			} );
+
+		} );
+
+		describe( "ResponseMetadata.SCHEMA", () => {
+
+			it( "should exist", () => {
+				expect( ResponseMetadata.SCHEMA ).toBeDefined();
+				expect( ResponseMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );
+			} );
+
+
+			it( "should have model properties", () => {
+				expect<any>( ResponseMetadata.SCHEMA ).toEqual( {
 					documentsMetadata: jasmine.any( Object ),
 				} );
 			} );
 
-			it( "should have c:documentMetadata", ():void => {
+			it( "should have specified `documentsMetadata`", () => {
 				expect( ResponseMetadata.SCHEMA[ "documentsMetadata" ] ).toEqual( {
 					"@id": C.documentMetadata,
 					"@type": "@id",
@@ -113,38 +55,42 @@ describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 
 		} );
 
-		// TODO: Separate in different tests
-		it( "ResponseMetadata.is", ():void => {
-			expect( ResponseMetadata.is ).toBeDefined();
-			expect( Utils.isFunction( ResponseMetadata.is ) ).toBe( true );
 
-			let object:Partial<ResponseMetadata> = void 0;
-			expect( ResponseMetadata.is( object ) ).toBe( false );
-			object = null;
-			expect( ResponseMetadata.is( object ) ).toBe( false );
-			object = {};
-			expect( ResponseMetadata.is( object ) ).toBe( false );
+		describe( "ResponseMetadata.is", () => {
 
-			object = Resource.decorate( {
-				types: [
-					C.VolatileResource,
-					C.ResponseMetadata,
-				],
-				documentsMetadata: null,
+			it( "should exist", () => {
+				expect( ResponseMetadata.is ).toBeDefined();
+				expect( ResponseMetadata.is ).toEqual( jasmine.any( Function ) );
 			} );
-			expect( ResponseMetadata.is( object ) ).toBe( true );
 
-			object.$removeType( C.VolatileResource );
-			expect( ResponseMetadata.is( object ) ).toBe( false );
-			object.$addType( C.VolatileResource );
 
-			object.$removeType( C.ResponseMetadata );
-			expect( ResponseMetadata.is( object ) ).toBe( false );
-			object.$addType( C.ResponseMetadata );
+			let isVolatileResource:jasmine.Spy;
+			let mockObject:jasmine.SpyObj<VolatileResource>;
+			beforeEach( () => {
+				isVolatileResource = spyOn( VolatileResource, "is" )
+					.and.returnValue( true );
 
-			delete object.documentsMetadata;
-			expect( ResponseMetadata.is( object ) ).toBe( true );
-			object.documentsMetadata = null;
+				mockObject = jasmine.createSpyObj( {
+					$hasType: true,
+				} );
+			} );
+
+
+			it( "should be a VolatileResource", () => {
+				ResponseMetadata.is( mockObject );
+				expect( isVolatileResource ).toHaveBeenCalledWith( mockObject );
+			} );
+
+			it( "should have type c:ResponseMetadata", () => {
+				ResponseMetadata.is( mockObject );
+				expect( mockObject.$hasType ).toHaveBeenCalledWith( C.ResponseMetadata );
+			} );
+
+			it( "should return true when all assertions", () => {
+				const returned:boolean = ResponseMetadata.is( mockObject );
+				expect( returned ).toBe( true );
+			} );
+
 		} );
 
 	} );

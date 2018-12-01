@@ -2,8 +2,6 @@ import { FinishClause, QueryClause } from "sparqler/clauses";
 
 import { DocumentsContext } from "../../Context/DocumentsContext";
 
-import { Document } from "../../Document/Document";
-
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 
 import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
@@ -14,59 +12,30 @@ import { RequestOptions } from "../../HTTP/Request";
 import { ErrorResponse } from "../../LDP/ErrorResponse";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
-import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { FinishSPARQLSelect } from "../../SPARQL/SPARQLBuilder";
 import { SPARQLService } from "../../SPARQL/SPARQLService";
 
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../../test/JasmineExtender";
-
 import { C } from "../../Vocabularies/C";
 import { XSD } from "../../Vocabularies/XSD";
 
-import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
-
-import { SPARQLDocumentsRepositoryTrait, SPARQLDocumentsRepositoryTraitFactory } from "./SPARQLDocumentsRepositoryTrait";
+import { SPARQLDocumentsRepositoryTrait } from "./SPARQLDocumentsRepositoryTrait";
 
 
-describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositoryTrait" ), () => {
+describe( "SPARQLDocumentsRepositoryTrait", () => {
+
+	it( "should exist", () => {
+		expect( SPARQLDocumentsRepositoryTrait ).toBeDefined();
+		expect( SPARQLDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
+	} );
 
 	let context:DocumentsContext;
-	beforeEach( ():void => {
+	beforeEach( () => {
 		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 
-	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentsRepositoryTrait",
-		"Documents repository with the implementation for sparql queries."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.GeneralRepository<CarbonLDP.Document>" ), () => {
-			const target:GeneralRepository<Document> = {} as SPARQLDocumentsRepositoryTrait;
-			expect( target ).toBeDefined();
-		} );
-
-
-		it( hasProperty(
-			OBLIGATORY,
-			"context",
-			"CarbonLDP.DocumentsContext"
-		), ():void => {
-			const target:SPARQLDocumentsRepositoryTrait[ "context" ] = {} as DocumentsContext;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[interface impl]]", () => {
 
 		beforeEach( () => {
 			jasmine.Ajax.install();
@@ -157,18 +126,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 		} );
 
 
-		describe( method( OBLIGATORY, "executeASKQuery" ), () => {
+		describe( "SPARQLDocumentsRepositoryTrait.executeASKQuery", () => {
 
-			it( hasSignature(
-				"Executes an ASK query on a document and returns the response of the query in form of a boolean.", [
-					{ name: "uri", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<boolean>" }
-			), () => {} );
-
-
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.executeASKQuery ).toBeDefined();
 				expect( repository.executeASKQuery ).toEqual( jasmine.any( Function ) );
 			} );
@@ -321,18 +281,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 		} );
 
-		describe( method( OBLIGATORY, "executeSELECTQuery" ), () => {
+		describe( "SPARQLDocumentsRepositoryTrait.executeSELECTQuery", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Executes a SELECT query on a document and returns a parsed response object.", [
-					{ name: "uri", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<CarbonLDP.SPARQL.SPARQLSelectResults<T>>" }
-			), () => {} );
-
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.executeSELECTQuery ).toBeDefined();
 				expect( repository.executeSELECTQuery ).toEqual( jasmine.any( Function ) );
 			} );
@@ -492,17 +443,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 		} );
 
-		describe( method( OBLIGATORY, "executeUPDATE" ), () => {
+		describe( "SPARQLDocumentsRepositoryTrait.executeUPDATE", () => {
 
-			it( hasSignature(
-				"Executes a DESCRIBE query on a document and returns a string with the resulting model.", [
-					{ name: "uri", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-					{ name: "update", type: "string", description: "UPDATE query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<void>" }
-			), () => {} );
-
-			it( "should exists", () => {
+			it( "should exist", () => {
 				expect( repository.executeUPDATE ).toBeDefined();
 				expect( repository.executeUPDATE ).toEqual( jasmine.any( Function ) );
 			} );
@@ -656,17 +599,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 		} );
 
 
-		describe( method( OBLIGATORY, "sparql" ), () => {
+		describe( "SPARQLDocumentsRepositoryTrait.sparql", () => {
 
-			it( hasSignature(
-				"Method that creates an instance of SPARQLER for the specified document URI.",
-				[
-					{ name: "uri", type: "string", description: "URI of the document where to execute the SPARQL query." },
-				],
-				{ type: "SPARQLER/Clauses/QueryClause<CarbonLDP.SPARQL.Builder.FinishSPARQLSelect>" }
-			), () => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.sparql ).toBeDefined();
 				expect( repository.sparql ).toEqual( jasmine.any( Function ) );
 			} );
@@ -734,25 +669,11 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentsRepositoryTraitFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentsRepositoryTrait` objects."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentsRepositoryTrait, CarbonLDP.GeneralRepository<CarbonLDP.Document>" ), () => {
-			const target:ModelPrototype<SPARQLDocumentsRepositoryTrait, GeneralRepository<Document>> = {} as SPARQLDocumentsRepositoryTraitFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentsRepositoryTrait<any>, CarbonLDP.BaseDocumentsRepository>" ), () => {
-			const target:ModelDecorator<SPARQLDocumentsRepositoryTrait, BaseDocumentsRepository> = {} as SPARQLDocumentsRepositoryTraitFactory;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[factory]]", () => {
 
 		describe( "SPARQLDocumentsRepositoryTrait.isDecorated", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( SPARQLDocumentsRepositoryTrait.isDecorated ).toBeDefined();
 				expect( SPARQLDocumentsRepositoryTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -770,7 +691,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 
 		describe( "SPARQLDocumentsRepositoryTrait.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( SPARQLDocumentsRepositoryTrait.decorate ).toBeDefined();
 				expect( SPARQLDocumentsRepositoryTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -805,19 +726,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/SPARQLDocumentsRepositor
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"SPARQLDocumentsRepositoryTrait",
-		"CarbonLDP.DocumentsRepository.Traits.SPARQLDocumentsRepositoryTraitFactory"
-	), () => {
-
-		it( "should exists", ():void => {
-			expect( SPARQLDocumentsRepositoryTrait ).toBeDefined();
-			expect( SPARQLDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );

@@ -3,83 +3,40 @@ import { createMockContext } from "../../test/helpers/mocks/core";
 
 import { Context } from "../Context/Context";
 
-import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
-
-import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelFactory } from "../Model/ModelFactory";
-import { ModelPrototype } from "../Model/ModelPrototype";
-import { ModelTypeGuard } from "../Model/ModelTypeGuard";
-
 import { Pointer } from "../Pointer/Pointer";
 
 import { Registry } from "../Registry/Registry";
 
 import { Resource } from "../Resource/Resource";
 
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	isDefined,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC,
-} from "../test/JasmineExtender";
-
 import { BaseFreeResources } from "./BaseFreeResources";
-import { FreeResources, FreeResourcesFactory, FreeResourcesUtils } from "./FreeResources";
+import { FreeResources } from "./FreeResources";
 
 
-describe( module( "carbonldp/FreeResources" ), ():void => {
+describe( "FreeResources", () => {
+
+	it( "should exist", () => {
+		expect( FreeResources ).toBeDefined();
+		expect( FreeResources ).toEqual( jasmine.any( Object ) );
+	} );
 
 	let context:Context;
-	beforeEach( ():void => {
+	beforeEach( () => {
 		context = createMockContext();
 	} );
 
 
-	describe( interfaze(
-		"CarbonLDP.FreeResources",
-		"Interface that represents a set of free resources."
-	), ():void => {
-
-		it( extendsClass( "CarbonLDP.Registry<CarbonLDP.TransientResource>" ), ():void => {} );
+	describe( "[[interface impl]]", () => {
 
 		let freeResources:FreeResources;
-		beforeEach( ():void => {
+		beforeEach( () => {
 			freeResources = FreeResources.decorate( { registry: context.registry } );
 		} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"registry",
-			"CarbonLDP.GeneralRegistry<any>",
-			"The registry where the FreeResources scope is in."
-		), ():void => {
-			const target:FreeResources[ "registry" ] = {} as GeneralRegistry<any>;
-			expect( target ).toBeDefined();
-		} );
 
+		describe( "FreeResources.toJSON", () => {
 
-		describe( method( OBLIGATORY, "toJSON" ), () => {
-
-			it( hasSignature(
-				"Returns a JSON-LD Node array using the data available from the registry of the current container.",
-				{ type: "CarbonLDP.RDF.RDFNode[]" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Returns a JSON-LD Node array using the data of context provided.",
-				[
-					{ name: "context", type: "CarbonLDP.Context" },
-				],
-				{ type: "CarbonLDP.RDF.RDFNode[]" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( freeResources.toJSON ).toBeDefined();
 				expect( freeResources.toJSON ).toEqual( jasmine.any( Function ) );
 			} );
@@ -149,54 +106,55 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 		} );
 
 
-		describe( "FreeResources.hasPointer", ():void => {
+		describe( "FreeResources.hasPointer", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( freeResources.hasPointer ).toBeDefined();
 				expect( freeResources.hasPointer ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should return false when no resource local ID", ():void => {
+
+			it( "should return false when no resource local ID", () => {
 				expect( freeResources.hasPointer( "_:some" ) ).toBe( false );
 			} );
 
-			it( "should return true when has resource local ID", ():void => {
+			it( "should return true when has resource local ID", () => {
 				freeResources._addPointer( { $id: "_:some" } );
 				expect( freeResources.hasPointer( "_:some" ) ).toBe( true );
 			} );
 
-			it( "should return false when no resource in parent registry", ():void => {
+			it( "should return false when no resource in parent registry", () => {
 				expect( freeResources.hasPointer( "https://example.com/some/" ) ).toBe( false );
 			} );
 
-			it( "should return true when resource in parent registry", ():void => {
+			it( "should return true when resource in parent registry", () => {
 				context.registry._addPointer( { $id: "https://example.com/some/" } );
 				expect( freeResources.hasPointer( "https://example.com/some/" ) ).toBe( true );
 			} );
 
 		} );
 
-		describe( "FreeResources.getPointer", ():void => {
+		describe( "FreeResources.getPointer", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( freeResources.getPointer ).toBeDefined();
 				expect( freeResources.getPointer ).toEqual( jasmine.any( Function ) );
 			} );
 
 
-			it( "should return existing resource", ():void => {
+			it( "should return existing resource", () => {
 				const resource:Resource = freeResources._addPointer( { $id: "_:some" } );
 				expect( freeResources.getPointer( "_:some" ) ).toBe( resource );
 			} );
 
-			it( "should create non-existing resource", ():void => {
+			it( "should create non-existing resource", () => {
 				const resource:Pointer = freeResources.getPointer( "_:another" );
 
 				expect( resource.$id ).toBe( "_:another" );
 				expect( resource ).toEqual( anyThatMatches( Resource.is, "Resource" ) as any );
 			} );
 
-			it( "should return from parent resource", ():void => {
+			it( "should return from parent resource", () => {
 				const parentResource:Pointer = context.registry.getPointer( "https://example.com/some/" );
 
 				const resource:Pointer = freeResources.getPointer( "https://example.com/some/" );
@@ -205,30 +163,31 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 		} );
 
-		describe( "FreeResources.inScope", ():void => {
+		describe( "FreeResources.inScope", () => {
 
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				expect( freeResources.inScope ).toBeDefined();
 				expect( freeResources.inScope ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should accept blank nodes labels", ():void => {
+
+			it( "should accept blank nodes labels", () => {
 				expect( freeResources.inScope( "_:some" ) ).toBe( true );
 			} );
 
-			it( "should reject absolute IRIs when local", ():void => {
+			it( "should reject absolute IRIs when local", () => {
 				expect( freeResources.inScope( "https://example.com/", true ) ).toBe( false );
 			} );
 
-			it( "should accept absolute IRIs when global", ():void => {
+			it( "should accept absolute IRIs when global", () => {
 				expect( freeResources.inScope( "https://example.com/" ) ).toBe( true );
 			} );
 
-			it( "should reject relative IRIs, when local", ():void => {
+			it( "should reject relative IRIs, when local", () => {
 				expect( freeResources.inScope( "resource/", true ) ).toBe( false );
 			} );
 
-			it( "should reject relative IRIs, when global", ():void => {
+			it( "should reject relative IRIs, when global", () => {
 				expect( freeResources.inScope( "resource/" ) ).toBe( true );
 			} );
 
@@ -236,23 +195,11 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 	} );
 
+	describe( "[[factory]]", () => {
 
-	describe( interfaze(
-		"CarbonLDP.FreeResourcesUtils",
-		"Utils for `CarbonLDP.FreeResources` objects."
-	), () => {
+		describe( "FreeResources.parseFreeNodes", () => {
 
-		describe( method( OBLIGATORY, "parseFreeNodes" ), () => {
-
-			it( hasSignature(
-				[
-					{ name: "registry", type: "CarbonLDP.GeneralRegistry<any>" },
-					{ name: "freeNodes", type: "CarbonLDP.RDF.RDFNode[]" },
-				],
-				{ type: "CarbonLDP.FreeResources" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( FreeResources.parseFreeNodes ).toBeDefined();
 				expect( FreeResources.parseFreeNodes ).toEqual( jasmine.any( Function ) );
 			} );
@@ -296,38 +243,6 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 		} );
 
-	} );
-
-	describe( interfaze(
-		"CarbonLDP.FreeResourcesFactory",
-		"Interfaces with the factory, decorate and utils methods of a `CarbonLDP.FreeResources` object."
-	), ():void => {
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.FreeResources, Registry, \"registry\" | \"_getLocalID\" | \"_addPointer\">" ), () => {
-			const target:ModelPrototype<FreeResources, Registry, "registry" | "_getLocalID" | "_addPointer"> = {} as FreeResourcesFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.FreeResources, CarbonLDP.BaseFreeResources>" ), () => {
-			const target:ModelDecorator<FreeResources, BaseFreeResources> = {} as FreeResourcesFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelTypeGuard<CarbonLDP.FreeResources>" ), () => {
-			const target:ModelTypeGuard<FreeResources> = {} as FreeResourcesFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.FreeResources, CarbonLDP.BaseFreeResources>" ), () => {
-			const target:ModelFactory<FreeResources, BaseFreeResources> = {} as FreeResourcesFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.FreeResourcesUtils" ), () => {
-			const target:FreeResourcesUtils = {} as FreeResourcesFactory;
-			expect( target ).toBeDefined();
-		} );
-
 
 		// TODO: Test .isDecorated
 
@@ -335,7 +250,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 		describe( "FreeResources.is", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( FreeResources.is ).toBeDefined();
 				expect( FreeResources.is ).toEqual( jasmine.any( Function ) );
 			} );
@@ -343,7 +258,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 			let isRegistry:jasmine.Spy;
 			let isSelfDecorated:jasmine.Spy;
-			beforeEach( ():void => {
+			beforeEach( () => {
 				isRegistry = spyOn( Registry, "isDecorated" )
 					.and.returnValue( true );
 				isSelfDecorated = spyOn( FreeResources, "isDecorated" )
@@ -369,49 +284,52 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 		} );
 
 
-		// TODO: Separate in different tests
-		it( "FreeResources.create", ():void => {
-			expect( FreeResources.create ).toBeDefined();
-			expect( FreeResources.create ).toEqual( jasmine.any( Function ) );
+		describe( "FreeResources.create", () => {
 
-			let freeResources:FreeResources = FreeResources.create( { registry: context.registry } );
+			it( "should exist", () => {
+				expect( FreeResources.create ).toBeDefined();
+				expect( FreeResources.create ).toEqual( jasmine.any( Function ) );
+			} );
 
-			expect( freeResources ).toBeTruthy();
-			expect( FreeResources.isDecorated( freeResources ) );
+
+			it( "should call FreeResources.createFrom", () => {
+				const spy:jasmine.Spy = spyOn( FreeResources, "createFrom" );
+
+				FreeResources.create( { registry: context.registry } );
+				expect( spy ).toHaveBeenCalledWith( { registry: context.registry } );
+			} );
+
+			it( "should return different reference", () => {
+				const object:BaseFreeResources = { registry: context.registry };
+				const returned:FreeResources = FreeResources.create( object );
+
+				expect( object ).not.toBe( returned );
+			} );
+
 		} );
 
-		// TODO: Separate in different tests
-		it( "FreeResources.createFrom", ():void => {
-			expect( FreeResources.createFrom ).toBeDefined();
-			expect( FreeResources.createFrom ).toEqual( jasmine.any( Function ) );
+		describe( "FreeResources.createFrom", () => {
 
-			let freeResources:FreeResources = FreeResources.create( { registry: context.registry } );
-			expect( freeResources ).toBeTruthy();
-			expect( FreeResources.isDecorated( freeResources ) );
+			it( "should exist", () => {
+				expect( FreeResources.createFrom ).toBeDefined();
+				expect( FreeResources.createFrom ).toEqual( jasmine.any( Function ) );
+			} );
 
-			interface My {
-				myProperty:string;
-			}
 
-			let myFreeResources:FreeResources & My = FreeResources.createFrom( { myProperty: "The property", registry: context.registry } );
-			expect( myFreeResources ).toBeTruthy();
-			expect( FreeResources.isDecorated( myFreeResources ) );
-			expect( myFreeResources.myProperty ).toBeDefined();
-			expect( myFreeResources.myProperty ).toBe( "The property" );
-		} );
+			it( "should call FreeResources.decorate", () => {
+				const spy:jasmine.Spy = spyOn( FreeResources, "decorate" );
 
-	} );
+				FreeResources.createFrom( { registry: context.registry } );
+				expect( spy ).toHaveBeenCalledWith( { registry: context.registry } );
+			} );
 
-	describe( property(
-		STATIC,
-		"FreeResources",
-		"CarbonLDP.FreeResourcesFactory",
-		"Constant that implements the `CarbonLDP.FreeResourcesFactory` interface."
-	), ():void => {
+			it( "should return same reference", () => {
+				const object:BaseFreeResources = { registry: context.registry };
+				const returned:FreeResources = FreeResources.createFrom( object );
 
-		it( isDefined(), ():void => {
-			expect( FreeResources ).toBeDefined();
-			expect( FreeResources ).toEqual( jasmine.any( Object ) );
+				expect( object ).toBe( returned );
+			} );
+
 		} );
 
 	} );

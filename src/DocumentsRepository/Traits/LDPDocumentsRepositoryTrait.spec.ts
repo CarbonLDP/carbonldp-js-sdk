@@ -17,61 +17,32 @@ import { Header } from "../../HTTP/Header";
 import { ErrorResponse } from "../../LDP/ErrorResponse";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
-import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { Pointer } from "../../Pointer/Pointer";
 
 import { BaseResource } from "../../Resource/BaseResource";
 
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../../test/JasmineExtender";
-
 import { C } from "../../Vocabularies/C";
 import { LDP } from "../../Vocabularies/LDP";
 import { XSD } from "../../Vocabularies/XSD";
 
-import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
-
-import { LDPDocumentsRepositoryTrait, LDPDocumentsRepositoryTraitFactory } from "./LDPDocumentsRepositoryTrait";
+import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
 
 
-describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTrait" ), () => {
+describe( "LDPDocumentsRepositoryTrait", () => {
+
+	it( "should exist", () => {
+		expect( LDPDocumentsRepositoryTrait ).toBeDefined();
+		expect( LDPDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
+	} );
 
 	let context:DocumentsContext;
-	beforeEach( ():void => {
+	beforeEach( () => {
 		context = new DocumentsContext( "https://example.com/" );
 	} );
 
 
-	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.LDPDocumentsRepositoryTrait",
-		"Documents repository with the implementation for sparql queries."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.GeneralRepository<CarbonLDP.Document>" ), () => {
-			const target:GeneralRepository<Document> = {} as LDPDocumentsRepositoryTrait;
-			expect( target ).toBeDefined();
-		} );
-
-
-		it( hasProperty(
-			OBLIGATORY,
-			"$context",
-			"CarbonLDP.DocumentsContext"
-		), ():void => {
-			const target:LDPDocumentsRepositoryTrait[ "context" ] = {} as DocumentsContext;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[interface impl]]", () => {
 
 		beforeEach( () => {
 			jasmine.Ajax.install();
@@ -169,18 +140,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		} );
 
 
-		describe( method( OBLIGATORY, "get" ), ():void => {
+		describe( "LDPDocumentsRepositoryTrait.get", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				[
-					{ name: "uri", type: "string", description: "The URI of the resource to retrieve." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.get ).toBeDefined();
 				expect( repository.get ).toEqual( jasmine.any( Function ) );
 			} );
@@ -519,18 +481,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "resolve" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.resolve", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				[
-					{ name: "document", type: "CarbonLDP.Document", description: "The document to be resolved." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.resolve ).toBeDefined();
 				expect( repository.resolve ).toEqual( jasmine.any( Function ) );
 			} );
@@ -783,17 +736,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "exists" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.exists", () => {
 
-			it( hasSignature(
-				[
-					{ name: "uri", type: "string", description: "The URI to verify if its existence." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<boolean>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.exists ).toBeDefined();
 				expect( repository.exists ).toEqual( jasmine.any( Function ) );
 			} );
@@ -970,51 +915,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		} );
 
 
-		describe( method( OBLIGATORY, "create" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.create", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists the object as a child of the uri specified.", [
-					{ name: "uri", type: "string", description: "URI of the document where to create the child." },
-					{ name: "child", type: "T", description: "The object from where to create the child." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists the object with the slug specified as a child of the uri specified.", [
-					{ name: "uri", type: "string", description: "URI of the document where to create the child." },
-					{ name: "child", type: "T", description: "The object from where to create the child." },
-					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists multiple objects as children of the uri specified.", [
-					{ name: "uri", type: "string", description: "URI of the document where to create the child." },
-					{ name: "children", type: "T[]", description: "An array with the objects to be persisted as the new children." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists multiple objects as children of the uri specified.", [
-					{ name: "uri", type: "string", description: "URI of the document where to create the child." },
-					{ name: "children", type: "T[]", description: "An array with the objects to be persisted as the new children." },
-					{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.create ).toBeDefined();
 				expect( repository.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -1637,51 +1540,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "createAndRetrieve" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.createAndRetrieve", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists the object as a child of the uri specified and retrieves the updates data from the server.", [
-					{ name: "uri", type: "string", description: "URI of the document where to create the child." },
-					{ name: "child", type: "T", description: "The object from where to create the child." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists the object with the slug specified as a child of the uri specified and retrieves the updates data from the server.", [
-					{ name: "uri", type: "string", description: "URI of the document where to create the child." },
-					{ name: "child", type: "T", description: "The object from where to create the child." },
-					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists multiple objects as children of the uri specified and retrieves the updates data from the server.", [
-					{ name: "uri", type: "string", description: "URI of the document where to create the child." },
-					{ name: "children", type: "T[]", description: "An array with the objects to be persisted as the new children." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Persists multiple objects as children of the uri specified and retrieves the updates data from the server.", [
-					{ name: "uri", type: "string", description: "URI of the document where to create the child." },
-					{ name: "children", type: "T[]", description: "An array with the objects to be persisted as the new children." },
-					{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
-				],
-				{ type: "Promise<(T & CarbonLDP.Document)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.createAndRetrieve ).toBeDefined();
 				expect( repository.createAndRetrieve ).toEqual( jasmine.any( Function ) );
 			} );
@@ -2528,18 +2389,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		} );
 
 
-		describe( method( OBLIGATORY, "save" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.save", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Send the changes of the document to the server.", [
-					{ name: "document", type: "CarbonLDP.Document", description: "The document to be saved." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), () => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.save ).toBeDefined();
 				expect( repository.save ).toEqual( jasmine.any( Function ) );
 			} );
@@ -2906,19 +2758,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "saveAndRefresh" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.saveAndRefresh", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Send the changes of the document and retrieves the updated data from the server.",
-				[
-					{ name: "document", type: "CarbonLDP.Document", description: "The document to be saved." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), () => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.saveAndRefresh ).toBeDefined();
 				expect( repository.saveAndRefresh ).toEqual( jasmine.any( Function ) );
 			} );
@@ -3358,19 +3200,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "refresh" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.refresh", () => {
 
-			it( hasSignature(
-				[ "T extends object" ],
-				"Update the document with the latest changes from the server.",
-				[
-					{ name: "document", type: "CarbonLDP.Document", description: "The document to be refreshed." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<T & CarbonLDP.Document>" }
-			), () => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.refresh ).toBeDefined();
 				expect( repository.refresh ).toEqual( jasmine.any( Function ) );
 			} );
@@ -3738,17 +3570,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		} );
 
 
-		describe( method( OBLIGATORY, "delete" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.delete", () => {
 
-			it( hasSignature(
-				"Delete the resource referred by the URI provided from the server.", [
-					{ name: "uri", type: "string", description: "The resource to be deleted." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<void>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.delete ).toBeDefined();
 				expect( repository.delete ).toEqual( jasmine.any( Function ) );
 			} );
@@ -3902,18 +3726,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		} );
 
 
-		describe( method( OBLIGATORY, "addMember" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.addMember", () => {
 
-			it( hasSignature(
-				"Adds the provided resource as member of the specified document.", [
-					{ name: "uri", type: "string", description: "URI of the document to add the specified member." },
-					{ name: "member", type: "CarbonLDP.Pointer | string", description: "URI or Pointer to add as a member." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<void>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.addMember ).toBeDefined();
 				expect( repository.addMember ).toEqual( jasmine.any( Function ) );
 			} );
@@ -4134,18 +3949,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "addMembers" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.addMembers", () => {
 
-			it( hasSignature(
-				"Adds the provided resources as members of the specified document.", [
-					{ name: "uri", type: "string", description: "URI of the document to add the specified member." },
-					{ name: "member", type: "CarbonLDP.Pointer | string", description: "URI or Pointer to add as a member." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<void>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.addMembers ).toBeDefined();
 				expect( repository.addMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -4404,18 +4210,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 		} );
 
 
-		describe( method( OBLIGATORY, "removeMember" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.removeMember", () => {
 
-			it( hasSignature(
-				"Removes the provided resource as member of the specified document.", [
-					{ name: "uri", type: "string", description: "URI of the document to remove the specified member." },
-					{ name: "member", type: "CarbonLDP.Pointer | string", description: "URI or Pointer to remove as a member." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<void>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.removeMember ).toBeDefined();
 				expect( repository.removeMember ).toEqual( jasmine.any( Function ) );
 			} );
@@ -4638,19 +4435,9 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-		describe( method( OBLIGATORY, "removeMembers" ), () => {
+		describe( "LDPDocumentsRepositoryTrait.removeMembers", () => {
 
-			it( hasSignature(
-				"Removes the provided resources as members of the specified document. If no members provided, all the available members will be removed.",
-				[
-					{ name: "uri", type: "string", description: "URI of the document to remove the specified member." },
-					{ name: "members", type: "(CarbonLDP.Pointer | string)[]", optional: true, description: "URIs or Pointers to remove as a members." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<void>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( repository.removeMembers ).toBeDefined();
 				expect( repository.removeMembers ).toEqual( jasmine.any( Function ) );
 			} );
@@ -5073,28 +4860,13 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		} );
 
-
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.DocumentsRepository.Traits.LDPDocumentsRepositoryTraitFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.DocumentsRepository.Traits.LDPDocumentsRepositoryTrait` objects."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.DocumentsRepository.Traits.LDPDocumentsRepositoryTrait, CarbonLDP.GeneralRepository<CarbonLDP.Document>" ), () => {
-			const target:ModelPrototype<LDPDocumentsRepositoryTrait, GeneralRepository<Document>> = {} as LDPDocumentsRepositoryTraitFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.DocumentsRepository.Traits.LDPDocumentsRepositoryTrait<any>, CarbonLDP.BaseDocumentsRepository>" ), () => {
-			const target:ModelDecorator<LDPDocumentsRepositoryTrait, BaseDocumentsRepository> = {} as LDPDocumentsRepositoryTraitFactory;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[factory]]", () => {
 
 		describe( "LDPDocumentsRepositoryTrait.isDecorated", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( LDPDocumentsRepositoryTrait.isDecorated ).toBeDefined();
 				expect( LDPDocumentsRepositoryTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -5112,7 +4884,7 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 
 		describe( "LDPDocumentsRepositoryTrait.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( LDPDocumentsRepositoryTrait.decorate ).toBeDefined();
 				expect( LDPDocumentsRepositoryTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -5147,19 +4919,6 @@ describe( module( "carbonldp/DocumentsRepository/Traits/LDPDocumentsRepositoryTr
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"LDPDocumentsRepositoryTrait",
-		"CarbonLDP.DocumentsRepository.Traits.LDPDocumentsRepositoryTraitFactory"
-	), () => {
-
-		it( "should exists", ():void => {
-			expect( LDPDocumentsRepositoryTrait ).toBeDefined();
-			expect( LDPDocumentsRepositoryTrait ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );

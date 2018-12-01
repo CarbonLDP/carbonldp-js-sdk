@@ -5,10 +5,9 @@ import { Context } from "../Context/Context";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelFactory } from "../Model/ModelFactory";
-import { ModelPrototype } from "../Model/ModelPrototype";
 
 import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
+
 import { Pointer } from "../Pointer/Pointer";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
@@ -17,62 +16,35 @@ import { Registry } from "../Registry/Registry";
 import { Repository } from "../Repository/Repository";
 import { ResolvablePointer } from "../Repository/ResolvablePointer";
 
-import {
-	extendsClass,
-	hasProperty,
-	hasSignature,
-	interfaze,
-	method,
-	module,
-	OBLIGATORY,
-	property,
-	STATIC
-} from "../test/JasmineExtender";
-
 import { BaseGeneralRegistry } from "./BaseGeneralRegistry";
-import { GeneralRegistry, GeneralRegistryFactory } from "./GeneralRegistry";
+import { GeneralRegistry } from "./GeneralRegistry";
 import { TypedModelDecorator } from "./TypedModelDecorator";
 
 
-describe( module( "carbonldp/GeneralRegistry" ), () => {
+describe( "GeneralRegistry", () => {
+
+	it( "should exist", () => {
+		expect( GeneralRegistry ).toBeDefined();
+		expect( GeneralRegistry ).toEqual( jasmine.any( Object ) );
+	} );
 
 	let context:Context;
-	beforeEach( ():void => {
+	beforeEach( () => {
 		context = createMockContext();
 	} );
 
 
-	describe( interfaze(
-		"CarbonLDP.GeneralRegistry",
-		[ "M extends RegisteredPointer = RegisteredPointer" ],
-		"Registry used by the context."
-	), () => {
+	describe( "[[interface impl]]", () => {
 
-		it( extendsClass( "CarbonLDP.Registry<M>" ), () => {
-			const target:Registry<RegisteredPointer> = {} as GeneralRegistry<RegisteredPointer>;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.ObjectSchemaResolver" ), () => {
-			const target:ObjectSchemaResolver = {} as GeneralRegistry<RegisteredPointer>;
-			expect( target ).toBeDefined();
-		} );
+		function createMock<T extends {}>( data?:T & Partial<GeneralRegistry> ):T & GeneralRegistry {
+			return GeneralRegistry.createFrom( Object.assign( {
+				context,
+				__modelDecorator: RegisteredPointer,
+			}, data ) );
+		}
 
 
-		it( hasProperty(
-			OBLIGATORY,
-			"context",
-			"CarbonLDP.Context"
-		), ():void => {
-			const target:GeneralRegistry[ "context" ] = {} as Context;
-			expect( target ).toBeDefined();
-		} );
-
-		describe( property(
-			OBLIGATORY,
-			"registry",
-			"CarbonLDP.GeneralRegistry<any> | undefined"
-		), () => {
+		describe( "GeneralRegistry.registry", () => {
 
 			it( "should return registry from parent context", () => {
 				context = createMockContext( { parentContext: context as any } );
@@ -98,34 +70,10 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 
 		} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"__modelDecorators",
-			"Map<string, CarbonLDP.TypedModelDecorator>"
-		), ():void => {
-			const target:GeneralRegistry[ "__modelDecorators" ] = {} as Map<string, TypedModelDecorator>;
-			expect( target ).toBeDefined();
-		} );
 
+		describe( "GeneralRegistry.addDecorator", () => {
 
-		function createMock<T extends {}>( data?:T & Partial<GeneralRegistry> ):T & GeneralRegistry {
-			return GeneralRegistry.createFrom( Object.assign( {
-				context,
-				__modelDecorator: RegisteredPointer,
-			}, data ) );
-		}
-
-
-		describe( method( OBLIGATORY, "addDecorator" ), () => {
-
-			it( hasSignature(
-				[
-					{ name: "decorator", type: "TypedModelDecorator" },
-				],
-				{ type: "this" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const registry:GeneralRegistry = createMock();
 
 				expect( registry.addDecorator ).toBeDefined();
@@ -185,15 +133,9 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "decorate" ), () => {
+		describe( "GeneralRegistry.decorate", () => {
 
-			it( hasSignature(
-				[
-					{ name: "object", type: "{ types?:string[] }" },
-				]
-			), ():void => {} );
-
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				const registry:GeneralRegistry = createMock();
 
 				expect( registry.decorate ).toBeDefined();
@@ -332,30 +274,11 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.GeneralRegistryFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.GeneralRegistry` objects."
-	), () => {
-
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.GeneralRegistry, CarbonLDP.Registry & CarbonLDP.ObjectSchemaResolver>" ), () => {
-			const target:ModelPrototype<GeneralRegistry, Registry & ObjectSchemaResolver> = {} as GeneralRegistryFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.GeneralRegistry<any>, CarbonLDP.BaseGeneralRegistry>" ), () => {
-			const target:ModelDecorator<GeneralRegistry, BaseGeneralRegistry> = {} as GeneralRegistryFactory;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.GeneralRegistry<any>, CarbonLDP.BaseGeneralRegistry>" ), () => {
-			const target:ModelFactory<GeneralRegistry<any>, BaseGeneralRegistry> = {} as GeneralRegistryFactory;
-			expect( target ).toBeDefined();
-		} );
-
+	describe( "[[factory]]", () => {
 
 		describe( "GeneralRegistry.isDecorated", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( GeneralRegistry.isDecorated ).toBeDefined();
 				expect( GeneralRegistry.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -373,7 +296,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 
 		describe( "GeneralRegistry.decorate", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( GeneralRegistry.decorate ).toBeDefined();
 				expect( GeneralRegistry.decorate ).toEqual( jasmine.any( Function ) );
 			} );
@@ -429,7 +352,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 
 		describe( "GeneralRegistry.create", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( GeneralRegistry.create ).toBeDefined();
 				expect( GeneralRegistry.create ).toEqual( jasmine.any( Function ) );
 			} );
@@ -455,7 +378,7 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 
 		describe( "GeneralRegistry.createFrom", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( GeneralRegistry.createFrom ).toBeDefined();
 				expect( GeneralRegistry.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
@@ -497,19 +420,6 @@ describe( module( "carbonldp/GeneralRegistry" ), () => {
 				] ) );
 			} );
 
-		} );
-
-	} );
-
-	describe( property(
-		STATIC,
-		"GeneralRegistry",
-		"CarbonLDP.GeneralRegistryFactory"
-	), () => {
-
-		it( "should exists", ():void => {
-			expect( GeneralRegistry ).toBeDefined();
-			expect( GeneralRegistry ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );

@@ -4,147 +4,91 @@ import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 
 import { Pointer } from "../../Pointer/Pointer";
 
-import {
-	extendsClass,
-	hasMethod,
-	hasProperty,
-	interfaze,
-	isDefined,
-	module,
-	OBLIGATORY,
-	OPTIONAL,
-	property,
-	STATIC,
-} from "../../test/JasmineExtender";
-
 import { LDP } from "../../Vocabularies/LDP";
 
 import { BaseDirectContainer } from "./BaseDirectContainer";
 import { TransientDirectContainer } from "./TransientDirectContainer";
 
 
-describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
+describe( "DirectContainer", () => {
 
-	describe( interfaze(
-		"CarbonLDP.LDP.TransientDirectContainer",
-		"Interface that represents an `ldp:DirectContainer`."
-	), ():void => {
-
-		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"membershipResource",
-			"CarbonLDP.Pointer",
-			"Pointer that references the document that the direct container belongs to."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"hasMembershipRelation",
-			"CarbonLDP.Pointer",
-			"Pointer that reference to the property the direct container manages."
-		), ():void => {} );
-
+	it( "should exist", () => {
+		expect( TransientDirectContainer ).toBeDefined();
+		expect( TransientDirectContainer ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( interfaze(
-		"CarbonLDP.LDP.TransientDirectContainerFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.LDP.TransientDirectContainer`"
-	), ():void => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"TYPE",
-			"CarbonLDP.Vocabularies.C.DirectContainer"
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.LDP.TransientDirectContainer` object.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "value is CarbonLDP.LDP.TransientDirectContainer" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"create",
-			[ "T extends object" ],
-			"Creates a `CarbonLDP.LDP.TransientDirectContainer` object with the parameters specified.", [
-				{ name: "data", type: "T & carbonLDP.LDP.BaseDirectContainer", description: "Data for creating a direct container." },
-			],
-			{ type: "T & CarbonLDP.LDP.TransientDirectContainer" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"createFrom",
-			[ "T extends object" ],
-			"Creates a `CarbonLDP.LDP.TransientDirectContainer` object with the object provided and the parameters specified.", [
-				{ name: "object", type: "T & CarbonLDP.LDP.BaseDirectContainer", description: "Object to be converted into a direct container." },
-			],
-			{ type: "T & CarbonLDP.LDP.TransientDirectContainer" }
-		), ():void => {} );
-
+	describe( "[[interface impl]]", () => {
 	} );
 
-	describe( property(
-		STATIC,
-		"TransientDirectContainer",
-		"CarbonLDP.LDP.TransientDirectContainerFactory",
-		"Constant that implements the `CarbonLDP.LDP.TransientDirectContainerFactory` interface."
-	), ():void => {
+	describe( "[[factory]]", () => {
 
-		it( isDefined(), ():void => {
-			expect( TransientDirectContainer ).toBeDefined();
-			expect( TransientDirectContainer ).toEqual( jasmine.any( Object ) );
-		} );
+		describe( "TransientDirectContainer.TYPE", () => {
 
-		describe( "TransientDirectContainer.TYPE", ():void => {
-
-			it( "should exist", ():void => {
+			it( "should exist", () => {
 				expect( TransientDirectContainer.TYPE ).toBeDefined();
 				expect( TransientDirectContainer.TYPE ).toEqual( jasmine.any( String ) );
 			} );
 
-			it( "should be `ldp:TransientDirectContainer`", ():void => {
+
+			it( "should be `ldp:TransientDirectContainer`", () => {
 				expect( TransientDirectContainer.TYPE ).toBe( LDP.DirectContainer );
 			} );
 
 		} );
 
-		// TODO: Separate in different tests
-		it( "TransientDirectContainer.is", ():void => {
-			expect( TransientDirectContainer.is ).toBeDefined();
-			expect( TransientDirectContainer.is ).toEqual( jasmine.any( Function ) );
+		describe( "TransientDirectContainer.is", () => {
 
-			let object:any;
+			it( "should exist", () => {
+				expect( TransientDirectContainer.is ).toBeDefined();
+				expect( TransientDirectContainer.is ).toEqual( jasmine.any( Function ) );
+			} );
 
-			object = {};
-			expect( TransientDirectContainer.is( object ) ).toBe( false );
-			object.membershipResource = "http://example.com/myNamespace#some-relation";
-			expect( TransientDirectContainer.is( object ) ).toBe( false );
-			object.types = [ LDP.DirectContainer ];
-			expect( TransientDirectContainer.is( object ) ).toBe( false );
 
-			object = TransientDocument.create();
-			expect( TransientDirectContainer.is( object ) ).toBe( false );
-			object.membershipResource = "http://example.com/myNamespace#some-relation";
-			expect( TransientDirectContainer.is( object ) ).toBe( false );
-			object.types.push( LDP.DirectContainer );
-			expect( TransientDirectContainer.is( object ) ).toBe( true );
+			function createMock( data:object = {} ):TransientDirectContainer {
+				return TransientDocument.create( {
+					types: [ LDP.DirectContainer ],
+					hasMemberRelation: null,
+
+					...data,
+				} );
+			}
+
+			it( "should return false when empty", () => {
+				expect( TransientDirectContainer.is( {} ) ).toBe( false );
+			} );
+
+			it( "should return true when all properties", () => {
+				const object:TransientDocument = createMock();
+				expect( TransientDirectContainer.is( object ) ).toBe( true );
+			} );
+
+			it( "should return false when no `hasMemberRelation`", () => {
+				const object:TransientDocument = createMock();
+				delete object.hasMemberRelation;
+
+				expect( TransientDirectContainer.is( object ) ).toBe( false );
+			} );
+
+			it( "should return false when no `DirectContainer` type", () => {
+				const object:TransientDocument = createMock( {
+					types: [],
+				} );
+
+				expect( TransientDirectContainer.is( object ) ).toBe( false );
+			} );
+
 		} );
 
-		describe( "TransientDirectContainer.create", ():void => {
+		describe( "TransientDirectContainer.create", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( TransientDirectContainer.create ).toBeDefined();
 				expect( TransientDirectContainer.create ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call TransientDirectContainer.createFrom", ():void => {
+
+			it( "should call TransientDirectContainer.createFrom", () => {
 				const spy:jasmine.Spy = spyOn( TransientDirectContainer, "createFrom" );
 
 				const base:BaseDirectContainer = {
@@ -156,7 +100,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( base );
 			} );
 
-			it( "should return different reference", ():void => {
+			it( "should return different reference", () => {
 				const base:BaseDirectContainer = {
 					membershipResource: Pointer.create(),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
@@ -168,14 +112,15 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 		} );
 
-		describe( "TransientDirectContainer.createFrom", ():void => {
+		describe( "TransientDirectContainer.createFrom", () => {
 
-			it( "should exists", ():void => {
+			it( "should exist", () => {
 				expect( TransientDirectContainer.createFrom ).toBeDefined();
 				expect( TransientDirectContainer.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should return same reference", ():void => {
+
+			it( "should return same reference", () => {
 				const base:BaseDirectContainer = {
 					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
@@ -185,7 +130,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 				expect( base ).toBe( returned );
 			} );
 
-			it( "should return a TransientDirectContainer", ():void => {
+			it( "should return a TransientDirectContainer", () => {
 				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( {
 					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
@@ -194,7 +139,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 				expect( TransientDirectContainer.is( directContainer ) ).toBe( true );
 			} );
 
-			it( "should return maintain hasMemberRelation", ():void => {
+			it( "should return maintain hasMemberRelation", () => {
 				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( {
 					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
@@ -203,7 +148,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 				expect( directContainer.hasMemberRelation as any as string ).toEqual( "http://example.com/myNamespace#some-relation" );
 			} );
 
-			it( "should return maintain isMemberOfRelation", ():void => {
+			it( "should return maintain isMemberOfRelation", () => {
 				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( {
 					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
@@ -213,7 +158,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 				expect( directContainer.isMemberOfRelation as any as string ).toBe( "http://example.com/myNamespace#some-inverted-relation" );
 			} );
 
-			it( "should return add type ldp:DirectContainer", ():void => {
+			it( "should return add type ldp:DirectContainer", () => {
 				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( {
 					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",
@@ -222,7 +167,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 				expect( directContainer.types ).toContain( LDP.DirectContainer );
 			} );
 
-			it( "should throw error if already a direct container", ():void => {
+			it( "should throw error if already a direct container", () => {
 				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( {
 					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
 					hasMemberRelation: "http://example.com/myNamespace#some-relation",

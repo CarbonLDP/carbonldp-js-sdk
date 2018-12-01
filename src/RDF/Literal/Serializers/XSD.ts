@@ -115,6 +115,11 @@ export class LongSerializer implements Serializer {
 	 */
 	serialize( value:any ):string {
 		if( ! Utils.isNumber( value ) ) throw new IllegalArgumentError( notNumberError );
+
+		if( value === Number.POSITIVE_INFINITY ) return "0";
+		if( value === Number.NEGATIVE_INFINITY ) return "0";
+		if( Number.isNaN( value ) ) return "0";
+
 		return Math.trunc( value ).toString();
 	}
 }
@@ -156,6 +161,11 @@ export let unsignedIntegerSerializer:UnsignedIntegerSerializer = new UnsignedInt
 export class UnsignedLongSerializer implements Serializer {
 	serialize( value:any ):string {
 		if( ! Utils.isNumber( value ) ) throw new IllegalArgumentError( notNumberError );
+
+		if( value === Number.POSITIVE_INFINITY ) return "0";
+		if( value === Number.NEGATIVE_INFINITY ) return "0";
+		if( Number.isNaN( value ) ) return "0";
+
 		return Math.trunc( Math.abs( value ) ).toString();
 	}
 }

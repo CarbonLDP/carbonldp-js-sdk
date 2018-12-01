@@ -1,4 +1,4 @@
-import { HTTPError } from "./../HTTPError";
+import { HTTPError } from "../HTTPError";
 
 const name:string = "HTTPVersionNotSupportedError";
 const statusCode:number = 505;
