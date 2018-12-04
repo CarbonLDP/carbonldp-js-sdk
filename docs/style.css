@@ -2,6 +2,10 @@
     background-color: #363F48 !important;
 }
 
+.doc-menu > .doc-logo-container {
+    padding: 0 1.14285714em !important;
+}
+
 .doc-menu .doc-logo {
 }
 
@@ -246,7 +250,7 @@ td.optional-label > .ui.horizontal.ribbon.label:after {
 .ui.sidebar.doc-menu-sidebar.doc-menu-sidebar > .menu.doc-menu.bottom {
     position: relative;
     top: 63px;
-    height: calc( 100% - 63px );
+    height: calc(100% - 63px);
 }
 
 .ui.sidebar.doc-menu-sidebar.doc-menu-sidebar > .menu.doc-menu .menu {
