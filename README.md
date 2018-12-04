@@ -1,4 +1,4 @@
-# [CarbonLDP JavaScript SDK](http://carbonldp.com/)
+# [CarbonLDP JavaScript SDK](https://carbonldp.com/)
 
 <div align="center">
   <a href="https://carbonldp.com/" style="text-decoration: none;">
