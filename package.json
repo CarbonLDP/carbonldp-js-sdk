@@ -25,6 +25,7 @@
     "file-type": "^6.1.0",
     "sockjs-client": "^1.1.0",
     "sparqler": "~0.6.0",
+    "tslib": "^1.9.3",
     "webstomp-client": "^1.2.1"
   },
   "devDependencies": {
