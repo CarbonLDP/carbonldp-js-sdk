@@ -1,5 +1,13 @@
 # [CarbonLDP JavaScript SDK](http://carbonldp.com/)
 
+<div align="center">
+  <a href="https://carbonldp.com/" style="text-decoration: none;">
+    <img width="500" src="https://carbonldp.com/wp-content/uploads/2018/10/logo-official.svg">
+  </a>
+  <br>
+  <br>
+</div>
+
 [![npm version][npm-image]][npm-url]
 [![Downloads][npm-downloads]][npm-url]
 [![Join the chat at https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK][gitter-image]][gitter-url]
