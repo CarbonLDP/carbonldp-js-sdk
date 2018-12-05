@@ -1,4 +1,12 @@
-# [CarbonLDP JavaScript SDK](http://carbonldp.com/)
+# [CarbonLDP JavaScript SDK](https://carbonldp.com/)
+
+<div align="center">
+  <a href="https://carbonldp.com/" style="text-decoration: none;">
+    <img width="500" src="https://carbonldp.com/wp-content/uploads/2018/10/logo-official.svg">
+  </a>
+  <br>
+  <br>
+</div>
 
 [![npm version][npm-image]][npm-url]
 [![Downloads][npm-downloads]][npm-url]
