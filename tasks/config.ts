@@ -1,7 +1,8 @@
-const SRC:string = "src/";
-const DIST:string = "dist/";
+export const SRC:string = "src/";
+export const DIST:string = "dist/";
 
 export default {
+	main: `${SRC}CarbonLDP.ts`,
 	src: [
 		`${SRC}**/*.ts`,
 		`!${SRC}**/*.spec.ts`,
