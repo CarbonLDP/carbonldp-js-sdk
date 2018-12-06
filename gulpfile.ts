@@ -26,3 +26,7 @@ export {
 	makeDirPackages,
 	preparePackage,
 } from "./tasks/package";
+
+export {
+	cleanSRC,
+} from "./tasks/src";
