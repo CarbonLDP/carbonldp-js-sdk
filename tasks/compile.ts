@@ -25,16 +25,16 @@ const cleaner:( folder:keyof typeof CONFIG["dist"], extension:string ) => Promis
 };
 
 export const cleanESM5:gulp.TaskFunction = () => cleaner( "esm5", "{js,map}" );
-cleanESM5.displayName = "cleanESM5";
+cleanESM5.displayName = "clean:esm5";
 
 export const cleanESM2015:gulp.TaskFunction = () => cleaner( "esm2015", "{js,map}" );
-cleanESM2015.displayName = "cleanESM2015";
+cleanESM2015.displayName = "clean:esm2015";
 
 export const cleanCJS:gulp.TaskFunction = () => cleaner( "cjs", "{js,map}" );
-cleanCJS.displayName = "cleanCJS";
+cleanCJS.displayName = "clean:cjs";
 
 export const cleanTypes:gulp.TaskFunction = () => cleaner( "types", "d.ts" );
-cleanTypes.displayName = "cleanTypes";
+cleanTypes.displayName = "clean:types";
 
 
 /**
@@ -79,7 +79,7 @@ export const compileESM5:gulp.TaskFunction = compiler( CONFIG.dist.esm5, {
 	allowSyntheticDefaultImports: true,
 	stream: "js",
 } );
-compileESM5.displayName = "compileESM5";
+compileESM5.displayName = "compile:esm5";
 
 export const compileESM2015:gulp.TaskFunction = compiler( CONFIG.dist.esm2015, {
 	module: "es2015",
@@ -87,33 +87,33 @@ export const compileESM2015:gulp.TaskFunction = compiler( CONFIG.dist.esm2015, {
 	allowSyntheticDefaultImports: true,
 	stream: "js",
 } );
-compileESM2015.displayName = "compileESM2015";
+compileESM2015.displayName = "compile:esm2015";
 
 export const compileCJS5:gulp.TaskFunction = compiler( CONFIG.dist.cjs, {
 	module: "commonjs",
 	target: "es5",
 	stream: "js",
 } );
-compileCJS5.displayName = "compileCJS5";
+compileCJS5.displayName = "compile:cjs5";
 
 export const compileTypes:gulp.TaskFunction = compiler( CONFIG.dist.types, {
 	target: "es2015",
 	declaration: true,
 	stream: "dts",
 } );
-compileTypes.displayName = "compileTypes";
+compileTypes.displayName = "compile:types";
 
 
 // Builders that merge the cleaning and compilation
 
 export const buildESM2015:gulp.TaskFunction = gulp.series( cleanESM2015, compileESM2015 );
-buildESM2015.displayName = "buildESM2015";
+buildESM2015.displayName = "build:esm2015";
 
 export const buildESM5:gulp.TaskFunction = gulp.series( cleanESM5, compileESM5 );
-buildESM5.displayName = "buildESM5";
+buildESM5.displayName = "build:esm5";
 
 export const buildCJS5:gulp.TaskFunction = gulp.series( cleanESM5, compileCJS5 );
-buildCJS5.displayName = "buildCJS5";
+buildCJS5.displayName = "build:cjs5";
 
 export const buildTypes:gulp.TaskFunction = gulp.series( cleanESM5, compileTypes );
-buildTypes.displayName = "buildTypes";
+buildTypes.displayName = "build:types";
