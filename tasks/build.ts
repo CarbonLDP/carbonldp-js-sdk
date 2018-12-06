@@ -6,6 +6,7 @@ import replace from "gulp-replace";
 import { bundleSFX } from "./bundle";
 import { compileCJS5, compileESM2015, compileESM5, compileTypes } from "./compile";
 import CONFIG, { DIST } from "./config";
+import { preparePackage } from "./package";
 
 
 export const version:gulp.TaskFunction = () => {
@@ -29,8 +30,8 @@ export const build:gulp.TaskFunction = gulp.series(
 		gulp.parallel( compileESM5, compileESM2015, compileCJS5, compileTypes ),
 		bundleSFX
 		// FIXME: Add compile:documentation
-		// FIXME: Add prepare:npm-package
-	)
+	),
+	preparePackage
 );
 build.displayName = "build";
 

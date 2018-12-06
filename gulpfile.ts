@@ -19,3 +19,10 @@ export {
 	cleanDist,
 	build,
 } from "./tasks/build";
+
+export {
+	copyPackage,
+	copyMarkdowns,
+	makeDirPackages,
+	preparePackage,
+} from "./tasks/package";
