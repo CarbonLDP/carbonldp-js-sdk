@@ -40,6 +40,107 @@ describe( "QueryableDocumentTrait", () => {
 		} );
 
 
+		describe( "QueryableDocumentTrait.$get", () => {
+
+			it( "should exist", () => {
+				expect( resource.$get ).toBeDefined();
+				expect( resource.$get ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let spy:jasmine.Spy;
+			beforeEach( () => {
+				spy = spyOnDecorated( $repository, "get" )
+					.and.returnValue( Promise.resolve( null ) );
+			} );
+
+
+			it( "should call repository with absolute URI when empty", async () => {
+				await resource.$get( "https://example.com/another-resource/" );
+				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/" );
+			} );
+
+			it( "should call repository with absolute URI when options", async () => {
+				await resource.$get( "https://example.com/another-resource/", { timeout: 5050 } );
+				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { timeout: 5050 } );
+			} );
+
+			it( "should call repository with absolute URI when query", async () => {
+				await resource.$get( "https://example.com/another-resource/", queryBuilderFn );
+				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", queryBuilderFn );
+			} );
+
+			it( "should call repository with absolute URI when options and query", async () => {
+				await resource.$get( "https://example.com/another-resource/", { timeout: 5050 }, queryBuilderFn );
+				expect( spy ).toHaveBeenCalledWith( "https://example.com/another-resource/", { timeout: 5050 }, queryBuilderFn );
+			} );
+
+
+			it( "should call repository with resoled relative URI when empty", async () => {
+				await resource.$get( "relative/" );
+				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/" );
+			} );
+
+			it( "should call repository with resoled relative URI when options", async () => {
+				await resource.$get( "relative/", { timeout: 5050 } );
+				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { timeout: 5050 } );
+			} );
+
+			it( "should call repository with resoled relative URI when query", async () => {
+				await resource.$get( "relative/", queryBuilderFn );
+				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", queryBuilderFn );
+			} );
+
+			it( "should call repository with resoled relative URI when options and query", async () => {
+				await resource.$get( "relative/", { timeout: 5050 }, queryBuilderFn );
+				expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/relative/", { timeout: 5050 }, queryBuilderFn );
+			} );
+
+
+			it( "should call repository with multiple absolute URI", async () => {
+				await resource.$get( [ "https://example.com/resource-1/", "https://example.com/resource-2/" ] );
+				expect( spy ).toHaveBeenCalledWith( [ "https://example.com/resource-1/", "https://example.com/resource-2/" ] );
+			} );
+
+			it( "should call repository with multiple absolute URI when options", async () => {
+				await resource.$get( [ "https://example.com/resource-1/", "https://example.com/resource-2/" ], { timeout: 5050 } );
+				expect( spy ).toHaveBeenCalledWith( [ "https://example.com/resource-1/", "https://example.com/resource-2/" ], { timeout: 5050 } );
+			} );
+
+			it( "should call repository with multiple absolute URI when query", async () => {
+				await resource.$get( [ "https://example.com/resource-1/", "https://example.com/resource-2/" ], queryBuilderFn );
+				expect( spy ).toHaveBeenCalledWith( [ "https://example.com/resource-1/", "https://example.com/resource-2/" ], queryBuilderFn );
+			} );
+
+			it( "should call repository with multiple absolute URI when options and query", async () => {
+				await resource.$get( [ "https://example.com/resource-1/", "https://example.com/resource-2/" ], { timeout: 5050 }, queryBuilderFn );
+				expect( spy ).toHaveBeenCalledWith( [ "https://example.com/resource-1/", "https://example.com/resource-2/" ], { timeout: 5050 }, queryBuilderFn );
+			} );
+
+
+			it( "should call repository with multiple resoled relative URI when empty", async () => {
+				await resource.$get( [ "relative-1/", "relative-2/" ] );
+				expect( spy ).toHaveBeenCalledWith( [ "https://example.com/resource/relative-1/", "https://example.com/resource/relative-2/" ] );
+			} );
+
+			it( "should call repository with multiple resoled relative URI when options", async () => {
+				await resource.$get( [ "relative-1/", "relative-2/" ], { timeout: 5050 } );
+				expect( spy ).toHaveBeenCalledWith( [ "https://example.com/resource/relative-1/", "https://example.com/resource/relative-2/" ], { timeout: 5050 } );
+			} );
+
+			it( "should call repository with multiple resoled relative URI when query", async () => {
+				await resource.$get( [ "relative-1/", "relative-2/" ], queryBuilderFn );
+				expect( spy ).toHaveBeenCalledWith( [ "https://example.com/resource/relative-1/", "https://example.com/resource/relative-2/" ], queryBuilderFn );
+			} );
+
+			it( "should call repository with multiple resoled relative URI when options and query", async () => {
+				await resource.$get( [ "relative-1/", "relative-2/" ], { timeout: 5050 }, queryBuilderFn );
+				expect( spy ).toHaveBeenCalledWith( [ "https://example.com/resource/relative-1/", "https://example.com/resource/relative-2/" ], { timeout: 5050 }, queryBuilderFn );
+			} );
+
+		} );
+
+
 		describe( "QueryableDocumentTrait.$getChildren", () => {
 
 			it( "should exist", () => {
