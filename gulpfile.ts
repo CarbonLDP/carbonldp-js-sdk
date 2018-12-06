@@ -37,3 +37,9 @@ export {
 	testBrowser,
 	testBrowserWatch,
 } from "./tasks/test";
+
+export {
+	compileDocumentation,
+	compileDgeni,
+	documentationMinify,
+} from "./tasks/documentation";
