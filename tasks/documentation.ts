@@ -4,8 +4,6 @@ import htmlMin from "gulp-htmlmin";
 
 
 export const compileDgeni:gulp.TaskFunction = () => {
-	require( "ts-node/register/transpile-only" );
-
 	const dgeni:Dgeni = new Dgeni( [
 		require( "docs-generator" )
 			.config( function( templateFinder:any, templateEngine:any ):void {
