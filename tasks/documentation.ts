@@ -1,11 +1,12 @@
 import { Dgeni } from "dgeni";
+import docsGenerator from "docs-generator";
 import gulp from "gulp";
 import htmlMin from "gulp-htmlmin";
 
 
 export const compileDgeni:gulp.TaskFunction = () => {
 	const dgeni:Dgeni = new Dgeni( [
-		require( "docs-generator" )
+		docsGenerator
 			.config( function( templateFinder:any, templateEngine:any ):void {
 				// Configure pattern for Handlebars templates
 				templateFinder.templateFolders = [ "build/docs/templates/html/" ];
