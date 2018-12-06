@@ -43,3 +43,8 @@ export {
 	compileDgeni,
 	documentationMinify,
 } from "./tasks/documentation";
+
+export {
+	lint,
+	lintTypescript,
+} from "./tasks/lint";
