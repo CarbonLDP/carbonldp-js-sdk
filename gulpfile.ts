@@ -30,3 +30,10 @@ export {
 export {
 	cleanSRC,
 } from "./tasks/src";
+
+export {
+	test,
+	testNode,
+	testBrowser,
+	testBrowserWatch,
+} from "./tasks/test";
