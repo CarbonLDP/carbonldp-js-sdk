@@ -22,7 +22,7 @@ describe( "QueryObject", () => {
 		context.extendObjectSchema( {
 			"ex": "http://example.com/ns#",
 		} );
-		queryContainer = new QueryContainer( context, { uri: "root" } );
+		queryContainer = new QueryContainer( context, { uris: [ "root" ] } );
 	} );
 
 

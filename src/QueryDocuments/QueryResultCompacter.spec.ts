@@ -24,7 +24,7 @@ describe( "QueryResultCompacter", () => {
 
 		registry = GeneralRegistry.create( { __modelDecorator: Document, context: context } );
 
-		queryContainer = new QueryContainer( context, { uri: "root/" } );
+		queryContainer = new QueryContainer( context, { uris: [ "root/" ] } );
 	} );
 
 

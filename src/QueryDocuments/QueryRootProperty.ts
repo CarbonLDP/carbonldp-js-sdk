@@ -22,7 +22,7 @@ export class QueryRootProperty extends QueryProperty {
 			optional: false,
 			propertyType: QueryPropertyType.PARTIAL,
 
-			values: [ data.documentIRI ],
+			values: data.values,
 		} );
 	}
 

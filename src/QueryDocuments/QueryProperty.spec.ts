@@ -24,7 +24,7 @@ describe( "QueryProperty", () => {
 	let queryContainer:QueryContainer;
 	beforeEach( () => {
 		context = createMockContext( { settings: { vocabulary: "https://example.com/vocab#" } } );
-		queryContainer = new QueryContainer( context, { uri: "root/" } );
+		queryContainer = new QueryContainer( context, { uris: [ "root/" ] } );
 	} );
 
 	describe( "QueryProperty.constructor", () => {

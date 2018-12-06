@@ -45,7 +45,7 @@ describe( "QueryDocumentBuilder", () => {
 			},
 		} );
 
-		queryContainer = new QueryContainer( context, { uri: "https://example.com/#root" } );
+		queryContainer = new QueryContainer( context, { uris: [ "https://example.com/#root" ] } );
 		baseProperty = queryContainer._queryProperty;
 	} );
 
@@ -502,7 +502,7 @@ describe( "SubQueryDocumentsBuilder", () => {
 			"ex": "https://example.com/ns#",
 		} );
 
-		queryContainer = new QueryContainer( context, { uri: "https://example.com/#root" } );
+		queryContainer = new QueryContainer( context, { uris: [ "https://example.com/#root" ] } );
 		baseProperty = queryContainer._queryProperty as QueryRootProperty;
 	} );
 

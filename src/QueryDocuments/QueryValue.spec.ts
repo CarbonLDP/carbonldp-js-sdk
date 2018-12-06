@@ -23,7 +23,7 @@ describe( "QueryValue", () => {
 	let queryContainer:QueryContainer;
 	beforeEach( () => {
 		context = createMockContext();
-		queryContainer = new QueryContainer( context, { uri: "root" } );
+		queryContainer = new QueryContainer( context, { uris: [ "root" ] } );
 	} );
 
 

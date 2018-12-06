@@ -22,13 +22,13 @@ describe( "QueryContainer", () => {
 	describe( "QueryContainer.constructor", () => {
 
 		it( "should be instantiable", () => {
-			const queryContainer:QueryContainer = new QueryContainer( context, { uri: "property/" } );
+			const queryContainer:QueryContainer = new QueryContainer( context, { uris: [ "property/" ] } );
 			expect( queryContainer ).toBeDefined();
 			expect( queryContainer ).toEqual( jasmine.any( QueryContainer ) );
 		} );
 
 		it( "should init property", () => {
-			const queryContainer:QueryContainer = new QueryContainer( context, { uri: "property/" } );
+			const queryContainer:QueryContainer = new QueryContainer( context, { uris: [ "property/" ] } );
 
 			expect( queryContainer._queryProperty ).toEqual( jasmine.any( QueryRootProperty ) );
 			expect( queryContainer._queryProperty.name ).toBe( "document" );
@@ -45,7 +45,7 @@ describe( "QueryContainer", () => {
 
 
 		it( "should use the literal serializers of carbon", () => {
-			const queryContainer:QueryContainer = new QueryContainer( context, { uri: "property/" } );
+			const queryContainer:QueryContainer = new QueryContainer( context, { uris: [ "property/" ] } );
 			const spy:jasmine.Spy = spyOnProperty( context.jsonldConverter, "literalSerializers", "get" ).and.callThrough();
 
 			queryContainer.serializeLiteral( "http://www.w3.org/2001/XMLSchema#string", "value" );
@@ -53,7 +53,7 @@ describe( "QueryContainer", () => {
 		} );
 
 		it( "should get the correct literal serializer", () => {
-			const queryContainer:QueryContainer = new QueryContainer( context, { uri: "property/" } );
+			const queryContainer:QueryContainer = new QueryContainer( context, { uris: [ "property/" ] } );
 			const spy:jasmine.Spy = spyOn( context.jsonldConverter.literalSerializers, "get" ).and.callThrough();
 
 			queryContainer.serializeLiteral( "http://www.w3.org/2001/XMLSchema#string", "value" );
