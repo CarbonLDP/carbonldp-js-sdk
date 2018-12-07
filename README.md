@@ -64,7 +64,7 @@ npm install carbonldp
 ├── .gitignore                          # Ignore file for git
 ├── .nvmrc                              # nvm configuration file that specifies supported Node.js version (for development)
 ├── CHANGELOG.md                        # File to track package changes
-├── gulpfile.js                         # Gulp's configuration file
+├── gulpfile.ts                         # Gulp's configuration file
 ├── karma.conf.js                       # Karma configuration file used for the Browser tests
 ├── LICENSE                             # Self explanatory
 ├── package.json                        # npm's configuration file

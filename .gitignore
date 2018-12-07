@@ -16,6 +16,12 @@ test/helpers/**/*.map
 test/mock-sockjs/*.js
 test/mock-sockjs/*.map
 
+# Gulp tasks
+tasks/**/*.js
+tasks/**/*.map
+gulpfile.js
+gulpfile.js.map
+
 # Dgeni
 build/docs/docs-generator/**/*.js
 build/docs/docs-generator/**/*.map
