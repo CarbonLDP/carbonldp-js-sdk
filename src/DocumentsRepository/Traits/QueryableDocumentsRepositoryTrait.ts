@@ -61,6 +61,19 @@ export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositor
 	 * @param queryBuilderFn Function that specify the structure of the document to be retrieved.
 	 */
 	get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	/**
+	 * Retrieves the properties set by the query function, of the documents specified.
+	 * @param uris URIs of the documents to be retrieved.
+	 * @param queryBuilderFn Function that specify the structure of the documents to be retrieved.
+	 */
+	get<T extends object>( uris:string[], queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
+	/**
+	 * Retrieves the entire documents of the URIs specified or only the properties set by the query function when provided.
+	 * @param uris URIs of the documents to be retrieved.
+	 * @param requestOptions Customizable options for the request.
+	 * @param queryBuilderFn Function that specify the structure of the documents to be retrieved.
+	 */
+	get<T extends object>( uris:string[], requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
 
 	/**
 	 * Resolves the properties of the document of the URI specified set by the query function.
@@ -145,11 +158,72 @@ type QueryData = {
 };
 
 
-function __executeQueryContainer<T extends object>( this:void, repository:QueryableDocumentsRepositoryTrait, url:string, requestOptions:RequestOptions, queryContainer:QueryContainer ):Promise<(T & Document)[]> {
+function __executeQueryBuilder( queryContainer:QueryContainer, queryData:QueryData ):void {
+	const queryBuilder:QueryDocumentBuilder | QueryDocumentsBuilder = "containerPropertyType" in queryContainer._queryProperty
+		? new QueryDocumentsBuilder( queryContainer, queryContainer._queryProperty )
+		: new QueryDocumentBuilder( queryContainer, queryContainer._queryProperty );
+
+	if( queryData.rootType !== void 0 ) queryContainer._queryProperty
+		.setType( queryData.rootType );
+
+	if( queryData.queryBuilderFn && queryData.queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
+		throw new IllegalArgumentError( "The provided query builder was not returned" );
+}
+
+function __sortQueryDocuments<T extends Document>( queryContainer:QueryContainer, documents:T[] ):T[] {
+	if( ! ("order" in queryContainer._queryProperty) || ! queryContainer._queryProperty.order ) return documents;
+
+	const { path, flow } = queryContainer._queryProperty.order;
+	const inverter:number = flow === "DESC" ? - 1 : 1;
+
+	return documents.sort( ( a:any, b:any ) => {
+		a = _getPathProperty( a, path );
+		b = _getPathProperty( b, path );
+
+		const aValue:any = Pointer.is( a ) ? a.$id : a;
+		const bValue:any = Pointer.is( b ) ? b.$id : b;
+
+		if( aValue === bValue ) return 0;
+
+		if( aValue === void 0 ) return - 1 * inverter;
+		if( bValue === void 0 ) return inverter;
+
+		if( ! _areDifferentType( a, b ) ) {
+			if( Pointer.is( a ) ) {
+				const aIsBNode:boolean = URI.isBNodeID( aValue );
+				const bIsBNode:boolean = URI.isBNodeID( bValue );
+
+				if( aIsBNode && ! bIsBNode ) return - 1 * inverter;
+				if( bIsBNode && ! aIsBNode ) return inverter;
+			}
+		} else {
+			if( Pointer.is( a ) ) return - 1 * inverter;
+			if( Pointer.is( b ) ) return inverter;
+
+			if( isNumber( a ) ) return - 1 * inverter;
+			if( isNumber( b ) ) return inverter;
+
+			if( isDate( a ) ) return - 1 * inverter;
+			if( isDate( b ) ) return inverter;
+
+			if( isBoolean( a ) ) return - 1 * inverter;
+			if( isBoolean( b ) ) return inverter;
+
+			if( isString( a ) ) return - 1 * inverter;
+			if( isString( b ) ) return inverter;
+		}
+
+		if( aValue < bValue ) return - 1 * inverter;
+		if( aValue > bValue ) return inverter;
+	} );
+}
+
+
+function __requestQueryDocuments<T extends object>( this:void, repository:QueryableDocumentsRepositoryTrait, url:string, requestOptions:RequestOptions, queryContainer:QueryContainer ):Promise<(T & Document)[]> {
 	const construct:ConstructToken = new ConstructToken()
 		.addTriple(
 			// Add QueryMetadata of the target elements
-			new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDUtils.generate() }` ) )
+			new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${UUIDUtils.generate()}` ) )
 				.addProperty( new PropertyToken( "a" )
 					.addObject( queryContainer.compactIRI( C.VolatileResource ) )
 					.addObject( queryContainer.compactIRI( C.QueryMetadata ) )
@@ -204,15 +278,15 @@ function __executeQueryContainer<T extends object>( this:void, repository:Querya
 			return new QueryResultCompacter( repository.context.registry, queryContainer )
 				.compactDocuments<T & Document>( rdfDocuments, targetDocuments );
 		} )
+		.then( documents => __sortQueryDocuments( queryContainer, documents ) )
 		.catch( _getErrorResponseParserFn( repository.context.registry ) )
 		;
 }
 
-function __executeQueryBuilder<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryData:QueryData ):Promise<(T & Document)[]> {
-	const { queryBuilderFn } = queryData;
 
+function __requestRelations<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryData:QueryData ):Promise<(T & Document)[]> {
 	if( ! repository.context.registry.inScope( uri, true ) )
-		return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+		return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
 
 	const url:string = repository.context
 		.getObjectSchema()
@@ -223,75 +297,37 @@ function __executeQueryBuilder<T extends object>( repository:QueryableDocumentsR
 		uri: url,
 	} );
 
-	const queryBuilder:QueryDocumentBuilder | QueryDocumentsBuilder = "containerPropertyType" in queryContainer._queryProperty
-		? new QueryDocumentsBuilder( queryContainer, queryContainer._queryProperty )
-		: new QueryDocumentBuilder( queryContainer, queryContainer._queryProperty );
+	__executeQueryBuilder( queryContainer, queryData );
 
-	if( queryData.rootType !== void 0 ) queryContainer._queryProperty
-		.setType( queryData.rootType );
+	return __requestQueryDocuments<T>( repository, url, requestOptions, queryContainer );
+}
 
-	if( queryBuilderFn && queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
-		throw new IllegalArgumentError( "The provided query builder was not returned" );
+function __requestDocuments<T extends object>( repository:QueryableDocumentsRepositoryTrait, uris:string[], requestOptions:RequestOptions, queryData:QueryData ):Promise<(T & Document)[]> {
+	for( const uri of uris ) {
+		if( ! repository.context.registry.inScope( uri, true ) )
+			return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
+	}
 
-	return __executeQueryContainer<T>( repository, url, requestOptions, queryContainer )
-		.then( documents => {
-			if( ! ("order" in queryContainer._queryProperty) || ! queryContainer._queryProperty.order ) return documents;
+	const urls:string[] = uris.map( uri => repository.context
+		.getObjectSchema()
+		.resolveURI( uri, { base: true } )
+	);
 
-			const { path, flow } = queryContainer._queryProperty.order;
-			const inverter:number = flow === "DESC" ? - 1 : 1;
+	const queryContainer:QueryContainer = new QueryContainer( repository.context, {
+		uris: urls,
+	} );
 
-			return documents.sort( ( a:any, b:any ) => {
-				a = _getPathProperty( a, path );
-				b = _getPathProperty( b, path );
+	__executeQueryBuilder( queryContainer, queryData );
 
-				const aValue:any = Pointer.is( a ) ? a.$id : a;
-				const bValue:any = Pointer.is( b ) ? b.$id : b;
+	const url:string = urls.length === 1 ? urls[ 0 ] : repository.context.baseURI;
+	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentChecksums ] }, requestOptions );
 
-				if( aValue === bValue ) return 0;
-
-				if( aValue === void 0 ) return - 1 * inverter;
-				if( bValue === void 0 ) return inverter;
-
-				if( ! _areDifferentType( a, b ) ) {
-					if( Pointer.is( a ) ) {
-						const aIsBNode:boolean = URI.isBNodeID( aValue );
-						const bIsBNode:boolean = URI.isBNodeID( bValue );
-
-						if( aIsBNode && ! bIsBNode ) return - 1 * inverter;
-						if( bIsBNode && ! aIsBNode ) return inverter;
-					}
-				} else {
-					if( Pointer.is( a ) ) return - 1 * inverter;
-					if( Pointer.is( b ) ) return inverter;
-
-					if( isNumber( a ) ) return - 1 * inverter;
-					if( isNumber( b ) ) return inverter;
-
-					if( isDate( a ) ) return - 1 * inverter;
-					if( isDate( b ) ) return inverter;
-
-					if( isBoolean( a ) ) return - 1 * inverter;
-					if( isBoolean( b ) ) return inverter;
-
-					if( isString( a ) ) return - 1 * inverter;
-					if( isString( b ) ) return inverter;
-				}
-
-				if( aValue < bValue ) return - 1 * inverter;
-				if( aValue > bValue ) return inverter;
-			} );
-		} );
+	return __requestQueryDocuments<T>( repository, url, requestOptions, queryContainer );
 }
 
 
 function __getQueryable<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
-	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentChecksums ] }, requestOptions );
-
-	const queryData:QueryData = {
-		queryBuilderFn,
-	};
-
-	return __executeQueryBuilder<T>( repository, uri, requestOptions, queryData )
+	return __requestDocuments<T>( repository, [ uri ], requestOptions, { queryBuilderFn } )
 		.then( ( documents ) => documents[ 0 ] );
 }
 
@@ -305,19 +341,19 @@ function __addRefreshProperties( parentProperty:QueryProperty, queryableProperty
 
 function __refreshQueryable<T extends object>( this:void, repository:QueryableDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 	if( ! repository.context.registry.inScope( document.$id, true ) )
-		return Promise.reject( new IllegalArgumentError( `"${ document.$id }" is out of scope.` ) );
+		return Promise.reject( new IllegalArgumentError( `"${document.$id}" is out of scope.` ) );
 
 	const url:string = repository.context
 		.getObjectSchema()
 		.resolveURI( document.$id, { base: true } );
 
 
-	const queryContainer:QueryContainer = new QueryContainer( repository.context, { uri: url } );
+	const queryContainer:QueryContainer = new QueryContainer( repository.context, { uris: [ url ] } );
 	__addRefreshProperties( queryContainer._queryProperty, document.$_queryableMetadata );
 
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentChecksums ] }, requestOptions );
 
-	return __executeQueryContainer<T>( repository, url, requestOptions, queryContainer )
+	return __requestQueryDocuments<T>( repository, url, requestOptions, queryContainer )
 		.then( ( documents ) => documents[ 0 ] );
 }
 
@@ -344,13 +380,21 @@ type QueryBuilderFn = Function & (( queryBuilder:QueryDocumentBuilder ) => Query
  */
 export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTraitFactory = {
 	PROTOTYPE: {
-		get<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
+		get<T extends object>( this:QueryableDocumentsRepositoryTrait, uriOrURIs:string | string[], requestOptionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<(T & Document) | (T & Document)[]> {
 			const requestOptions:GETOptions = isObject( requestOptionsOrQueryBuilderFn ) ?
 				requestOptionsOrQueryBuilderFn : {};
 
 			queryBuilderFn = isFunction( requestOptionsOrQueryBuilderFn ) ?
 				requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
+			if( typeof uriOrURIs !== "string" ) {
+				return __requestDocuments<T>( this, uriOrURIs, requestOptions, {
+					rootType: queryBuilderFn ? void 0 : QueryPropertyType.FULL,
+					queryBuilderFn,
+				} );
+			}
+
+			const uri:string = uriOrURIs;
 			const target:Document | undefined = this.context.registry.hasPointer( uri ) ?
 				this.context.registry.getPointer( uri, true ) :
 				void 0;
@@ -399,7 +443,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			if( ! document.$_queryableMetadata ) return LDPDocumentsRepositoryTrait.PROTOTYPE
 				.saveAndRefresh.call( this, document, requestOptions );
 
-			if( document.$eTag === null ) return Promise.reject( new IllegalStateError( `The document "${ document.$id }" is locally outdated and cannot be saved.` ) );
+			if( document.$eTag === null ) return Promise.reject( new IllegalStateError( `The document "${document.$id}" is locally outdated and cannot be saved.` ) );
 
 			const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions || {} );
 			return this.save<T & Document>( document, cloneOptions )
@@ -418,7 +462,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 
 			RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentChecksums ] }, requestOptions );
 
-			return __executeQueryBuilder<T>( this, uri, requestOptions, {
+			return __requestRelations<T>( this, uri, requestOptions, {
 				rootType: queryBuilderFn ? void 0 : QueryPropertyType.FULL,
 				containerPropertyType: QueryContainerPropertyType.CHILD,
 				queryBuilderFn,
@@ -434,7 +478,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 
 			RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentChecksums ] }, requestOptions );
 
-			return __executeQueryBuilder<T>( this, uri, requestOptions, {
+			return __requestRelations<T>( this, uri, requestOptions, {
 				rootType: queryBuilderFn ? void 0 : QueryPropertyType.FULL,
 				containerPropertyType: QueryContainerPropertyType.MEMBER,
 				queryBuilderFn,
@@ -442,14 +486,14 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 		},
 
 		listChildren<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<(T & Document)[]> {
-			return __executeQueryBuilder<T>( this, uri, requestOptions, {
+			return __requestRelations<T>( this, uri, requestOptions, {
 				containerPropertyType: QueryContainerPropertyType.CHILD,
 				rootType: QueryPropertyType.EMPTY,
 			} );
 		},
 
 		listMembers<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<(T & Document)[]> {
-			return __executeQueryBuilder<T>( this, uri, requestOptions, {
+			return __requestRelations<T>( this, uri, requestOptions, {
 				rootType: QueryPropertyType.EMPTY,
 				containerPropertyType: QueryContainerPropertyType.MEMBER,
 			} );

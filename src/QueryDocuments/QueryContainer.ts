@@ -32,7 +32,7 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	private _variablesCounter:number;
 
 
-	constructor( context:AbstractContext<any, any, any>, propertyData:{ uri:string, containerPropertyType?:QueryContainerPropertyType } ) {
+	constructor( context:AbstractContext<any, any, any>, propertyData:{ uri:string, containerPropertyType:QueryContainerPropertyType } | { uris:string[] } ) {
 		const schema:DigestedObjectSchema = context.getObjectSchema();
 		super( {
 			iriResolver: __createIRIResolver( schema ),
@@ -50,14 +50,15 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 		this._variablesMap = new Map();
 
 		// Create target property
-		const iri:IRIToken = this.compactIRI( propertyData.uri );
-		if( propertyData.containerPropertyType === void 0 ) {
+		if( "uris" in propertyData ) {
+			const values:IRIToken[] = propertyData.uris.map( this.compactIRI, this );
 			this._queryProperty = new QueryRootProperty( {
 				queryContainer: this,
-				documentIRI: iri,
+				values: values,
 			} );
 
 		} else {
+			const iri:IRIToken = this.compactIRI( propertyData.uri );
 			this._queryProperty = new QueryContainerProperty( {
 				queryContainer: this,
 				containerIRI: iri,

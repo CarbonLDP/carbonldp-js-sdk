@@ -561,6 +561,71 @@
 				expect( doc.$isQueried() ).toBe( false );
 			} );
 
+			it( "get multiple partial", async function() {
+				const child1 = await root.$create( {
+					property1: "property 1",
+					property2: "property 2",
+					property3: "property 3",
+				} );
+
+				const child2 = await child1.$create( {
+					property1: "property 1",
+					property2: "property 2",
+					property3: "property 3",
+				} );
+
+				carbon.registry.removePointer( child1 );
+				carbon.registry.removePointer( child2 );
+
+
+				const docs = await carbon.documents
+					.$get( [ child1.$id, child2.$id ], _ => _.properties( {
+						property1: _.inherit,
+						property2: _.inherit,
+					} ) );
+
+				expect( docs[ 0 ].property1 ).toBe( "property 1" );
+				expect( docs[ 0 ].property2 ).toBe( "property 2" );
+				expect( docs[ 0 ].property3 ).toBeUndefined();
+				expect( docs[ 0 ].$isQueried() ).toBe( true );
+
+				expect( docs[ 1 ].property1 ).toBe( "property 1" );
+				expect( docs[ 1 ].property2 ).toBe( "property 2" );
+				expect( docs[ 1 ].property3 ).toBeUndefined();
+				expect( docs[ 1 ].$isQueried() ).toBe( true );
+			} );
+
+			it( "get multiple full", async function() {
+				const child1 = await root.$create( {
+					property1: "property 1",
+					property2: "property 2",
+					property3: "property 3",
+				} );
+
+				const child2 = await child1.$create( {
+					property1: "property 1",
+					property2: "property 2",
+					property3: "property 3",
+				} );
+
+				carbon.registry.removePointer( child1 );
+				carbon.registry.removePointer( child2 );
+
+
+				const docs = await carbon.documents
+					.$get( [ child1.$id, child2.$id ] );
+
+				expect( docs[ 0 ].property1 ).toBe( "property 1" );
+				expect( docs[ 0 ].property2 ).toBe( "property 2" );
+				expect( docs[ 0 ].property3 ).toBe( "property 3" );
+				expect( docs[ 0 ].$isQueried() ).toBe( false );
+
+				expect( docs[ 1 ].property1 ).toBe( "property 1" );
+				expect( docs[ 1 ].property2 ).toBe( "property 2" );
+				expect( docs[ 1 ].property3 ).toBe( "property 3" );
+				expect( docs[ 1 ].$isQueried() ).toBe( false );
+			} );
+
 		} );
 
 	} );

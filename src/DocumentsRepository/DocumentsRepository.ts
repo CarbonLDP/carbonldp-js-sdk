@@ -34,6 +34,8 @@ export interface DocumentsRepository extends QueryableDocumentsRepositoryTrait, 
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
 	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	get<T extends object>( uris:string[], queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
+	get<T extends object>( uris:string[], requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
 
 	/**
 	 * @see {@link QueryableDocumentsRepositoryTrait.resolve}

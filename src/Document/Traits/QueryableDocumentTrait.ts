@@ -11,6 +11,10 @@ import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
 import { QueryDocumentBuilder } from "../../QueryDocuments/QueryDocumentBuilder";
 import { QueryDocumentsBuilder } from "../../QueryDocuments/QueryDocumentsBuilder";
 
+import { URI } from "../../RDF/URI";
+
+import { ResolvablePointer } from "../../Repository/ResolvablePointer";
+
 import { Document } from "../Document";
 import { LDPDocumentTrait } from "./LDPDocumentTrait";
 
@@ -59,6 +63,19 @@ export interface QueryableDocumentTrait extends LDPDocumentTrait, QueryablePoint
 	 * @param queryBuilderFn Function that specify the structure of the document to be retrieved.
 	 */
 	$get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	/**
+	 * Retrieves the properties set by the query function, of the documents specified.
+	 * @param uris URIs of the documents to be retrieved.
+	 * @param queryBuilderFn Function that specify the structure of the documents to be retrieved.
+	 */
+	$get<T extends object>( uris:string[], queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
+	/**
+	 * Retrieves the entire documents of the URIs specified or only the properties set by the query function when provided.
+	 * @param uris URIs of the documents to be retrieved.
+	 * @param requestOptions Customizable options for the request.
+	 * @param queryBuilderFn Function that specify the structure of the documents to be retrieved.
+	 */
+	$get<T extends object>( uris:string[], requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
 
 	/**
 	 * Resolves the specific properties of the current document set by the query function.
@@ -169,7 +186,7 @@ type QueryDocsBuilderFn = Function & (( queryBuilder:QueryDocumentsBuilder ) => 
  * Factory, decorator and utils for {@link QueryableDocumentTrait}.
  */
 export type QueryableDocumentTraitFactory =
-	& ModelPrototype<QueryableDocumentTrait, LDPDocumentTrait & QueryablePointer>
+	& ModelPrototype<QueryableDocumentTrait, LDPDocumentTrait & QueryablePointer, "$get">
 	& ModelDecorator<QueryableDocumentTrait, BaseQueryableDocumentTrait>
 	;
 
@@ -178,6 +195,14 @@ export type QueryableDocumentTraitFactory =
  */
 export const QueryableDocumentTrait:QueryableDocumentTraitFactory = {
 	PROTOTYPE: {
+		$get( this:QueryableDocumentTrait, uris:any | string[], ...args:any[] ):Promise<any> {
+			if( ! Array.isArray( uris ) )
+				return ResolvablePointer.PROTOTYPE.$get.call( this, uris, ...args );
+
+			const resolvedURIs:string[] = uris.map( uri => URI.resolve( this.$id, uri ) );
+			return this.$repository.get( resolvedURIs, ...args );
+		},
+
 		$getChildren<T extends object>( this:QueryableDocumentTrait, uriOrQueryBuilderFnOrOptions:string | QueryDocsBuilderFn | RequestOptions, queryBuilderFnOrOptions?:QueryDocsBuilderFn | RequestOptions, queryBuilderFn?:QueryDocsBuilderFn ):Promise<(T & Document)[]> {
 			const { _uri, _args } = _parseURIParams( this, uriOrQueryBuilderFnOrOptions, arguments );
 			// FIXME
