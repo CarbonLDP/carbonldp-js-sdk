@@ -1,7 +1,7 @@
 type Options = {};
 
 const LINK_TAG_REGEX:RegExp = /({@link ?[^]*?})/;
-const PATH_REGEX:RegExp = /(^|[^\/])(CarbonLDP(?:[.\/][^\s]+?)?)([()}<>|&\s,\]\[]|$)/gm;
+const PATH_REGEX:RegExp = /(^|[^\/])(CarbonLDP(?:[.\/][^\s]+?)?)([()}<>|&\s,;\]\[]|$)/gm;
 const PATH_PROP_TYPE_REGEX:RegExp = /(CarbonLDP(?:[.\/][^\s]+?)?)\[&quot;([^\s]+?)&quot;]/gm;
 
 export default ( str:string, isHTML?:boolean | Options, noParagraph?:boolean | Options ) => {

@@ -21,3 +21,4 @@ export { QuerySubPropertyData } from "./QuerySubPropertyData";
 export { QueryValue } from "./QueryValue";
 export { QueryVariable } from "./QueryVariable";
 export { SubQueryPropertyDefinition } from "./SubQueryPropertyDefinition";
+export * from "./Utils";

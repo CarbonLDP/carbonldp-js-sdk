@@ -41,7 +41,7 @@ interface CheckedApiDoc extends ApiDoc {
 	typeChecker:TypeChecker;
 }
 
-const TYPE_LABELS_REGEX:RegExp = /((?:&#x3D;&gt;|&#x3D;|&lt;|&amp;|extends|is |=>|[|=<&,:](?!gt;)|^) ?)([_$a-zA-Z\xA0-\uFFFF][._$a-zA-Z0-9\xA0-\uFFFF]*)/g;
+const TYPE_LABELS_REGEX:RegExp = /((?:&#x3D;&gt;|&#x3D;|&lt;|&amp;|extends|is |=>|[|=<&,:;](?!gt;)|^) ?)([_$a-zA-Z\xA0-\uFFFF][._$a-zA-Z0-9\xA0-\uFFFF]*)/gm;
 
 export class OldDocsTree implements Processor {
 	$runAfter:[ "paths-computed" ];

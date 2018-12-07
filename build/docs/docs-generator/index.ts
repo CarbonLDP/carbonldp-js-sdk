@@ -4,18 +4,18 @@ import JsDocs from "dgeni-packages/jsdoc";
 import Links from "dgeni-packages/links";
 import Typescript from "dgeni-packages/typescript";
 
-import * as path from "path";
-// Inline tags
+import path from "path";
+
 import { INLINE_TAGS } from "./inline-tags/index";
-// Model Tags
+
 import { generics } from "./model-tags/generics";
-// Packages
+
 import HandleBars from "./packages/handlebars/index";
-// Processors
+
+import readTypeScriptModules from "./processors/extendedReadTypeScriptModules";
 import normalizeDocs from "./processors/normalizeDocs";
 import oldDocsTree from "./processors/oldDocsTree";
-import readTypeScriptModules from "./processors/extendedReadTypeScriptModules";
-// Services
+
 import getLinkInfo from "./services/getLinkInfo";
 import resolveUrl from "./services/resolveUrl";
 
