@@ -58,7 +58,7 @@ export const cleanSRC:gulp.TaskFunction = ( done ) => {
 	}
 
 	function processFile( file:string ):Promise<boolean> {
-		let extension:string = getFileExtension( file );
+		const extension:string | null = getFileExtension( file );
 		if( extension === null ) return Promise.resolve( false );
 
 		let hasSrcFilePromise:Promise<boolean>;
@@ -99,7 +99,7 @@ export const cleanSRC:gulp.TaskFunction = ( done ) => {
 	function mapHasSrc( file:string ):Promise<boolean> {
 		const directory:string = getDirectory( file );
 		const srcFileName:string = getFileName( file );
-		const srcFileExtension:string = getFileExtension( srcFileName );
+		const srcFileExtension:string | null = getFileExtension( srcFileName );
 
 		const srcFile:string = directory + "/" + srcFileName;
 
@@ -152,7 +152,7 @@ export const cleanSRC:gulp.TaskFunction = ( done ) => {
 		return fileParts.join( "." );
 	}
 
-	function getFileExtension( file:string ):string {
+	function getFileExtension( file:string ):string | null {
 		const fileName:string = getFile( file );
 		const fileParts:string[] = fileName.split( "." );
 
