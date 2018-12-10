@@ -13,10 +13,10 @@ export interface Arguments {
 
 export interface Signature extends MemberLike {
 	name:string;
-	generics:string[];
+	generics?:string[];
 	description?:string;
 	arguments:Arguments[];
-	returns:Returns;
+	returns?:Returns;
 }
 
 export interface MethodDoc extends MemberLike {

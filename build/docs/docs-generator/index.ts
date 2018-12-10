@@ -12,7 +12,7 @@ import { generics } from "./model-tags/generics";
 
 import HandleBars from "./packages/handlebars/index";
 
-import readTypeScriptModules from "./processors/extendedReadTypeScriptModules";
+import readTypeScriptModulesFactory from "./processors/extendedReadTypeScriptModules";
 import normalizeDocs from "./processors/normalizeDocs";
 import oldDocsTree from "./processors/oldDocsTree";
 
@@ -35,7 +35,7 @@ export = new Package( "docs-generator",
 	.factory( getLinkInfo )
 	.factory( resolveUrl )
 
-	.processor( readTypeScriptModules )
+	.processor( readTypeScriptModulesFactory )
 	.processor( normalizeDocs )
 	.processor( oldDocsTree )
 

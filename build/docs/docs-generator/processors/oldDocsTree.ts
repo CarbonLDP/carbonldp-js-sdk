@@ -6,11 +6,11 @@ import { ClassLikeExportDoc, HeritageInfo } from "dgeni-packages/typescript/api-
 import { ConstExportDoc } from "dgeni-packages/typescript/api-doc-types/ConstExportDoc";
 import { EnumExportDoc } from "dgeni-packages/typescript/api-doc-types/EnumExportDoc";
 import { FunctionExportDoc } from "dgeni-packages/typescript/api-doc-types/FunctionExportDoc";
-import { TypeAliasExportDoc } from "dgeni-packages/typescript/api-doc-types/TypeAliasExportDoc";
 import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
 import { MemberDoc } from "dgeni-packages/typescript/api-doc-types/MemberDoc";
 import { MethodMemberDoc } from "dgeni-packages/typescript/api-doc-types/MethodMemberDoc";
 import { PropertyMemberDoc } from "dgeni-packages/typescript/api-doc-types/PropertyMemberDoc";
+import { TypeAliasExportDoc } from "dgeni-packages/typescript/api-doc-types/TypeAliasExportDoc";
 
 import { Symbol, SymbolFlags, TypeChecker, TypeNode } from "typescript";
 
@@ -99,7 +99,7 @@ export class OldDocsTree implements Processor {
 
 		const reexports:ReexportDoc[] = doc.exports
 			.filter( _ => _.docType === "module" )
-			.map( _ => <ReexportDoc> ({
+			.map( _ => <ReexportDoc>({
 				access: "static",
 				name: _.name,
 				originalLocation: _.path,
@@ -148,9 +148,9 @@ export class OldDocsTree implements Processor {
 		const indexMember:MethodMemberDoc | undefined = doc.members
 			.find( ( _ ):_ is MethodMemberDoc => _.name === "__index" );
 		if( indexMember ) properties
-			.push( this._getPropertyLike( <PropertyMemberDoc> {
+			.push( this._getPropertyLike( <PropertyMemberDoc>{
 				...indexMember,
-				name: `[ ${ indexMember.parameters.join() } ]`,
+				name: `[ ${indexMember.parameters.join()} ]`,
 				getAccessor: null,
 				setAccessor: null,
 			} ) );
@@ -189,7 +189,8 @@ export class OldDocsTree implements Processor {
 			.sort( compareNamed );
 
 		// Remove implementations when multiple signatures
-		[].concat( constructors, instanceMethods, staticMethods )
+		Array<MethodDoc | undefined>()
+			.concat( constructors, instanceMethods, staticMethods )
 			.forEach( _ => {
 				if( ! _ || _.signatures.length === 1 ) return;
 				_.signatures = _.signatures.slice( 1 );
@@ -266,7 +267,7 @@ export class OldDocsTree implements Processor {
 	private _getPropertyLike( doc:(ConstExportDoc | PropertyMemberDoc) & JSDoc ):PropertyDoc {
 		// Constants not having correct type
 		if( ! doc.type && "variableDeclaration" in doc )
-			doc.type = doc.variableDeclaration.type.getText();
+			doc.type = doc.variableDeclaration.type!.getText();
 
 		return {
 			...this._getMemberLike( doc ),
@@ -274,7 +275,7 @@ export class OldDocsTree implements Processor {
 			name: doc.name,
 			description: doc.description,
 
-			type: this._getExpandedType( doc, doc.type ),
+			type: this._getExpandedType( doc, doc.type! ),
 		};
 	}
 
@@ -288,7 +289,7 @@ export class OldDocsTree implements Processor {
 				description: _.description,
 				arguments: _.parameterDocs.map( __ => ({
 					name: __.name,
-					type: __.type,
+					type: __.type!,
 					description: __.description,
 					optional: __.isOptional,
 				}) ),
@@ -315,7 +316,7 @@ export class OldDocsTree implements Processor {
 	private _getConstructor( doc:MethodMemberDoc ):MethodDoc {
 		const method:MethodDoc = this._getFunctionLike( doc );
 
-		// Delete returns since constructor
+		// Delete returns since is a constructor
 		method.returns = undefined;
 		method.signatures.forEach( _ => _.returns = undefined );
 
@@ -328,7 +329,7 @@ export class OldDocsTree implements Processor {
 				? "static" : "instance",
 
 			optional: "isOptional" in doc ?
-				doc.isOptional : false,
+				! ! doc.isOptional : false,
 		};
 	}
 
@@ -344,7 +345,7 @@ export class OldDocsTree implements Processor {
 			const typeArguments:string[] = clause.type.typeArguments
 				.map( _ => this._getPathFromNode( doc, _ ) );
 
-			return `${ mainPath }<${ typeArguments.join( ", " ) }>`;
+			return `${mainPath}<${typeArguments.join( ", " )}>`;
 		} );
 
 	}
@@ -374,7 +375,9 @@ export class OldDocsTree implements Processor {
 			[ subName, rest ] = rest.split( /\.([^]*)/ );
 
 			const exportArray:Symbol[] | undefined = (symbol as any).exportArray || [];
-			const subSymbol:Symbol = exportArray.find( _ => _.name === subName );
+			const subSymbol:Symbol | undefined = exportArray
+				? exportArray.find( _ => _.name === subName )
+				: undefined;
 
 			symbol = subSymbol ? subSymbol :
 				symbol.exports && symbol.exports.get( subName as any );
@@ -393,13 +396,13 @@ export class OldDocsTree implements Processor {
 		if( ! doc ) return text;
 
 		return opts.keepName
-			? `{@link ${ doc.path } ${ text }}`
+			? `{@link ${doc.path} ${text}}`
 			: doc.path;
 	}
 
 	private _getExpandedType( doc:CheckedApiDoc, type:string, opts?:{ keepName?:boolean } ):string {
 		return type.replace( TYPE_LABELS_REGEX, ( _, before, label ) =>
-			`${ before }${ this._getPathFromName( doc, label, opts ) }`
+			`${before}${this._getPathFromName( doc, label, opts )}`
 		);
 	}
 }

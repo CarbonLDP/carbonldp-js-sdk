@@ -4,6 +4,6 @@ export interface ClassLikeDoc extends SuiteDoc {
 	description?:string;
 	generics?:string[];
 
-	"super-classes":string[];
-	interfaces:string[];
+	"super-classes"?:string[];
+	interfaces?:string[];
 }

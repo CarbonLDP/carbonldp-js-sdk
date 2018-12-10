@@ -70,7 +70,7 @@ export class NormalizeDocs implements Processor {
 			const reexports:ExtendedModuleDoc[] = moduleSymbol.reexportArray
 				.map( symbol => symbol.resolvedSymbol.valueDeclaration )
 				.map( declaration => docs.find( ( _ ):_ is ModuleDoc => _.declaration === declaration ) )
-				.filter( moduleDoc => ! ! moduleDoc )
+				.filter( ( moduleDoc ):moduleDoc is ExtendedModuleDoc => ! ! moduleDoc )
 			;
 
 			// Add to the exports array
@@ -132,7 +132,7 @@ export class NormalizeDocs implements Processor {
 					doc.content = this.tsHost.getContent( doc.symbol.getDeclarations()![ 0 ]! );
 					break;
 				default:
-					this.log.error( `Other declaration merged for ${ doc.name }` );
+					this.log.error( `Other declaration merged for ${doc.name}` );
 					break;
 			}
 
@@ -157,7 +157,7 @@ export class NormalizeDocs implements Processor {
 	}
 
 	private _addExportDoc( docs:DocCollection, moduleDoc:ModuleDoc, exportDoc:ExportDoc ):void {
-		this.log.debug( `>>>> EXPORT: ${ exportDoc.name } (${ exportDoc.docType }) from ${ moduleDoc.id }` );
+		this.log.debug( `>>>> EXPORT: ${exportDoc.name} (${exportDoc.docType}) from ${moduleDoc.id}` );
 
 		moduleDoc.exports.push( exportDoc );
 		docs.push( exportDoc );
