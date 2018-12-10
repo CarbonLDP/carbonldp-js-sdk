@@ -8,7 +8,7 @@ import URL from "url";
 
 
 class MockAgent {
-	protocol:string;
+	protocol:string | undefined;
 	defaultPort:number;
 	maxSockets:number;
 
@@ -33,16 +33,16 @@ interface AjaxResponse {
 
 
 class RequestStub {
-	response:string;
 	url:string | RegExp;
-	query:string;
+	query:string | undefined;
 	data:string | RegExp;
 	method:string;
 
-	status:number;
-	contentType:string;
-	responseText:string;
-	responseHeaders:{ [ p:string ]:string };
+	status?:number;
+	response?:string;
+	contentType?:string;
+	responseText?:string;
+	responseHeaders?:{ [ p:string ]:string };
 
 	constructor( url:string | RegExp, stubData:string | RegExp, method:string ) {
 		if( url instanceof RegExp ) {
@@ -66,7 +66,7 @@ class RequestStub {
 		this.responseHeaders = options.responseHeaders;
 	}
 
-	matches( fullUrl:string | RegExp, data:string, method:string ):boolean {
+	matches( fullUrl:string | RegExp, data?:string, method?:string ):boolean {
 		fullUrl = fullUrl.toString();
 
 		let urlMatches:boolean = false;
@@ -79,7 +79,7 @@ class RequestStub {
 
 		let dataMatches:boolean = false;
 		if( this.data instanceof RegExp ) {
-			dataMatches = this.data.test( data );
+			if( data ) dataMatches = this.data.test( data );
 		} else {
 			dataMatches = ! this.data || this.data === normalizeQuery( data );
 		}
@@ -94,15 +94,15 @@ class FakeClientRequest extends http.ClientRequest {
 	aborted:number;
 
 	url:string;
-	method:string;
+	method:string | undefined;
 	params:any;
 	requestHeaders:{ [ key:string ]:string };
 
 	private ajax:MockAjax;
 	private res:http.IncomingMessage;
-	private callback:Function;
+	private callback:Function | undefined;
 
-	private _ended:boolean;
+	private _ended:boolean | undefined;
 	private requestBodyBuffers:Buffer[];
 	private responseBodyBuffers:Buffer[];
 
@@ -120,6 +120,7 @@ class FakeClientRequest extends http.ClientRequest {
 
 		if( protocol === "https:" ) this.socket.authorized = true;
 		this.res.socket = this.socket;
+		this.aborted = 0;
 
 		this.callback = callback;
 		this.requestBodyBuffers = [];
@@ -127,7 +128,7 @@ class FakeClientRequest extends http.ClientRequest {
 
 		let url:string = "";
 		if( protocol )
-			url += `${ protocol }//`;
+			url += `${protocol}//`;
 		if( _options.hostname || _options.host )
 			url += _options.hostname || _options.host;
 		if( _options.path )
@@ -217,11 +218,9 @@ class FakeClientRequest extends http.ClientRequest {
 		this.res.headers = response.responseHeaders ? { ...response.responseHeaders } : {};
 
 		if( response.response || response.responseText ) {
-			const responseData:string | Buffer = response.response || response.responseText;
-			this.responseBodyBuffers.push( Buffer.isBuffer( responseData ) ?
-				responseData :
-				Buffer.from( responseData )
-			);
+			const responseData:string | Buffer = response.response! || response.responseText!;
+			const responseBuffer:Buffer = Buffer.isBuffer( responseData ) ? responseData : Buffer.from( responseData );
+			this.responseBodyBuffers.push( responseBuffer );
 		}
 
 		this.endFake();
@@ -230,7 +229,7 @@ class FakeClientRequest extends http.ClientRequest {
 	private responseWithStub():void {
 		if( this._ended ) return;
 
-		const stub:RequestStub = this.ajax.stubs.findStub( this.url, this.params, this.method );
+		const stub:RequestStub | undefined = this.ajax.stubs.findStub( this.url, this.params, this.method );
 		if( stub ) this.respondWith( stub );
 	}
 
@@ -265,7 +264,7 @@ class FakeClientRequest extends http.ClientRequest {
 
 			// Stream the response chunks one at a time.
 			let emitChunk:() => void = () => {
-				const chunk:Buffer = this.responseBodyBuffers.shift();
+				const chunk:Buffer | undefined = this.responseBodyBuffers.shift();
 				if( chunk ) {
 					this.res.push( chunk );
 					timers.setImmediate( emitChunk );
@@ -295,7 +294,7 @@ class StubTracker {
 		this.stubs.unshift( stub );
 	}
 
-	findStub( url:string, data?:string, method?:string ):RequestStub {
+	findStub( url:string, data?:string, method?:string ):RequestStub | undefined {
 		return this
 			.stubs
 			.find( stub => stub.matches( url, data, method ) );
@@ -318,16 +317,16 @@ class RequestTracker {
 		this.requests.push( request );
 	}
 
-	first():FakeClientRequest {
+	first():FakeClientRequest | undefined {
 		return this.at( 0 );
 	}
 
-	mostRecent():FakeClientRequest {
+	mostRecent():FakeClientRequest | undefined {
 		return this.at( this.requests.length - 1 );
 	}
 
-	at( index:number ):FakeClientRequest {
-		if( index >= this.requests.length ) return void 0;
+	at( index:number ):FakeClientRequest | undefined {
+		if( index >= this.requests.length ) return;
 		return this.requests[ index ];
 	}
 
@@ -355,7 +354,7 @@ class MockAjax {
 	readonly stubs:StubTracker;
 	readonly requests:RequestTracker;
 
-	private requestOverride:{ [ protocol:string ]:{ module:typeof http, request:typeof http.request } };
+	private requestOverride?:{ [ protocol:string ]:{ module:typeof http, request:typeof http.request } };
 
 	constructor() {
 		this.stubs = new StubTracker();
@@ -367,10 +366,10 @@ class MockAjax {
 		this.requestOverride = {};
 
 		[ "http", "https" ].forEach( protocol => {
-			if( this.requestOverride[ protocol ] ) throw new Error( "Module's request already overridden for " + protocol + " protocol." );
+			if( this.requestOverride![ protocol ] ) throw new Error( "Module's request already overridden for " + protocol + " protocol." );
 
 			const module:typeof http = { http, https }[ protocol ];
-			this.requestOverride[ protocol ] = { module, request: module.request };
+			this.requestOverride![ protocol ] = { module, request: module.request };
 
 			module.request = ( options, callback ):http.ClientRequest => {
 				const request:FakeClientRequest = new FakeClientRequest( this, options, callback );
@@ -387,7 +386,7 @@ class MockAjax {
 
 		//  Restore any overridden requests.
 		Object.keys( this.requestOverride )
-			.map( protocol => this.requestOverride[ protocol ] )
+			.map( protocol => this.requestOverride![ protocol ] )
 			.forEach( override => {
 				override.module.request = override.request;
 			} )
@@ -408,8 +407,8 @@ class MockAjax {
 }
 
 
-function normalizeQuery( query:string ):string {
-	if( ! query ) return void 0;
+function normalizeQuery( query?:string ):string | undefined {
+	if( ! query ) return;
 
 	return query
 		.split( "&" )
