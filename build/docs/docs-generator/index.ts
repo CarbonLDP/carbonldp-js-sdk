@@ -68,7 +68,12 @@ export = new Package( "docs-generator",
 
 		computePathsProcessor.pathTemplates.push( {
 			docTypes: [ "module" ],
-			pathTemplate: "carbonldp/${ id }",
+			getPath( doc:any ):string {
+				// Special case for main index
+				if( doc.id === "index" ) return "carbonldp";
+
+				return `carbonldp/${doc.id}`;
+			},
 			getOutputPath():void {},
 		} );
 

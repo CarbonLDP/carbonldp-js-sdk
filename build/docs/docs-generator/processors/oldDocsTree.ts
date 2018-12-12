@@ -405,7 +405,7 @@ export class OldDocsTree implements Processor {
 }
 
 function compareSuites( a:SuiteDoc, b:SuiteDoc ):number {
-	return a.id.localeCompare( b.id );
+	return a.path.localeCompare( b.path );
 }
 
 function compareNamed( a:{ name:string }, b:{ name:string } ):number {
