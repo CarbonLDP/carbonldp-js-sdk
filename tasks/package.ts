@@ -44,6 +44,8 @@ copyPackage.displayName = "copy:package";
 
 
 export const makeDirPackages:gulp.TaskFunction = async () => {
+	const mainPackage:any = JSON.parse( fs.readFileSync( "package.json", "utf8" ) );
+
 	const directories:string[] = glob
 		.sync( `${SRC}/*/**/index.ts` )
 		.map( file => file.replace( "/index.ts", "" ) )
@@ -66,6 +68,7 @@ export const makeDirPackages:gulp.TaskFunction = async () => {
 			module: path.join( path.relative( distEntry, moduleDir ), "index.js" ),
 			es2015: path.join( path.relative( distEntry, es2015Dir ), "index.js" ),
 			typings: path.join( path.relative( distEntry, typesDir ), "index.d.ts" ),
+			browser: mainPackage.browser,
 		};
 
 		const bodyStr:string = JSON.stringify( body, null, 2 );
