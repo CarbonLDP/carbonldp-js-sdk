@@ -3,8 +3,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
-<!--## [Unreleased]-->
-<!--### Added-->
+## [Unreleased]
+
+### Added
+
+- [#337](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/337) - Retrieve all properties of a document with additional sub-properties<br>
+	Example:<br>
+	```typescript
+	carbonldp.documents.$get(  [ "posts/a-post/" ], _ => _
+			.properties( _.all )
+            .properties( {
+                "comments": {
+               	    "query": _ => _
+              	        .properties( {
+             	            "author": _.inherit,
+            	            "content": _.inherit,
+             	        } ),
+               	},
+            } )
+        );
+	```
 
 <!--### Fixed-->
 
