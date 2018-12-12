@@ -376,7 +376,7 @@ describe( "QueryResultCompacter", () => {
 			] );
 
 			expect( compacted[ 0 ].pointer ).toBe( compacted[ 1 ].pointer );
-			expect( compacted[ 0 ].pointer as any as Document ).toEqual( jasmine.objectContaining( {
+			expect( compacted[ 0 ].pointer as any as Document ).toEqual( jasmine.objectContaining<Document>( {
 				$id: "https://example.com/shared-resource/",
 			} ) );
 		} );

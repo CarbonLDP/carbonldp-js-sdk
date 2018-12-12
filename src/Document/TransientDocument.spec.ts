@@ -412,7 +412,7 @@ describe( "TransientDocument", () => {
 				const fragment:TransientFragment = {} as any;
 				document.$__resourcesMap.set( "fragment", fragment );
 
-				expect( document.$getFragment( "#fragment" ) ).toBe( fragment );
+				expect( document.$getFragment<{}>( "#fragment" ) ).toBe( fragment );
 			} );
 
 			it( "should return null when absolute fragment label and not exits", () => {
@@ -426,7 +426,7 @@ describe( "TransientDocument", () => {
 				const fragment:TransientFragment = {} as any;
 				document.$__resourcesMap.set( "fragment", fragment );
 
-				expect( document.$getFragment( "https://example.com/document/#fragment" ) ).toBe( fragment );
+				expect( document.$getFragment<{}>( "https://example.com/document/#fragment" ) ).toBe( fragment );
 			} );
 
 			it( "should return null when label and not exits", () => {
@@ -440,7 +440,7 @@ describe( "TransientDocument", () => {
 				const fragment:TransientFragment = {} as any;
 				document.$__resourcesMap.set( "fragment", fragment );
 
-				expect( document.$getFragment( "fragment" ) ).toBe( fragment );
+				expect( document.$getFragment<{}>( "fragment" ) ).toBe( fragment );
 			} );
 
 			it( "should return null when blank node label and not exists", () => {
@@ -454,7 +454,7 @@ describe( "TransientDocument", () => {
 				const fragment:TransientFragment = {} as any;
 				document.$__resourcesMap.set( "_:1", fragment );
 
-				expect( document.$getFragment( "_:1" ) ).toBe( fragment );
+				expect( document.$getFragment<{}>( "_:1" ) ).toBe( fragment );
 			} );
 
 		} );
@@ -619,42 +619,42 @@ describe( "TransientDocument", () => {
 
 			it( "should throw error when object but slug label is already used", () => {
 				const document:TransientDocument = createMock();
-				document.$__resourcesMap.set( "fragment", null );
+				document.$__resourcesMap.set( "fragment", TransientFragment.create( { $registry: document } ) );
 
 				expect( () => document.$createFragment( {}, "fragment" ) ).toThrowError( IDAlreadyInUseError, `"#fragment" is already being used.` );
 			} );
 
 			it( "should throw error when only slug label is already used", () => {
 				const document:TransientDocument = createMock();
-				document.$__resourcesMap.set( "fragment", null );
+				document.$__resourcesMap.set( "fragment", TransientFragment.create( { $registry: document } ) );
 
 				expect( () => document.$createFragment( "fragment" ) ).toThrowError( IDAlreadyInUseError, `"#fragment" is already being used.` );
 			} );
 
 			it( "should throw error when object but absolute IRI provided is already used", () => {
 				const document:TransientDocument = createMock();
-				document.$__resourcesMap.set( "fragment", null );
+				document.$__resourcesMap.set( "fragment", TransientFragment.create( { $registry: document } ) );
 
 				expect( () => document.$createFragment( {}, "https://example.com/document/#fragment" ) ).toThrowError( IDAlreadyInUseError, `"https://example.com/document/#fragment" is already being used.` );
 			} );
 
 			it( "should throw error when only absolute IRI provided is already used", () => {
 				const document:TransientDocument = createMock();
-				document.$__resourcesMap.set( "fragment", null );
+				document.$__resourcesMap.set( "fragment", TransientFragment.create( { $registry: document } ) );
 
 				expect( () => document.$createFragment( "https://example.com/document/#fragment" ) ).toThrowError( IDAlreadyInUseError, `"https://example.com/document/#fragment" is already being used.` );
 			} );
 
 			it( "should throw error when object but blank node label is used", () => {
 				const document:TransientDocument = createMock();
-				document.$__resourcesMap.set( "_:1", null );
+				document.$__resourcesMap.set( "_:1", TransientFragment.create( { $registry: document } ) );
 
 				expect( () => document.$createFragment( {}, "_:1" ) ).toThrowError( IDAlreadyInUseError, `"_:1" is already being used.` );
 			} );
 
 			it( "should throw error when only blank node label is used", () => {
 				const document:TransientDocument = createMock();
-				document.$__resourcesMap.set( "_:1", null );
+				document.$__resourcesMap.set( "_:1", TransientFragment.create( { $registry: document } ) );
 
 				expect( () => document.$createFragment( "_:1" ) ).toThrowError( IDAlreadyInUseError, `"_:1" is already being used.` );
 			} );
@@ -700,7 +700,7 @@ describe( "TransientDocument", () => {
 			it( "should remove providing a fragment label", () => {
 				const document:TransientDocument = createMock();
 
-				document.$__resourcesMap.set( "fragment", null );
+				document.$__resourcesMap.set( "fragment", TransientFragment.create( { $registry: document } ) );
 
 				document.$removeFragment( "#fragment" );
 				expect( document.$__resourcesMap ).toEqual( new Map() );
@@ -709,7 +709,7 @@ describe( "TransientDocument", () => {
 			it( "should remove providing a fragment slug label", () => {
 				const document:TransientDocument = createMock();
 
-				document.$__resourcesMap.set( "fragment", null );
+				document.$__resourcesMap.set( "fragment", TransientFragment.create( { $registry: document } ) );
 
 				document.$removeFragment( "fragment" );
 				expect( document.$__resourcesMap ).toEqual( new Map() );
@@ -718,7 +718,7 @@ describe( "TransientDocument", () => {
 			it( "should remove providing an absolute fragment IRI", () => {
 				const document:TransientDocument = createMock();
 
-				document.$__resourcesMap.set( "fragment", null );
+				document.$__resourcesMap.set( "fragment", TransientFragment.create( { $registry: document } ) );
 
 				document.$removeFragment( "https://example.com/document/#fragment" );
 				expect( document.$__resourcesMap ).toEqual( new Map() );
@@ -726,7 +726,7 @@ describe( "TransientDocument", () => {
 
 			it( "should remove providing a blank node label", () => {
 				const document:TransientDocument = createMock();
-				document.$__resourcesMap.set( "_:1", null );
+				document.$__resourcesMap.set( "_:1", TransientFragment.create( { $registry: document } ) );
 
 				document.$removeFragment( "_:1" );
 				expect( document.$__resourcesMap ).toEqual( new Map() );

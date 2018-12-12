@@ -105,25 +105,25 @@ describe( "PrefixToken", () => {
 	describe( "PrefixToken.constructor", () => {
 
 		it( "should be instantiable", () => {
-			const token:PrefixToken = new PrefixToken( null, null );
+			const token:PrefixToken = new PrefixToken( "", new IRIRefToken( "" ) );
 			expect( token ).toEqual( jasmine.any( PrefixToken ) );
 		} );
 
 
 		it( "should initialize prefix namespace", () => {
 			const namespace:string = "prefix_name";
-			const token:PrefixToken = new PrefixToken( namespace, null );
+			const token:PrefixToken = new PrefixToken( namespace, new IRIRefToken( "" ) );
 			expect( token.namespace ).toBe( namespace );
 		} );
 
 		it( "should initialize iri", () => {
 			const iri:IRIRefToken = new IRIRefToken( "http://example.com/" );
-			const token:PrefixToken = new PrefixToken( null, iri );
+			const token:PrefixToken = new PrefixToken( "", iri );
 			expect( token.iri ).toBe( iri );
 		} );
 
 		it( "should set token name as `prefix`", () => {
-			const token:PrefixToken = new PrefixToken( null, null );
+			const token:PrefixToken = new PrefixToken( "", new IRIRefToken( "" ) );
 			expect( token.token ).toBe( "prefix" );
 		} );
 
@@ -270,12 +270,12 @@ describe( "UpdateListToken", () => {
 	describe( "UpdateListToken.constructor", () => {
 
 		it( "should be instantiable", () => {
-			const token:UpdateListToken = new UpdateListToken( null, null, null, null );
+			const token:UpdateListToken = new UpdateListToken( new IRIRefToken( "" ), new IRIRefToken( "" ), new SliceToken(), new CollectionToken() );
 			expect( token ).toEqual( jasmine.any( UpdateListToken ) );
 		} );
 
 		it( "should set token name as `updateList`", () => {
-			const token:UpdateListToken = new UpdateListToken( null, null, null, null );
+			const token:UpdateListToken = new UpdateListToken( new IRIRefToken( "" ), new IRIRefToken( "" ), new SliceToken(), new CollectionToken() );
 			expect( token.token ).toBe( "updateList" );
 		} );
 
@@ -336,7 +336,7 @@ describe( "SliceToken", () => {
 
 		it( "should ignore minIndex when null", () => {
 			const helper:( maxIndex:number ) => void = ( maxIndex ) => {
-				const token:SliceToken = new SliceToken( null, maxIndex );
+				const token:SliceToken = new SliceToken( undefined, maxIndex );
 				expect( token.minIndex ).toBeUndefined();
 				expect( token.maxIndex ).toBe( maxIndex );
 			};
@@ -360,7 +360,7 @@ describe( "SliceToken", () => {
 
 		it( "should ignore maxIndex when null", () => {
 			const helper:( minIndex:number ) => void = ( minIndex ) => {
-				const token:SliceToken = new SliceToken( minIndex, null );
+				const token:SliceToken = new SliceToken( minIndex, undefined );
 				expect( token.minIndex ).toBe( minIndex );
 				expect( token.maxIndex ).toBeUndefined();
 			};
@@ -414,7 +414,7 @@ describe( "SliceToken", () => {
 
 		it( "should print slice from start to index", () => {
 			const helper:( index:number, expected:string ) => void = ( index, expected ) => {
-				const token:SliceToken = new SliceToken( null, index );
+				const token:SliceToken = new SliceToken( undefined, index );
 				expect( token.toString() ).toBe( expected );
 			};
 

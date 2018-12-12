@@ -9,7 +9,7 @@ import { QueryContainer } from "./QueryContainer";
  * Class with the helpers and properties for construct a query for children or members.
  */
 export class QueryDocumentsBuilder extends SubQueryDocumentsBuilder {
-	readonly _queryProperty:QueryContainerProperty;
+	readonly _queryProperty!:QueryContainerProperty;
 
 	constructor( queryContainer:QueryContainer, queryProperty:QueryContainerProperty ) {
 		super( queryContainer, queryProperty );
@@ -54,8 +54,8 @@ export class QueryDocumentsBuilder extends SubQueryDocumentsBuilder {
 }
 
 
-function parseFlowString( flow?:"ASC" | "DESC" | "ascending" | "descending" ):"ASC" | "DESC" {
-	if( flow === void 0 ) return void 0;
+function parseFlowString( flow?:"ASC" | "DESC" | "ascending" | "descending" ):"ASC" | "DESC" | undefined {
+	if( flow === void 0 ) return;
 
 	const upperCase:"ASC" | "DESC" | "ASCENDING" | "DESCENDING" = flow
 		.toUpperCase() as any;

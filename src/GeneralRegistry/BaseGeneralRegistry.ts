@@ -12,7 +12,7 @@ export interface BaseGeneralRegistry extends BaseRegistry {
 	/**
 	 * Context where the registry will belong to.
 	 */
-	context:Context;
+	context:Context<any, any>;
 	/**
 	 * Optional parent registry used to inherit resources and more data.
 	 */

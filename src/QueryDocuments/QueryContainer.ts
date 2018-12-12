@@ -11,6 +11,7 @@ import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 import { ObjectSchemaProperty } from "../ObjectSchema/ObjectSchemaProperty";
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
 
 import { QueryContainerProperty } from "./QueryContainerProperty";
 import { QueryContainerPropertyType } from "./QueryContainerPropertyType";
@@ -22,7 +23,7 @@ import { QueryVariable } from "./QueryVariable";
  * Container of the query data specialized with elements for the custom querying of documents.
  */
 export class QueryContainer extends FluentPathContainer<undefined> {
-	readonly context:AbstractContext<any, any, any>;
+	readonly context:AbstractContext<RegisteredPointer, any, any>;
 	readonly _queryProperty:QueryRootProperty | QueryContainerProperty;
 
 	private readonly _generalSchema:DigestedObjectSchema;
@@ -75,7 +76,7 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	 */
 	getVariable( name:string ):QueryVariable {
 		if( this._variablesMap.has( name ) )
-			return this._variablesMap.get( name );
+			return this._variablesMap.get( name )!;
 
 		const variable:QueryVariable = new QueryVariable( name, this._variablesCounter ++ );
 		this._variablesMap.set( name, variable );
@@ -103,7 +104,7 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 		if( ! prefix ) return iri;
 
 		const [ namespace, prefixIRI ] = prefix;
-		return `${ namespace }:${ iri.substr( prefixIRI.length ) }`;
+		return `${namespace}:${iri.substr( prefixIRI.length )}`;
 	}
 
 
@@ -118,7 +119,7 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	}
 
 	protected __isUsedPrefix( [ namespace, ]:[ string, string ] ):boolean {
-		return this.iriResolver.prefixes.get( namespace );
+		return ! ! this.iriResolver.prefixes.get( namespace );
 	}
 
 
@@ -148,11 +149,11 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	 */
 	serializeLiteral( type:string, value:any ):string {
 		if( ! this.context.jsonldConverter.literalSerializers.has( type ) )
-			throw new IllegalArgumentError( `Type "${ type }" hasn't a defined serializer.` );
+			throw new IllegalArgumentError( `Type "${type}" hasn't a defined serializer.` );
 
 		return this.context.jsonldConverter
 			.literalSerializers
-			.get( type )
+			.get( type )!
 			.serialize( value );
 	}
 

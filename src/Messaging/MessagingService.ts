@@ -8,6 +8,7 @@ import { IllegalStateError } from "../Errors/IllegalStateError";
 import { FreeResources } from "../FreeResources/FreeResources";
 
 import { JSONLDParser } from "../JSONLD/JSONLDParser";
+import { RDFDocument } from "../RDF/Document";
 
 import { RDFNode } from "../RDF/Node";
 
@@ -36,13 +37,16 @@ export class MessagingService {
 	private _options:MessagingOptions;
 	private _attempts:number;
 	private _client?:webstomp.Client;
-	private _subscriptionsMap:Map<string, Map<( data:EventMessage ) => void, Subscription>>;
+	private _subscriptionsMap!:Map<string, Map<( data:EventMessage ) => void, Subscription>>;
 	private _subscriptionsQueue:Function[];
 
 	constructor( context:DocumentsContext ) {
 		this.context = context;
-		this._subscriptionsQueue = [];
+
 		this._options = DEFAULT_OPTIONS;
+		this._attempts = 0;
+
+		this._subscriptionsQueue = [];
 	}
 
 	/**
@@ -73,7 +77,7 @@ export class MessagingService {
 	 */
 	connect( onConnect?:() => void, onError?:( error:Error ) => void ):void {
 		if( this._client ) {
-			const error:Error = new IllegalStateError( `The messaging service is already connect${ this._client.connected ? "ed" : "ing"}.` );
+			const error:Error = new IllegalStateError( `The messaging service is already connect${this._client.connected ? "ed" : "ing"}.` );
 			if( onError ) onError( error );
 			throw error;
 		}
@@ -106,7 +110,7 @@ export class MessagingService {
 			if( onConnect ) onConnect();
 
 		}, ( errorFrameOrEvent:webstomp.Frame | CloseEvent ) => {
-			const canReconnect:boolean = this._options.maxReconnectAttempts === null || this._options.maxReconnectAttempts >= this._attempts;
+			const canReconnect:boolean = this._options.maxReconnectAttempts === null || this._options.maxReconnectAttempts! >= this._attempts;
 			let errorMessage:string;
 			if( "reason" in errorFrameOrEvent ) {
 				if( canReconnect ) {
@@ -114,14 +118,14 @@ export class MessagingService {
 					setTimeout( () => this.reconnect( onConnect, onError ), this._options.reconnectDelay );
 					return;
 				}
-				this._client = null;
+				this._client = undefined;
 				this._subscriptionsQueue.length = 0;
-				errorMessage = `CloseEventError: ${ errorFrameOrEvent.reason }`;
+				errorMessage = `CloseEventError: ${errorFrameOrEvent.reason}`;
 			} else if( "body" in errorFrameOrEvent ) {
-				if( ! this._client.connected && canReconnect ) return;
-				errorMessage = `${ errorFrameOrEvent.headers[ "message" ] }: ${ errorFrameOrEvent.body.trim() }`;
+				if( ! this._client || ! this._client.connected && canReconnect ) return;
+				errorMessage = `${errorFrameOrEvent.headers[ "message" ]}: ${errorFrameOrEvent.body.trim()}`;
 			} else {
-				errorMessage = `Unknown error: ${ errorFrameOrEvent }`;
+				errorMessage = `Unknown error: ${errorFrameOrEvent}`;
 			}
 			onError( new Error( errorMessage ) );
 		} );
@@ -136,7 +140,7 @@ export class MessagingService {
 	subscribe( destination:string, onEvent:( data:EventMessage ) => void, onError?:( error:Error ) => void ):void {
 		if( ! this._client ) this.connect();
 		if( ! this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
-		const callbacksMap:Map<( data:EventMessage ) => void, Subscription> = this._subscriptionsMap.get( destination );
+		const callbacksMap:Map<( data:EventMessage ) => void, Subscription> = this._subscriptionsMap.get( destination )!;
 
 		if( callbacksMap.has( onEvent ) ) return;
 		const subscriptionID:string = UUIDUtils.generate();
@@ -146,7 +150,7 @@ export class MessagingService {
 		} );
 
 		const subscribeTo:() => void = this.__makeSubscription( subscriptionID, destination, onEvent, onError );
-		if( this._client.connected ) return subscribeTo();
+		if( this._client!.connected ) return subscribeTo();
 		this._subscriptionsQueue.push( subscribeTo );
 	}
 
@@ -158,10 +162,10 @@ export class MessagingService {
 	unsubscribe( destination:string, onEvent:( data:EventMessage ) => void ):void {
 		if( ! this._client || ! this._subscriptionsMap || ! this._subscriptionsMap.has( destination ) ) return;
 
-		const callbackMap:Map<( data:EventMessage ) => void, Subscription> = this._subscriptionsMap.get( destination );
+		const callbackMap:Map<( data:EventMessage ) => void, Subscription> = this._subscriptionsMap.get( destination )!;
 		if( ! callbackMap.has( onEvent ) ) return;
 
-		const subscriptionID:string = callbackMap.get( onEvent ).id;
+		const subscriptionID:string = callbackMap.get( onEvent )!.id;
 		callbackMap.delete( onEvent );
 
 		if( callbackMap.size === 0 ) this._subscriptionsMap.delete( destination );
@@ -184,12 +188,14 @@ export class MessagingService {
 	}
 
 	private __makeSubscription( id:string, destination:string, eventCallback:( data:EventMessage ) => void, errorCallback?:( error:Error ) => void ):() => void {
-		return () => this._client.subscribe( destination, message => {
+		return () => this._client!.subscribe( destination, message => {
 			new JSONLDParser()
 				.parse( message.body )
-				.then( ( data:RDFNode[] ) => {
+				.then( ( data:object[] ) => {
+					const nodes:RDFNode[] = RDFDocument.getResources( data );
+
 					const freeResources:FreeResources = FreeResources
-						.parseFreeNodes( this.context.registry, data );
+						.parseFreeNodes( this.context.registry, nodes );
 
 					const eventMessage:EventMessage | undefined = freeResources
 						.getPointers( true )

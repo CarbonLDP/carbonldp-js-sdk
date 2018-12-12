@@ -61,15 +61,15 @@ describe( "Request", () => {
 
 		beforeEach( () => {
 			jasmine.Ajax.install();
-			jasmine.Ajax.stubRequest( "http://example.com/200", null, "OPTIONS" ).andReturn( responseOptions );
-			jasmine.Ajax.stubRequest( "http://example.com/200", null, "HEAD" ).andReturn( responseHeaders );
-			jasmine.Ajax.stubRequest( "http://example.com/200", null, "GET" ).andReturn( responseFull );
-			jasmine.Ajax.stubRequest( "http://example.com/200", null, "POST" ).andReturn( responseFull );
-			jasmine.Ajax.stubRequest( "http://example.com/200", null, "PUT" ).andReturn( responseFull );
-			jasmine.Ajax.stubRequest( "http://example.com/200", null, "PATCH" ).andReturn( responseFull );
-			jasmine.Ajax.stubRequest( "http://example.com/200", null, "DELETE" ).andReturn( responseFull );
-			jasmine.Ajax.stubRequest( "http://example.com/404", null ).andReturn( { status: 404 } );
-			jasmine.Ajax.stubRequest( "http://example.com/500", null ).andReturn( { status: 500 } );
+			jasmine.Ajax.stubRequest( "http://example.com/200", undefined, "OPTIONS" ).andReturn( responseOptions );
+			jasmine.Ajax.stubRequest( "http://example.com/200", undefined, "HEAD" ).andReturn( responseHeaders );
+			jasmine.Ajax.stubRequest( "http://example.com/200", undefined, "GET" ).andReturn( responseFull );
+			jasmine.Ajax.stubRequest( "http://example.com/200", undefined, "POST" ).andReturn( responseFull );
+			jasmine.Ajax.stubRequest( "http://example.com/200", undefined, "PUT" ).andReturn( responseFull );
+			jasmine.Ajax.stubRequest( "http://example.com/200", undefined, "PATCH" ).andReturn( responseFull );
+			jasmine.Ajax.stubRequest( "http://example.com/200", undefined, "DELETE" ).andReturn( responseFull );
+			jasmine.Ajax.stubRequest( "http://example.com/404", undefined ).andReturn( { status: 404 } );
+			jasmine.Ajax.stubRequest( "http://example.com/500", undefined ).andReturn( { status: 500 } );
 		} );
 
 		afterEach( () => {
@@ -105,7 +105,7 @@ describe( "Request", () => {
 						expect( response.status ).toEqual( 200 );
 						expect( response.data ).toEqual( "" );
 
-						testHTTPResponseHeaders( response, responseHeaders.responseHeaders );
+						testHTTPResponseHeaders( response, responseHeaders.responseHeaders! );
 					} );
 			} );
 
@@ -141,8 +141,8 @@ describe( "Request", () => {
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseData( response, responseOptions.responseText );
-						testHTTPResponseHeaders( response, responseOptions.responseHeaders );
+						testHTTPResponseData( response, responseOptions.responseText! );
+						testHTTPResponseHeaders( response, responseOptions.responseHeaders! );
 					} );
 			} );
 
@@ -178,24 +178,24 @@ describe( "Request", () => {
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 					} );
 			} );
 
 			it( "should make a GET request with parser", async () => {
 				await RequestService
-					.get( "http://example.com/200", null, parser )
+					.get( "http://example.com/200", undefined, parser )
 					.then( ( [ object, response ]:[ Object, Response ] ) => {
 						testHTTPResponse( response );
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 
 						return parser
-							.parse( responseFull.responseText )
+							.parse( responseFull.responseText! )
 							.then( ( parsedObject:object ) => {
 								testDataParsed( object, parsedObject );
 							} );
@@ -234,24 +234,24 @@ describe( "Request", () => {
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 					} );
 			} );
 
 			it( "should make a POST request with parser", async () => {
 				await RequestService
-					.post( "http://example.com/200", "some body", null, parser )
+					.post( "http://example.com/200", "some body", undefined, parser )
 					.then( ( [ object, response ]:[ Object, Response ] ) => {
 						testHTTPResponse( response );
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 
 						return parser
-							.parse( responseFull.responseText )
+							.parse( responseFull.responseText! )
 							.then( ( parsedObject:object ) => {
 								testDataParsed( object, parsedObject );
 							} );
@@ -290,24 +290,24 @@ describe( "Request", () => {
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 					} );
 			} );
 
 			it( "should make a PUT request with parser", async () => {
 				await RequestService
-					.put( "http://example.com/200", "some body", null, parser )
+					.put( "http://example.com/200", "some body", undefined, parser )
 					.then( ( [ object, response ]:[ Object, Response ] ) => {
 						testHTTPResponse( response );
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 
 						return parser
-							.parse( responseFull.responseText )
+							.parse( responseFull.responseText! )
 							.then( ( parsedObject:object ) => {
 								testDataParsed( object, parsedObject );
 							} );
@@ -346,24 +346,24 @@ describe( "Request", () => {
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 					} );
 			} );
 
 			it( "should make a PATCH request with parser", async () => {
 				await RequestService
-					.patch( "http://example.com/200", "some body", null, parser )
+					.patch( "http://example.com/200", "some body", undefined, parser )
 					.then( ( [ object, response ]:[ Object, Response ] ) => {
 						testHTTPResponse( response );
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 
 						return parser
-							.parse( responseFull.responseText )
+							.parse( responseFull.responseText! )
 							.then( ( parsedObject:object ) => {
 								testDataParsed( object, parsedObject );
 							} );
@@ -402,24 +402,24 @@ describe( "Request", () => {
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 					} );
 			} );
 
 			it( "should make a PATCH request with parser", async () => {
 				await RequestService
-					.delete( "http://example.com/200", null, parser )
+					.delete( "http://example.com/200", undefined, parser )
 					.then( ( [ object, response ]:[ Object, Response ] ) => {
 						testHTTPResponse( response );
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 
 						return parser
-							.parse( responseFull.responseText )
+							.parse( responseFull.responseText! )
 							.then( ( parsedObject:object ) => {
 								testDataParsed( object, parsedObject );
 							} );
@@ -434,24 +434,24 @@ describe( "Request", () => {
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 					} );
 			} );
 
 			it( "should make a PATCH request with data and parser", async () => {
 				await RequestService
-					.delete( "http://example.com/200", "some body", null, parser )
+					.delete( "http://example.com/200", "some body", undefined, parser )
 					.then( ( [ object, response ]:[ Object, Response ] ) => {
 						testHTTPResponse( response );
 
 						expect( response.status ).toEqual( 200 );
 
-						testHTTPResponseHeaders( response, responseFull.responseHeaders );
-						testHTTPResponseData( response, responseFull.responseText );
+						testHTTPResponseHeaders( response, responseFull.responseHeaders! );
+						testHTTPResponseData( response, responseFull.responseText! );
 
 						return parser
-							.parse( responseFull.responseText )
+							.parse( responseFull.responseText! )
 							.then( ( parsedObject:object ) => {
 								testDataParsed( object, parsedObject );
 							} );
@@ -753,7 +753,7 @@ describe( "Request", () => {
 						LDP.PreferMembership,
 					],
 				}, newOptionsObject() );
-				expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}"` );
+				expect( RequestUtils.getHeader( "Prefer", options )!.toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}"` );
 			} );
 
 			it( "should add header when omits with empty options", () => {
@@ -764,7 +764,7 @@ describe( "Request", () => {
 						C.PreferMembershipResources,
 					],
 				}, newOptionsObject() );
-				expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
+				expect( RequestUtils.getHeader( "Prefer", options )!.toString() ).toEqual( `omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
 			} );
 
 			it( "should add header when includes & omits with empty options", () => {
@@ -779,7 +779,7 @@ describe( "Request", () => {
 						C.PreferMembershipResources,
 					],
 				}, newOptionsObject() );
-				expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}", omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
+				expect( RequestUtils.getHeader( "Prefer", options )!.toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}", omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
 			} );
 
 		} );
@@ -795,10 +795,10 @@ describe( "Request", () => {
 
 			it( "should return true when all properties", () => {
 				const anotherOptions:RequestOptions = {
-					headers: null,
-					sendCredentialsOnCORS: null,
-					timeout: null,
-					request: null,
+					headers: undefined,
+					sendCredentialsOnCORS: undefined,
+					timeout: undefined,
+					request: undefined,
 				};
 				expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
 			} );

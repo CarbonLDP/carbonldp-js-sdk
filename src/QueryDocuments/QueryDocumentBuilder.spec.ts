@@ -7,7 +7,11 @@ import { AbstractContext } from "../Context/AbstractContext";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
 
+import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
+
 import { Pointer } from "../Pointer/Pointer";
+
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
 
 import { QueryContainer } from "./QueryContainer";
 import { QueryDocumentBuilder, SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
@@ -26,7 +30,7 @@ describe( "QueryDocumentBuilder", () => {
 		expect( QueryDocumentBuilder ).toEqual( jasmine.any( Function ) );
 	} );
 
-	let context:AbstractContext<any, any>;
+	let context:AbstractContext<RegisteredPointer, any>;
 	let queryContainer:QueryContainer;
 	let baseProperty:QueryProperty;
 	beforeEach( () => {
@@ -393,8 +397,8 @@ describe( "QueryDocumentBuilder", () => {
 				"defaultProperty": {},
 			} );
 
-			expect( baseProperty.getProperty( "defaultProperty" ).definition )
-				.toEqual( jasmine.objectContaining( {
+			expect( baseProperty.getProperty( "defaultProperty" )!.definition )
+				.toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 					uri: "https://example.com/vocab#defaultProperty",
 				} ) );
 		} );
@@ -405,8 +409,8 @@ describe( "QueryDocumentBuilder", () => {
 				"inheritGeneralProperty": {},
 			} );
 
-			expect( baseProperty.getProperty( "inheritGeneralProperty" ).definition )
-				.toEqual( jasmine.objectContaining( {
+			expect( baseProperty.getProperty( "inheritGeneralProperty" )!.definition )
+				.toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 					uri: "https://example.com/ns#inheritProperty",
 				} ) );
 		} );
@@ -419,8 +423,8 @@ describe( "QueryDocumentBuilder", () => {
 				},
 			} );
 
-			expect( baseProperty.getProperty( "extendedGeneralProperty" ).definition )
-				.toEqual( jasmine.objectContaining( {
+			expect( baseProperty.getProperty( "extendedGeneralProperty" )!.definition )
+				.toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 					uri: "https://example.com/ns#extendedGeneralProperty",
 					literal: true,
 					literalType: "http://www.w3.org/2001/XMLSchema#string",
@@ -439,8 +443,8 @@ describe( "QueryDocumentBuilder", () => {
 				"inheritTypedProperty": {},
 			} );
 
-			expect( baseProperty.getProperty( "inheritTypedProperty" ).definition )
-				.toEqual( jasmine.objectContaining( {
+			expect( baseProperty.getProperty( "inheritTypedProperty" )!.definition )
+				.toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 					uri: "https://example.com/ns#inheritProperty",
 				} ) );
 
@@ -462,8 +466,8 @@ describe( "QueryDocumentBuilder", () => {
 				"inheritTypedProperty": {},
 			} );
 
-			expect( baseProperty.getProperty( "inheritTypedProperty" ).definition )
-				.toEqual( jasmine.objectContaining( {
+			expect( baseProperty.getProperty( "inheritTypedProperty" )!.definition )
+				.toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 					uri: "https://example.com/ns#inheritProperty",
 				} ) );
 
@@ -475,8 +479,8 @@ describe( "QueryDocumentBuilder", () => {
 				"inlineProperty": "ex:inlineProperty",
 			} );
 
-			expect( baseProperty.getProperty( "inlineProperty" ).definition )
-				.toEqual( jasmine.objectContaining( {
+			expect( baseProperty.getProperty( "inlineProperty" )!.definition )
+				.toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 					uri: "https://example.com/ns#inlineProperty",
 				} ) );
 		} );

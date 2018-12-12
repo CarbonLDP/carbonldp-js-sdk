@@ -53,7 +53,6 @@ export interface FreeResources extends Registry<Resource> {
 
 
 export type OverriddenMembers =
-	| "registry"
 	| "_getLocalID"
 	| "_addPointer"
 	;
@@ -81,11 +80,9 @@ export type FreeResourcesFactory =
  */
 export const FreeResources:FreeResourcesFactory = {
 	PROTOTYPE: {
-		registry: void 0,
-
 		_getLocalID( this:FreeResources, id:string ):string {
 			if( isAbsolute( id ) && ! URI.hasProtocol( id ) ) return id;
-			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
+			throw new IllegalArgumentError( `"${id}" is out of scope.` );
 		},
 
 		_addPointer<T extends object>( this:FreeResources, base:T & Partial<Pointer> ):T & Resource {

@@ -385,10 +385,16 @@ export interface EventEmitterDocumentTrait extends TransientDocument, Resolvable
 }
 
 
-type OnEvent<T extends EventMessage> = ( message:EventMessage ) => void;
+type AnyMessageEvent =
+	ChildCreatedEvent
+	| DocumentModifiedEvent
+	| DocumentDeletedEvent
+	| MemberAddedEvent
+	| MemberRemovedEvent;
+type OnEvent<T extends AnyMessageEvent> = ( message:T ) => void;
 type OnError = ( error:Error ) => void;
 
-function __parseParams<T extends EventMessage>( resource:Pointer, uriPatternOROnEvent:string | OnEvent<T>, onEventOrOnError:OnEvent<T> | OnError, onError:OnError | undefined ):{ uriPattern:string, onEvent:OnEvent<T>, onError:OnError | undefined } {
+function __parseParams<T extends AnyMessageEvent>( resource:Pointer, uriPatternOROnEvent:string | OnEvent<T>, onEventOrOnError:OnEvent<T> | OnError, onError:OnError | undefined ):{ uriPattern:string, onEvent:OnEvent<T>, onError:OnError | undefined } {
 	const uriPattern:string = isString( uriPatternOROnEvent ) ?
 		URI.resolve( resource.$id, uriPatternOROnEvent ) : resource.$id;
 
@@ -414,39 +420,39 @@ export type EventEmitterDocumentTraitFactory =
  */
 export const EventEmitterDocumentTrait:EventEmitterDocumentTraitFactory = {
 	PROTOTYPE: {
-		$on<T extends EventMessage>( this:EventEmitterDocumentTrait, event:Event | string, uriPatternOROnEvent:string | OnEvent<T>, onEventOrOnError:OnEvent<T> | OnError, onError?:OnError ):void {
+		$on( this:EventEmitterDocumentTrait, event:Event | string, uriPatternOROnEvent:string | OnEvent<any>, onEventOrOnError:OnEvent<any> | OnError, onError?:OnError ):void {
 			const { uriPattern, onEvent, onError: $onError } = __parseParams( this, uriPatternOROnEvent, onEventOrOnError, onError );
 			return this.$repository.on( event, uriPattern, onEvent, $onError );
 		},
 
-		$off<T extends EventMessage>( this:EventEmitterDocumentTrait, event:Event | string, uriPatternOROnEvent:string | OnEvent<T>, onEventOrOnError:OnEvent<T> | OnError, onError?:OnError ):void {
+		$off( this:EventEmitterDocumentTrait, event:Event | string, uriPatternOROnEvent:string | OnEvent<any>, onEventOrOnError:OnEvent<any> | OnError, onError?:OnError ):void {
 			const { uriPattern, onEvent, onError: $onError } = __parseParams( this, uriPatternOROnEvent, onEventOrOnError, onError );
 			return this.$repository.off( event, uriPattern, onEvent, $onError );
 		},
 
-		$one<T extends EventMessage>( this:EventEmitterDocumentTrait, event:Event | string, uriPatternOROnEvent:string | OnEvent<T>, onEventOrOnError:OnEvent<T> | OnError, onError?:OnError ):void {
+		$one( this:EventEmitterDocumentTrait, event:Event | string, uriPatternOROnEvent:string | OnEvent<any>, onEventOrOnError:OnEvent<any> | OnError, onError?:OnError ):void {
 			const { uriPattern, onEvent, onError: $onError } = __parseParams( this, uriPatternOROnEvent, onEventOrOnError, onError );
 			return this.$repository.one( event, uriPattern, onEvent, $onError );
 		},
 
 
-		$onChildCreated( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<ChildCreatedEvent>, onEventOrOnError:OnEvent<ChildCreatedEvent> | OnError, onError?:OnError ):void {
+		$onChildCreated( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<ChildCreatedEvent>, onEventOrOnError?:OnEvent<ChildCreatedEvent> | OnError, onError?:OnError ):void {
 			return this.$on( Event.CHILD_CREATED, uriPatternOROnEvent as string, onEventOrOnError as OnEvent<ChildCreatedEvent>, onError );
 		},
 
-		$onDocumentModified( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<DocumentModifiedEvent>, onEventOrOnError:OnEvent<DocumentModifiedEvent> | OnError, onError?:OnError ):void {
+		$onDocumentModified( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<DocumentModifiedEvent>, onEventOrOnError?:OnEvent<DocumentModifiedEvent> | OnError, onError?:OnError ):void {
 			return this.$on( Event.DOCUMENT_MODIFIED, uriPatternOROnEvent as string, onEventOrOnError as OnEvent<DocumentModifiedEvent>, onError );
 		},
 
-		$onDocumentDeleted( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<DocumentDeletedEvent>, onEventOrOnError:OnEvent<DocumentDeletedEvent> | OnError, onError?:OnError ):void {
+		$onDocumentDeleted( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<DocumentDeletedEvent>, onEventOrOnError?:OnEvent<DocumentDeletedEvent> | OnError, onError?:OnError ):void {
 			return this.$on( Event.DOCUMENT_DELETED, uriPatternOROnEvent as string, onEventOrOnError as OnEvent<DocumentDeletedEvent>, onError );
 		},
 
-		$onMemberAdded( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<MemberAddedEvent>, onEventOrOnError:OnEvent<MemberAddedEvent> | OnError, onError?:OnError ):void {
+		$onMemberAdded( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<MemberAddedEvent>, onEventOrOnError?:OnEvent<MemberAddedEvent> | OnError, onError?:OnError ):void {
 			return this.$on( Event.MEMBER_ADDED, uriPatternOROnEvent as string, onEventOrOnError as OnEvent<MemberAddedEvent>, onError );
 		},
 
-		$onMemberRemoved( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<MemberRemovedEvent>, onEventOrOnError:OnEvent<MemberRemovedEvent> | OnError, onError?:OnError ):void {
+		$onMemberRemoved( this:EventEmitterDocumentTrait, uriPatternOROnEvent:string | OnEvent<MemberRemovedEvent>, onEventOrOnError?:OnEvent<MemberRemovedEvent> | OnError, onError?:OnError ):void {
 			return this.$on( Event.MEMBER_REMOVED, uriPatternOROnEvent as string, onEventOrOnError as OnEvent<MemberRemovedEvent>, onError );
 		},
 	},

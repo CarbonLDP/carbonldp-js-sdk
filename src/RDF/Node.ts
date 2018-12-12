@@ -22,7 +22,7 @@ export type RDFNode = {
 	"@id":string;
 	"@type"?:string[];
 
-	[ propertyURI:string ]:string | RDFNodePropertyValue[];
+	[ propertyURI:string ]:string | RDFNodePropertyValue[] | undefined;
 };
 
 
@@ -144,7 +144,7 @@ export const RDFNode:RDFNodeFactory = {
 
 	getTypes( node:RDFNode ):string[] {
 		if( ! ("@type" in node) ) return [];
-		return node[ "@type" ];
+		return node[ "@type" ]!;
 	},
 
 	getList( propertyValues:RDFNodePropertyValue[] ):RDFList | undefined {
@@ -173,7 +173,7 @@ export const RDFNode:RDFNodeFactory = {
 			if( ! RDFLiteral.is( propertyValue ) ) continue;
 			if( ! RDFLiteral.hasType( propertyValue, XSD.string ) ) continue;
 
-			const languageTag:string = propertyValue[ "@language" ];
+			const languageTag:string | undefined = propertyValue[ "@language" ];
 			if( ! languageTag ) continue;
 
 			propertyLanguageMap[ languageTag ] = RDFLiteral.parse( propertyValue );

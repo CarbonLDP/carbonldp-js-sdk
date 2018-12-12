@@ -18,7 +18,7 @@ export interface RegisteredPointer extends Pointer {
 	/**
 	 * Registry the current pointer belongs to.
 	 */
-	$registry:Registry<RegisteredPointer> | $Registry<RegisteredPointer>;
+	$registry:Registry<RegisteredPointer> | $Registry<RegisteredPointer> | undefined;
 }
 
 

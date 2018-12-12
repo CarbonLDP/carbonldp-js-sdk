@@ -23,7 +23,7 @@ describe( "Fragment", () => {
 		let $registry:Document;
 		let fragment:Fragment;
 		beforeEach( () => {
-			$registry = Document.decorate( { $registry: null, $repository: null } );
+			$registry = Document.decorate( { $registry: null as any, $repository: null as any } );
 			fragment = Fragment
 				.decorate( { $registry } );
 		} );
@@ -35,7 +35,7 @@ describe( "Fragment", () => {
 			} );
 
 			it( "should assign the $registry ", () => {
-				const document:Document = Document.decorate( { $registry: null, $repository: null } );
+				const document:Document = Document.decorate( { $registry: null as any, $repository: null as any } );
 				fragment.$repository = document;
 
 				expect( fragment.$registry ).toBe( document );
@@ -90,7 +90,7 @@ describe( "Fragment", () => {
 
 			let $registry:Document;
 			beforeEach( () => {
-				$registry = Document.decorate( { $registry: null, $repository: null } );
+				$registry = Document.decorate( { $registry: null as any, $repository: null as any } );
 			} );
 
 

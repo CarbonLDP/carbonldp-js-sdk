@@ -264,8 +264,8 @@ describe( "CarbonLDP", ():void => {
 
 
 		it( "should throw error when invalid host property", ():void => {
-			const helper:( settings:CarbonLDPSettings ) => void = settings => () => {
-				new CarbonLDP( settings );
+			const helper:( settings:{} ) => void = settings => () => {
+				new CarbonLDP( settings as CarbonLDPSettings );
 			};
 
 			expect( helper( { host: null } ) ).toThrowError( Errors.IllegalArgumentError, "The settings object must contains a valid host string." );
@@ -473,7 +473,7 @@ describe( "CarbonLDP", ():void => {
 		} );
 
 		it( "should retrieve a PlatformMetadata object", ( done:DoneFn ):void => {
-			jasmine.Ajax.stubRequest( "https://example.com/.system/platform/", null, "GET" ).andReturn( {
+			jasmine.Ajax.stubRequest( "https://example.com/.system/platform/", undefined, "GET" ).andReturn( {
 				status: 200,
 				responseHeaders: {
 					"ETag": '"123456789"',

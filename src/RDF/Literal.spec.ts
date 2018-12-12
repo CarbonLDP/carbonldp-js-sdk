@@ -126,12 +126,12 @@ describe( "RDFLiteral", () => {
 			} );
 
 			it( "should return null when null", () => {
-				const literal:RDFLiteral = null;
+				const literal:RDFLiteral = null as any;
 				expect( RDFLiteral.parse( literal ) ).toBeNull();
 			} );
 
 			it( "should return null when undefined", () => {
-				const literal:RDFLiteral = undefined;
+				const literal:RDFLiteral = undefined as any;
 				expect( RDFLiteral.parse( literal ) ).toBeNull();
 			} );
 

@@ -48,7 +48,7 @@ describe( "DirectContainer", () => {
 			function createMock( data:object = {} ):TransientDirectContainer {
 				return TransientDocument.create( {
 					types: [ LDP.DirectContainer ],
-					hasMemberRelation: null,
+					hasMemberRelation: "relation",
 
 					...data,
 				} );

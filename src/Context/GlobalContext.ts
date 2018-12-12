@@ -61,7 +61,7 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined,
 	protected _baseURI:"" = "";
 
 	private constructor() {
-		super();
+		super( undefined );
 		this._generalObjectSchema = new DigestedObjectSchema();
 		this.registry = GeneralRegistry.createFrom( { context: this, __modelDecorator: RegisteredPointer } );
 

@@ -40,22 +40,22 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	protected _settings?:DocumentsContextSettings;
 
 
-	private static __mergePaths( this:void, target:Paths, source:Paths ):Paths {
+	private static __mergePaths( this:void, target?:Paths, source?:Paths ):Paths | undefined {
 		if( ! source ) return target;
 		if( ! target ) return ObjectUtils.clone( source, { objects: true } );
 
 		for( const key of Object.keys( source ) ) {
-			const sourcePath:string | DocumentPaths = source[ key ];
+			const sourcePath:string | DocumentPaths | null = source[ key ];
 
 			if( sourcePath === null ) {
 				delete target[ key ];
 				continue;
 			}
 
-			const targetPath:string | DocumentPaths = target[ key ];
+			const targetPath:string | DocumentPaths | null = target[ key ];
 			if( ! targetPath ) {
 				target[ key ] = isObject( sourcePath ) ?
-					ObjectUtils.clone( sourcePath, { objects: true } ) :
+					ObjectUtils.clone( sourcePath, { objects: true } )! :
 					sourcePath;
 				continue;
 			}
@@ -130,31 +130,31 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 		let url:string = "";
 		let documentPaths:DocumentPaths[ "paths" ] = this._settings && this._settings.paths;
 		while( leftSearchedPaths.length ) {
-			const containerKey:string = leftSearchedPaths.shift();
+			const containerKey:string = leftSearchedPaths.shift()!;
 			currentSearchedPaths.push( containerKey );
 
-			const containerPath:string | DocumentPaths = documentPaths ? documentPaths[ containerKey ] : null;
-			if( ! containerPath ) throw new IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" hasn't been declared.` );
+			const containerPath:string | DocumentPaths | null = documentPaths ? documentPaths[ containerKey ] : null;
+			if( ! containerPath ) throw new IllegalStateError( `The path "${currentSearchedPaths.join( "." )}" hasn't been declared.` );
 
-			const slug:string = isString( containerPath ) ? containerPath : containerPath.slug;
-			if( ! slug ) throw new IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" doesn't have a slug set.` );
+			const slug:string | undefined = isString( containerPath ) ? containerPath : containerPath.slug;
+			if( ! slug ) throw new IllegalStateError( `The path "${currentSearchedPaths.join( "." )}" doesn't have a slug set.` );
 
 			url = URI.resolve( url, slug );
-			documentPaths = isObject( containerPath ) ? containerPath.paths : null;
+			documentPaths = isObject( containerPath ) ? containerPath.paths : undefined;
 		}
 
 		return this.resolve( url );
 	}
 
-	protected _extendPaths( paths:Paths ):void {
-		this._settings.paths = DocumentsContext.__mergePaths( this._settings.paths, paths );
+	protected _extendPaths( paths:Paths | undefined ):void {
+		this._settings!.paths = DocumentsContext.__mergePaths( this._settings!.paths, paths );
 	}
 
 	protected _extendsSettings( settings:DocumentsContextSettings ):void {
 		this._extendPaths( settings.paths );
 
 		delete settings.paths;
-		ObjectUtils.extend( this._settings, settings );
+		ObjectUtils.extend( this._settings!, settings );
 	}
 
 }

@@ -15,6 +15,8 @@ import { PointerLibrary } from "../Pointer/PointerLibrary";
 import { RDFDocument } from "../RDF/Document";
 import { RDFNode } from "../RDF/Node";
 
+import { _isExistingValue } from "../Utils";
+
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 
@@ -134,7 +136,7 @@ export class QueryResultCompacter {
 		rdfDocuments
 			.map( RDFNode.getID )
 			.map( id => compactionMap.get( id ) )
-			.filter( compactionNode => compactionNode )
+			.filter( _isExistingValue )
 			.forEach( ( { resource, node } ) => {
 				// Sync documents (and its fragments)
 				resource.$_syncSnapshot();
@@ -145,17 +147,17 @@ export class QueryResultCompacter {
 				const rawValues:RDFNode[ any ] | undefined = node[ C.checksum ];
 				if( ! rawValues || typeof rawValues === "string" ) return;
 
-				const [ eTag ] = RDFNode.getPropertyLiterals( rawValues, XSD.string );
+				const [ eTag ] = RDFNode.getPropertyLiterals( rawValues, XSD.string )!;
 				if( ! eTag ) return;
 
-				resource.$eTag = `"${ eTag }"`;
+				resource.$eTag = `"${eTag}"`;
 				resource.$_resolved = true;
 			} )
 		;
 
 		return targetDocuments.map( id => {
 			return compactionMap
-				.get( id )
+				.get( id )!
 				.resource as T & Document;
 		} );
 	}
@@ -171,9 +173,9 @@ export class QueryResultCompacter {
 		const targetNode:RDFNode = {
 			...node,
 			// Avoid compaction of c:document
-			[ C.document ]: null,
+			[ C.document ]: undefined,
 			// Avoid compaction of c:checksum
-			[ C.checksum ]: null,
+			[ C.checksum ]: undefined,
 		};
 
 		this.jsonldConverter
@@ -265,7 +267,7 @@ function __createPointerLibrary( compactionMap:Map<string, CompactionNode>, docu
 		getPointer( id:string ):Pointer {
 			if( compactionMap.has( id ) )
 				return compactionMap
-					.get( id )
+					.get( id )!
 					.resource;
 
 			return document

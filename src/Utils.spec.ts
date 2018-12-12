@@ -706,20 +706,20 @@ describe( "ObjectUtils", ():void => {
 
 		it( "should return return target", () => {
 			const target:object = {};
-			const extended:object = ObjectUtils.extend( target, {} );
+			const extended:object = ObjectUtils.extend( target, {} )!;
 
 			expect( extended ).toBe( target );
 		} );
 
 		it( "should return empty when empty", () => {
-			const extended:object = ObjectUtils.extend( {}, {} );
+			const extended:object = ObjectUtils.extend( {}, {} )!;
 
 			expect( extended ).toEqual( {} );
 		} );
 
 
 		it( "should maintain target properties", () => {
-			const extended:object = ObjectUtils.extend( { inTarget: true }, {} );
+			const extended:object = ObjectUtils.extend( { inTarget: true }, {} )!;
 
 			expect( extended ).toEqual( {
 				inTarget: true,
@@ -727,7 +727,7 @@ describe( "ObjectUtils", ():void => {
 		} );
 
 		it( "should merge source properties", () => {
-			const extended:object = ObjectUtils.extend( { inTarget: true }, { inSource: true } );
+			const extended:object = ObjectUtils.extend( { inTarget: true }, { inSource: true } )!;
 
 			expect( extended ).toEqual( {
 				inTarget: true,
@@ -737,21 +737,21 @@ describe( "ObjectUtils", ():void => {
 
 		it( "should keep reference of object properties", () => {
 			const source:object = { inSource: {} };
-			const extended:object = ObjectUtils.extend( { inTarget: true }, source );
+			const extended:object = ObjectUtils.extend( { inTarget: true }, source )!;
 
 			expect( extended[ "inSource" ] ).toBe( source[ "inSource" ] );
 		} );
 
 		it( "should keep reference of array properties", () => {
 			const source:object = { inSource: [] };
-			const extended:object = ObjectUtils.extend( { inTarget: true }, source );
+			const extended:object = ObjectUtils.extend( { inTarget: true }, source )!;
 
 			expect( extended[ "inSource" ] ).toBe( source[ "inSource" ] );
 		} );
 
 		it( "should copy of object properties when option set", () => {
 			const source:object = { inSource: { inSubProperty: true } };
-			const extended:object = ObjectUtils.extend( { inTarget: true }, source, { objects: true } );
+			const extended:object = ObjectUtils.extend( { inTarget: true }, source, { objects: true } )!;
 
 			expect( extended[ "inSource" ] ).not.toBe( source[ "inSource" ] );
 			expect( extended[ "inSource" ] ).toEqual( source[ "inSource" ] );
@@ -759,7 +759,7 @@ describe( "ObjectUtils", ():void => {
 
 		it( "should copy of array properties when option set", () => {
 			const source:object = { inSource: [ "in sub-property" ] };
-			const extended:object = ObjectUtils.extend( { inTarget: true }, source, { arrays: true } );
+			const extended:object = ObjectUtils.extend( { inTarget: true }, source, { arrays: true } )!;
 
 			expect( extended[ "inSource" ] ).not.toBe( source[ "inSource" ] );
 			expect( extended[ "inSource" ] ).toEqual( source[ "inSource" ] );
@@ -767,7 +767,7 @@ describe( "ObjectUtils", ():void => {
 
 		it( "should copy of array and object properties when options set", () => {
 			const source:object = { inSource1: { inSubProperty: true }, inSource2: [ "in sub-property" ] };
-			const extended:object = ObjectUtils.extend( { inTarget: true }, source, { objects: true, arrays: true } );
+			const extended:object = ObjectUtils.extend( { inTarget: true }, source, { objects: true, arrays: true } )!;
 
 			expect( extended[ "inSource1" ] ).not.toBe( source[ "inSource1" ] );
 			expect( extended[ "inSource1" ] ).toEqual( source[ "inSource1" ] );
@@ -788,13 +788,13 @@ describe( "ObjectUtils", ():void => {
 
 		it( "should return not return source", () => {
 			const source:object = {};
-			const extended:object = ObjectUtils.clone( source );
+			const extended:object = ObjectUtils.clone( source )!;
 
 			expect( extended ).not.toBe( source );
 		} );
 
 		it( "should copy source properties", () => {
-			const extended:object = ObjectUtils.clone( { inSource: true } );
+			const extended:object = ObjectUtils.clone( { inSource: true } )!;
 
 			expect( extended ).toEqual( {
 				inSource: true,
@@ -803,21 +803,21 @@ describe( "ObjectUtils", ():void => {
 
 		it( "should keep reference of object properties", () => {
 			const source:object = { inSource: {} };
-			const extended:object = ObjectUtils.clone( source );
+			const extended:object = ObjectUtils.clone( source )!;
 
 			expect( extended[ "inSource" ] ).toBe( source[ "inSource" ] );
 		} );
 
 		it( "should keep reference of array properties", () => {
 			const source:object = { inSource: [] };
-			const extended:object = ObjectUtils.clone( source );
+			const extended:object = ObjectUtils.clone( source )!;
 
 			expect( extended[ "inSource" ] ).toBe( source[ "inSource" ] );
 		} );
 
 		it( "should copy of object properties when option set", () => {
 			const source:object = { inSource: { inSubProperty: true } };
-			const extended:object = ObjectUtils.clone( source, { objects: true } );
+			const extended:object = ObjectUtils.clone( source, { objects: true } )!;
 
 			expect( extended[ "inSource" ] ).not.toBe( source[ "inSource" ] );
 			expect( extended[ "inSource" ] ).toEqual( source[ "inSource" ] );
@@ -825,7 +825,7 @@ describe( "ObjectUtils", ():void => {
 
 		it( "should copy of array properties when option set", () => {
 			const source:object = { inSource: [ "in sub-property" ] };
-			const extended:object = ObjectUtils.clone( source, { arrays: true } );
+			const extended:object = ObjectUtils.clone( source, { arrays: true } )!;
 
 			expect( extended[ "inSource" ] ).not.toBe( source[ "inSource" ] );
 			expect( extended[ "inSource" ] ).toEqual( source[ "inSource" ] );
@@ -833,7 +833,7 @@ describe( "ObjectUtils", ():void => {
 
 		it( "should copy of array and object properties when options set", () => {
 			const source:object = { inSource1: { inSubProperty: true }, inSource2: [ "in sub-property" ] };
-			const extended:object = ObjectUtils.clone( source, { objects: true, arrays: true } );
+			const extended:object = ObjectUtils.clone( source, { objects: true, arrays: true } )!;
 
 			expect( extended[ "inSource1" ] ).not.toBe( source[ "inSource1" ] );
 			expect( extended[ "inSource1" ] ).toEqual( source[ "inSource1" ] );
@@ -1176,7 +1176,7 @@ describe( "ArrayUtils", ():void => {
 					} else {
 						value = {
 							done: true,
-							value: null,
+							value: null as any,
 						};
 					}
 					return value;
@@ -1447,7 +1447,7 @@ describe( "UUIDUtils", ():void => {
 
 
 		it( "should false when null", () => {
-			expect( UUIDUtils.is( null ) ).toEqual( false );
+			expect( UUIDUtils.is( null as any ) ).toEqual( false );
 		} );
 
 		it( "should false when string without separations", () => {

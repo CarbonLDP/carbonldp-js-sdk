@@ -209,7 +209,7 @@ describe( "RDFNode", () => {
 							"@type": "@id",
 						} ],
 					},
-				] );
+				] )!;
 
 				expect( returned ).toEqual( {
 					"@list": [ {

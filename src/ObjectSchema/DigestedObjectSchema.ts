@@ -15,11 +15,11 @@ export class DigestedObjectSchema {
 	/**
 	 * The default language of the string properties.
 	 */
-	language:string;
+	language:string | null;
 	/**
 	 * URI that will be used to resolve relative URIs that aren't defined in the schema.
 	 */
-	vocab:string;
+	vocab:string | undefined;
 	/**
 	 * Map that contains the prefixes of absolutes URIs.
 	 */
@@ -31,7 +31,7 @@ export class DigestedObjectSchema {
 
 	constructor() {
 		this.base = "";
-		this.vocab = void 0;
+		this.vocab = undefined;
 		this.language = null;
 		this.prefixes = new Map<string, string>();
 		this.properties = new Map<string, DigestedObjectSchemaProperty>();
@@ -46,14 +46,25 @@ export class DigestedObjectSchema {
 	 * @param uri Relative URI to resolve.
 	 * @param relativeTo Object with flags indicating which resolution mode to use.
 	 */
-	resolveURI( uri:string, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
+	resolveURI( uri:string, relativeTo?:{ vocab?:boolean, base?:boolean } ):string;
+	/**
+	 * Tries to resolve a non absolute URI using the schema and the configuration provided.
+	 *
+	 * The configuration indicates if the `vocab` or the `base` URI must be used to resolve the URI;
+	 * if both are set, the `vocab` one takes preference before the `base`-
+	 *
+	 * @param uri Relative URI to resolve.
+	 * @param relativeTo Object with flags indicating which resolution mode to use.
+	 */
+	resolveURI( uri:string | null, relativeTo?:{ vocab?:boolean, base?:boolean } ):string | null;
+	resolveURI( uri:string | null, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string | null {
 		if( uri === null || URI.isAbsolute( uri ) || URI.isBNodeID( uri ) ) return uri;
 
 		const [ prefix, localName = "" ]:[ string, string ] = uri.split( ":" ) as [ string, string ];
 
-		const definedReference:string = this.prefixes.has( prefix ) ?
-			this.prefixes.get( prefix ) : this.properties.has( prefix ) ?
-				this.properties.get( prefix ).uri
+		const definedReference:string | null = this.prefixes.has( prefix ) ?
+			this.prefixes.get( prefix )! : this.properties.has( prefix ) ?
+				this.properties.get( prefix )!.uri
 				: null;
 
 		if( definedReference !== null && definedReference !== prefix ) {
@@ -77,8 +88,8 @@ export class DigestedObjectSchema {
 	 * @param name Property name to return its definition.
 	 */
 	getProperty( name:string ):DigestedObjectSchemaProperty | undefined {
-		if( ! this.properties.has( name) ) return void 0;
-		return ObjectSchemaUtils._resolveProperty( this, this.properties.get( name ) );
+		if( ! this.properties.has( name ) ) return void 0;
+		return ObjectSchemaUtils._resolveProperty( this, this.properties.get( name )! );
 	}
 
 }

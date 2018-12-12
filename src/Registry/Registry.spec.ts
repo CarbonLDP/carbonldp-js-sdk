@@ -467,7 +467,7 @@ describe( "Registry", () => {
 				const registry:Registry<RegisteredPointer> = createMock( {} );
 
 				const returned:TargetResource = registry.getPointer( "id" );
-				expect( returned ).toEqual( jasmine.objectContaining( { $id: "id" } ) );
+				expect( returned ).toEqual( jasmine.objectContaining<TargetResource>( { $id: "id" } ) );
 			} );
 
 			it( "should return local resource when in scope and exists & has no parent", () => {
@@ -492,7 +492,7 @@ describe( "Registry", () => {
 				const registry:Registry<RegisteredPointer> = createMock( {} );
 
 				const returned:TargetResource = registry.getPointer( "id", true );
-				expect( returned ).toEqual( jasmine.objectContaining( { $id: "id" } ) );
+				expect( returned ).toEqual( jasmine.objectContaining<TargetResource>( { $id: "id" } ) );
 			} );
 
 			it( "should return local resource when in scope and exists & has no parent & local flag is set ", () => {
@@ -559,7 +559,7 @@ describe( "Registry", () => {
 				const registry:Registry<RegisteredPointer> = createMock( { registry: parent } );
 
 				const returned:TargetResource = registry.getPointer( "id", true );
-				expect( returned ).toEqual( jasmine.objectContaining( { $id: "id" } ) );
+				expect( returned ).toEqual( jasmine.objectContaining<TargetResource>( { $id: "id" } ) );
 			} );
 
 			it( "should return parent resource when in scope and not exists & in parent", () => {
@@ -589,7 +589,7 @@ describe( "Registry", () => {
 				const registry:Registry<RegisteredPointer> = createMock( { registry: parent } );
 
 				const returned:TargetResource = registry.getPointer( "id", true );
-				expect( returned ).toEqual( jasmine.objectContaining( { $id: "id" } ) );
+				expect( returned ).toEqual( jasmine.objectContaining<TargetResource>( { $id: "id" } ) );
 			} );
 
 			it( "should return new resource when in scope and not exists & in parent & local flag is set", () => {
@@ -599,7 +599,7 @@ describe( "Registry", () => {
 				const registry:Registry<RegisteredPointer> = createMock( { registry: parent } );
 
 				const returned:TargetResource = registry.getPointer( "id", true );
-				expect( returned ).toEqual( jasmine.objectContaining( { $id: "id" } ) );
+				expect( returned ).toEqual( jasmine.objectContaining<TargetResource>( { $id: "id" } ) );
 				expect( returned ).not.toBe( parentPointer );
 			} );
 
@@ -989,7 +989,7 @@ describe( "Registry", () => {
 					.and.returnValue( true );
 
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
-				Registry.decorate( { __modelDecorator: null } );
+				Registry.decorate( { __modelDecorator: RegisteredPointer } );
 
 				expect( spy ).not.toHaveBeenCalled();
 			} );
@@ -1454,7 +1454,7 @@ describe( "$Registry", () => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( {} );
 
 				const returned:TargetResource = registry.$getPointer( "id" );
-				expect( returned ).toEqual( jasmine.objectContaining( { $id: "id" } ) );
+				expect( returned ).toEqual( jasmine.objectContaining<TargetResource>( { $id: "id" } ) );
 			} );
 
 			it( "should return local resource when in scope and exists & has no parent", () => {
@@ -1479,7 +1479,7 @@ describe( "$Registry", () => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( {} );
 
 				const returned:TargetResource = registry.$getPointer( "id", true );
-				expect( returned ).toEqual( jasmine.objectContaining( { $id: "id" } ) );
+				expect( returned ).toEqual( jasmine.objectContaining<TargetResource>( { $id: "id" } ) );
 			} );
 
 			it( "should return local resource when in scope and exists & has no parent & local flag is set ", () => {
@@ -1546,7 +1546,7 @@ describe( "$Registry", () => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( { $registry: parent } );
 
 				const returned:TargetResource = registry.$getPointer( "id", true );
-				expect( returned ).toEqual( jasmine.objectContaining( { $id: "id" } ) );
+				expect( returned ).toEqual( jasmine.objectContaining<TargetResource>( { $id: "id" } ) );
 			} );
 
 			it( "should return parent resource when in scope and not exists & in parent", () => {
@@ -1576,7 +1576,7 @@ describe( "$Registry", () => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( { $registry: parent } );
 
 				const returned:TargetResource = registry.$getPointer( "id", true );
-				expect( returned ).toEqual( jasmine.objectContaining( { $id: "id" } ) );
+				expect( returned ).toEqual( jasmine.objectContaining<TargetResource>( { $id: "id" } ) );
 			} );
 
 			it( "should return new resource when in scope and not exists & in parent & local flag is set", () => {
@@ -1586,7 +1586,7 @@ describe( "$Registry", () => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( { $registry: parent } );
 
 				const returned:TargetResource = registry.$getPointer( "id", true );
-				expect( returned ).toEqual( jasmine.objectContaining( { $id: "id" } ) );
+				expect( returned ).toEqual( jasmine.objectContaining<TargetResource>( { $id: "id" } ) );
 				expect( returned ).not.toBe( parentPointer );
 			} );
 

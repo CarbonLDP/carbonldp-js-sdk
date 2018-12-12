@@ -34,12 +34,10 @@ describe( "PlatformMetadata", ():void => {
 			} );
 
 			it( "should have c:instance", ():void => {
-				expect( PlatformMetadata.SCHEMA ).toEqual( jasmine.objectContaining( {
-					instance: {
-						"@id": C.instance,
-						"@type": "@id",
-					},
-				} ) );
+				expect( PlatformMetadata.SCHEMA[ "instance" ] ).toEqual( {
+					"@id": C.instance,
+					"@type": "@id",
+				} );
 			} );
 
 		} );

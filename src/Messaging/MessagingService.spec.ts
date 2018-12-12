@@ -151,7 +151,7 @@ describe( "MessagingService", () => {
 		it( "should initialize the connection/reconnection attempts counter", ( done:DoneFn ) => {
 			const mockServer:any = new Server( "https://example.com/broker" );
 
-			expect( service[ "_attempts" ] ).toBeUndefined();
+			expect( service[ "_attempts" ] ).toBe( 0 );
 
 			service.connect();
 			expect( service[ "_attempts" ] ).toBe( 0 );
@@ -162,7 +162,7 @@ describe( "MessagingService", () => {
 		it( "should reset the connection/reconnection attempts counter", ( done:DoneFn ) => {
 			const mockServer:any = new Server( "https://example.com/broker" );
 
-			expect( service[ "_attempts" ] ).toBeUndefined();
+			expect( service[ "_attempts" ] ).toBe( 0 );
 			service[ "_attempts" ] = 10;
 
 			service.connect();
@@ -216,7 +216,7 @@ describe( "MessagingService", () => {
 			} );
 
 			service.reconnect( () => {
-				expect( service[ "_client" ].connected ).toBe( true );
+				expect( service[ "_client" ]!.connected ).toBe( true );
 				mockServer.stop( done );
 			}, ( error ) => {
 				done.fail( error );
@@ -242,13 +242,13 @@ describe( "MessagingService", () => {
 
 			let reconnected:boolean = false;
 			service.reconnect( () => {
-				expect( service[ "_client" ].connected ).toBe( true );
+				expect( service[ "_client" ]!.connected ).toBe( true );
 				if( reconnected ) mockServer.stop( done );
 				else {
 					mockServer.close( {
 						code: 1006,
 					} );
-					expect( service[ "_client" ].connected ).toBe( false );
+					expect( service[ "_client" ]!.connected ).toBe( false );
 					connectServer();
 					reconnected = true;
 				}
@@ -286,14 +286,14 @@ describe( "MessagingService", () => {
 					reconnected = attempts === maxAttempts + 1;
 					connectServer();
 				} else {
-					expect( service[ "_client" ].connected ).toBe( false );
+					expect( service[ "_client" ]!.connected ).toBe( false );
 				}
 
 				MessagingService.prototype.reconnect.call( service, ...args );
 			} );
 
 			service.reconnect( () => {
-				expect( service[ "_client" ].connected ).toBe( true );
+				expect( service[ "_client" ]!.connected ).toBe( true );
 				if( reconnected ) mockServer.stop( done );
 				else mockServer.close( {
 					code: 1006,
@@ -330,7 +330,7 @@ describe( "MessagingService", () => {
 				if( attempts === 1 ) {
 					connectServer();
 				} else {
-					expect( service[ "_client" ].connected ).toBe( false );
+					expect( service[ "_client" ]!.connected ).toBe( false );
 				}
 
 				MessagingService.prototype.reconnect.call( service, ...args );
@@ -338,7 +338,7 @@ describe( "MessagingService", () => {
 
 			let reconnected:boolean = false;
 			service.reconnect( () => {
-				expect( service[ "_client" ].connected ).toBe( true );
+				expect( service[ "_client" ]!.connected ).toBe( true );
 
 				if( reconnected ) done.fail( "No should be reconnected" );
 
@@ -371,7 +371,7 @@ describe( "MessagingService", () => {
 
 			service.reconnect( () => {
 				const previousClient:any = service[ "_client" ];
-				expect( service[ "_client" ].connected ).toBe( true );
+				expect( service[ "_client" ]!.connected ).toBe( true );
 				service.reconnect( () => {
 					expect( previousClient ).not.toBe( service[ "_client" ] );
 					mockServer.stop( done );
@@ -422,7 +422,7 @@ describe( "MessagingService", () => {
 			} );
 
 			service.subscribe( "destination/", ( message:EventMessage ) => {
-				expect( service[ "_client" ].connected ).toBe( true );
+				expect( service[ "_client" ]!.connected ).toBe( true );
 
 				expect( message ).toEqual( {
 					target: jasmine.any( Object ),
@@ -465,7 +465,7 @@ describe( "MessagingService", () => {
 							"@id": "_:1",
 							"@type": [ "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ],
 							"https://carbonldp.com/ns/v1/platform#target": {
-								"@id": "https://example.com/created-child-${frame.headers.destination.split( "/" ).reverse()[ 1 ].split( "-" ).reverse()[ 0 ]}/"
+								"@id": "https://example.com/created-child-${frame.headers.destination!.split( "/" ).reverse()[ 1 ].split( "-" ).reverse()[ 0 ]}/"
 							}
 						} ]` ) );
 				} );
@@ -473,7 +473,7 @@ describe( "MessagingService", () => {
 
 			function addSubscription( index:number ):void {
 				service.subscribe( `/topic/*.*.destination-${index}/`, ( message:EventMessage ) => {
-					expect( service[ "_client" ].connected ).toBe( true );
+					expect( service[ "_client" ]!.connected ).toBe( true );
 
 					expect( message ).toEqual( {
 						target: jasmine.any( Object ),
@@ -494,10 +494,10 @@ describe( "MessagingService", () => {
 
 			let receivedData:number = 0;
 			addSubscription( 1 );
-			expect( service[ "_client" ].connected ).toBe( false );
+			expect( service[ "_client" ]!.connected ).toBe( false );
 
 			addSubscription( 2 );
-			expect( service[ "_client" ].connected ).toBe( false );
+			expect( service[ "_client" ]!.connected ).toBe( false );
 		} );
 
 		it( "should receive broadcasted errors", ( done:DoneFn ) => {
@@ -605,9 +605,9 @@ describe( "MessagingService", () => {
 
 
 					if( frame.command !== "SUBSCRIBE" ) return;
-					const index:string = frame.headers.destination.split( "/" ).reverse()[ 1 ].split( "-" ).reverse()[ 0 ];
+					const index:string = frame.headers.destination!.split( "/" ).reverse()[ 1 ].split( "-" ).reverse()[ 0 ];
 
-					if( index === "2" ) targetID = frame.headers.id;
+					if( index === "2" ) targetID = frame.headers.id!;
 
 					mockServer.send( Frame.marshall( "MESSAGE", {
 						"subscription": frame.headers.id,
@@ -631,7 +631,7 @@ describe( "MessagingService", () => {
 			function addSubscription( index:number ):( message:EventMessage ) => void {
 				let callback:( message:EventMessage ) => void;
 				service.subscribe( `/topic/*.*.destination-${index}/`, callback = ( message:EventMessage ) => {
-					expect( service[ "_client" ].connected ).toBe( true );
+					expect( service[ "_client" ]!.connected ).toBe( true );
 
 					expect( message ).toEqual( {
 						target: jasmine.any( Object ),

@@ -151,11 +151,11 @@ export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositor
 }
 
 
-type QueryData = {
-	containerPropertyType?:QueryContainerPropertyType;
-	queryBuilderFn?:QueryBuilderFn;
-	rootType?:QueryPropertyType;
-};
+type QueryBuilderFn = Function & (( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder);
+type QueryDocsBuilderFn = Function & (( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder);
+
+type QueryData = { queryBuilderFn?:QueryBuilderFn | QueryDocsBuilderFn, rootType?:QueryPropertyType };
+type QueryContainerData = QueryData & { containerPropertyType:QueryContainerPropertyType };
 
 
 function __executeQueryBuilder( queryContainer:QueryContainer, queryData:QueryData ):void {
@@ -215,6 +215,8 @@ function __sortQueryDocuments<T extends Document>( queryContainer:QueryContainer
 
 		if( aValue < bValue ) return - 1 * inverter;
 		if( aValue > bValue ) return inverter;
+
+		return 0;
 	} );
 }
 
@@ -250,16 +252,8 @@ function __requestQueryDocuments<T extends object>( this:void, repository:Querya
 		.then( ( jsonldString ) => {
 			return new JSONLDParser().parse( jsonldString );
 		} )
-		.then<(T & Document)[]>( ( rdfNodes:RDFNode[] ) => {
+		.then<(T & Document)[]>( ( rdfNodes:object[] ) => {
 			const freeNodes:RDFNode[] = RDFDocument.getFreeNodes( rdfNodes );
-
-			rdfNodes.forEach( ( node, index ) => { // TODO: Remove when `cldp-sdk://` fixed
-				if( ! RDFNode.getID( node ).startsWith( "cldp-sdk://" ) ) return;
-				if( ! Array.isArray( node[ "@graph" ] ) ) return;
-
-				freeNodes.push( ...node[ "@graph" ] as RDFNode[] );
-				rdfNodes.splice( index, 1 );
-			} );
 
 			const freeResources:FreeResources = FreeResources
 				.parseFreeNodes( repository.context.registry, freeNodes );
@@ -284,7 +278,7 @@ function __requestQueryDocuments<T extends object>( this:void, repository:Querya
 }
 
 
-function __requestRelations<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryData:QueryData ):Promise<(T & Document)[]> {
+function __requestRelations<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryData:QueryContainerData ):Promise<(T & Document)[]> {
 	if( ! repository.context.registry.inScope( uri, true ) )
 		return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
 
@@ -349,7 +343,7 @@ function __refreshQueryable<T extends object>( this:void, repository:QueryableDo
 
 
 	const queryContainer:QueryContainer = new QueryContainer( repository.context, { uris: [ url ] } );
-	__addRefreshProperties( queryContainer._queryProperty, document.$_queryableMetadata );
+	__addRefreshProperties( queryContainer._queryProperty, document.$_queryableMetadata! );
 
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentChecksums ] }, requestOptions );
 
@@ -372,8 +366,6 @@ export type QueryableDocumentsRepositoryTraitFactory =
 	& ModelPrototype<QueryableDocumentsRepositoryTrait, LDPDocumentsRepositoryTrait, OverriddenMembers>
 	& ModelDecorator<QueryableDocumentsRepositoryTrait, BaseDocumentsRepository>
 	;
-
-type QueryBuilderFn = Function & (( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder);
 
 /**
  * Constant that implements {@link QueryableDocumentsRepositoryTraitFactory}.
@@ -403,7 +395,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 				const types:string[] = target ? target.types : [];
 				return __getQueryable( this, uri, requestOptions, _ => {
 					types.forEach( type => _.withType( type ) );
-					return queryBuilderFn.call( void 0, _ );
+					return queryBuilderFn!.call( void 0, _ );
 				} );
 			}
 
@@ -453,7 +445,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 		},
 
 
-		getChildren<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptionsOrQueryBuilderFn?:RequestOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<(T & Document)[]> {
+		getChildren<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptionsOrQueryBuilderFn?:RequestOptions | QueryDocsBuilderFn, queryBuilderFn?:QueryDocsBuilderFn ):Promise<(T & Document)[]> {
 			const requestOptions:RequestOptions = isObject( requestOptionsOrQueryBuilderFn ) ?
 				requestOptionsOrQueryBuilderFn : {};
 
@@ -469,7 +461,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			} );
 		},
 
-		getMembers<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptionsOrQueryBuilderFn?:RequestOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<(T & Document)[]> {
+		getMembers<T extends object>( this:QueryableDocumentsRepositoryTrait, uri:string, requestOptionsOrQueryBuilderFn?:RequestOptions | QueryDocsBuilderFn, queryBuilderFn?:QueryDocsBuilderFn ):Promise<(T & Document)[]> {
 			const requestOptions:RequestOptions = isObject( requestOptionsOrQueryBuilderFn ) ?
 				requestOptionsOrQueryBuilderFn : {};
 

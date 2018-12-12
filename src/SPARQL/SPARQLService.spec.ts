@@ -45,7 +45,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send request to URI", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -67,7 +67,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the query", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -89,7 +89,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the basic headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -114,7 +114,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the custom headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -146,7 +146,7 @@ describe( "SPARQLService", () => {
 
 		it( "should return the parsed data", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -170,7 +170,7 @@ describe( "SPARQLService", () => {
 
 		it( "should return the response object", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -201,7 +201,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send request to URI", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -223,7 +223,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the query", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -245,7 +245,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the basic headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -270,7 +270,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the custom headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -302,7 +302,7 @@ describe( "SPARQLService", () => {
 
 		it( "should return the parsed data", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -323,7 +323,7 @@ describe( "SPARQLService", () => {
 
 		it( "should return the response object", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -355,7 +355,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send request to URI", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -455,7 +455,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the query", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -555,7 +555,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the basic headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -658,7 +658,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the custom headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -768,7 +768,7 @@ describe( "SPARQLService", () => {
 
 		it( "should return the parsed data", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -948,7 +948,7 @@ describe( "SPARQLService", () => {
 
 		it( "should return the response object", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1057,7 +1057,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send request to URI", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1158,7 +1158,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the query", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1259,7 +1259,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the basic headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1363,7 +1363,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the custom headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1474,7 +1474,7 @@ describe( "SPARQLService", () => {
 
 		it( "should return the parsed data", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1609,7 +1609,7 @@ describe( "SPARQLService", () => {
 
 		it( "should throw error when bNode in bindings", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1647,7 +1647,7 @@ describe( "SPARQLService", () => {
 
 		it( "should return the response object", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1758,7 +1758,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send request to URI", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1784,7 +1784,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the query", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1810,7 +1810,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the basic headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1839,7 +1839,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the custom headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1884,7 +1884,7 @@ describe( "SPARQLService", () => {
 			}`;
 
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: data,
@@ -1902,7 +1902,7 @@ describe( "SPARQLService", () => {
 
 		it( "should return the response object", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1938,7 +1938,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send request to URI", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1964,7 +1964,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the query", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -1990,7 +1990,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the basic headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -2019,7 +2019,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the custom headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -2064,7 +2064,7 @@ describe( "SPARQLService", () => {
 			}`;
 
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: data,
@@ -2082,7 +2082,7 @@ describe( "SPARQLService", () => {
 
 		it( "should return the response object", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: `{
@@ -2118,7 +2118,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send request to URI", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: ``,
@@ -2137,7 +2137,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the query", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: ``,
@@ -2156,7 +2156,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the basic headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: ``,
@@ -2178,7 +2178,7 @@ describe( "SPARQLService", () => {
 
 		it( "should send the custom headers", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: ``,
@@ -2207,7 +2207,7 @@ describe( "SPARQLService", () => {
 
 		it( "should return the response object", async () => {
 			jasmine.Ajax
-				.stubRequest( "http://example.com/sparql-endpoint/", null, "POST" )
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
 				.andReturn( {
 					status: 200,
 					responseText: ``,

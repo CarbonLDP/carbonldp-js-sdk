@@ -10,5 +10,5 @@ export interface BaseRegisteredPointer extends BasePointer {
 	/**
 	 * The registry the pointer will belong to.
 	 */
-	$registry:Registry | $Registry;
+	$registry:Registry | $Registry | undefined;
 }

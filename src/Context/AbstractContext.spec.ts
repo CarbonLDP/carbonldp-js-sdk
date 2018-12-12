@@ -8,7 +8,7 @@ import { AbstractContext } from "./AbstractContext";
 import { ContextSettings } from "./ContextSettings";
 
 
-function createMock<PARENT extends AbstractContext<any, any, any> = undefined>( data?:{
+function createMock<PARENT extends AbstractContext<any, any, any> | undefined = undefined>( data?:{
 	parentContext?:PARENT;
 
 	uri?:string;
@@ -23,17 +23,16 @@ function createMock<PARENT extends AbstractContext<any, any, any> = undefined>( 
 
 		_baseURI:string;
 
-		constructor( parentContext?:PARENT ) {
-			super( parentContext );
+		constructor() {
+			super( data! && data!.parentContext! );
 
-			this._baseURI = data && "uri" in data ? data.uri : "https://example.com/";
+			this._baseURI = data && "uri" in data ? data.uri || "" : "https://example.com/";
 			if( data && data.settings ) this._settings = data.settings;
 
 			if( data && data.generalSchema ) this._generalObjectSchema = data.generalSchema;
 			if( data && data.schemasMap ) this._typeObjectSchemaMap = data.schemasMap;
 		}
-
-	}( data && data.parentContext );
+	};
 }
 
 
@@ -63,7 +62,7 @@ describe( "AbstractContext", () => {
 			const subContext:AbstractContext<any, any, any> = new class extends AbstractContext<any, any, any> {
 				registry:undefined;
 				repository:undefined;
-				protected _baseURI:string;
+				protected _baseURI:string = "";
 			}( context );
 
 			expect( subContext.parentContext ).toBe( context );

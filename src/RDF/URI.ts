@@ -207,7 +207,7 @@ export const URI:URIFactory = {
 
 	getFragment( uri:string ):string {
 		let parts:string[] = uri.split( "#" );
-		if( parts.length < 2 ) return null;
+		if( parts.length < 2 ) throw new IllegalArgumentError( "The URI provided hasn't a # sign." );
 		if( parts.length > 2 ) throw new IllegalArgumentError( "The URI provided has more than one # sign." );
 
 		return parts[ 1 ];
@@ -232,20 +232,22 @@ export const URI:URIFactory = {
 	},
 
 	getParameters( uri:string ):Map<string, string | string[]> {
-		let parameters:Map<string, string | string[]> = new Map();
+		const parameters:Map<string, string | string[]> = new Map();
 
 		if( ! URI.hasQuery( uri ) ) return parameters;
 
 		uri.replace( /^.*\?/, "" ).split( "&" ).forEach( ( param:string ) => {
-			let parts:string[] = param.replace( /\+/g, " " ).split( "=" );
+			const parts:string[] = param
+				.replace( /\+/g, " " )
+				.split( "=" );
 
-			let key:string = parts.shift();
-			let val:string = parts.length > 0 ? parts.join( "=" ) : null;
+			const key:string = parts.shift()!;
+			const val:string = parts.length > 0 ? parts.join( "=" ) : "";
 
 			if( ! parameters.has( key ) ) {
 				parameters.set( key, val );
 			} else {
-				parameters.set( key, [].concat( parameters.get( key ), val ) );
+				parameters.set( key, new Array<string>().concat( parameters.get( key )!, val ) );
 			}
 		} );
 
@@ -285,9 +287,9 @@ export const URI:URIFactory = {
 
 		const prefix:string = prefixOrObjectSchema;
 
-		if( URI.isPrefixed( uri ) || ! uri.startsWith( prefixURI ) ) return uri;
+		if( URI.isPrefixed( uri ) || ! uri.startsWith( prefixURI! ) ) return uri;
 
-		return `${prefix}:${uri.substring( prefixURI.length )}`;
+		return `${prefix}:${uri.substring( prefixURI!.length )}`;
 	},
 };
 

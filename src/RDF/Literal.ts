@@ -114,7 +114,7 @@ export const RDFLiteral:RDFLiteralFactory = {
 		return literal;
 	},
 
-	parse( valueOrLiteral:string | RDFLiteral, type?:string ):any {
+	parse( valueOrLiteral:string | RDFLiteral, type?:string | null ):any | null {
 		let literalValue:string;
 		if( Utils.isString( valueOrLiteral ) ) {
 			literalValue = valueOrLiteral;
@@ -128,7 +128,6 @@ export const RDFLiteral:RDFLiteralFactory = {
 		}
 
 		let value:any = literalValue;
-		let parts:string[];
 		switch( type ) {
 			// Dates
 			case XSD.date:
@@ -136,7 +135,8 @@ export const RDFLiteral:RDFLiteralFactory = {
 				value = new Date( literalValue );
 				break;
 			case XSD.time:
-				parts = literalValue.match( /(\d+):(\d+):(\d+)\.(\d+)Z/ );
+				const parts:string[] | null = literalValue.match( /(\d+):(\d+):(\d+)\.(\d+)Z/ );
+				if( ! parts ) throw new IllegalArgumentError( `Invalid value for type ${XSD.time}.` );
 				value = new Date();
 				value.setUTCHours( parseFloat( parts[ 1 ] ), parseFloat( parts[ 2 ] ), parseFloat( parts[ 3 ] ), parseFloat( parts[ 4 ] ) );
 				break;

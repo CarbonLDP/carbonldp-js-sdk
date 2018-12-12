@@ -267,7 +267,7 @@ export const LDPDocumentTrait:LDPDocumentTraitFactory = {
 			return this.$repository.addMember( uri, ...params );
 		},
 
-		$addMembers( this:LDPDocumentTrait, uriOrMembers:string | (Pointer | string)[], membersOrOptions:(Pointer | string)[] | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
+		$addMembers( this:LDPDocumentTrait, uriOrMembers:string | (Pointer | string)[], membersOrOptions?:(Pointer | string)[] | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 			const { _uri, _args } = _parseURIParams( this, uriOrMembers, arguments );
 			// FIXME
 			// @ts-ignore
@@ -275,7 +275,7 @@ export const LDPDocumentTrait:LDPDocumentTraitFactory = {
 		},
 
 
-		$removeMember( this:LDPDocumentTrait, uriOrMember:string | (Pointer | string), memberOrOptions:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
+		$removeMember( this:LDPDocumentTrait, uriOrMember:string | (Pointer | string), memberOrOptions?:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 			const { uri, params } = __parseMemberParams( this, arguments );
 			// FIXME
 			// @ts-ignore

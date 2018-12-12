@@ -23,13 +23,20 @@ describe( "RDFValue", ():void => {
 			} );
 
 
+			let pointerLibrary:jasmine.SpyObj<PointerLibrary>;
+			beforeEach( () => {
+				pointerLibrary = jasmine.createSpyObj<PointerLibrary>( {
+					getPointer: { $id: "http://example.com/pointer/", the: "mock pointer" },
+				} );
+			} );
+
 			it( "should return string from literal string with out type", () => {
-				const returned:any = RDFValue.parse( null, { "@value": "a string" } );
+				const returned:any = RDFValue.parse( pointerLibrary, { "@value": "a string" } );
 				expect( returned ).toEqual( "a string" );
 			} );
 
 			it( "should return Date from literal with dateTime type", () => {
-				const returned:any = RDFValue.parse( null, {
+				const returned:any = RDFValue.parse( pointerLibrary, {
 					"@value": "2001-02-15T05:35:12.029Z",
 					"@type": XSD.dateTime,
 				} );
@@ -38,10 +45,6 @@ describe( "RDFValue", ():void => {
 			} );
 
 			it( "should return pointer from library when literal pointer", () => {
-				const pointerLibrary:jasmine.SpyObj<PointerLibrary> = jasmine.createSpyObj<PointerLibrary>( {
-					getPointer: { $id: "http://example.com/pointer/", the: "mock pointer" },
-				} );
-
 				const returned:any = RDFValue.parse( pointerLibrary, {
 					"@id": "http://example.com/pointer/",
 					"@type": "@id",
@@ -52,10 +55,6 @@ describe( "RDFValue", ():void => {
 			} );
 
 			it( "should return array from @list", () => {
-				const pointerLibrary:jasmine.SpyObj<PointerLibrary> = jasmine.createSpyObj<PointerLibrary>( {
-					getPointer: { $id: "http://example.com/pointer/", the: "mock pointer" },
-				} );
-
 				const returned:any = RDFValue.parse( pointerLibrary, {
 					"@list": [
 						{
@@ -81,7 +80,7 @@ describe( "RDFValue", ():void => {
 			} );
 
 			it( "should return null when empty property", () => {
-				const returned:any = RDFValue.parse( null, {} );
+				const returned:any = RDFValue.parse( pointerLibrary, {} );
 				expect( returned ).toBeNull();
 			} );
 

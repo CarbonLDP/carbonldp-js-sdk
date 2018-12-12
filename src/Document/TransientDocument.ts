@@ -121,10 +121,10 @@ function __getLabelFrom( slug:string ):string {
 }
 
 function __getObjectId( object:{ $id?:string, $slug?:string } ):string {
-	if( "$id" in object ) return object.$id;
+	if( "$id" in object ) return object.$id!;
 
-	if( "$slug" in object ) return URI.hasFragment( object.$slug ) ?
-		object.$slug : __getLabelFrom( object.$slug );
+	if( "$slug" in object ) return URI.hasFragment( object.$slug! ) ?
+		object.$slug! : __getLabelFrom( object.$slug! );
 
 	return URI.generateBNodeID();
 }
@@ -201,7 +201,7 @@ export const TransientDocument:TransientDocumentFactory = {
 
 			if( URI.isFragmentOf( id, this.$id ) ) return URI.getFragment( id );
 
-			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
+			throw new IllegalArgumentError( `"${id}" is out of scope.` );
 		},
 
 		$getPointer( this:TransientDocument, id:string, local?:true ):TransientFragment {
@@ -222,7 +222,7 @@ export const TransientDocument:TransientDocumentFactory = {
 			id = __getLabelFrom( id );
 			const localID:string = this.$_getLocalID( id );
 
-			const resource:TransientFragment = this.$__resourcesMap.get( localID );
+			const resource:TransientFragment | undefined = this.$__resourcesMap.get( localID );
 			if( ! resource ) return null;
 
 			return resource as T & TransientFragment;

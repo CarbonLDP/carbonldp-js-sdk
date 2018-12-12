@@ -9,7 +9,7 @@ export class HTTPError extends AbstractError {
 	/**
 	 * Status code of the HTTP error.
 	 */
-	static get statusCode():number { return null; }
+	static get statusCode():number | null { return null; }
 
 	get name():string { return "HTTPError"; }
 

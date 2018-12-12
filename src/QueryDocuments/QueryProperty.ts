@@ -175,7 +175,7 @@ export class QueryProperty implements QueryablePropertyData {
 
 		if( propertyDefinition.inherit === false ) return digestedDefinition;
 
-		const propertyURI:string | undefined = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
+		const propertyURI:string | undefined = "@id" in propertyDefinition ? digestedDefinition.uri! : void 0;
 		const inheritDefinition:DigestedObjectSchemaProperty | undefined = this
 			.__getInheritDefinition( propertyName, propertyURI );
 
@@ -228,7 +228,7 @@ export class QueryProperty implements QueryablePropertyData {
 	// Helpers for property specialization
 
 	setType( type:QueryPropertyType ):void {
-		this.propertyType = _getBestType( this.propertyType, type );
+		this.propertyType = _getBestType( this.propertyType!, type );
 	}
 
 	addType( type:string ):void {
@@ -264,13 +264,13 @@ export class QueryProperty implements QueryablePropertyData {
 
 	_getVariable( name:string ):VariableToken {
 		return this.queryContainer
-			.getVariable( `${ this.fullName }.${ name }` );
+			.getVariable( `${this.fullName}.${name}` );
 	}
 
 	protected __createIRIToken():IRIToken {
 		return this
 			.queryContainer
-			.compactIRI( this.definition.uri );
+			.compactIRI( this.definition.uri! );
 	}
 
 	protected __createPathToken():PathToken | VariableToken {
@@ -408,14 +408,14 @@ export class QueryProperty implements QueryablePropertyData {
 
 		if( this.definition.literal ) {
 			const literalToken:IRIToken = this.queryContainer
-				.compactIRI( this.definition.literalType );
+				.compactIRI( this.definition.literalType! );
 
 			if( identifier.token === "variable" )
-				return new FilterToken( `datatype( ${ identifier } ) = ${ literalToken }` );
+				return new FilterToken( `datatype( ${identifier} ) = ${literalToken}` );
 		}
 
 		if( this.definition.pointerType !== null && identifier.token === "variable" )
-			return new FilterToken( `! isLiteral( ${ identifier } )` );
+			return new FilterToken( `! isLiteral( ${identifier} )` );
 	}
 
 	protected __createPartialSearchPatterns():PatternToken[] {

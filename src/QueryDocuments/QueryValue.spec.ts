@@ -73,7 +73,7 @@ describe( "QueryValue", () => {
 				const queryValue:QueryValue = new QueryValue( queryContainer, value );
 
 				queryValue.withType( type );
-				expect( queryValue[ "_literal" ] ).toEqual( jasmine.objectContaining<RDFLiteralToken>( {
+				expect( queryValue[ "_literal" ] as RDFLiteralToken ).toEqual( jasmine.objectContaining<RDFLiteralToken>( {
 					type: new IRIRefToken( XSD[ type ] ),
 				} ) );
 			};
@@ -94,7 +94,7 @@ describe( "QueryValue", () => {
 				queryValue.withType( type );
 
 				expect( serializeSpy ).toHaveBeenCalledWith( type, value );
-				expect( queryValue[ "_literal" ] ).toEqual( jasmine.objectContaining<RDFLiteralToken>( {
+				expect( queryValue[ "_literal" ] as RDFLiteralToken ).toEqual( jasmine.objectContaining<RDFLiteralToken>( {
 					value: serializeSpy.calls.mostRecent().returnValue,
 					type: new IRIRefToken( type ),
 				} ) );
@@ -139,7 +139,7 @@ describe( "QueryValue", () => {
 				const queryValue:QueryValue = new QueryValue( queryContainer, "value" );
 
 				queryValue.withLanguage( language );
-				expect( queryValue[ "_literal" ] ).toEqual( jasmine.objectContaining<RDFLiteralToken>( {
+				expect( queryValue[ "_literal" ] as RDFLiteralToken ).toEqual( jasmine.objectContaining<RDFLiteralToken>( {
 					language: new LanguageToken( language ),
 				} ) );
 			};
@@ -161,7 +161,7 @@ describe( "QueryValue", () => {
 		it( "should return the token created", () => {
 			const helper:( value:string | number | boolean | Date ) => void = value => {
 				const queryValue:QueryValue = new QueryValue( queryContainer, value );
-				expect( queryValue.getToken() ).toBe( queryValue[ "_literal" ] );
+				expect( queryValue.getToken() ).toBe( queryValue[ "_literal" ]! );
 			};
 
 			helper( "a-value" );
@@ -185,7 +185,7 @@ describe( "QueryValue", () => {
 				if( type ) queryValue.withType( type );
 				if( lang ) queryValue.withLanguage( lang );
 
-				expect( queryValue.toString() ).toBe( queryValue[ "_literal" ].toString() );
+				expect( queryValue.toString() ).toBe( queryValue[ "_literal" ]!.toString() );
 			};
 
 			helper( "value" );
@@ -193,8 +193,8 @@ describe( "QueryValue", () => {
 			helper( 1 );
 			helper( 10.01, XSD.double );
 			helper( new Date() );
-			helper( "value", null, "en" );
-			helper( "value", null, "en-US" );
+			helper( "value", undefined, "en" );
+			helper( "value", undefined, "en-US" );
 		} );
 
 	} );

@@ -49,7 +49,7 @@ export class QueryableProperty {
 	 * @param type
 	 */
 	setType( type:QueryPropertyType ):void {
-		this.propertyType = _getBestType( this.propertyType, type );
+		this.propertyType = _getBestType( this.propertyType!, type );
 	}
 
 
@@ -71,7 +71,7 @@ export class QueryableProperty {
 	getProperty( propertyName:string, data?:QueryablePropertyData ):QueryableProperty {
 		if( ! this.subProperties.has( propertyName ) ) {
 			if( ! data )
-				throw new Error( `Property "${ propertyName }" doesn't exists.` );
+				throw new Error( `Property "${propertyName}" doesn't exists.` );
 
 			const property:QueryableProperty = new QueryableProperty( data );
 
@@ -79,7 +79,7 @@ export class QueryableProperty {
 			return property;
 
 		} else {
-			const property:QueryableProperty = this.subProperties.get( propertyName );
+			const property:QueryableProperty = this.subProperties.get( propertyName )!;
 
 			if( data ) property
 				.mergeData( propertyName, data );
@@ -97,7 +97,7 @@ export class QueryableProperty {
 	mergeData( propertyName:string, data:QueryablePropertyData ):void {
 		if( this === data ) return;
 
-		this.setType( data.propertyType );
+		this.setType( data.propertyType! );
 		this.__mergeDefinition( propertyName, data.definition );
 	}
 
@@ -111,7 +111,7 @@ export class QueryableProperty {
 				this.definition[ key ] = newValue;
 
 			if( newValue !== oldValue ) {
-				throw new IllegalArgumentError( `Property "${ propertyName }" has different "${ key }": "${ oldValue }", "${ newValue }".` );
+				throw new IllegalArgumentError( `Property "${propertyName}" has different "${key}": "${oldValue}", "${newValue}".` );
 			}
 		}
 	}

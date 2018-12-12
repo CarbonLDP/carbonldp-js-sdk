@@ -40,7 +40,7 @@ describe( "DeltaCreator", () => {
 	describe( "DeltaCreator.constructor", () => {
 
 		it( "should exist", () => {
-			const delta:DeltaCreator = new DeltaCreator( null );
+			const delta:DeltaCreator = new DeltaCreator( context );
 			expect( delta ).toBeDefined();
 			expect( delta ).toEqual( jasmine.any( DeltaCreator ) );
 		} );

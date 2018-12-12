@@ -77,7 +77,7 @@ export class ObjectSchemaDigester {
 		}
 
 		if( "@language" in definition ) {
-			const language:string = definition[ "@language" ];
+			const language:string | undefined | null = definition[ "@language" ];
 			if( language !== null && ! Utils.isString( language ) ) throw new IllegalArgumentError( "@language needs to point to a string or null." );
 
 			digestedDefinition.literal = true;
@@ -129,17 +129,17 @@ export class ObjectSchemaDigester {
 
 		for( const propertyName of [ "@base", "@vocab" ] as [ "@base", "@vocab" ] ) {
 			if( ! (propertyName in schema) ) continue;
-			const value:string = schema[ propertyName ];
+			const value:string | undefined | null = schema[ propertyName ];
 
-			if( value !== null && ! Utils.isString( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
-			if( (propertyName === "@vocab" && value === "") || ! URI.isAbsolute( value ) && ! URI.isBNodeID( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
+			if( value !== null && ! Utils.isString( value ) ) throw new IllegalArgumentError( `The value of '${propertyName}' must be a string or null.` );
+			if( (propertyName === "@vocab" && value === "") || (value && ! URI.isAbsolute( value ) && ! URI.isBNodeID( value )) ) throw new IllegalArgumentError( `The value of '${propertyName}' must be an absolute URI${propertyName === "@base" ? " or an empty string" : ""}.` );
 
 			digestedSchema[ propertyName.substr( 1 ) ] = value;
 		}
 		digestedSchema.base = digestedSchema.base || "";
 
 		if( "@language" in schema ) {
-			const value:string = schema[ "@language" ];
+			const value:string | undefined | null = schema[ "@language" ];
 			if( value !== null && ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `The value of '@language' must be a string or null.` );
 			digestedSchema.language = value;
 		}
@@ -153,7 +153,7 @@ export class ObjectSchemaDigester {
 			if( propertyName === "@vocab" ) continue;
 			if( propertyName === "@language" ) continue;
 
-			let propertyValue:(string | ObjectSchemaProperty) = schema[ propertyName ];
+			let propertyValue:string | ObjectSchemaProperty | null | undefined = schema[ propertyName ];
 
 			if( Utils.isString( propertyValue ) ) {
 				if( URI.isPrefixed( propertyName ) ) throw new IllegalArgumentError( "A prefixed property cannot be equal to another URI." );

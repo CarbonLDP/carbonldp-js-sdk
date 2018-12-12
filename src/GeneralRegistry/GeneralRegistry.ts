@@ -30,7 +30,7 @@ export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer
 	/**
 	 * Context where the registry belongs to.
 	 */
-	readonly context:Context<M>;
+	readonly context:Context<M, any>;
 	/**
 	 * Parent registry used to inherit resources and more data.
 	 */
@@ -96,7 +96,7 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 			if( ! this.context || ! this.context.parentContext ) return;
 			return this.context.parentContext.registry;
 		},
-		set registry( value:GeneralRegistry<any> ) {},
+		set registry( value:GeneralRegistry<any> | undefined ) {},
 
 
 		get __modelDecorators():Map<string, TypedModelDecorator> { return new Map(); },
@@ -114,7 +114,7 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 
 			object.types
 				.filter( type => this.__modelDecorators.has( type ) )
-				.map( type => this.__modelDecorators.get( type ) )
+				.map( type => this.__modelDecorators.get( type )! )
 				.forEach( decorator => decorator.decorate( object ) )
 			;
 		},
@@ -135,7 +135,7 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 			const uri:string = this.context.getObjectSchema().resolveURI( id, { base: true } );
 
 			if( ! URI.isAbsolute( uri ) || ! URI.isBaseOf( this.context.baseURI, uri ) )
-				throw new IllegalArgumentError( `"${ uri }" is out of scope.` );
+				throw new IllegalArgumentError( `"${uri}" is out of scope.` );
 
 			return URI.getRelativeURI( uri, this.context.baseURI );
 		},

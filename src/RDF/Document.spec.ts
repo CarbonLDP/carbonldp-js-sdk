@@ -153,12 +153,12 @@ describe( "RDFDocument", () => {
 			} );
 
 			it( "should return empty array from single null", () => {
-				const documents:RDFDocument[] = RDFDocument.getDocuments( null );
+				const documents:RDFDocument[] = RDFDocument.getDocuments( null as any );
 				expect( documents ).toEqual( [] );
 			} );
 
 			it( "should return empty array from single undefined", () => {
-				const documents:RDFDocument[] = RDFDocument.getDocuments( undefined );
+				const documents:RDFDocument[] = RDFDocument.getDocuments( undefined as any );
 				expect( documents ).toEqual( [] );
 			} );
 
@@ -268,7 +268,7 @@ describe( "RDFDocument", () => {
 			} );
 
 			it( "should return empty from null", () => {
-				const nodes:RDFNode[] = RDFDocument.getResources( null );
+				const nodes:RDFNode[] = RDFDocument.getResources( null as any );
 				expect( nodes ).toEqual( [] );
 			} );
 
@@ -300,7 +300,7 @@ describe( "RDFDocument", () => {
 			} );
 
 			it( "should return empty from null", () => {
-				const documentResources:RDFNode[] = RDFDocument.getDocumentResources( null );
+				const documentResources:RDFNode[] = RDFDocument.getDocumentResources( null as any );
 				expect( documentResources ).toEqual( [] );
 			} );
 
@@ -310,7 +310,7 @@ describe( "RDFDocument", () => {
 			} );
 
 			it( "should return empty from array of null", () => {
-				const documentResources:RDFNode[] = RDFDocument.getDocumentResources( [ null, null ] );
+				const documentResources:RDFNode[] = RDFDocument.getDocumentResources( [ null, null ] as any );
 				expect( documentResources ).toEqual( [] );
 			} );
 
@@ -405,7 +405,7 @@ describe( "RDFDocument", () => {
 			} );
 
 			it( "should return empty when null", () => {
-				const nodes:RDFNode[] = RDFDocument.getNamedFragmentResources( null );
+				const nodes:RDFNode[] = RDFDocument.getNamedFragmentResources( null as any );
 				expect( nodes ).toEqual( [] );
 			} );
 
@@ -415,7 +415,7 @@ describe( "RDFDocument", () => {
 			} );
 
 			it( "should return empty when null array", () => {
-				const nodes:RDFNode[] = RDFDocument.getNamedFragmentResources( [ null, null ] );
+				const nodes:RDFNode[] = RDFDocument.getNamedFragmentResources( [ null, null ] as any );
 				expect( nodes ).toEqual( [] );
 			} );
 
@@ -441,7 +441,7 @@ describe( "RDFDocument", () => {
 			} );
 
 			it( "should empty from null", () => {
-				const nodes:RDFNode[] = RDFDocument.getBNodeResources( null );
+				const nodes:RDFNode[] = RDFDocument.getBNodeResources( null as any );
 				expect( nodes ).toEqual( [] );
 			} );
 

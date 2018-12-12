@@ -203,14 +203,14 @@ export const QueryableDocumentTrait:QueryableDocumentTraitFactory = {
 			return this.$repository.get( resolvedURIs, ...args );
 		},
 
-		$getChildren<T extends object>( this:QueryableDocumentTrait, uriOrQueryBuilderFnOrOptions:string | QueryDocsBuilderFn | RequestOptions, queryBuilderFnOrOptions?:QueryDocsBuilderFn | RequestOptions, queryBuilderFn?:QueryDocsBuilderFn ):Promise<(T & Document)[]> {
+		$getChildren<T extends object>( this:QueryableDocumentTrait, uriOrQueryBuilderFnOrOptions?:string | QueryDocsBuilderFn | RequestOptions, queryBuilderFnOrOptions?:QueryDocsBuilderFn | RequestOptions, queryBuilderFn?:QueryDocsBuilderFn ):Promise<(T & Document)[]> {
 			const { _uri, _args } = _parseURIParams( this, uriOrQueryBuilderFnOrOptions, arguments );
 			// FIXME
 			// @ts-ignore
 			return this.$repository.getChildren( _uri, ..._args );
 		},
 
-		$getMembers<T extends object>( this:QueryableDocumentTrait, uriOrQueryBuilderFnOrOptions:string | QueryDocsBuilderFn | RequestOptions, queryBuilderFnOrOptions?:QueryDocsBuilderFn | RequestOptions, queryBuilderFn?:QueryDocsBuilderFn ):Promise<(T & Document)[]> {
+		$getMembers<T extends object>( this:QueryableDocumentTrait, uriOrQueryBuilderFnOrOptions?:string | QueryDocsBuilderFn | RequestOptions, queryBuilderFnOrOptions?:QueryDocsBuilderFn | RequestOptions, queryBuilderFn?:QueryDocsBuilderFn ):Promise<(T & Document)[]> {
 			const { _uri, _args } = _parseURIParams( this, uriOrQueryBuilderFnOrOptions, arguments );
 			// FIXME
 			// @ts-ignore
@@ -218,14 +218,14 @@ export const QueryableDocumentTrait:QueryableDocumentTraitFactory = {
 		},
 
 
-		$listChildren<T extends object>( this:QueryableDocumentTrait, uriOrOptions:string | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document)[]> {
+		$listChildren<T extends object>( this:QueryableDocumentTrait, uriOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document)[]> {
 			const { _uri, _args } = _parseURIParams( this, uriOrOptions, arguments );
 			// FIXME
 			// @ts-ignore
 			return this.$repository.listChildren( _uri, ..._args );
 		},
 
-		$listMembers<T extends object>( this:QueryableDocumentTrait, uriOrOptions:string | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document)[]> {
+		$listMembers<T extends object>( this:QueryableDocumentTrait, uriOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document)[]> {
 			const { _uri, _args } = _parseURIParams( this, uriOrOptions, arguments );
 			// FIXME
 			// @ts-ignore

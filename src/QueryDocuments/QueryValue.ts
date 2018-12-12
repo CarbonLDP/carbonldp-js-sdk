@@ -14,7 +14,7 @@ export class QueryValue {
 	private readonly _queryContainer:QueryContainer;
 
 	private readonly _value:string | number | boolean | Date;
-	private _literal:LiteralToken;
+	private _literal?:LiteralToken;
 
 	constructor( queryContainer:QueryContainer, value:string | number | boolean | Date ) {
 		this._value = value;
@@ -60,13 +60,13 @@ export class QueryValue {
 	 * Returns the SPARQL token of the value.
 	 */
 	getToken():LiteralToken {
-		return this._literal;
+		return this._literal!;
 	}
 
 	/**
 	 * Returns the SPARQL string representation of the value.
 	 */
 	toString():string {
-		return `${ this._literal }`;
+		return `${this._literal}`;
 	}
 }
