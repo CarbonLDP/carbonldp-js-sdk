@@ -194,7 +194,7 @@ export class QueryResultCompacter {
 				} );
 			}
 
-			let subMetadataProperty:QueryableProperty = metadataProperty
+			const subMetadataProperty:QueryableProperty = metadataProperty
 				.getProperty( propertyName, subQueryProperty );
 
 			if( ! resource.hasOwnProperty( propertyName ) ) return;

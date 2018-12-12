@@ -524,6 +524,90 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				);
 			} );
 
+			it( "should send CONSTRUCT query of ALL and sub-properties", async () => {
+				stubRequest( "https://example.com/resource/" );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+					.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": "integer",
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": "string",
+						},
+					} )
+				;
+
+
+				await repository.get( "https://example.com/resource/", _ => _
+					.withType( "Resource" )
+					.properties( _.all )
+					.properties( {
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"query": __ => __.properties( {
+								"property2": __.inherit,
+								"property3": __.inherit,
+							} ),
+						},
+					} )
+				);
+
+
+				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+				expect( request.params ).toEqual( "" +
+					"PREFIX schema: <https://schema.org/> " +
+					"CONSTRUCT {" +
+					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
+					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
+					"" + ` <${C.target}> <https://example.com/resource/>.` +
+
+					" <https://example.com/resource/>" +
+					"" + " ?document___predicate ?document___object;" +
+					"" + ` <${C.document}> ?document___graph.` +
+
+					" ?document__property2 a ?document__property2__types;" +
+					"" + ` <${C.document}> ?document__property2___graph;` +
+					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
+					"" + " schema:property-3 ?document__property2__property3 " +
+
+					"} {" +
+
+					" GRAPH ?document___graph {" +
+					"" + " <https://example.com/resource/> ?document___predicate ?document___object" +
+					" }" +
+
+					" OPTIONAL {" +
+					"" + " GRAPH ?document___graph { <https://example.com/resource/> schema:property-2 ?document__property2 }" +
+					"" + " OPTIONAL { GRAPH ?document__property2___graph { ?document__property2 a ?document__property2__types } }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2 }" +
+					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+					"" + " }" +
+
+					"" + " OPTIONAL {" +
+					"" + "" + " GRAPH ?document__property2___graph { ?document__property2 schema:property-3 ?document__property2__property3 }" +
+					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+					"" + " }" +
+					" }" +
+
+					" " +
+					"}"
+				);
+			} );
+
 			it( "should send CONSTRUCT query of FULL multiple", async () => {
 				stubRequest( "https://example.com/" );
 
@@ -857,6 +941,113 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						"property2": 12345,
 						"property3": "another value",
 					},
+				} );
+			} );
+
+			it( "should return queried document with ALL and sub-properties", async () => {
+				stubRequest( "https://example.com/resource/", {
+					resources: [
+						{
+							"@id": "cldp-sdk://metadata-1",
+							"@type": [
+								C.VolatileResource,
+								C.QueryMetadata,
+							],
+							[ C.target ]: [ {
+								"@id": "https://example.com/resource/",
+							} ],
+						},
+						{
+							"@id": "https://example.com/resource/",
+							"@graph": [
+								{
+									"@id": "https://example.com/resource/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-1": [ {
+										"@value": "value property 1",
+									} ],
+									"https://schema.org/property-2": [ {
+										"@id": "https://example.com/another/",
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "value property 3",
+									} ],
+								},
+							],
+						},
+						{
+							"@id": "https://example.com/another/",
+							"@graph": [
+								{
+									"@id": "https://example.com/another/",
+									"@type": [
+										LDP.RDFSource,
+										LDP.BasicContainer,
+										C.Document,
+										"https://example.com/ns#Resource",
+									],
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								},
+							],
+						},
+					],
+				} );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+					} )
+					.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": XSD.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": XSD.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": XSD.string,
+						},
+					} )
+				;
+
+
+				type MyDocument = { property1:string, property2:{ property2:number, property3:string }, property3?: string };
+				const returned:MyDocument = await repository.get<MyDocument>( "resource/", _ => _
+					.withType( "Resource" )
+					.properties( _.all )
+					.properties( {
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+							"query": __ => __.properties( {
+								"property2": __.inherit,
+								"property3": __.inherit,
+							} ),
+						},
+					} )
+				);
+
+				expect( returned ).toEqual( {
+					property1: "value property 1",
+					property2: {
+						property2: 12345,
+						property3: "another value",
+					},
+					property3: "value property 3",
 				} );
 			} );
 
