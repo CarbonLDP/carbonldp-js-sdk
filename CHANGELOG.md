@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 - [#337](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/337) - Retrieve all properties of a document with additional sub-properties<br>
 	Example:<br>
 	```typescript
-	carbonldp.documents.$get(  [ "posts/a-post/" ], _ => _
+	carbonldp.documents.$get( "posts/a-post/", _ => _
 			.properties( _.all )
             .properties( {
                 "comments": {
