@@ -206,7 +206,7 @@ export const TransientDocument:TransientDocumentFactory = {
 
 		$getPointer( this:TransientDocument, id:string, local?:true ):TransientFragment {
 			id = URI.resolve( this.$id, id );
-			return Registry.PROTOTYPE.getPointer.call( this, id, local );
+			return Registry.PROTOTYPE.getPointer.call( this, id, local! );
 		},
 
 

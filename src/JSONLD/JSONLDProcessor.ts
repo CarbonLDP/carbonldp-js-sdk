@@ -97,7 +97,7 @@ export class JSONLDProcessor {
 						url = URI.resolve( base, url );
 						if( replace ) {
 							if( Utils.isArray( contexts[ url ] ) ) {
-								Array.prototype.splice.apply( contextArray, [ index, 1 ].concat( <any>contexts[ url ] ) );
+								contextArray.splice( index, 1, ...[].concat( contexts[ url ] ) );
 								index += (<Array<any>>contexts[ url ]).length - 1;
 								length = contextArray.length;
 							} else {

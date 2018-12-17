@@ -533,7 +533,7 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.get.call( this, uri, requestOptions )
+			.get.call<HTTPRepositoryTrait, [ string, RequestOptions? ], Promise<T & Document>>( this, uri, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
@@ -560,7 +560,7 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 			RequestUtils.setIfNoneMatchHeader( document.$eTag!, requestOptions );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.refresh.call( this, document, requestOptions )
+				.refresh.call<HTTPRepositoryTrait, [ Document, RequestOptions? ], Promise<T & Document>>( this, document, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) )
 				;
 		},

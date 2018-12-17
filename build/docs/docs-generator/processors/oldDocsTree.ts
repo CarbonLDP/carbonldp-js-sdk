@@ -9,6 +9,7 @@ import { FunctionExportDoc } from "dgeni-packages/typescript/api-doc-types/Funct
 import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
 import { MemberDoc } from "dgeni-packages/typescript/api-doc-types/MemberDoc";
 import { MethodMemberDoc } from "dgeni-packages/typescript/api-doc-types/MethodMemberDoc";
+import { OverloadInfo } from "dgeni-packages/typescript/api-doc-types/OverloadInfo";
 import { PropertyMemberDoc } from "dgeni-packages/typescript/api-doc-types/PropertyMemberDoc";
 import { TypeAliasExportDoc } from "dgeni-packages/typescript/api-doc-types/TypeAliasExportDoc";
 
@@ -323,7 +324,7 @@ export class OldDocsTree implements Processor {
 		return method;
 	}
 
-	private _getMemberLike( doc:{ isStatic?:boolean, isOptional?:boolean } ):MemberLike {
+	private _getMemberLike( doc:MemberDoc | ConstExportDoc | FunctionExportDoc | OverloadInfo ):MemberLike {
 		return {
 			access: ! ("isStatic" in doc) || doc.isStatic
 				? "static" : "instance",
