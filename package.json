@@ -39,7 +39,7 @@
     "@types/webpack-env": "^1.13.1",
     "awesome-typescript-loader": "^3.0.4-rc.0",
     "del": "^3.0.0",
-    "dgeni": "^0.4.10",
+    "dgeni": "^0.4.11",
     "docs-generator": "file:build/docs/docs-generator",
     "gulp": "^4.0.0",
     "gulp-filter": "^5.0.0",
