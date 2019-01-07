@@ -237,7 +237,7 @@
 				expect( freshChild.modified ).toEqual( jasmine.any( Date ) );
 			} );
 
-			fit( "should return filtered children with ALL", async function() {
+			it( "should return filtered children with ALL", async function() {
 				const children = await parent.$getChildren( _ => _
 					.properties( _.all )
 					.filter( `${_.property( "index" )} = 2` )
