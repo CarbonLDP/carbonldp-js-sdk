@@ -374,12 +374,12 @@ export class QueryProperty implements QueryablePropertyData {
 
 			case QueryPropertyType.ALL:
 				patterns.push( this._getContextGraph().addPattern( this.__createAllPattern() ) );
-				patterns.push( ...this.__createSubPropertiesPatterns( true ) );
+				patterns.push( ...this.__createSubPropertiesPatterns() );
 				break;
 
 			case QueryPropertyType.FULL:
 				patterns.push( this.__createGraphPattern() );
-				patterns.push( ...this.__createSubPropertiesPatterns( true ) );
+				patterns.push( ...this.__createSubPropertiesPatterns() );
 				break;
 
 			default:
@@ -431,13 +431,10 @@ export class QueryProperty implements QueryablePropertyData {
 		];
 	}
 
-	protected __createSubPropertiesPatterns( ignoreEmpties?:true ):PatternToken[] {
+	protected __createSubPropertiesPatterns():PatternToken[] {
 		const patterns:PatternToken[] = [];
 
 		this.subProperties.forEach( subProperty => {
-			// Ignore properties without sub-properties
-			if( ignoreEmpties && subProperty._isEmpty() ) return;
-
 			patterns.push( ...subProperty.getSearchPatterns() );
 		} );
 

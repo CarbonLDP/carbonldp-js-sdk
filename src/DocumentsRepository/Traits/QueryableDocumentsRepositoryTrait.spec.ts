@@ -6196,6 +6196,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					" }" +
 
 					" GRAPH ?child___graph { ?child ?child___predicate ?child___object }" +
+					" OPTIONAL {" +
+					"" + " GRAPH ?child___graph { ?child schema:property-2 ?child__property2 }" +
+					"" + ` FILTER( datatype( ?child__property2 ) = <${XSD.integer}> )` +
+					" }" +
 
 					" " +
 					"}"
@@ -8167,6 +8171,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					" }" +
 
 					" GRAPH ?member___graph { ?member ?member___predicate ?member___object }" +
+					" OPTIONAL {" +
+					"" + " GRAPH ?member___graph { ?member schema:property-2 ?member__property2 }" +
+					"" + ` FILTER( datatype( ?member__property2 ) = <${XSD.integer}> )` +
+					" }" +
 
 					" " +
 					"}"

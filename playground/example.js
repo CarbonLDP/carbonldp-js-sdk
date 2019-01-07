@@ -237,6 +237,25 @@
 				expect( freshChild.modified ).toEqual( jasmine.any( Date ) );
 			} );
 
+			fit( "should return filtered children with ALL", async function() {
+				const children = await parent.$getChildren( _ => _
+					.properties( _.all )
+					.filter( `${_.property( "index" )} = 2` )
+				);
+
+				expect( children ).toEqual( [
+					{
+						index:2,
+						created: jasmine.any( Date ),
+						modified: jasmine.any( Date ),
+
+						membershipResource: jasmine.anything(),
+						hasMemberRelation: jasmine.anything(),
+						insertedContentRelation: jasmine.anything(),
+					},
+				] );
+			} );
+
 		} );
 
 
