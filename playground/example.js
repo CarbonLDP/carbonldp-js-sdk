@@ -237,6 +237,25 @@
 				expect( freshChild.modified ).toEqual( jasmine.any( Date ) );
 			} );
 
+			it( "should return filtered children with ALL", async function() {
+				const children = await parent.$getChildren( _ => _
+					.properties( _.all )
+					.filter( `${_.property( "index" )} = 2` )
+				);
+
+				expect( children ).toEqual( [
+					{
+						index:2,
+						created: jasmine.any( Date ),
+						modified: jasmine.any( Date ),
+
+						membershipResource: jasmine.anything(),
+						hasMemberRelation: jasmine.anything(),
+						insertedContentRelation: jasmine.anything(),
+					},
+				] );
+			} );
+
 		} );
 
 
@@ -624,6 +643,57 @@
 				expect( docs[ 1 ].property2 ).toBe( "property 2" );
 				expect( docs[ 1 ].property3 ).toBe( "property 3" );
 				expect( docs[ 1 ].$isQueried() ).toBe( false );
+			} );
+
+			it( "get ALL and sub-properties", async function() {
+				const child1 = await root.$create( {
+					property1: "property 1",
+					property2: "property 2",
+					property3: "property 3",
+				} );
+
+				const child2 = await child1.$create( {
+					property1: "property 1",
+					property2: "property 2",
+					property3: child1,
+				} );
+
+				carbon.registry.removePointer( child1 );
+				carbon.registry.removePointer( child2 );
+
+
+				const doc = await carbon.documents
+					.$get( child2.$id, _ => _
+						.properties( _.all )
+						.properties( {
+							property3: {
+								query: _ => _
+									.properties( {
+										property1: _.inherit,
+										property2: _.inherit,
+									} )
+							}
+						} )
+					);
+
+				expect( doc ).toEqual( {
+					property1: "property 1",
+					property2: "property 2",
+					property3: {
+						property1: "property 1",
+						property2: "property 2",
+					},
+
+					hasMemberRelation: jasmine.any( Object ),
+					insertedContentRelation: jasmine.any( Object ),
+					membershipResource: jasmine.any( Object ),
+					created: jasmine.any( Date ),
+					modified: jasmine.any( Date ),
+				} );
+
+				expect( doc.$isQueried() ).toBe( true );
+
+				console.log( doc );
 			} );
 
 		} );
