@@ -22,7 +22,11 @@ export interface InvalidLink extends LinkInfo {
 export default function getLinkInfo( encodeCodeBlock:Function ):Function {
 	function getDocFromAlias( url:string, doc:IndexDoc ):ApiDoc | undefined {
 		return doc.docs.find( _ => {
-			const inAlias:boolean = _.aliases.some( __ => __ === url );
+			const inAlias:boolean = _.aliases.some( __ =>
+				__ === url ||
+				(url.endsWith( "()" ) ? __ === `${url.slice( 0, - 2 )}_0()` : false)
+			);
+
 			if( inAlias ) return inAlias;
 
 			return _.path === url;
