@@ -269,7 +269,7 @@ export class QueryProperty implements QueryablePropertyData {
 
 	_getVariable( name:string ):VariableToken {
 		return this.queryContainer
-			.getVariable( `${this.fullName}.${name}` );
+			.getVariable( `${ this.fullName }.${ name }` );
 	}
 
 	protected __createIRIToken():IRIToken {
@@ -417,11 +417,11 @@ export class QueryProperty implements QueryablePropertyData {
 				.compactIRI( this.definition.literalType! );
 
 			if( identifier.token === "variable" )
-				return new FilterToken( `datatype( ${identifier} ) = ${literalToken}` );
+				return new FilterToken( `datatype( ${ identifier } ) = ${ literalToken }` );
 		}
 
 		if( this.definition.pointerType !== null && identifier.token === "variable" )
-			return new FilterToken( `! isLiteral( ${identifier} )` );
+			return new FilterToken( `! isLiteral( ${ identifier } )` );
 	}
 
 	protected __createPartialSearchPatterns():PatternToken[] {

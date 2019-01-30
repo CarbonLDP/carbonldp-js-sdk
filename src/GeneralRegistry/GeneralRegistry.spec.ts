@@ -13,7 +13,7 @@ import { Pointer } from "../Pointer/Pointer";
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
 import { Registry } from "../Registry/Registry";
 
-import { Repository } from "../Repository/Repository";
+import { $Repository, Repository } from "../Repository/Repository";
 import { ResolvablePointer } from "../Repository/ResolvablePointer";
 
 import { BaseGeneralRegistry } from "./BaseGeneralRegistry";
@@ -237,9 +237,9 @@ describe( "GeneralRegistry", () => {
 				context = createMockContext( { repository: void 0 } );
 				const registry:GeneralRegistry<ResolvablePointer & RegisteredPointer> = createMock();
 
-				const returned:{ repository?:Repository } = registry._addPointer( { $id: "resource/" } );
+				const returned:{ $repository?:Repository | $Repository } = registry._addPointer( { $id: "resource/" } );
 
-				expect( returned.repository ).toBeUndefined();
+				expect( returned.$repository ).toBeUndefined();
 			} );
 
 		} );

@@ -136,7 +136,7 @@ export class NormalizeDocs implements Processor {
 					doc.content = this.tsHost.getContent( doc.symbol.getDeclarations()![ 0 ]! );
 					break;
 				default:
-					this.log.error( `Other declaration merged for ${doc.name}` );
+					this.log.error( `Other declaration merged for ${ doc.name }` );
 					break;
 			}
 
@@ -161,7 +161,7 @@ export class NormalizeDocs implements Processor {
 	}
 
 	private _addExportDoc( docs:DocCollection, moduleDoc:ModuleDoc, exportDoc:ExportDoc ):void {
-		this.log.debug( `>>>> EXPORT: ${exportDoc.name} (${exportDoc.docType}) from ${moduleDoc.id}` );
+		this.log.debug( `>>>> EXPORT: ${ exportDoc.name } (${ exportDoc.docType }) from ${ moduleDoc.id }` );
 
 		moduleDoc.exports.push( exportDoc );
 		docs.push( exportDoc );

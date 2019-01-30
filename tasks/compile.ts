@@ -15,11 +15,11 @@ const cleaner:( folder:keyof typeof CONFIG["dist"], extension:string ) => Promis
 	const ignoreFolders:string[] = Object
 		.keys( CONFIG.dist )
 		.filter( _ => ! (_ !== folder) )
-		.map( _ => `!${CONFIG.dist[ _ ]} ` )
+		.map( _ => `!${ CONFIG.dist[ _ ] } ` )
 	;
 
 	const folders:string[] = [ folder, ...ignoreFolders ]
-		.map( _ => `${_}/**/*.${extension}` );
+		.map( _ => `${ _ }/**/*.${ extension }` );
 
 	return del( folders );
 };
@@ -69,7 +69,7 @@ const compiler:( folder:string, options:ts.Settings & { stream:"js" | "dts" } ) 
 				.pipe( gulp.dest( folder ) );
 
 		default:
-			throw new Error( `Invalid stream "${stream}"` );
+			throw new Error( `Invalid stream "${ stream }"` );
 	}
 };
 

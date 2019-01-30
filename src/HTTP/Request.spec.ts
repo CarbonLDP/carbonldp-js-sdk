@@ -753,7 +753,7 @@ describe( "Request", () => {
 						LDP.PreferMembership,
 					],
 				}, newOptionsObject() );
-				expect( RequestUtils.getHeader( "Prefer", options )!.toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}"` );
+				expect( RequestUtils.getHeader( "Prefer", options )!.toString() ).toEqual( `include="${ LDP.PreferMinimalContainer } ${ LDP.PreferMembership }"` );
 			} );
 
 			it( "should add header when omits with empty options", () => {
@@ -764,7 +764,7 @@ describe( "Request", () => {
 						C.PreferMembershipResources,
 					],
 				}, newOptionsObject() );
-				expect( RequestUtils.getHeader( "Prefer", options )!.toString() ).toEqual( `omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
+				expect( RequestUtils.getHeader( "Prefer", options )!.toString() ).toEqual( `omit="${ LDP.PreferContainment } ${ C.PreferContainmentResources } ${ C.PreferMembershipResources }"` );
 			} );
 
 			it( "should add header when includes & omits with empty options", () => {
@@ -779,7 +779,7 @@ describe( "Request", () => {
 						C.PreferMembershipResources,
 					],
 				}, newOptionsObject() );
-				expect( RequestUtils.getHeader( "Prefer", options )!.toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}", omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
+				expect( RequestUtils.getHeader( "Prefer", options )!.toString() ).toEqual( `include="${ LDP.PreferMinimalContainer } ${ LDP.PreferMembership }", omit="${ LDP.PreferContainment } ${ C.PreferContainmentResources } ${ C.PreferMembershipResources }"` );
 			} );
 
 		} );

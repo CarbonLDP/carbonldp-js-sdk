@@ -131,8 +131,8 @@ export class ObjectSchemaDigester {
 			if( ! (propertyName in schema) ) continue;
 			const value:string | undefined | null = schema[ propertyName ];
 
-			if( value !== null && ! Utils.isString( value ) ) throw new IllegalArgumentError( `The value of '${propertyName}' must be a string or null.` );
-			if( (propertyName === "@vocab" && value === "") || (value && ! URI.isAbsolute( value ) && ! URI.isBNodeID( value )) ) throw new IllegalArgumentError( `The value of '${propertyName}' must be an absolute URI${propertyName === "@base" ? " or an empty string" : ""}.` );
+			if( value !== null && ! Utils.isString( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
+			if( (propertyName === "@vocab" && value === "") || (value && ! URI.isAbsolute( value ) && ! URI.isBNodeID( value )) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
 
 			digestedSchema[ propertyName.substr( 1 ) ] = value;
 		}

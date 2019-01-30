@@ -72,7 +72,7 @@ export = new Package( "docs-generator",
 				// Special case for main index
 				if( doc.id === "index" ) return "carbonldp";
 
-				return `carbonldp/${doc.id}`;
+				return `carbonldp/${ doc.id }`;
 			},
 			getOutputPath():void {},
 		} );
@@ -84,7 +84,7 @@ export = new Package( "docs-generator",
 				if( doc.id === "CarbonLDP" ) return doc.id;
 
 				const id:string = doc.id.replace( /\//g, "." );
-				return `CarbonLDP.${id}`;
+				return `CarbonLDP.${ id }`;
 			},
 			getOutputPath():void {},
 		} );
@@ -94,7 +94,7 @@ export = new Package( "docs-generator",
 			docTypes: [ "member" ],
 			getPath( doc:any ):string {
 				const access:string = doc.isStatic ? "#" : ".";
-				return `${doc.containerDoc.path}${access}${doc.name}`;
+				return `${ doc.containerDoc.path }${ access }${ doc.name }`;
 			},
 			getOutputPath():void {},
 		} );

@@ -87,7 +87,8 @@ export const FreeResources:FreeResourcesFactory = {
 
 		_addPointer<T extends object>( this:FreeResources, base:T & Partial<Pointer> ):T & Resource {
 			if( ! base.$id ) base.$id = URI.generateBNodeID();
-			return Registry.PROTOTYPE._addPointer.call( this, base );
+			type FilledID = typeof base & { $id:string };
+			return Registry.PROTOTYPE._addPointer.call( this, base as FilledID );
 		},
 
 

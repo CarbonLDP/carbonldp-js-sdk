@@ -134,10 +134,10 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 			currentSearchedPaths.push( containerKey );
 
 			const containerPath:string | DocumentPaths | null = documentPaths ? documentPaths[ containerKey ] : null;
-			if( ! containerPath ) throw new IllegalStateError( `The path "${currentSearchedPaths.join( "." )}" hasn't been declared.` );
+			if( ! containerPath ) throw new IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" hasn't been declared.` );
 
 			const slug:string | undefined = isString( containerPath ) ? containerPath : containerPath.slug;
-			if( ! slug ) throw new IllegalStateError( `The path "${currentSearchedPaths.join( "." )}" doesn't have a slug set.` );
+			if( ! slug ) throw new IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" doesn't have a slug set.` );
 
 			url = URI.resolve( url, slug );
 			documentPaths = isObject( containerPath ) ? containerPath.paths : undefined;

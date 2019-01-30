@@ -40,7 +40,7 @@ export interface RDFValueFactory {
 	 * @param pointerLibrary Library from where to obtains pointers when RDFNode provided.
 	 * @param value The RDF value to parse.
 	 */
-	parse( pointerLibrary:PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string, ):any;
+	parse( pointerLibrary:PointerLibrary | $PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string, ):any;
 }
 
 /**

@@ -136,7 +136,7 @@ export const RDFLiteral:RDFLiteralFactory = {
 				break;
 			case XSD.time:
 				const parts:string[] | null = literalValue.match( /(\d+):(\d+):(\d+)\.(\d+)Z/ );
-				if( ! parts ) throw new IllegalArgumentError( `Invalid value for type ${XSD.time}.` );
+				if( ! parts ) throw new IllegalArgumentError( `Invalid value for type ${ XSD.time }.` );
 				value = new Date();
 				value.setUTCHours( parseFloat( parts[ 1 ] ), parseFloat( parts[ 2 ] ), parseFloat( parts[ 3 ] ), parseFloat( parts[ 4 ] ) );
 				break;

@@ -47,7 +47,7 @@ export const makeDirPackages:gulp.TaskFunction = async () => {
 	const mainPackage:any = JSON.parse( fs.readFileSync( "package.json", "utf8" ) );
 
 	const directories:string[] = glob
-		.sync( `${SRC}/*/**/index.ts` )
+		.sync( `${ SRC }/*/**/index.ts` )
 		.map( file => file.replace( "/index.ts", "" ) )
 		.sort()
 	;
@@ -63,7 +63,7 @@ export const makeDirPackages:gulp.TaskFunction = async () => {
 		const typesDir:string = path.join( CONFIG.dist.types, relativeEntry );
 
 		const body:object = {
-			name: `CarbonLDP/${relativeEntry}`,
+			name: `CarbonLDP/${ relativeEntry }`,
 			main: path.join( path.relative( distEntry, mainDir ), "index.js" ),
 			module: path.join( path.relative( distEntry, moduleDir ), "index.js" ),
 			es2015: path.join( path.relative( distEntry, es2015Dir ), "index.js" ),

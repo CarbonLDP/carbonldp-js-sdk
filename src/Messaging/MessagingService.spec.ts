@@ -20,12 +20,19 @@ describe( "MessagingService", () => {
 		expect( MessagingService ).toEqual( jasmine.any( Function ) );
 	} );
 
-
+	let mockServer:Server | null;
 	let service:MessagingService;
 	beforeEach( () => {
+		mockServer = new Server( `wss://example.com/broker` );
+
 		const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 		service = new MessagingService( context );
 	} );
+
+	afterEach( () => {
+		mockServer!.stop();
+	} );
+
 
 	describe( "MessagingService.constructor", () => {
 
@@ -125,19 +132,15 @@ describe( "MessagingService", () => {
 		} );
 
 		it( "should initialize the subscription map", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-
 			expect( service[ "_subscriptionsMap" ] ).toBeUndefined();
 
 			service.connect();
 			expect( service[ "_subscriptionsMap" ] ).toEqual( new Map() );
 
-			mockServer.stop( done );
+			mockServer!.stop( done );
 		} );
 
 		it( "should reset the subscription map", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-
 			expect( service[ "_subscriptionsMap" ] ).toBeUndefined();
 			service[ "_subscriptionsMap" ] = new Map();
 			service[ "_subscriptionsMap" ].set( "topic/*.*", new Map() );
@@ -145,30 +148,26 @@ describe( "MessagingService", () => {
 			service.connect();
 			expect( service[ "_subscriptionsMap" ] ).toEqual( new Map() );
 
-			mockServer.stop( done );
+			mockServer!.stop( done );
 		} );
 
 		it( "should initialize the connection/reconnection attempts counter", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-
 			expect( service[ "_attempts" ] ).toBe( 0 );
 
 			service.connect();
 			expect( service[ "_attempts" ] ).toBe( 0 );
 
-			mockServer.stop( done );
+			mockServer!.stop( done );
 		} );
 
 		it( "should reset the connection/reconnection attempts counter", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-
 			expect( service[ "_attempts" ] ).toBe( 0 );
 			service[ "_attempts" ] = 10;
 
 			service.connect();
 			expect( service[ "_attempts" ] ).toBe( 0 );
 
-			mockServer.stop( done );
+			mockServer!.stop( done );
 		} );
 
 		it( "should throw an error when service is already connected", () => {
@@ -190,8 +189,6 @@ describe( "MessagingService", () => {
 
 
 		it( "should not change the subscription map", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-
 			expect( service[ "_subscriptionsMap" ] ).toBeUndefined();
 
 			service.reconnect();
@@ -201,12 +198,11 @@ describe( "MessagingService", () => {
 			service.reconnect();
 			expect( service[ "_subscriptionsMap" ] ).toEqual( new Map( [ [ "/topic/*.*", new Map() ] ] ) );
 
-			mockServer.stop( done );
+			mockServer!.stop( done );
 		} );
 
 		it( "should connect to the broker", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-			mockServer.on( "connection", server => {
+			mockServer!.on( "connection", server => {
 				server.send( Frame.marshall( "CONNECTED", {
 					"server": "MockSocket-Server/**",
 					"session": "session-1",
@@ -217,17 +213,15 @@ describe( "MessagingService", () => {
 
 			service.reconnect( () => {
 				expect( service[ "_client" ]!.connected ).toBe( true );
-				mockServer.stop( done );
+				done();
 			}, ( error ) => {
 				done.fail( error );
 			} );
 		} );
 
 		it( "should be able to reconnect automatically", ( done:DoneFn ) => {
-			let mockServer:any;
-
 			function connectServer():void {
-				mockServer = new Server( "https://example.com/broker" );
+				if( ! mockServer ) mockServer = new Server( `wss://example.com/broker` );
 				mockServer.on( "connection", server => {
 					server.send( Frame.marshall( "CONNECTED", {
 						"server": "MockSocket-Server/**",
@@ -243,15 +237,20 @@ describe( "MessagingService", () => {
 			let reconnected:boolean = false;
 			service.reconnect( () => {
 				expect( service[ "_client" ]!.connected ).toBe( true );
-				if( reconnected ) mockServer.stop( done );
-				else {
-					mockServer.close( {
-						code: 1006,
-					} );
-					expect( service[ "_client" ]!.connected ).toBe( false );
-					connectServer();
-					reconnected = true;
-				}
+
+				if( reconnected )
+					return done();
+
+				mockServer!.close( {
+					code: 1006,
+					reason: "mock close",
+					wasClean: false,
+				} );
+				mockServer = null;
+
+				expect( service[ "_client" ]!.connected ).toBe( false );
+				connectServer();
+				reconnected = true;
 
 			}, ( error ) => {
 				done.fail( error );
@@ -261,13 +260,12 @@ describe( "MessagingService", () => {
 		it( "should still reconnect on maxReconnectAttempts", ( done:DoneFn ) => {
 			const maxAttempts:number = 5;
 			service.setOptions( {
-				reconnectDelay: 1,
+				reconnectDelay: 0,
 				maxReconnectAttempts: maxAttempts,
 			} );
-			let mockServer:any;
 
 			function connectServer():void {
-				mockServer = new Server( "https://example.com/broker" );
+				if( ! mockServer ) mockServer = new Server( `wss://example.com/broker` );
 				mockServer.on( "connection", server => {
 					server.send( Frame.marshall( "CONNECTED", {
 						"server": "MockSocket-Server/**",
@@ -294,10 +292,17 @@ describe( "MessagingService", () => {
 
 			service.reconnect( () => {
 				expect( service[ "_client" ]!.connected ).toBe( true );
-				if( reconnected ) mockServer.stop( done );
-				else mockServer.close( {
-					code: 1006,
-				} );
+				if( reconnected ) {
+					done();
+
+				} else {
+					mockServer!.close( {
+						code: 1006,
+						reason: "mock close",
+						wasClean: false,
+					} );
+					mockServer = null;
+				}
 
 			}, ( error ) => {
 				done.fail( error );
@@ -310,11 +315,9 @@ describe( "MessagingService", () => {
 				reconnectDelay: 1,
 				maxReconnectAttempts: maxAttempts,
 			} );
-			let mockServer:any;
 
 			function connectServer():void {
-				mockServer = new Server( "https://example.com/broker" );
-				mockServer.on( "connection", server => {
+				mockServer!.on( "connection", server => {
 					server.send( Frame.marshall( "CONNECTED", {
 						"server": "MockSocket-Server/**",
 						"session": "session-1",
@@ -342,19 +345,21 @@ describe( "MessagingService", () => {
 
 				if( reconnected ) done.fail( "No should be reconnected" );
 
-				mockServer.close( {
+
+				mockServer!.close( {
 					code: 1006,
+					reason: "mock close",
+					wasClean: false,
 				} );
 				reconnected = true;
 			}, ( error ) => {
 				expect( error ).toEqual( jasmine.any( Error ) );
-				mockServer.stop( done );
+				done();
 			} );
 		} );
 
 		it( "should disconnect if already connected", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-			mockServer.on( "connection", server => {
+			mockServer!.on( "connection", server => {
 				server.send( Frame.marshall( "CONNECTED", {
 					"server": "MockSocket-Server/**",
 					"session": "session-1",
@@ -362,7 +367,7 @@ describe( "MessagingService", () => {
 					"version": "1.2",
 				} ) );
 			} );
-			mockServer.on( "message", ( framesString:string ) => {
+			mockServer!.on( "message", ( framesString:any ) => {
 				const frame:Frame = Frame.unmarshallSingle( framesString );
 				if( frame.command === "CONNECT" ) return;
 
@@ -374,7 +379,7 @@ describe( "MessagingService", () => {
 				expect( service[ "_client" ]!.connected ).toBe( true );
 				service.reconnect( () => {
 					expect( previousClient ).not.toBe( service[ "_client" ] );
-					mockServer.stop( done );
+					done();
 				} );
 			}, ( error ) => {
 				done.fail( error );
@@ -392,32 +397,41 @@ describe( "MessagingService", () => {
 
 
 		it( "should be able to subscribe and parse its data", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-			mockServer.on( "connection", server => {
-				server.send( Frame.marshall( "CONNECTED", {
-					"server": "MockSocket-Server/**",
-					"session": "session-1",
-					"heart-beat": "0,0",
-					"version": "1.2",
-				} ) );
-			} );
-			mockServer.on( "message", ( framesString:string ) => {
-				const frames:Frame[] = Frame.unmarshall( framesString ).frames;
-				frames.forEach( frame => {
-					if( frame.command !== "SUBSCRIBE" ) return;
-					mockServer.send( Frame.marshall( "MESSAGE", {
-						"subscription": frame.headers.id,
-						"destination": "/topic/*.*.some",
-						"id": frame.headers.id + "@session-1@@1",
-						"redelivered": "false",
-						"content-type": "application/json+ld",
-					}, `[ {
-							"@id": "_:1",
-							"@type": [ "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ],
-							"https://carbonldp.com/ns/v1/platform#target": {
-								"@id": "https://example.com/created-child/"
-							}
-						} ]` ) );
+			mockServer!.on( "connection", socket => {
+				socket.addEventListener( "server::message", ( framesString:unknown ) => {
+					if( typeof framesString !== "string" ) return done.fail( "Invalid Event frame string." );
+
+					const frames:Frame[] = Frame.unmarshall( framesString ).frames;
+					frames.forEach( frame => {
+						switch( frame.command ) {
+							case "CONNECT":
+								socket.send( Frame.marshall( "CONNECTED", {
+									"server": "MockSocket-Server/**",
+									"session": "session-1",
+									"heart-beat": "0,0",
+									"version": "1.2",
+								} ) );
+								break;
+
+							case "SUBSCRIBE":
+								socket.send( Frame.marshall( "MESSAGE", {
+									"subscription": frame.headers.id,
+									"destination": "/topic/*.*.some",
+									"id": frame.headers.id + "@session-1@@1",
+									"redelivered": "false",
+									"content-type": "application/json+ld",
+								}, `[ {
+									"@id": "_:1",
+									"@type": [ "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ],
+									"https://carbonldp.com/ns/v1/platform#target": {
+										"@id": "https://example.com/created-child/"
+									}
+								} ]` ) );
+								break;
+
+							default:
+						}
+					} );
 				} );
 			} );
 
@@ -435,44 +449,53 @@ describe( "MessagingService", () => {
 				expect( Pointer.is( message.target ) ).toBe( true );
 				expect( message.target.$id ).toBe( "https://example.com/created-child/" );
 
-				mockServer.stop( done );
+				done();
 			}, ( error ) => {
 				done.fail( error );
 			} );
 		} );
 
 		it( "should be able add subscriptions in queue until connection is established", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-			mockServer.on( "connection", server => {
-				server.send( Frame.marshall( "CONNECTED", {
-					"server": "MockSocket-Server/**",
-					"session": "session-1",
-					"heart-beat": "0,0",
-					"version": "1.2",
-				} ) );
-			} );
-			mockServer.on( "message", ( framesString:string ) => {
-				const frames:Frame[] = Frame.unmarshall( framesString ).frames;
-				frames.forEach( frame => {
-					if( frame.command !== "SUBSCRIBE" ) return;
-					mockServer.send( Frame.marshall( "MESSAGE", {
-						"subscription": frame.headers.id,
-						"destination": frame.headers.destination,
-						"id": frame.headers.id + "@session-1@@1",
-						"redelivered": "false",
-						"content-type": "application/json+ld",
-					}, `[ {
-							"@id": "_:1",
-							"@type": [ "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ],
-							"https://carbonldp.com/ns/v1/platform#target": {
-								"@id": "https://example.com/created-child-${frame.headers.destination!.split( "/" ).reverse()[ 1 ].split( "-" ).reverse()[ 0 ]}/"
-							}
-						} ]` ) );
+			mockServer!.on( "connection", socket => {
+				socket.addEventListener( "server::message", ( framesString:unknown ) => {
+					if( typeof framesString !== "string" ) return done.fail( "Invalid Event frame string." );
+
+					const frames:Frame[] = Frame.unmarshall( framesString ).frames;
+					frames.forEach( frame => {
+						switch( frame.command ) {
+							case "CONNECT":
+								socket.send( Frame.marshall( "CONNECTED", {
+									"server": "MockSocket-Server/**",
+									"session": "session-1",
+									"heart-beat": "0,0",
+									"version": "1.2",
+								} ) );
+								break;
+
+							case "SUBSCRIBE":
+								socket.send( Frame.marshall( "MESSAGE", {
+									"subscription": frame.headers.id,
+									"destination": frame.headers.destination,
+									"id": frame.headers.id + "@session-1@@1",
+									"redelivered": "false",
+									"content-type": "application/json+ld",
+								}, `[ {
+									"@id": "_:1",
+									"@type": [ "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ],
+									"https://carbonldp.com/ns/v1/platform#target": {
+										"@id": "https://example.com/created-child-${ frame.headers.destination!.split( "/" ).reverse()[ 1 ].split( "-" ).reverse()[ 0 ] }/"
+									}
+								} ]` ) );
+								break;
+
+							default:
+						}
+					} );
 				} );
 			} );
 
 			function addSubscription( index:number ):void {
-				service.subscribe( `/topic/*.*.destination-${index}/`, ( message:EventMessage ) => {
+				service.subscribe( `/topic/*.*.destination-${ index }/`, ( message:EventMessage ) => {
 					expect( service[ "_client" ]!.connected ).toBe( true );
 
 					expect( message ).toEqual( {
@@ -484,9 +507,9 @@ describe( "MessagingService", () => {
 					expect( message.$hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
 					expect( Pointer.is( message.target ) ).toBe( true );
-					expect( message.target.$id ).toBe( `https://example.com/created-child-${index}/` );
+					expect( message.target.$id ).toBe( `https://example.com/created-child-${ index }/` );
 
-					if( ++ receivedData === 2 ) mockServer.stop( done );
+					if( ++ receivedData === 2 ) done();
 				}, ( error ) => {
 					done.fail( error );
 				} );
@@ -501,34 +524,43 @@ describe( "MessagingService", () => {
 		} );
 
 		it( "should receive broadcasted errors", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-			mockServer.on( "connection", server => {
-				server.send( Frame.marshall( "CONNECTED", {
-					"server": "MockSocket-Server/**",
-					"session": "session-1",
-					"heart-beat": "0,0",
-					"version": "1.2",
-				} ) );
-			} );
-			mockServer.on( "message", ( framesString:string ) => {
-				const frames:Frame[] = Frame.unmarshall( framesString ).frames;
-				frames.forEach( frame => {
-					if( frame.command !== "SUBSCRIBE" ) return;
-					mockServer.send( Frame.marshall( "ERROR", {
-						"message": "Connection closed.",
-						"content-length": "0",
-					} ) );
+			mockServer!.on( "connection", socket => {
+				socket.addEventListener( "server::message", ( framesString:unknown ) => {
+					if( typeof framesString !== "string" ) return done.fail( "Invalid Event frame string." );
+
+					const frames:Frame[] = Frame.unmarshall( framesString ).frames;
+					frames.forEach( frame => {
+						switch( frame.command ) {
+							case "CONNECT":
+								socket.send( Frame.marshall( "CONNECTED", {
+									"server": "MockSocket-Server/**",
+									"session": "session-1",
+									"heart-beat": "0,0",
+									"version": "1.2",
+								} ) );
+								break;
+
+							case "SUBSCRIBE":
+								socket.send( Frame.marshall( "ERROR", {
+									"message": "Connection closed.",
+									"content-length": "0",
+								} ) );
+								break;
+
+							default:
+						}
+					} );
 				} );
 			} );
 
 			function addSubscription( index:number ):void {
-				service.subscribe( `/topic/*.*.destination-${index}/`, () => {
+				service.subscribe( `/topic/*.*.destination-${ index }/`, () => {
 					done.fail( "Should not receive successfully any data." );
 				}, ( error ) => {
 					expect( error ).toEqual( jasmine.any( Error ) );
 					expect( error.message ).toContain( "Connection closed" );
 
-					if( ++ receivedData === 2 ) mockServer.stop( done );
+					if( ++ receivedData === 2 ) done();
 				} );
 			}
 
@@ -538,23 +570,32 @@ describe( "MessagingService", () => {
 		} );
 
 		it( "should silently fail when no error callback in broadcasting", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-			mockServer.on( "connection", server => {
-				server.send( Frame.marshall( "CONNECTED", {
-					"server": "MockSocket-Server/**",
-					"session": "session-1",
-					"heart-beat": "0,0",
-					"version": "1.2",
-				} ) );
-			} );
-			mockServer.on( "message", ( framesString:string ) => {
-				const frames:Frame[] = Frame.unmarshall( framesString ).frames;
-				frames.forEach( frame => {
-					if( frame.command !== "SUBSCRIBE" ) return;
-					mockServer.send( Frame.marshall( "ERROR", {
-						"message": "Connection closed.",
-						"content-length": "0",
-					} ) );
+			mockServer!.on( "connection", socket => {
+				socket.addEventListener( "server::message", ( framesString:unknown ) => {
+					if( typeof framesString !== "string" ) return done.fail( "Invalid Event frame string." );
+
+					const frames:Frame[] = Frame.unmarshall( framesString ).frames;
+					frames.forEach( frame => {
+						switch( frame.command ) {
+							case "CONNECT":
+								socket.send( Frame.marshall( "CONNECTED", {
+									"server": "MockSocket-Server/**",
+									"session": "session-1",
+									"heart-beat": "0,0",
+									"version": "1.2",
+								} ) );
+								break;
+
+							case "SUBSCRIBE":
+								socket.send( Frame.marshall( "ERROR", {
+									"message": "Connection closed.",
+									"content-length": "0",
+								} ) );
+								break;
+
+							default:
+						}
+					} );
 				} );
 			} );
 
@@ -567,7 +608,6 @@ describe( "MessagingService", () => {
 				done.fail( "Should not throw an error." );
 			}
 
-			mockServer.stop();
 			done();
 		} );
 
@@ -582,46 +622,56 @@ describe( "MessagingService", () => {
 
 
 		it( "should remove the matched subscription", ( done:DoneFn ) => {
-			const mockServer:any = new Server( "https://example.com/broker" );
-			mockServer.on( "connection", server => {
-				server.send( Frame.marshall( "CONNECTED", {
-					"server": "MockSocket-Server/**",
-					"session": "session-1",
-					"heart-beat": "0,0",
-					"version": "1.2",
-				} ) );
-			} );
+			mockServer!.on( "connection", socket => {
 
-			let targetID:string;
-			mockServer.on( "message", ( framesString:string ) => {
-				const frames:Frame[] = Frame.unmarshall( framesString ).frames;
-				frames.forEach( frame => {
-					if( frame.command === "UNSUBSCRIBE" ) {
-						expect( frame.headers.id ).toBe( targetID );
-						expect( service[ "_subscriptionsMap" ].size ).toBe( 2 );
-						done();
-						return;
-					}
+				let targetID:string;
+				socket.addEventListener( "server::message", ( framesString:unknown ) => {
+					if( typeof framesString !== "string" ) return done.fail( "Invalid Event frame string." );
 
+					const frames:Frame[] = Frame.unmarshall( framesString ).frames;
+					frames.forEach( frame => {
+						switch( frame.command ) {
+							case "CONNECT":
+								socket.send( Frame.marshall( "CONNECTED", {
+									"server": "MockSocket-Server/**",
+									"session": "session-1",
+									"heart-beat": "0,0",
+									"version": "1.2",
+								} ) );
+								break;
 
-					if( frame.command !== "SUBSCRIBE" ) return;
-					const index:string = frame.headers.destination!.split( "/" ).reverse()[ 1 ].split( "-" ).reverse()[ 0 ];
+							case "SUBSCRIBE":
+								const index:string = frame.headers.destination!
+									.split( "/" )
+									.reverse()[ 1 ]
+									.split( "-" )
+									.reverse()[ 0 ];
+								if( index === "2" ) targetID = frame.headers.id!;
 
-					if( index === "2" ) targetID = frame.headers.id!;
+								socket.send( Frame.marshall( "MESSAGE", {
+									"subscription": frame.headers.id,
+									"destination": frame.headers.destination,
+									"id": frame.headers.id + "@session-1@@1",
+									"redelivered": "false",
+									"content-type": "application/json+ld",
+								}, `[ {
+									"@id": "_:1",
+									"@type": [ "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ],
+									"https://carbonldp.com/ns/v1/platform#target": {
+										"@id": "https://example.com/created-child-${ index }/"
+									}
+								} ]` ) );
+								break;
 
-					mockServer.send( Frame.marshall( "MESSAGE", {
-						"subscription": frame.headers.id,
-						"destination": frame.headers.destination,
-						"id": frame.headers.id + "@session-1@@1",
-						"redelivered": "false",
-						"content-type": "application/json+ld",
-					}, `[ {
-							"@id": "_:1",
-							"@type": [ "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ],
-							"https://carbonldp.com/ns/v1/platform#target": {
-								"@id": "https://example.com/created-child-${index}/"
-							}
-						} ]` ) );
+							case "UNSUBSCRIBE":
+								expect( frame.headers.id ).toBe( targetID );
+								expect( service[ "_subscriptionsMap" ].size ).toBe( 2 );
+								done();
+								break;
+
+							default:
+						}
+					} );
 				} );
 			} );
 
@@ -630,7 +680,7 @@ describe( "MessagingService", () => {
 
 			function addSubscription( index:number ):( message:EventMessage ) => void {
 				let callback:( message:EventMessage ) => void;
-				service.subscribe( `/topic/*.*.destination-${index}/`, callback = ( message:EventMessage ) => {
+				service.subscribe( `/topic/*.*.destination-${ index }/`, callback = ( message:EventMessage ) => {
 					expect( service[ "_client" ]!.connected ).toBe( true );
 
 					expect( message ).toEqual( {
@@ -642,7 +692,7 @@ describe( "MessagingService", () => {
 					expect( message.$hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
 					expect( Pointer.is( message.target ) ).toBe( true );
-					expect( message.target.$id ).toBe( `https://example.com/created-child-${index}/` );
+					expect( message.target.$id ).toBe( `https://example.com/created-child-${ index }/` );
 
 					if( ++ responded === 3 ) finishCallback();
 				}, ( error ) => {

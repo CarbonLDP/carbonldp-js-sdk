@@ -293,7 +293,7 @@ function __getPointer( this:AnyRegistry, id:string, local?:true ):RegisteredPoin
 	if( resourcesMap.has( localID ) ) return resourcesMap.get( localID )!;
 
 	if( local !== true && __hasPointer.call( parentRegistry, id ) )
-		return __getPointer.call( parentRegistry, id );
+		return __getPointer.call( parentRegistry!, id );
 
 	return __addPointer( this, { $id: id } );
 }

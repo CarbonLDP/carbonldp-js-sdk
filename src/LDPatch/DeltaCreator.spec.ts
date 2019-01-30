@@ -2428,7 +2428,7 @@ describe( "DeltaCreator", () => {
 			);
 
 			expect( deltaCreator.getPatch() ).toBe( `` +
-				`@prefix xsd: <${XSD.namespace}>. ` +
+				`@prefix xsd: <${ XSD.namespace }>. ` +
 				`@prefix resource: <http://example.org/resource/#>. ` +
 				`UpdateList <http://example.org/resource/> <http://example.org/vocab#property2> 0.. (). ` +
 				`UpdateList resource:fragment <http://example.org/vocab#property2> 3..5 (). ` +

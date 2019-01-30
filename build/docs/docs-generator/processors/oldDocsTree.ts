@@ -9,6 +9,7 @@ import { FunctionExportDoc } from "dgeni-packages/typescript/api-doc-types/Funct
 import { InterfaceExportDoc } from "dgeni-packages/typescript/api-doc-types/InterfaceExportDoc";
 import { MemberDoc } from "dgeni-packages/typescript/api-doc-types/MemberDoc";
 import { MethodMemberDoc } from "dgeni-packages/typescript/api-doc-types/MethodMemberDoc";
+import { OverloadInfo } from "dgeni-packages/typescript/api-doc-types/OverloadInfo";
 import { PropertyMemberDoc } from "dgeni-packages/typescript/api-doc-types/PropertyMemberDoc";
 import { TypeAliasExportDoc } from "dgeni-packages/typescript/api-doc-types/TypeAliasExportDoc";
 
@@ -150,7 +151,7 @@ export class OldDocsTree implements Processor {
 		if( indexMember ) properties
 			.push( this._getPropertyLike( <PropertyMemberDoc>{
 				...indexMember,
-				name: `[ ${indexMember.parameters.join()} ]`,
+				name: `[ ${ indexMember.parameters.join() } ]`,
 				getAccessor: null,
 				setAccessor: null,
 			} ) );
@@ -323,7 +324,7 @@ export class OldDocsTree implements Processor {
 		return method;
 	}
 
-	private _getMemberLike( doc:{ isStatic?:boolean, isOptional?:boolean } ):MemberLike {
+	private _getMemberLike( doc:MemberDoc | ConstExportDoc | FunctionExportDoc | OverloadInfo ):MemberLike {
 		return {
 			access: ! ("isStatic" in doc) || doc.isStatic
 				? "static" : "instance",
@@ -345,7 +346,7 @@ export class OldDocsTree implements Processor {
 			const typeArguments:string[] = clause.type.typeArguments
 				.map( _ => this._getPathFromNode( doc, _ ) );
 
-			return `${mainPath}<${typeArguments.join( ", " )}>`;
+			return `${ mainPath }<${ typeArguments.join( ", " ) }>`;
 		} );
 
 	}
@@ -396,13 +397,13 @@ export class OldDocsTree implements Processor {
 		if( ! doc ) return text;
 
 		return opts.keepName
-			? `{@link ${doc.path} ${text}}`
+			? `{@link ${ doc.path } ${ text }}`
 			: doc.path;
 	}
 
 	private _getExpandedType( doc:CheckedApiDoc, type:string, opts?:{ keepName?:boolean } ):string {
 		return type.replace( TYPE_LABELS_REGEX, ( _, before, label ) =>
-			`${before}${this._getPathFromName( doc, label, opts )}`
+			`${ before }${ this._getPathFromName( doc, label, opts ) }`
 		);
 	}
 }

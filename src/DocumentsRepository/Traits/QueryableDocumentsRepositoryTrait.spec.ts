@@ -79,70 +79,70 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				responseText: `
 							[ {
 								"@id": "_:1",
-								"@type": [ "${C.ErrorResponse}" ],
-								"${C.error}": [ {
+								"@type": [ "${ C.ErrorResponse }" ],
+								"${ C.error }": [ {
 									"@id": "_:2"
 								}, {
 									"@id": "_:3"
 								} ],
-								"${C.httpStatusCode}": [ {
-									"@type": "${XSD.int}",
+								"${ C.httpStatusCode }": [ {
+									"@type": "${ XSD.int }",
 									"@value": "500"
 								} ]
 							}, {
 								"@id": "_:2",
-								"@type": [ "${C.Error}" ],
-								"${C.errorCode}": [ {
+								"@type": [ "${ C.Error }" ],
+								"${ C.errorCode }": [ {
 									"@language": "en",
 									"@value": "code-01"
 								} ],
-								"${C.errorMessage}": [ {
+								"${ C.errorMessage }": [ {
 									"@language": "en",
 									"@value": "Message 01"
 								} ],
-								"${C.errorParameters}": [ {
+								"${ C.errorParameters }": [ {
 									"@id": "_:4"
 								} ]
 							}, {
 								"@id": "_:3",
-								"@type": [ "${C.Error}" ],
-								"${C.errorCode}": [ {
+								"@type": [ "${ C.Error }" ],
+								"${ C.errorCode }": [ {
 									"@language": "en",
 									"@value": "code-02"
 								} ],
-								"${C.errorMessage}": [ {
+								"${ C.errorMessage }": [ {
 									"@language": "en",
 									"@value": "Message 02"
 								} ],
-								"${C.errorParameters}": [ {
+								"${ C.errorParameters }": [ {
 									"@id": "_:6"
 								} ]
 							}, {
 								"@id": "_:4",
-								"@type": [ "${C.Map}" ],
-								"${C.entry}": [ {
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [ {
 									"@id": "_:5"
 								} ]
 							}, {
 								"@id": "_:5",
-								"${C.entryKey}": [ {
+								"${ C.entryKey }": [ {
 									"@value": "document"
 								} ],
-								"${C.entryValue}": [ {
+								"${ C.entryValue }": [ {
 									"@id": "https://example.com/target-document/"
 								} ]
 							}, {
 								"@id": "_:6",
-								"@type": [ "${C.Map}" ],
-								"${C.entry}": [ {
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [ {
 									"@id": "_:7"
 								} ]
 							}, {
 								"@id": "_:7",
-								"${C.entryKey}": [ {
+								"${ C.entryKey }": [ {
 									"@value": "document"
 								} ],
-								"${C.entryValue}": [ {
+								"${ C.entryValue }": [ {
 									"@id": "https://example.com/target-document/"
 								} ]
 							} ]`,
@@ -323,8 +323,8 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${C.PreferDocumentChecksums}"`,
-						`include="${C.PreferResultsContexts}"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -390,17 +390,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> <https://example.com/resource/>.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/resource/>.` +
 
 					" <https://example.com/resource/> a ?document__types;" +
-					"" + ` <${C.document}> ?document___graph;` +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
 					"" + " schema:property-2 ?document__property2." +
 
 					" ?document__property2 a ?document__property2__types;" +
-					"" + ` <${C.document}> ?document__property2___graph;` +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
@@ -483,17 +483,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> <https://example.com/resource/>.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/resource/>.` +
 
 					" <https://example.com/resource/> a ?document__types;" +
-					"" + ` <${C.document}> ?document___graph;` +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
 					"" + " schema:property-2 ?document__property2." +
 
 					" ?document__property2 a ?document__property2__types;" +
-					"" + ` <${C.document}> ?document__property2___graph;` +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
@@ -639,13 +639,13 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?document.` +
 
 					" ?document___subject" +
 					"" + " ?document___predicate ?document___object;" +
-					"" + ` <${C.document}> ?document` +
+					"" + ` <${ C.document }> ?document` +
 
 					" " +
 					"} {" +
@@ -706,17 +706,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?document.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?document.` +
 
 					" ?document a ?document__types;" +
-					"" + ` <${C.document}> ?document___graph;` +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
 					"" + " schema:property-2 ?document__property2." +
 
 					" ?document__property2 a ?document__property2__types;" +
-					"" + ` <${C.document}> ?document__property2___graph;` +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3" +
 
@@ -2204,17 +2204,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> <https://example.com/resource/>.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/resource/>.` +
 
 					" <https://example.com/resource/> a ?document__types;" +
-					"" + ` <${C.document}> ?document___graph;` +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
 					"" + " schema:property-2 ?document__property2." +
 
 					" ?document__property2 a ?document__property2__types;" +
-					"" + ` <${C.document}> ?document__property2___graph;` +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
@@ -2921,8 +2921,8 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${C.PreferDocumentChecksums}"`,
-						`include="${C.PreferResultsContexts}"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -2988,17 +2988,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> <https://example.com/>.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
 					" <https://example.com/> a ?document__types;" +
-					"" + ` <${C.document}> ?document___graph;` +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
 					"" + " schema:property-2 ?document__property2." +
 
 					" ?document__property2 a ?document__property2__types;" +
-					"" + ` <${C.document}> ?document__property2___graph;` +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
@@ -3083,17 +3083,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> <https://example.com/>.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
 					" <https://example.com/> a ?document__types;" +
-					"" + ` <${C.document}> ?document___graph;` +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-1> ?document__property1;" +
 					"" + " schema:property-2 ?document__property2." +
 
 					" ?document__property2 a ?document__property2__types;" +
-					"" + ` <${C.document}> ?document__property2___graph;` +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
 					"" + " schema:property-3 ?document__property2__property3 " +
 
@@ -4246,8 +4246,8 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${C.PreferDocumentChecksums}"`,
-						`include="${C.PreferResultsContexts}"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -4355,7 +4355,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.first();
 				expect( request.params ).toBe( "" +
-					`@prefix xsd: <${XSD.namespace}>. ` +
+					`@prefix xsd: <${ XSD.namespace }>. ` +
 					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..5 (). ` +
 					`UpdateList <https://example.com/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
 					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
@@ -4433,19 +4433,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> <https://example.com/>.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
 
 					" <https://example.com/> a ?document__types;" +
-					"" + ` <${C.document}> ?document___graph;` +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
 					"" + " schema:property-2 ?document__property2;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1." +
 
 					" ?document__property2 a ?document__property2__types;" +
-					"" + ` <${C.document}> ?document__property2___graph;` +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " schema:property-3 ?document__property2__property3;" +
 					"" + " schema:property-5 ?document__property2__property5;" +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
@@ -4654,8 +4654,8 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${C.PreferDocumentChecksums}"`,
-						`include="${C.PreferResultsContexts}"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -4734,18 +4734,18 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> <https://example.com/>.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
 					" <https://example.com/> a ?document__types;" +
-					"" + ` <${C.document}> ?document___graph;` +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
 					"" + " schema:property-2 ?document__property2;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1." +
 
 					" ?document__property2 a ?document__property2__types;" +
-					"" + ` <${C.document}> ?document__property2___graph;` +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " schema:property-3 ?document__property2__property3;" +
 					"" + " schema:property-5 ?document__property2__property5;" +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
@@ -4834,19 +4834,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> <https://example.com/>.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
 					" <https://example.com/> a ?document__types;" +
-					"" + ` <${C.document}> ?document___graph;` +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
 					"" + " schema:property-2 ?document__property2;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1." +
 
 					" ?document__property2" +
 					"" + " ?document__property2___predicate ?document__property2___object;" +
-					"" + ` <${C.document}> ?document__property2___graph` +
+					"" + ` <${ C.document }> ?document__property2___graph` +
 
 					" " +
 					"} {" +
@@ -5261,18 +5261,18 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> <https://example.com/>.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> <https://example.com/>.` +
 
 					" <https://example.com/> a ?document__types;" +
-					"" + ` <${C.document}> ?document___graph;` +
+					"" + ` <${ C.document }> ?document___graph;` +
 					"" + " <https://example.com/ns#property-4> ?document__property4;" +
 					"" + " schema:property-2 ?document__property2;" +
 					"" + " <https://example.com/ns#property-1> ?document__property1." +
 
 					" ?document__property2 a ?document__property2__types;" +
-					"" + ` <${C.document}> ?document__property2___graph;` +
+					"" + ` <${ C.document }> ?document__property2___graph;` +
 					"" + " schema:property-3 ?document__property2__property3;" +
 					"" + " schema:property-5 ?document__property2__property5;" +
 					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
@@ -5746,8 +5746,8 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${C.PreferDocumentChecksums}"`,
-						`include="${C.PreferResultsContexts}"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -5821,17 +5821,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?child.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?child.` +
 
 					" ?child a ?child__types;" +
-					"" + ` <${C.document}> ?child___graph;` +
+					"" + ` <${ C.document }> ?child___graph;` +
 					"" + " <https://example.com/ns#property-1> ?child__property1;" +
 					"" + " schema:property-2 ?child__property2." +
 
 					" ?child__property2 a ?child__property2__types;" +
-					"" + ` <${C.document}> ?child__property2___graph;` +
+					"" + ` <${ C.document }> ?child__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
 					"" + " schema:property-3 ?child__property2__property3;" +
 					"" + " schema:property-4 ?child__property2__property4 " +
@@ -5916,17 +5916,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?child.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?child.` +
 
 					" ?child a ?child__types;" +
-					"" + ` <${C.document}> ?child___graph;` +
+					"" + ` <${ C.document }> ?child___graph;` +
 					"" + " <https://example.com/ns#property1> ?child__property1;" +
 					"" + " <https://example.com/ns#property2> ?child__property2." +
 
 					" ?child__property2 a ?child__property2__types;" +
-					"" + ` <${C.document}> ?child__property2___graph;` +
+					"" + ` <${ C.document }> ?child__property2___graph;` +
 					"" + " <https://example.com/ns#property2> ?child__property2__property2;" +
 					"" + " <https://example.com/ns#property3> ?child__property2__property3;" +
 					"" + " <https://example.com/ns#property4> ?child__property2__property4 " +
@@ -6029,17 +6029,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?child.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?child.` +
 
 					" ?child a ?child__types;" +
-					"" + ` <${C.document}> ?child___graph;` +
+					"" + ` <${ C.document }> ?child___graph;` +
 					"" + " <https://example.com/ns#property-1> ?child__property1;" +
 					"" + " schema:property-2 ?child__property2." +
 
 					" ?child__property2 a ?child__property2__types;" +
-					"" + ` <${C.document}> ?child__property2___graph;` +
+					"" + ` <${ C.document }> ?child__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
 					"" + " schema:property-3 ?child__property2__property3;" +
 					"" + " schema:property-4 ?child__property2__property4 " +
@@ -6117,13 +6117,13 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?child.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?child.` +
 
 					" ?child___subject" +
 					"" + " ?child___predicate ?child___object;" +
-					"" + ` <${C.document}> ?child` +
+					"" + ` <${ C.document }> ?child` +
 
 					" " +
 					"} {" +
@@ -6175,13 +6175,13 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?child.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?child.` +
 
 					" ?child" +
 					"" + " ?child___predicate ?child___object;" +
-					"" + ` <${C.document}> ?child___graph` +
+					"" + ` <${ C.document }> ?child___graph` +
 
 					" " +
 					"} {" +
@@ -6244,17 +6244,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?child.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?child.` +
 
 					" ?child a ?child__types;" +
-					"" + ` <${C.document}> ?child___graph;` +
+					"" + ` <${ C.document }> ?child___graph;` +
 					"" + " schema:property-1 ?child__property1;" +
 					"" + " schema:property-2 ?child__property2." +
 
 					" ?child__property2 ?child__property2___predicate ?child__property2___object;" +
-					"" + ` <${C.document}> ?child__property2___graph ` +
+					"" + ` <${ C.document }> ?child__property2___graph ` +
 
 					"} {" +
 					" {" +
@@ -6313,17 +6313,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?child.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?child.` +
 
 					" ?child a ?child__types;" +
-					"" + ` <${C.document}> ?child___graph;` +
+					"" + ` <${ C.document }> ?child___graph;` +
 					"" + " <https://example.com/ns#property1> ?child__property1;" +
 					"" + " <https://example.com/ns#property2> ?child__property2." +
 
 					" ?child__property2 ?child__property2___predicate ?child__property2___object;" +
-					"" + ` <${C.document}> ?child__property2___graph ` +
+					"" + ` <${ C.document }> ?child__property2___graph ` +
 
 					"} {" +
 					" {" +
@@ -6400,7 +6400,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 									},
 									"property3": __.inherit,
 								} )
-								.filter( `${__.property( "property2" )} = ${__.value( 12345 ).withType( "integer" )}` )
+								.filter( `${ __.property( "property2" ) } = ${ __.value( 12345 ).withType( "integer" ) }` )
 							,
 						},
 					} )
@@ -6412,7 +6412,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				const query:QueryToken = spy.calls.mostRecent().object;
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
-						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}` ) )
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }` ) )
 							.addProperty( new PropertyToken( "a" )
 								.addObject( new IRIRefToken( C.VolatileResource ) )
 								.addObject( new IRIRefToken( C.QueryMetadata ) )
@@ -6525,7 +6525,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							)
 							.addPattern( new FilterToken( "datatype( ?child__property2__property3 ) = xsd:string" ) )
 						)
-						.addPattern( new FilterToken( `${new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) )} = "12345"^^xsd:integer` ) )
+						.addPattern( new FilterToken( `${ new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) } = "12345"^^xsd:integer` ) )
 					)
 
 						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
@@ -6541,19 +6541,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -6561,12 +6561,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -6579,7 +6579,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -6590,12 +6590,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -6608,7 +6608,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -6831,19 +6831,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -6851,15 +6851,15 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
-								"${C.document}": [ {
+								"${ C.document }": [ {
 									"@id": "https://example.com/resource/child1/"
 								} ],
 								"https://schema.org/property-1": [ {
@@ -6878,7 +6878,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "12345",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						}, {
@@ -6886,15 +6886,15 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "2-12345"
 								} ],
-								"${C.document}": [ {
+								"${ C.document }": [ {
 									"@id": "https://example.com/resource/child2/"
 								} ],
 								"https://schema.org/property-1": [ {
@@ -6913,7 +6913,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "67890",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						} ]`,
@@ -6998,19 +6998,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -7018,12 +7018,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
 								"https://schema.org/property-1": [ {
@@ -7038,12 +7038,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "2-12345"
 								} ],
 								"https://schema.org/property-1": [ {
@@ -7444,19 +7444,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -7464,12 +7464,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -7482,7 +7482,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -7493,12 +7493,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -7511,7 +7511,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -7595,19 +7595,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -7615,12 +7615,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -7634,12 +7634,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@id": "https://example.com/sub-documents/sub-document1/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/",
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "3-12345"
 								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -7650,12 +7650,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -7669,12 +7669,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@id": "https://example.com/sub-documents/sub-document2/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/",
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "4-12345"
 								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -7906,8 +7906,8 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${C.PreferDocumentChecksums}"`,
-						`include="${C.PreferResultsContexts}"`,
+						`include="${ C.PreferDocumentChecksums }"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -7981,17 +7981,17 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?member.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?member.` +
 
 					" ?member a ?member__types;" +
-					"" + ` <${C.document}> ?member___graph;` +
+					"" + ` <${ C.document }> ?member___graph;` +
 					"" + " <https://example.com/ns#property-1> ?member__property1;" +
 					"" + " schema:property-2 ?member__property2." +
 
 					" ?member__property2 a ?member__property2__types;" +
-					"" + ` <${C.document}> ?member__property2___graph;` +
+					"" + ` <${ C.document }> ?member__property2___graph;` +
 					"" + " <https://example.com/ns#property-2> ?member__property2__property2;" +
 					"" + " schema:property-3 ?member__property2__property3;" +
 					"" + " schema:property-4 ?member__property2__property4 " +
@@ -8081,13 +8081,13 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?member.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?member.` +
 
 					" ?member___subject" +
 					"" + " ?member___predicate ?member___object;" +
-					"" + ` <${C.document}> ?member ` +
+					"" + ` <${ C.document }> ?member ` +
 
 					"} {" +
 					" {" +
@@ -8144,13 +8144,13 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( request.params ).toEqual( "" +
 					"PREFIX schema: <https://schema.org/> " +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?member.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?member.` +
 
 					" ?member" +
 					"" + " ?member___predicate ?member___object;" +
-					"" + ` <${C.document}> ?member___graph ` +
+					"" + ` <${ C.document }> ?member___graph ` +
 
 					"} {" +
 					" {" +
@@ -8227,7 +8227,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 									},
 									"property3": __.inherit,
 								} )
-								.filter( `${__.property( "property2" )} = ${__.value( 12345 ).withType( "integer" )}` )
+								.filter( `${ __.property( "property2" ) } = ${ __.value( 12345 ).withType( "integer" ) }` )
 							,
 						},
 					} )
@@ -8239,7 +8239,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				const query:QueryToken = spy.calls.mostRecent().object;
 				expect( query ).toEqual( new QueryToken(
 					new ConstructToken()
-						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}` ) )
+						.addTriple( new SubjectToken( new IRIRefToken( `cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }` ) )
 							.addProperty( new PropertyToken( "a" )
 								.addObject( new IRIRefToken( C.VolatileResource ) )
 								.addObject( new IRIRefToken( C.QueryMetadata ) )
@@ -8363,7 +8363,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							)
 							.addPattern( new FilterToken( "datatype( ?member__property2__property3 ) = xsd:string" ) )
 						)
-						.addPattern( new FilterToken( `${new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) )} = "12345"^^xsd:integer` ) )
+						.addPattern( new FilterToken( `${ new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) } = "12345"^^xsd:integer` ) )
 					)
 
 						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
@@ -8379,19 +8379,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -8399,12 +8399,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -8417,7 +8417,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8428,12 +8428,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -8446,7 +8446,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8521,19 +8521,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -8541,15 +8541,15 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
-								"${C.document}": [ {
+								"${ C.document }": [ {
 									"@id": "https://example.com/resource/child1/"
 								} ],
 								"https://schema.org/property-1": [ {
@@ -8568,7 +8568,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "12345",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						}, {
@@ -8576,15 +8576,15 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "2-12345"
 								} ],
-								"${C.document}": [ {
+								"${ C.document }": [ {
 									"@id": "https://example.com/resource/child2/"
 								} ],
 								"https://schema.org/property-1": [ {
@@ -8603,7 +8603,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "67890",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						} ]`,
@@ -8686,19 +8686,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -8706,12 +8706,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
 								"https://schema.org/property-1": [ {
@@ -8726,12 +8726,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "2-12345"
 								} ],
 								"https://schema.org/property-1": [ {
@@ -8821,19 +8821,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -8841,12 +8841,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -8859,7 +8859,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8870,12 +8870,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -8888,7 +8888,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8971,19 +8971,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -8991,12 +8991,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "1-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -9010,12 +9010,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@id": "https://example.com/sub-documents/sub-document1/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/",
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "3-12345"
 								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -9026,12 +9026,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "2-12345"
 								} ],
 								"https://example.com/ns#property-1": [ {
@@ -9045,12 +9045,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@id": "https://example.com/sub-documents/sub-document2/",
 							"@graph": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/",
-								"${C.checksum}": [ {
+								"${ C.checksum }": [ {
 									"@value": "4-12345"
 								} ],
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${XSD.integer}"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -9281,7 +9281,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${C.PreferResultsContexts}"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -9333,16 +9333,16 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?child.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?child.` +
 
 					" ?child a ?child__types " +
 
 					"} {" +
 					" {" +
 					"" + " SELECT DISTINCT ?child {" +
-					"" + "" + ` <https://example.com/> <${LDP.contains}> ?child` +
+					"" + "" + ` <https://example.com/> <${ LDP.contains }> ?child` +
 					"" + " }" +
 					" }" +
 
@@ -9360,19 +9360,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -9380,10 +9380,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
 							} ]
 						}, {
@@ -9391,10 +9391,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
 							} ]
 						} ]`,
@@ -9410,10 +9410,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						$eTag: void 0,
 						$_resolved: false,
 						types: [
-							`${C.Document}`,
+							`${ C.Document }`,
 							`https://example.com/ns#Resource`,
-							`${LDP.BasicContainer}`,
-							`${LDP.RDFSource}`,
+							`${ LDP.BasicContainer }`,
+							`${ LDP.RDFSource }`,
 						],
 					} ) );
 
@@ -9422,10 +9422,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						$eTag: void 0,
 						$_resolved: false,
 						types: [
-							`${C.Document}`,
+							`${ C.Document }`,
 							`https://example.com/ns#Resource`,
-							`${LDP.BasicContainer}`,
-							`${LDP.RDFSource}`,
+							`${ LDP.BasicContainer }`,
+							`${ LDP.RDFSource }`,
 						],
 					} ) );
 
@@ -9439,19 +9439,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -9459,10 +9459,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
 							} ]
 						}, {
@@ -9470,10 +9470,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
 							} ]
 						} ]`,
@@ -9645,7 +9645,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/sparql-query",
 					"prefer": [
-						`include="${C.PreferResultsContexts}"`,
+						`include="${ C.PreferResultsContexts }"`,
 					].join( ", " ),
 				} );
 			} );
@@ -9697,9 +9697,9 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toEqual( "" +
 					"CONSTRUCT {" +
-					` <cldp-sdk://metadata-${UUIDSpy.calls.all()[ 0 ].returnValue}>` +
-					"" + ` a <${C.VolatileResource}>, <${C.QueryMetadata}>;` +
-					"" + ` <${C.target}> ?member.` +
+					` <cldp-sdk://metadata-${ UUIDSpy.calls.all()[ 0 ].returnValue }>` +
+					"" + ` a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+					"" + ` <${ C.target }> ?member.` +
 
 					" ?member a ?member__types " +
 
@@ -9731,19 +9731,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -9751,10 +9751,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
 							} ]
 						}, {
@@ -9762,10 +9762,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
 							} ]
 						} ]`,
@@ -9781,10 +9781,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						$eTag: void 0,
 						$_resolved: false,
 						types: [
-							`${C.Document}`,
+							`${ C.Document }`,
 							`https://example.com/ns#Resource`,
-							`${LDP.BasicContainer}`,
-							`${LDP.RDFSource}`,
+							`${ LDP.BasicContainer }`,
+							`${ LDP.RDFSource }`,
 						],
 					} ) );
 
@@ -9793,10 +9793,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						$eTag: void 0,
 						$_resolved: false,
 						types: [
-							`${C.Document}`,
+							`${ C.Document }`,
 							`https://example.com/ns#Resource`,
-							`${LDP.BasicContainer}`,
-							`${LDP.RDFSource}`,
+							`${ LDP.BasicContainer }`,
+							`${ LDP.RDFSource }`,
 						],
 					} ) );
 
@@ -9810,19 +9810,19 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${C.VolatileResource}",
-								"${C.QueryMetadata}"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${C.target}": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -9830,10 +9830,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
 							} ]
 						}, {
@@ -9841,10 +9841,10 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${C.Document}",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${LDP.BasicContainer}",
-									"${LDP.RDFSource}"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
 							} ]
 						} ]`,

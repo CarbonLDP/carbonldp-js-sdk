@@ -77,7 +77,7 @@ export class MessagingService {
 	 */
 	connect( onConnect?:() => void, onError?:( error:Error ) => void ):void {
 		if( this._client ) {
-			const error:Error = new IllegalStateError( `The messaging service is already connect${this._client.connected ? "ed" : "ing"}.` );
+			const error:Error = new IllegalStateError( `The messaging service is already connect${ this._client.connected ? "ed" : "ing" }.` );
 			if( onError ) onError( error );
 			throw error;
 		}
@@ -97,7 +97,7 @@ export class MessagingService {
 		else if( this._client.connected ) this._client.disconnect();
 		if( ! this._subscriptionsMap ) this._subscriptionsMap = new Map();
 
-		const sock:SockJS.Socket = new SockJS( this.context.resolve( "/broker" ) );
+		const sock:WebSocket = new SockJS( this.context.resolve( "/broker" ) );
 		this._client = webstomp.over( sock, {
 			debug: false,
 			heartbeat: false,
@@ -120,12 +120,12 @@ export class MessagingService {
 				}
 				this._client = undefined;
 				this._subscriptionsQueue.length = 0;
-				errorMessage = `CloseEventError: ${errorFrameOrEvent.reason}`;
+				errorMessage = `CloseEventError: ${ errorFrameOrEvent.reason }`;
 			} else if( "body" in errorFrameOrEvent ) {
 				if( ! this._client || ! this._client.connected && canReconnect ) return;
-				errorMessage = `${errorFrameOrEvent.headers[ "message" ]}: ${errorFrameOrEvent.body.trim()}`;
+				errorMessage = `${ errorFrameOrEvent.headers[ "message" ] }: ${ errorFrameOrEvent.body.trim() }`;
 			} else {
-				errorMessage = `Unknown error: ${errorFrameOrEvent}`;
+				errorMessage = `Unknown error: ${ errorFrameOrEvent }`;
 			}
 			onError( new Error( errorMessage ) );
 		} );

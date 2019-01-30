@@ -289,7 +289,7 @@ export const URI:URIFactory = {
 
 		if( URI.isPrefixed( uri ) || ! uri.startsWith( prefixURI! ) ) return uri;
 
-		return `${prefix}:${uri.substring( prefixURI!.length )}`;
+		return `${ prefix }:${ uri.substring( prefixURI!.length ) }`;
 	},
 };
 
