@@ -10,8 +10,8 @@ import { TypeAlias } from "./TypeAlias";
 export interface ModuleDoc extends SuiteDoc {
 	interfaces:InterfaceDoc[];
 	classes:ClassDoc[];
-	enums: EnumDoc[];
-	typeAliases: TypeAlias[];
+	enums:EnumDoc[];
+	typeAliases:TypeAlias[];
 
 	reexports:ReexportDoc[];
 

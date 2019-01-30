@@ -24,7 +24,7 @@ export default function getLinkInfo( encodeCodeBlock:Function ):Function {
 		return doc.docs.find( _ => {
 			const inAlias:boolean = _.aliases.some( __ =>
 				__ === url ||
-				(url.endsWith( "()" ) ? __ === `${url.slice( 0, - 2 )}_0()` : false)
+				(url.endsWith( "()" ) ? __ === `${ url.slice( 0, - 2 ) }_0()` : false)
 			);
 
 			if( inAlias ) return inAlias;
@@ -38,7 +38,7 @@ export default function getLinkInfo( encodeCodeBlock:Function ):Function {
 
 		const doc:ApiDoc | undefined = getDocFromAlias( url, currentDoc );
 
-		if( ! doc ) return <InvalidLink> {
+		if( ! doc ) return <InvalidLink>{
 			url: "#",
 			title: title || url,
 			valid: false,
@@ -46,7 +46,7 @@ export default function getLinkInfo( encodeCodeBlock:Function ):Function {
 			error: `Invalid link (does not match any doc): "${ url }"`,
 		};
 
-		return <ValidLink> {
+		return <ValidLink>{
 			url: `#${ toURL( doc.path ) }`,
 			type: "doc",
 			valid: true,

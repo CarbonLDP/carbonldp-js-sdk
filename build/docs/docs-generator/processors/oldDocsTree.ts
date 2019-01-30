@@ -151,7 +151,7 @@ export class OldDocsTree implements Processor {
 		if( indexMember ) properties
 			.push( this._getPropertyLike( <PropertyMemberDoc>{
 				...indexMember,
-				name: `[ ${indexMember.parameters.join()} ]`,
+				name: `[ ${ indexMember.parameters.join() } ]`,
 				getAccessor: null,
 				setAccessor: null,
 			} ) );
@@ -346,7 +346,7 @@ export class OldDocsTree implements Processor {
 			const typeArguments:string[] = clause.type.typeArguments
 				.map( _ => this._getPathFromNode( doc, _ ) );
 
-			return `${mainPath}<${typeArguments.join( ", " )}>`;
+			return `${ mainPath }<${ typeArguments.join( ", " ) }>`;
 		} );
 
 	}
@@ -397,13 +397,13 @@ export class OldDocsTree implements Processor {
 		if( ! doc ) return text;
 
 		return opts.keepName
-			? `{@link ${doc.path} ${text}}`
+			? `{@link ${ doc.path } ${ text }}`
 			: doc.path;
 	}
 
 	private _getExpandedType( doc:CheckedApiDoc, type:string, opts?:{ keepName?:boolean } ):string {
 		return type.replace( TYPE_LABELS_REGEX, ( _, before, label ) =>
-			`${before}${this._getPathFromName( doc, label, opts )}`
+			`${ before }${ this._getPathFromName( doc, label, opts ) }`
 		);
 	}
 }
