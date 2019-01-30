@@ -1,4 +1,6 @@
-export { Context } from "./Context";
 export { AbstractContext } from "./AbstractContext";
-export { GlobalContext } from "./GlobalContext";
+export { Context } from "./Context";
+export { ContextSettings } from "./ContextSettings";
 export { DocumentsContext } from "./DocumentsContext";
+export * from "./DocumentsContextSettings";
+export { GlobalContext } from "./GlobalContext";

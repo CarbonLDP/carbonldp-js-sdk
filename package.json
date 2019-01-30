@@ -12,8 +12,8 @@
     "type": "git",
     "url": "https://github.com/CarbonLDP/carbonldp-js-sdk.git"
   },
-  "main": "./dist/CarbonLDP.js",
-  "typings": "./dist/CarbonLDP.d.ts",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "browser": {
     "file-type": false,
     "url": false,
