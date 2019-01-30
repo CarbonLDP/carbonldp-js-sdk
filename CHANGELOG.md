@@ -3,11 +3,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
-## [Unreleased]
+<!-- ## [Unreleased] -->
+
+<!-- ### Added -->
+
+<!--### Fixed-->
+
+<!--### Breaking Changes -->
+
+## [5.2.0-alpha.1] - 2019-01-30
 
 ### Added
 
-- [#336](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/336) - Support TypeScript strict mode
+- [#336](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/336) - Support TypeScript's strict mode
 - [#345](https://github.com/CarbonLDP/carbonldp-js-sdk/pull/345) - Support for TypeScript 3.2
 - [#337](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/337) - Retrieve all properties of a document with additional sub-properties<br>
 	Example:<br>
@@ -25,10 +33,6 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
         } )
     );
 	```
-
-<!--### Fixed-->
-
-<!--### Breaking Changes -->
 
 ## [5.1.0] - 2018-12-06
 
@@ -87,6 +91,7 @@ New version out! This version brings structural changes to the SDK so for more i
 
 [Unreleased]: https://github.com/CarbonLDP/carbonldp-js-sdk/compare/v5.1.0...HEAD
 
+[5.2.0-alpha.1]: https://github.com/CarbonLDP/carbonldp-js-sdk/compare/v5.1.0...v5.2.0-alpha.1
 [5.1.0]: https://github.com/CarbonLDP/carbonldp-js-sdk/compare/v5.0.0...v5.1.0
 [5.0.0]: https://github.com/CarbonLDP/carbonldp-js-sdk/compare/v0.42.0...v5.0.0
 
