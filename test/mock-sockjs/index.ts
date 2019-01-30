@@ -1,7 +1,6 @@
 import { WebSocket } from "mock-socket";
 
 
-// TODO: Add implements SockJS.Socket when better TS support for types of mock-socket@8.x
 class MockSTOMPSockJS extends WebSocket {
 
 	constructor( url:string ) {

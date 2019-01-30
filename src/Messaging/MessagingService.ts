@@ -97,7 +97,7 @@ export class MessagingService {
 		else if( this._client.connected ) this._client.disconnect();
 		if( ! this._subscriptionsMap ) this._subscriptionsMap = new Map();
 
-		const sock:SockJS.Socket = new SockJS( this.context.resolve( "/broker" ) );
+		const sock:WebSocket = new SockJS( this.context.resolve( "/broker" ) );
 		this._client = webstomp.over( sock, {
 			debug: false,
 			heartbeat: false,
