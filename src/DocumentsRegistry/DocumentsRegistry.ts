@@ -53,7 +53,7 @@ export const DocumentsRegistry:DocumentsRegistryFactory = {
 		},
 
 		_getLocalID( this:DocumentsRegistry, id:string ):string {
-			if( URI.hasFragment( id ) ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
+			if( URI.hasFragment( id ) ) throw new IllegalArgumentError( `"${id}" is out of scope.` );
 			return GeneralRegistry.PROTOTYPE._getLocalID.call( this, id );
 		},
 	},

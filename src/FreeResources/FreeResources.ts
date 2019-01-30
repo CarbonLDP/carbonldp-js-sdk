@@ -82,7 +82,7 @@ export const FreeResources:FreeResourcesFactory = {
 	PROTOTYPE: {
 		_getLocalID( this:FreeResources, id:string ):string {
 			if( isAbsolute( id ) && ! URI.hasProtocol( id ) ) return id;
-			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
+			throw new IllegalArgumentError( `"${id}" is out of scope.` );
 		},
 
 		_addPointer<T extends object>( this:FreeResources, base:T & Partial<Pointer> ):T & Resource {

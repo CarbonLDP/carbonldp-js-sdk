@@ -67,6 +67,6 @@ export class QueryValue {
 	 * Returns the SPARQL string representation of the value.
 	 */
 	toString():string {
-		return `${ this._literal }`;
+		return `${this._literal}`;
 	}
 }

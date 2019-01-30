@@ -128,7 +128,7 @@ class FakeClientRequest extends http.ClientRequest {
 
 		let url:string = "";
 		if( protocol )
-			url += `${ protocol }//`;
+			url += `${protocol}//`;
 		if( _options.hostname || _options.host )
 			url += _options.hostname || _options.host;
 		if( _options.path )

@@ -52,70 +52,70 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 				responseText: `
 							[ {
 								"@id": "_:1",
-								"@type": [ "${ C.ErrorResponse }" ],
-								"${ C.error }": [ {
+								"@type": [ "${C.ErrorResponse}" ],
+								"${C.error}": [ {
 									"@id": "_:2"
 								}, {
 									"@id": "_:3"
 								} ],
-								"${ C.httpStatusCode }": [ {
-									"@type": "${ XSD.int }",
+								"${C.httpStatusCode}": [ {
+									"@type": "${XSD.int}",
 									"@value": "500"
 								} ]
 							}, {
 								"@id": "_:2",
-								"@type": [ "${ C.Error }" ],
-								"${ C.errorCode }": [ {
+								"@type": [ "${C.Error}" ],
+								"${C.errorCode}": [ {
 									"@language": "en",
 									"@value": "code-01"
 								} ],
-								"${ C.errorMessage }": [ {
+								"${C.errorMessage}": [ {
 									"@language": "en",
 									"@value": "Message 01"
 								} ],
-								"${ C.errorParameters }": [ {
+								"${C.errorParameters}": [ {
 									"@id": "_:4"
 								} ]
 							}, {
 								"@id": "_:3",
-								"@type": [ "${ C.Error }" ],
-								"${ C.errorCode }": [ {
+								"@type": [ "${C.Error}" ],
+								"${C.errorCode}": [ {
 									"@language": "en",
 									"@value": "code-02"
 								} ],
-								"${ C.errorMessage }": [ {
+								"${C.errorMessage}": [ {
 									"@language": "en",
 									"@value": "Message 02"
 								} ],
-								"${ C.errorParameters }": [ {
+								"${C.errorParameters}": [ {
 									"@id": "_:6"
 								} ]
 							}, {
 								"@id": "_:4",
-								"@type": [ "${ C.Map }" ],
-								"${ C.entry }": [ {
+								"@type": [ "${C.Map}" ],
+								"${C.entry}": [ {
 									"@id": "_:5"
 								} ]
 							}, {
 								"@id": "_:5",
-								"${ C.entryKey }": [ {
+								"${C.entryKey}": [ {
 									"@value": "document"
 								} ],
-								"${ C.entryValue }": [ {
+								"${C.entryValue}": [ {
 									"@id": "https://example.com/target-document/"
 								} ]
 							}, {
 								"@id": "_:6",
-								"@type": [ "${ C.Map }" ],
-								"${ C.entry }": [ {
+								"@type": [ "${C.Map}" ],
+								"${C.entry}": [ {
 									"@id": "_:7"
 								} ]
 							}, {
 								"@id": "_:7",
-								"${ C.entryKey }": [ {
+								"${C.entryKey}": [ {
 									"@value": "document"
 								} ],
-								"${ C.entryValue }": [ {
+								"${C.entryValue}": [ {
 									"@id": "https://example.com/target-document/"
 								} ]
 							} ]`,
@@ -267,7 +267,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
 					"accept": "application/ld+json",
-					"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
+					"prefer": `${LDP.RDFSource}; rel=interaction-model`,
 				} );
 			} );
 
@@ -547,7 +547,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
 					"accept": "application/ld+json",
-					"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
+					"prefer": `${LDP.RDFSource}; rel=interaction-model`,
 				} );
 			} );
 
@@ -842,7 +842,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
 					"accept": "application/ld+json",
-					"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
+					"prefer": `${LDP.RDFSource}; rel=interaction-model`,
 				} );
 			} );
 
@@ -950,7 +950,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					.andReturn( {
 						status,
 						responseHeaders: {
-							get location():string { return `${ url }child-${ counter ++ }/`; },
+							get location():string { return `${url}child-${counter ++}/`; },
 							...headers,
 						},
 						responseText: data,
@@ -1038,7 +1038,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/ld+json",
 					"prefer": [
-						`${ LDP.Container }; rel=interaction-model`,
+						`${LDP.Container}; rel=interaction-model`,
 						"return=minimal",
 					].join( ", " ),
 				} );
@@ -1055,7 +1055,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/ld+json",
 					"prefer": [
-						`${ LDP.Container }; rel=interaction-model`,
+						`${LDP.Container}; rel=interaction-model`,
 						"return=minimal",
 					].join( ", " ),
 				} );
@@ -1065,7 +1065,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/ld+json",
 					"prefer": [
-						`${ LDP.Container }; rel=interaction-model`,
+						`${LDP.Container}; rel=interaction-model`,
 						"return=minimal",
 					].join( ", " ),
 				} );
@@ -1569,17 +1569,17 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					status: status,
 					responseHeaders: {
 						"preference-applied": "return=representation",
-						"eTag": `"${ options.index }-12345"`,
-						"location": `${ url }child-${ options.index }/`,
+						"eTag": `"${options.index}-12345"`,
+						"location": `${url}child-${options.index}/`,
 						...headers,
 					},
 					responseText: JSON.stringify( [
 						...frees,
 						{
-							"@id": `${ url }child-${ options.index }/`,
+							"@id": `${url}child-${options.index}/`,
 							"@graph": [
 								{
-									"@id": `${ url }child-${ options.index }/`,
+									"@id": `${url}child-${options.index}/`,
 									...resource,
 								},
 								...fragments,
@@ -1689,7 +1689,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/ld+json",
 					"prefer": [
-						`${ LDP.Container }; rel=interaction-model`,
+						`${LDP.Container}; rel=interaction-model`,
 						"return=representation",
 					].join( ", " ),
 				} );
@@ -1704,7 +1704,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/ld+json",
 					"prefer": [
-						`${ LDP.Container }; rel=interaction-model`,
+						`${LDP.Container}; rel=interaction-model`,
 						"return=representation",
 					].join( ", " ),
 				} );
@@ -1714,7 +1714,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/ld+json",
 					"prefer": [
-						`${ LDP.Container }; rel=interaction-model`,
+						`${LDP.Container}; rel=interaction-model`,
 						"return=representation",
 					].join( ", " ),
 				} );
@@ -2617,7 +2617,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toBe( "" +
-					`@prefix xsd: <${ XSD.namespace }>. ` +
+					`@prefix xsd: <${XSD.namespace}>. ` +
 					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..5 (). ` +
 					`UpdateList <https://example.com/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
 					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
@@ -2796,10 +2796,10 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 						responseText: JSON.stringify( [
 							...frees,
 							{
-								"@id": `${ url }`,
+								"@id": `${url}`,
 								"@graph": [
 									{
-										"@id": `${ url }`,
+										"@id": `${url}`,
 										...resource,
 									},
 									...fragments,
@@ -3000,7 +3000,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.params ).toBe( "" +
-					`@prefix xsd: <${ XSD.namespace }>. ` +
+					`@prefix xsd: <${XSD.namespace}>. ` +
 					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..5 (). ` +
 					`UpdateList <https://example.com/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
 					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
@@ -3237,10 +3237,10 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 						responseText: JSON.stringify( [
 							...frees,
 							{
-								"@id": `${ url }`,
+								"@id": `${url}`,
 								"@graph": [
 									{
-										"@id": `${ url }`,
+										"@id": `${url}`,
 										...resource,
 									},
 									...fragments,
@@ -3320,7 +3320,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
-					"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
+					"prefer": `${LDP.RDFSource}; rel=interaction-model`,
 					"accept": "application/ld+json",
 					"if-none-match": "\"1-12345\"",
 				} );
@@ -3656,7 +3656,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
 					"accept": "application/ld+json",
-					"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
+					"prefer": `${LDP.RDFSource}; rel=interaction-model`,
 				} );
 			} );
 
@@ -3891,7 +3891,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/ld+json",
 					"prefer": [
-						`${ LDP.Container }; rel=interaction-model`,
+						`${LDP.Container}; rel=interaction-model`,
 					].join( ", " ),
 				} );
 			} );
@@ -4150,7 +4150,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/ld+json",
 					"prefer": [
-						`${ LDP.Container }; rel=interaction-model`,
+						`${LDP.Container}; rel=interaction-model`,
 					].join( ", " ),
 				} );
 			} );
@@ -4375,9 +4375,9 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					"accept": "application/ld+json",
 					"content-type": "application/ld+json",
 					"prefer": [
-						`${ LDP.Container }; rel=interaction-model`,
-						`include="${ C.PreferSelectedMembershipTriples }"`,
-						`omit="${ C.PreferMembershipTriples }"`,
+						`${LDP.Container}; rel=interaction-model`,
+						`include="${C.PreferSelectedMembershipTriples}"`,
+						`omit="${C.PreferMembershipTriples}"`,
 					].join( ", " ),
 				} );
 			} );
@@ -4638,9 +4638,9 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 						"accept": "application/ld+json",
 						"content-type": "application/ld+json",
 						"prefer": [
-							`${ LDP.Container }; rel=interaction-model`,
-							`include="${ C.PreferSelectedMembershipTriples }"`,
-							`omit="${ C.PreferMembershipTriples }"`,
+							`${LDP.Container}; rel=interaction-model`,
+							`include="${C.PreferSelectedMembershipTriples}"`,
+							`omit="${C.PreferMembershipTriples}"`,
 						].join( ", " ),
 					} );
 				} );
@@ -4793,14 +4793,14 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					expect( request.requestHeaders ).toEqual( {
 						"accept": "application/ld+json",
 						"prefer": [
-							`${ LDP.Container }; rel=interaction-model`,
-							`include="${ C.PreferMembershipTriples }"`,
-							`omit="${ [
+							`${LDP.Container}; rel=interaction-model`,
+							`include="${C.PreferMembershipTriples}"`,
+							`omit="${[
 								C.PreferMembershipResources,
 								C.PreferContainmentTriples,
 								C.PreferContainmentResources,
 								C.PreferContainer,
-							].join( " " ) }"`,
+							].join( " " )}"`,
 						].join( ", " ),
 					} );
 				} );

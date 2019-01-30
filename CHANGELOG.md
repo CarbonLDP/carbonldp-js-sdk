@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 ## [Unreleased]
 
 ### Added
+
 - [#336](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/336) - Support TypeScript strict mode
 - [#345](https://github.com/CarbonLDP/carbonldp-js-sdk/pull/345) - Support for TypeScript 3.2
 - [#337](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/337) - Retrieve all properties of a document with additional sub-properties<br>

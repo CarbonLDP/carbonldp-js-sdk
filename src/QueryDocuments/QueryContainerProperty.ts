@@ -140,12 +140,12 @@ export class QueryContainerProperty extends QueryProperty {
 		if( ! this.order ) return;
 
 		const targetProperty:QueryProperty | undefined = this.getProperty( this.order.path, { create: true } );
-		if( ! targetProperty ) throw new IllegalArgumentError( `Property "${ this.order.path }" hasn't been defined.` );
+		if( ! targetProperty ) throw new IllegalArgumentError( `Property "${this.order.path}" hasn't been defined.` );
 
 		const identifier:VariableToken | IRIToken | LiteralToken = targetProperty.identifier;
 		const constraint:VariableToken | string = identifier.token === "variable"
 			? identifier
-			: `( ${ identifier } )`;
+			: `( ${identifier} )`;
 
 		// Add modifier
 		subSelect.addModifier( new OrderToken( constraint, this.order.flow ) );
