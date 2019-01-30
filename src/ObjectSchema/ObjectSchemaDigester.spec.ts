@@ -197,7 +197,7 @@ describe( "ObjectSchemaDigester", () => {
 				"@id": "https://example.com/ns#property",
 			} );
 
-			expect( definition ).toEqual( jasmine.objectContaining( {
+			expect( definition ).toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 				uri: "https://example.com/ns#property",
 			} ) );
 		} );
@@ -205,7 +205,7 @@ describe( "ObjectSchemaDigester", () => {
 		it( "should digest name when @id", () => {
 			const definition:DigestedObjectSchemaProperty = ObjectSchemaDigester.digestProperty( "property", {} );
 
-			expect( definition ).toEqual( jasmine.objectContaining( {
+			expect( definition ).toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 				uri: "property",
 			} ) );
 		} );
@@ -215,7 +215,7 @@ describe( "ObjectSchemaDigester", () => {
 				"@type": "https://example.com/ns#type",
 			} );
 
-			expect( definition ).toEqual( jasmine.objectContaining( {
+			expect( definition ).toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 				literal: true,
 				literalType: "https://example.com/ns#type",
 			} ) );
@@ -226,7 +226,7 @@ describe( "ObjectSchemaDigester", () => {
 				"@type": "@id",
 			} );
 
-			expect( definition ).toEqual( jasmine.objectContaining( {
+			expect( definition ).toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 				literal: false,
 				pointerType: PointerType.ID,
 			} ) );
@@ -237,7 +237,7 @@ describe( "ObjectSchemaDigester", () => {
 				"@type": "@vocab",
 			} );
 
-			expect( definition ).toEqual( jasmine.objectContaining( {
+			expect( definition ).toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 				literal: false,
 				pointerType: PointerType.VOCAB,
 			} ) );
@@ -248,7 +248,7 @@ describe( "ObjectSchemaDigester", () => {
 				"@language": "en",
 			} );
 
-			expect( definition ).toEqual( jasmine.objectContaining( {
+			expect( definition ).toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 				language: "en",
 			} ) );
 		} );
@@ -258,7 +258,7 @@ describe( "ObjectSchemaDigester", () => {
 				"@container": "@set",
 			} );
 
-			expect( definition ).toEqual( jasmine.objectContaining( {
+			expect( definition ).toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 				containerType: ContainerType.SET,
 			} ) );
 		} );
@@ -268,7 +268,7 @@ describe( "ObjectSchemaDigester", () => {
 				"@container": "@list",
 			} );
 
-			expect( definition ).toEqual( jasmine.objectContaining( {
+			expect( definition ).toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 				containerType: ContainerType.LIST,
 			} ) );
 		} );
@@ -278,7 +278,7 @@ describe( "ObjectSchemaDigester", () => {
 				"@container": "@language",
 			} );
 
-			expect( definition ).toEqual( jasmine.objectContaining( {
+			expect( definition ).toEqual( jasmine.objectContaining<DigestedObjectSchemaProperty>( {
 				containerType: ContainerType.LANGUAGE,
 			} ) );
 		} );

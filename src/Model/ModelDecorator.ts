@@ -86,7 +86,7 @@ export const ModelDecorator:ModelDecoratorFactory = {
 
 
 				const definition:PropertyDescriptor = Object
-					.getOwnPropertyDescriptor( prototype, key );
+					.getOwnPropertyDescriptor( prototype, key )!;
 
 				const descriptor:PropertyDescriptor = {
 					enumerable: false,

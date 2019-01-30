@@ -46,13 +46,15 @@ export class Response {
 
 		} else {
 			this.data = data || "";
+			this.status = response && response.statusCode || 0;
+
 			this.headers = new Map<string, Header>();
 			if( ! response ) return;
 
-			this.status = response.statusCode;
-			Object.keys( response.headers ).forEach( name => {
-				this.headers.set( name.toLowerCase(), new Header( response.headers[ name ] ) );
-			} );
+			for( const name in response.headers ) {
+				const header:Header = new Header( response.headers[ name ] );
+				this.headers.set( name.toLowerCase(), header );
+			}
 		}
 	}
 
@@ -71,7 +73,7 @@ export class Response {
 	 * If no such header exists a {@link BadResponseError} will be thrown.
 	 */
 	getETag():string {
-		const eTagHeader:Header = this.getHeader( "ETag" );
+		const eTagHeader:Header | null = this.getHeader( "ETag" );
 
 		// TODO: Warn multiple ETags
 		if( ! eTagHeader || ! eTagHeader.values.length )

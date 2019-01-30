@@ -122,9 +122,9 @@ describe( "Header", () => {
 
 			expect( headersMap ).toEqual( jasmine.any( Map ) );
 			expect( headersMap.size ).toBe( 4 );
-			expect( headersMap.get( "host" ).toString() ).toEqual( "http://example.com" );
-			expect( headersMap.get( "user-agent" ).toString() ).toBe( "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)" );
-			expect( headersMap.get( "cache-control" ).toString() ).toBe( "no-cache" );
+			expect( headersMap.get( "host" )!.toString() ).toEqual( "http://example.com" );
+			expect( headersMap.get( "user-agent" )!.toString() ).toBe( "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)" );
+			expect( headersMap.get( "cache-control" )!.toString() ).toBe( "no-cache" );
 			expect( headersMap.get( "accept" ) ).toEqual( new Header( "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" ) );
 		} );
 

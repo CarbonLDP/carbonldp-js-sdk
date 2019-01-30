@@ -9,27 +9,27 @@ export class DigestedObjectSchemaProperty {
 	/**
 	 * The URI that represents the property.
 	 */
-	uri:string = null;
+	uri:string | null = null;
 	/**
 	 * Indicates if the property is a literal or not.
 	 */
-	literal:boolean = null;
+	literal:boolean | null = null;
 	/**
 	 * The type of literal the property is.
 	 * Will be `null` when the property is not a literal.
 	 */
-	literalType:string = null;
+	literalType:string | null = null;
 	/**
 	 * Type of pointer the property value is related.
 	 */
-	pointerType:PointerType = null;
+	pointerType:PointerType | null = null;
 	/**
 	 * The language the property value is in.
 	 */
-	language?:string;
+	language?:string | null;
 	/**
 	 * Type of container when the property contains multiple values.
 	 * Will be `null` when the property is not a multiple one.
 	 */
-	containerType:ContainerType = null;
+	containerType:ContainerType | null = null;
 }

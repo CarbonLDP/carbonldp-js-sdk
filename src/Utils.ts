@@ -39,7 +39,7 @@ export function isDefined( value:any ):boolean {
  * Checks if the value passed is null.
  * @param value
  */
-export function isNull( value:any ):boolean {
+export function isNull( value:any ):value is null {
 	return value === null;
 }
 
@@ -233,7 +233,7 @@ export class ArrayUtils {
 	 * @param searchedElement The element searched
 	 * @param comparator The function that must compare if the two elements provided are de same.
 	 */
-	static indexOf<T, W>( array:Array<T>, searchedElement:W, comparator:( element:T, searchedElement:W ) => boolean = ( a:T, b:W ) => <any> a === <any> b ):number {
+	static indexOf<T, W>( array:Array<T>, searchedElement:W, comparator:( element:T, searchedElement:W ) => boolean = ( a:T, b:W ) => <any>a === <any>b ):number {
 		if( ! array ) return - 1;
 
 		for( let i:number = 0, length:number = array.length; i < length; ++ i ) {
@@ -255,10 +255,10 @@ export class ObjectUtils {
 	 * @param config Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied.
 	 * @returns The extended object provided.
 	 */
-	static extend<T extends object, W extends object>( target:T, source:W, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):T & W {
-		if( ! isArray( source ) && ! isPlainObject( source ) || ! isArray( target ) && ! isPlainObject( target ) ) return null;
+	static extend<T extends object, W extends object>( target:T, source:W, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):T & W | undefined {
+		if( ! isArray( source ) && ! isPlainObject( source ) || ! isArray( target ) && ! isPlainObject( target ) ) return;
 
-		(<any> source).__CarbonSDK_circularReferenceFlag = target;
+		(<any>source).__CarbonSDK_circularReferenceFlag = target;
 
 		for( const key of Object.keys( source ) ) {
 			if( isFunction( source[ key ] ) || key === "__CarbonSDK_circularReferenceFlag" ) continue;
@@ -282,7 +282,7 @@ export class ObjectUtils {
 			target[ key ] = property;
 		}
 
-		delete (<any> source).__CarbonSDK_circularReferenceFlag;
+		delete (<any>source).__CarbonSDK_circularReferenceFlag;
 		return target as T & W;
 	}
 
@@ -292,11 +292,11 @@ export class ObjectUtils {
 	 * @param config Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied.
 	 * @returns The copy of the object provided.
 	 */
-	static clone<T extends Object>( object:T, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):T {
+	static clone<T extends object>( object:T, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):T | undefined {
 		let isAnArray:boolean = isArray( object );
-		if( ! isAnArray && ! isPlainObject( object ) ) return null;
+		if( ! isAnArray && ! isPlainObject( object ) ) return;
 
-		let clone:T = <T> (isAnArray ? [] : Object.create( Object.getPrototypeOf( object ) ));
+		let clone:T = <T>(isAnArray ? [] : Object.create( Object.getPrototypeOf( object ) ));
 		return ObjectUtils.extend<T, T>( clone, object, config );
 	}
 
@@ -344,7 +344,7 @@ function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:bool
 	if( object1 === object2 ) return true;
 	if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
 
-	if( isDate( object1 ) ) return (<Date> object1).getTime() === (<Date> object2).getTime();
+	if( isDate( object1 ) ) return (<Date>object1).getTime() === (<Date>object2).getTime();
 
 	let keys:string[] = ArrayUtils.joinWithoutDuplicates( Object.keys( object1 ), Object.keys( object2 ) );
 	for( let key of keys ) {
@@ -447,8 +447,8 @@ export class MapUtils {
 			let next:IteratorResult<Array<(K | V)>> = values.next();
 			while( ! next.done ) {
 				let entry:Array<(K | V)> = next.value;
-				let key:K = <K> entry[ 0 ];
-				let value:V = <V> entry[ 1 ];
+				let key:K = <K>entry[ 0 ];
+				let value:V = <V>entry[ 1 ];
 				toExtend.set( key, value );
 
 				next = values.next();
@@ -482,4 +482,8 @@ export class UUIDUtils {
 			return v.toString( 16 );
 		} );
 	}
+}
+
+export function _isExistingValue<T>( value:T ):value is NonNullable<T> {
+	return value !== null && value !== void 0;
 }

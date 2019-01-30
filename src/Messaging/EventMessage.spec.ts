@@ -56,14 +56,13 @@ describe( "EventMessage", () => {
 
 			it( "should return false if has a missing model properties", () => {
 				const object:EventMessage = Resource.create( {
-					target: null,
+					target: {} as any,
 				} );
 
 				expect( EventMessage.is( object ) ).toBe( true );
 
 				delete object.target;
 				expect( EventMessage.is( object ) ).toBe( false );
-				object.target = null;
 			} );
 
 		} );

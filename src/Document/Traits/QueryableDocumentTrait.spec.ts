@@ -7,6 +7,7 @@ import { QueryableDocumentsRepositoryTrait } from "../../DocumentsRepository/Tra
 import { ModelDecorator } from "../../Model/ModelDecorator";
 
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
+import { QueryDocumentBuilder } from "../../QueryDocuments/QueryDocumentBuilder";
 import { QueryDocumentsBuilder } from "../../QueryDocuments/QueryDocumentsBuilder";
 
 import { LDPDocumentTrait } from "./LDPDocumentTrait";
@@ -30,7 +31,6 @@ describe( "QueryableDocumentTrait", () => {
 
 	describe( "[[interface impl]]", () => {
 
-		const queryBuilderFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder = _ => _;
 		let resource:QueryableDocumentTrait;
 		beforeEach( () => {
 			resource = QueryableDocumentTrait.decorate( {
@@ -48,6 +48,7 @@ describe( "QueryableDocumentTrait", () => {
 			} );
 
 
+			const queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder = _ => _;
 			let spy:jasmine.Spy;
 			beforeEach( () => {
 				spy = spyOnDecorated( $repository, "get" )
@@ -149,6 +150,7 @@ describe( "QueryableDocumentTrait", () => {
 			} );
 
 
+			const queryBuilderFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder = _ => _;
 			let spy:jasmine.Spy;
 			beforeEach( () => {
 				spy = spyOnDecorated( $repository, "getChildren" )
@@ -228,6 +230,7 @@ describe( "QueryableDocumentTrait", () => {
 			} );
 
 
+			const queryBuilderFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder = _ => _;
 			let spy:jasmine.Spy;
 			beforeEach( () => {
 				spy = spyOnDecorated( $repository, "getMembers" )

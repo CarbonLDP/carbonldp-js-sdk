@@ -37,14 +37,14 @@ function __addProperties( schema:ObjectSchema | undefined, parentProperty:Querya
 
 	digestedSchema.properties.forEach( ( definition, propertyName ) => {
 		const subProperty:QueryableProperty = parentProperty.getProperty( propertyName, {
-			definition: digestedSchema.getProperty( propertyName ),
+			definition: digestedSchema.getProperty( propertyName )!,
 
-			propertyType: schema[ propertyName ][ "$propertyType" ],
-			pathBuilderFn: schema[ propertyName ][ "$pathBuilderFn" ],
+			propertyType: schema[ propertyName ]![ "$propertyType" ],
+			pathBuilderFn: schema[ propertyName ]![ "$pathBuilderFn" ],
 			optional: true,
 		} );
 
-		__addProperties( schema[ propertyName ][ "$subProperties" ], subProperty );
+		__addProperties( schema[ propertyName ]![ "$subProperties" ], subProperty );
 	} );
 }
 

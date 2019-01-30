@@ -33,7 +33,7 @@ export function _parseURIParams<T>( this:void, resource:ResolvablePointer, uri?:
 		URI.resolve( resource.$id, uri ) : resource.$id;
 
 	const _args:any[] = ! isString( uri ) ?
-		Array.from( args ) :
+		Array.from( args! ) :
 		Array.prototype.slice.call( args, 1 );
 
 	return { _uri, _args };
@@ -52,7 +52,7 @@ export function _parseResourceParams<T>( this:void, resource:ResolvablePointer, 
 		$resource : resource;
 
 	const _args:any[] = ! Pointer.is( $resource ) ?
-		Array.from( args ) :
+		Array.from( args! ) :
 		Array.prototype.slice.call( args, 1 );
 
 	return { _resource, _args };
@@ -70,7 +70,7 @@ export function _getErrorResponseParserFn( this:void, registry:DocumentsRegistry
 
 		return new JSONLDParser()
 			.parse( error.response.data )
-			.then( ( rdfNodes:RDFNode[] ) => {
+			.then( ( rdfNodes:object[] ) => {
 				const freeNodes:RDFNode[] = RDFDocument.getFreeNodes( rdfNodes );
 				const freeResources:FreeResources = FreeResources.parseFreeNodes( registry, freeNodes );
 

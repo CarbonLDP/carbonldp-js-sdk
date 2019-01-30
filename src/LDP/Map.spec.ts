@@ -74,7 +74,9 @@ describe( "Map", () => {
 					$hasType: true,
 				} );
 
-				mockObject.entries = null;
+				Object.assign<{}, Partial<Map<any, any>>>( mockObject, {
+					entries: [],
+				} );
 			} );
 
 

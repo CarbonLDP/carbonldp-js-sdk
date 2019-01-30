@@ -140,12 +140,12 @@ export class QueryContainerProperty extends QueryProperty {
 		if( ! this.order ) return;
 
 		const targetProperty:QueryProperty | undefined = this.getProperty( this.order.path, { create: true } );
-		if( ! targetProperty ) throw new IllegalArgumentError( `Property "${ this.order.path }" hasn't been defined.` );
+		if( ! targetProperty ) throw new IllegalArgumentError( `Property "${this.order.path}" hasn't been defined.` );
 
 		const identifier:VariableToken | IRIToken | LiteralToken = targetProperty.identifier;
 		const constraint:VariableToken | string = identifier.token === "variable"
 			? identifier
-			: `( ${ identifier } )`;
+			: `( ${identifier} )`;
 
 		// Add modifier
 		subSelect.addModifier( new OrderToken( constraint, this.order.flow ) );
@@ -159,7 +159,7 @@ export class QueryContainerProperty extends QueryProperty {
 				const targetSubject:SubjectToken | undefined = subSelect
 					.where.groupPattern.patterns
 					.find( ( selectPattern ):selectPattern is SubjectToken => {
-						if( selectPattern.token !== "subject" ) return;
+						if( selectPattern.token !== "subject" ) return false;
 						return selectPattern.subject === pattern.subject;
 					} );
 
@@ -176,14 +176,14 @@ export class QueryContainerProperty extends QueryProperty {
 						targetSubject.addProperty( property );
 
 					property.objects.forEach( object => {
-						const targetObject:ObjectToken | undefined = targetPredicate
+						const targetObject:ObjectToken | undefined = targetPredicate!
 							.objects
 							.find( ( selectObject ) => {
 								return selectObject.toString() === object.toString();
 							} );
 
 						if( ! targetObject )
-							targetPredicate.addObject( object );
+							targetPredicate!.addObject( object );
 					} );
 				} );
 			} )
@@ -198,7 +198,7 @@ export class QueryContainerProperty extends QueryProperty {
 
 		// While not been the root property
 		while( targetProperty !== this ) {
-			const subTargetPattern:PatternToken = targetProperty.getSelfPattern();
+			const subTargetPattern:PatternToken | undefined = targetProperty.getSelfPattern()!;
 
 			// Append non optional
 			if( subTargetPattern.token !== "optional" ) {
@@ -212,6 +212,7 @@ export class QueryContainerProperty extends QueryProperty {
 				];
 			}
 
+			if( ! targetProperty.parent ) break;
 			targetProperty = targetProperty.parent;
 		}
 

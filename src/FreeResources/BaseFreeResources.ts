@@ -8,5 +8,5 @@ export interface BaseFreeResources {
 	/**
 	 * Registry where the {@link FreeResources} scope will be in.
 	 */
-	registry:GeneralRegistry;
+	registry:GeneralRegistry<any>;
 }

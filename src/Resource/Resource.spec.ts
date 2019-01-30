@@ -550,7 +550,7 @@ describe( "Resource", () => {
 
 			it( "should return empty resource when no parameters", () => {
 				const resource:Resource = Resource.createFrom( {} );
-				expect( resource ).toEqual( jasmine.objectContaining( {
+				expect( resource ).toEqual( jasmine.objectContaining<Resource>( {
 					$id: "",
 					types: [],
 				} ) );
@@ -558,7 +558,7 @@ describe( "Resource", () => {
 
 			it( "should return resource with $id when $id provided", () => {
 				const resource:Resource = Resource.createFrom( { $id: "http://example.com/resource/" } );
-				expect( resource ).toEqual( jasmine.objectContaining( {
+				expect( resource ).toEqual( jasmine.objectContaining<Resource>( {
 					$id: "http://example.com/resource/",
 					types: [],
 				} ) );
@@ -566,7 +566,7 @@ describe( "Resource", () => {
 
 			it( "should return resource with $id & types when $id & types provided", () => {
 				const resource:Resource = Resource.createFrom( { $id: "http://example.com/resource/", types: [ LDP.RDFSource, LDP.Container ] } );
-				expect( resource ).toEqual( jasmine.objectContaining( {
+				expect( resource ).toEqual( jasmine.objectContaining<Resource>( {
 					$id: "http://example.com/resource/",
 					types: [ LDP.RDFSource, LDP.Container ],
 				} ) );

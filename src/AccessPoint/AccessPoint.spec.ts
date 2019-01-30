@@ -15,7 +15,7 @@ describe( "AccessPoint", () => {
 	describe( "[[factory]]", () => {
 
 		it( "should inherit TransientAccessPointFactory", () => {
-			expect( AccessPoint ).toEqual( jasmine.objectContaining( {
+			expect( AccessPoint ).toEqual( jasmine.objectContaining<AccessPointFactory>( {
 				TYPE: TransientAccessPoint.TYPE,
 				create: TransientAccessPoint.create,
 				createFrom: TransientAccessPoint.createFrom,

@@ -68,7 +68,7 @@ describe( "QueryDocumentsBuilder", () => {
 			const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContainer, baseProperty );
 
 			builder.orderBy( "property" );
-			expect( baseProperty.order ).toEqual( jasmine.objectContaining<QueryDocumentsOrder>( {
+			expect( baseProperty.order! ).toEqual( jasmine.objectContaining<QueryDocumentsOrder>( {
 				path: "property",
 			} ) );
 		} );
@@ -77,7 +77,7 @@ describe( "QueryDocumentsBuilder", () => {
 			const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContainer, baseProperty );
 
 			builder.orderBy( "property", "ASC" );
-			expect( baseProperty.order ).toEqual( jasmine.objectContaining<QueryDocumentsOrder>( {
+			expect( baseProperty.order! ).toEqual( jasmine.objectContaining<QueryDocumentsOrder>( {
 				flow: "ASC",
 			} ) );
 		} );
@@ -86,7 +86,7 @@ describe( "QueryDocumentsBuilder", () => {
 			const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContainer, baseProperty );
 
 			builder.orderBy( "property", "ascending" );
-			expect( baseProperty.order ).toEqual( jasmine.objectContaining<QueryDocumentsOrder>( {
+			expect( baseProperty.order! ).toEqual( jasmine.objectContaining<QueryDocumentsOrder>( {
 				flow: "ASC",
 			} ) );
 		} );
@@ -95,7 +95,7 @@ describe( "QueryDocumentsBuilder", () => {
 			const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContainer, baseProperty );
 
 			builder.orderBy( "property", "DESC" );
-			expect( baseProperty.order ).toEqual( jasmine.objectContaining<QueryDocumentsOrder>( {
+			expect( baseProperty.order! ).toEqual( jasmine.objectContaining<QueryDocumentsOrder>( {
 				flow: "DESC",
 			} ) );
 		} );
@@ -104,7 +104,7 @@ describe( "QueryDocumentsBuilder", () => {
 			const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContainer, baseProperty );
 
 			builder.orderBy( "property", "descending" );
-			expect( baseProperty.order ).toEqual( jasmine.objectContaining<QueryDocumentsOrder>( {
+			expect( baseProperty.order! ).toEqual( jasmine.objectContaining<QueryDocumentsOrder>( {
 				flow: "DESC",
 			} ) );
 		} );

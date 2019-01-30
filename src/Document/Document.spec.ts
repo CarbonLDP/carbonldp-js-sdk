@@ -149,7 +149,7 @@ describe( "Document", () => {
 				resource.$removeFragment( "_:1" );
 				resource.$revert();
 
-				expect( resource.$getFragment( "_:1" ) ).toEqual( { the: "fragment" } );
+				expect<{ the:string } | null>( resource.$getFragment<{ the:string }>( "_:1" ) ).toEqual( { the: "fragment" } );
 			} );
 
 			it( "should remove new fragments", () => {
@@ -170,7 +170,7 @@ describe( "Document", () => {
 				resource.$createFragment( { the: "another-fragment" }, "_:2" );
 				resource.$revert();
 
-				expect( resource.$getFragment( "_:1" ) ).toEqual( { the: "fragment" } );
+				expect<{ the:string } | null>( resource.$getFragment<{ the:string }>( "_:1" ) ).toEqual( { the: "fragment" } );
 				expect( resource.$hasFragment( "_:2" ) ).toEqual( false );
 			} );
 
@@ -206,10 +206,10 @@ describe( "Document", () => {
 			let object:typeof Document.PROTOTYPE;
 			beforeEach( () => {
 				object = createNonEnumerable<typeof Document.PROTOTYPE>( {
-					created: null,
-					modified: null,
-					accessPoints: null,
-					contains: null,
+					created: undefined,
+					modified: undefined,
+					accessPoints: undefined,
+					contains: undefined,
 
 					$__savedFragments: [],
 					$_syncSavedFragments: ():any => {},
@@ -222,11 +222,11 @@ describe( "Document", () => {
 
 
 			it( "should return false when `undefined`", () => {
-				expect( Document.isDecorated( void 0 ) ).toBe( false );
+				expect( Document.isDecorated( void 0 as any ) ).toBe( false );
 			} );
 
 			it( "should return false when `null`", () => {
-				expect( Document.isDecorated( null ) ).toBe( false );
+				expect( Document.isDecorated( null as any ) ).toBe( false );
 			} );
 
 			it( "should return true when prototype properties", () => {

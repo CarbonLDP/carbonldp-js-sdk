@@ -7,7 +7,7 @@ import { VariableToken } from "sparqler/tokens";
  * Instances of the the class are create internally by {@link QueryContainer.getVariable()}.
  */
 export class QueryVariable extends VariableToken {
-	readonly name:string;
+	readonly name!:string;
 	readonly index:number;
 
 	constructor( name:string, index:number ) {
@@ -22,7 +22,7 @@ export class QueryVariable extends VariableToken {
 	 * Returns the SPARQL string representation of the variable.
 	 */
 	toString():string {
-		if( process.env.NODE_ENV === "prod" ) return `?_${ this.index }`;
+		if( process.env.NODE_ENV === "prod" ) return `?_${this.index}`;
 		return super.toString();
 	}
 }

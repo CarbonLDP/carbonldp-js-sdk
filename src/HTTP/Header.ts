@@ -24,7 +24,7 @@ export class Header {
 			const values:string[] = Header.__parseValues( parts.slice( 1 ).join( ":" ) );
 
 			if( headers.has( name ) ) {
-				headers.get( name ).values.push( ...values );
+				headers.get( name )!.values.push( ...values );
 			} else {
 				headers.set( name, new Header( values ) );
 			}

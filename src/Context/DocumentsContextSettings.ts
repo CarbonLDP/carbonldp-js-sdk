@@ -6,7 +6,7 @@ import { ContextSettings } from "./ContextSettings";
  * or a {@link DocumentPaths} where one can add sub-paths of the desired document.
  */
 export interface Paths {
-	[ document:string ]:string | DocumentPaths;
+	[ document:string ]:string | DocumentPaths | null;
 }
 
 /**

@@ -47,7 +47,7 @@ export class SPARQLService {
 		return SPARQLService
 			.executeRawASKQuery( url, askQuery, options )
 			.then<[ boolean, Response ]>( ( [ rawResults, response ]:[ SPARQLRawResults, Response ] ) => {
-				return [ rawResults.boolean, response ];
+				return [ rawResults.boolean!, response ];
 			} );
 	}
 
@@ -77,7 +77,7 @@ export class SPARQLService {
 		return SPARQLService
 			.executeRawSELECTQuery( url, selectQuery, options )
 			.then<[ SPARQLSelectResults<T>, Response ]>( ( [ rawResults, response ]:[ SPARQLRawResults, Response ] ) => {
-				let rawBindings:SPARQLRawBindingObject[] = rawResults.results.bindings;
+				let rawBindings:SPARQLRawBindingObject[] = rawResults.results!.bindings;
 				let bindings:T[] = [];
 
 				for( let bindingColumn of rawBindings ) {
@@ -91,8 +91,8 @@ export class SPARQLService {
 					bindings.push( binding );
 				}
 
-				let results:SPARQLSelectResults<T> = {
-					vars: rawResults.head.vars,
+				const results:SPARQLSelectResults<T> = {
+					vars: rawResults.head.vars!,
 					bindings: bindings,
 				};
 				return [ results, response ];

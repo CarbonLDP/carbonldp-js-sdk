@@ -183,10 +183,10 @@ function __getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
 
 	const protocol:string = settings.ssl === false ? "http://" : "https://";
 	const host:string = settings.host.endsWith( "/" ) ? settings.host.slice( 0, - 1 ) : settings.host;
-	const url:string = `${ protocol }${ host }/`;
+	const url:string = `${protocol}${host}/`;
 
 	if( ! Utils.isNumber( settings.port ) ) return url;
-	return url.slice( 0, - 1 ) + `:${ settings.port }/`;
+	return url.slice( 0, - 1 ) + `:${settings.port}/`;
 }
 
 

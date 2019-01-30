@@ -232,7 +232,7 @@ export type EventEmitterDocumentsRepositoryTraitFactory =
  */
 export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositoryTraitFactory = {
 	PROTOTYPE: {
-		on<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
+		on( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<any>, onError?:OnError ):void {
 			try {
 				const destination:string = _createDestination( event, uriPattern, this.context.baseURI );
 				this.context.messaging.subscribe( destination, onEvent, onError );
@@ -243,7 +243,7 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 			}
 		},
 
-		off<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
+		off( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<any>, onError?:OnError ):void {
 			try {
 				const destination:string = _createDestination( event, uriPattern, this.context.baseURI );
 				this.context.messaging.unsubscribe( destination, onEvent );
@@ -254,11 +254,11 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 			}
 		},
 
-		one<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
+		one( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<any>, onError?:OnError ):void {
 			try {
 				const destination:string = _createDestination( event, uriPattern, this.context.baseURI );
 
-				const onEventWrapper:OnEvent<T> = message => {
+				const onEventWrapper:OnEvent<any> = message => {
 					onEvent( message );
 					this.context.messaging.unsubscribe( destination, onEventWrapper );
 				};

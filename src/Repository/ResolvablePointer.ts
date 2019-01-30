@@ -24,7 +24,7 @@ export interface ResolvablePointer extends Pointer, $Repository {
 	/**
 	 * Identifier that describes the state of the last data retrieved.
 	 */
-	$eTag:string | undefined;
+	$eTag:string | undefined | null;
 
 	$_resolved:boolean;
 	/**
@@ -210,7 +210,7 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 		$_snapshot: {},
 
 		$_syncSnapshot( this:{ types?:string[] } & ResolvablePointer ):void {
-			const clone:{ types?:string[] } & ResolvablePointer = ObjectUtils.clone( this, { arrays: true } );
+			const clone:{ types?:string[] } & ResolvablePointer = ObjectUtils.clone( this, { arrays: true } )!;
 			if( this.types ) clone.types = [ ...this.types ];
 
 			this.$_snapshot = clone;
@@ -271,7 +271,7 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 		},
 
 
-		$delete( uri?:string, ...args:any[] ):Promise<void> {
+		$delete( this:ResolvablePointer, uri?:string, ...args:any[] ):Promise<void> {
 			const { _uri, _args } = _parseURIParams( this, uri, arguments );
 			return "$id" in this.$repository ?
 				this.$repository.$delete( _uri, ..._args ) :

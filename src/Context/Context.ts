@@ -15,15 +15,15 @@ import { ResolvablePointer } from "../Repository/ResolvablePointer";
 /**
  * Interface that every context in the SDK must implement.
  */
-export interface Context<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer> {
+export interface Context<REGISTRY extends RegisteredPointer | undefined = RegisteredPointer, REPOSITORY extends ResolvablePointer | undefined = ResolvablePointer> {
 	/**
 	 * Registry where the context stores its associated resources.
 	 */
-	readonly registry:GeneralRegistry<REGISTRY> | undefined;
+	readonly registry:REGISTRY extends {} ? GeneralRegistry<REGISTRY> : undefined;
 	/**
 	 * Repository that can fetch the data of the resources of the context.
 	 */
-	readonly repository:GeneralRepository<REPOSITORY> | undefined;
+	readonly repository:REPOSITORY extends {} ? GeneralRepository<REPOSITORY> : undefined;
 
 	/**
 	 * Base URI of the resources that can be used by the context.
@@ -32,7 +32,7 @@ export interface Context<REGISTRY extends RegisteredPointer = RegisteredPointer,
 	/**
 	 * Parent context from where the context inherit some data, configurations and more.
 	 */
-	readonly parentContext:Context | undefined;
+	readonly parentContext:Context<any, any> | undefined;
 
 	/**
 	 * Converter of JSONLD objects associated to the current context.

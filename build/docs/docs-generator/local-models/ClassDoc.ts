@@ -5,11 +5,11 @@ import { PropertyDoc } from "./PropertyDoc";
 export interface ClassDoc extends ClassLikeDoc {
 	constructors?:MethodDoc;
 
-	properties:{
+	properties?:{
 		static:PropertyDoc[];
 		instance:PropertyDoc[];
 	};
-	methods:{
+	methods?:{
 		static:MethodDoc[];
 		instance:MethodDoc[];
 	};

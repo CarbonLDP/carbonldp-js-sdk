@@ -229,7 +229,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					options.resources : [];
 
 				jasmine.Ajax
-					.stubRequest( url, null, options.GET ? "GET" : "POST" )
+					.stubRequest( url, undefined, options.GET ? "GET" : "POST" )
 					.andReturn( {
 						status,
 						responseHeaders: {
@@ -339,7 +339,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				}, _ => _ );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+				expect( request.requestHeaders ).toEqual( jasmine.objectContaining<typeof request.requestHeaders>( {
 					"custom": "custom value",
 				} ) );
 			} );
@@ -1563,7 +1563,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata!.getProperty( "property2" ) );
 			} );
 
 			it( "should add partial metadata at the partial relations", async () => {
@@ -1892,7 +1892,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					} )
 				);
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
+				expect( returned ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 					property4: false,
 					property1: "value",
 					property2: jasmine.objectContaining( {
@@ -2048,7 +2048,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata!.getProperty( "property2" ) );
 			} );
 
 
@@ -2555,7 +2555,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata!.getProperty( "property2" ) );
 			} );
 
 			it( "should add partial metadata data with external virtual property", async () => {
@@ -2780,7 +2780,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				const returned:MyDocument & Document = await repository.get<MyDocument>( "https://example.com/" );
 
 				expect( returned.$_queryableMetadata ).toBeUndefined();
-				expect( returned.property2.$_queryableMetadata ).toBeUndefined();
+				expect( returned.property2!.$_queryableMetadata ).toBeUndefined();
 			} );
 
 			it( "should remove virtual property when partial and entire requested", async () => {
@@ -2900,7 +2900,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					options.resources : [];
 
 				jasmine.Ajax
-					.stubRequest( url, null, "POST" )
+					.stubRequest( url, undefined, "POST" )
 					.andReturn( {
 						status,
 						responseHeaders: {
@@ -2937,7 +2937,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				}, _ => _ );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+				expect( request.requestHeaders ).toEqual( jasmine.objectContaining<typeof request.requestHeaders>( {
 					"custom": "custom value",
 				} ) );
 			} );
@@ -3567,7 +3567,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata!.getProperty( "property2" ) );
 
 			} );
 
@@ -3825,7 +3825,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					} )
 				);
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
+				expect( returned ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 					property4: false,
 					property1: "value",
 					property2: jasmine.objectContaining( {
@@ -3981,7 +3981,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata!.getProperty( "property2" ) );
 			} );
 
 
@@ -4109,7 +4109,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					options.resources : [];
 
 				jasmine.Ajax
-					.stubRequest( url, null, "PATCH" )
+					.stubRequest( url, undefined, "PATCH" )
 					.andReturn( {
 						status,
 						responseHeaders: {
@@ -4118,7 +4118,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					} );
 
 				jasmine.Ajax
-					.stubRequest( url, null, "POST" )
+					.stubRequest( url, undefined, "POST" )
 					.andReturn( {
 						status,
 						responseHeaders: {
@@ -4266,7 +4266,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				} );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+				expect( request.requestHeaders ).toEqual( jasmine.objectContaining<typeof request.requestHeaders>( {
 					"custom": "custom value",
 				} ) );
 			} );
@@ -4624,7 +4624,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					options.resources : [];
 
 				jasmine.Ajax
-					.stubRequest( url, null, "POST" )
+					.stubRequest( url, undefined, "POST" )
 					.andReturn( {
 						status,
 						responseHeaders: {
@@ -4670,7 +4670,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				} );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+				expect( request.requestHeaders ).toEqual( jasmine.objectContaining<typeof request.requestHeaders>( {
 					"custom": "custom value",
 				} ) );
 			} );
@@ -5026,7 +5026,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				const returned:MyDocument = await repository.refresh<MyDocument>( document );
 
 				// Data updates
-				expect( returned ).toEqual( jasmine.objectContaining( {
+				expect( returned ).toEqual( jasmine.objectContaining<MyDocument>( {
 					property4: false,
 					property1: "updated value",
 					property2: jasmine.objectContaining( {
@@ -5036,12 +5036,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				} ) );
 
 				// Non query data
-				expect( returned ).toEqual( jasmine.objectContaining( {
+				expect( returned ).toEqual( jasmine.objectContaining<MyDocument>( {
 					property3: "non query-value",
 				} ) );
 
 				// Data removed
-				expect( returned.property2 ).not.toEqual( jasmine.objectContaining( {
+				expect( returned.property2 ).not.toEqual( jasmine.objectContaining<MyDocument["property2"]>( {
 					property2: 12345,
 				} ) );
 			} );
@@ -5127,7 +5127,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 				const returned:Document = await repository.refresh( document );
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
+				expect( returned ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
 				} ) );
 			} );
@@ -5539,7 +5539,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					},
 				} ) );
 
-				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata.getProperty( "property2" ) );
+				expect( returned.property2.$_queryableMetadata ).toEqual( returned.$_queryableMetadata!.getProperty( "property2" ) );
 			} );
 
 			it( "should remove virtual property when no in new data", async () => {
@@ -5655,7 +5655,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					options.resources : [];
 
 				jasmine.Ajax
-					.stubRequest( url, null, "POST" )
+					.stubRequest( url, undefined, "POST" )
 					.andReturn( {
 						status,
 						responseHeaders: {
@@ -5762,7 +5762,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				} );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+				expect( request.requestHeaders ).toEqual( jasmine.objectContaining<typeof request.requestHeaders>( {
 					"custom": "custom value",
 				} ) );
 			} );
@@ -6661,13 +6661,13 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						},
 					} )
 					.orderBy( "property2.property2", "DESC" )
-				).then( ( myDocuments ) => {
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+				).then( ( myDocuments:MyDocument[] ) => {
+					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<MyDocument>( {
 						"property2": jasmine.objectContaining( {
 							"property2": 67890,
 						} ) as any,
 					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<MyDocument>( {
 						"property2": jasmine.objectContaining( {
 							"property2": 12345,
 						} ) as any,
@@ -6801,7 +6801,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( myDocuments.length ).toBe( 2 );
 
 				expect( myDocuments[ 0 ].$isQueried() ).toBe( true );
-				expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+				expect<Document>( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
 					$_resolved: true,
 				} ) );
@@ -6813,7 +6813,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				} );
 
 				expect( myDocuments[ 1 ].$isQueried() ).toBe( true );
-				expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+				expect<Document>( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"2-12345\"",
 					$_resolved: true,
 				} ) );
@@ -6962,7 +6962,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 					expect( myDocuments[ 0 ].$isQueried() ).toBe( false );
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+					expect<Document>( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document>( {
 						$eTag: "\"1-12345\"",
 						$_resolved: true,
 					} ) );
@@ -6976,7 +6976,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
 					expect( myDocuments[ 1 ].$isQueried() ).toBe( false );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+					expect<Document>( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document>( {
 						$eTag: "\"2-12345\"",
 						$_resolved: true,
 					} ) );
@@ -7101,7 +7101,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 						expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 						expect( myDocuments[ 0 ].$isQueried() ).toBe( true );
-						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 							"$eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.any( Object ) as any,
@@ -7113,7 +7113,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 						expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
 						expect( myDocuments[ 1 ].$isQueried() ).toBe( true );
-						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 							"$eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.any( Object ) as any,
@@ -7270,7 +7270,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( myDocuments.length ).toBe( 2 );
 
 				expect( myDocuments[ 0 ].$isQueried() ).toBe( true );
-				expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+				expect<Document>( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
 					$_resolved: true,
 				} ) );
@@ -7282,7 +7282,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				} );
 
 				expect( myDocuments[ 1 ].$isQueried() ).toBe( true );
-				expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+				expect<Document>( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"2-12345\"",
 					$_resolved: true,
 				} ) );
@@ -7414,7 +7414,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				expect( myDocuments.length ).toBe( 2 );
 
 				expect( myDocuments[ 0 ].$isQueried() ).toBe( true );
-				expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+				expect<Document>( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"1-12345\"",
 					$_resolved: true,
 				} ) );
@@ -7426,7 +7426,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				} );
 
 				expect( myDocuments[ 1 ].$isQueried() ).toBe( true );
-				expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+				expect<Document>( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document>( {
 					$eTag: "\"2-12345\"",
 					$_resolved: true,
 				} ) );
@@ -7566,7 +7566,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					expect( myDocuments.length ).toBe( 2 );
 
 					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						"$eTag": "\"1-12345\"",
 						"property1": "value 1",
 						"property2": jasmine.objectContaining( {
@@ -7576,7 +7576,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					} ) );
 
 					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						"$eTag": "\"2-12345\"",
 						"property1": "value 2",
 						"property2": jasmine.objectContaining( {
@@ -7729,7 +7729,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					expect( myDocuments.length ).toBe( 2 );
 
 					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						"$eTag": "\"1-12345\"",
 						"property1": "value 1",
 						"property2": jasmine.objectContaining( {
@@ -7741,7 +7741,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 
 					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						"$eTag": "\"2-12345\"",
 						"property1": "value 2",
 						"property2": jasmine.objectContaining( {
@@ -7815,7 +7815,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					options.resources : [];
 
 				jasmine.Ajax
-					.stubRequest( url, null, "POST" )
+					.stubRequest( url, undefined, "POST" )
 					.andReturn( {
 						status,
 						responseHeaders: {
@@ -7922,7 +7922,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				} );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+				expect( request.requestHeaders ).toEqual( jasmine.objectContaining<typeof request.requestHeaders>( {
 					"custom": "custom value",
 				} ) );
 			} );
@@ -8500,12 +8500,12 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					} )
 					.orderBy( "property2.property2", "DESC" )
 				).then( ( myDocuments ) => {
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						"property2": jasmine.objectContaining( {
 							"property2": 67890,
 						} ) as any,
 					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						"property2": jasmine.objectContaining( {
 							"property2": 12345,
 						} ) as any,
@@ -8653,7 +8653,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						expect( doc.$isQueried() ).toBe( false );
 					}
 
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document>( {
+					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						$eTag: "\"1-12345\"",
 						$_resolved: true,
 					} ) );
@@ -8665,7 +8665,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						},
 					} );
 
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document>( {
+					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						$eTag: "\"2-12345\"",
 						$_resolved: true,
 					} ) );
@@ -8790,7 +8790,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							expect( doc.$isQueried() ).toBe( true );
 						}
 
-						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 							"$eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.any( Object ) as any,
@@ -8800,7 +8800,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"property4": 12345,
 						} ) as any );
 
-						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 							"$eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.any( Object ) as any,
@@ -8945,7 +8945,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						expect( Document.is( doc ) ).toBe( true );
 					}
 
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						"$eTag": "\"1-12345\"",
 						"property1": "value 1",
 						"property2": jasmine.objectContaining( {
@@ -8953,7 +8953,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"property3": "another value 1",
 						} ),
 					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						"$eTag": "\"2-12345\"",
 						"property1": "value 2",
 						"property2": jasmine.objectContaining( {
@@ -9107,7 +9107,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						expect( Document.is( doc ) ).toBe( true );
 					}
 
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						"$eTag": "\"1-12345\"",
 						"property1": "value 1",
 						"property2": jasmine.objectContaining( {
@@ -9116,7 +9116,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 							"property3": "another value 1",
 						} ),
 					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining<Document & MyDocument>( {
 						"$eTag": "\"2-12345\"",
 						"property1": "value 2",
 						"property2": jasmine.objectContaining( {
@@ -9190,7 +9190,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					options.resources : [];
 
 				jasmine.Ajax
-					.stubRequest( url, null, "POST" )
+					.stubRequest( url, undefined, "POST" )
 					.andReturn( {
 						status,
 						responseHeaders: {
@@ -9296,7 +9296,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				} );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+				expect( request.requestHeaders ).toEqual( jasmine.objectContaining<typeof request.requestHeaders>( {
 					"custom": "custom value",
 				} ) );
 			} );
@@ -9554,7 +9554,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					options.resources : [];
 
 				jasmine.Ajax
-					.stubRequest( url, null, "POST" )
+					.stubRequest( url, undefined, "POST" )
 					.andReturn( {
 						status,
 						responseHeaders: {
@@ -9660,7 +9660,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 				} );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+				expect( request.requestHeaders ).toEqual( jasmine.objectContaining<typeof request.requestHeaders>( {
 					"custom": "custom value",
 				} ) );
 			} );

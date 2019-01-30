@@ -99,7 +99,7 @@ export const RDFDocument:RDFDocumentFactory = {
 	},
 
 	getNamedFragmentResources( document:RDFDocument | RDFNode[], documentResource?:string | RDFNode ):RDFNode[] {
-		const uriToMatch:string = Utils.isObject( documentResource ) ?
+		const uriToMatch:string | undefined = Utils.isObject( documentResource ) ?
 			RDFNode.getID( documentResource ) :
 			documentResource;
 
@@ -131,7 +131,7 @@ export const RDFDocument:RDFDocumentFactory = {
 		const fragmentNodes:RDFNode[] = [];
 
 		for( const node of rdfDocument[ "@graph" ] ) {
-			( RDFNode.isFragment( node ) ? fragmentNodes : documentNodes ).push( node );
+			(RDFNode.isFragment( node ) ? fragmentNodes : documentNodes).push( node );
 		}
 
 		return [ documentNodes, fragmentNodes ];

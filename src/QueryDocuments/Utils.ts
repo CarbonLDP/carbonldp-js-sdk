@@ -73,7 +73,7 @@ export function _getMatchingDefinition( generalSchema:DigestedObjectSchema, targ
 	if( ! targetSchema.properties.has( propertyName ) ) return;
 
 	const definition:DigestedObjectSchemaProperty = ObjectSchemaUtils
-		._resolveProperty( generalSchema, targetSchema.properties.get( propertyName ) );
+		._resolveProperty( generalSchema, targetSchema.properties.get( propertyName )! );
 
 	if( propertyURI === void 0 || propertyURI === definition.uri )
 		return definition;

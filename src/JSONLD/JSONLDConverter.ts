@@ -16,7 +16,7 @@ import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 import { RDFValue } from "../RDF/Value";
 
-import { forEachOwnProperty, isFunction, isNull, isObject, isString, MapUtils } from "../Utils";
+import { _isExistingValue, forEachOwnProperty, isFunction, isNull, isObject, isString, MapUtils } from "../Utils";
 
 import { XSD } from "../Vocabularies/XSD";
 
@@ -100,12 +100,12 @@ export class JSONLDConverter {
 	 * @param pointerLibrary An object from where one can obtain the pointers of resources.
 	 */
 	compact( expandedObject:object, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):object;
-	compact( expandedObjectOrObjects:any, targetObjectOrObjectsOrDigestedContext:any, digestedSchemaOrPointerLibrary:any, pointerLibrary:PointerLibrary | $PointerLibrary = null, strict?:boolean ):any {
+	compact( expandedObjectOrObjects:any, targetObjectOrObjectsOrDigestedContext:any, digestedSchemaOrPointerLibrary:any, pointerLibrary?:PointerLibrary | $PointerLibrary, strict?:boolean ):any {
 		let targetObjectOrObjects:any = ! pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
 		let digestedSchema:any = ! pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
 		pointerLibrary = ! pointerLibrary ? digestedSchemaOrPointerLibrary : pointerLibrary;
 
-		if( ! Array.isArray( expandedObjectOrObjects ) ) return this.__compactSingle( expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary, strict );
+		if( ! Array.isArray( expandedObjectOrObjects ) ) return this.__compactSingle( expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary!, strict );
 
 		let expandedObjects:Object[] = expandedObjectOrObjects;
 		let targetObjects:Object[] = ! ! targetObjectOrObjects ? targetObjectOrObjects : [];
@@ -113,7 +113,7 @@ export class JSONLDConverter {
 			let expandedObject:Object = expandedObjects[ i ];
 			let targetObject:Object = targetObjects[ i ] = ! ! targetObjects[ i ] ? targetObjects[ i ] : {};
 
-			this.__compactSingle( expandedObject, targetObject, digestedSchema, pointerLibrary, strict );
+			this.__compactSingle( expandedObject, targetObject, digestedSchema, pointerLibrary!, strict );
 		}
 
 		return targetObjects;
@@ -195,7 +195,7 @@ export class JSONLDConverter {
 			const expandedPropertyName:string = digestedSchema.resolveURI( propertyName, { vocab: true } );
 			if( URI.isRelative( expandedPropertyName ) ) return;
 
-			const expandedValue:any[] = this.__expandProperty( propertyName, value, digestedSchema, generalSchema );
+			const expandedValue:any[] | null = this.__expandProperty( propertyName, value, digestedSchema, generalSchema );
 			if( expandedValue === null ) return;
 
 			expandedObject[ expandedPropertyName ] = expandedValue;
@@ -204,18 +204,18 @@ export class JSONLDConverter {
 		return expandedObject;
 	}
 
-	private __expandProperty( propertyName:string, propertyValue:any, digestedSchema:DigestedObjectSchema, generalSchema:DigestedObjectSchema ):any[] {
-		const definition:DigestedObjectSchemaProperty = digestedSchema.properties.get( propertyName );
+	private __expandProperty( propertyName:string, propertyValue:any, digestedSchema:DigestedObjectSchema, generalSchema:DigestedObjectSchema ):any[] | null {
+		const definition:DigestedObjectSchemaProperty | undefined = digestedSchema.properties.get( propertyName );
 
-		const propertyContainer:ContainerType = definition ? definition.containerType : void 0;
+		const propertyContainer:ContainerType | undefined | null = definition ? definition.containerType : void 0;
 		if( propertyContainer === ContainerType.LANGUAGE ) return this.__expandPropertyLanguageMap( propertyValue );
 
 		propertyValue = Array.isArray( propertyValue ) ? propertyValue : [ propertyValue ];
 		if( propertyContainer === null ) propertyValue = [ propertyValue[ 0 ] ];
 
-		const propertyType:boolean = definition ? definition.literal : null;
+		const propertyType:boolean | null = definition ? definition.literal : null;
 		const expandedValues:any[] = propertyType === true ?
-			this.__expandPropertyLiteral( propertyValue, definition, digestedSchema ) :
+			this.__expandPropertyLiteral( propertyValue, definition!, digestedSchema ) :
 			propertyType === false ?
 				this.__expandPropertyPointer( propertyValue, digestedSchema, generalSchema ) :
 				this.__expandPropertyValue( propertyValue, digestedSchema, generalSchema )
@@ -240,7 +240,7 @@ export class JSONLDConverter {
 	}
 
 	private __expandPropertyLiteral( propertyValue:any[], definition:DigestedObjectSchemaProperty, digestedSchema:DigestedObjectSchema ):any[] {
-		const literalType:string = digestedSchema.resolveURI( definition.literalType, { vocab: true, base: true } );
+		const literalType:string = digestedSchema.resolveURI( definition.literalType!, { vocab: true, base: true } );
 		const expandedValues:any[] = propertyValue.map( value => this.__expandLiteralValue( value, literalType ) );
 
 		if( definition.language ) expandedValues.forEach( value => value[ "@language" ] = definition.language );
@@ -258,14 +258,14 @@ export class JSONLDConverter {
 		forEachOwnProperty( propertyValue, ( languageTag:string, value:any ):void => {
 			// TODO: Validate language tags
 
-			let serializedValue:string = this.literalSerializers.get( XSD.string ).serialize( value );
+			let serializedValue:string = this.literalSerializers.get( XSD.string )!.serialize( value );
 			mapValues.push( { "@value": serializedValue, "@type": XSD.string, "@language": languageTag } );
 		} );
 
 		return mapValues;
 	}
 
-	private __expandPointerValue( propertyValue:any, digestedSchema:DigestedObjectSchema, generalSchema:DigestedObjectSchema ):RDFNode {
+	private __expandPointerValue( propertyValue:any, digestedSchema:DigestedObjectSchema, generalSchema:DigestedObjectSchema ):RDFNode | null {
 		const isStringID:boolean = isString( propertyValue );
 		const id:string = Pointer.is( propertyValue ) ?
 			propertyValue.$id :
@@ -290,17 +290,18 @@ export class JSONLDConverter {
 			;
 	}
 
-	private __expandLiteralValue( literalValue:any, literalType:string ):any {
+	private __expandLiteralValue( literalValue:any, literalType:string | null ):any | null {
 		if( literalType === null ) return null;
 
 		// TODO: Warn of data loss
 		if( ! this.literalSerializers.has( literalType ) ) return null;
 
 		const serializedValue:string = this.literalSerializers
-			.get( literalType )
+			.get( literalType )!
 			.serialize( literalValue );
 		return { "@value": serializedValue, "@type": literalType };
 	}
+
 
 	private __compactSingle( expandedObject:any, targetObject:any, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary, strict?:boolean ):void {
 		if( ! expandedObject[ "@id" ] ) throw new IllegalArgumentError( "The expandedObject doesn't have an @id defined." );
@@ -312,13 +313,13 @@ export class JSONLDConverter {
 		forEachOwnProperty( expandedObject, ( propertyURI:string, propertyValues:any[] ):void => {
 			if( propertyURI === "@id" ) return;
 			if( propertyURI === "@type" ) return;
-			if( propertyValues === null ) return;
+			if( ! _isExistingValue( propertyValues ) ) return;
 
 			if( ! propertyURINameMap.has( propertyURI ) && strict ) return;
 
 			const propertyName:string = propertyURINameMap.has( propertyURI ) ?
-				propertyURINameMap.get( propertyURI ) :
-				digestedSchema.vocab !== null ?
+				propertyURINameMap.get( propertyURI )! :
+				digestedSchema.vocab ?
 					URI.getRelativeURI( propertyURI, digestedSchema.vocab ) :
 					propertyURI
 			;
@@ -332,7 +333,7 @@ export class JSONLDConverter {
 		return targetObject;
 	}
 
-	private __getPropertyContainerType( propertyValues:any ):ContainerType {
+	private __getPropertyContainerType( propertyValues:any ):ContainerType | null {
 		if( propertyValues.length === 1 ) {
 			if( RDFList.is( propertyValues[ 0 ] ) ) return ContainerType.LIST;
 		} else {
@@ -343,29 +344,32 @@ export class JSONLDConverter {
 	}
 
 	private __getPropertyValue( propertyName:string, propertyValues:any[], digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):any {
-		const definition:DigestedObjectSchemaProperty = digestedSchema.properties.get( propertyName );
-		const propertyContainer:ContainerType = definition ?
+		const definition:DigestedObjectSchemaProperty | undefined = digestedSchema.properties.get( propertyName );
+		const propertyContainer:ContainerType | null = definition ?
 			definition.containerType :
 			this.__getPropertyContainerType( propertyValues );
 
-		if( propertyContainer === ContainerType.LANGUAGE ) return RDFNode.getPropertyLanguageMap( propertyValues );
+		if( propertyContainer === ContainerType.LANGUAGE ) {
+			return RDFNode.getPropertyLanguageMap( propertyValues );
+		}
 
 		if( propertyContainer === ContainerType.LIST ) {
-			const list:RDFList = RDFNode.getList( propertyValues );
+			const list:RDFList | undefined = RDFNode.getList( propertyValues );
 
 			if( ! list ) return null;
 			propertyValues = list[ "@list" ];
 		}
 
-		const propertyType:boolean = definition ? definition.literal : null;
-		if( propertyType === true && definition.language ) {
+		const propertyType:boolean | null = definition ? definition.literal : null;
+
+		if( propertyType === true && (definition && definition.language) ) {
 			propertyValues = propertyValues.filter( value => value[ "@language" ] === definition.language );
 		}
 
 		if( propertyContainer === null ) propertyValues = [ propertyValues[ 0 ] ];
 
 		const compactedValues:any[] | undefined = propertyType === true ?
-			this.__compactPropertyLiteral( propertyValues, definition, digestedSchema ) :
+			this.__compactPropertyLiteral( propertyValues, definition!, digestedSchema ) :
 			propertyType === false ?
 				this.__getPropertyPointers( propertyValues, pointerLibrary ) :
 				this.__getProperties( propertyValues, pointerLibrary )
@@ -382,13 +386,13 @@ export class JSONLDConverter {
 	private __getPropertyURINameMap( digestedSchema:DigestedObjectSchema ):Map<string, string> {
 		const map:Map<string, string> = new Map<string, string>();
 		digestedSchema.properties.forEach( ( definition:DigestedObjectSchemaProperty, propertyName:string ):void => {
-			const uri:string = digestedSchema.resolveURI( definition.uri, { vocab: true } );
+			const uri:string = digestedSchema.resolveURI( definition.uri!, { vocab: true } );
 			map.set( uri, propertyName );
 		} );
 		return map;
 	}
 
-	private __compactPropertyLiteral( propertyValues:any[], definition:DigestedObjectSchemaProperty, digestedSchema:DigestedObjectSchema ):any[] {
+	private __compactPropertyLiteral( propertyValues:any[], definition:DigestedObjectSchemaProperty, digestedSchema:DigestedObjectSchema ):any[] | undefined {
 		const literalType:string = definition.literalType === null ?
 			XSD.string : digestedSchema.resolveURI( definition.literalType, { vocab: true, base: true } );
 

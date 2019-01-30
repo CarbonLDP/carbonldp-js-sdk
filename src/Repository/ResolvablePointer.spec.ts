@@ -166,7 +166,7 @@ describe( "ResolvablePointer", () => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property" } );
 				resource.$_syncSnapshot();
 
-				resource.the = null;
+				resource.the = undefined;
 
 				expect( resource.$isDirty() ).toBe( true );
 			} );
@@ -247,7 +247,7 @@ describe( "ResolvablePointer", () => {
 				resource.the = "new property value";
 				resource.$revert();
 
-				expect( resource ).toEqual( jasmine.objectContaining( {
+				expect( resource ).toEqual( jasmine.objectContaining<ResolvablePointer & { the?:string }>( {
 					the: "old property value",
 				} ) );
 			} );
@@ -259,7 +259,7 @@ describe( "ResolvablePointer", () => {
 				delete resource.the;
 				resource.$revert();
 
-				expect( resource ).toEqual( jasmine.objectContaining( {
+				expect( resource ).toEqual( jasmine.objectContaining<ResolvablePointer & { the?:string }>( {
 					the: "old property",
 				} ) );
 			} );
@@ -268,10 +268,10 @@ describe( "ResolvablePointer", () => {
 				const resource:ResolvablePointer & { the?:string } = createMock( { the: "old property" } );
 				resource.$_syncSnapshot();
 
-				resource.the = null;
+				resource.the = undefined;
 				resource.$revert();
 
-				expect( resource ).toEqual( jasmine.objectContaining( {
+				expect( resource ).toEqual( jasmine.objectContaining<ResolvablePointer & { the?:string }>( {
 					the: "old property",
 				} ) );
 			} );
@@ -283,7 +283,7 @@ describe( "ResolvablePointer", () => {
 				resource.the = "new property";
 				resource.$revert();
 
-				expect( resource ).not.toEqual( jasmine.objectContaining( {
+				expect( resource ).not.toEqual( jasmine.objectContaining<ResolvablePointer & { the?:string }>( {
 					the: "new property",
 				} ) );
 			} );
@@ -299,7 +299,7 @@ describe( "ResolvablePointer", () => {
 				resource.types.push( "https://example.com/ns#Type-2" );
 				resource.$revert();
 
-				expect( resource ).toEqual( jasmine.objectContaining( {
+				expect( resource ).toEqual( jasmine.objectContaining<ResolvablePointer & { types:string[] }>( {
 					types: [ "https://example.com/ns#Type" ],
 				} ) );
 			} );
@@ -314,7 +314,7 @@ describe( "ResolvablePointer", () => {
 				resource.types.splice( 1, 1 );
 				resource.$revert();
 
-				expect( resource ).toEqual( jasmine.objectContaining( {
+				expect( resource ).toEqual( jasmine.objectContaining<ResolvablePointer & { types:string[] }>( {
 					types: [ "https://example.com/ns#Type", "https://example.com/ns#Type-2" ],
 				} ) );
 			} );
@@ -329,7 +329,7 @@ describe( "ResolvablePointer", () => {
 				resource.$id = "https://exampple.com/another-resource/";
 				resource.$revert();
 
-				expect( resource ).toEqual( jasmine.objectContaining( {
+				expect( resource ).toEqual( jasmine.objectContaining<ResolvablePointer>( {
 					$id: "https://exampple.com/another-resource/",
 				} ) );
 			} );
@@ -345,7 +345,7 @@ describe( "ResolvablePointer", () => {
 				Object.assign( relatedResource, { the: "change in content" } );
 				resource.$revert();
 
-				expect( relatedResource ).toEqual( jasmine.objectContaining( {
+				expect( relatedResource ).toEqual( jasmine.objectContaining<ResolvablePointer & { the?:string }>( {
 					the: "change in content",
 				} ) );
 			} );

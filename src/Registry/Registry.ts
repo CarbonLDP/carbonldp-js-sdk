@@ -283,14 +283,14 @@ function __getPointer( this:AnyRegistry, id:string, local?:true ):RegisteredPoin
 	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
 
 	if( ! __inScope.call( this, id, true ) ) {
-		if( local === true || ! parentRegistry ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
+		if( local === true || ! parentRegistry ) throw new IllegalArgumentError( `"${id}" is out of scope.` );
 		return __getPointer.call( parentRegistry, id );
 	}
 
 	const localID:string = __getLocalID( this, id );
 
 	const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
-	if( resourcesMap.has( localID ) ) return resourcesMap.get( localID );
+	if( resourcesMap.has( localID ) ) return resourcesMap.get( localID )!;
 
 	if( local !== true && __hasPointer.call( parentRegistry, id ) )
 		return __getPointer.call( parentRegistry, id );
@@ -370,7 +370,7 @@ export const Registry:RegistryFactory = {
 			const localID:string = __getLocalID( this, pointer.$id );
 
 			const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
-			if( resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being used.` );
+			if( resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${pointer.$id}" is already being used.` );
 
 			const resource:T & RegisteredPointer = __getDecorator( this )
 				.decorate( Object.assign<T, BaseRegisteredPointer>( pointer, {

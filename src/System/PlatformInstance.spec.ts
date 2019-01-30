@@ -35,21 +35,17 @@ describe( "PlatformInstance", () => {
 			} );
 
 			it( "should have c:buildDate", () => {
-				expect( PlatformInstance.SCHEMA ).toEqual( jasmine.objectContaining( {
-					buildDate: {
-						"@id": C.buildDate,
-						"@type": XSD.dateTime,
-					},
-				} ) );
+				expect( PlatformInstance.SCHEMA[ "buildDate" ] ).toEqual( {
+					"@id": C.buildDate,
+					"@type": XSD.dateTime,
+				} );
 			} );
 
 			it( "should have c:version", () => {
-				expect( PlatformInstance.SCHEMA ).toEqual( jasmine.objectContaining( {
-					version: {
-						"@id": C.version,
-						"@type": XSD.string,
-					},
-				} ) );
+				expect( PlatformInstance.SCHEMA[ "version" ] ).toEqual( {
+					"@id": C.version,
+					"@type": XSD.string,
+				} );
 			} );
 
 		} );

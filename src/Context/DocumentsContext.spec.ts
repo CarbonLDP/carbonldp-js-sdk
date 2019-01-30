@@ -17,7 +17,7 @@ function createMock( data?:{
 } ):DocumentsContext {
 	return new class extends DocumentsContext {
 		constructor() {
-			const uri:string = data && "uri" in data ? data.uri : "https://example.com/";
+			const uri:string = data && "uri" in data ? data.uri || "" : "https://example.com/";
 			super( uri );
 
 			this._settings = data && data.settings;

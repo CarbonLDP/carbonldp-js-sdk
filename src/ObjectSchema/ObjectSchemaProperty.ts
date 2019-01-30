@@ -14,7 +14,7 @@ export interface ObjectSchemaProperty {
 	/**
 	 * The language the string property value has.
 	 */
-	"@language"?:string;
+	"@language"?:string | null;
 	/**
 	 * If the property is multiple it can be of tree types:
 	 * - `@set`: An unsorted array of elements.

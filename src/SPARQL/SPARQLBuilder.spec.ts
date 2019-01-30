@@ -23,7 +23,8 @@ describe( "SPARQLBuilder", () => {
 		} );
 
 		it( "should extend from SPARQLER", () => {
-			const target:SPARQLBuilder = new SPARQLBuilder( null, "" );
+			const repository:SPARQLDocumentsRepositoryTrait = SPARQLDocumentsRepositoryTrait.decorate( { context: new DocumentsContext( "https://example.com/" ) } );
+			const target:SPARQLBuilder = new SPARQLBuilder( repository, "" );
 			expect( target ).toEqual( jasmine.any( SPARQLER ) );
 		} );
 
@@ -38,7 +39,7 @@ describe( "SPARQLBuilder", () => {
 				.selectAll()
 				.where( () => [] );
 
-			expect( finishClause ).toEqual( jasmine.objectContaining( {
+			expect( finishClause ).toEqual( jasmine.objectContaining<FinishSPARQLSelect>( {
 				execute: jasmine.any( Function ),
 			} ) );
 		} );
@@ -73,7 +74,7 @@ describe( "SPARQLBuilder", () => {
 				.ask()
 				.where( () => [] );
 
-			expect( finishClause ).toEqual( jasmine.objectContaining( {
+			expect( finishClause ).toEqual( jasmine.objectContaining<FinishSPARQLAsk>( {
 				execute: jasmine.any( Function ),
 			} ) );
 		} );

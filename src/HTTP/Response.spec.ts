@@ -87,22 +87,22 @@ describe( "Response", () => {
 			const [ response ] = await createResponse();
 
 			expect( response.status ).toBeDefined();
-			expect( response.status ).toBe( rawResponse.status );
+			expect( response.status ).toBe( rawResponse.status! );
 		} );
 
 		it( "should assign data", async () => {
 			const [ response ] = await createResponse();
 
 			expect( response.data ).toBeDefined();
-			expect( response.data ).toBe( rawResponse.responseText );
+			expect( response.data ).toBe( rawResponse.responseText! );
 		} );
 
 		it( "should assign headers", async () => {
 			const [ response ] = await createResponse();
 
 			expect( response.headers ).toBeDefined();
-			for( const header of Object.keys( rawResponse.responseHeaders ) ) {
-				expect( response.getHeader( header ) ).toEqual( new Header( rawResponse.responseHeaders[ header ] ) );
+			for( const header of Object.keys( rawResponse.responseHeaders! ) ) {
+				expect( response.getHeader( header ) ).toEqual( new Header( rawResponse.responseHeaders![ header ] ) );
 			}
 		} );
 
@@ -129,7 +129,7 @@ describe( "Response", () => {
 		it( "should return specified header", async () => {
 			const [ response ] = await createResponse();
 
-			const header:Header = response.getHeader( "Content-Type" );
+			const header:Header | null = response.getHeader( "Content-Type" );
 			expect( header ).toEqual( jasmine.any( Header ) );
 		} );
 

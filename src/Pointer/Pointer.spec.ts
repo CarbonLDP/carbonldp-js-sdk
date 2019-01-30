@@ -23,7 +23,7 @@ describe( "Pointer", () => {
 			let mockObject:PointerFactory[ "PROTOTYPE" ];
 			beforeEach( () => {
 				mockObject = createNonEnumerable( {
-					$id: null,
+					$id: "",
 				} );
 			} );
 
@@ -35,7 +35,6 @@ describe( "Pointer", () => {
 			it( "should return false when no `$id`", () => {
 				delete mockObject.$id;
 				expect( Pointer.isDecorated( mockObject ) ).toBe( false );
-				mockObject.$id = null;
 			} );
 
 		} );
@@ -59,7 +58,7 @@ describe( "Pointer", () => {
 
 			it( "should return true when non-enumerable properties", () => {
 				const target:Pointer = createNonEnumerable( {
-					$id: null,
+					$id: "",
 				} );
 
 				expect( Pointer.is( target ) ).toBe( true );

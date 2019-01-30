@@ -50,7 +50,7 @@ describe( "GeneralRegistry", () => {
 				context = createMockContext( { parentContext: context as any } );
 
 				const registry:GeneralRegistry = createMock();
-				expect( registry.registry ).toBe( context.parentContext.registry );
+				expect( registry.registry ).toBe( context.parentContext!.registry );
 			} );
 
 			it( "should return undefined when parent has no registry", () => {
@@ -100,7 +100,7 @@ describe( "GeneralRegistry", () => {
 			it( "should replace decorator to the map", () => {
 				const registry:GeneralRegistry = createMock( {
 					__modelDecorators: new Map( [
-						[ "a-type", null ],
+						[ "a-type", null as any ],
 					] ),
 				} );
 

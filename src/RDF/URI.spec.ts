@@ -433,15 +433,15 @@ describe( "URI", () => {
 
 
 			it( "should return null when absolute with no named fragment", () => {
-				expect( URI.getFragment( "http://example.com/resource/" ) ).toBeNull();
+				expect( () => URI.getFragment( "http://example.com/resource/" ) ).toThrowError( IllegalArgumentError );
 			} );
 
 			it( "should return null when relative with no named fragment", () => {
-				expect( URI.getFragment( "resource/" ) ).toBeNull();
+				expect( () => URI.getFragment( "resource/" ) ).toThrowError( IllegalArgumentError );
 			} );
 
 			it( "should return null when prefixed named with no named fragment", () => {
-				expect( URI.getFragment( "prefix:resource/" ) ).toBeNull();
+				expect( () => URI.getFragment( "prefix:resource/" ) ).toThrowError( IllegalArgumentError );
 			} );
 
 

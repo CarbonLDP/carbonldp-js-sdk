@@ -23,7 +23,7 @@ export function createMockDigestedSchemaProperty( values?:Partial<DigestedObject
 	return Object.assign( new DigestedObjectSchemaProperty(), values );
 }
 
-export function createMockContext<PARENT extends AbstractContext<any, any, any> = undefined>( data?:{
+export function createMockContext<PARENT extends AbstractContext<any, any, any> | undefined = undefined>( data?:{
 	parentContext?:PARENT;
 
 	uri?:string;
@@ -42,7 +42,7 @@ export function createMockContext<PARENT extends AbstractContext<any, any, any> 
 		_baseURI:string;
 
 		constructor() {
-			super( data && data.parentContext );
+			super( data! && data!.parentContext! );
 
 			const decorator:ModelDecorator<ResolvablePointer & RegisteredPointer, BaseResolvablePointer & BaseRegisteredPointer> = {
 				isDecorated: ( object ):object is ResolvablePointer & RegisteredPointer =>
@@ -54,14 +54,14 @@ export function createMockContext<PARENT extends AbstractContext<any, any, any> 
 			};
 
 			this.registry = data && "registry" in data ?
-				data.registry :
+				data.registry! :
 				GeneralRegistry.create( {
 					context: this,
 					__modelDecorator: decorator,
 				} );
 
 			this.repository = data && "repository" in data ?
-				data.repository :
+				data.repository! :
 				GeneralRepository.create( { context: this } );
 
 			this._baseURI = data && data.uri !== void 0 ? data.uri : "https://example.com/";

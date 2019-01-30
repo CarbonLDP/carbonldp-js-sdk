@@ -72,7 +72,7 @@ function __onResolve( resolve:ResolveCallback, reject:RejectCallback, response:R
 		if( ! statusCodeMap.has( response.status ) )
 			return reject( new UnknownError( response.data, response ) );
 
-		reject( new (statusCodeMap.get( response.status ))( response.data, response ) );
+		reject( new (statusCodeMap.get( response.status )!)( response.data, response ) );
 	}
 }
 
@@ -84,7 +84,7 @@ function __sendWithBrowser( method:string, url:string, body:string | Blob, optio
 		if( options.headers ) options.headers
 			.forEach( ( header:Header, name:string ) => request.setRequestHeader( name, header.toString() ) );
 
-		request.withCredentials = options.sendCredentialsOnCORS;
+		request.withCredentials = ! ! options.sendCredentialsOnCORS;
 		if( options.timeout ) request.timeout = options.timeout;
 
 		request.onload = request.onerror = () => {
@@ -132,13 +132,13 @@ function __sendWithNode( method:string, url:string, body:string | Buffer, option
 			};
 
 			if( options.headers ) options.headers
-				.forEach( ( header:Header, name:string ) => requestOptions.headers[ name ] = header.toString() );
+				.forEach( ( header:Header, name:string ) => requestOptions.headers![ name ] = header.toString() );
 
 			let request:HTTP.ClientRequest = Adapter.request( requestOptions );
 			if( options.timeout ) request.setTimeout( options.timeout );
 			request.on( "response", ( res:HTTP.IncomingMessage ) => {
-				if( res.statusCode >= 300 && res.statusCode <= 399 && "location" in res.headers ) {
-					if( ++ numberOfRedirects < 10 ) return sendRequestWithRedirect( URL.resolve( _url, res.headers.location ) );
+				if( res.statusCode! >= 300 && res.statusCode! <= 399 && "location" in res.headers ) {
+					if( ++ numberOfRedirects < 10 ) return sendRequestWithRedirect( URL.resolve( _url, res.headers!.location! ) );
 				}
 
 				returnResponse( request, res );
@@ -156,10 +156,10 @@ function __sendWithNode( method:string, url:string, body:string | Buffer, option
 	} );
 }
 
-function __sendRequest( method:string, url:string, body:string | Blob | Buffer, options:RequestOptions ):Promise<Response> {
+function __sendRequest( method:string, url:string, body:string | Blob | Buffer | undefined, options:RequestOptions ):Promise<Response> {
 	return typeof XMLHttpRequest !== "undefined" ?
-		__sendWithBrowser( method, url, <string | Blob> body, options ) :
-		__sendWithNode( method, url, <string | Buffer> body, options );
+		__sendWithBrowser( method, url, <string | Blob>body, options ) :
+		__sendWithNode( method, url, <string | Buffer>body, options );
 }
 
 function __isBody( data:string | Blob | Buffer ):boolean {
@@ -207,13 +207,13 @@ export class RequestService {
 	 * @param options Customizable options for the request.
 	 * @param parser Parser to be used in the response body of the request.
 	 */
-	static send<T>( method:(HTTPMethod | string), url:string, body:string | Blob | Buffer, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static send<T>( method:any, url:string, bodyOrOptions:any = RequestService.defaultOptions, optionsOrParser:any = RequestService.defaultOptions, parser:Parser<T> = null ):any {
-		let body:string | Blob | Buffer = null;
+	static send<T>( method:(HTTPMethod | string), url:string, body?:string | Blob | Buffer, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	static send<T>( method:any, url:string, bodyOrOptions?:any, optionsOrParser?:any, parser?:Parser<T> ):any {
+		let body:string | Blob | Buffer | undefined = undefined;
 		let options:RequestOptions = hasProperty( optionsOrParser, "parse" ) ? bodyOrOptions : optionsOrParser;
 		parser = hasProperty( optionsOrParser, "parse" ) ? optionsOrParser : parser;
 
-		if( __isBody( bodyOrOptions ) ) {
+		if( ! bodyOrOptions || __isBody( bodyOrOptions ) ) {
 			body = bodyOrOptions;
 		} else {
 			options = bodyOrOptions ? bodyOrOptions : options;
@@ -230,10 +230,10 @@ export class RequestService {
 			} )
 		;
 
-		if( parser === null ) return requestPromise;
+		if( ! parser ) return requestPromise;
 
 		return requestPromise.then( ( response:Response ) => {
-			return parser.parse( response.data ).then( ( parsedBody:T ) => {
+			return parser!.parse( response.data ).then( ( parsedBody:T ) => {
 				return [ parsedBody, response ];
 			} );
 		} );
@@ -270,8 +270,8 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static get<T>( url:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static get<T>( url:string, options:RequestOptions = RequestService.defaultOptions, parser:Parser<T> = null ):any {
-		return RequestService.send( HTTPMethod.GET, url, null, options, parser );
+	static get<T>( url:string, options:RequestOptions = RequestService.defaultOptions, parser?:Parser<T> ):any {
+		return RequestService.send( HTTPMethod.GET, url, undefined, options, parser );
 	}
 
 	/**
@@ -289,7 +289,7 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static post<T>( url:string, body:string | Blob | Buffer, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static post<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, options:RequestOptions = RequestService.defaultOptions, parser:Parser<T> = null ):any {
+	static post<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, options:RequestOptions = RequestService.defaultOptions, parser?:Parser<T> ):any {
 		return RequestService.send( HTTPMethod.POST, url, bodyOrOptions, options, parser );
 	}
 
@@ -308,7 +308,7 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static put<T>( url:string, body:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static put<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, options:RequestOptions = RequestService.defaultOptions, parser:Parser<T> = null ):any {
+	static put<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, options:RequestOptions = RequestService.defaultOptions, parser?:Parser<T> ):any {
 		return RequestService.send( HTTPMethod.PUT, url, bodyOrOptions, options, parser );
 	}
 
@@ -327,7 +327,7 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static patch<T>( url:string, body:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static patch<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, options:RequestOptions = RequestService.defaultOptions, parser:Parser<T> = null ):any {
+	static patch<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, options:RequestOptions = RequestService.defaultOptions, parser?:Parser<T> ):any {
 		return RequestService.send( HTTPMethod.PATCH, url, bodyOrOptions, options, parser );
 	}
 
@@ -359,7 +359,7 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static delete<T>( url:string, body:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static delete<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, optionsOrParser:any = RequestService.defaultOptions, parser:Parser<T> = null ):any {
+	static delete<T>( url:string, bodyOrOptions:any = RequestService.defaultOptions, optionsOrParser:any = RequestService.defaultOptions, parser?:Parser<T> ):any {
 		return RequestService.send( HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser );
 	}
 
@@ -376,7 +376,7 @@ export class RequestService {
 
 				if( ! this.__isChromiumAgent() ) this.__setFalseETag( requestOptions );
 
-				return __sendRequest( "GET", url, null, requestOptions )
+				return __sendRequest( "GET", url, undefined, requestOptions )
 					.then( noCachedResponse => {
 						if( ! this.__contentTypeIsAccepted( requestOptions, response ) ) {
 							throw new BadResponseError( "The server responded with an unacceptable Content-Type", response );
@@ -388,20 +388,23 @@ export class RequestService {
 	}
 
 	private static __contentTypeIsAccepted( requestOptions:RequestOptions, response:Response ):boolean {
+		if( ! requestOptions.headers ) return true;
+
 		const accepts:string[] = requestOptions.headers.has( "accept" ) ?
-			requestOptions.headers.get( "accept" ).values :
+			requestOptions.headers.get( "accept" )!.values :
 			[]
 		;
 
-		const contentType:Header = response.headers.has( "content-type" ) ?
+		const contentType:Header | undefined = response.headers.has( "content-type" ) ?
 			response.headers.get( "content-type" ) :
-			null
+			undefined
 		;
+
 		return ! contentType || accepts.some( contentType.hasValue, contentType );
 	}
 
 	private static __setNoCacheHeaders( requestOptions:RequestOptions ):void {
-		requestOptions.headers
+		requestOptions.headers!
 			.set( "pragma", new Header( "no-cache" ) )
 			.set( "cache-control", new Header( "no-cache, max-age=0" ) )
 		;
@@ -412,7 +415,7 @@ export class RequestService {
 	}
 
 	private static __setFalseETag( requestOptions:RequestOptions ):void {
-		requestOptions.headers.set( "if-none-match", new Header() );
+		requestOptions.headers!.set( "if-none-match", new Header() );
 	}
 }
 
@@ -504,7 +507,7 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:RequestOptions ):RequestOptions {
-		const headerValue:string = `${ interactionModelURI }; rel=interaction-model`;
+		const headerValue:string = `${interactionModelURI}; rel=interaction-model`;
 		RequestUtils.__addHeaderValue( "prefer", headerValue, requestOptions );
 
 		return requestOptions;
@@ -516,7 +519,7 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setPreferredRetrieval( retrievalType:"representation" | "minimal", requestOptions:RequestOptions ):RequestOptions {
-		const headerValue:string = `return=${ retrievalType }`;
+		const headerValue:string = `return=${retrievalType}`;
 		RequestUtils.__addHeaderValue( "prefer", headerValue, requestOptions );
 
 		return requestOptions;
@@ -528,15 +531,15 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setRetrievalPreferences( preferences:RetrievalPreferences, requestOptions:RequestOptions ):RequestOptions {
-		const prefer:Header = RequestUtils.getHeader( "prefer", requestOptions, true );
+		const prefer:Header = RequestUtils.getHeader( "prefer", requestOptions, true )!;
 
 		const keys:string[] = [ "include", "omit" ];
 		for( const key of keys ) {
-			if( ! ( key in preferences ) ) continue;
+			if( ! (key in preferences) ) continue;
 			if( preferences[ key ].length <= 0 ) continue;
 
 			const strPreferences:string = preferences[ key ].join( " " );
-			prefer.values.push( `${ key }="${ strPreferences }"` );
+			prefer.values.push( `${key}="${strPreferences}"` );
 		}
 
 		return requestOptions;
@@ -576,14 +579,14 @@ export class RequestUtils {
 		};
 
 		if( options.headers ) options.headers
-			.forEach( ( value, key ) => clone.headers.set( key, new Header( value.values.slice() ) ) );
+			.forEach( ( value, key ) => clone.headers!.set( key, new Header( value.values.slice() ) ) );
 
 		return clone;
 	}
 
 
 	private static __addHeaderValue( headerName:string, headerValue:string, requestOptions:RequestOptions ):void {
-		const header:Header = RequestUtils.getHeader( headerName, requestOptions, true );
+		const header:Header = RequestUtils.getHeader( headerName, requestOptions, true )!;
 		header.addValue( headerValue );
 	}
 
