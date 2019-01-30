@@ -201,7 +201,7 @@ export const TransientDocument:TransientDocumentFactory = {
 
 			if( URI.isFragmentOf( id, this.$id ) ) return URI.getFragment( id );
 
-			throw new IllegalArgumentError( `"${id}" is out of scope.` );
+			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		},
 
 		$getPointer( this:TransientDocument, id:string, local?:true ):TransientFragment {

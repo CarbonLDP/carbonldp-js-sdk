@@ -14,7 +14,7 @@ export const version:gulp.TaskFunction = () => {
 	const pk:any = JSON.parse( fs.readFileSync( "./package.json", "utf8" ) );
 
 	return gulp.src( CONFIG.main )
-		.pipe( replace( /(static get version\(\):string \{ return ")(.*)("; })/g, `$1${pk.version}$3` ) )
+		.pipe( replace( /(static get version\(\):string \{ return ")(.*)("; })/g, `$1${ pk.version }$3` ) )
 		.pipe( gulp.dest( "src/" ) )
 		;
 };

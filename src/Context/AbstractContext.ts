@@ -98,7 +98,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer | undef
 			if( this._typeObjectSchemaMap.has( type ) ) return this._typeObjectSchemaMap.get( type )!;
 			if( this.parentContext && this.parentContext.hasObjectSchema( type ) ) return this.parentContext.getObjectSchema( type );
 
-			throw new IllegalArgumentError( `"${type}" hasn't an object schema.` );
+			throw new IllegalArgumentError( `"${ type }" hasn't an object schema.` );
 		} else {
 			// General schema
 			const generalSchema:DigestedObjectSchema = ! this._generalObjectSchema ?

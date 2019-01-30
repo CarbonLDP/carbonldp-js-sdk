@@ -49,7 +49,7 @@ export class PrefixToken implements TokenNode {
 	}
 
 	toString():string {
-		return `@prefix ${this.namespace}: ${this.iri}.`;
+		return `@prefix ${ this.namespace }: ${ this.iri }.`;
 	}
 }
 
@@ -68,7 +68,7 @@ export class AddToken implements TokenNode {
 	}
 
 	toString():string {
-		return `Add { ${this.triples.join( ". " )}. }.`;
+		return `Add { ${ this.triples.join( ". " ) }. }.`;
 	}
 }
 
@@ -87,7 +87,7 @@ export class DeleteToken implements TokenNode {
 	}
 
 	toString():string {
-		return `Delete { ${this.triples.join( ". " )}. }.`;
+		return `Delete { ${ this.triples.join( ". " ) }. }.`;
 	}
 }
 
@@ -114,7 +114,7 @@ export class UpdateListToken implements TokenNode {
 	}
 
 	toString():string {
-		return `UpdateList ${this.subject} ${this.predicate} ${this.slice} ${this.collection}.`;
+		return `UpdateList ${ this.subject } ${ this.predicate } ${ this.slice } ${ this.collection }.`;
 	}
 }
 

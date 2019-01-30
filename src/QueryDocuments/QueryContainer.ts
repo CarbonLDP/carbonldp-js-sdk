@@ -104,7 +104,7 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 		if( ! prefix ) return iri;
 
 		const [ namespace, prefixIRI ] = prefix;
-		return `${namespace}:${iri.substr( prefixIRI.length )}`;
+		return `${ namespace }:${ iri.substr( prefixIRI.length ) }`;
 	}
 
 
@@ -149,7 +149,7 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	 */
 	serializeLiteral( type:string, value:any ):string {
 		if( ! this.context.jsonldConverter.literalSerializers.has( type ) )
-			throw new IllegalArgumentError( `Type "${type}" hasn't a defined serializer.` );
+			throw new IllegalArgumentError( `Type "${ type }" hasn't a defined serializer.` );
 
 		return this.context.jsonldConverter
 			.literalSerializers

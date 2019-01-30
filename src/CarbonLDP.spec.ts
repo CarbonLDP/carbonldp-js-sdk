@@ -482,26 +482,26 @@ describe( "CarbonLDP", ():void => {
 				responseText: `[ {
 					"@graph": [ {
 						"@id": "https://example.com/.system/platform/",
-						"@type": [ "${Vocabularies.C.Document}", "${Vocabularies.C.Platform}" ],
-						"${Vocabularies.C.created}": [ {
-							"@type": "${Vocabularies.XSD.dateTime}",
+						"@type": [ "${ Vocabularies.C.Document }", "${ Vocabularies.C.Platform }" ],
+						"${ Vocabularies.C.created }": [ {
+							"@type": "${ Vocabularies.XSD.dateTime }",
 							"@value": "2016-05-01T00:00:00.000-06:00"
 						} ],
-						"${Vocabularies.C.modified}": [ {
-							"@type": "${Vocabularies.XSD.dateTime}",
+						"${ Vocabularies.C.modified }": [ {
+							"@type": "${ Vocabularies.XSD.dateTime }",
 							"@value": "2016-05-01T00:00:00.000-06:00"
 						} ],
-						"${Vocabularies.C.instance}": [ {
+						"${ Vocabularies.C.instance }": [ {
 							"@id": "_:1"
 						} ]
 					}, {
 						"@id": "_:1",
-						"@type": [ "${Vocabularies.C.VolatileResource}", "${Vocabularies.C.PlatformInstance}" ],
-						"${Vocabularies.C.buildDate}": [ {
+						"@type": [ "${ Vocabularies.C.VolatileResource }", "${ Vocabularies.C.PlatformInstance }" ],
+						"${ Vocabularies.C.buildDate }": [ {
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
 							"@value": "2016-06-01T00:00:00.000-06:00"
 						} ],
-						"${Vocabularies.C.version}": [ {
+						"${ Vocabularies.C.version }": [ {
 							"@value": "1.0.0"
 						} ]
 					} ],

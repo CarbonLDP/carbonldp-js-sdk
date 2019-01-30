@@ -22,7 +22,7 @@ export class QueryVariable extends VariableToken {
 	 * Returns the SPARQL string representation of the variable.
 	 */
 	toString():string {
-		if( process.env.NODE_ENV === "prod" ) return `?_${this.index}`;
+		if( process.env.NODE_ENV === "prod" ) return `?_${ this.index }`;
 		return super.toString();
 	}
 }

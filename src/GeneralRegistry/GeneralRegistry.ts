@@ -135,7 +135,7 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 			const uri:string = this.context.getObjectSchema().resolveURI( id, { base: true } );
 
 			if( ! URI.isAbsolute( uri ) || ! URI.isBaseOf( this.context.baseURI, uri ) )
-				throw new IllegalArgumentError( `"${uri}" is out of scope.` );
+				throw new IllegalArgumentError( `"${ uri }" is out of scope.` );
 
 			return URI.getRelativeURI( uri, this.context.baseURI );
 		},

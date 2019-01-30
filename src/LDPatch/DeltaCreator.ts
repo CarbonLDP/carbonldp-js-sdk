@@ -94,7 +94,7 @@ export class DeltaCreator {
 		if( this.addToken.triples.length ) patch.statements.push( this.addToken );
 		if( this.deleteToken.triples.length ) patch.statements.push( this.deleteToken );
 
-		return `${patch}`;
+		return `${ patch }`;
 	}
 
 	/**
@@ -345,7 +345,7 @@ export class DeltaCreator {
 }
 
 function __getArrayDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):ArrayDelta {
-	const objectMapper:( object:ObjectToken ) => [ string, ObjectToken ] = object => [ `${object}`, object ];
+	const objectMapper:( object:ObjectToken ) => [ string, ObjectToken ] = object => [ `${ object }`, object ];
 	const toAdd:Map<string, ObjectToken> = new Map( newValues.map( objectMapper ) );
 	const toDelete:Map<string, ObjectToken> = new Map( oldValues.map( objectMapper ) );
 
@@ -370,7 +370,7 @@ function __getListDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):Upda
 	}
 
 	const nodeMapper:( object:ObjectToken, index:number ) => Node = ( object, index ) => ({
-		identifier: `${object}`,
+		identifier: `${ object }`,
 		object,
 		index,
 	});

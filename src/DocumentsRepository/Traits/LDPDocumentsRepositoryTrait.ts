@@ -334,7 +334,7 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 }
 
 function __createChildren<T extends object>( this:void, retrievalType:"minimal" | "representation", repository:LDPDocumentsRepositoryTrait, uri:string, children:T | T[], slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
-	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
+	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	requestOptions = RequestUtils.isOptions( slugsOrOptions ) ?
@@ -361,11 +361,11 @@ function __createChildren<T extends object>( this:void, retrievalType:"minimal" 
 
 	const invalidChild:number = children
 		.findIndex( child => __isInvalidChild( child ) );
-	if( invalidChild !== - 1 ) return Promise.reject( new IllegalArgumentError( `The object in "${invalidChild}" is already a resolvable pointer.` ) );
+	if( invalidChild !== - 1 ) return Promise.reject( new IllegalArgumentError( `The object in "${ invalidChild }" is already a resolvable pointer.` ) );
 
 	const persistingChild:number = children
 		.findIndex( child => __isPersistingChild( child ) );
-	if( persistingChild !== - 1 ) return Promise.reject( new IllegalArgumentError( `The object in "${persistingChild}" is already being persisted.` ) );
+	if( persistingChild !== - 1 ) return Promise.reject( new IllegalArgumentError( `The object in "${ persistingChild }" is already being persisted.` ) );
 
 	const promises:Promise<T & Document>[] = children.map( ( child, index ) => {
 		const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions! );
@@ -380,7 +380,7 @@ function __createChildren<T extends object>( this:void, retrievalType:"minimal" 
 function __sendPatch<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions ):Promise<T & Document> {
 	if( ! ResolvablePointer.is( document ) ) return Promise.reject( new IllegalArgumentError( "The document isn't a resolvable pointer." ) );
 
-	if( ! repository.context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( `"${document.$id}" is out of scope.` ) );
+	if( ! repository.context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( `"${ document.$id }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( document.$id, { base: true } );
 
 	if( ! document.$isDirty() ) return Promise.resolve( document as T & Document );
@@ -437,7 +437,7 @@ function __parseMembers( registry:Registry, pointers:(string | Pointer)[] ):Poin
 }
 
 function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
-	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
+	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
@@ -458,7 +458,7 @@ function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri
 }
 
 function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
-	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
+	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
@@ -483,7 +483,7 @@ function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, 
 }
 
 function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<void> {
-	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
+	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
@@ -533,7 +533,7 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-			.get.call<HTTPRepositoryTrait, [ string, RequestOptions? ], Promise<T & Document>>( this, uri, requestOptions )
+				.get.call<HTTPRepositoryTrait, [ string, RequestOptions?], Promise<T & Document>>( this, uri, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
@@ -560,7 +560,7 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 			RequestUtils.setIfNoneMatchHeader( document.$eTag!, requestOptions );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.refresh.call<HTTPRepositoryTrait, [ Document, RequestOptions? ], Promise<T & Document>>( this, document, requestOptions )
+				.refresh.call<HTTPRepositoryTrait, [ Document, RequestOptions?], Promise<T & Document>>( this, document, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) )
 				;
 		},
@@ -615,7 +615,7 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 					id = __getTargetID( id, response );
 					const rdfDocument:RDFDocument | undefined = rdfDocuments.find( doc => doc[ "@id" ] === id );
 
-					if( ! rdfDocument ) throw new BadResponseError( `No document "${id}" was returned.`, response );
+					if( ! rdfDocument ) throw new BadResponseError( `No document "${ id }" was returned.`, response );
 					const document:T & Document = this.context.registry.register( id ) as T & Document;
 
 					const previousFragments:Set<string> = new Set();

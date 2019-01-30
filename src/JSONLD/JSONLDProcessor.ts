@@ -163,7 +163,7 @@ export class JSONLDProcessor {
 			let promise:Promise<[ any, Response ]> = RequestService
 				.get( url, requestOptions, new JSONParser() )
 				.catch( ( response:Response ) =>
-					Promise.reject( new InvalidJSONLDSyntaxError( `Unable to resolve context from "${url}". Status code: ${response.status}` ) )
+					Promise.reject( new InvalidJSONLDSyntaxError( `Unable to resolve context from "${ url }". Status code: ${ response.status }` ) )
 				);
 			promises.push( resolved( url, promise ) );
 		}

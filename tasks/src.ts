@@ -48,7 +48,7 @@ export const cleanSRC:gulp.TaskFunction = ( done ) => {
 			.then( ( _allContentsWereErased ) => {
 				allContentsWereErased = _allContentsWereErased;
 				if( allContentsWereErased ) {
-					console.log( `All files of directory '${directory}' were removed. Deleting it...` );
+					console.log( `All files of directory '${ directory }' were removed. Deleting it...` );
 					return promisify( fs.rmdir )( directory );
 				}
 			} )
@@ -79,7 +79,7 @@ export const cleanSRC:gulp.TaskFunction = ( done ) => {
 			.then( ( _hasSrcFile ) => {
 				hasSrcFile = _hasSrcFile;
 				if( ! hasSrcFile ) {
-					console.log( `File '${file}' doesn't have a src file. Deleting it...` );
+					console.log( `File '${ file }' doesn't have a src file. Deleting it...` );
 					return promisify( fs.unlink )( file );
 				}
 			} )
