@@ -5,25 +5,13 @@ import { WebSocket } from "mock-socket";
 class MockSTOMPSockJS extends WebSocket {
 
 	constructor( url:string ) {
-		super( url, "v12.stomp" );
+		url = url.startsWith( "https" )
+			? `wss${ url.substr( 5 ) }`
+			: url.startsWith( "http" )
+				? `ws${ url.substr( 4 ) }`
+				: url;
 
-		// TODO: thoov/mock-socket#143
-		for( const eventName of [ "open", "message", "close", "error" ] ) {
-			Object.defineProperty( this, `on${eventName}`, {
-				configurable: true,
-				enumerable: true,
-				get():any {
-					return this.listeners[ eventName ][ 0 ];
-				},
-				set( listener:any ):void {
-					if( listener === null ) {
-						this.listeners[ eventName ].length = 0;
-					} else {
-						this.listeners[ eventName ] = [ listener ];
-					}
-				},
-			} );
-		}
+		super( url, "v12.stomp" );
 	}
 
 }
