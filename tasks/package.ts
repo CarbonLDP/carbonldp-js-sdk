@@ -30,10 +30,10 @@ export const copyPackage:gulp.TaskFunction = () => {
 			private: void 0,
 			scripts: void 0,
 			devDependencies: void 0,
-			main: path.join( mainDir, "CarbonLDP.js" ),
-			module: path.join( moduleDir, "CarbonLDP.js" ),
-			es2015: path.join( es2015Dir, "CarbonLDP.js" ),
-			typings: path.join( typesDir, "CarbonLDP.d.ts" ),
+			main: path.join( mainDir, "index.js" ),
+			module: path.join( moduleDir, "index.js" ),
+			es2015: path.join( es2015Dir, "index.js" ),
+			typings: path.join( typesDir, "index.d.ts" ),
 		}, {
 			keep_array_indentation: true,
 			end_with_newline: true,
@@ -44,6 +44,8 @@ copyPackage.displayName = "copy:package";
 
 
 export const makeDirPackages:gulp.TaskFunction = async () => {
+	const mainPackage:any = JSON.parse( fs.readFileSync( "package.json", "utf8" ) );
+
 	const directories:string[] = glob
 		.sync( `${SRC}/*/**/index.ts` )
 		.map( file => file.replace( "/index.ts", "" ) )
@@ -66,6 +68,7 @@ export const makeDirPackages:gulp.TaskFunction = async () => {
 			module: path.join( path.relative( distEntry, moduleDir ), "index.js" ),
 			es2015: path.join( path.relative( distEntry, es2015Dir ), "index.js" ),
 			typings: path.join( path.relative( distEntry, typesDir ), "index.d.ts" ),
+			browser: mainPackage.browser,
 		};
 
 		const bodyStr:string = JSON.stringify( body, null, 2 );

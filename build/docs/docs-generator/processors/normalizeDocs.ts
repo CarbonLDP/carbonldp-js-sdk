@@ -60,7 +60,7 @@ export class NormalizeDocs implements Processor {
 			if( ! (doc instanceof ModuleDoc) ) return;
 
 			// Root elements are not reexported, but mark them for future used
-			if( ! doc.id.includes( "/" ) ) {
+			if( ! doc.id.includes( "/" ) && doc.fileInfo.baseName === "index" ) {
 				(doc as ExtendedModuleDoc).reexported = true;
 			}
 
@@ -103,6 +103,10 @@ export class NormalizeDocs implements Processor {
 		// Normalize IDs
 		docs.forEach( doc => {
 			if( doc.docType === "module" ) return;
+
+			if( doc.id.includes( "index/" ) )
+				doc.id = doc.id.replace( "index/", "" );
+
 			if( ! (doc instanceof BaseApiDoc) ) return;
 
 			const indexOfSameName:number = doc.moduleDoc.exports

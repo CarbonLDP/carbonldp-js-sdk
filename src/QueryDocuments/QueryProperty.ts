@@ -224,6 +224,11 @@ export class QueryProperty implements QueryablePropertyData {
 			;
 	}
 
+	_isEmpty():boolean {
+		return this.propertyType === undefined
+			|| this.propertyType === QueryPropertyType.EMPTY;
+	}
+
 
 	// Helpers for property specialization
 
@@ -368,12 +373,13 @@ export class QueryProperty implements QueryablePropertyData {
 				break;
 
 			case QueryPropertyType.ALL:
-				patterns.push( this._getContextGraph()
-					.addPattern( this.__createAllPattern() ) );
+				patterns.push( this._getContextGraph().addPattern( this.__createAllPattern() ) );
+				patterns.push( ...this.__createSubPropertiesPatterns() );
 				break;
 
 			case QueryPropertyType.FULL:
 				patterns.push( this.__createGraphPattern() );
+				patterns.push( ...this.__createSubPropertiesPatterns() );
 				break;
 
 			default:
@@ -419,9 +425,14 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	protected __createPartialSearchPatterns():PatternToken[] {
-		const patterns:PatternToken[] = [
+		return [
 			this.__createTypesSearchPatterns(),
+			...this.__createSubPropertiesPatterns(),
 		];
+	}
+
+	protected __createSubPropertiesPatterns():PatternToken[] {
+		const patterns:PatternToken[] = [];
 
 		this.subProperties.forEach( subProperty => {
 			patterns.push( ...subProperty.getSearchPatterns() );
