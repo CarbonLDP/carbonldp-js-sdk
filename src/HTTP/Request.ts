@@ -148,7 +148,14 @@ function __sendWithNode( method:string, url:string, body:string | Buffer, option
 				let response:Response = new Response( request, error.message );
 				__onResolve( resolve, reject, response );
 			} );
-			request.end( body );
+
+			if( body ) {
+				// Force to send body in `DELETE` (`RemoveMemberAction`)
+				if( method === "DELETE" ) request.useChunkedEncodingByDefault = true;
+				request.write( body );
+			}
+
+			request.end();
 		}
 
 		sendRequestWithRedirect( url );
@@ -507,7 +514,7 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:RequestOptions ):RequestOptions {
-		const headerValue:string = `${interactionModelURI}; rel=interaction-model`;
+		const headerValue:string = `${ interactionModelURI }; rel=interaction-model`;
 		RequestUtils.__addHeaderValue( "prefer", headerValue, requestOptions );
 
 		return requestOptions;
@@ -519,7 +526,7 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setPreferredRetrieval( retrievalType:"representation" | "minimal", requestOptions:RequestOptions ):RequestOptions {
-		const headerValue:string = `return=${retrievalType}`;
+		const headerValue:string = `return=${ retrievalType }`;
 		RequestUtils.__addHeaderValue( "prefer", headerValue, requestOptions );
 
 		return requestOptions;
@@ -539,7 +546,7 @@ export class RequestUtils {
 			if( preferences[ key ].length <= 0 ) continue;
 
 			const strPreferences:string = preferences[ key ].join( " " );
-			prefer.values.push( `${key}="${strPreferences}"` );
+			prefer.values.push( `${ key }="${ strPreferences }"` );
 		}
 
 		return requestOptions;
