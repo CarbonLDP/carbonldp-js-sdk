@@ -15,14 +15,12 @@
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "browser": {
-    "file-type": false,
     "url": false,
     "http": false,
     "https": false
   },
   "dependencies": {
     "@types/node": ">=6",
-    "file-type": "^6.1.0",
     "sockjs-client": "^1.1.0",
     "sparqler": "~0.6.0",
     "tslib": "^1.9.3",
