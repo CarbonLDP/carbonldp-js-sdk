@@ -38,9 +38,24 @@ module.exports = function( config ) {
 			compilerOptions: {
 				sourceMap: true,
 			},
+			coverageOptions: {
+				exclude: /(\.spec\.ts$)|(^test[\/\\].*)/,
+				threshold: {
+					global: {
+						statements: 90,
+						branches: 90,
+						functions: 90,
+						lines: 90,
+					},
+				},
+			},
+			reports: {
+				"html": "coverage",
+				"text-summary": ""
+			},
 		},
 
-		reporters: [ "mocha" ],
+		reporters: [ "mocha", "karma-typescript" ],
 
 		// reporter options
 		mochaReporter: {
