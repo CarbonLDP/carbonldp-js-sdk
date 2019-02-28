@@ -1,6 +1,5 @@
 // Karma configuration
 // Generated on Wed Nov 12 2014 12:33:32 GMT-0600 (CST)
-const webpackConfig = require( "./webpack.test.js" );
 
 module.exports = function( config ) {
 	const configuration = {
@@ -8,25 +7,37 @@ module.exports = function( config ) {
 		basePath: "",
 
 		// frameworks to use
-		frameworks: [ "jasmine-ajax", "jasmine" ],
+		frameworks: [ "jasmine-ajax", "jasmine", "karma-typescript", "source-map-support" ],
 
 		// list of files / patterns to load in the browser
 		files: [
-			"test/tests_index.js",
+			"src/**/*.ts",
+			"test/helpers/**/*.ts",
 		],
-
-		mime: {
-			"text/x-typescript": [ "ts" ]
-		},
-
-		webpack: webpackConfig( { env: "test" } ),
-		webpackMiddleware: {
-			stats: "errors-only"
-		},
 
 		// pre-process matching files before serving them to the browser
 		preprocessors: {
-			"test/tests_index.js": [ "webpack", "sourcemap" ],
+			"**/*.ts": [ "karma-typescript" ],
+		},
+
+		karmaTypescriptConfig: {
+			tsconfig: "./tsconfig.json",
+			bundlerOptions: {
+				resolve: {
+					alias: {
+						"sockjs-client": "test/mock-sockjs.js",
+					},
+				},
+				entrypoints: /\.spec\.ts$/,
+				constants: {
+					"process.env": {
+						"NODE_ENV": "test",
+					},
+				},
+			},
+			compilerOptions: {
+				sourceMap: true,
+			},
 		},
 
 		reporters: [ "mocha" ],
