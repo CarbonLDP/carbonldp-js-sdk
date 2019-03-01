@@ -33,8 +33,6 @@
     "@types/jasmine-ajax": "^3.1.36",
     "@types/nock": "^8.2.1",
     "@types/sockjs-client": "^1.1.0",
-    "@types/webpack": "^3.8.8",
-    "awesome-typescript-loader": "^3.0.4-rc.0",
     "del": "^3.0.0",
     "dgeni": "^0.4.11",
     "docs-generator": "file:build/docs/docs-generator",
@@ -70,9 +68,7 @@
     "source-map-support": "^0.5.0",
     "ts-node": "^7.0.1",
     "tslint": "^5.7.0",
-    "typescript": "^3.2.2",
-    "webpack": "^3.6.0",
-    "webpack-merge": "^4.1.0"
+    "typescript": "^3.2.2"
   },
   "scripts": {
     "preinstall": "rm -f ./node_modules/docs-generator",
