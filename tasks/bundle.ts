@@ -1,16 +1,22 @@
 import gulp from "gulp";
 import path from "path";
-import { rollup, Plugin } from "rollup";
-import typescript from "rollup-plugin-typescript2";
-import resolve from "rollup-plugin-node-resolve";
+import { Plugin, rollup } from "rollup";
+import alias from "rollup-plugin-alias";
 import commonjs from "rollup-plugin-commonjs";
+import resolve from "rollup-plugin-node-resolve";
 import replace from "rollup-plugin-replace";
+import typescript from "rollup-plugin-typescript2";
 import { uglify } from "rollup-plugin-uglify";
 import config from "./config";
 
 const SRC_DIR:string = path.resolve( __dirname, "../build" );
 
 const DEFAULT_PLUGINS:Plugin[] = [
+	alias( {
+		"url": path.resolve( "./build/empty.js" ),
+		"http": path.resolve( "./build/empty.js" ),
+		"https": path.resolve( "./build/empty.js" ),
+	} ),
 	resolve( {
 		main: true,
 		module: true,
@@ -19,6 +25,9 @@ const DEFAULT_PLUGINS:Plugin[] = [
 	commonjs( {
 		ignoreGlobal: true,
 		sourceMap: false,
+		namedExports: {
+			"webstomp-client": [ "over" ],
+		},
 	} ),
 	typescript( {
 		tsconfig: "tsconfig.json",
