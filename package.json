@@ -14,6 +14,9 @@
   },
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
+  "cdn": "./dist/bundles/CarbonLDP.sfx.min.js",
+  "unpkg": "./dist/bundles/CarbonLDP.sfx.min.js",
+  "jsdelivr": "./dist/bundles/CarbonLDP.sfx.min.js",
   "browser": {
     "url": false,
     "http": false,
