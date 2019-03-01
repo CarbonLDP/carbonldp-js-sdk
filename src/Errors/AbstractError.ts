@@ -8,7 +8,8 @@ export abstract class AbstractError extends Error {
 		super( message );
 		Object.setPrototypeOf( this, new.target.prototype );
 
-		if( "captureStackTrace" in Error ) Error.captureStackTrace( this, this.constructor );
+		// Deletes self construct from the stack
+		"captureStackTrace" in Error && Error.captureStackTrace( this, this.constructor );
 	}
 
 }

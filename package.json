@@ -52,7 +52,6 @@
     "jsonld": "^0.4.11",
     "karma": "^4.0.0",
     "karma-chrome-launcher": "^2.2.0",
-    "karma-coverage": "^1.1.2",
     "karma-firefox-launcher": "^1.0.0",
     "karma-jasmine": "^2.0.1",
     "karma-jasmine-ajax": "^0.1.13",

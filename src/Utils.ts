@@ -173,21 +173,6 @@ export function parseBoolean( value:string ):boolean {
 	/* tslint:enable: no-switch-case-fall-through */
 }
 
-/**
- * Executes an action for each own property of the object.
- * @param object The object to iterate over its properties.
- * @param action A function that will be called for every property own property in the object.
- * The loop will break if the action function returns `false`.
- */
-export function forEachOwnProperty( object:Object, action:( name:string, value:any ) => (boolean | void) ):void {
-	if( ! (isObject( object ) || isFunction( object )) ) throw new Error( "IllegalArgument" );
-	for( let name in object ) {
-		if( object.hasOwnProperty( name ) ) {
-			if( action( name, object[ name ] ) === false ) break;
-		}
-	}
-}
-
 export function promiseMethod<T>( fn?:() => T | Promise<T> ):Promise<T> {
 	return new Promise<T>( resolve => resolve( fn ? fn() : void 0 ) );
 }
@@ -224,22 +209,6 @@ export class ArrayUtils {
 		}
 
 		return result;
-	}
-
-	/**
-	 * Returns the index of a element searched in an array with a custom comparator function.
-	 * If the element was not found `-1` is returned.
-	 * @param array The array were to search the element.
-	 * @param searchedElement The element searched
-	 * @param comparator The function that must compare if the two elements provided are de same.
-	 */
-	static indexOf<T, W>( array:Array<T>, searchedElement:W, comparator:( element:T, searchedElement:W ) => boolean = ( a:T, b:W ) => <any>a === <any>b ):number {
-		if( ! array ) return - 1;
-
-		for( let i:number = 0, length:number = array.length; i < length; ++ i ) {
-			if( comparator( array[ i ], searchedElement ) ) return i;
-		}
-		return - 1;
 	}
 }
 
@@ -348,9 +317,10 @@ function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:bool
 
 	let keys:string[] = ArrayUtils.joinWithoutDuplicates( Object.keys( object1 ), Object.keys( object2 ) );
 	for( let key of keys ) {
-		if( ! (key in object1) || ! (key in object2) ) return false;
-		if( typeof object1 !== typeof object2 ) return false;
 		if( key in ignore ) continue;
+
+		if( ! (key in object1) || ! (key in object2) ) return false;
+		if( typeof object1[ key ] !== typeof object2[ key ] ) return false;
 
 		if( isFunction( object1[ key ] ) ) continue;
 
@@ -425,9 +395,9 @@ export class MapUtils {
 	 */
 	static from<V>( object:Object ):Map<string, V> {
 		let map:Map<string, V> = new Map<string, V>();
-		forEachOwnProperty( object, ( name:string, value:any ) => {
-			map.set( name, value );
-		} );
+		for( const name of Object.keys( object ) ) {
+			map.set( name, object[ name ] );
+		}
 		return map;
 	}
 

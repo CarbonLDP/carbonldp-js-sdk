@@ -16,7 +16,7 @@ import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 import { RDFValue } from "../RDF/Value";
 
-import { _isExistingValue, forEachOwnProperty, isFunction, isNull, isObject, isString, MapUtils } from "../Utils";
+import { _isExistingValue, isFunction, isNull, isObject, isString, MapUtils } from "../Utils";
 
 import { XSD } from "../Vocabularies/XSD";
 
@@ -188,18 +188,18 @@ export class JSONLDConverter {
 					.map( type => generalSchema.resolveURI( type, { vocab: true, base: true } ) );
 		}
 
-		forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
-			if( propertyName === "$id" ) return;
-			if( propertyName === "types" ) return;
+		for( const propertyName of Object.keys( compactedObject ) ) {
+			if( propertyName === "$id" ) continue;
+			if( propertyName === "types" ) continue;
 
 			const expandedPropertyName:string = digestedSchema.resolveURI( propertyName, { vocab: true } );
-			if( URI.isRelative( expandedPropertyName ) ) return;
+			if( URI.isRelative( expandedPropertyName ) ) continue;
 
-			const expandedValue:any[] | null = this.__expandProperty( propertyName, value, digestedSchema, generalSchema );
-			if( expandedValue === null ) return;
+			const expandedValue:any[] | null = this.__expandProperty( propertyName, compactedObject[ propertyName ], digestedSchema, generalSchema );
+			if( expandedValue === null ) continue;
 
 			expandedObject[ expandedPropertyName ] = expandedValue;
-		} );
+		}
 
 		return expandedObject;
 	}
@@ -255,12 +255,12 @@ export class JSONLDConverter {
 		}
 
 		let mapValues:Array<any> = [];
-		forEachOwnProperty( propertyValue, ( languageTag:string, value:any ):void => {
+		for( const languageTag of Object.keys( propertyValue ) ) {
 			// TODO: Validate language tags
 
-			let serializedValue:string = this.literalSerializers.get( XSD.string )!.serialize( value );
+			let serializedValue:string = this.literalSerializers.get( XSD.string )!.serialize( propertyValue[ languageTag ] );
 			mapValues.push( { "@value": serializedValue, "@type": XSD.string, "@language": languageTag } );
-		} );
+		}
 
 		return mapValues;
 	}
@@ -310,12 +310,14 @@ export class JSONLDConverter {
 		targetObject[ "types" ] = ! ! expandedObject[ "@type" ] ? expandedObject[ "@type" ] : [];
 
 		const propertyURINameMap:Map<string, string> = this.__getPropertyURINameMap( digestedSchema );
-		forEachOwnProperty( expandedObject, ( propertyURI:string, propertyValues:any[] ):void => {
-			if( propertyURI === "@id" ) return;
-			if( propertyURI === "@type" ) return;
-			if( ! _isExistingValue( propertyValues ) ) return;
+		for( const propertyURI of Object.keys( expandedObject ) ) {
+			if( propertyURI === "@id" ) continue;
+			if( propertyURI === "@type" ) continue;
 
-			if( ! propertyURINameMap.has( propertyURI ) && strict ) return;
+			const propertyValues:any[] = expandedObject[ propertyURI ];
+			if( ! _isExistingValue( propertyValues ) ) continue;
+
+			if( ! propertyURINameMap.has( propertyURI ) && strict ) continue;
 
 			const propertyName:string = propertyURINameMap.has( propertyURI ) ?
 				propertyURINameMap.get( propertyURI )! :
@@ -325,10 +327,10 @@ export class JSONLDConverter {
 			;
 
 			const targetValue:any = this.__getPropertyValue( propertyName, propertyValues, digestedSchema, pointerLibrary );
-			if( targetValue === null || targetValue === void 0 ) return;
+			if( targetValue === null || targetValue === void 0 ) continue;
 
 			targetObject[ propertyName ] = targetValue;
-		} );
+		}
 
 		return targetObject;
 	}

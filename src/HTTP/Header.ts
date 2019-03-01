@@ -1,3 +1,5 @@
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
 /**
  * Class to manage the values in an HTTP header.
  */
@@ -18,7 +20,7 @@ export class Header {
 			if( ! strHeader.trim() ) return;
 
 			const parts:string[] = strHeader.split( ":" );
-			if( parts.length < 2 ) throw new Error( "ParseError: The header couldn't be parsed." );
+			if( parts.length < 2 ) throw new IllegalArgumentError( "The header couldn't be parsed." );
 
 			const name:string = parts[ 0 ].trim().toLowerCase();
 			const values:string[] = Header.__parseValues( parts.slice( 1 ).join( ":" ) );

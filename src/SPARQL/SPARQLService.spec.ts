@@ -1,3 +1,4 @@
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { NotImplementedError } from "../Errors/NotImplementedError";
 
 import { Header } from "../HTTP/Header";
@@ -5,6 +6,8 @@ import { Response } from "../HTTP/Response";
 
 import { Pointer } from "../Pointer/Pointer";
 import { PointerLibrary } from "../Pointer/PointerLibrary";
+
+import { XSD } from "../Vocabularies/XSD";
 
 import { SPARQLService } from "./SPARQLService";
 
@@ -1553,7 +1556,8 @@ describe( "SPARQLService", () => {
 									},
 									"title": {
 										"type": "literal",
-										"value": "Harry Potter and the Philosopher's Stone"
+										"value": "Harry Potter and the Philosopher's Stone",
+										"datatype": "${ XSD.string }"
 									}
 								}
 							]
@@ -1642,6 +1646,44 @@ describe( "SPARQLService", () => {
 				.catch( error => {
 					expect( error ).toEqual( jasmine.any( NotImplementedError ) );
 					expect( error.message ).toEqual( "BNodes cannot be queried directly" );
+				} );
+		} );
+
+		it( "should throw error when invalid binding type", async () => {
+			jasmine.Ajax
+				.stubRequest( "http://example.com/sparql-endpoint/", undefined, "POST" )
+				.andReturn( {
+					status: 200,
+					responseText: `{
+						"head": {
+							"vars": [
+								"bnodeBinding"
+							]
+						},
+						"results": {
+							"bindings": [
+								{
+									"bnodeBinding": {
+										"type": "invalid",
+										"value": "r1"
+									}
+								}
+							]
+						}
+					}`,
+				} );
+
+
+			await SPARQLService
+				.executeSELECTQuery(
+					"http://example.com/sparql-endpoint/",
+					"SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }",
+					new MockPointerLibrary()
+				)
+				.then( () => fail( "Should not be resolved." ) )
+				.catch( error => {
+					expect( error ).toEqual( jasmine.any( IllegalArgumentError ) );
+					expect( error.message ).toEqual( "The bindingProperty has an unsupported type" );
 				} );
 		} );
 

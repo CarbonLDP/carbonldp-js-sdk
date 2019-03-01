@@ -139,6 +139,15 @@ describe( "DirectContainer", () => {
 				expect( TransientDirectContainer.is( directContainer ) ).toBe( true );
 			} );
 
+			it( "should return a TransientDirectContainer from TransientDocument", () => {
+				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( TransientDocument.createFrom( {
+					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
+					hasMemberRelation: "http://example.com/myNamespace#some-relation",
+				} ) );
+
+				expect( TransientDirectContainer.is( directContainer ) ).toBe( true );
+			} );
+
 			it( "should return maintain hasMemberRelation", () => {
 				const directContainer:TransientDirectContainer = TransientDirectContainer.createFrom( {
 					membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
@@ -174,6 +183,14 @@ describe( "DirectContainer", () => {
 				} );
 
 				expect( () => TransientDirectContainer.createFrom( directContainer ) ).toThrowError( IllegalArgumentError, "The base object is already a DirectContainer." );
+			} );
+
+			it( "should throw error invalid `hasMemberRelation`", () => {
+				expect( () =>
+					TransientDirectContainer.createFrom( {
+						membershipResource: Pointer.create( { $id: "http://example.com/theResource/" } ),
+					} as any )
+				).toThrowError( IllegalArgumentError, "The property hasMemberRelation is required." );
 			} );
 
 		} );

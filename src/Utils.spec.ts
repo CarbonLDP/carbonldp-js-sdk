@@ -1,6 +1,5 @@
 import {
 	ArrayUtils,
-	forEachOwnProperty,
 	hasFunction,
 	hasProperty,
 	hasPropertyDefined,
@@ -659,30 +658,8 @@ describe( "parseBoolean", ():void => {
 		expect( parseBoolean( "An invalid string" ) ).toBe( false );
 	} );
 
-} );
-
-describe( "forEachOwnProperty", ():void => {
-
-	it( "should exist", () => {
-		expect( forEachOwnProperty ).toBeDefined();
-		expect( forEachOwnProperty ).toEqual( jasmine.any( Function ) );
-	} );
-
-
-	it( "should call function for each property", () => {
-		const spy:jasmine.Spy = jasmine.createSpy();
-
-		const object:object = {
-			one: "value 1",
-			two: "value 2",
-			three: "value 3",
-		};
-
-		forEachOwnProperty( object, spy );
-
-		expect( spy ).toHaveBeenCalledWith( "one", "value 1" );
-		expect( spy ).toHaveBeenCalledWith( "two", "value 2" );
-		expect( spy ).toHaveBeenCalledWith( "three", "value 3" );
+	it( "should return false when not a string", () => {
+		expect( parseBoolean( {} as any ) ).toBe( false );
 	} );
 
 } );
@@ -786,11 +763,16 @@ describe( "ObjectUtils", ():void => {
 		} );
 
 
-		it( "should return not return source", () => {
+		it( "should not return source", () => {
 			const source:object = {};
 			const extended:object = ObjectUtils.clone( source )!;
 
 			expect( extended ).not.toBe( source );
+		} );
+
+		it( "should return undefined if not plain object", () => {
+			const extended:unknown = ObjectUtils.clone( new Map() );
+			expect( extended ).toBeUndefined();
 		} );
 
 		it( "should copy source properties", () => {
@@ -849,6 +831,57 @@ describe( "ObjectUtils", ():void => {
 		it( "should exist", () => {
 			expect( ObjectUtils.areEqual ).toBeDefined();
 			expect( ObjectUtils.areEqual ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should return true when both same", () => {
+			const object:{} = {};
+			const result:boolean = ObjectUtils.areEqual( object, object );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return false when first not object", () => {
+			const result:boolean = ObjectUtils.areEqual( "string", {} );
+			expect( result ).toBe( false );
+		} );
+
+		it( "should return false when second not object", () => {
+			const result:boolean = ObjectUtils.areEqual( {}, "string" );
+			expect( result ).toBe( false );
+		} );
+
+		it( "should return false when none is object", () => {
+			const result:boolean = ObjectUtils.areEqual( "string 1", "string 2" );
+			expect( result ).toBe( false );
+		} );
+
+		it( "should return true when same dates from different objects", () => {
+			const result:boolean = ObjectUtils.areEqual( new Date( "2000/01/01" ), new Date( "2000/01/01" ) );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should ignore functions", () => {
+			const result:boolean = ObjectUtils.areEqual( {
+				functionName():void {},
+			}, {
+				functionName():void {},
+			} );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should ignore provided key", () => {
+			const result:boolean = ObjectUtils.areEqual( {
+				functionName():void {},
+				another: "value",
+			}, {
+				functionName():void {},
+			}, {
+				arrays: undefined,
+				objects: undefined,
+			}, {
+				another: true,
+			} );
+			expect( result ).toBe( true );
 		} );
 
 
@@ -931,6 +964,27 @@ describe( "ObjectUtils", ():void => {
 			expect( ObjectUtils.areShallowlyEqual ).toEqual( jasmine.any( Function ) );
 		} );
 
+
+		it( "should return true when both same", () => {
+			const object:{} = {};
+			const result:boolean = ObjectUtils.areShallowlyEqual( object, object );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return false when first not object", () => {
+			const result:boolean = ObjectUtils.areShallowlyEqual( "string", {} );
+			expect( result ).toBe( false );
+		} );
+
+		it( "should return false when second not object", () => {
+			const result:boolean = ObjectUtils.areShallowlyEqual( {}, "string" );
+			expect( result ).toBe( false );
+		} );
+
+		it( "should return false when none is object", () => {
+			const result:boolean = ObjectUtils.areShallowlyEqual( "string 1", "string 2" );
+			expect( result ).toBe( false );
+		} );
 
 		it( "should return true when both empty", () => {
 			expect( ObjectUtils.areShallowlyEqual( {}, {} ) ).toBe( true );
@@ -1211,82 +1265,6 @@ describe( "ArrayUtils", ():void => {
 
 	} );
 
-	describe( "ArrayUtils.indexOf", ():void => {
-
-		it( "should exist", () => {
-			expect( ArrayUtils.indexOf ).toBeDefined();
-			expect( ArrayUtils.indexOf ).toEqual( jasmine.any( Function ) );
-		} );
-
-
-		it( "should return index of last element with default comparator", () => {
-			const result:number = ArrayUtils.indexOf<number, number>( [ 5, 3, 1 ], 1 );
-			expect( result ).toBe( 2 );
-		} );
-
-		it( "should return index of first element with default comparator", () => {
-			const result:number = ArrayUtils.indexOf<number, number>( [ 5, 3, 1 ], 5 );
-			expect( result ).toBe( 0 );
-		} );
-
-		it( "should return -1 of non element with default comparator", () => {
-			const result:number = ArrayUtils.indexOf<number, number>( [ 5, 3, 1 ], 4 );
-			expect( result ).toBe( - 1 );
-		} );
-
-		it( "should return -1 of element in string format with default comparator", () => {
-			const result:number = ArrayUtils.indexOf<number, string>( [ 5, 3, 1 ], "5" );
-			expect( result ).toBe( - 1 );
-		} );
-
-
-		it( "should return index of last element with custom comparator", () => {
-			function comparator( a:number, b:{ value:number } ):boolean {
-				return a === b.value;
-			}
-
-			const result:number = ArrayUtils
-				.indexOf<number, { value:number }>(
-					[ 5, 3, 1 ],
-					{ value: 1 },
-					comparator
-				);
-
-			expect( result ).toBe( 2 );
-		} );
-
-		it( "should return index of first element with custom comparator", () => {
-			function comparator( a:number, b:{ value:number } ):boolean {
-				return a === b.value;
-			}
-
-			const result:number = ArrayUtils
-				.indexOf<number, { value:number }>(
-					[ 5, 3, 1 ],
-					{ value: 5 },
-					comparator
-				);
-
-			expect( result ).toBe( 0 );
-		} );
-
-		it( "should return -1 of non element with default comparator", () => {
-			function comparator( a:number, b:{ value:number } ):boolean {
-				return a === b.value;
-			}
-
-			const result:number = ArrayUtils
-				.indexOf<number, { value:number }>(
-					[ 5, 3, 1 ],
-					{ value: 4 },
-					comparator
-				);
-
-			expect( result ).toBe( - 1 );
-		} );
-
-	} );
-
 } );
 
 describe( "MapUtils", ():void => {
@@ -1355,6 +1333,15 @@ describe( "MapUtils", ():void => {
 			const result:Map<string, number> = MapUtils.extend<string, number>(
 				new Map(),
 				new Map()
+			);
+
+			expect( result ).toEqual( new Map() );
+		} );
+
+		it( "should return empty when undefined source", () => {
+			const result:Map<string, number> = MapUtils.extend<string, number>(
+				new Map(),
+				undefined as any
 			);
 
 			expect( result ).toEqual( new Map() );
