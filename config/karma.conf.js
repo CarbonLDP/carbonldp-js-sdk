@@ -50,6 +50,10 @@ module.exports = function( config ) {
 				},
 			},
 			reports: {
+				"lcovonly": {
+					"directory": "coverage",
+					"filename": "lcov.info"
+				},
 				"html": "coverage",
 				"text-summary": ""
 			},
@@ -84,8 +88,6 @@ module.exports = function( config ) {
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: true
 	};
-
-	if( process.env.TRAVIS ) configuration.browsers = [ "ChromeHeadless" ];
 
 	config.set( configuration );
 };
