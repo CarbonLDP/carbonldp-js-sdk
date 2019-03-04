@@ -5,7 +5,9 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased] 
 
-<!-- ### Added -->
+### Added
+
+- Improve bundle size using rollup
 
 ### Fixed
 
