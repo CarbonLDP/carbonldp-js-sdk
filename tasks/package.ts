@@ -24,6 +24,7 @@ export const copyPackage:gulp.TaskFunction = () => {
 	const moduleDir:string = path.relative( DIST, CONFIG.dist.esm5 );
 	const es2015Dir:string = path.relative( DIST, CONFIG.dist.esm2015 );
 	const typesDir:string = path.relative( DIST, CONFIG.dist.types );
+	const bundleDir:string = path.relative( DIST, CONFIG.dist.bundle );
 
 	return gulp.src( "package.json" )
 		.pipe( jsonEditor( {
@@ -34,6 +35,9 @@ export const copyPackage:gulp.TaskFunction = () => {
 			module: path.join( moduleDir, "index.js" ),
 			es2015: path.join( es2015Dir, "index.js" ),
 			typings: path.join( typesDir, "index.d.ts" ),
+			cdn: path.join( bundleDir, "CarbonLDP.sfx.min.js" ),
+			unpkg: path.join( bundleDir, "CarbonLDP.sfx.min.js" ),
+			jsdelivr: path.join( bundleDir, "CarbonLDP.sfx.min.js" ),
 		}, {
 			keep_array_indentation: true,
 			end_with_newline: true,

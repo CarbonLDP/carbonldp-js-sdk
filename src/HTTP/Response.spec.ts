@@ -1,4 +1,5 @@
 import { ClientRequest, IncomingMessage } from "http";
+import { BadResponseError } from "./Errors/ServerErrors/BadResponseError";
 
 import { Header } from "./Header";
 import { Response } from "./Response";
@@ -148,6 +149,13 @@ describe( "Response", () => {
 
 			const eTag:string = response.getETag();
 			expect( eTag ).toBe( "W/\"123456789\"" );
+		} );
+
+		it( "should throw error when no eTag", async () => {
+			const [ response ] = await createResponse();
+			response.headers.delete( "etag" );
+
+			expect( () => response.getETag() ).toThrowError( BadResponseError, "The response doesn't contain an ETag" );
 		} );
 
 	} );

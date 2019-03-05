@@ -54,6 +54,8 @@ jobs:
         name: Run tests
         command: npm test
 
+    - run: npx codecov
+
   deploy:
     <<: *defaults
 

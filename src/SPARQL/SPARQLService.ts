@@ -83,8 +83,6 @@ export class SPARQLService {
 				for( let bindingColumn of rawBindings ) {
 					let binding:T = {} as T;
 					for( let bindingRow in bindingColumn ) {
-						if( ! bindingColumn.hasOwnProperty( bindingRow ) ) continue;
-
 						let bindingCell:SPARQLRawBindingProperty = bindingColumn[ bindingRow ];
 						binding[ bindingRow ] = SPARQLService.__parseRawBindingProperty( bindingCell, pointerLibrary );
 					}
@@ -108,7 +106,7 @@ export class SPARQLService {
 	static executeRawCONSTRUCTQuery( url:string, constructQuery:string, options:RequestOptions = {} ):Promise<[ string, Response ]> {
 		options = Object.assign( options, SPARQLService.DEFAULT_OPTIONS );
 
-		if( RequestUtils.getHeader( "Accept", options ) === undefined ) RequestUtils.setAcceptHeader( "application/ld+json", options );
+		RequestUtils.setAcceptHeader( "application/ld+json", options );
 		RequestUtils.setContentTypeHeader( "application/sparql-query", options );
 
 		return RequestService.post( url, constructQuery, options, SPARQLService.STRING_PARSER );
@@ -123,7 +121,7 @@ export class SPARQLService {
 	static executeRawDESCRIBEQuery( url:string, describeQuery:string, options:RequestOptions = {} ):Promise<[ string, Response ]> {
 		options = Object.assign( options, SPARQLService.DEFAULT_OPTIONS );
 
-		if( RequestUtils.getHeader( "Accept", options ) === undefined ) RequestUtils.setAcceptHeader( "application/ld+json", options );
+		RequestUtils.setAcceptHeader( "application/ld+json", options );
 		RequestUtils.setContentTypeHeader( "application/sparql-query", options );
 
 		return RequestService.post( url, describeQuery, options, SPARQLService.STRING_PARSER );
@@ -138,7 +136,7 @@ export class SPARQLService {
 	static executeUPDATE( url:string, updateQuery:string, options:RequestOptions = {} ):Promise<Response> {
 		options = Object.assign( options, SPARQLService.DEFAULT_OPTIONS );
 
-		if( RequestUtils.getHeader( "Accept", options ) === undefined ) RequestUtils.setAcceptHeader( "application/ld+json", options );
+		RequestUtils.setAcceptHeader( "application/ld+json", options );
 		RequestUtils.setContentTypeHeader( "application/sparql-update", options );
 
 		return RequestService.post( url, updateQuery, options );

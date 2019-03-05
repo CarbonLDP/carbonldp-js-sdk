@@ -34,7 +34,7 @@ export const testNode:gulp.TaskFunction = () => {
 	process.env.NODE_ENV = "test";
 
 	moduleAlias.addAliases( {
-		"sockjs-client": path.resolve( process.cwd(), TEMP, "test/mock-sockjs" ),
+		"sockjs-client": path.resolve( "test/mock-sockjs.js" ),
 	} );
 
 	require( "source-map-support/register" );

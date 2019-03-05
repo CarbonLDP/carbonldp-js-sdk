@@ -1,2 +1,2 @@
 import { CarbonLDP } from "../src/CarbonLDP";
-export = CarbonLDP;
+export default CarbonLDP;

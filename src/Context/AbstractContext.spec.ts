@@ -276,6 +276,14 @@ describe( "AbstractContext", () => {
 		} );
 
 
+		it( "should throw error if not schema provided", () => {
+			const context:AbstractContext<any, any> = createMock();
+
+			expect( () =>
+				context.extendObjectSchema( "https://example.com/ns#Type" as any )
+			).toThrowError( IllegalArgumentError, "An object schema is required." );
+		} );
+
 		it( "should add when absolute type schema does not exists", () => {
 			const schemasMap:Map<string, DigestedObjectSchema> = new Map();
 			const context:AbstractContext<any, any> = createMock( { schemasMap } );

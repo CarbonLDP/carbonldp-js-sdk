@@ -1,5 +1,7 @@
 import { DocumentsContext } from "../../Context/DocumentsContext";
 
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+
 import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 
 import { Event } from "../../Messaging/Event";
@@ -64,6 +66,27 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 				done();
 			} );
 
+
+			it( "should call onError when invalid event", ( done:DoneFn ) => {
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
+
+				resource.on( "invalid.event", "child/!*", onEvent, ( error ) => {
+					expect( () => { throw error; } )
+						.toThrowError( IllegalArgumentError, `Provided event type "invalid.event" is invalid.` );
+
+					done();
+				} );
+			} );
+
+			it( "should throw error when invalid event", () => {
+				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
+				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
+
+				expect( () => resource.on( "invalid.event", "child/!*", onEvent ) )
+					.toThrowError( IllegalArgumentError, `Provided event type "invalid.event" is invalid.` );
+			} );
+
 		} );
 
 		describe( "EventEmitterDocumentsRepositoryTrait.off", () => {
@@ -100,6 +123,27 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 
 				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", onEvent );
 				done();
+			} );
+
+
+			it( "should call onError when invalid event", ( done:DoneFn ) => {
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
+
+				resource.off( "invalid.event", "child/!*", onEvent, ( error ) => {
+					expect( () => { throw error; } )
+						.toThrowError( IllegalArgumentError, `Provided event type "invalid.event" is invalid.` );
+
+					done();
+				} );
+			} );
+
+			it( "should throw error when invalid event", () => {
+				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
+				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
+
+				expect( () => resource.off( "invalid.event", "child/!*", onEvent ) )
+					.toThrowError( IllegalArgumentError, `Provided event type "invalid.event" is invalid.` );
 			} );
 
 		} );
@@ -203,6 +247,26 @@ describe( "EventEmitterDocumentsRepositoryTrait", () => {
 				done();
 			} );
 
+
+			it( "should call onError when invalid event", ( done:DoneFn ) => {
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
+
+				resource.one( "invalid.event", "child/!*", onEvent, ( error ) => {
+					expect( () => { throw error; } )
+						.toThrowError( IllegalArgumentError, `Provided event type "invalid.event" is invalid.` );
+
+					done();
+				} );
+			} );
+
+			it( "should throw error when invalid event", () => {
+				const onEvent:( data:any ) => void = () => fail( "Should not enter here." );
+				const resource:EventEmitterDocumentsRepositoryTrait = createMock();
+
+				expect( () => resource.one( "invalid.event", "child/!*", onEvent ) )
+					.toThrowError( IllegalArgumentError, `Provided event type "invalid.event" is invalid.` );
+			} );
 
 		} );
 

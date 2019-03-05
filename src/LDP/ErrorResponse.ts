@@ -77,26 +77,9 @@ export const ErrorResponse:ErrorResponseFactory = {
 
 
 	getMessage( errorResponse:ErrorResponse ):string {
-		const errors:Error[] = getErrors( errorResponse );
-
-		return errors
-			.map( getErrorMessage )
+		return errorResponse.errors
+			.map( error => error.errorMessage )
 			.join( ", " );
 	},
 
 };
-
-function getErrors( errorResponse:ErrorResponse ):Error[] {
-	if( errorResponse.errors && errorResponse.errors.length )
-		return errorResponse.errors;
-
-	if( ! errorResponse[ C.error ] ) return [];
-
-	if( Array.isArray( errorResponse[ C.error ] ) ) return errorResponse[ C.error ];
-	return [ errorResponse[ C.error ] ];
-}
-
-function getErrorMessage( error:Error ):string {
-	if( "errorMessage" in error ) return error.errorMessage;
-	return error[ C.errorMessage ];
-}

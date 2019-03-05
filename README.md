@@ -11,6 +11,7 @@
 [![npm version][npm-image]][npm-url]
 [![Downloads][npm-downloads]][npm-url]
 [![Join the chat at https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK][gitter-image]][gitter-url]
+[![codecov][codecov-image]][codecov-url]
 
 [![Build status][circleci-image]][circleci-url]
 
@@ -90,3 +91,5 @@ npm install carbonldp
 [gitter-url]: https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [circleci-image]: https://circleci.com/gh/CarbonLDP/carbonldp-js-sdk/tree/master.svg?style=svg
 [circleci-url]: https://circleci.com/gh/CarbonLDP/carbonldp-js-sdk/tree/master
+[codecov-image]: https://codecov.io/gh/CarbonLDP/carbonldp-js-sdk/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/CarbonLDP/carbonldp-js-sdk

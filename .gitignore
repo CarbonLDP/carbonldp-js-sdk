@@ -26,6 +26,12 @@ gulpfile.js.map
 build/docs/docs-generator/**/*.js
 build/docs/docs-generator/**/*.map
 
+# Rollup Typescript cache
+.rpt2_cache
+
+# Coverage files
+coverage/
+
 # JSPM
 **/jspm_packages/
 
