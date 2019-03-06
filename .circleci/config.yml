@@ -1,0 +1,139 @@
+workspace_root: &workspace_root /home/circleci
+workspace_path: &workspace_path workspace
+workspace: &workspace /home/circleci/workspace
+
+defaults: &defaults
+  working_directory: *workspace
+  docker:
+    - image: circleci/node:9
+
+version: 2
+jobs:
+  build:
+    <<: *defaults
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+          # Since we are using internal packages (docs-generator), using a fallback cache can sometimes break the build
+          # - v1-dependencies-
+
+      - run:
+          name: Install npm dependencies
+          command: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run:
+          name: Build package
+          command: npm start
+
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - *workspace_path
+
+  test:
+    working_directory: *workspace
+
+    docker:
+      - image: circleci/node:9-browsers
+
+    steps:
+      - attach_workspace:
+          at: *workspace_root
+
+      - run:
+          name: Run tests
+          command: npm test
+
+      - run: npx codecov
+
+  deploy_npm:
+    <<: *defaults
+
+    steps:
+      - attach_workspace:
+          at: *workspace_root
+
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > "${CIRCLE_WORKING_DIRECTORY}/dist/.npmrc"
+
+      - run:
+          name: Publish package
+          command: |
+            cd dist
+            npm publish
+
+      - run:
+          name: Pack package
+          command: |
+            cd dist
+            npm pack | { read package; mv "${package}" "carbonldp.tgz"; }
+
+      - store_artifacts:
+          path: dist/carbonldp.tgz
+
+  deploy_docs:
+    <<: *defaults
+
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "dd:1f:9e:a4:0e:15:42:f0:2f:78:6d:73:6d:ff:ca:2d"
+
+      - attach_workspace:
+          at: *workspace_root
+
+      - run:
+          name: Auth with github
+          command: |
+            mkdir -p ~/.ssh/
+            ssh-keyscan -Ht rsa github.com >> ~/.ssh/known_hosts
+
+      - run: .circleci/deploy-api-docs.sh
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - gh-pages
+      - test:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - gh-pages
+      - deploy_npm:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+\.[0-9]+\.[0-9]+(-.+)?/
+      - deploy_docs:
+          requires:
+            - deploy_npm
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+\.\d+\.\d+$/
