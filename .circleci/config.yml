@@ -110,7 +110,8 @@ workflows:
             tags:
               only: /.*/
             branches:
-              only: /.*/
+              ignore:
+                - gh-pages
       - test:
           requires:
             - build
@@ -118,7 +119,8 @@ workflows:
             tags:
               only: /.*/
             branches:
-              only: /.*/
+              ignore:
+                - gh-pages
       - deploy_npm:
           requires:
             - test
