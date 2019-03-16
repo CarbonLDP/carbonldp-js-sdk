@@ -1,6 +1,6 @@
 # Documentation for Contributors
 
-# Contents
+## Contents
 
 - [Intro](#intro)
 - [Prerequisites](prerequisites.md)
