@@ -102,6 +102,16 @@ Document/
 	└── Document [const]
 ```
 
+Since the models are representation of real data, its properties are the alias defined object schemas added into the context;
+but for properties and methods that are extension from the SDK, a `$` symbol need to be added at the beginning to avoid overlapping of data,
+
+This is to follow the respective `$` convention of registries and repositories that has interfaces that helps as base of some models.
+
+Remember, preceding with `_` is a common convention to mark a private property, but since we are already preceding with a `$` symbol,
+the private properties will be started by `$_` or `$__`, where:
+ - `$_`, is for private properties that can be used any where in the SDK.
+ - `$__`, is for private properties that only can be used within the class/interface where it is been declared.
+
 ---
 
 For more detailed information, read the [API Reference documentation](https://carbonldp.github.io/carbonldp-js-sdk/). 
