@@ -79,7 +79,8 @@ src/
 ```
 
 For the **Transient** and **Persisted** models, there is a type alias describing
-the factory and utilities methods of that models.
+the factory and utilities methods of that models. To create the type is to unite
+the already interfaces described inside [`carbonldp/Model`](../src/Model/index.ts).<br>
 The names will be created adding the `Factory` word after the interface name,
 e.g. for `TransientDocument` the type will be `TransientDocumentFactory`.
 
