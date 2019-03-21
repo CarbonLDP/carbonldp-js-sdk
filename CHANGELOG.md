@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 ### Fixed
 
 - [#338](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/338) - Fix `$removeMember()`/`$removeMembers()` in Node.js
+- [#366](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/366) - Fix error in bundle with undefined `global` variable 
 
 <!--### Breaking Changes -->
 
