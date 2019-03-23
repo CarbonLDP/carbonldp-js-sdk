@@ -235,6 +235,73 @@
 				expect( childWithNestedDocuments.contains.length ).toEqual( childrenToCreate );
 			} );
 
+			it( "should retrieve nested even documents with ALL", async function() {
+				const child = children[ childrenToCreate / 2 ];
+
+				for( let i = 0; i < childrenToCreate; ++ i ) {
+					let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
+
+					await child.$create( {
+						types: [ "ex:NestedChild", type ],
+						index: i + 1,
+					} );
+				}
+
+				const childrenWithNestedDocuments = await carbonldp.documents.$getChildren( parent.$id, _ => _
+					.withType( "ex:Child" )
+					.properties( {
+						"index": {
+							"query": _ => _
+								.values( _.value( child.index ) )
+						},
+						"contains": {
+							"query": _ => _
+								.withType( "ex:Even" )
+								.properties( _.all )
+						}
+					} )
+				);
+
+				expect( childrenWithNestedDocuments.length ).toEqual( 1 );
+
+				const childWithNestedDocuments = childrenWithNestedDocuments[ 0 ];
+				expect( childWithNestedDocuments.contains.length ).toEqual( childrenToCreate / 2 );
+			} );
+
+			it( "should retrieve nested even documents with FULL", async function() {
+				const child = children[ childrenToCreate / 2 ];
+
+				for( let i = 0; i < childrenToCreate; ++ i ) {
+					let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
+
+					await child.$create( {
+						types: [ "ex:NestedChild", type ],
+						index: i + 1,
+						another: { yep: true },
+					} );
+				}
+
+				const childrenWithNestedDocuments = await carbonldp.documents.$getChildren( parent.$id, _ => _
+					.withType( "ex:Child" )
+					.properties( {
+						"index": {
+							"query": _ => _
+								.values( _.value( child.index ) )
+						},
+						"contains": {
+							"query": _ => _
+								.withType( "ex:Even" )
+								.properties( _.constructor.FULL )
+						}
+					} )
+				);
+
+				expect( childrenWithNestedDocuments.length ).toEqual( 1 );
+
+				const childWithNestedDocuments = childrenWithNestedDocuments[ 0 ];
+				expect( childWithNestedDocuments.contains.length ).toEqual( childrenToCreate / 2 );
+			} );
+
 			it( "should modify partial documents", async function() {
 				const [ child ] = await carbonldp.documents.$getChildren( parent.$id, _ => _
 					.withType( "ex:Child" )
@@ -275,6 +342,15 @@
 						insertedContentRelation: jasmine.anything(),
 					},
 				] );
+			} );
+
+			it( "should return even children with ALL", async function() {
+				const children = await carbonldp.documents.$getChildren( parent.$id, _ => _
+					.withType( "ex:Even" )
+					.properties( _.all )
+				);
+
+				expect( children.length ).toEqual( childrenToCreate / 2 );
 			} );
 
 		} );
@@ -429,7 +505,6 @@
 				const nested = { the: "nested one" };
 				doc = await root.$createAndRetrieve( { nested: nested } );
 
-				console.log( doc );
 				expect( doc ).toEqual( {
 					created: jasmine.any( Date ),
 					modified: jasmine.any( Date ),
@@ -716,8 +791,6 @@
 				} );
 
 				expect( doc.$isQueried() ).toBe( true );
-
-				console.log( doc );
 			} );
 
 		} );
