@@ -6,6 +6,5 @@
     <option name="nodeInterpreterTextField" value="node" />
     <option name="recompileOnChanges" value="true" />
     <option name="showAllErrors" value="true" />
-    <option name="useService" value="false" />
   </component>
 </project>
