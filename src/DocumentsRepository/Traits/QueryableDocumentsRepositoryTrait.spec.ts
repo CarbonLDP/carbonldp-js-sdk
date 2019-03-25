@@ -586,7 +586,9 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					"} {" +
 
 					" GRAPH ?document___graph {" +
-					"" + " <https://example.com/resource/> ?document___predicate ?document___object" +
+					"" + " <https://example.com/resource/>" +
+					"" + "" + " ?document___predicate ?document___object;" +
+					"" + "" + " a <https://example.com/ns#Resource>" +
 					" }" +
 
 					" OPTIONAL {" +
