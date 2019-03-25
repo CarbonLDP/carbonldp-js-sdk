@@ -89,7 +89,7 @@ export class CarbonLDP extends DocumentsContext {
 	/**
 	 * Version of the SDK.
 	 */
-	static get version():string { return "5.2.0-alpha.2"; }
+	static get version():string { return "5.2.0-alpha.3"; }
 
 	/**
 	 * @see {@link CarbonLDP.version}
