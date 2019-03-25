@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 - [#338](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/338) - Fix `$removeMember()`/`$removeMembers()` in Node.js
 - [#366](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/366) - Fix error in bundle with undefined `global` variable 
+- [#368](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/368) - Fix ignore of `_.withType()` filter when used along `_.properties( _.all )` 
 
 <!--### Breaking Changes -->
 
