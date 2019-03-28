@@ -40,7 +40,8 @@
 		"schema": "https://schema.org/"
 	};
 
-	const carbon = new CarbonLDP( "http://localhost:8083" );
+	const platformURL = "http://local.example.com:8083";
+	const carbon = new CarbonLDP( platformURL );
 	carbon.extendObjectSchema( prefixes );
 
 	describe( "Tests >", () => {
@@ -58,65 +59,59 @@
 
 		describe( "Querying >", function() {
 
-			const carbon1 = new CarbonLDP( "http://localhost:8083" );
-			const carbon2 = new CarbonLDP( "http://localhost:8083" );
-			const carbon3 = new CarbonLDP( "http://localhost:8083" );
-
-			carbon1.extendObjectSchema( prefixes );
-			carbon1.extendObjectSchema( "ex:Child", {
-				"index": {
-					"@id": "ex:index",
-					"@type": "xsd:integer",
-				}
-			} );
-			carbon1.extendObjectSchema( "ex:NestedChild", {
-				"index": {
-					"@id": "ex:index",
-					"@type": "xsd:integer",
-				}
-			} );
-
-			carbon2.extendObjectSchema( prefixes );
-			carbon2.extendObjectSchema( "ex:Child", {
-				"index": {
-					"@id": "ex:index",
-					"@type": "xsd:integer",
-				}
-			} );
-			carbon2.extendObjectSchema( "ex:NestedChild", {
-				"index": {
-					"@id": "ex:index",
-					"@type": "xsd:integer",
-				}
-			} );
+			function extendObjectSchemas( carbonldp ) {
+				carbonldp.extendObjectSchema( prefixes );
+				carbonldp.extendObjectSchema( "ex:Child", {
+					"index": {
+						"@id": "ex:index",
+						"@type": "xsd:integer",
+					}
+				} );
+				carbonldp.extendObjectSchema( "ex:NestedChild", {
+					"index": {
+						"@id": "ex:index",
+						"@type": "xsd:integer",
+					}
+				} );
+			}
 
 
 			let childrenToCreate = 6;
 			let parent;
 			let children;
-			let child;
-			beforeAll( async function() {
-				parent = await carbon1.documents.$create( root.$id, { types: [ "ex:Parent" ] } );
+			let carbonldp;
+			beforeEach( async function() {
+				const carbonldp1 = new CarbonLDP( platformURL );
+				const carbonldp2 = new CarbonLDP( platformURL );
 
+				extendObjectSchemas( carbonldp1 );
+				extendObjectSchemas( carbonldp2 );
+
+				parent = await carbonldp1.documents.$create( root.$id, { types: [ "ex:Parent" ] } );
+
+				children = [];
 				for( let i = 0; i < childrenToCreate; i ++ ) {
-					let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
+					const type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
 
-					await parent.$create( {
+					const child = await parent.$create( {
 						types: [ "ex:Child", type ],
 						index: i + 1,
 					} );
+
+					children.push( child );
 				}
+
+				carbonldp = carbonldp2;
 			} );
 
-			afterAll( async function() {
+			afterEach( async function() {
 				if( ! parent ) return;
 				await parent.$delete();
 			} );
 
 
-			it( "can retrieve all the children", async function() {
-				let retrievedChildren = await parent.$getChildren();
-
+			it( "should retrieve all the children", async function() {
+				let retrievedChildren = await carbonldp.documents.$getChildren( parent.$id );
 				expect( retrievedChildren.length ).toEqual( childrenToCreate );
 
 				for( let i = 0; i < childrenToCreate; i ++ ) {
@@ -127,36 +122,56 @@
 						index: i + 1,
 					} ) );
 				}
-
-				children = retrievedChildren;
 			} );
 
-			it( "can list the children", async function() {
-				const shallowChildren = await carbon3.documents.$listChildren( parent.$id );
+			it( "should list the children", async function() {
+				const shallowChildren = await carbonldp.documents.$listChildren( parent.$id );
 
 				expect( shallowChildren.length ).toEqual( childrenToCreate );
+				for( let i = 0; i < childrenToCreate; ++ i ) {
+					const child = shallowChildren[ 0 ];
+					expect( child ).toEqual( {} );
+				}
 			} );
 
-			it( "can remove one member", async function() {
-				await parent.$removeMember( children[ 0 ] );
+			it( "should remove one member", async function() {
+				const [ child ] = children;
+
+				await carbonldp.documents.$removeMember( parent.$id, child );
 
 				expect( null ).nothing();
 			} );
 
-			it( "can retrieve all the members", async function() {
-				let members = await parent.$getMembers();
+			it( "should retrieve all the members", async function() {
+				const members = await carbonldp.documents.$getMembers( parent.$id );
 
-				expect( members.length ).toEqual( childrenToCreate - 1 );
+				expect( members.length ).toEqual( childrenToCreate );
+
+				for( let i = 0; i < childrenToCreate; ++ i ) {
+					const type = i % 2 === 0 ? "http://example.org/ns#Even" : "http://example.org/ns#Odd";
+
+					expect( members ).toContain( jasmine.objectContaining( {
+						types: jasmine.arrayContaining( [ "http://example.org/ns#Child", type ] ),
+						index: i + 1,
+					} ) );
+				}
 			} );
 
-			it( "can retrieve children of a specific type", async function() {
-				let filteredChildren = await parent.$getChildren( _ => _.withType( "ex:Even" ) );
+			it( "should retrieve shallow children of a specific type", async function() {
+				const filteredChildren = await carbonldp.documents.$getChildren( parent.$id, _ => _.withType( "ex:Even" ) );
 
 				expect( filteredChildren.length ).toEqual( childrenToCreate / 2 );
+				for( let i = 0; i < childrenToCreate / 2; ++ i ) {
+					const child = filteredChildren[ 0 ];
+					expect( child ).not.toEqual( {
+						created: jasmine.any( Date ),
+						modified: jasmine.any( Date ),
+					} );
+				}
 			} );
 
-			it( "can retrieve children with a property that has a specific value", async function() {
-				let filteredChildren = await parent.$getChildren( _ => _
+			it( "should retrieve children with a property that has a specific value", async function() {
+				let filteredChildren = await carbonldp.documents.$getChildren( parent.$id, _ => _
 					.withType( "ex:Child" )
 					.properties( {
 						"index": {
@@ -168,11 +183,11 @@
 
 				expect( filteredChildren.length ).toEqual( 1 );
 				expect( filteredChildren[ 0 ].index ).toEqual( 3 );
-
-				child = filteredChildren[ 0 ];
 			} );
 
-			it( `can create nested documents`, async function() {
+			it( "should create nested documents", async function() {
+				const [ child ] = children;
+
 				for( let i = 0; i < childrenToCreate; i ++ ) {
 					let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
 
@@ -181,11 +196,23 @@
 						index: i + 1,
 					} );
 				}
+
 				expect( null ).nothing();
 			} );
 
-			it( `can retrieve nested documents`, async function() {
-				let childrenWithNestedDocuments = await carbon2.documents.$getChildren( parent.$id, _ => _
+			it( "should retrieve nested documents", async function() {
+				const child = children[ childrenToCreate / 2 ];
+
+				for( let i = 0; i < childrenToCreate; ++ i ) {
+					let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
+
+					await child.$create( {
+						types: [ "ex:NestedChild", type ],
+						index: i + 1,
+					} );
+				}
+
+				const childrenWithNestedDocuments = await carbonldp.documents.$getChildren( parent.$id, _ => _
 					.withType( "ex:Child" )
 					.properties( {
 						"index": {
@@ -205,17 +232,78 @@
 				expect( childrenWithNestedDocuments.length ).toEqual( 1 );
 
 				const childWithNestedDocuments = childrenWithNestedDocuments[ 0 ];
-
-				console.log( childWithNestedDocuments );
-
 				expect( childWithNestedDocuments.contains.length ).toEqual( childrenToCreate );
-				childWithNestedDocuments.contains.forEach( nestedDocument =>
-					expect( nestedDocument.index ).toBeDefined()
-				);
 			} );
 
-			it( `can modify partial documents`, async function() {
-				let [ child ] = await carbon2.documents.$getChildren( parent.$id, _ => _
+			it( "should retrieve nested even documents with ALL", async function() {
+				const child = children[ childrenToCreate / 2 ];
+
+				for( let i = 0; i < childrenToCreate; ++ i ) {
+					let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
+
+					await child.$create( {
+						types: [ "ex:NestedChild", type ],
+						index: i + 1,
+					} );
+				}
+
+				const childrenWithNestedDocuments = await carbonldp.documents.$getChildren( parent.$id, _ => _
+					.withType( "ex:Child" )
+					.properties( {
+						"index": {
+							"query": _ => _
+								.values( _.value( child.index ) )
+						},
+						"contains": {
+							"query": _ => _
+								.withType( "ex:Even" )
+								.properties( _.all )
+						}
+					} )
+				);
+
+				expect( childrenWithNestedDocuments.length ).toEqual( 1 );
+
+				const childWithNestedDocuments = childrenWithNestedDocuments[ 0 ];
+				expect( childWithNestedDocuments.contains.length ).toEqual( childrenToCreate / 2 );
+			} );
+
+			it( "should retrieve nested even documents with FULL", async function() {
+				const child = children[ childrenToCreate / 2 ];
+
+				for( let i = 0; i < childrenToCreate; ++ i ) {
+					let type = i % 2 === 0 ? "ex:Even" : "ex:Odd";
+
+					await child.$create( {
+						types: [ "ex:NestedChild", type ],
+						index: i + 1,
+						another: { yep: true },
+					} );
+				}
+
+				const childrenWithNestedDocuments = await carbonldp.documents.$getChildren( parent.$id, _ => _
+					.withType( "ex:Child" )
+					.properties( {
+						"index": {
+							"query": _ => _
+								.values( _.value( child.index ) )
+						},
+						"contains": {
+							"query": _ => _
+								.withType( "ex:Even" )
+								.properties( _.constructor.FULL )
+						}
+					} )
+				);
+
+				expect( childrenWithNestedDocuments.length ).toEqual( 1 );
+
+				const childWithNestedDocuments = childrenWithNestedDocuments[ 0 ];
+				expect( childWithNestedDocuments.contains.length ).toEqual( childrenToCreate / 2 );
+			} );
+
+			it( "should modify partial documents", async function() {
+				const [ child ] = await carbonldp.documents.$getChildren( parent.$id, _ => _
 					.withType( "ex:Child" )
 					.properties( {
 						"index": {
@@ -230,7 +318,7 @@
 
 				await child.$save();
 
-				const freshChild = await carbon2.documents.$get( child.$id );
+				const freshChild = await carbonldp.documents.$get( child.$id );
 
 				expect( freshChild.index ).toEqual( 100 );
 				expect( freshChild.somethingElse ).toEqual( "Hello world!" );
@@ -238,14 +326,14 @@
 			} );
 
 			it( "should return filtered children with ALL", async function() {
-				const children = await parent.$getChildren( _ => _
+				const children = await carbonldp.documents.$getChildren( parent.$id, _ => _
 					.properties( _.all )
 					.filter( `${_.property( "index" )} = 2` )
 				);
 
 				expect( children ).toEqual( [
 					{
-						index:2,
+						index: 2,
 						created: jasmine.any( Date ),
 						modified: jasmine.any( Date ),
 
@@ -254,6 +342,15 @@
 						insertedContentRelation: jasmine.anything(),
 					},
 				] );
+			} );
+
+			it( "should return even children with ALL", async function() {
+				const children = await carbonldp.documents.$getChildren( parent.$id, _ => _
+					.withType( "ex:Even" )
+					.properties( _.all )
+				);
+
+				expect( children.length ).toEqual( childrenToCreate / 2 );
 			} );
 
 		} );
@@ -408,7 +505,6 @@
 				const nested = { the: "nested one" };
 				doc = await root.$createAndRetrieve( { nested: nested } );
 
-				console.log( doc );
 				expect( doc ).toEqual( {
 					created: jasmine.any( Date ),
 					modified: jasmine.any( Date ),
@@ -429,7 +525,7 @@
 				doc = await root.$create( { nested: nested } );
 
 				// Use another instance to update
-				const carbon2 = new CarbonLDP( "http://localhost:8083" );
+				const carbon2 = new CarbonLDP( platformURL );
 				const copy = await carbon2.documents.$get( doc.$id );
 				copy.nested.the = "updated nested one";
 				await copy.$save();
@@ -445,26 +541,40 @@
 
 			let accessPoint;
 			let targetDoc;
-			beforeAll( async function() {
-				targetDoc = await root.$create( {} );
-			} );
+			let existingMembers;
+			beforeEach( async function() {
+				targetDoc = await root.$createAndRetrieve( {} );
 
-			afterAll( async function() {
-				if( ! targetDoc ) return;
-				await targetDoc.$delete();
-			} );
+				existingMembers = await root.$create( [ ...Array( 5 ) ].map( ( _, i ) => ({
+					types: [ "ex:Child" ],
+					the: `member ${- i - 1}`,
+					index: - i - 1,
+					myInverseRelation: targetDoc,
+				}) ) );
 
-			it( `can create an access point`, async function() {
-				accessPoint = await targetDoc.$create( CarbonLDP.AccessPoint.create( {
+				targetDoc.myRelation = existingMembers.slice();
+				await targetDoc.$saveAndRefresh();
+
+				accessPoint = await targetDoc.$createAndRetrieve( CarbonLDP.AccessPoint.create( {
 					hasMemberRelation: "myRelation",
 					isMemberOfRelation: "myInverseRelation",
 				} ) );
 
+				// await accessPoint.$addMembers( existingMembers );
+			} );
+
+			afterEach( async function() {
+				if( ! targetDoc ) return;
+				await targetDoc.$delete();
+			} );
+
+
+			it( "should create an access point", async function() {
 				expect( null ).nothing();
 			} );
 
 
-			it( `should add a member from access point`, async function() {
+			it( "should add a member from access point", async function() {
 				const member = await root.$create( {
 					types: [ "ex:Child" ],
 					the: "member",
@@ -472,14 +582,14 @@
 
 				await accessPoint.$addMember( member );
 
-				await targetDoc.$get();
-				await member.$resolve();
+				await targetDoc.$refresh();
+				expect( targetDoc.myRelation ).toEqual( jasmine.arrayContaining( [ member ] ) );
 
-				expect( targetDoc.myRelation ).toBe( member );
+				await member.$resolve();
 				expect( member.myInverseRelation ).toBe( targetDoc );
 			} );
 
-			it( `should add members from access point`, async function() {
+			it( "should add members from access point", async function() {
 				const members = [ ...Array( 5 ) ].map( ( _, i ) => ({
 					types: [ "ex:Child" ],
 					the: "member " + (i + 1),
@@ -491,56 +601,45 @@
 
 				await targetDoc.$get( { ensureLatest: true } );
 
-				await Promise.all( members
-					.map( async member => await member.$resolve() )
-				);
+				await Promise.all( members.map( async member => await member.$resolve() ) );
 
 				expect( targetDoc.myRelation ).toEqual( jasmine.arrayContaining( members ) );
 				expect( members[ 0 ].myInverseRelation ).toBe( targetDoc );
 				expect( members[ 1 ].myInverseRelation ).toBe( targetDoc );
 			} );
 
-			it( `should remove member from access point`, async function() {
-				const members = await accessPoint.$getMembers();
-
-				await accessPoint.$removeMember( members[ 0 ] );
+			it( "should remove member from access point", async function() {
+				await accessPoint.$removeMember( existingMembers[ 0 ] );
 
 				await targetDoc.$refresh();
-				expect( targetDoc.myRelation.length ).toEqual( members.length - 1 );
-				expect( targetDoc.myRelation ).not.toContain( members[ 0 ] );
+				expect( targetDoc.myRelation.length ).toEqual( existingMembers.length - 1 );
+				expect( targetDoc.myRelation ).not.toContain( existingMembers[ 0 ] );
 
-				await members[ 0 ].$refresh();
-				expect( members[ 0 ].myInverseRelation ).not.toBeDefined();
+				await existingMembers[ 0 ].$refresh();
+				expect( existingMembers[ 0 ].myInverseRelation ).not.toBeDefined();
 			} );
 
-			it( `should remove members from access point`, async function() {
-				const members = await accessPoint.$getMembers();
-
-				await accessPoint.$removeMembers( [ members[ 0 ], members[ 1 ] ] );
+			it( "should remove members from access point", async function() {
+				await accessPoint.$removeMembers( [ existingMembers[ 0 ], existingMembers[ 1 ] ] );
 
 				await targetDoc.$refresh();
-				expect( targetDoc.myRelation.length ).toEqual( members.length - 2 );
-				expect( targetDoc.myRelation.length ).not.toContain( members[ 0 ] );
-				expect( targetDoc.myRelation.length ).not.toContain( members[ 1 ] );
+				expect( targetDoc.myRelation.length ).toEqual( existingMembers.length - 2 );
+				expect( targetDoc.myRelation.length ).not.toContain( existingMembers[ 0 ] );
+				expect( targetDoc.myRelation.length ).not.toContain( existingMembers[ 1 ] );
 
-				await Promise.all( members
-					.map( async member => await member.$refresh() )
-				);
+				await Promise.all( existingMembers.map( async member => await member.$refresh() ) );
 
-				expect( members[ 0 ].myInverseRelation ).not.toBeDefined();
-				expect( members[ 1 ].myInverseRelation ).not.toBeDefined();
+				expect( existingMembers[ 0 ].myInverseRelation ).not.toBeDefined();
+				expect( existingMembers[ 1 ].myInverseRelation ).not.toBeDefined();
 			} );
 
-			it( `should remove all rest members from access point`, async function() {
-				const members = await accessPoint.$getMembers();
-				expect( members.length ).toBeGreaterThan( 0, "The child document has no members left" );
-
+			it( "should remove all rest members from access point", async function() {
 				await accessPoint.$removeMembers();
 
 				await targetDoc.$refresh();
 				expect( targetDoc.myRelation ).not.toBeDefined();
 
-				for( let member of members ) {
+				for( let member of existingMembers ) {
 					await member.$refresh();
 					expect( member.myInverseRelation ).not.toBeDefined();
 				}
@@ -692,8 +791,6 @@
 				} );
 
 				expect( doc.$isQueried() ).toBe( true );
-
-				console.log( doc );
 			} );
 
 		} );

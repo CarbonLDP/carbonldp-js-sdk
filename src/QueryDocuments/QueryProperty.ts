@@ -373,12 +373,12 @@ export class QueryProperty implements QueryablePropertyData {
 				break;
 
 			case QueryPropertyType.ALL:
-				patterns.push( this._getContextGraph().addPattern( this.__createAllPattern() ) );
+				patterns.push( this.__createSearchAllPattern() );
 				patterns.push( ...this.__createSubPropertiesPatterns() );
 				break;
 
 			case QueryPropertyType.FULL:
-				patterns.push( this.__createGraphPattern() );
+				patterns.push( this.__createSearchGraphPattern() );
 				patterns.push( ...this.__createSubPropertiesPatterns() );
 				break;
 
@@ -465,15 +465,48 @@ export class QueryProperty implements QueryablePropertyData {
 		const types:IRIToken[] = this
 			.__createTypesTokens();
 
-		pattern
-			.properties[ 0 ] // Should be the `a` predicate
-			.objects
+		let aProperty:PropertyToken | undefined = pattern.properties
+			.find( _ => _.verb === "a" );
+
+		// Create a predicate if not exists
+		if( ! aProperty ) {
+			aProperty = new PropertyToken( "a" );
+			pattern.addProperty( aProperty );
+		}
+
+		aProperty.objects
 			.unshift( ...types ); // Add them as first matches
 	}
 
 	protected __createTypesTokens():IRIToken[] {
 		return this._types
 			.map( type => this.queryContainer.compactIRI( type ) );
+	}
+
+	protected __createSearchAllPattern():GraphToken {
+		const pattern:SubjectToken = this.__createAllPattern();
+
+		if( this._types.length )
+			this.__addTypesTo( pattern );
+
+		return this
+			._getContextGraph()
+			.addPattern( pattern );
+	}
+
+	protected __createSearchGraphPattern():GraphToken {
+		const graph:GraphToken = new GraphToken( this.__getSelfToken() );
+
+		if( this._types.length ) {
+			const pattern:SubjectToken = new SubjectToken( this.__getSelfToken() );
+			this.__addTypesTo( pattern );
+
+			graph.addPattern( pattern );
+		}
+
+		return graph
+			.addPattern( this.__createGraphSubPattern() )
+			;
 	}
 
 
@@ -597,16 +630,10 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	protected __createAllPattern():SubjectToken {
-		return new SubjectToken( this.identifier )
+		return new SubjectToken( this.__getSelfToken() )
 			.addProperty( new PropertyToken( this._getVariable( "_predicate" ) )
 				.addObject( this._getVariable( "_object" ) )
 			);
-	}
-
-	protected __createGraphPattern():GraphToken {
-		return new GraphToken( this.__getSelfToken() )
-			.addPattern( this.__createGraphSubPattern() )
-			;
 	}
 
 	protected __createGraphSubPattern():SubjectToken {

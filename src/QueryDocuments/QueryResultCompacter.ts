@@ -122,8 +122,16 @@ export class QueryResultCompacter {
 		compactionMap.forEach( ( { node, resource, document, isCompacted } ) => {
 			// Compact missing resources
 			if( ! isCompacted ) {
-				const targetSchema:DigestedObjectSchema = this.queryContainer.context.registry.getSchemaFor( node );
-				this.jsonldConverter.update( resource, node, targetSchema, document );
+				const targetNode:RDFNode = {
+					...node,
+					// Avoid compaction of c:document
+					[ C.document ]: undefined,
+					// Avoid compaction of c:checksum
+					[ C.checksum ]: undefined,
+				};
+
+				const targetSchema:DigestedObjectSchema = this.queryContainer.context.registry.getSchemaFor( targetNode );
+				this.jsonldConverter.update( resource, targetNode, targetSchema, document );
 
 				// Remove possible metadata
 				resource.$_queryableMetadata = void 0;
