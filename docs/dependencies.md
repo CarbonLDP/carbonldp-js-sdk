@@ -99,6 +99,9 @@
     Used to force the empty imports of Node.js modules that will not be used in the browser bundle.
  - [rollup-plugin-commonjs](https://github.com/rollup/rollup-plugin-commonjs)<br>
     Rollup plugin to import commonjs modules, since natively rollup only support ES modules.
+ - [rollup-plugin-node-globals](https://github.com/calvinmetcalf/rollup-plugin-node-globals)<br>
+    Rollup plugin to insert Node.js globals into the bundle,
+    specially the `global` variable that is used by some SDK dependencies (for browserify support).
  - [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve)<br>
     Rollup plugin to import Node.js dependencies.
  - [rollup-plugin-replace](https://www.npmjs.com/package/rollup-plugin-replace)<br>
