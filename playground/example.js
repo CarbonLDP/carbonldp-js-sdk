@@ -56,6 +56,20 @@
 				;
 		} );
 
+
+		afterEach( function() {
+			return root
+				.$listChildren()
+				.then( function( children ) {
+					const promises = children
+						.map( function( child ) {
+							return child.$delete();
+						} );
+
+					return Promise.all( promises );
+				} );
+		} );
+
 		afterAll( function() {
 			if( !root ) return;
 
@@ -470,20 +484,6 @@
 
 		describe( "Creations >", function() {
 
-			afterEach( function() {
-				return root
-					.$listChildren()
-					.then( function( children ) {
-						const promises = children
-							.map( function( child ) {
-								return child.$delete();
-							} );
-
-						return Promise.all( promises );
-					} );
-			} );
-
-
 			it( "should create object", function() {
 				return root
 					.$create( {} )
@@ -534,7 +534,7 @@
 							insertedContentRelation: jasmine.objectContaining( {
 								$id: carbonldp.getObjectSchema().resolveURI( "ldp:MemberSubject" ),
 							} ),
-							membershipResource: doc,
+							membershipResource: jasmine.objectContaining( { $id: doc.$id } ),
 						} );
 					} )
 					;
@@ -553,7 +553,7 @@
 							insertedContentRelation: jasmine.objectContaining( {
 								$id: carbonldp.getObjectSchema().resolveURI( "ldp:MemberSubject" ),
 							} ),
-							membershipResource: doc,
+							membershipResource: jasmine.objectContaining( { $id: doc.$id } ),
 						} );
 
 						expect( doc.$slug ).toBe( "the-slug" );
@@ -582,16 +582,15 @@
 
 
 			it( "should create access point", function() {
-				let doc;
-				return root
-					.$create( CarbonLDP.AccessPoint.create( {
-						$id: "the-slug/",
-						hasMemberRelation: "member",
-						isMemberOfRelation: "isMemberOf",
-					} ) )
-					.then( function( _doc ) {
-						doc = _doc;
+				const doc = CarbonLDP.AccessPoint.create( {
+					$id: "the-slug/",
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
+				} );
 
+				return root
+					.$create( doc )
+					.then( function( doc ) {
 						expect( doc.$slug ).toBe( "the-slug" );
 
 						return root
@@ -604,40 +603,47 @@
 			} );
 
 			it( "should create access point with options", function() {
+				const doc = CarbonLDP.AccessPoint.create( {
+					$id: "the-slug/",
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
+				} );
+
 				return root
-					.$create( CarbonLDP.AccessPoint.create( {
-						$id: "the-slug/",
-						hasMemberRelation: "member",
-						isMemberOfRelation: "isMemberOf",
-					} ), {} )
+					.$create( doc, {} )
 					.then( function( doc ) {
 						expect( doc.$slug ).toBe( "the-slug" );
 
 						return root
 							.$refresh()
-							.then( function() {
-								expect( root.accessPoints ).toContain( doc );
-							} );
-					} );
+					} )
+					.then( function() {
+						expect( root.accessPoints ).toContain( doc );
+					} )
+					;
 			} );
 
 			it( "should create access point with slug", function() {
+				const doc = CarbonLDP.AccessPoint.create( {
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
+				} );
+
 				return root
-					.$create( CarbonLDP.AccessPoint.create( {
-						hasMemberRelation: "member",
-						isMemberOfRelation: "isMemberOf",
-					} ), "the-slug" )
+					.$create( doc, "the-slug" )
 					.then( function( doc ) {
 						expect( doc.$slug ).toBe( "the-slug" );
 					} );
 			} );
 
 			it( "should create access point with slug and options", function() {
+				const doc = CarbonLDP.AccessPoint.create( {
+					hasMemberRelation: "member",
+					isMemberOfRelation: "isMemberOf",
+				} );
+
 				return root
-					.$create( CarbonLDP.AccessPoint.create( {
-						hasMemberRelation: "member",
-						isMemberOfRelation: "isMemberOf",
-					} ), "the-slug", {} )
+					.$create( doc, "the-slug", {} )
 					.then( function( doc ) {
 						expect( doc.$slug ).toBe( "the-slug" );
 					} );
@@ -673,9 +679,9 @@
 							insertedContentRelation: jasmine.objectContaining( {
 								$id: carbonldp.getObjectSchema().resolveURI( "ldp:MemberSubject" ),
 							} ),
-							membershipResource: doc,
+							membershipResource: jasmine.objectContaining( { $id: doc.$id } ),
 
-							nested: nested,
+							nested: jasmine.objectContaining( { $id: nested.$id } ),
 						} );
 					} );
 			} );
@@ -712,13 +718,14 @@
 			let accessPoint;
 			let targetDoc;
 			let existingMembers;
+			const membersToCreate = 5;
 			beforeEach( function() {
 				return root
 					.$createAndRetrieve( {} )
 					.then( function( doc ) {
 						targetDoc = doc;
 
-						existingMembers = new Array( 5 )
+						existingMembers = new Array( membersToCreate )
 							.fill( undefined )
 							.map( function( _, i ) {
 								return {
@@ -785,7 +792,7 @@
 			} );
 
 			it( "should add members from access point", function() {
-				const members = Array( 5 )
+				const members = Array( membersToCreate )
 					.fill( undefined )
 					.map( function( _, i ) {
 						return {
@@ -939,7 +946,7 @@
 			it( "should get multiple partial", function() {
 				const docsIDs = [];
 
-				root
+				return root
 					.$create( {
 						property1: "property 1",
 						property2: "property 2",
@@ -978,7 +985,7 @@
 						expect( docs[ 1 ].property3 ).toBeUndefined();
 						expect( docs[ 1 ].$isQueried() ).toBe( true );
 					} )
-				;
+					;
 			} );
 
 			it( "should get multiple full", function() {
