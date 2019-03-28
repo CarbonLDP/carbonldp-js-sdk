@@ -5,15 +5,19 @@
 </head>
 <body>
 
-	<script src="../dist/bundles/CarbonLDP.sfx.js"></script>
+	<!-- Polyfills for IE -->
+	<script src="../node_modules/core-js-bundle/index.js"></script>
+	<script src="../node_modules/proxy-polyfill/proxy.min.js"></script>
+
 	<script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
 	<script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
 	<script src="../node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
 	<script src="../node_modules/jasmine-ajax/lib/mock-ajax.js"></script>
+
+	<script src="../dist/bundles/CarbonLDP.sfx.js"></script>
 	<script>
 
 	</script>
-	<script src="https://unpkg.com/core-js-bundle@3"></script>
 	<script src="example.js"></script>
 </body>
 </html>
