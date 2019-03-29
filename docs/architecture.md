@@ -5,26 +5,26 @@ The following diagram exposes the base elements that form the structure of the S
 
 ## Contexts
 
-Central point of access of the functionality inside the SDK.
+Central point of access to the functionality inside the SDK.
 The main elements of every context are:
   - `baseURI`. The domain of the resources the context can manage.
   - `respository`. Interface to the available requests in the domain.
   - `registry`. Manage the resources inside the context's domain.
   - `JSONLDConverter`. Has the capabilities to convert JSON-LD into simple JS objects.
-  - ObjectSchema methods. Methods that manage the schemas that has the information for a better JSON-LD conversion.
+  - ObjectSchema methods. Methods that manage the schemas that have the information for a better JSON-LD conversion.
   
-There are different implementation of context inside the SDK:
+There are different implementations of context inside the SDK:
   - `AbstractContext`. Base implementation of the general functionality.
-  - `DocumentsContext`. The context for the `Document`s of the platform. It add the real-time functionality of the Platform.
-  - `CarbonLDP`. The exposed context for the user that add submodules, version and the endpoint of the root document of the Platform.
-  - `GlobalContext`. A context that exposes a singleton that shares the common information of the Platform and is used for share them to the `CarbonLDP` contexts and also to manage external resources of the `CarbonLDP` domain.
+  - `DocumentsContext`. The context for the `Document`s of the platform. It adds the real-time functionality of the platform.
+  - `CarbonLDP`. The exposed context for the user that adds submodules, version, and the endpoint of the root document of the platform.
+  - `GlobalContext`. Context that exposes a singleton that shares the common information of the platform. It is used to share this information to the `CarbonLDP` contexts and also, to manage external resources from the `CarbonLDP` domain.
 
 ## Repositories
 
-The repositories has the methods to of the available request of the context domain.
+The repositories have the methods to perform the available requests of the context domain.
 
-Since the repository of the `CarbonLDP` has is multiple methods, these are grouped and separated in different traits that later will be composed to create `DocumentRespository`:
-- `EventEmitterDocumentsRepositoryTrait`. Methods fro the real-time subscriptions.
+Since the `CarbonLDP` repository has multiple methods, these are grouped and separated in different traits, that will later be composed to create a `DocumentRespository`:
+- `EventEmitterDocumentsRepositoryTrait`. Methods for the real-time subscriptions.
 - `SPARQLDocumentsRepositoryTrait`. Methods for making SPARQL queries.
 - `LDPDocumentsRepositoryTrait`. Methods for the CRUD and LDP action requests.
 - `QueryableDocumentsRepositoryTrait`. Methods for partial reading of documents.
