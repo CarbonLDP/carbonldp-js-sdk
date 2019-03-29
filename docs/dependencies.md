@@ -29,7 +29,7 @@
     to process the source code and create the API documentation.<br>
     **Local package dependencies**:<br>
     - [dgeni-packages](https://github.com/angular/dgeni-packages)<br>
-        Dgeni packages developed by the Angular team that actually have logic
+        Dgeni packages developed by the Angular team that actually have the logic
         to process the source code into understandable API models.<br>
     - [glob](https://github.com/isaacs/node-glob)<br>
         Library used to find the templates and partials provided to the
