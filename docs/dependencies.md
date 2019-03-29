@@ -21,7 +21,7 @@
     Script to upload test coverage to [Codecov](https://codecov.io/), improving CI.
  - [code-js-bundle](https://github.com/zloirock/core-js)<br>
     Bundle version of the `code-js` package that includes polyfills for older ECMAScript engines.<br>
-    We use the 3th version that ensures polyfills up to ES2019, and allows us to run the tests in IE11.
+    We use the 3rd version that ensures polyfills up to ES2019, and allows us to run the tests in IE11.
  - [del](https://github.com/sindresorhus/del)<br>
     Library used in Gulp tasks to delete folders.
  - [dgeni](https://github.com/angular/dgeni)<br>
@@ -60,9 +60,9 @@
     Gulp plugin to generate the sourcemaps of the distribution files.
  - [gulp-token-replace](https://github.com/Pictela/gulp-token-replace)<br>
     Gulp plugin to replace a matching token for an specific value,
-    this plugin is preferred to similar ones for the configurability on the token delimiters
-    which is compatible with the equal behaviour of `rollup-plugin-replace` dependency.<br>
-    Used to insert the current version of the library into the `CarbonLDP` class.
+    this plugin is preferred to similar ones for the configurability of the token delimiters
+    which is compatible with the equal behaviour of the `rollup-plugin-replace` dependency.<br>
+    Used to insert the current version of the library into the `CarbonLDP` class of the distribution bundle.
  - [gulp-tslint](https://github.com/panuhorsmalahti/gulp-tslint)<br>
     Gulp plugin to check the fulfillment of the lint rules.
  - [gulp-typescript](https://github.com/ivogabe/gulp-typescript)<br>
@@ -114,9 +114,10 @@
  - [rollup-plugin-replace](https://www.npmjs.com/package/rollup-plugin-replace)<br>
     Rollup plugin to replace strings in the files.<br>
     Used to insert the `process.env.NODE_ENV` variable.<br>
-    Also used to insert the current version of the library into the `CarbonLDP` class;
-    but this replacement is used as another plugin instance to be able to configure the delimiters of the replacement
-    which is compatible with the equal behaviour of the `gulp-token-replace` dependency. 
+    Also used to insert the current version of the library into the `CarbonLDP` class 
+    in the building distributions of the TS source.
+    This replacement is used as another plugin instance to configure the delimiters of the replacement
+    which is compatible with the equal behaviour of the `gulp-token-replace` dependency.
  - [rollup-plugin-typescript2](https://github.com/ezolenko/rollup-plugin-typescript2)<br>
     Rollup plugin to compile the source TypeScript files.
  - [rollup-plugin-uglify](https://github.com/TrySound/rollup-plugin-uglify)<br>

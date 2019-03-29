@@ -40,19 +40,19 @@ Therefore the `Document` resource is a repository, which functionality is also s
 
 ## Registries
 
-The registries are the elements in charge to store and provide resources in the domain of certain context.
+The registries are the elements in charge of storing and providing resources in a certain context's domain.
 
 The purpose of the registries is to always have the same reference for every specific resource,
-allowing to relate resources an access that related information easier.
+allowing users to relate resources and access that related information in an easier way.
 
-Similar to the repositories, there is `$Registry` interface declaring the `$` methods equivalents
+Similar to the repositories, there is the `$Registry` interface declaring the `$` methods equivalents
 that manage resources inside resources.
 In the case of `Document`s, this sub-resources are called `Fragments` (Named Fragments/Blank Nodes).
 
 ## Models
 
 The models are representations of specific types of resources.<br>
-Its name should be the same as the slug of the `rdf:type` that describe the resource.
+Its name should be the same as the slug of the `rdf:type` that describes the resource.
 
 There are three kinds of models:
 - **Base**:<br>
@@ -79,14 +79,14 @@ src/
 ```
 
 For the **Transient** and **Persisted** models, there is a type alias describing
-the factory and utilities methods of that models. To create the type is to unite
-the already interfaces described inside [`carbonldp/Model`](../src/Model/index.ts).<br>
+the factory and utilities methods of those models. To create the type is to unite
+the interfaces already described inside [`carbonldp/Model`](../src/Model/index.ts).<br>
 The names will be created adding the `Factory` word after the interface name,
 e.g. for `TransientDocument` the type will be `TransientDocumentFactory`.
 
-But for the implementation, it will be a constant with the same name of the model.
+However, for the implementation, the name will be a constant with the same name of the model.
 e.g. for `TransientDocument` the constant will be `TransientDocument`.
-This will merge the types making easier to use the type and factory at the same time.  
+This will merge the types making it easier to use the type and factory at the same time. 
 
 ```text
 Document/
@@ -102,14 +102,14 @@ Document/
 	└── Document [const]
 ```
 
-Since the models are representation of real data, its properties are the alias defined object schemas added into the context;
-but for properties and methods that are extension from the SDK, a `$` symbol need to be added at the beginning to avoid overlapping of data,
+Since the models are representations of real data, their properties are the alias defined in object schemas added into the context.
+For properties and methods that are extension from the SDK, a `$` symbol needs to be added at the beginning to avoid the overlapping of data.
 
-This is to follow the respective `$` convention of registries and repositories that has interfaces that helps as base of some models.
+This is to follow the respective `$` convention of registries and repositories that have interfaces that help as base for some models.
 
 Remember, preceding with `_` is a common convention to mark a private property, but since we are already preceding with a `$` symbol,
 the private properties will be started by `$_` or `$__`, where:
- - `$_`, is for private properties that can be used any where in the SDK.
+ - `$_`, is for private properties that can be used anywhere in the SDK.
  - `$__`, is for private properties that only can be used within the class/interface where it is been declared.
 
 ---
