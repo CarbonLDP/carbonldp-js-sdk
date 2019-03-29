@@ -57,7 +57,7 @@ describe( "CarbonLDP", ():void => {
 		expect( CarbonLDP.version ).toBeDefined();
 		expect( CarbonLDP.version ).toEqual( jasmine.any( String ) );
 
-		expect( CarbonLDP.version ).toMatch( /\d+\.\d+\.\d+.*/ );
+		expect( CarbonLDP.version ).toEqual( "{{VERSION}}" );
 	} );
 
 

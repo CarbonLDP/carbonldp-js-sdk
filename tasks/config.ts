@@ -1,8 +1,13 @@
+import fs from "fs";
+
+const pkg:any = JSON.parse( fs.readFileSync( "./package.json", "utf8" ) );
+
 export const SRC:string = "src/";
 export const DIST:string = "dist/";
 
 export default {
-	main: `${ SRC }CarbonLDP.ts`,
+	version: pkg.version,
+	mainName: `CarbonLDP`,
 	src: [
 		`${ SRC }**/*.ts`,
 		`!${ SRC }**/*.spec.ts`,
