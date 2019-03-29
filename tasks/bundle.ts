@@ -4,6 +4,7 @@ import { Plugin, rollup } from "rollup";
 import alias from "rollup-plugin-alias";
 import commonjs from "rollup-plugin-commonjs";
 import resolve from "rollup-plugin-node-resolve";
+import globals from "rollup-plugin-node-globals";
 import replace from "rollup-plugin-replace";
 import typescript from "rollup-plugin-typescript2";
 import { uglify } from "rollup-plugin-uglify";
@@ -39,6 +40,18 @@ const DEFAULT_PLUGINS:Plugin[] = [
 	} ),
 	replace( {
 		"process.env.NODE_ENV": JSON.stringify( "production" ),
+	} ),
+	replace( {
+		delimiters: [ "{{", "}}" ],
+		values: {
+			"VERSION": config.version,
+		},
+	} ),
+	globals( {
+		process: false,
+		buffer: false,
+		dirname: false,
+		filename: false,
 	} ),
 ];
 

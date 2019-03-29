@@ -70,8 +70,13 @@ jobs:
       - run:
           name: Publish package
           command: |
+            NPM_TAG="latest"
+            if [[ ${CIRCLE_TAG} =~ ^v.*-[a-zA-Z]+\.[0-9]+$ ]]; then
+            	NPM_TAG="next"
+            fi
+
             cd dist
-            npm publish
+            npm publish --tag ${NPM_TAG}
 
       - run:
           name: Pack package
@@ -128,7 +133,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /v[0-9]+\.[0-9]+\.[0-9]+(-.+)?/
+              only: /^v\d+\.\d+\.\d+(-.+)?/
       - deploy_docs:
           requires:
             - deploy_npm

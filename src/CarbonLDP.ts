@@ -89,7 +89,7 @@ export class CarbonLDP extends DocumentsContext {
 	/**
 	 * Version of the SDK.
 	 */
-	static get version():string { return "5.2.0-alpha.1"; }
+	static get version():string { return "{{VERSION}}"; }
 
 	/**
 	 * @see {@link CarbonLDP.version}
@@ -164,7 +164,7 @@ function __getURLFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):str
 }
 
 function __getURLFromString( this:void, url:string ):string {
-	if( ! RDF.URI.hasProtocol( url ) )
+	if( !RDF.URI.hasProtocol( url ) )
 		throw new IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
 
 	if( url.endsWith( "/" ) ) return url;
@@ -172,7 +172,7 @@ function __getURLFromString( this:void, url:string ):string {
 }
 
 function __getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
-	if( ! Utils.isString( settings.host ) )
+	if( !Utils.isString( settings.host ) )
 		throw new IllegalArgumentError( `The settings object must contains a valid host string.` );
 
 	if( hasProtocol( settings.host ) )
@@ -183,10 +183,10 @@ function __getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
 
 	const protocol:string = settings.ssl === false ? "http://" : "https://";
 	const host:string = settings.host.endsWith( "/" ) ? settings.host.slice( 0, - 1 ) : settings.host;
-	const url:string = `${protocol}${host}/`;
+	const url:string = `${ protocol }${ host }/`;
 
-	if( ! Utils.isNumber( settings.port ) ) return url;
-	return url.slice( 0, - 1 ) + `:${settings.port}/`;
+	if( !Utils.isNumber( settings.port ) ) return url;
+	return url.slice( 0, - 1 ) + `:${ settings.port }/`;
 }
 
 
