@@ -408,21 +408,9 @@ export class MapUtils {
 	 * @param extenders Every other Map parameter, from which the entries to be added to the target Map will be taken.
 	 */
 	static extend<K, V>( toExtend:Map<K, V>, ...extenders:Map<K, V>[] ):Map<K, V> {
-		for( let i:number = 0, length:number = extenders.length; i < length; i ++ ) {
-			let extender:Map<K, V> = extenders[ i ];
+		for( const extender of extenders ) {
 			if( ! extender ) continue;
-
-			let values:Iterator<Array<(K | V)>> = extender.entries();
-
-			let next:IteratorResult<Array<(K | V)>> = values.next();
-			while( ! next.done ) {
-				let entry:Array<(K | V)> = next.value;
-				let key:K = <K>entry[ 0 ];
-				let value:V = <V>entry[ 1 ];
-				toExtend.set( key, value );
-
-				next = values.next();
-			}
+			extender.forEach( ( value, key ) => toExtend.set( key, value ) );
 		}
 		return toExtend;
 	}

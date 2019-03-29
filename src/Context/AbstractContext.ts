@@ -84,7 +84,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer | undef
 	hasObjectSchema( type:string ):boolean {
 		type = this.__resolveTypeURI( type );
 		if( this._typeObjectSchemaMap.has( type ) ) return true;
-		return ! ! this.parentContext && this.parentContext.hasObjectSchema( type );
+		return !!this.parentContext && this.parentContext.hasObjectSchema( type );
 	}
 
 
@@ -92,7 +92,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer | undef
 	 * @see {@link Context.getObjectSchema}
 	 */
 	getObjectSchema( type?:string ):DigestedObjectSchema {
-		if( ! ! type ) {
+		if( !!type ) {
 			// Type specific schema
 			type = this.__resolveTypeURI( type );
 			if( this._typeObjectSchemaMap.has( type ) ) return this._typeObjectSchemaMap.get( type )!;
@@ -101,7 +101,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer | undef
 			throw new IllegalArgumentError( `"${ type }" hasn't an object schema.` );
 		} else {
 			// General schema
-			const generalSchema:DigestedObjectSchema = ! this._generalObjectSchema ?
+			const generalSchema:DigestedObjectSchema = !this._generalObjectSchema ?
 				this.parentContext ?
 					this.parentContext.getObjectSchema() :
 					new DigestedObjectSchema() :
@@ -112,7 +112,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer | undef
 			if( generalSchema.vocab === void 0 && this._settings && this._settings.vocabulary )
 				generalSchema.vocab = this.resolve( this._settings.vocabulary );
 
-			if( ! generalSchema.base )
+			if( !generalSchema.base )
 				generalSchema.base = this.baseURI;
 
 			return generalSchema;
@@ -128,7 +128,7 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer | undef
 	 */
 	extendObjectSchema( objectSchemaOrTypeOrModelSchema:string | ModelSchema | (ModelSchema | ObjectSchema)[] | ObjectSchema, objectSchema?:ObjectSchema ):this {
 		if( isString( objectSchemaOrTypeOrModelSchema ) ) {
-			if( ! objectSchema ) throw new IllegalArgumentError( `An object schema is required.` );
+			if( !objectSchema ) throw new IllegalArgumentError( `An object schema is required.` );
 			return this.__extendTypeSchema( objectSchema, objectSchemaOrTypeOrModelSchema );
 		}
 
@@ -166,16 +166,18 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer | undef
 
 		const types:string[] = this
 			.__getObjectSchemasTypes()
-			.filter( type => ! exceptsSet.has( type ) )
+			.filter( type => !exceptsSet.has( type ) )
 		;
 
 		return types.map( this.getObjectSchema, this );
 	}
 
 	protected __getObjectSchemasTypes():string[] {
-		const localTypes:string[] = Array.from( this._typeObjectSchemaMap.keys() );
+		const localTypes:string[] = [];
+		this._typeObjectSchemaMap
+			.forEach( ( _, key ) => localTypes.push( key ) );
 
-		if( ! this._parentContext ) return localTypes;
+		if( !this._parentContext ) return localTypes;
 
 		const allTypes:string[] = this._parentContext.__getObjectSchemasTypes();
 		for( const type of localTypes ) {

@@ -11,6 +11,10 @@ module.exports = function( config ) {
 
 		// list of files / patterns to load in the browser
 		files: [
+			// polyfills for IE
+			"node_modules/core-js-bundle/index.js",
+			"node_modules/proxy-polyfill/proxy.min.js",
+			// Sourcecode and tests helpers
 			"src/**/*.ts",
 			"test/helpers/**/*.ts",
 		],
