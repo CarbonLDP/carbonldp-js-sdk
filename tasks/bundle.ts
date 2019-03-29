@@ -41,6 +41,12 @@ const DEFAULT_PLUGINS:Plugin[] = [
 	replace( {
 		"process.env.NODE_ENV": JSON.stringify( "production" ),
 	} ),
+	replace( {
+		delimiters: [ "{{", "}}" ],
+		values: {
+			"VERSION": config.version,
+		},
+	} ),
 	globals( {
 		process: false,
 		buffer: false,
