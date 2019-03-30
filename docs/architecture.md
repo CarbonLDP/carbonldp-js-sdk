@@ -8,14 +8,15 @@ The following diagram exposes the base elements that form the structure of the S
 Central point of access to the functionality inside the SDK.
 The main elements of every context are:
   - `baseURI`. The domain of the resources the context can manage.
-  - `respository`. Interface to the available requests in the domain.
-  - `registry`. Manage the resources inside the context's domain.
+  - `respository`. Manage the request methods of the context's domain. See [Repositories](#repositories)
+  - `registry`. Manage the resources inside the context's domain. See [Registries](#registries)
   - `JSONLDConverter`. Has the capabilities to convert JSON-LD into simple JS objects.
   - ObjectSchema methods. Methods that manage the schemas that have the information for a better JSON-LD conversion.
   
 There are different implementations of context inside the SDK:
+  - `Context`. Interface with the description of the minimum methods a context should have.
   - `AbstractContext`. Base implementation of the general functionality.
-  - `DocumentsContext`. The context for the `Document`s of the platform. It adds the real-time functionality of the platform.
+  - `DocumentsContext`. The context for the `Document`s of the platform. It also adds the real-time service that can connect to the Carbon LDP platform broker.
   - `CarbonLDP`. The exposed context for the user that adds submodules, version, and the endpoint of the root document of the platform.
   - `GlobalContext`. Context that exposes a singleton that shares the common information of the platform. It is used to share this information to the `CarbonLDP` contexts and also, to manage external resources from the `CarbonLDP` domain.
 
@@ -23,20 +24,30 @@ There are different implementations of context inside the SDK:
 
 The repositories have the methods to perform the available requests of the context domain.
 
-Since the `CarbonLDP` repository has multiple methods, these are grouped and separated in different traits, that will later be composed to create a `DocumentRespository`:
-- `EventEmitterDocumentsRepositoryTrait`. Methods for the real-time subscriptions.
-- `SPARQLDocumentsRepositoryTrait`. Methods for making SPARQL queries.
-- `LDPDocumentsRepositoryTrait`. Methods for the CRUD and LDP action requests.
-- `QueryableDocumentsRepositoryTrait`. Methods for partial reading of documents.
+The different repositories inside the SDK are:
+  - `Repository`. Base interface that describe the minimum request of any repository, i.e. CRUD methods.
+  - `GeneralRepository`. Similar to the previous one, but it exists to separate a repository that is specialized to work directly for a context.
+  - `DocumentsRepository`. The repository that the `DocumentsContext` and the `CarbonLDP` class contains and has all the multiple services the Carbon LDP platform offers.
 
-The `$Repository` element has the same functionality, but the methods are preceded with a `$` symbol,
-since this interface is to describe resources functionality and to avoid data overlap its content are described by this symbol.
+Since the `DocumentRespository` has a lot of methods, these are grouped and separated in different traits for having a better scalability:
+  - `EventEmitterDocumentsRepositoryTrait`. Methods for the real-time subscriptions.
+  - `SPARQLDocumentsRepositoryTrait`. Methods for making SPARQL queries.
+  - `LDPDocumentsRepositoryTrait`. Methods for the CRUD and LDP action requests.
+  - `QueryableDocumentsRepositoryTrait`. Methods for partial reading of documents.
 
-Therefore the `Document` resource is a repository, which functionality is also separated in multiple traits:
-- `$EventEmitterDocumentTrait`
-- `$SPARQLDocumentRepositoryTrait`
-- `$LDPDocumentRepositoryTrait`
-- `$QueryableDocumentRepositoryTrait`
+Resources inside the SDK are also repositories, but this are described by the `$Repository` element. 
+This repository has the same functionality as one described before, but the methods are preceded with a `$` symbol,
+to avoid overlap between the repositories methods and the data of the resources.
+
+The main resources/repositories inside the SDK are:
+  - `ResolvablePointer`. The base resource/repository that has a relation to a context's repository by the `$repository` property, to delegate the behavior and not repeat the implementation code.
+  - `Document`. The resource that connects to the `DocumentsRepository`, and therefore also has all the services of the platform.
+
+Due to the same reasons of the `DocumentsRepository`, the `Document` resource also divides its functionality in similar traits:
+  - `$EventEmitterDocumentTrait`
+  - `$SPARQLDocumentRepositoryTrait`
+  - `$LDPDocumentRepositoryTrait`
+  - `$QueryableDocumentRepositoryTrait`
 
 ## Registries
 
@@ -47,7 +58,12 @@ allowing users to relate resources and access that related information in an eas
 
 Similar to the repositories, there is the `$Registry` interface declaring the `$` methods equivalents
 that manage resources inside resources.
-In the case of `Document`s, this sub-resources are called `Fragments` (Named Fragments/Blank Nodes).
+
+The main repositories inside the SDK are:
+  - `Registry`/`$Reistry`. As explained, the base methods of any registry.
+  - `GeneralRegistry`. Specialized registry to work directly for a context.
+  - `DocumentsRegistry`. The registry that the `DocumentsContext` and the `CarbonLDP` class contains and manages the `Document` resources.
+  - `Document`. Also a registry that store sub-resources called `Fragments` (Named Fragments/Blank Nodes).
 
 ## Models
 
@@ -55,18 +71,18 @@ The models are representations of specific types of resources.<br>
 Its name should be the same as the slug of the `rdf:type` that describes the resource.
 
 There are three kinds of models:
-- **Base**:<br>
-  Interface that contains the basic information to create a **Transient** type.<br>
-  Its name is formed by the model name preceded by the `Base` word,
-  e.g. for the model _Document_, the interface will be `BaseDocument`. 
-- **Transient**:<br>
-  Interface that represents a resource before it has been persisted into the Platform.<br>
-  Its name is formed by the model name preceded by the `Transient` word,
-  e.g. for the model _Document_, the interface will be `TransientDocument`.
-- **Persisted**:<br>
-  Interface that represents a resource that already has a stored representation in the platform.<br>
-  Its name is the same as the model,
-  e.g. for the model _Document_, the interface will be `Document`.
+  - **Base**:<br>
+    Interface that contains the basic information to create a **Transient** type.<br>
+    Its name is formed by the model name preceded by the `Base` word,
+    e.g. for the model _Document_, the interface will be `BaseDocument`. 
+  - **Transient**:<br>
+    Interface that represents a resource before it has been persisted into the Platform.<br>
+    Its name is formed by the model name preceded by the `Transient` word,
+    e.g. for the model _Document_, the interface will be `TransientDocument`.
+  - **Persisted**:<br>
+    Interface that represents a resource that already has a stored representation in the platform.<br>
+    Its name is the same as the model,
+    e.g. for the model _Document_, the interface will be `Document`.
 
 Every type of model should be created in a different file,
 inside a directory with the name of the model:
@@ -109,8 +125,8 @@ This is to follow the respective `$` convention of registries and repositories t
 
 Remember, preceding with `_` is a common convention to mark a private property, but since we are already preceding with a `$` symbol,
 the private properties will be started by `$_` or `$__`, where:
- - `$_`, is for private properties that can be used anywhere in the SDK.
- - `$__`, is for private properties that only can be used within the class/interface where it is been declared.
+  - `$_`, is for private properties that can be used anywhere in the SDK.
+  - `$__`, is for private properties that only can be used within the class/interface where it is been declared.
 
 ---
 
