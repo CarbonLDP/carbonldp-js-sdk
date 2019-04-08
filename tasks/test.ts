@@ -49,9 +49,12 @@ export const testNode:gulp.TaskFunction = () => {
 			includeContent: false,
 		} ) )
 		.pipe( gulp.dest( TEMP ) )
-		.pipe( filter( [ "**/*.spec.js", "**/test/**/index.js" ] ) )
+		.pipe( filter( [ "**/*.js" ] ) )
 		.pipe( jasmine( {
 			includeStackTrace: true,
+			config: {
+				helpers: [ "./node_modules/jasmine-ajax-node" ],
+			},
 		} ) );
 
 	const delTemp:() => void = () => del.sync( TEMP );
