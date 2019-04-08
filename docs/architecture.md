@@ -8,8 +8,8 @@ The following diagram exposes the base elements that form the structure of the S
 Central point of access to the functionality inside the SDK.
 The main elements of every context are:
   - `baseURI`. The domain of the resources the context can manage.
-  - `respository`. Manage the request methods of the context's domain. See [Repositories](#repositories)
-  - `registry`. Manage the resources inside the context's domain. See [Registries](#registries)
+  - `respository`. Manages the request methods of the context's domain. See [Repositories](#repositories)
+  - `registry`. Manages the resources inside the context's domain. See [Registries](#registries)
   - `JSONLDConverter`. Has the capabilities to convert JSON-LD into simple JS objects.
   - ObjectSchema methods. Methods that manage the schemas that have the information for a better JSON-LD conversion.
   
@@ -25,19 +25,19 @@ There are different implementations of context inside the SDK:
 The repositories have the methods to perform the available requests of the context domain.
 
 The different repositories inside the SDK are:
-  - `Repository`. Base interface that describe the minimum request of any repository, i.e. CRUD methods.
+  - `Repository`. Base interface that describes the minimum requests of any repository, i.e. CRUD methods.
   - `GeneralRepository`. Similar to the previous one, but it exists to separate a repository that is specialized to work directly for a context.
-  - `DocumentsRepository`. The repository that the `DocumentsContext` and the `CarbonLDP` class contains and has all the multiple services the Carbon LDP platform offers.
+  - `DocumentsRepository`. The repository that the `DocumentsContext` and the `CarbonLDP` class contain, it has all the multiple services the Carbon LDP platform offers.
 
-Since the `DocumentRespository` has a lot of methods, these are grouped and separated in different traits for having a better scalability:
+Since the `DocumentRespository` has a lot of methods, these are grouped and separated in different traits to have a better scalability:
   - `EventEmitterDocumentsRepositoryTrait`. Methods for the real-time subscriptions.
   - `SPARQLDocumentsRepositoryTrait`. Methods for making SPARQL queries.
   - `LDPDocumentsRepositoryTrait`. Methods for the CRUD and LDP action requests.
-  - `QueryableDocumentsRepositoryTrait`. Methods for partial reading of documents.
+  - `QueryableDocumentsRepositoryTrait`. Methods for partially reading documents.
 
-Resources inside the SDK are also repositories, but this are described by the `$Repository` element. 
+Resources inside the SDK are also repositories, but these are described by the `$Repository` element. 
 This repository has the same functionality as one described before, but the methods are preceded with a `$` symbol,
-to avoid overlap between the repositories methods and the data of the resources.
+to avoid overlaps between the repository's methods and the data of the resources.
 
 The main resources/repositories inside the SDK are:
   - `ResolvablePointer`. The base resource/repository that has a relation to a context's repository by the `$repository` property, to delegate the behavior and not repeat the implementation code.
@@ -59,11 +59,11 @@ allowing users to relate resources and access that related information in an eas
 Similar to the repositories, there is the `$Registry` interface declaring the `$` methods equivalents
 that manage resources inside resources.
 
-The main repositories inside the SDK are:
-  - `Registry`/`$Reistry`. As explained, the base methods of any registry.
+The main registries inside the SDK are:
+  - `Registry`/`$Reistry`. As explained before, the base methods of any registry.
   - `GeneralRegistry`. Specialized registry to work directly for a context.
-  - `DocumentsRegistry`. The registry that the `DocumentsContext` and the `CarbonLDP` class contains and manages the `Document` resources.
-  - `Document`. Also a registry that store sub-resources called `Fragments` (Named Fragments/Blank Nodes).
+  - `DocumentsRegistry`. The registry that the `DocumentsContext` and the `CarbonLDP` class contain, it manages the `Document` resources.
+  - `Document`. Also a registry that stores sub-resources called `Fragments` (Named Fragments/Blank Nodes).
 
 ## Models
 
@@ -126,7 +126,7 @@ This is to follow the respective `$` convention of registries and repositories t
 Remember, preceding with `_` is a common convention to mark a private property, but since we are already preceding with a `$` symbol,
 the private properties will be started by `$_` or `$__`, where:
   - `$_`, is for private properties that can be used anywhere in the SDK.
-  - `$__`, is for private properties that only can be used within the class/interface where it is been declared.
+  - `$__`, is for private properties that can only be used within the class/interface where it has been declared.
 
 ---
 
