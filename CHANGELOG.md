@@ -3,21 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
-## [Unreleased] 
+<!-- ## [Unreleased] -->
 
-### Added
+<!-- ### Added -->
 
-- Improve bundle size using rollup
+<!-- ### Fixed -->
 
-### Fixed
+<!-- ### Breaking Changes -->
 
-- [#338](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/338) - Fix `$removeMember()`/`$removeMembers()` in Node.js
-- [#366](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/366) - Fix error in bundle with undefined `global` variable 
-- [#368](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/368) - Fix ignore of `_.withType()` filter when used along `_.properties( _.all )` 
-
-<!--### Breaking Changes -->
-
-## [5.2.0-alpha.1] - 2019-01-30
+## [5.2.0] - 2019-04-10
 
 ### Added
 
@@ -39,6 +33,13 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
         } )
     );
 	```
+- Improve bundle size using rollup
+
+### Fixed
+
+- [#338](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/338) - Fix `$removeMember()`/`$removeMembers()` in Node.js
+- [#366](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/366) - Fix error in bundle with undefined `global` variable 
+- [#368](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/368) - Fix ignore of `_.withType()` filter when used along `_.properties( _.all )` 
 
 ## [5.1.0] - 2018-12-06
 
@@ -95,9 +96,9 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 New version out! This version brings structural changes to the SDK so for more information please check out [https://carbonldp.com/5.0.x/javascript-sdk/].
 
-[Unreleased]: https://github.com/CarbonLDP/carbonldp-js-sdk/compare/v5.1.0...HEAD
+[Unreleased]: https://github.com/CarbonLDP/carbonldp-js-sdk/compare/v5.2.0...HEAD
 
-[5.2.0-alpha.1]: https://github.com/CarbonLDP/carbonldp-js-sdk/compare/v5.1.0...v5.2.0-alpha.1
+[5.2.0]: https://github.com/CarbonLDP/carbonldp-js-sdk/compare/v5.1.0...v5.2.0
 [5.1.0]: https://github.com/CarbonLDP/carbonldp-js-sdk/compare/v5.0.0...v5.1.0
 [5.0.0]: https://github.com/CarbonLDP/carbonldp-js-sdk/compare/v0.42.0...v5.0.0
 
