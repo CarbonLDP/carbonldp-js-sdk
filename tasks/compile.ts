@@ -99,6 +99,7 @@ compileCJS5.displayName = "compile:cjs5";
 export const compileTypes:gulp.TaskFunction = compiler( CONFIG.dist.types, {
 	target: "es2015",
 	declaration: true,
+	removeComments: false,
 	stream: "dts",
 } );
 compileTypes.displayName = "compile:types";
