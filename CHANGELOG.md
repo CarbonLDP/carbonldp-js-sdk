@@ -11,6 +11,12 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 <!-- ### Breaking Changes -->
 
+## [Unreleased]
+
+### Added
+
+- [#376](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/376) - Add doc comments to the types files
+
 ## [5.2.0] - 2019-04-10
 
 ### Added
