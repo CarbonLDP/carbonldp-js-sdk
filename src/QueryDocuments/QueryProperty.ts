@@ -160,7 +160,6 @@ export class QueryProperty implements QueryablePropertyData {
 			name: propertyName,
 			queryContainer: this.queryContainer,
 			parent: this,
-			optional: true,
 		} );
 
 		this.subProperties.set( propertyName, property );
