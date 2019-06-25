@@ -12,6 +12,7 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 
+import { IllegalActionError } from "../Errors/IllegalActionError";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
 
@@ -62,7 +63,7 @@ export class QueryRootProperty extends QueryProperty {
 	protected __createSearchPatterns():PatternToken[] {
 		const patterns:PatternToken[] = [];
 
-		if( this.name !== QueryRootPropertyType.DOCUMENT ) {
+		if( this.__hasSolutionModifier() ) {
 			patterns.push( this.__createSearchSelfPattern() );
 		} else {
 			const values:PatternToken | undefined = this.__createValuesPattern();
@@ -139,6 +140,13 @@ export class QueryRootProperty extends QueryProperty {
 			);
 
 		return [ memberRelations, memberSelection ];
+	}
+
+
+	protected __hasSolutionModifier():boolean {
+		return this._limit !== undefined
+			|| this._offset !== undefined
+			|| !!this.order;
 	}
 
 	protected __addLimitTo( subSelect:SubSelectToken ):void {
@@ -238,7 +246,7 @@ export class QueryRootProperty extends QueryProperty {
 
 	// Override to be added in the sub-select
 	protected __addTypesTo( pattern:SubjectToken ):void {
-		if( this.name !== QueryRootPropertyType.DOCUMENT ) return;
+		if( this.__hasSolutionModifier() ) return;
 		super.__addTypesTo( pattern );
 	}
 

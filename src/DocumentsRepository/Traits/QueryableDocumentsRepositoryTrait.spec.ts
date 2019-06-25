@@ -6400,11 +6400,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 					" " +
 					"} {" +
-					" {" +
-					"" + " SELECT DISTINCT ?child {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child" +
-					"" + " }" +
-					" }" +
+					" <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
 
 					" GRAPH ?child {" +
 					"" + " ?child___subject ?child___predicate ?child___object" +
@@ -8364,17 +8360,13 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 					"} {" +
 					" {" +
-					"" + " SELECT DISTINCT ?member {" +
-					"" + "" + " {" +
-					"" + "" + "" + " SELECT ?membershipResource ?hasMemberRelation {" +
-					"" + "" + "" + "" + " <https://example.com/>" +
-					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
-					"" + "" + "" + " }" +
-					"" + "" + " }" +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + " SELECT ?membershipResource ?hasMemberRelation {" +
+					"" + "" + " <https://example.com/>" +
+					"" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
 					"" + " }" +
 					" }" +
+					" ?membershipResource ?hasMemberRelation ?member." +
 
 					" GRAPH ?member {" +
 					"" + " ?member___subject ?member___predicate ?member___object" +
@@ -9613,11 +9605,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 					" ?child a ?child__types " +
 
 					"} {" +
-					" {" +
-					"" + " SELECT DISTINCT ?child {" +
-					"" + "" + ` <https://example.com/> <${ LDP.contains }> ?child` +
-					"" + " }" +
-					" }" +
+					` <https://example.com/> <${ LDP.contains }> ?child.` +
 
 					" OPTIONAL { ?child a ?child__types }" +
 
@@ -9978,17 +9966,13 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 
 					"} {" +
 					" {" +
-					"" + " SELECT DISTINCT ?member {" +
-					"" + "" + " {" +
-					"" + "" + "" + " SELECT ?membershipResource ?hasMemberRelation {" +
-					"" + "" + "" + "" + " <https://example.com/>" +
-					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
-					"" + "" + "" + " }" +
-					"" + "" + " }" +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+					"" + " SELECT ?membershipResource ?hasMemberRelation {" +
+					"" + "" + " <https://example.com/>" +
+					"" + "" + "" + " <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation" +
 					"" + " }" +
 					" }" +
+					" ?membershipResource ?hasMemberRelation ?member." +
 
 					" OPTIONAL { ?member a ?member__types }" +
 
