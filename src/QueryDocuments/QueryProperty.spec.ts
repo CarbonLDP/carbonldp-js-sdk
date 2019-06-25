@@ -1,14 +1,15 @@
-import { OptionalToken, VariableToken } from "sparqler/tokens";
+import { LiteralToken, OptionalToken, VariableToken } from "sparqler/tokens";
 
 import { createMockContext, createMockDigestedSchema, createMockDigestedSchemaProperty } from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
 
+import { IllegalActionError } from "../Errors/IllegalActionError";
+
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
 import { QueryContainer } from "./QueryContainer";
-
 import { QueryProperty } from "./QueryProperty";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { QueryRootPropertyType } from "./QueryRootPropertyType";
@@ -117,17 +118,92 @@ describe( "QueryProperty", () => {
 	// TODO: Test .addProperty
 	// TODO: Test ._addSubProperty
 
+	describe( "QueryProperty.getProperty", () => {
+
+		it( "should exist", () => {
+			expect( QueryProperty.prototype.getProperty ).toBeDefined();
+			expect( QueryProperty.prototype.getProperty ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should create ALL property when root is FULL", () => {
+			const queryProperty:QueryProperty = new QueryProperty( {
+				queryContainer: queryContainer,
+				name: "name",
+				definition: new DigestedObjectSchemaProperty(),
+				optional: true,
+				propertyType: QueryPropertyType.FULL,
+			} );
+
+			const returned:QueryProperty = queryProperty.getProperty( "property", { create: true } )!;
+			expect( returned.propertyType ).toEqual( QueryPropertyType.ALL );
+		} );
+
+		// TODO: Test more cases
+
+	} );
+
 
 	// TODO: Test .setType
 	// TODO: Test .addValues
 	// TODO: Test .addType
 	// TODO: Test .addFilter
-	// TODO: Test .setObligatory
+
+	describe( "QueryProperty.setObligatory", () => {
+
+		it( "should exist", () => {
+			expect( QueryProperty.prototype.setObligatory ).toBeDefined();
+			expect( QueryProperty.prototype.setObligatory ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should set obligatory to parent when child set to inherit", () => {
+			const queryProperty:QueryProperty = new QueryProperty( {
+				queryContainer: queryContainer,
+				definition: new DigestedObjectSchemaProperty(),
+				optional: true,
+				name: "name",
+			} );
+
+			const subProperty:QueryProperty = queryProperty
+				.addProperty( "property", {} );
+
+			subProperty.setObligatory( { inheritParents: true } );
+
+			expect( queryProperty.optional ).toEqual( false );
+		} );
+
+		// TODO: Test more cases
+
+	} );
+
 	// TODO: Test ._isPartial
 	// TODO: Test ._isComplete
 
 
-	// TODO: Test .getSelfPattern
+	describe( "QueryProperty.getSelfPattern", () => {
+
+		it( "should exist", () => {
+			expect( QueryProperty.prototype.getSelfPattern ).toBeDefined();
+			expect( QueryProperty.prototype.getSelfPattern ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should throw error when no parent", () => {
+			const queryProperty:QueryProperty = new QueryProperty( {
+				queryContainer: queryContainer,
+				definition: new DigestedObjectSchemaProperty(),
+				optional: true,
+				name: "name",
+			} );
+
+			expect( () => queryProperty.getSelfPattern() )
+				.toThrowError( IllegalActionError, "Cannot create pattern without a parent." );
+		} );
+
+		// TODO: Test more cases
+
+	} );
 
 	describe( "QueryProperty.getSearchPatterns", () => {
 
@@ -174,6 +250,111 @@ describe( "QueryProperty", () => {
 			expect( queryProperty.getSearchPatterns() ).not.toEqual( [
 				jasmine.any( OptionalToken ) as any as OptionalToken,
 			] );
+		} );
+
+
+		it( "should throw error when has literal values and type ALL", () => {
+			const queryProperty:QueryProperty = new QueryProperty( {
+					parent: new QueryProperty( {
+						queryContainer: queryContainer,
+						name: "parent",
+						definition: new DigestedObjectSchemaProperty(),
+						optional: true,
+					} ),
+					name: "property",
+					optional: false,
+					queryContainer: queryContainer,
+					definition: createMockDigestedSchemaProperty( { uri: "http://example.com/ns#property" } ),
+					values: [ new LiteralToken( "some-value" ) ],
+					propertyType: QueryPropertyType.ALL,
+				} )
+			;
+
+			expect( () => queryProperty.getSearchPatterns() )
+				.toThrowError( IllegalActionError, `Property is not a resource.` );
+		} );
+
+		it( "should throw error when has literal values and type FULL", () => {
+			const queryProperty:QueryProperty = new QueryProperty( {
+					parent: new QueryProperty( {
+						queryContainer: queryContainer,
+						name: "parent",
+						definition: new DigestedObjectSchemaProperty(),
+						optional: true,
+					} ),
+					name: "property",
+					optional: false,
+					queryContainer: queryContainer,
+					definition: createMockDigestedSchemaProperty( { uri: "http://example.com/ns#property" } ),
+					values: [ new LiteralToken( "some-value" ) ],
+					propertyType: QueryPropertyType.FULL,
+				} )
+			;
+
+			expect( () => queryProperty.getSearchPatterns() )
+				.toThrowError( IllegalActionError, `Property is not a resource.` );
+		} );
+
+		it( "should NOT throw error when has literal values and type EMPTY", () => {
+			const queryProperty:QueryProperty = new QueryProperty( {
+					parent: new QueryProperty( {
+						queryContainer: queryContainer,
+						name: "parent",
+						definition: new DigestedObjectSchemaProperty(),
+						optional: true,
+					} ),
+					name: "property",
+					optional: false,
+					queryContainer: queryContainer,
+					definition: createMockDigestedSchemaProperty( { uri: "http://example.com/ns#property" } ),
+					values: [ new LiteralToken( "some-value" ) ],
+					propertyType: QueryPropertyType.EMPTY,
+				} )
+			;
+
+			expect( () => queryProperty.getSearchPatterns() )
+				.not.toThrowError( IllegalActionError, `Property is not a resource.` );
+		} );
+
+		it( "should NOT throw error when has literal values and type PARTIAL", () => {
+			const queryProperty:QueryProperty = new QueryProperty( {
+					parent: new QueryProperty( {
+						queryContainer: queryContainer,
+						name: "parent",
+						definition: new DigestedObjectSchemaProperty(),
+						optional: true,
+					} ),
+					name: "property",
+					optional: false,
+					queryContainer: queryContainer,
+					definition: createMockDigestedSchemaProperty( { uri: "http://example.com/ns#property" } ),
+					values: [ new LiteralToken( "some-value" ) ],
+					propertyType: QueryPropertyType.PARTIAL,
+				} )
+			;
+
+			expect( () => queryProperty.getSearchPatterns() )
+				.not.toThrowError( IllegalActionError, `Property is not a resource.` );
+		} );
+
+		it( "should NOT throw error when has literal values and NO type", () => {
+			const queryProperty:QueryProperty = new QueryProperty( {
+					parent: new QueryProperty( {
+						queryContainer: queryContainer,
+						name: "parent",
+						definition: new DigestedObjectSchemaProperty(),
+						optional: true,
+					} ),
+					name: "property",
+					optional: false,
+					queryContainer: queryContainer,
+					definition: createMockDigestedSchemaProperty( { uri: "http://example.com/ns#property" } ),
+					values: [ new LiteralToken( "some-value" ) ],
+				} )
+			;
+
+			expect( () => queryProperty.getSearchPatterns() )
+				.not.toThrowError( IllegalActionError, `Property is not a resource.` );
 		} );
 
 		// TODO: Test more cases

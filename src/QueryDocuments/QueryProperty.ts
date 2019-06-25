@@ -101,9 +101,7 @@ export class QueryProperty implements QueryablePropertyData {
 		this.pathBuilderFn = data.pathBuilderFn;
 
 		this.propertyType = data.propertyType;
-		this.optional = data.optional === void 0
-			? true
-			: data.optional;
+		this.optional = data.optional;
 
 		this.subProperties = new Map();
 
@@ -162,6 +160,7 @@ export class QueryProperty implements QueryablePropertyData {
 			name: propertyName,
 			queryContainer: this.queryContainer,
 			parent: this,
+			optional: true,
 		} );
 
 		this.subProperties.set( propertyName, property );
@@ -222,11 +221,6 @@ export class QueryProperty implements QueryablePropertyData {
 			|| this.propertyType === QueryPropertyType.ALL
 			|| !!this.subProperties.size
 			;
-	}
-
-	_isEmpty():boolean {
-		return this.propertyType === undefined
-			|| this.propertyType === QueryPropertyType.EMPTY;
 	}
 
 
@@ -592,28 +586,21 @@ export class QueryProperty implements QueryablePropertyData {
 				return this.__createPartialConstructPattern();
 
 			case QueryPropertyType.ALL:
+				return this.__createAllPattern()
+					.addProperty( this.__getCDocumentPropertyContext() );
+
 			case QueryPropertyType.FULL:
-				return this.__createCompleteConstructPattern()
-					.addProperty( new PropertyToken( this.queryContainer.compactIRI( C.document ) )
-						.addObject( this._getContextVariable() )
-					);
+				return this.__createGraphSubPattern()
+					.addProperty( this.__getCDocumentPropertyContext() );
 
 			default:
 				return;
 		}
 	}
 
-	protected __createCompleteConstructPattern():SubjectToken {
-		switch( this.propertyType ) {
-			case QueryPropertyType.ALL:
-				return this.__createAllPattern();
-
-			case QueryPropertyType.FULL:
-				return this.__createGraphSubPattern();
-
-			default:
-				throw new IllegalActionError( "Invalid property type" );
-		}
+	protected __getCDocumentPropertyContext():PropertyToken {
+		return new PropertyToken( this.queryContainer.compactIRI( C.document ) )
+			.addObject( this._getContextVariable() );
 	}
 
 	protected __createPartialConstructPattern():SubjectToken {
