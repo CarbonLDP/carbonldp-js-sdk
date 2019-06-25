@@ -3,11 +3,11 @@ import { createMockContext } from "../../test/helpers/mocks";
 import { AbstractContext } from "../Context/AbstractContext";
 
 import { QueryContainer } from "./QueryContainer";
-import { QueryContainerProperty } from "./QueryContainerProperty";
-import { QueryContainerPropertyType } from "./QueryContainerPropertyType";
 import { SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
 import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
 import { QueryDocumentsOrder } from "./QueryDocumentsOrder";
+import { QueryRootProperty } from "./QueryRootProperty";
+import { QueryRootPropertyType } from "./QueryRootPropertyType";
 
 
 describe( "QueryDocumentsBuilder", () => {
@@ -19,7 +19,7 @@ describe( "QueryDocumentsBuilder", () => {
 
 	let context:AbstractContext<any, any>;
 	let queryContainer:QueryContainer;
-	let baseProperty:QueryContainerProperty;
+	let baseProperty:QueryRootProperty;
 	beforeEach( () => {
 		context = createMockContext( {
 			uri: "http://example.com",
@@ -29,8 +29,8 @@ describe( "QueryDocumentsBuilder", () => {
 			"ex": "http://example.com/ns#",
 		} );
 
-		queryContainer = new QueryContainer( context, { uri: "root/", containerPropertyType: QueryContainerPropertyType.CHILD } );
-		baseProperty = queryContainer._queryProperty as QueryContainerProperty;
+		queryContainer = new QueryContainer( context, { uri: "root/", rootPropertyType: QueryRootPropertyType.CHILD } );
+		baseProperty = queryContainer._queryProperty;
 	} );
 
 	describe( "QueryDocumentsBuilder.constructor", () => {

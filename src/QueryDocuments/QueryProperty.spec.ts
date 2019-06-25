@@ -11,6 +11,7 @@ import { QueryContainer } from "./QueryContainer";
 
 import { QueryProperty } from "./QueryProperty";
 import { QueryPropertyType } from "./QueryPropertyType";
+import { QueryRootPropertyType } from "./QueryRootPropertyType";
 
 
 describe( "QueryProperty", () => {
@@ -24,7 +25,7 @@ describe( "QueryProperty", () => {
 	let queryContainer:QueryContainer;
 	beforeEach( () => {
 		context = createMockContext( { settings: { vocabulary: "https://example.com/vocab#" } } );
-		queryContainer = new QueryContainer( context, { uris: [ "root/" ] } );
+		queryContainer = new QueryContainer( context, { rootPropertyType: QueryRootPropertyType.DOCUMENT, uris: [ "root/" ] } );
 	} );
 
 	describe( "QueryProperty.constructor", () => {

@@ -13,9 +13,8 @@ import { ObjectSchemaDigester } from "../ObjectSchema/ObjectSchemaDigester";
 import { ObjectSchemaProperty } from "../ObjectSchema/ObjectSchemaProperty";
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
 
-import { QueryContainerProperty } from "./QueryContainerProperty";
-import { QueryContainerPropertyType } from "./QueryContainerPropertyType";
 import { QueryRootProperty } from "./QueryRootProperty";
+import { QueryRootPropertyType } from "./QueryRootPropertyType";
 import { QueryVariable } from "./QueryVariable";
 
 
@@ -24,7 +23,7 @@ import { QueryVariable } from "./QueryVariable";
  */
 export class QueryContainer extends FluentPathContainer<undefined> {
 	readonly context:AbstractContext<RegisteredPointer, any, any>;
-	readonly _queryProperty:QueryRootProperty | QueryContainerProperty;
+	readonly _queryProperty:QueryRootProperty;
 
 	private readonly _generalSchema:DigestedObjectSchema;
 	private readonly _prefixesTuples:[ string, string ][];
@@ -33,7 +32,7 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	private _variablesCounter:number;
 
 
-	constructor( context:AbstractContext<any, any, any>, propertyData:{ uri:string, containerPropertyType:QueryContainerPropertyType } | { uris:string[] } ) {
+	constructor( context:AbstractContext<any, any, any>, propertyData:{ rootPropertyType:QueryRootPropertyType, uri?:string, uris?:string[] } ) {
 		const schema:DigestedObjectSchema = context.getObjectSchema();
 		super( {
 			iriResolver: __createIRIResolver( schema ),
@@ -50,22 +49,20 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 		this._variablesCounter = 0;
 		this._variablesMap = new Map();
 
-		// Create target property
-		if( "uris" in propertyData ) {
-			const values:IRIToken[] = propertyData.uris.map( this.compactIRI, this );
-			this._queryProperty = new QueryRootProperty( {
-				queryContainer: this,
-				values: values,
-			} );
+		const values:IRIToken[] | undefined = propertyData.uris ?
+			propertyData.uris.map( this.compactIRI, this )
+			: undefined;
 
-		} else {
-			const iri:IRIToken = this.compactIRI( propertyData.uri );
-			this._queryProperty = new QueryContainerProperty( {
-				queryContainer: this,
-				containerIRI: iri,
-				containerPropertyType: propertyData.containerPropertyType,
-			} );
-		}
+		const containerIRI:IRIToken | undefined = propertyData.uri ?
+			this.compactIRI( propertyData.uri )
+			: undefined;
+
+		this._queryProperty = new QueryRootProperty( {
+			queryContainer: this,
+			queryRootPropertyType: propertyData.rootPropertyType,
+			values,
+			containerIRI,
+		} );
 	}
 
 
@@ -101,10 +98,10 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 		const prefix:[ string, string ] | undefined = this._prefixesTuples
 			.find( ( [ , x ] ) => iri.startsWith( x ) );
 
-		if( ! prefix ) return iri;
+		if( !prefix ) return iri;
 
 		const [ namespace, prefixIRI ] = prefix;
-		return `${namespace}:${iri.substr( prefixIRI.length )}`;
+		return `${ namespace }:${ iri.substr( prefixIRI.length ) }`;
 	}
 
 
@@ -119,7 +116,7 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	}
 
 	protected __isUsedPrefix( [ namespace, ]:[ string, string ] ):boolean {
-		return ! ! this.iriResolver.prefixes.get( namespace );
+		return !!this.iriResolver.prefixes.get( namespace );
 	}
 
 
@@ -148,8 +145,8 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 	 * @param value The value to serialize.
 	 */
 	serializeLiteral( type:string, value:any ):string {
-		if( ! this.context.jsonldConverter.literalSerializers.has( type ) )
-			throw new IllegalArgumentError( `Type "${type}" hasn't a defined serializer.` );
+		if( !this.context.jsonldConverter.literalSerializers.has( type ) )
+			throw new IllegalArgumentError( `Type "${ type }" hasn't a defined serializer.` );
 
 		return this.context.jsonldConverter
 			.literalSerializers

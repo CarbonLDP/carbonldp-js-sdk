@@ -122,12 +122,12 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	getProperty( path?:string, flags?:{ create:true, inherit?:false } ):QueryProperty | undefined {
-		if( ! path ) return this;
+		if( !path ) return this;
 
 		const rootPath:string = _getRootPath( path );
 		const property:QueryProperty | undefined = this.subProperties.get( rootPath );
 
-		if( ! property ) {
+		if( !property ) {
 			// If immediate child and can be created in valid property
 			if( rootPath === path && flags && flags.create && this._isComplete() ) {
 				const newProperty:QueryProperty = this.addProperty( rootPath, flags );
@@ -152,7 +152,7 @@ export class QueryProperty implements QueryablePropertyData {
 		return this._addSubProperty( propertyName, {
 			definition,
 			pathBuilderFn: propertyDefinition.path,
-			optional: ! propertyDefinition.required,
+			optional: !propertyDefinition.required,
 		} );
 	}
 
@@ -220,7 +220,7 @@ export class QueryProperty implements QueryablePropertyData {
 	_isPartial():boolean {
 		return this.propertyType === QueryPropertyType.PARTIAL
 			|| this.propertyType === QueryPropertyType.ALL
-			|| ! ! this.subProperties.size
+			|| !!this.subProperties.size
 			;
 	}
 
@@ -241,7 +241,7 @@ export class QueryProperty implements QueryablePropertyData {
 		const iri:string = schema.resolveURI( type, { vocab: true } );
 		this._types.push( iri );
 
-		if( ! this.queryContainer.context.hasObjectSchema( iri ) ) return;
+		if( !this.queryContainer.context.hasObjectSchema( iri ) ) return;
 
 		const typedSchema:DigestedObjectSchema = this.queryContainer.context.getObjectSchema( iri );
 		ObjectSchemaDigester._combineSchemas( [ schema, typedSchema ] );
@@ -256,7 +256,7 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	setObligatory( flags?:{ inheritParents:true } ):void {
-		if( ! this.optional ) return;
+		if( !this.optional ) return;
 
 		this.optional = false;
 
@@ -279,7 +279,7 @@ export class QueryProperty implements QueryablePropertyData {
 	}
 
 	protected __createPathToken():PathToken | VariableToken {
-		if( ! this.pathBuilderFn )
+		if( !this.pathBuilderFn )
 			return this.__createIRIToken();
 
 		const pathBuilder:PathBuilder = PathBuilder
@@ -306,17 +306,16 @@ export class QueryProperty implements QueryablePropertyData {
 
 	// Self description patterns
 
-	getSelfPattern():PatternToken | undefined {
-		const pattern:PatternToken | undefined = this.__createSelfPattern();
-		if( ! pattern ) return;
+	public getSelfPattern():PatternToken {
+		const pattern:PatternToken = this.__createSelfPattern();
 
-		if( ! this.optional ) return pattern;
+		if( !this.optional ) return pattern;
 		return new OptionalToken()
 			.addPattern( pattern );
 	}
 
-	protected __createSelfPattern():PatternToken | undefined {
-		if( ! this.parent )
+	protected __createSelfPattern():PatternToken {
+		if( !this.parent )
 			throw new IllegalActionError( "Cannot create pattern without a parent." );
 
 		return this
@@ -340,7 +339,7 @@ export class QueryProperty implements QueryablePropertyData {
 		const patterns:PatternToken[] = this
 			.__createSearchPatterns();
 
-		if( ! this.optional ) return patterns;
+		if( !this.optional ) return patterns;
 		return [ new OptionalToken()
 			.addPattern( ...patterns ),
 		];
@@ -352,16 +351,28 @@ export class QueryProperty implements QueryablePropertyData {
 		const values:PatternToken | undefined = this.__createValuesPattern();
 		if( values ) patterns.push( values );
 
+		patterns.push(
+			this.__createSearchSelfPattern(),
+			...this.__createPropertyPatterns(),
+			...this.__createFilterPatterns()
+		);
+
+		return patterns;
+	}
+
+	protected __createSearchSelfPattern():PatternToken {
+		const selfTriple:PatternToken = this.__createSelfPattern();
+
 		// If self is sub-property and not virtual, add inside graph
-		const selfTriple:PatternToken | undefined = this.__createSelfPattern();
-		if( selfTriple ) {
-			if( this.parent && ! this.pathBuilderFn ) {
-				patterns.push( this.parent._getContextGraph()
-					.addPattern( selfTriple ) );
-			} else {
-				patterns.push( selfTriple );
-			}
-		}
+		if( this.parent && !this.pathBuilderFn )
+			return this.parent._getContextGraph()
+				.addPattern( selfTriple );
+
+		return selfTriple;
+	}
+
+	protected __createPropertyPatterns():PatternToken[] {
+		const patterns:PatternToken[] = [];
 
 		switch( this.propertyType ) {
 			case QueryPropertyType.EMPTY:
@@ -388,13 +399,14 @@ export class QueryProperty implements QueryablePropertyData {
 				break;
 		}
 
-		if( this._filters.length ) {
-			const filters:FilterToken[] = this._filters
-				.map( constraint => new FilterToken( constraint ) );
-			patterns.push( ...filters );
-		}
-
 		return patterns;
+	}
+
+	protected __createFilterPatterns():PatternToken[] {
+		if( !this._filters.length ) return [];
+
+		return this._filters
+			.map( constraint => new FilterToken( constraint ) );
 	}
 
 	protected __createValuesPattern():ValuesToken | undefined {
@@ -450,7 +462,7 @@ export class QueryProperty implements QueryablePropertyData {
 				.addPattern( types );
 
 		// Return optional types
-		if( ! this._types.length )
+		if( !this._types.length )
 			return new OptionalToken()
 				.addPattern( pattern );
 
@@ -469,7 +481,7 @@ export class QueryProperty implements QueryablePropertyData {
 			.find( _ => _.verb === "a" );
 
 		// Create a predicate if not exists
-		if( ! aProperty ) {
+		if( !aProperty ) {
 			aProperty = new PropertyToken( "a" );
 			pattern.addProperty( aProperty );
 		}
@@ -543,7 +555,7 @@ export class QueryProperty implements QueryablePropertyData {
 		} );
 
 		// Exclude self if no predicated added
-		if( ! selfSubject.properties.length )
+		if( !selfSubject.properties.length )
 			return patterns.slice( 1 );
 
 		return patterns;

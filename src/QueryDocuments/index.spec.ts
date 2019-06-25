@@ -2,7 +2,7 @@ import * as Module from "./index";
 import { QueryablePointer, } from "./QueryablePointer";
 import { QueryableProperty } from "./QueryableProperty";
 import { QueryContainer } from "./QueryContainer";
-import { QueryContainerPropertyType } from "./QueryContainerPropertyType";
+import { QueryRootPropertyType } from "./QueryRootPropertyType";
 import { QueryDocumentBuilder, SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
 import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
 import { QueryObject } from "./QueryObject";
@@ -31,9 +31,9 @@ describe( "QueryDocuments/index", () => {
 		expect( Module.QueryContainer ).toBe( QueryContainer );
 	} );
 
-	it( "should reexport QueryContainerPropertyType", () => {
-		expect( Module.QueryContainerPropertyType ).toBeDefined();
-		expect( Module.QueryContainerPropertyType ).toBe( QueryContainerPropertyType );
+	it( "should reexport QueryRootPropertyType", () => {
+		expect( Module.QueryRootPropertyType ).toBeDefined();
+		expect( Module.QueryRootPropertyType ).toBe( QueryRootPropertyType );
 	} );
 
 	it( "should reexport QueryDocumentBuilder", () => {

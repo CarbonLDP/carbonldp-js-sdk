@@ -1,17 +1,17 @@
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
-import { QueryContainerProperty } from "./QueryContainerProperty";
 import { SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
 import { QueryContainer } from "./QueryContainer";
+import { QueryRootProperty } from "./QueryRootProperty";
 
 
 /**
  * Class with the helpers and properties for construct a query for children or members.
  */
 export class QueryDocumentsBuilder extends SubQueryDocumentsBuilder {
-	readonly _queryProperty!:QueryContainerProperty;
+	readonly _queryProperty!:QueryRootProperty;
 
-	constructor( queryContainer:QueryContainer, queryProperty:QueryContainerProperty ) {
+	constructor( queryContainer:QueryContainer, queryProperty:QueryRootProperty ) {
 		super( queryContainer, queryProperty );
 	}
 
