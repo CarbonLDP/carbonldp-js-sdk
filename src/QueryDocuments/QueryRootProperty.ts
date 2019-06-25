@@ -12,7 +12,6 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 
-import { IllegalActionError } from "../Errors/IllegalActionError";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../Errors/IllegalStateError";
 
@@ -63,7 +62,7 @@ export class QueryRootProperty extends QueryProperty {
 	protected __createSearchPatterns():PatternToken[] {
 		const patterns:PatternToken[] = [];
 
-		if( this.__hasSolutionModifier() ) {
+		if( this.__hasValidSolutionModifier() ) {
 			patterns.push( this.__createSearchSelfPattern() );
 		} else {
 			const values:PatternToken | undefined = this.__createValuesPattern();
@@ -143,10 +142,18 @@ export class QueryRootProperty extends QueryProperty {
 	}
 
 
-	protected __hasSolutionModifier():boolean {
-		return this._limit !== undefined
+	protected __hasValidSolutionModifier():boolean {
+		const has:boolean = this._limit !== undefined
 			|| this._offset !== undefined
 			|| !!this.order;
+
+		if( !has ) return has;
+
+		// Not valid any modifier if only one document
+		if( this.name === QueryRootPropertyType.DOCUMENT )
+			return this.values.length > 1;
+
+		return has;
 	}
 
 	protected __addLimitTo( subSelect:SubSelectToken ):void {
@@ -246,7 +253,7 @@ export class QueryRootProperty extends QueryProperty {
 
 	// Override to be added in the sub-select
 	protected __addTypesTo( pattern:SubjectToken ):void {
-		if( this.__hasSolutionModifier() ) return;
+		if( this.__hasValidSolutionModifier() ) return;
 		super.__addTypesTo( pattern );
 	}
 

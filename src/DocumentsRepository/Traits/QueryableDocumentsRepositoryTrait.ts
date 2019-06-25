@@ -175,7 +175,7 @@ function __executeQueryBuilder( queryContainer:QueryContainer, queryData:QueryDa
 }
 
 function __sortQueryDocuments<T extends Document>( queryContainer:QueryContainer, documents:T[] ):T[] {
-	if( !("order" in queryContainer._queryProperty) || !queryContainer._queryProperty.order ) return documents;
+	if( !queryContainer._queryProperty.order ) return documents;
 
 	const { path, flow } = queryContainer._queryProperty.order;
 	const inverter:number = flow === "DESC" ? - 1 : 1;
@@ -318,7 +318,7 @@ function __requestDocuments<T extends object>( repository:QueryableDocumentsRepo
 
 	__executeQueryBuilder( queryContainer, queryData );
 
-	const url:string = urls.length === 1 ? urls[ 0 ] : repository.context.baseURI;
+	const url:string = queryData.multiple ? repository.context.baseURI : urls[ 0 ];
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentChecksums ] }, requestOptions );
 
 	return __requestQueryDocuments<T>( repository, url, requestOptions, queryContainer );
