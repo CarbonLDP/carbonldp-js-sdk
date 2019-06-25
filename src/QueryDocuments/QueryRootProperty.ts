@@ -31,6 +31,7 @@ import { QueryRootPropertyType } from "./QueryRootPropertyType";
  */
 export class QueryRootProperty extends QueryProperty {
 	readonly parent:undefined;
+	readonly name!:QueryRootPropertyType;
 
 	readonly containerIRI?:IRIToken;
 
@@ -41,7 +42,7 @@ export class QueryRootProperty extends QueryProperty {
 	constructor( data:QueryRootPropertyData ) {
 		super( {
 			queryContainer: data.queryContainer,
-			name: data.queryRootPropertyType,
+			name: data.rootPropertyType,
 
 			definition: new DigestedObjectSchemaProperty(),
 
@@ -104,10 +105,8 @@ export class QueryRootProperty extends QueryProperty {
 				return this.__createMemberSelfPattern();
 
 			case QueryRootPropertyType.DOCUMENT:
-				return [];
-
 			default:
-				throw new IllegalStateError( `Invalid container type.` );
+				return [];
 		}
 	}
 

@@ -9,7 +9,7 @@ import { QueryRootPropertyType } from "./QueryRootPropertyType";
  */
 export interface QueryRootPropertyData {
 	queryContainer:QueryContainer;
-	queryRootPropertyType:QueryRootPropertyType;
+	rootPropertyType:QueryRootPropertyType;
 
 	values?:(IRIToken | LiteralToken)[];
 	containerIRI?:IRIToken;

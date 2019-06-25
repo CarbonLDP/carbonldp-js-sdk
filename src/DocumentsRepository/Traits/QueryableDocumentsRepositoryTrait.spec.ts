@@ -346,6 +346,55 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 			} );
 
 
+			it( "should throw error when query builder returned", async () => {
+				stubRequest( "https://example.com/resource/" );
+
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"schema": "https://schema.org/",
+					} )
+					.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": "string",
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": "integer",
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": "string",
+						},
+					} )
+				;
+
+
+				await repository
+					.get( "https://example.com/resource/", _ => {
+						_
+							.withType( "Resource" )
+							.properties( {
+								"property1": _.inherit,
+								"property2": {
+									"@id": "https://schema.org/property-2",
+									"@type": "@id",
+									"query": __ => __.properties( {
+										"property2": __.inherit,
+										"property3": __.inherit,
+									} ),
+								},
+							} );
+
+						return {} as any;
+					} )
+					.catch( error => {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The provided query builder was not returned" );
+					} );
+			} );
+
 			it( "should send CONSTRUCT query", async () => {
 				stubRequest( "https://example.com/resource/" );
 

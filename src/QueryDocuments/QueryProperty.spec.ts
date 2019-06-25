@@ -26,6 +26,12 @@ describe( "QueryProperty", () => {
 	let queryContainer:QueryContainer;
 	beforeEach( () => {
 		context = createMockContext( { settings: { vocabulary: "https://example.com/vocab#" } } );
+		context.extendObjectSchema(  "Type", {
+			"property": {
+				"@id": "https://example.com/ns#property",
+			},
+		} );
+
 		queryContainer = new QueryContainer( context, { rootPropertyType: QueryRootPropertyType.DOCUMENT, uris: [ "root/" ] } );
 	} );
 
@@ -115,7 +121,57 @@ describe( "QueryProperty", () => {
 
 
 	// TODO: Test .hasProperties
-	// TODO: Test .addProperty
+
+	describe( "QueryProperty.addProperty", () => {
+
+		it( "should exist", () => {
+			expect( QueryProperty.prototype.addProperty ).toBeDefined();
+			expect( QueryProperty.prototype.addProperty ).toEqual( jasmine.any( Function ) );
+		} );
+
+
+		it( "should create property with definition from context", () => {
+			const queryProperty:QueryProperty = new QueryProperty( {
+				queryContainer: queryContainer,
+				name: "parent",
+				definition: new DigestedObjectSchemaProperty(),
+				optional: true,
+			} );
+
+			// Add type of the schema to look for
+			queryProperty.addType( "Type" );
+
+			const returned:QueryProperty = queryProperty
+				.addProperty( "property", {} );
+
+			expect( returned.definition ).toEqual( createMockDigestedSchemaProperty( {
+				uri: "https://example.com/ns#property",
+			} ) );
+		} );
+
+		it( "should create property with not inherited definition", () => {
+			const queryProperty:QueryProperty = new QueryProperty( {
+				queryContainer: queryContainer,
+				name: "parent",
+				definition: new DigestedObjectSchemaProperty(),
+				optional: true,
+			} );
+
+			// Add type odf the schema where the property is in
+			queryProperty.addType( "Type" );
+
+			const returned:QueryProperty = queryProperty
+				.addProperty( "property", { inherit: false } );
+
+			expect( returned.definition ).toEqual( createMockDigestedSchemaProperty( {
+				uri: "https://example.com/vocab#property",
+			} ) );
+		} );
+
+		// TODO: Test more cases
+
+	} );
+
 	// TODO: Test ._addSubProperty
 
 	describe( "QueryProperty.getProperty", () => {

@@ -59,7 +59,7 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 
 		this._queryProperty = new QueryRootProperty( {
 			queryContainer: this,
-			queryRootPropertyType: propertyData.rootPropertyType,
+			rootPropertyType: propertyData.rootPropertyType,
 			values,
 			containerIRI,
 		} );
