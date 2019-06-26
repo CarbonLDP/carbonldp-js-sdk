@@ -18,5 +18,5 @@ export interface QuerySubPropertyData {
 	pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
 
 	propertyType?:QueryPropertyType;
-	optional?:boolean;
+	optional:boolean;
 }

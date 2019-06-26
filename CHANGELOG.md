@@ -16,6 +16,9 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 ### Added
 
 - [#376](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/376) - Add doc comments to the types files
+- [#378](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/378) - Allow pagination and ordering of multiple `$get()` documents
+	- The pagination sub-select (that may repeat the entire query) will now only be added when pagination (`limit()`, `offset()`) and/or sorting (`orderBy()`) are used.
+	  This also applies to the `$getChildren()` and `$getMembers()` methods
 
 ## [5.2.0] - 2019-04-10
 

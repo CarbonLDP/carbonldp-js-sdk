@@ -6,6 +6,7 @@ import { AbstractContext } from "../Context/AbstractContext";
 
 import { QueryContainer } from "./QueryContainer";
 import { QueryObject } from "./QueryObject";
+import { QueryRootPropertyType } from "./QueryRootPropertyType";
 
 
 describe( "QueryObject", () => {
@@ -22,7 +23,7 @@ describe( "QueryObject", () => {
 		context.extendObjectSchema( {
 			"ex": "http://example.com/ns#",
 		} );
-		queryContainer = new QueryContainer( context, { uris: [ "root" ] } );
+		queryContainer = new QueryContainer( context, { rootPropertyType: QueryRootPropertyType.DOCUMENT, uris: [ "root" ] } );
 	} );
 
 

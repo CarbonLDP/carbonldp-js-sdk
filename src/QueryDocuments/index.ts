@@ -2,7 +2,7 @@ export { QueryablePointer, QueryablePointerFactory } from "./QueryablePointer";
 export { QueryableProperty } from "./QueryableProperty";
 export { QueryablePropertyData } from "./QueryablePropertyData";
 export { QueryContainer } from "./QueryContainer";
-export { QueryContainerPropertyType } from "./QueryContainerPropertyType";
+export { QueryRootPropertyType } from "./QueryRootPropertyType";
 export { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 export { SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
 export { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";

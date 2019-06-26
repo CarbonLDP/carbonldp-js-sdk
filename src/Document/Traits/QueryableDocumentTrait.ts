@@ -68,14 +68,14 @@ export interface QueryableDocumentTrait extends LDPDocumentTrait, QueryablePoint
 	 * @param uris URIs of the documents to be retrieved.
 	 * @param queryBuilderFn Function that specify the structure of the documents to be retrieved.
 	 */
-	$get<T extends object>( uris:string[], queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
+	$get<T extends object>( uris:string[], queryBuilderFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 	/**
 	 * Retrieves the entire documents of the URIs specified or only the properties set by the query function when provided.
 	 * @param uris URIs of the documents to be retrieved.
 	 * @param requestOptions Customizable options for the request.
 	 * @param queryBuilderFn Function that specify the structure of the documents to be retrieved.
 	 */
-	$get<T extends object>( uris:string[], requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
+	$get<T extends object>( uris:string[], requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
 	/**
 	 * Resolves the specific properties of the current document set by the query function.
@@ -196,7 +196,7 @@ export type QueryableDocumentTraitFactory =
 export const QueryableDocumentTrait:QueryableDocumentTraitFactory = {
 	PROTOTYPE: {
 		$get( this:QueryableDocumentTrait, uris:any | string[], ...args:any[] ):Promise<any> {
-			if( ! Array.isArray( uris ) )
+			if( !Array.isArray( uris ) )
 				return ResolvablePointer.PROTOTYPE.$get.call( this, uris, ...args );
 
 			const resolvedURIs:string[] = uris.map( uri => URI.resolve( this.$id, uri ) );

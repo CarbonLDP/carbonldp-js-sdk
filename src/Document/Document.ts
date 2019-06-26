@@ -14,6 +14,7 @@ import { ModelSchema } from "../Model/ModelSchema";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
+import { QueryDocumentsBuilder } from "../QueryDocuments/QueryDocumentsBuilder";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
 import { $Registry } from "../Registry/Registry";
@@ -143,8 +144,8 @@ export interface Document extends $Registry<Fragment>, QueryableDocumentTrait, S
 	$get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	$get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	$get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	$get<T extends object>( uris:string[], queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
-	$get<T extends object>( uris:string[], requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
+	$get<T extends object>( uris:string[], queryBuilderFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	$get<T extends object>( uris:string[], requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
 	/**
 	 * @see {@link QueryableDocumentTrait.$resolve}

@@ -10,6 +10,7 @@ import { QueryContainer } from "./QueryContainer";
 import { QueryProperty } from "./QueryProperty";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { QueryResultCompacter } from "./QueryResultCompacter";
+import { QueryRootPropertyType } from "./QueryRootPropertyType";
 
 
 describe( "QueryResultCompacter", () => {
@@ -24,7 +25,7 @@ describe( "QueryResultCompacter", () => {
 
 		registry = GeneralRegistry.create( { __modelDecorator: Document, context: context } );
 
-		queryContainer = new QueryContainer( context, { uris: [ "root/" ] } );
+		queryContainer = new QueryContainer( context, { rootPropertyType: QueryRootPropertyType.DOCUMENT, uris: [ "root/" ] } );
 	} );
 
 

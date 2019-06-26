@@ -9,6 +9,7 @@ import { ModelFactory } from "../Model/ModelFactory";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
+import { QueryDocumentsBuilder } from "../QueryDocuments/QueryDocumentsBuilder";
 
 import { isObject } from "../Utils";
 
@@ -34,8 +35,8 @@ export interface DocumentsRepository extends QueryableDocumentsRepositoryTrait, 
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
 	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	get<T extends object>( uris:string[], queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
-	get<T extends object>( uris:string[], requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]>;
+	get<T extends object>( uris:string[], queryBuilderFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+	get<T extends object>( uris:string[], requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
 	/**
 	 * @see {@link QueryableDocumentsRepositoryTrait.resolve}

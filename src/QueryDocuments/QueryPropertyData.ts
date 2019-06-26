@@ -20,7 +20,7 @@ export interface QueryPropertyData {
 	pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
 
 	propertyType?:QueryPropertyType;
-	optional?:boolean;
+	optional:boolean;
 
 	values?:(IRIToken | LiteralToken)[];
 }

@@ -19,6 +19,7 @@ import * as QueryObject2Module from "./QueryObject";
 import { QueryObject } from "./QueryObject";
 import { QueryProperty } from "./QueryProperty";
 import { QueryRootProperty } from "./QueryRootProperty";
+import { QueryRootPropertyType } from "./QueryRootPropertyType";
 import * as QueryValue2Module from "./QueryValue";
 import { QueryValue } from "./QueryValue";
 
@@ -49,7 +50,7 @@ describe( "QueryDocumentBuilder", () => {
 			},
 		} );
 
-		queryContainer = new QueryContainer( context, { uris: [ "https://example.com/#root" ] } );
+		queryContainer = new QueryContainer( context, { rootPropertyType: QueryRootPropertyType.DOCUMENT, uris: [ "https://example.com/#root" ] } );
 		baseProperty = queryContainer._queryProperty;
 	} );
 
@@ -506,7 +507,7 @@ describe( "SubQueryDocumentsBuilder", () => {
 			"ex": "https://example.com/ns#",
 		} );
 
-		queryContainer = new QueryContainer( context, { uris: [ "https://example.com/#root" ] } );
+		queryContainer = new QueryContainer( context, { rootPropertyType: QueryRootPropertyType.DOCUMENT, uris: [ "https://example.com/#root" ] } );
 		baseProperty = queryContainer._queryProperty as QueryRootProperty;
 	} );
 

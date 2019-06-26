@@ -9,6 +9,7 @@ import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { XSD } from "../Vocabularies/XSD";
 
 import { QueryContainer } from "./QueryContainer";
+import { QueryRootPropertyType } from "./QueryRootPropertyType";
 import { QueryValue } from "./QueryValue";
 
 
@@ -23,7 +24,7 @@ describe( "QueryValue", () => {
 	let queryContainer:QueryContainer;
 	beforeEach( () => {
 		context = createMockContext();
-		queryContainer = new QueryContainer( context, { uris: [ "root" ] } );
+		queryContainer = new QueryContainer( context, { rootPropertyType: QueryRootPropertyType.DOCUMENT, uris: [ "root" ] } );
 	} );
 
 
