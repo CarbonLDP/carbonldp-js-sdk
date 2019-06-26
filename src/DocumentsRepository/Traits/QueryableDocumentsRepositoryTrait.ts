@@ -282,9 +282,9 @@ function __requestQueryDocuments<T extends object>( this:void, repository:Querya
 }
 
 
-function __requestRelations<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryData:QueryData ):Promise<(T & Document)[]> {
+async function __requestRelations<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryData:QueryData ):Promise<(T & Document)[]> {
 	if( !repository.context.registry.inScope( uri, true ) )
-		return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+		throw new IllegalArgumentError( `"${ uri }" is out of scope.` );
 
 	const url:string = repository.context
 		.getObjectSchema()
@@ -300,10 +300,10 @@ function __requestRelations<T extends object>( repository:QueryableDocumentsRepo
 	return __requestQueryDocuments<T>( repository, url, requestOptions, queryContainer );
 }
 
-function __requestDocuments<T extends object>( repository:QueryableDocumentsRepositoryTrait, uris:string[], requestOptions:RequestOptions, queryData:QueryData ):Promise<(T & Document)[]> {
+async function __requestDocuments<T extends object>( repository:QueryableDocumentsRepositoryTrait, uris:string[], requestOptions:RequestOptions, queryData:QueryData ):Promise<(T & Document)[]> {
 	for( const uri of uris ) {
 		if( !repository.context.registry.inScope( uri, true ) )
-			return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+			throw new IllegalArgumentError( `"${ uri }" is out of scope.` );
 	}
 
 	const urls:string[] = uris.map( uri => repository.context
