@@ -1,0 +1,8 @@
+<div class="ui top attached menu main-container__location location-menu">
+    <a class="item js-sidebar-toggler"><i class="large content icon"></i>Menu</a>
+    <div class="left menu location-menu__items">
+        <a class="item{{ ' active' if doc.docType === 'index' }}" href="/">sparqler</a>
+        {% if doc.moduleDoc and doc.moduleDoc.name !== "index" %}<a class="item" href="/{{ doc.moduleDoc.id }}">{{ doc.moduleDoc.id }}</a>{% endif %}
+        {% if doc.name !== "index" %}<a class="item active" href="/{{ doc.id }}">{{ doc.id if doc.docType === "module" else doc.name }}</a>{% endif %}
+    </div>
+</div>

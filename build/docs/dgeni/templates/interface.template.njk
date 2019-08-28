@@ -1,0 +1,79 @@
+{% extends 'base.template.njk' %}
+
+{% block title %}
+    Interface {{ doc.name }}
+{% endblock %}
+
+{% block content_continuation %}
+    {% set indexDoc = doc.members | selectattr( 'isIndex' ) | first %}
+    {% if indexDoc %}
+        <h3 class="doc-content__title">Index</h3>
+        {{ memberCode.index( indexDoc ) }}
+    {% endif %}
+    {% include 'partials/properties.partial.njk' %}
+    {% include 'partials/methods.partial.njk' %}
+{% endblock %}
+
+{% block multiple_content %} 
+{% if doc.constants %}
+    {% for constant in doc.constants%}
+        <div class="doc__header">
+            <div class="ui basic segment container doc__container">
+                <h2 class="ui header doc-header">
+                    <label class="ui horizontal violet large label doc-header__label">{{ constant.docType | replace('-', ' ') | title }}</label>
+                    {{constant.name}}
+                </h2>
+            </div>
+        </div>
+        <div class="ui basic segment justified text container doc__container doc-content">
+            {% if constant.content %}
+                <h3 class="doc-content__title">Description</h3>
+                <div>{{ constant.content | marked }}</div>
+            {% endif %}
+            {% if constant.members | length %}
+                <h3 class="doc-content__title">Functions</h3>
+            {% endif %}
+            {% for member in constant.members %}
+            {% set paramsString %}( {{ member.parameters | join(', ') }} ){% endset %}
+            {% set memberString %}
+            {{ 'function '}}{{ member.name }}{{ member.typeParameters }}{{ paramsString if member.parameters | length else "()" }}: {{ member.type }}
+            {% endset %}
+            
+            <div class="member-code">
+                <code class="highlight language-typescript" id="{{member.name}}">{{ memberString | highlight('typescript', member) }}</code>
+                {% if member.content | length %}
+                    <h4>Description</h4>
+                    <p>{{member.description}}</p>
+                {% endif %}
+                
+                {% if member.params | length %}
+                <h4>Parameters</h4>
+                <table class="ui celled table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for param in member.params %}
+                            <tr>
+                                <td><label class="param-name">{{ param.name }}</label>{% if param.optional %}<label class="ui basic small blue horizontal label">optional</label>{% endif %}</td>
+                                <td>{{ param.type | linkify( doc ) }}</td>
+                                <td>{{ param.description | marked }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+                {% if member.returns %} 
+                    <h4>Returns</h4>
+                    <p>{{member.returns.description}}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}

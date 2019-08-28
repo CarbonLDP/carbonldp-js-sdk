@@ -1,0 +1,13 @@
+.location-menu {
+	height: 63px;
+
+	&.ui.menu {
+		border-radius: 0;
+		max-width: none;
+		border-right: none;
+	}
+
+	&__items {
+		overflow-x: auto;
+	}
+}

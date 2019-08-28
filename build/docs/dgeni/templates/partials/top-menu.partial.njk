@@ -1,0 +1,32 @@
+<div class="ui top fixed inverted menu top-menu">
+    <a class="item top-menu_title" href="/">
+        SPARQLER Docs
+    </a>
+    <div class="ui right aligned search item js-search">
+        <div class="ui icon input">
+            <input class="prompt" placeholder="Search...">
+            <i class="search icon"></i>
+        </div>
+        <div class="results"></div>
+    </div>
+</div>
+
+<script>
+	window._searchSource = [
+        {%- for moduleDoc in doc.navigationDocs %}
+        {%- if moduleDoc.name !== "index" or not moduleDoc.isDefault%}
+        {%- for exported in moduleDoc.exports -%}
+		{
+			"title": "{{ exported.name }}",
+			"type": "{{ moduleDoc.id }}",
+			"url": "{{ exported.id }}"
+		}
+        {{- ', ' if not loop.last -}}
+        {%- endfor -%}
+        {{- ', ' if not loop.last -}}
+        {% else %}
+        {{ '' }}
+        {%- endif -%}
+        {% endfor %}
+	];
+</script>

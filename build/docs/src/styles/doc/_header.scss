@@ -1,0 +1,22 @@
+.doc__header {
+	background: #85898d linear-gradient(rgba(255, 255, 255, .35) 0, rgba(255, 255, 255, .35) 100%);
+
+	// Header vertical padding
+	.doc__container.ui.segment.container {
+		padding-top: 4em;
+		padding-bottom: 4em;
+
+		@media (max-width: 933px) {
+			padding-top: 3em;
+			padding-bottom: 3em;
+		}
+		@media (max-width: 723px) {
+			padding-top: 2em;
+			padding-bottom: 2em;
+		}
+	}
+
+	.doc-header__sub-header {
+		margin: 0.5em 0 0 0.5rem;
+	}
+}

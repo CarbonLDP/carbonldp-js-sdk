@@ -1,0 +1,25 @@
+<div class="main-container__menu left-menu visible in-mobile">
+    <div class="ui top attached inverted fluid vertical menu">
+        <div class="ui item right aligned container">
+            <button class="ui inverted icon button js-sidebar-toggler">
+                <i class="sidebar icon"></i>
+            </button>
+        </div>
+    </div>
+    <div class="ui bottom attached inverted fluid vertical menu left-menu__items">
+        {% for moduleDoc in doc.navigationDocs %}
+            <div class="item {{ ' active' if doc.id === moduleDoc.id or doc.moduleDoc.id === moduleDoc.id }}">
+                {% if moduleDoc.name !== "index" %}
+                    <div class="module-menu-header">
+                        <a class="item module-menu-header__link" href="/{{ moduleDoc.id }}">{{ moduleDoc.id }}</a>
+                    </div>
+                {% endif %}
+                <div class="menu">
+                    {% for exported in moduleDoc.exports -%}
+                        <a class="item{{ ' active' if doc.id === exported.id }}" href="/{{ exported.id }}">{{ exported.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

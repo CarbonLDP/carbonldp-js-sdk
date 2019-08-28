@@ -1,0 +1,23 @@
+{% extends 'base.template.njk' %}
+
+{% block title %}Module {{ doc.id }}{% endblock %}
+
+{% block content_continuation %}
+    {% if doc.exports %}
+        {% for key, items in doc.exports | groupby( 'docType' ) | dictsort %}
+            {% set typeName = key | replace('-', ' ') | title %}
+            {% set typeName = typeName + ( 'es' if typeName | last === 's' else 's' ) %}
+            <h3>{{ typeName }}</h3>
+            <div class="ui bulleted relaxed divided list">
+                {% for item in items %}
+                    <div class="item">
+                        <div class="content">
+                            <a class="header no-width" href="/{{ item.id }}">{{ item.name }}</a>
+                            <div class="description">{{ item.description | firstParagraph | marked }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

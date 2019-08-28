@@ -1,0 +1,20 @@
+.info-cards {
+	display: flex;
+	flex-wrap: wrap;
+
+	&__card {
+		-webkit-box-flex: 0;
+		-ms-flex: 0 0 auto;
+		flex: 1 0 auto;
+		margin: 1em .5em 0 .5em;
+
+		& .icon.message {
+			width: auto;
+			margin: 0;
+
+			& > .icon {
+				margin-right: .5em;
+			}
+		}
+	}
+}

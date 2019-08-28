@@ -1,0 +1,23 @@
+{% set members = doc.members | selectattr( 'params' ) | rejectattr( 'isIndex' ) %}
+{% if members | length %}
+    <h3 class="doc-content__title">Methods</h3>
+    {% for member in members %}
+        {% set signatures = [ member ] if doc.docType === 'interface' or member.overloads.length === 0 else [] %}
+        {% set signatures = signatures.concat( member.overloads ) %}
+        {% for signature in signatures %}
+            {{ memberCode.method( signature ) }}
+            {{ signature.description | marked }}
+            {{ parameters(doc, signature) }}
+            {% if signature.returns %}
+                <h4>Returns</h4>
+                {{ signature.returns.description | marked }}
+            {% endif %}
+            {% if not loop.last %}
+                <div class="ui section divider"></div>
+            {% endif %}
+        {% endfor %}
+        {% if not loop.last %}
+            <div class="ui section divider"></div>
+        {% endif %}
+    {% endfor %}
+{% endif %}

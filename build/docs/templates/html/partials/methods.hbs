@@ -1,7 +1,0 @@
-{{#each methods~}}
-	{{>header level=4 path=(concat ../path (concat ../access name) ) name=(concat ../access (concat name "()") ) secondary=returns.type}}
-
-	{{>signatures access=../access}}
-
-	{{^if @last}}{{br 1}}{{/if}}
-{{/each}}

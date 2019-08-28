@@ -1,0 +1,18 @@
+{% set color = 'purple' if doc.docType === 'module'     else color %}
+{% set color = 'orange' if doc.docType === 'interface'  else color %}
+{% set color = 'blue'   if doc.docType === 'class'      else color %}
+{% set color = 'teal'   if doc.docType === 'function'   else color %}
+{% set color = 'green'  if doc.docType === 'enum'       else color %}
+{% set color = 'yellow' if doc.docType === 'type-alias' else color %}
+{% set color = 'violet'   if doc.docType === 'const'      else color %}
+<div class="doc__header">
+    <div class="ui basic segment container doc__container">
+        <h2 class="ui header doc-header">
+            <label class="ui horizontal {{ color }} large label doc-header__label">{{ doc.docType | replace('-', ' ') | title }}</label>
+            {{ doc.name if doc.docType !== 'module' else doc.id }}
+            {% if doc.docType === 'class' or doc.docType === 'interface' %}
+                {% include 'doc-sub-header.partial.njk' %}
+            {% endif %}
+        </h2>
+    </div>
+</div>

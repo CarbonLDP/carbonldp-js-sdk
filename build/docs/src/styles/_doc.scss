@@ -1,0 +1,31 @@
+@import "doc/header";
+@import "doc/content";
+
+.doc {
+	overflow-y: auto;
+	height: calc(100% - 63px);
+	padding-bottom: 1.5rem;
+
+	&.ui.container {
+		@media only screen and (max-width: 767px) {
+			margin: 0 !important;
+		}
+	}
+}
+
+.doc__container {
+	&.ui.segment.container {
+		padding-left: 5em;
+		padding-right: 5em;
+
+		@media (max-width: 933px) {
+			padding-left: 2.5em;
+			padding-right: 2.5em;
+		}
+		@media (max-width: 723px) {
+			margin: 0;
+			padding-left: 1em;
+			padding-right: 1em;
+		}
+	}
+}

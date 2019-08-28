@@ -1,0 +1,28 @@
+<h3 class="doc-content__title">Constructor</h3>
+{% if doc.constructorDoc %}
+    {% set constuctorDocs = doc.constructorDoc.overloads if doc.constructorDoc.overloads | length else [ doc.constructorDoc ] %}
+    {% for constructorDoc in constuctorDocs %}
+        {{ memberCode.constructor( doc, constructorDoc ) }}
+        {{ constructorDoc.description | marked }}
+        {{ parameters( doc, constructorDoc ) }}
+        {% if not loop.last %}
+            <div class="ui section divider"></div>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    {% set parent = doc.extendsClauses[ 0 ].doc if doc.extendsClauses | length %}
+    {% if parent %}
+        {% set constuctorDocs = parent.constructorDoc.overloads if parent.constructorDoc.overloads | length else [ parent.constructorDoc ] %}
+        {% for constructorDoc in constuctorDocs %}
+            {{ memberCode.constructor( doc, constructorDoc ) }}
+            {{ constructorDoc.description | marked }}
+            {{ parameters( parent, constructorDoc ) }}
+            {% if not loop.last %}
+                <div class="ui section divider"></div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        {{ memberCode.constructor( doc, { parameters:[] } ) }}
+    {% endif %}
+{% endif %}
+

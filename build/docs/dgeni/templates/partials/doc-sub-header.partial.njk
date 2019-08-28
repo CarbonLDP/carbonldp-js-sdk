@@ -1,0 +1,36 @@
+{% if doc.typeParameters or doc.extendsClauses | length  or doc.implementsClauses | length %}
+    <div class="doc-header__sub-header">
+        <div class="sub header">
+            <div class="ui list">
+                {% if doc.typeParameters %}
+                    <div class="item">
+                        <div class="header">Generics</div>
+                        <div class="left-indent">{{ doc.typeParameters | linkify }}</div>
+                    </div>
+                {% endif %}
+                {% if doc.extendsClauses | length %}
+                    <div class="item">
+                        <div class="header">Extends</div>
+                        <div class="left-indent">
+                            {% set comma = joiner('<br>') %}
+                            {% for clause in doc.extendsClauses -%}
+                                {{ comma() }} {{ clause.text | linkify }}
+                            {%- endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if doc.implementsClauses | length %}
+                    <div class="item">
+                        <div class="header">Implements</div>
+                        <div class="left-indent">
+                            {% set comma = joiner('<br>') %}
+                            {% for clause in doc.implementsClauses -%}
+                                {{ comma() }} {{ clause.text | linkify }}
+                            {%- endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}

@@ -1,0 +1,18 @@
+{% extends 'base.template.njk' %}
+
+{% block title %}
+    Enum {{ doc.name }}
+{% endblock %}
+
+{% block content_continuation %}
+    {% if doc.members | length %}
+        <h3 class="doc-content__title">Members</h3>
+        {% for member in doc.members %}
+            {{ memberCode.base( member.name, doc ) }}
+            {{ member.description | marked }}
+            {% if not loop.last %}
+                <div class="ui section divider"></div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

@@ -6,6 +6,7 @@ import { generateCJS, generateESM2015, generateTypes } from "./compile";
 import config, { DIST } from "./config";
 // import { compileDocumentation } from "./documentation";
 import { preparePackage } from "./package";
+import { docsBuildDev } from './documentation';
 
 
 export const cleanDist:gulp.TaskFunction = () => del( DIST );
@@ -18,7 +19,7 @@ export const build:gulp.TaskFunction = gulp.series(
 			gulp.parallel( generateCJS, generateESM2015, generateTypes ),
 		),
 		bundleSFX,
-		// compileDocumentation
+		docsBuildDev
 	),
 	preparePackage
 );

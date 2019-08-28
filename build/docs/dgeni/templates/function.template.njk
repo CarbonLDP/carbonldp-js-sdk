@@ -1,0 +1,22 @@
+{% extends 'base.template.njk' %}
+
+{% block title %}
+    Function {{ doc.name }}
+{% endblock %}
+
+{% block content_continuation %}
+    {% set signatures = [ doc ] if doc.overloads.length === 0 else [] %}
+    {% set signatures = signatures.concat( doc.overloads ) %}
+    {% for signature in signatures %}
+        {{ memberCode.method( signature, true ) }}
+        {{ signature.description | marked }}
+        {{ parameters(doc, signature) }}
+        {% if signature.returns %}
+            <h4>Returns</h4>
+            {{ signature.returns.description | marked }}
+        {% endif %}
+        {% if not loop.last %}
+            <div class="ui section divider"></div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

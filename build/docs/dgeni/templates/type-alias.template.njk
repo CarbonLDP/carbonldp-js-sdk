@@ -1,0 +1,9 @@
+{% extends 'base.template.njk' %}
+
+{% block title %}
+    Type Alias {{ doc.name }}
+{% endblock %}
+
+{% block overview %}
+    {{ memberCode.type( doc ) }}
+{% endblock %}

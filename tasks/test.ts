@@ -40,11 +40,12 @@ export const testNode:gulp.TaskFunction = () => {
 	require( "source-map-support/register" );
 
 	const tsProject:ts.Project = ts.createProject( "tsconfig.json" );
+	console.log("hi",tsProject);
 	const stream:NodeJS.WritableStream = gulp.src( [ "{src,test}/**/*.ts" ] )
 		.pipe( sourcemaps.init() )
 		.pipe( tsProject() )
 		.js
-		.pipe( sourcemaps.mapSources( ( sourcePath ) => path.resolve( "./", sourcePath ) ) )
+		// .pipe( sourcemaps.mapSources( ( sourcePath ) => path.resolve( "./", sourcePath ) ) )
 		.pipe( sourcemaps.write( ".", {
 			includeContent: false,
 		} ) )

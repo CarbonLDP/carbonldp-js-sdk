@@ -1,0 +1,18 @@
+@import "content/member-code";
+@import "content/example-code";
+@import "content/params";
+@import "content/info-cards";
+
+.doc-content {
+	&.ui.text.container {
+		max-width: 100% !important;
+	}
+
+	&__title {
+		margin-top: 2em;
+
+		&:first-child {
+			margin-top: 1em;
+		}
+	}
+}

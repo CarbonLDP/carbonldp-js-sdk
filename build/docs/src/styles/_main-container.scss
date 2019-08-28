@@ -1,0 +1,91 @@
+@import "variables";
+
+.main-container {
+	position: relative;
+	top: 76px;
+
+	height: calc(100% - 76px);
+	width: 100%;
+
+	overflow: hidden;
+	display: flex;
+	flex-direction: row;
+
+	&__menu {
+		height: 100%;
+		overflow: hidden;
+		z-index: 1001;
+
+		-webkit-box-flex: 0;
+		flex: 0 0 auto;
+
+		transition: width $sidebar-transition-params;
+	}
+
+	&__content {
+		-webkit-box-flex: 1;
+		flex: 0 0 auto;
+
+		position: relative;
+		width: 100%;
+
+		transition: width $sidebar-transition-params;
+	}
+
+	&__location {
+		transition: width $sidebar-transition-params, transform $sidebar-transition-params;
+		border-right: none !important;
+	}
+
+	.dimmer {
+		display: none;
+		position: absolute;
+		top: 0;
+
+		height: 100%;
+		width: 100%;
+		z-index: 1000;
+
+		background-color: rgba( 0, 0, 0, .65);
+		transition: opacity $sidebar-transition-params;
+	}
+
+	/**
+		Animations
+	 */
+
+	&__menu:not(.visible) {
+		width: 0;
+	}
+	&__menu.visible + &__content {
+		width: calc(100% - #{$sidebar-width});
+	}
+	&__menu.visible + &__content > &__location {
+		width: calc(100% + 101px);
+		transform: translateX(-100px);
+	}
+
+	@media (max-width: 767px) {
+		&__menu.in-mobile {
+			width: 0;
+		}
+
+		&__content {
+			width: 100% !important;
+		}
+		&__menu:not(.in-mobile) + &__content {
+			& > div {
+				overflow-y: hidden !important;
+			}
+
+			.dimmer {
+				display: block;
+			}
+		}
+
+		&__menu.in-mobile + &__content > &__location {
+			width: 100%;
+			transform: translateX(0);
+		}
+	}
+}

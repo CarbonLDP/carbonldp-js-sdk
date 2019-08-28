@@ -1,0 +1,42 @@
+{% macro base( memberString, doc ) %}
+    <div class="member-code">
+        <code class="highlight language-typescript" id="{{doc.name}}">{{ memberString | highlight('typescript', doc) }}</code>
+    </div>
+{% endmacro %}
+
+{% macro constructor( classDoc, constructorDoc ) %}
+    {% set paramsString %}( {{ constructorDoc.parameters | join(', ') }} ){% endset %}
+    {% set memberString %}
+        {{ classDoc.name }}{{ classDoc.typeParams }}{{ paramsString if constructorDoc.parameters | length else "()" }}
+    {% endset %}
+    {{ base( memberString, classDoc ) }}
+{% endmacro %}
+
+{% macro index( methodDoc ) %}
+    {% set memberString %}
+        [ {{ methodDoc.parameters | first }} ]: {{ methodDoc.type }}
+    {% endset %}
+    {{ base( memberString, methodDoc ) }}
+{% endmacro %}
+
+{% macro method( methodDoc, isFunction=false ) %}
+    {% set paramsString %}( {{ methodDoc.parameters | join(', ') }} ){% endset %}
+    {% set memberString %}
+        {{ 'function ' if isFunction }}{{ methodDoc.name }}{{ methodDoc.typeParameters }}{{ paramsString if methodDoc.parameters | length else "()" }}: {{ methodDoc.type }}
+    {% endset %}
+    {{ base( memberString, methodDoc ) }}
+{% endmacro %}
+
+{% macro property( methodDoc ) %}
+    {% set memberString %}
+        {{ methodDoc.name }}{{ '?' if methodDoc.isOptional }}: {{ methodDoc.type }}
+    {% endset %}
+    {{ base( memberString, methodDoc ) }}
+{% endmacro %}
+
+{% macro type( typeDoc ) %}
+    {% set typeString %}
+        type {{ typeDoc.name }} {{typeDoc.typeParameters}} = {{ typeDoc.typeDefinition }}
+    {% endset %}
+    {{ base( typeString, typeDoc ) }}
+{% endmacro %}

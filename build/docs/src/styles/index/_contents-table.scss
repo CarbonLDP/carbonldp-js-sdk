@@ -1,0 +1,24 @@
+.contents-table {
+
+	&__module {
+		margin-top: 1em;
+
+		& > .content {
+			margin-top: .25em;
+		}
+	}
+
+	& > div:last-child {
+		border-bottom: none !important;
+	}
+
+	.contents-item {
+		&__icon {
+			display: table-cell !important;
+		}
+
+		&__text {
+		}
+	}
+
+}
