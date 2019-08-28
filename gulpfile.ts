@@ -4,9 +4,9 @@ export default build;
 
 
 export {
-	buildESM5,
+	buildCJS,
 	buildESM2015,
-	buildCJS5,
+	buildESM5,
 	buildTypes,
 } from "./tasks/compile";
 
@@ -15,7 +15,6 @@ export {
 } from "./tasks/bundle";
 
 export {
-	version,
 	cleanDist,
 	build,
 } from "./tasks/build";
@@ -39,9 +38,13 @@ export {
 } from "./tasks/test";
 
 export {
-	compileDocumentation,
-	compileDgeni,
-	documentationMinify,
+	docsBuildDev,
+	docsBuildProd,
+	docsHTML,
+	docsBundle,
+	docsImages,
+	docsCleanImages,
+	docsAddImages,
 } from "./tasks/documentation";
 
 export {
