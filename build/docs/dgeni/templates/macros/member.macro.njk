@@ -5,11 +5,13 @@
 {% endmacro %}
 
 {% macro constructor( classDoc, constructorDoc ) %}
-    {% set paramsString %}( {{ constructorDoc.parameters | join(', ') }} ){% endset %}
-    {% set memberString %}
-        {{ classDoc.name }}{{ classDoc.typeParams }}{{ paramsString if constructorDoc.parameters | length else "()" }}
-    {% endset %}
-    {{ base( memberString, classDoc ) }}
+    {%if constructorDoc.parameters %}
+        {% set paramsString %}( {{ constructorDoc.parameters | join(', ') }} ){% endset %}
+        {% set memberString %}
+            {{ classDoc.name }}{{ classDoc.typeParams }}{{ paramsString if constructorDoc.parameters | length else "()" }}
+        {% endset %}
+        {{ base( memberString, classDoc ) }}
+    {% endif %}}
 {% endmacro %}
 
 {% macro index( methodDoc ) %}
@@ -20,11 +22,13 @@
 {% endmacro %}
 
 {% macro method( methodDoc, isFunction=false ) %}
-    {% set paramsString %}( {{ methodDoc.parameters | join(', ') }} ){% endset %}
-    {% set memberString %}
-        {{ 'function ' if isFunction }}{{ methodDoc.name }}{{ methodDoc.typeParameters }}{{ paramsString if methodDoc.parameters | length else "()" }}: {{ methodDoc.type }}
-    {% endset %}
-    {{ base( memberString, methodDoc ) }}
+    {% if methodDoc.parameters %} 
+        {% set paramsString %}( {{ methodDoc.parameters | join(', ') }} ){% endset %}
+        {% set memberString %}
+            {{ 'function ' if isFunction }}{{ methodDoc.name }}{{ methodDoc.typeParameters }}{{ paramsString if methodDoc.parameters | length else "()" }}: {{ methodDoc.type }}
+        {% endset %}
+        {{ base( memberString, methodDoc ) }}
+    {% endif %}
 {% endmacro %}
 
 {% macro property( methodDoc ) %}

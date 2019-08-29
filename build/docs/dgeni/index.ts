@@ -104,12 +104,12 @@ const apiDocsPackage = new Package( "sdk-api-docs", [
 	// Where to find the templates for the doc rendering
 	templateFinder.templateFolders = [ templateDir, path.resolve( templateDir, "partials" ), path.resolve( templateDir, "macros" ) ];
 
-	// // Standard patterns for matching docs to templates
-	// templateFinder.templatePatterns = [
-	// 	"${ doc.docType }.template.njk",
-	// 	"${ doc.docType }.macro.njk",
-	// ];
-	templateFinder.templatePatterns.unshift('common.template.html');
+	// Standard patterns for matching docs to templates
+	templateFinder.templatePatterns = [
+		"${ doc.docType }.template.njk",
+		"${ doc.docType }.macro.njk",
+	];
+	// templateFinder.templatePatterns.unshift('common.template.html');
 } )
 
 
