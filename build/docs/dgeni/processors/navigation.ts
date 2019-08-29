@@ -28,9 +28,8 @@ export class Navigation implements Processor {
 
 	$process( docs:DocCollection ) {
 		const filteredDocs:DocCollection = docs.filter( doc => {
-			console.log(doc.name);
 			if (doc.docType === "function-overload") return false;
-
+			
 			if( doc.docType === "module" ) {
 				if( doc.fileInfo.baseName !== "index" ) return false;
 				if( doc.name === "index" ) this._fixIndexModule( doc );
@@ -39,13 +38,18 @@ export class Navigation implements Processor {
 				if( doc.moduleDoc === void 0 ) return false;
 				if( doc.moduleDoc.fileInfo.baseName !== "index" ) return false;
 			}
-
+			
 			doc.navigationDocs = this._navigationDocs;
 			return true;
 		} );
-
+		
 		this._navigationDocs.sort( docCompare );
-
+		
+		this._navigationDocs.forEach(navDoc => {
+			if (navDoc.id === "AccessPoint") {
+				console.log(navDoc);
+			}
+		})
 		return filteredDocs;
 	}
 
