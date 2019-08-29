@@ -72,7 +72,7 @@ export const docsCreateBundle:gulp.TaskFunction = done => {
 		else done();
 	} );
 };
-docsCreateBundle.displayName = "docs:clean-bundle";
+docsCreateBundle.displayName = "docs:create-bundle";
 
 export const docsBundle:gulp.TaskFunction = gulp.series(
 	docsCleanBundle,
