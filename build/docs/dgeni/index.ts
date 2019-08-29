@@ -15,6 +15,7 @@ import { highlightTag } from "./rendering/tags/highlight";
 import { typeParameters } from "./tags-def/typeParameters";
 import { isDefault } from "./tags-def/isDefault";
 import { moduleDoc } from "./tags-def/moduleDoc";
+import { paramInLineTag } from "./inline-tags-def/paramInlineTag";
 
 
 
@@ -90,6 +91,13 @@ const apiDocsPackage = new Package( "sdk-api-docs", [
 		},
 	];
 } )
+
+// Configure the processor to accept the '@param' tag.
+.config(function (inlineTagProcessor, getInjectables) {
+	inlineTagProcessor.inlineTagDefinitions.push( ...getInjectables([
+		paramInLineTag
+	]))
+})
 
 // Configure processor for finding nunjucks templates.
 .config( function( templateFinder ) {
