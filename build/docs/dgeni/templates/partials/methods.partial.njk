@@ -1,3 +1,4 @@
+{# Todo: When an optional method is declared (method?:()=> type), it gets repeated #}
 {% set members = doc.members | selectattr( 'params' ) | rejectattr( 'isIndex' ) %}
 {% if members | length %}
     <h3 class="doc-content__title">Methods</h3>

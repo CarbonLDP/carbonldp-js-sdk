@@ -44,12 +44,6 @@ export class Navigation implements Processor {
 		});
 
 		this._navigationDocs.sort(docCompare);
-
-		// this._navigationDocs.forEach(navDoc => {
-		// 	if (navDoc.id === "AccessPoint") {
-		// 		console.log(navDoc);
-		// 	}
-		// })
 		return filteredDocs;
 	}
 
