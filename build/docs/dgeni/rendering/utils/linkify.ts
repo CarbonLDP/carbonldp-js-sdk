@@ -88,6 +88,7 @@ const MDN_IDENTIFIERS:string[] = [
 ];
 
 export function linkify( str:string, getLinkInfo, doc:Document, escape:boolean = true ):string {
+	// @ts-ignore
 	if( ! str ) return;
 
 	const IDENTIFIERS_REGEX:RegExp = str.match( /<span class="token/ ) ?

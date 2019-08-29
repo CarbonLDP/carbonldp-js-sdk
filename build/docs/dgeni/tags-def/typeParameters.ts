@@ -4,7 +4,7 @@ import { TagDef } from "./TagDef";
 export function typeParameters():TagDef {
 	return {
 		name: "typeParameters",
-		defaultFn( doc:Document ):string {
+		defaultFn( doc:Document ):string | undefined  {
 			if( doc.typeParameters ) return;
 			if( ! doc.declaration.typeParameters ) return;
 

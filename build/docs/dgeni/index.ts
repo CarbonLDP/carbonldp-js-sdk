@@ -1,9 +1,21 @@
-// Canonical path provides a consistent path (i.e. always forward slashes) across different OSes
 import path from "canonical-path";
 import {Package} from "dgeni";
 
 //Processors
 import {navigationProcessor} from "./processors/navigation";
+
+//Nunjucks Filters
+import { linkifyFilter } from "./rendering/filters/linkify";
+import { nullifyEmptyFilter } from "./rendering/filters/nullifyEmpty";
+import { highlightFilter } from "./rendering/filters/highlight";
+//Nunjucks tags
+import { highlightTag } from "./rendering/tags/highlight";
+
+// Dgeni doc tags
+import { typeParameters } from "./tags-def/typeParameters";
+import { isDefault } from "./tags-def/isDefault";
+import { moduleDoc } from "./tags-def/moduleDoc";
+
 
 
 // Project configuration.
@@ -42,6 +54,28 @@ const apiDocsPackage = new Package( "sdk-api-docs", [
 	writeFilesProcessor.outputFolder = outputDir;
 } )
 
+// Configure the output path for written files (i.e., file names).
+.config( function( computePathsProcessor, computeIdsProcessor ) {
+
+	computePathsProcessor.pathTemplates.push( {
+		docTypes: [ "module", "class", "interface", "function", "enum", "type-alias", "const" ],
+		pathTemplate: "/${id}/",
+		outputPathTemplate: "${id}/index.html",
+	} );
+
+	computePathsProcessor.pathTemplates.push( {
+		docTypes: [ "index" ],
+		pathTemplate: ".",
+		outputPathTemplate: "${id}.html",
+	} );
+
+	computeIdsProcessor.idTemplates.push( {
+		docTypes: [ "index" ],
+		idTemplate: "index",
+		// getAliases: () => [ "index" ],
+	} );
+} )
+
 // Configure the processor for understanding TypeScript.
 .config( function( readTypeScriptModules ) {
 	readTypeScriptModules.basePath = sourceDir;
@@ -69,5 +103,25 @@ const apiDocsPackage = new Package( "sdk-api-docs", [
 	// ];
 	templateFinder.templatePatterns.unshift('common.template.html');
 } )
+
+
+// Adds custom functions for nunjucks templates
+.config( function( templateEngine, getInjectables ) {
+	templateEngine.filters.push( ...getInjectables( [
+		linkifyFilter,
+		nullifyEmptyFilter,
+		highlightFilter,
+	] ) );
+	templateEngine.tags.push( ...getInjectables( [
+		highlightTag,
+	] ) );
+} )
+.config( function( parseTagsProcessor, getInjectables ) {
+	parseTagsProcessor.tagDefinitions.push( ...getInjectables( [
+		moduleDoc,
+		typeParameters,
+		isDefault,
+	] ) );
+} );
 
 export = apiDocsPackage;

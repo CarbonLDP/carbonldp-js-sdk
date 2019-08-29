@@ -3,7 +3,7 @@ import { Filter } from "./Filter";
 export function nullifyEmptyFilter():Filter {
 	return {
 		name: "nullifyEmpty",
-		process( array:any[] ):any[] {
+		process( array:any[] ):any[] | any {
 			if( ! array ) return null;
 
 			array = array.filter( x => x );
