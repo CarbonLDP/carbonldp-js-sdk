@@ -1,0 +1,23 @@
+{% if doc.interface %}
+    {% set doc = doc.interface %}
+    {% include "partials/doc-header.partial.njk" %}
+    <div class="ui basic segment justified text container doc__container doc-content">
+        {% if doc.description %}
+            <h3 class="doc-content__title">Description</h3>
+            <div>{{ doc.description | marked }}</div>
+        {% endif %}
+{% endif %}
+
+{% if doc.constants %}
+    {% for constant in doc.constants%}
+        {% set doc = constant %}
+        {% include "partials/doc-header.partial.njk" %}
+        <div class="ui basic segment justified text container doc__container doc-content">
+            {% if constant.content %}
+                <h3 class="doc-content__title">Description</h3>
+                <div>{{ constant.content | marked }}</div>
+            {% endif %}
+            {% include 'partials/properties.partial.njk' %}
+            {% include 'partials/methods.partial.njk' %}
+    {% endfor %}
+{% endif %}

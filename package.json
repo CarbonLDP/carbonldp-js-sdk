@@ -52,7 +52,7 @@
     "core-js-bundle": "^3.0.0",
     "css-loader": "^1.0.0",
     "del": "^3.0.0",
-    "dgeni": "^0.4.11",
+    "dgeni": "^0.4.12",
     "dgeni-packages": "^0.28.1",
     "file-loader": "^1.1.11",
     "fomantic-ui": "^2.7.7",

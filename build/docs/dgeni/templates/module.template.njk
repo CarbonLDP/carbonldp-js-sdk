@@ -12,7 +12,7 @@
                 {% for item in items %}
                     <div class="item">
                         <div class="content">
-                            <a class="header no-width" href="/{{ item.id }}">{{ item.name }}</a>
+                            <a class="header" href="/{{ item.id }}">{{ item.name }}</a>
                             <div class="description">{{ item.description | firstParagraph | marked }}</div>
                         </div>
                     </div>

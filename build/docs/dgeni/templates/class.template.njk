@@ -11,22 +11,5 @@
 {% endblock %}
 
 {% block multiple_content %}
-
-{% if doc.interface %}
-    {%set interface = doc.interface %}
-    <div class="doc__header">
-        <div class="ui basic segment container doc__container">
-            <h2 class="ui header doc-header">
-                <label class="ui horizontal orange large label doc-header__label">{{ interface.docType | replace('-', ' ') | title }}</label>
-                {{interface.name}}
-            </h2>
-        </div>
-    </div>
-    <div class="ui basic segment justified text container doc__container doc-content">
-        {% if interface.description %}
-            <h3 class="doc-content__title">Description</h3>
-            <div>{{ interface.description | marked }}</div>
-        {% endif %}
-{% endif %}
-
+    {% include 'partials/multiple-content.partial.njk' %}
 {% endblock %}

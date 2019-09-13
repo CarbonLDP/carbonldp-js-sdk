@@ -2163,11 +2163,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scripts_main__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_scripts_main__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _styles_main_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./styles/main.scss */ "./build/docs/src/styles/main.scss");
 /* harmony import */ var _styles_main_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_styles_main_scss__WEBPACK_IMPORTED_MODULE_1__);
-// Semantic UI
-
-console.log("Hello2");
-
-
 if( false ) {} else {
 	__webpack_require__( /*! ../semantic-ui/dist/semantic */ "./build/docs/semantic-ui/dist/semantic.js" );
 	__webpack_require__( /*! ../semantic-ui/dist/semantic.css */ "./build/docs/semantic-ui/dist/semantic.css" );

@@ -3,6 +3,8 @@ import {Package} from "dgeni";
 
 //Processors
 import {navigationProcessor} from "./processors/navigation";
+import { multipleExports } from "./processors/multipleExports";
+import { normalizeDocsProcessor } from "./processors/normalizeDocs";
 
 //Nunjucks Filters
 import { linkifyFilter } from "./rendering/filters/linkify";
@@ -42,6 +44,8 @@ const apiDocsPackage = new Package( "sdk-api-docs", [
 ] )
 
 .processor(navigationProcessor)
+.processor(multipleExports)
+.processor(normalizeDocsProcessor)
 
 .config( function( log ) {
 	log.level = "info";
