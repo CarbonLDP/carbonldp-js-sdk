@@ -78,7 +78,45 @@ export type FreeResourcesFactory =
 /**
  * Constant that implements {@link FreeResourcesFactory}.
  */
-export const FreeResources:FreeResourcesFactory = {
+export const FreeResources:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link FreeResources}
+	 */
+	PROTOTYPE: FreeResourcesFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the FreeResources has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object): object is FreeResources;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link FreeResources}.
+	 */
+	is( object:object ): object is FreeResources;
+
+	/**
+	 * Defines the FreeResources's prototype properties and methods to the FreeResources object.
+	 */
+	decorate<T extends BaseFreeResources>( object:T ):T & FreeResources
+
+	/**
+	 * Creates a {@link FreeResources} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseFreeResources ):T & FreeResources
+
+	/**
+	 * Creates a {@link FreeResources} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseFreeResources ):T & FreeResources
+
+	/**
+	 * Function that parses free RDFNodes.
+	 * @param this {@link FreeResources}
+	 * @param registry Base registry used in the context
+	 * @param freeNodes List of RDFNodes to parse
+	 */
+	parseFreeNodes( this:void, registry:GeneralRegistry<any>, freeNodes:RDFNode[] ):FreeResources;
+} = {
 	PROTOTYPE: {
 		_getLocalID( this:FreeResources, id:string ):string {
 			if( isAbsolute( id ) && ! URI.hasProtocol( id ) ) return id;

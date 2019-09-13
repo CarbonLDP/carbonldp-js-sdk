@@ -153,7 +153,32 @@ export type FragmentFactory =
 /**
  * Constant that implements {@link FragmentFactory}.
  */
-export const Fragment:FragmentFactory = {
+export const Fragment:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link Fragment}
+	 */
+	PROTOTYPE: FragmentFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the Fragment has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object): object is Fragment;
+
+	/**
+	 * Defines the Fragment's prototype properties and methods to the document Fragment.
+	 */
+	decorate<T extends object>( object:T &  BaseResolvableFragment ):T & Fragment;
+
+	/**
+	 * Creates a {@link Fragment} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseTransientFragment ):T & TransientFragment;
+
+	/**
+	 * Creates a {@link Fragment} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseTransientFragment ):T & BaseTransientFragment;
+} = {
 	PROTOTYPE: {
 		get $repository( this:Fragment ):Document {
 			return this.$registry;

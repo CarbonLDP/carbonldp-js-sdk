@@ -58,7 +58,57 @@ export interface PointerFactory extends ModelPrototype<Pointer>
 /**
  * Constant that implements {@link PointerFactory}.
  */
-export const Pointer:PointerFactory = {
+export const Pointer:{
+		/**
+		 * The object with the properties/methods to use in the decoration of a {@link Pointer}
+		 */
+		PROTOTYPE: PointerFactory["PROTOTYPE"];
+
+		/**
+		 * Checks if the Pointer has the decorated properties and methods from its prototype.
+		 */
+		isDecorated( object:object ):object is Pointer;
+
+		/**
+		 * Returns true when the value provided is considered to be a {@link Pointer}.
+		 */
+		is( value:any ):value is Pointer;
+
+		/**
+		 * Defines the Pointer's prototype properties and methods to the Pointer object.
+		 */
+		decorate<T extends object>( object:T ):T & Pointer;
+
+		/**
+		 * Creates a pointer object with the ID provided.
+		 * @param data The optional data to use in the pointer creation.
+		 */
+		create<T extends object>( data?:T & BasePointer ):T & Pointer;
+
+		/**
+		 * Creates a {@link Pointer} from the provided Pointer.
+		 */
+		createFrom<T extends object>( object:T & BasePointer ):T & Pointer;
+
+		/**l
+		 * Checks if the objects refer to the same resource by its ID.
+		 * @param pointer1
+		 * @param pointer2
+		 */
+		areEqual( pointer1:Pointer, pointer2:Pointer ):boolean;
+
+		/**
+		 * Extracts the IDs of all the pointers provided.
+		 * @param pointers The array of pointers to obtain their IDs.
+		 */
+		getIDs( pointers:Pointer[] ):string[];
+
+		/**
+		 * Extract the IF of the pointer provided.
+		 * @param pointerOrIRI Pointer to extract its ID, or the URI that will be immediately returned.
+		 */
+		getID( pointerOrIRI:Pointer | string ):string;
+} = {
 	PROTOTYPE: {
 		get $id():string { return ""; },
 	},

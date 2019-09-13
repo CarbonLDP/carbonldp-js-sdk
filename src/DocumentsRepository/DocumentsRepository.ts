@@ -85,7 +85,24 @@ export type DocumentsRepositoryFactory =
 /**
  * Constant that implements {@link DocumentsRepositoryFactory}.
  */
-export const DocumentsRepository:DocumentsRepositoryFactory = {
+export const DocumentsRepository:{
+
+	/**
+	 * Creates a {@link Document} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseDocumentsRepository ):T & DocumentsRepository;
+
+	/**
+	 * Creates a {@link Document} from the provided Document.
+	 */
+	createFrom<T extends object>( object:T & BaseDocumentsRepository ):T & DocumentsRepository;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link DocumentsRepository}.
+	 */
+	is( object:object ): object is DocumentsRepository;
+
+} = {
 	create<T extends object>( data:T & BaseDocumentsRepository ):T & DocumentsRepository {
 		return DocumentsRepository.createFrom( { ...data as any } );
 	},

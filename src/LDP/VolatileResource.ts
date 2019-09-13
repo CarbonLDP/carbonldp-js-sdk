@@ -30,7 +30,27 @@ export interface VolatileResourceFactory extends ModelFactory<VolatileResource> 
 /**
  * Constant that implements {@link VolatileResourceFactory}.
  */
-export const VolatileResource:VolatileResourceFactory = {
+export const VolatileResource:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#VolatileResource'
+	 */
+	TYPE: C["VolatileResource"];
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link VolatileResource}.
+	 */
+	is( value:any ):value is VolatileResource;
+
+	/**
+	 * Creates a {@link VolatileResource} with the provided data.
+	 */
+	create<T extends object>( data?:T ): T & VolatileResource;
+
+	/**
+	 * Creates a {@link VolatileResource} from the provided VolatileResource.
+	 */
+	createFrom<T extends object>( object:T ):T & VolatileResource;
+} = {
 	TYPE: C.VolatileResource,
 
 	is( value:any ):value is VolatileResource {

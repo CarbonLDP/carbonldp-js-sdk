@@ -341,7 +341,22 @@ export type RegistryFactory =
 /**
  * Constant that implements for {@link RegistryFactory}.
  */
-export const Registry:RegistryFactory = {
+export const Registry:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link Registry}
+	 */
+	PROTOTYPE: RegistryFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the Registry has the decorated properties and methods from its prototype.
+	 */
+	isDecorated<T extends object>( object:object ):object is any;
+
+	/**
+	 * Defines the Registry's prototype properties and methods to the Registry object.
+	 */
+	decorate<T extends object>( object:T ):T & any;
+} = {
 	PROTOTYPE: {
 		registry: void 0,
 

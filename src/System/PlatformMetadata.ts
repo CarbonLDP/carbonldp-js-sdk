@@ -38,7 +38,17 @@ const SCHEMA:ObjectSchema = {
 /**
  * Constant that implements {@link PlatformMetadata}.
  */
-export const PlatformMetadata:PlatformMetadataFactory = {
+export const PlatformMetadata:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#PlatformMetadata'
+	 */
+	TYPE: C["Platform"];
+
+	/**
+	 * Defines the basic schema for the {@link PlatformMetadata}.
+	 */
+	SCHEMA: ObjectSchema;
+} = {
 	TYPE: C.Platform,
 	SCHEMA,
 };

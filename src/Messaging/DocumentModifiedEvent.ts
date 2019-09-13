@@ -21,13 +21,22 @@ export interface DocumentModifiedEventFactory {
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.DocumentModifiedEvent;
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
 /**
  * Constant that implements {@link DocumentModifiedEventFactory}.
  */
-export const DocumentModifiedEvent:DocumentModifiedEventFactory = {
-	TYPE,
+export const DocumentModifiedEvent:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent'
+	 */
+	TYPE: C["DocumentModifiedEvent"];
+
+	/**
+	 * Defines the basic schema for the {@link DocumentModifiedEvent}.
+	 */
+	SCHEMA: ObjectSchema;
+} = {
+	TYPE:C.DocumentModifiedEvent,
 	SCHEMA,
 };

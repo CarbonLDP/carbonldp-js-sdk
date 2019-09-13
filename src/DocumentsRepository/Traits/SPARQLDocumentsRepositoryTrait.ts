@@ -80,7 +80,22 @@ export type SPARQLDocumentsRepositoryTraitFactory =
 /**
  * Constant that implements {@link SPARQLDocumentsRepositoryTraitFactory}.
  */
-export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactory = {
+export const SPARQLDocumentsRepositoryTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link SPARQLDocumentsRepositoryTrait}
+	 */
+	PROTOTYPE: SPARQLDocumentsRepositoryTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the SPARQLDocumentsRepositoryTrait has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is SPARQLDocumentsRepositoryTrait
+
+	/**
+	 * Defines the SPARQLDocumentsRepositoryTrait's prototype properties and methods to the SPARQLDocumentsRepositoryTrait object.
+	 */
+	decorate<T extends BaseDocumentsRepository>( object:T ):T & SPARQLDocumentsRepositoryTrait;
+} = {
 	PROTOTYPE: {
 		executeASKQuery( this:SPARQLDocumentsRepositoryTrait, uri:string, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean> {
 			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );

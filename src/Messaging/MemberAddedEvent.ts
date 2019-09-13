@@ -25,7 +25,6 @@ export interface MemberAddedEventFactory {
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.MemberAddedEvent;
 const SCHEMA:ObjectSchema = {
 	...EventMessage.SCHEMA,
 	"details": {
@@ -37,7 +36,17 @@ const SCHEMA:ObjectSchema = {
 /**
  * Constant that implements {@link MemberAddedEventFactory}.
  */
-export const MemberAddedEvent:MemberAddedEventFactory = {
-	TYPE,
+export const MemberAddedEvent:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#MemberAddedEvent'
+	 */
+	TYPE: C["MemberAddedEvent"];
+
+	/**
+	 * Defines the basic schema for the {@link MemberAddedEvent}.
+	 */
+	SCHEMA: ObjectSchema;
+} = {
+	TYPE: C.MemberAddedEvent,
 	SCHEMA,
 };

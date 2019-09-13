@@ -33,6 +33,7 @@ import { QueryableDocumentTrait } from "./Traits/QueryableDocumentTrait";
 import { SPARQLDocumentTrait } from "./Traits/SPARQLDocumentTrait";
 
 import { TransientDocument } from "./TransientDocument";
+import { ObjectSchema } from "../ObjectSchema";
 
 
 /**
@@ -253,7 +254,48 @@ export type DocumentFactory =
 /**
  * Constant that implements {@link DocumentFactory}.
  */
-export const Document:DocumentFactory = {
+export const Document:{
+
+		/**
+		 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#Document'
+		 */
+		TYPE: C["Document"];
+
+		/**
+		 * Defines the basic schema for the {@link Document}.
+		 */
+		SCHEMA: ObjectSchema;
+
+		/**
+		 * The object with the properties/methods to use in the decoration of a {@link Document}
+		 */
+		PROTOTYPE: DocumentFactory["PROTOTYPE"];
+
+		/**
+		 * Checks if the document has the decorated properties and methods from its prototype.
+		 */
+		isDecorated( object:object): object is Document;
+
+		/**
+		 * Returns true when the value provided is considered to be a {@link Document}.
+		 */
+		is( object:object ): object is Document;
+
+		/**
+		 * Defines the document's prototype properties and methods to the document object.
+		 */
+		decorate<T extends object>( object:T &  BaseResolvableDocument ):T & Document;
+
+		/**
+		 * Creates a {@link Document} with the provided data.
+		 */
+		create<T extends object>( data?:T & BaseDocument ): T & TransientDocument;
+
+		/**
+		 * Creates a {@link Document} from the provided Document.
+		 */
+		createFrom<T extends object>( object:T & BaseDocument ):T & TransientDocument;
+} = {
 	TYPE: C.Document,
 	SCHEMA: {
 		"contains": {

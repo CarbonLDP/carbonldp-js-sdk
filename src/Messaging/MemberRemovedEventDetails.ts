@@ -21,13 +21,22 @@ export interface MemberRemovedEventDetailsFactory {
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.MemberRemovedEventDetails;
 const SCHEMA:ObjectSchema = MemberEventDetails.SCHEMA;
 
 /**
  * Constant that implements {@link MemberRemovedEventDetailsFactory}.
  */
-export const MemberRemovedEventDetails:MemberRemovedEventDetailsFactory = {
-	TYPE,
+export const MemberRemovedEventDetails:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails'
+	 */
+	TYPE: C["MemberRemovedEventDetails"];
+
+	/**
+	 * Defines the basic schema for the {@link MemberRemovedEventDetails}.
+	 */
+	SCHEMA: ObjectSchema;
+} = {
+	TYPE: C.MemberRemovedEventDetails,
 	SCHEMA,
 };

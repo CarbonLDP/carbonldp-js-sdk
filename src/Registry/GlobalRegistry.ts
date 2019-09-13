@@ -41,7 +41,17 @@ export type GlobalRegistryFactory =
 /**
  * Constant that implements {@link GlobalRegistryFactory}
  */
-export const GlobalRegistry:GlobalRegistryFactory = {
+export const GlobalRegistry:{
+	/**
+	 * Creates a {@link GlobalRegistry} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseGlobalRegistry ):T & GlobalRegistry;
+
+	/**
+	 * Creates a {@link GlobalRegistry} from the provided GlobalRegistry.
+	 */
+	createFrom<T extends object>( object:T & BaseGlobalRegistry ):T & GlobalRegistry;
+} = {
 	create<T extends object>( data:T & BaseGlobalRegistry ):T & GlobalRegistry {
 		// FIXME: TS 3.0
 		return GlobalRegistry.createFrom( { ...data as any } );

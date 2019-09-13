@@ -46,7 +46,15 @@ export interface RDFValueFactory {
 /**
  * Constant that implements {@link RDFValueFactory}.
  */
-export const RDFValue:RDFValueFactory = {
+export const RDFValue:{
+	/**
+	 * Returns the parsed object from an Literal, Node, or List.
+	 * Returns `null` if it cannot be parsed.
+	 * @param pointerLibrary Library from where to obtains pointers when RDFNode provided.
+	 * @param value The RDF value to parse.
+	 */
+	parse( pointerLibrary:PointerLibrary | $PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string, ):any;
+} = {
 
 	parse( pointerLibrary:PointerLibrary | $PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string ):any {
 		if( isString( value ) ) return value;

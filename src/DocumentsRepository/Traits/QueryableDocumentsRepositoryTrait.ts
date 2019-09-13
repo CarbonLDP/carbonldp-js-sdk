@@ -42,6 +42,7 @@ import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 import { _getErrorResponseParserFn } from "../Utils";
 
 import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
+import { QueryableDocumentTraitFactory } from '../../Document/Traits';
 
 
 /**
@@ -378,7 +379,22 @@ export type QueryableDocumentsRepositoryTraitFactory =
 /**
  * Constant that implements {@link QueryableDocumentsRepositoryTraitFactory}.
  */
-export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTraitFactory = {
+export const QueryableDocumentsRepositoryTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link QueryableDocumentsRepositoryTrait}
+	 */
+	PROTOTYPE: QueryableDocumentsRepositoryTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the QueryableDocumentsRepositoryTrait has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is QueryableDocumentsRepositoryTrait;
+
+	/**
+	 * Defines the QueryableDocumentsRepositoryTrait's prototype properties and methods to the QueryableDocumentsRepositoryTrait object.
+	 */
+	decorate<T extends BaseDocumentsRepository>( object:T ):T & QueryableDocumentsRepositoryTrait;
+} = {
 	PROTOTYPE: {
 		get<T extends object>( this:QueryableDocumentsRepositoryTrait, uriOrURIs:string | string[], requestOptionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn | QueryDocsBuilderFn, queryBuilderFn?:QueryBuilderFn | QueryDocsBuilderFn ):Promise<(T & Document) | (T & Document)[]> {
 			const requestOptions:GETOptions = typeof requestOptionsOrQueryBuilderFn === "object" ?

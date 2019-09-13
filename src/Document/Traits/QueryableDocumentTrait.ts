@@ -193,7 +193,22 @@ export type QueryableDocumentTraitFactory =
 /**
  * Constant that implements {@link QueryableDocumentTraitFactory}.
  */
-export const QueryableDocumentTrait:QueryableDocumentTraitFactory = {
+export const QueryableDocumentTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link QueryableDocumentTrait}.
+	 */
+	PROTOTYPE:QueryableDocumentTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the QueryableDocumentTrait has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is QueryableDocumentTrait;
+
+	/**
+	 * Defines the QueryableDocumentTrait's prototype properties and methods to the QueryableDocumentTrait object.
+	 */
+	decorate<T extends BaseQueryableDocumentTrait>( object:T ):T & QueryableDocumentTrait
+} = {
 	PROTOTYPE: {
 		$get( this:QueryableDocumentTrait, uris:any | string[], ...args:any[] ):Promise<any> {
 			if( !Array.isArray( uris ) )

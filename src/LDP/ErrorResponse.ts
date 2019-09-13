@@ -64,7 +64,27 @@ const SCHEMA:ObjectSchema = {
  * Constant that implements {@link ErrorResponseFactory}.
  */
 // TODO: Change to type-alias
-export const ErrorResponse:ErrorResponseFactory = {
+export const ErrorResponse:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#ErrorResponse'
+	 */
+	TYPE: C["ErrorResponse"];
+
+	/**
+	 * Defines the basic schema for the {@link ErrorResponse}.
+	 */
+	SCHEMA: ObjectSchema;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link ErrorResponse}.
+	 */
+	is( value:any ):value is ErrorResponse;
+
+	/**
+	 *  Gets the errors from the Error Response.
+	 */
+	getMessage( errorResponse:ErrorResponse ):string;
+} = {
 	TYPE: C.ErrorResponse,
 	SCHEMA,
 

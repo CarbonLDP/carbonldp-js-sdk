@@ -105,7 +105,37 @@ export type ResourceFactory =
 /**
  * Constant that implements {@link ResourceFactory}.
  */
-export const Resource:ResourceFactory = {
+export const Resource:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link Resource}
+	 */
+	PROTOTYPE: ResourceFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the Resource has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is Resource;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link Resource}.
+	 */
+	is( value:any ):value is Resource;
+
+	/**
+	 * Defines the Resource's prototype properties and methods to the Resource object.
+	 */
+	decorate<T extends object>( object:T &  BaseResource ):T & Resource;
+
+	/**
+	 * Creates a {@link Resource} with the provided data.
+	 */
+	create<T extends object>( data?:T & BaseResource ):T & Resource
+
+	/**
+	 * Creates a {@link Resource} from the provided Resource.
+	 */
+	createFrom<T extends object>( object:T & BaseResource ):T & Resource;
+} = {
 	PROTOTYPE: {
 		get types():string[] { return []; },
 

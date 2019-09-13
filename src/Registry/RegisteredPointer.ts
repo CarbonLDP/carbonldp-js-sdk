@@ -35,7 +35,37 @@ export type RegisteredPointerFactory =
 /**
  * Constant that implements {@link RegisteredPointerFactory}
  */
-export const RegisteredPointer:RegisteredPointerFactory = {
+export const RegisteredPointer:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link RegisteredPointer}
+	 */
+	PROTOTYPE: RegisteredPointerFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the RegisteredPointer has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is RegisteredPointer;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link RegisteredPointer}.
+	 */
+	is( value:any ):value is RegisteredPointer;
+
+	/**
+	 * Defines the RegisteredPointer's prototype properties and methods to the RegisteredPointer object.
+	 */
+	decorate<T extends object>( object:T & BaseRegisteredPointer ):T & RegisteredPointer;
+
+	/**
+	 * Creates a {@link RegisteredPointer} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseRegisteredPointer ):T & RegisteredPointer;
+
+	/**
+	 * Creates a {@link RegisteredPointer} from the provided RegisteredPointer.
+	 */
+	createFrom<T extends object>( object:T & BaseRegisteredPointer ):T & RegisteredPointer;
+} = {
 	PROTOTYPE: {
 		get $registry():Registry {
 			throw new IllegalArgumentError( `Property "$registry" is required.` );

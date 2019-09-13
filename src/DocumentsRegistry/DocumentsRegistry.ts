@@ -1,6 +1,6 @@
 import { DocumentsContext } from "../Context/DocumentsContext";
 
-import { Document } from "../Document/Document";
+import { Document, BaseResolvableDocument } from "../Document/Document";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
@@ -46,7 +46,32 @@ export type DocumentsRegistryFactory =
 /**
  * Constant that implements {@link DocumentsRegistryFactory}.
  */
-export const DocumentsRegistry:DocumentsRegistryFactory = {
+export const DocumentsRegistry:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link DocumentsRegistry}
+	 */
+	PROTOTYPE: DocumentsRegistryFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the DocumentsRegistry has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is DocumentsRegistry;
+
+	/**
+	 * Defines the DocumentsRegistry's prototype properties and methods to the DocumentsRegistry object.
+	 */
+	decorate<T extends object>( object:T &  BaseDocumentsRegistry ):T & DocumentsRegistry;
+
+	/**
+	 * Creates a {@link DocumentsRegistry} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseDocumentsRegistry ):T & DocumentsRegistry;
+
+	/**
+	 * Creates a {@link DocumentsRegistry} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseDocumentsRegistry ):T & DocumentsRegistry
+} = {
 	PROTOTYPE: {
 		register( this:DocumentsRegistry, id:string ):Document {
 			return this.getPointer( id, true );

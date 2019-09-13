@@ -21,13 +21,22 @@ export interface DocumentDeletedEventFactory {
 	SCHEMA:ObjectSchema;
 }
 
-const TYPE:string = C.DocumentDeletedEvent;
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
 /**
  * Constant that implements {@link DocumentDeletedEventFactory}
  */
-export const DocumentDeletedEvent:DocumentDeletedEventFactory = {
-	TYPE,
+export const DocumentDeletedEvent:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent'
+	 */
+	TYPE: C["DocumentDeletedEvent"];
+
+	/**
+	 * Defines the basic schema for the {@link DocumentDeletedEvent}.
+	 */
+	SCHEMA: ObjectSchema;
+} = {
+	TYPE: C.DocumentDeletedEvent,
 	SCHEMA,
 };
