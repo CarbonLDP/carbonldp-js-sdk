@@ -102,7 +102,23 @@ export type HTTPRepositoryTraitFactory =
 /**
  * Constant that implements {@link HTTPRepositoryTraitFactory}-
  */
-export const HTTPRepositoryTrait:HTTPRepositoryTraitFactory = {
+export const HTTPRepositoryTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link HTTPRepositoryTrait}
+	 */
+	PROTOTYPE: HTTPRepositoryTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the HTTPRepositoryTrait has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is HTTPRepositoryTrait
+
+	/**
+	 * Defines the HTTPRepositoryTrait's prototype properties and methods to the HTTPRepositoryTrait object.
+	 */
+	decorate<T extends BaseGeneralRepository>( object:T ):T & HTTPRepositoryTrait;
+
+} = {
 	PROTOTYPE: {
 		get<T extends object>( this:HTTPRepositoryTrait, uri:string, requestOptions?:GETOptions ):Promise<T & ResolvablePointer> {
 			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );

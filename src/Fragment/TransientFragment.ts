@@ -48,7 +48,37 @@ export type TransientFragmentFactory =
 /**
  * Constant that implements {@link TransientFragmentFactory}.
  */
-export const TransientFragment:TransientFragmentFactory = {
+export const TransientFragment:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link TransientFragment}
+	 */
+	PROTOTYPE: TransientFragmentFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the TransientFragment has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object): object is TransientFragment;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link Document}.
+	 */
+	is( value:any ):value is TransientFragment;
+
+	/**
+	 * Defines the TransientFragment's prototype properties and methods to the document TransientFragment.
+	 */
+	decorate<T extends object>( object:T &  BaseTransientFragment ):T & TransientFragment;
+
+	/**
+	 * Creates a {@link TransientFragment} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseTransientFragment ):T & TransientFragment;
+
+	/**
+	 * Creates a {@link TransientFragment} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseTransientFragment ):T & TransientFragment;
+} = {
 	PROTOTYPE: {
 		get $registry():TransientDocument {
 			throw new IllegalArgumentError( `Property "$registry" is required.` );

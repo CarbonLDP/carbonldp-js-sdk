@@ -43,7 +43,22 @@ const SCHEMA:ObjectSchema = {
 /**
  * Constant that implements {@link MapFactory}.
  */
-export const Map:MapFactory = {
+export const Map:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#Map'
+	 */
+	TYPE: C["Map"];
+
+	/**
+	 * Defines the basic schema for the map.
+	 */
+	SCHEMA: ObjectSchema;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link Map}.
+	 */
+	is( object:object ): object is Map<any, any>;
+} = {
 	TYPE: C.Map,
 	SCHEMA,
 

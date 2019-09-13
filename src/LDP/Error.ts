@@ -55,7 +55,17 @@ const SCHEMA:ObjectSchema = {
 /**
  * Constant that implements {@link ErrorFactory}.
  */
-export const Error:ErrorFactory = {
+export const Error:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#Error'
+	 */
+	TYPE: C["Error"];
+
+	/**
+	 * Defines the basic schema for the error.
+	 */
+	SCHEMA: ObjectSchema;
+} = {
 	TYPE: C.Error,
 	SCHEMA,
 };

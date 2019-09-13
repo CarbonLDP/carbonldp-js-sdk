@@ -37,7 +37,32 @@ export type GeneralRepositoryFactory =
 /**
  * Constant that implements {@link GeneralRepositoryFactory}.
  */
-export const GeneralRepository:GeneralRepositoryFactory = {
+export const GeneralRepository:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link GeneralRepository}
+	 */
+	PROTOTYPE: GeneralRepositoryFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the GeneralRepository has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object): object is GeneralRepository;
+
+	/**
+	 * Defines the GeneralRepository's prototype properties and methods to the GeneralRepository object.
+	 */
+	decorate<T extends object>( object:T &  BaseGeneralRepository ):T & GeneralRepository<any>;
+
+	/**
+	 * Creates a {@link GeneralRepository} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseGeneralRepository ):T & GeneralRepository;
+
+	/**
+	 * Creates a {@link GeneralRepository} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseGeneralRepository ):T & GeneralRepository;
+} = {
 	PROTOTYPE: {
 		get context():Context<ResolvablePointer & RegisteredPointer, ResolvablePointer> {
 			throw new IllegalArgumentError( `Property "context" is required.` );

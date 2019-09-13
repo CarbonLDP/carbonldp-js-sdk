@@ -230,7 +230,23 @@ export type EventEmitterDocumentsRepositoryTraitFactory =
 /**
  * Constant that implements {@link EventEmitterDocumentsRepositoryTraitFactory}.
  */
-export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositoryTraitFactory = {
+export const EventEmitterDocumentsRepositoryTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link EventEmitterDocumentsRepositoryTrait}
+	 */
+	PROTOTYPE: EventEmitterDocumentsRepositoryTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the EventEmitterDocumentsRepositoryTrait has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is EventEmitterDocumentsRepositoryTrait
+
+	/**
+	 * Defines the EventEmitterDocumentsRepositoryTrait's prototype properties and methods to the EventEmitterDocumentsRepositoryTrait object.
+	 */
+	decorate<T extends object>( object:T &  BaseDocumentsRepository ):T & EventEmitterDocumentsRepositoryTrait;
+
+} = {
 	PROTOTYPE: {
 		on( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<any>, onError?:OnError ):void {
 			try {

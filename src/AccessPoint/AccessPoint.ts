@@ -3,6 +3,8 @@ import { Document } from "../Document/Document";
 import { Pointer } from "../Pointer/Pointer";
 
 import { TransientAccessPoint, TransientAccessPointFactory } from "./TransientAccessPoint";
+import { BaseAccessPoint } from './BaseAccessPoint';
+import { C } from '../Vocabularies/C';
 
 
 /**
@@ -57,7 +59,28 @@ export interface AccessPointFactory {
 /**
  * Constant that implements the {@link AccessPointFactory} interface.
  */
-export const AccessPoint:AccessPointFactory = {
+export const AccessPoint: {
+
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#AccessPoint'
+	 */
+	TYPE: C["AccessPoint"];
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link AccessPoint}.
+	 */
+	is(value:any):value is AccessPoint;
+
+	/**
+	 * Creates a {@link AccessPoint} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseAccessPoint ): T & TransientAccessPoint;
+
+	/**
+	 * Creates a {@link AccessPoint} from the provided Document.
+	 */
+	createFrom<T extends object>( object:T & BaseAccessPoint ):T & TransientAccessPoint;
+} = {
 	TYPE: TransientAccessPoint.TYPE,
 
 	is: ( value ):value is AccessPoint =>

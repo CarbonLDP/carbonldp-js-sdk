@@ -116,7 +116,22 @@ export type SPARQLDocumentTraitFactory =
 /**
  * Constant that implements {@link SPARQLDocumentTraitFactory}.
  */
-export const SPARQLDocumentTrait:SPARQLDocumentTraitFactory = {
+export const SPARQLDocumentTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link SPARQLDocumentTrait}.
+	 */
+	PROTOTYPE:SPARQLDocumentTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the SPARQLDocumentTrait has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is SPARQLDocumentTrait;
+
+	/**
+	 * Defines the SPARQLDocumentTrait's prototype properties and methods to the SPARQLDocumentTrait object.
+	 */
+	decorate<T extends BaseSPARQLDocumentTrait>( object:T ):T & SPARQLDocumentTrait;
+} = {
 	PROTOTYPE: {
 		$executeASKQuery( this:SPARQLDocumentTrait, uriOrQuery:string, queryOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<boolean> {
 			const { uri, query, options } = __parseParams( this, uriOrQuery, queryOrOptions, requestOptions );

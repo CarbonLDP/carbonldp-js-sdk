@@ -38,7 +38,17 @@ const SCHEMA:ObjectSchema = {
 /**
  * Constant that implements {@link DocumentCreatedEventDetailsFactory}.
  */
-export const DocumentCreatedEventDetails:DocumentCreatedEventDetailsFactory = {
+export const DocumentCreatedEventDetails:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails'
+	 */
+	TYPE: C["DocumentCreatedEventDetails"];
+
+	/**
+	 * Defines the basic schema for the {@link DocumentCreatedEventDetails}.
+	 */
+	SCHEMA: ObjectSchema;
+} = {
 	TYPE: C.DocumentCreatedEventDetails,
 	SCHEMA,
 };

@@ -179,7 +179,37 @@ export type TransientDocumentFactory =
 /**
  * Constant that implements {@link TransientDocumentFactory}.
  */
-export const TransientDocument:TransientDocumentFactory = {
+export const TransientDocument:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link TransientDocument}
+	 */
+	PROTOTYPE: TransientDocumentFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the TransientDocument has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object): object is TransientDocument;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link TransientDocument}.
+	 */
+	is( value:any ): value is TransientDocument;
+
+	/**
+	 * Defines the document's prototype properties and methods to the TransientDocument object.
+	 */
+	decorate<T extends BaseDocument>( object:T):T & TransientDocument;
+
+	/**
+	 * Creates a {@link TransientDocument} with the provided data.
+	 */
+	create<T extends object>( data?:T & BaseDocument ): T & TransientDocument;
+
+	/**
+	 * Creates a {@link TransientDocument} from the provided Document.
+	 */
+	createFrom<T extends object>( object:T & BaseDocument ):T & TransientDocument;
+} = {
 	PROTOTYPE: {
 		$registry: void 0,
 

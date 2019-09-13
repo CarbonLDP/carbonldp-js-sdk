@@ -243,7 +243,22 @@ export type LDPDocumentTraitFactory =
 /**
  * Constant that implements {@link LDPDocumentTraitFactory}.
  */
-export const LDPDocumentTrait:LDPDocumentTraitFactory = {
+export const LDPDocumentTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link LDPDocumentTrait}.
+	 */
+	PROTOTYPE:LDPDocumentTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the LDPDocumentTrait has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is LDPDocumentTrait;
+
+	/**
+	 * Defines the LDPDocumentTrait's prototype properties and methods to the LDPDocumentTrait object.
+	 */
+	decorate<T extends BaseLDPDocumentTrait>( object:T ):T & LDPDocumentTrait
+} = {
 	PROTOTYPE: {
 		$create<T extends object>( this:LDPDocumentTrait, uriOrChildren:string | T | T[], childrenOrSlugsOrRequestOptions?:T | T[] | string | string[] | RequestOptions, slugsOrRequestOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
 			const { _uri, _args } = _parseURIParams( this, uriOrChildren, arguments );

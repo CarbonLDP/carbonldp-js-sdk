@@ -41,7 +41,22 @@ const SCHEMA:ObjectSchema = {
 /**
  * Constant that implements {@link QueryMetadataFactory}.
  */
-export const QueryMetadata:QueryMetadataFactory = {
+export const QueryMetadata:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#QueryMetadata'
+	 */
+	TYPE: C["QueryMetadata"];
+
+	/**
+	 * Defines the basic schema for the {@link QueryMetadata}.
+	 */
+	SCHEMA: ObjectSchema;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link QueryMetadata}.
+	 */
+	is( object:object ): object is QueryMetadata;
+} = {
 	TYPE: C.QueryMetadata,
 	SCHEMA,
 

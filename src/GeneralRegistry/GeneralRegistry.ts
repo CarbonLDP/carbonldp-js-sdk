@@ -86,7 +86,32 @@ export type GeneralRegistryFactory =
 /**
  * Constant that implements {@link GeneralRegistryFactory}.
  */
-export const GeneralRegistry:GeneralRegistryFactory = {
+export const GeneralRegistry:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link GeneralRegistry}
+	 */
+	PROTOTYPE: GeneralRegistryFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the GeneralRegistry has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object): object is GeneralRegistry;
+
+	/**
+	 * Defines the GeneralRegistry's prototype properties and methods to the GeneralRegistry object.
+	 */
+	decorate<T extends object>( object:T &  BaseGeneralRegistry ):T & GeneralRegistry<any>;
+
+	/**
+	 * Creates a {@link GeneralRegistry} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseGeneralRegistry ):T & GeneralRegistry<any>
+
+	/**
+	 * Creates a {@link GeneralRegistry} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseGeneralRegistry ):T & GeneralRegistry<any>
+} = {
 	PROTOTYPE: {
 		get context():Context {
 			throw new IllegalArgumentError( "Property context is required." );

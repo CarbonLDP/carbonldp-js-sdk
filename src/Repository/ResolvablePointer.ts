@@ -191,7 +191,27 @@ export type ResolvablePointerFactory =
 /**
  * Constant that implements {@link ResolvablePointerFactory}.
  */
-export const ResolvablePointer:ResolvablePointerFactory = {
+export const ResolvablePointer:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link ResolvablePointer}
+	 */
+	PROTOTYPE: ResolvablePointerFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the ResolvablePointer has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is ResolvablePointer;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link ResolvablePointer}.
+	 */
+	is( value:any ):value is ResolvablePointer;
+
+	/**
+	 * Defines the ResolvablePointer's prototype properties and methods to the ResolvablePointer object.
+	 */
+	decorate<T extends object>( object:T &  BaseResolvablePointer ):T & ResolvablePointer;
+} = {
 	PROTOTYPE: {
 		get $repository():Repository | $Repository {
 			throw new IllegalArgumentError( `Property "$repository" is required.` );

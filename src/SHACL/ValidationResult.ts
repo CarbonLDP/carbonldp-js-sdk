@@ -94,7 +94,17 @@ const SCHEMA:ObjectSchema = {
 /**
  * Constant that implements {@link ValidationResultFactory}.
  */
-export const ValidationResult:ValidationResultFactory = {
+export const ValidationResult:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#ValidationResult'
+	 */
+	TYPE: SHACL["ValidationResult"];
+
+	/**
+	 * Defines the basic schema for the {@link ValidationResult}.
+	 */
+	SCHEMA: ObjectSchema;
+} = {
 	TYPE: SHACL.ValidationResult,
 	SCHEMA,
 };

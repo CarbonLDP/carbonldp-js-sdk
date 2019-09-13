@@ -41,7 +41,23 @@ const SCHEMA:ObjectSchema = {
 /**
  * Constant that implements {@link ResponseMetadataFactory}.
  */
-export const ResponseMetadata:ResponseMetadataFactory = {
+export const ResponseMetadata:{
+	/**
+	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#ResponseMetadata'
+	 */
+	TYPE: C["ResponseMetadata"];
+
+	/**
+	 * Defines the basic schema for the {@link ResponseMetadata}.
+	 */
+	SCHEMA: ObjectSchema;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link ResponseMetadata}.
+	 */
+	is( object:object ): object is ResponseMetadata;
+
+} = {
 	TYPE: C.ResponseMetadata,
 	SCHEMA,
 

@@ -37,7 +37,27 @@ export type QueryablePointerFactory =
 /**
  * Constant that implements {@link QueryablePointerFactory}.
  */
-export const QueryablePointer:QueryablePointerFactory = {
+export const QueryablePointer:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link QueryablePointer}
+	 */
+	PROTOTYPE: QueryablePointerFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the QueryablePointer has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is QueryablePointer;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link QueryablePointer}.
+	 */
+	is( value:any ):value is QueryablePointer;
+
+	/**
+	 * Defines the QueryablePointer's prototype properties and methods to the QueryablePointer object.
+	 */
+	decorate<T extends BaseResolvablePointer>( object:T ):T & QueryablePointer;
+} = {
 	PROTOTYPE: {
 		$_queryableMetadata: void 0,
 

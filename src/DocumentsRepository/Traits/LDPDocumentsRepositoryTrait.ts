@@ -527,7 +527,22 @@ export type LDPDocumentsRepositoryTraitFactory =
 /**
  * Constant that implements {@link LDPDocumentsRepositoryTraitFactory}.
  */
-export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
+export const LDPDocumentsRepositoryTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link LDPDocumentsRepositoryTrait}
+	 */
+	PROTOTYPE: LDPDocumentsRepositoryTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the LDPDocumentsRepositoryTrait has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object ):object is LDPDocumentsRepositoryTrait
+
+	/**
+	 * Defines the LDPDocumentsRepositoryTrait's prototype properties and methods to the LDPDocumentsRepositoryTrait object.
+	 */
+	decorate<T extends BaseDocumentsRepository>( object:T ):T & LDPDocumentsRepositoryTrait;
+} = {
 	PROTOTYPE: {
 		get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );

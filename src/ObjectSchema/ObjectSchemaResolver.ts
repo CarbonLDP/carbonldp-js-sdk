@@ -81,7 +81,22 @@ export type ObjectSchemaResolverFactory =
 	& ModelDecorator<ObjectSchemaResolver>
 	;
 
-export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
+export const ObjectSchemaResolver:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link ObjectSchemaResolver}
+	 */
+	PROTOTYPE: ObjectSchemaResolverFactory["PROTOTYPE"];
+
+	/**
+	 * Checks if the ObjectSchemaResolver has the decorated properties and methods from its prototype.
+	 */
+	isDecorated( object:object): object is ObjectSchemaResolver;
+
+	/**
+	 * Defines the ObjectSchemaResolver's prototype properties and methods to the ObjectSchemaResolver object.
+	 */
+	decorate<T extends object>( object:T ):T & ObjectSchemaResolver;
+} = {
 	PROTOTYPE: {
 		context: undefined,
 
