@@ -60,7 +60,7 @@ export const TransientFragment:{
 	isDecorated( object:object): object is TransientFragment;
 
 	/**
-	 * Returns true when the value provided is considered to be a {@link Document}.
+	 * Returns true when the value provided is considered to be a {@link TransientFragment}.
 	 */
 	is( value:any ):value is TransientFragment;
 
