@@ -6,7 +6,7 @@ import { isNumber } from "../Utils";
 /**
  * The tokens that states a change in the data.
  *
- * Used in the {@link LDPatchToken.statements}.
+ * Used in the {@link LDPatchToken#statements `LDPatchToken.statements`}.
  */
 export type StatementToken = AddToken | DeleteToken | UpdateListToken;
 

@@ -59,40 +59,4 @@ describe( "Errors", () => {
 		expect( Errors.ServiceUnavailableError ).toBe( ServiceUnavailableError );
 	} );
 
-
-	describe( "statusCodeMap", () => {
-
-		it( "should exist", () => {
-			expect( Errors.statusCodeMap ).toBeDefined();
-			expect( Errors.statusCodeMap ).toEqual( jasmine.any( Map ) );
-		} );
-
-		it( "should have all the error classes", () => {
-			expect( Errors.statusCodeMap.size ).toBe( 21 );
-
-			expect( Errors.statusCodeMap.get( BadRequestError.statusCode ) ).toBe( BadRequestError );
-			expect( Errors.statusCodeMap.get( ConflictError.statusCode ) ).toBe( ConflictError );
-			expect( Errors.statusCodeMap.get( ForbiddenError.statusCode ) ).toBe( ForbiddenError );
-			expect( Errors.statusCodeMap.get( MethodNotAllowedError.statusCode ) ).toBe( MethodNotAllowedError );
-			expect( Errors.statusCodeMap.get( NotAcceptableError.statusCode ) ).toBe( NotAcceptableError );
-			expect( Errors.statusCodeMap.get( NotFoundError.statusCode ) ).toBe( NotFoundError );
-			expect( Errors.statusCodeMap.get( PreconditionFailedError.statusCode ) ).toBe( PreconditionFailedError );
-			expect( Errors.statusCodeMap.get( PreconditionRequiredError.statusCode ) ).toBe( PreconditionRequiredError );
-			expect( Errors.statusCodeMap.get( RequestEntityTooLargeError.statusCode ) ).toBe( RequestEntityTooLargeError );
-			expect( Errors.statusCodeMap.get( RequestHeaderFieldsTooLargeError.statusCode ) ).toBe( RequestHeaderFieldsTooLargeError );
-			expect( Errors.statusCodeMap.get( RequestURITooLongError.statusCode ) ).toBe( RequestURITooLongError );
-			expect( Errors.statusCodeMap.get( TooManyRequestsError.statusCode ) ).toBe( TooManyRequestsError );
-			expect( Errors.statusCodeMap.get( UnauthorizedError.statusCode ) ).toBe( UnauthorizedError );
-			expect( Errors.statusCodeMap.get( UnsupportedMediaTypeError.statusCode ) ).toBe( UnsupportedMediaTypeError );
-			expect( Errors.statusCodeMap.get( BadResponseError.statusCode ) ).toBe( BadResponseError );
-			expect( Errors.statusCodeMap.get( BadGatewayError.statusCode ) ).toBe( BadGatewayError );
-			expect( Errors.statusCodeMap.get( GatewayTimeoutError.statusCode ) ).toBe( GatewayTimeoutError );
-			expect( Errors.statusCodeMap.get( HTTPVersionNotSupportedError.statusCode ) ).toBe( HTTPVersionNotSupportedError );
-			expect( Errors.statusCodeMap.get( InternalServerErrorError.statusCode ) ).toBe( InternalServerErrorError );
-			expect( Errors.statusCodeMap.get( NotImplementedError.statusCode ) ).toBe( NotImplementedError );
-			expect( Errors.statusCodeMap.get( ServiceUnavailableError.statusCode ) ).toBe( ServiceUnavailableError );
-		} );
-
-	} );
-
 } );

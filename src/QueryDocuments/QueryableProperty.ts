@@ -14,7 +14,7 @@ import { _getBestType } from "./Utils";
 /**
  * Metadata of a resource that has been queried.
  *
- * It is used in {@link QueryablePointer.$_queryableMetadata}.
+ * It is used in {@link QueryablePointer#$_queryableMetadata `QueryablePointer.$_queryableMetadata`}.
  */
 export class QueryableProperty {
 	readonly definition:DigestedObjectSchemaProperty;

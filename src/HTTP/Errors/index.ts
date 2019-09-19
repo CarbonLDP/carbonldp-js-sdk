@@ -1,24 +1,33 @@
-import * as ClientErrors from "./ClientErrors";
 import { HTTPError } from "./HTTPError";
-import * as ServerErrors from "./ServerErrors";
 
+export * from "./ClientErrors/BadRequestError";
+export * from "./ClientErrors/ConflictError";
+export * from "./ClientErrors/ForbiddenError";
+export * from "./ClientErrors/MethodNotAllowedError";
+export * from "./ClientErrors/NotAcceptableError";
+export * from "./ClientErrors/NotFoundError";
+export * from "./ClientErrors/PreconditionFailedError";
+export * from "./ClientErrors/PreconditionRequiredError";
+export * from "./ClientErrors/RequestEntityTooLargeError";
+export * from "./ClientErrors/RequestHeaderFieldsTooLargeError";
+export * from "./ClientErrors/RequestURITooLongError";
+export * from "./ClientErrors/TooManyRequestsError";
+export * from "./ClientErrors/UnauthorizedError";
+export * from "./ClientErrors/UnsupportedMediaTypeError";
 
-export * from "./ClientErrors";
-export * from "./ServerErrors";
+export * from "./ServerErrors/BadResponseError";
+export * from "./ServerErrors/BadGatewayError";
+export * from "./ServerErrors/GatewayTimeoutError";
+export * from "./ServerErrors/HTTPVersionNotSupportedError";
+export * from "./ServerErrors/InternalServerErrorError";
+export * from "./ServerErrors/NotImplementedError";
+export * from "./ServerErrors/ServiceUnavailableError";
 
 export * from "./HTTPError";
 export * from "./UnknownError";
-
 
 /**
  * Map where all the HTTP Status Codes used in the SDK are assigned to their specific error class.
  */
 export const statusCodeMap:Map<number, typeof HTTPError> = new Map<number, typeof HTTPError>();
 
-const addErrors:<T extends {}>( o:T ) => void = o => Object
-	.keys( o )
-	.map( k => o[ k ] )
-	.forEach( e => statusCodeMap.set( e.statusCode, e ) )
-;
-addErrors( ClientErrors );
-addErrors( ServerErrors );

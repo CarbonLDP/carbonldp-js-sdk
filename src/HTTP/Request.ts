@@ -8,6 +8,7 @@ import { HTTPError } from "./Errors/HTTPError";
 import { statusCodeMap } from "./Errors/index";
 import { BadResponseError } from "./Errors/ServerErrors/BadResponseError";
 import { UnknownError } from "./Errors/UnknownError";
+import * as Errors from "./Errors";
 
 import { Header } from "./Header";
 import { HTTPMethod } from "./HTTPMethod";
@@ -48,7 +49,7 @@ export interface GETOptions extends RequestOptions {
 }
 
 /**
- * Object used by {@link RequestUtils.setRetrievalPreferences()}
+ * Object used by {@link RequestUtils#setRetrievalPreferences `RequestUtils.setRetrievalPreferences()`}
  * which specifies the behaviour of a request when using an `ldp:Container` interaction model.
  */
 export interface RetrievalPreferences {
@@ -64,6 +65,17 @@ export interface RetrievalPreferences {
 
 type ResolveCallback = ( response:Response ) => void;
 type RejectCallback = ( error:HTTPError ) => void;
+
+function __addErrors<T extends {}>( o:T ):void {
+	Object
+	.keys( o )
+	.map( k => o[ k ] )
+	.filter( e => {
+		if (e.statusCode === null || e instanceof Map) return false;
+		statusCodeMap.set( e.statusCode, e );
+	} );
+}
+__addErrors( Errors );
 
 function __onResolve( resolve:ResolveCallback, reject:RejectCallback, response:Response ):void {
 	if( response.status >= 200 && response.status <= 299 ) {
