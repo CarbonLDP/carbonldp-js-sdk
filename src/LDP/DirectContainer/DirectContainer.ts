@@ -2,7 +2,7 @@ import { Document } from "../../Document/Document";
 
 import { TransientDirectContainer, TransientDirectContainerFactory } from "./TransientDirectContainer";
 import { LDP } from '../../Vocabularies';
-import { BaseDirectContainer } from '.';
+import { BaseDirectContainer } from './BaseDirectContainer';
 
 
 /**
