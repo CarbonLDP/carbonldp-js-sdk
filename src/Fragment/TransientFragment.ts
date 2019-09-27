@@ -60,11 +60,7 @@ export const TransientFragment:{
 	isDecorated( object:object): object is TransientFragment;
 
 	/**
-<<<<<<< HEAD
 	 * Returns true when the value provided is considered to be a {@link TransientFragment}.
-=======
-	 * Returns true when the value provided is considered to be a {@link Document}.
->>>>>>> 8a2c860c... Change the current documentation for exported constant and interface
 	 */
 	is( value:any ):value is TransientFragment;
 
