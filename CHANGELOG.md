@@ -19,6 +19,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 - [#378](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/378) - Allow pagination and ordering of multiple `$get()` documents
 	- The pagination sub-select (that may repeat the entire query) will now only be added when pagination (`limit()`, `offset()`) and/or sorting (`orderBy()`) are used.
 	  This also applies to the `$getChildren()` and `$getMembers()` methods
+	  
+### Fixed
+
+- [#391](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/391) - Saving a document with nullable data or empty array will not trigger a patch request since no changes is considered for RDF
 
 ## [5.2.0] - 2019-04-10
 
