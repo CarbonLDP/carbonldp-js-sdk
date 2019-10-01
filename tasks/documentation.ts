@@ -4,7 +4,7 @@ import path from "path";
 
 const projectRootDir:string = path.resolve( __dirname, "../" );
 const sourceDir:string = path.resolve( projectRootDir, "src/" );
-const outputDir:string = path.resolve( projectRootDir, "docs/" );
+const outputDir:string = path.resolve( projectRootDir, "api-docs/" );
 
 export const docsBuildProd:gulp.TaskFunction = () => {
 

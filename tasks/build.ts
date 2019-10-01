@@ -3,8 +3,7 @@ import gulp from "gulp";
 
 import { bundleSFX } from "./bundle";
 import { generateCJS, generateESM2015, generateTypes } from "./compile";
-import config, { DIST } from "./config";
-// import { compileDocumentation } from "./documentation";
+import { DIST } from "./config";
 import { preparePackage } from "./package";
 import { docsBuildProd } from './documentation';
 
