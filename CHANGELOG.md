@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 	  
 ### Fixed
 
-- [#391](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/391) - Saving a document with nullable data or empty array will not trigger a patch request since no changes is considered for RDF
+- [#391](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/391) - Adding properties with `undefined`, `null` and/or `[]` (empty array) will not trigger a patch request on save, since no changes are considered for RDF
 
 ## [5.2.0] - 2019-04-10
 
