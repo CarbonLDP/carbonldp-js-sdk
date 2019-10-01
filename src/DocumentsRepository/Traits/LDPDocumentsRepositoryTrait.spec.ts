@@ -2506,7 +2506,7 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 			it( "should not send request if no dirty with null", async () => {
 				stubRequest( "https://example.com/" );
 
-				Object.assign( document, { property: undefined } );
+				Object.assign( document, { property: null } );
 				await repository.save( document );
 
 				const requests:number = jasmine.Ajax.requests.count();
