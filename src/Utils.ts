@@ -276,7 +276,7 @@ export class ObjectUtils {
 	 * @param config Object that indicates if the arrays or the objects must have a deep comparison or not. By default the comparison is shallow.
 	 * @param ignore Object that indicates there is any property to ignore.
 	 */
-	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):boolean {
+	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean, equalities?:{ nullable?:boolean } } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):boolean {
 		return internalAreEqual( object1, object2, config, [ object1 ], [ object2 ], ignore );
 	}
 
@@ -309,7 +309,7 @@ export class ObjectUtils {
 	}
 }
 
-function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean }, stack1:any[], stack2:any[], ignore:{ [ key:string ]:boolean } = {} ):boolean {
+function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean, equalities?:{ nullable?:boolean } }, stack1:any[], stack2:any[], ignore:{ [ key:string ]:boolean } = {} ):boolean {
 	if( object1 === object2 ) return true;
 	if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
 
@@ -318,6 +318,10 @@ function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:bool
 	let keys:string[] = ArrayUtils.joinWithoutDuplicates( Object.keys( object1 ), Object.keys( object2 ) );
 	for( let key of keys ) {
 		if( key in ignore ) continue;
+
+		if( config.equalities && config.equalities.nullable ) {
+			if( _isNothing( object1[ key ] ) && _isNothing( object2[ key ] ) ) continue;
+		}
 
 		if( ! (key in object1) || ! (key in object2) ) return false;
 		if( typeof object1[ key ] !== typeof object2[ key ] ) return false;
@@ -351,6 +355,12 @@ function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:bool
 	}
 
 	return true;
+}
+
+function _isNothing( value:unknown ):boolean {
+	return !_isExistingValue( value )
+		|| (Array.isArray( value ) && value.length === 0)
+		;
 }
 
 /**

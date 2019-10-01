@@ -2484,6 +2484,46 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 				expect( returned ).toBe( document );
 			} );
 
+			it( "should not send request if no dirty", async () => {
+				stubRequest( "https://example.com/" );
+
+				await repository.save( document );
+
+				const requests:number = jasmine.Ajax.requests.count();
+				expect( requests ).toBe( 0, "A request was made when it should not" );
+			} );
+
+			it( "should not send request if no dirty with undefined", async () => {
+				stubRequest( "https://example.com/" );
+
+				Object.assign( document, { property: undefined } );
+				await repository.save( document );
+
+				const requests:number = jasmine.Ajax.requests.count();
+				expect( requests ).toBe( 0, "A request was made when it should not" );
+			} );
+
+			it( "should not send request if no dirty with null", async () => {
+				stubRequest( "https://example.com/" );
+
+				Object.assign( document, { property: undefined } );
+				await repository.save( document );
+
+				const requests:number = jasmine.Ajax.requests.count();
+				expect( requests ).toBe( 0, "A request was made when it should not" );
+			} );
+
+			it( "should not send request if no dirty with empty array", async () => {
+				stubRequest( "https://example.com/" );
+
+				Object.assign( document, { property: [] } );
+				await repository.save( document );
+
+				const requests:number = jasmine.Ajax.requests.count();
+				expect( requests ).toBe( 0, "A request was made when it should not" );
+			} );
+
+
 			it( "should send PATCH when dirty", async () => {
 				stubRequest( "https://example.com/" );
 
