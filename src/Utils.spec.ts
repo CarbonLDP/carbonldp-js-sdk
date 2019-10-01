@@ -1004,6 +1004,23 @@ describe( "ObjectUtils", ():void => {
 			expect( result ).toBe( true );
 		} );
 
+
+		it( "should return true when equality nullable with single property and wrapped property", () => {
+			const firstObject:object = { property: "foo" };
+			const secondObject:object = { property: [ "foo" ] };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { equalities: { wrapped: true } } );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return true when equality nullable with wrapped property and single property", () => {
+			const firstObject:object = { property: [ "foo" ] };
+			const secondObject:object = { property: "foo" };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { equalities: { wrapped: true } } );
+			expect( result ).toBe( true );
+		} );
+
 	} );
 
 	describe( "ObjectUtils.areShallowlyEqual", ():void => {
