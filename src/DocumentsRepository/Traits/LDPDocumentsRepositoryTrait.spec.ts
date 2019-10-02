@@ -2523,6 +2523,20 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 				expect( requests ).toBe( 0, "A request was made when it should not" );
 			} );
 
+			it( "should not send request if no dirty with wrapped property in array", async () => {
+				stubRequest( "https://example.com/" );
+
+				// Original content
+				Object.assign( document, { property: "foo" } );
+				document.$_syncSnapshot();
+
+				Object.assign( document, { property: [ "foo" ] } );
+				await repository.save( document );
+
+				const requests:number = jasmine.Ajax.requests.count();
+				expect( requests ).toBe( 0, "A request was made when it should not" );
+			} );
+
 
 			it( "should send PATCH when dirty", async () => {
 				stubRequest( "https://example.com/" );
@@ -2676,6 +2690,37 @@ describe( "LDPDocumentsRepositoryTrait", () => {
 					``
 				);
 			} );
+
+			it( "should send update patch with delete if assigned empty array", async () => {
+				stubRequest( "https://example.com/" );
+				context
+					.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+						"xsd": XSD.namespace,
+						"property": {
+							"@type": "string",
+							"@container": "@set",
+						},
+					} );
+
+				// Original content
+				Object.assign( document, { property: "foo" } );
+				document.$_syncSnapshot();
+
+				// Change data
+				Object.assign( document, { property: [] } );
+
+				await repository.save( document );
+
+				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+				expect( request.params ).toBe( "" +
+					`Delete { ` +
+					`` + `<https://example.com/> <https://example.com/ns#property> "foo". ` +
+					`}.` +
+					``
+				);
+			} );
+
 
 			it( "should update blank nodes when response metadata returned", async () => {
 				stubRequest( "https://example.com/", {
