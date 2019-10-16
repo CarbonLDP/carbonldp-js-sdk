@@ -41,7 +41,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link MapFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link Map} object.
  */
 export const Map:{
 	/**

@@ -39,7 +39,7 @@ export type GlobalRegistryFactory =
 	;
 
 /**
- * Constant that implements {@link GlobalRegistryFactory}
+ * Constant with the factory, decorator and/or utils for an {@link GlobalRegistry} object.
  */
 export const GlobalRegistry:{
 	/**

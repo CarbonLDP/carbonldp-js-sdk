@@ -83,7 +83,7 @@ export type DocumentsRepositoryFactory =
 	;
 
 /**
- * Constant that implements {@link DocumentsRepositoryFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link DocumentsRepository} object.
  */
 export const DocumentsRepository:{
 

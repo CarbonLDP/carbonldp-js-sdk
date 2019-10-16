@@ -33,7 +33,7 @@ export type RegisteredPointerFactory =
 	;
 
 /**
- * Constant that implements {@link RegisteredPointerFactory}
+ * Constant with the factory, decorator and/or utils for an {@link RegisteredPointer} object.
  */
 export const RegisteredPointer:{
 	/**

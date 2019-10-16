@@ -34,7 +34,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link MemberAddedEventFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link MemberAddedEvent} object.
  */
 export const MemberAddedEvent:{
 	/**

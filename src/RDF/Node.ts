@@ -105,7 +105,7 @@ export interface RDFNodeFactory {
 }
 
 /**
- * Constant that implements {@link RDFNodeFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link RDFNode} object.
  */
 export const RDFNode:RDFNodeFactory = {
 	is( value:any ):value is RDFNode {

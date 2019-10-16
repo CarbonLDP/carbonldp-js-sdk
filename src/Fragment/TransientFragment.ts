@@ -46,7 +46,7 @@ export type TransientFragmentFactory =
 	;
 
 /**
- * Constant that implements {@link TransientFragmentFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link TransientFragment} object.
  */
 export const TransientFragment:{
 	/**

@@ -28,7 +28,7 @@ export interface VolatileResourceFactory extends ModelFactory<VolatileResource> 
 }
 
 /**
- * Constant that implements {@link VolatileResourceFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link VolatileResource} object.
  */
 export const VolatileResource:{
 	/**

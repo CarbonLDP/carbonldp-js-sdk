@@ -24,7 +24,7 @@ export interface DocumentModifiedEventFactory {
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
 /**
- * Constant that implements {@link DocumentModifiedEventFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link DocumentModifiedEvent} object.
  */
 export const DocumentModifiedEvent:{
 	/**

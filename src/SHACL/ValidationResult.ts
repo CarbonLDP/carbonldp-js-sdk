@@ -92,7 +92,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ValidationResultFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link ValidationResult} object.
  */
 export const ValidationResult:{
 	/**

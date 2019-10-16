@@ -36,7 +36,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link PlatformMetadata}.
+ * Constant with the factory, decorator and/or utils for an {@link PlatformMetadata} object.
  */
 export const PlatformMetadata:{
 	/**

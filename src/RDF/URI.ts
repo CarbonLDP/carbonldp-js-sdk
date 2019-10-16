@@ -133,7 +133,7 @@ export interface URIFactory {
 }
 
 /**
- * Constant that implements {@link URIFactory}.
+ * Constant with the factory, decorator and/or utils for an {@link URI} object.
  */
 export const URI:URIFactory = {
 	hasFragment( uri:string ):boolean {

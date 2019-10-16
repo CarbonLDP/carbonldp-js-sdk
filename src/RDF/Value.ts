@@ -44,7 +44,7 @@ export interface RDFValueFactory {
 }
 
 /**
- * Constant that implements {@link RDFValueFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link RDFValue} object.
  */
 export const RDFValue:{
 	/**

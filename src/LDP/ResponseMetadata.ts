@@ -39,7 +39,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ResponseMetadataFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link ResponseMetadata} object.
  */
 export const ResponseMetadata:{
 	/**

@@ -44,7 +44,7 @@ export type DocumentsRegistryFactory =
 	;
 
 /**
- * Constant that implements {@link DocumentsRegistryFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link DocumentsRegistry} object.
  */
 export const DocumentsRegistry:{
 	/**

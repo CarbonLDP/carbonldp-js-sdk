@@ -45,7 +45,7 @@ export interface RDFDocumentFactory {
 }
 
 /**
- * Constant that implements {@link RDFDocumentFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link RDFDocument} object.
  */
 export const RDFDocument:RDFDocumentFactory = {
 	is( value:any ):value is RDFDocument {

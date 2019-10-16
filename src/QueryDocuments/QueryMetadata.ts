@@ -39,7 +39,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link QueryMetadataFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link QueryMetadata} object.
  */
 export const QueryMetadata:{
 	/**

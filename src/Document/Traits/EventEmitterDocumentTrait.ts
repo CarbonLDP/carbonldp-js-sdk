@@ -416,7 +416,7 @@ export type EventEmitterDocumentTraitFactory =
 	;
 
 /**
- * Constant that implements {@link EventEmitterDocumentTraitFactory}
+ * Constant with the factory, decorator and/or utils for an {@link EventEmitterDocumentTrait} object.
  */
 export const EventEmitterDocumentTrait:{
 

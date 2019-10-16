@@ -72,7 +72,7 @@ export interface RDFLiteralFactory {
 }
 
 /**
- * Constant that implements {@link RDFLiteralFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link RDFLiteral} object.
  */
 export const RDFLiteral:{
 	/**

@@ -45,7 +45,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link PlatformInstanceFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link PlatformInstance} object.
  */
 export const PlatformInstance:{
 	/**

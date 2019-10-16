@@ -189,7 +189,7 @@ export type ResolvablePointerFactory =
 	;
 
 /**
- * Constant that implements {@link ResolvablePointerFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link ResolvablePointer} object.
  */
 export const ResolvablePointer:{
 	/**

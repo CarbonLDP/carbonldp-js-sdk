@@ -56,7 +56,7 @@ export interface PointerFactory extends ModelPrototype<Pointer>
 }
 
 /**
- * Constant that implements {@link PointerFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link Pointer} object.
  */
 export const Pointer:{
 		/**

@@ -36,7 +36,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link EventMessageFactory}.
+ * Constant with the factory, decorator and/or utils for an {@link EventMessage} object.
  */
 export const EventMessage:{
 	/**

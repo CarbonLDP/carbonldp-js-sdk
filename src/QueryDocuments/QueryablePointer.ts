@@ -35,7 +35,7 @@ export type QueryablePointerFactory =
 	;
 
 /**
- * Constant that implements {@link QueryablePointerFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link QueryablePointer} object.
  */
 export const QueryablePointer:{
 	/**

@@ -34,7 +34,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ChildCreatedEventFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link ChildCreatedEvent} object.
  */
 export const ChildCreatedEvent:{
 	/**

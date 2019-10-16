@@ -58,7 +58,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link AddMemberActionFactory}.
+ * Constant with the factory, decorator and/or utils for an {@link AddMemberAction} object.
  */
 export const AddMemberAction:{
 	/**

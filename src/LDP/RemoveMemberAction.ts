@@ -57,7 +57,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link RemoveMemberActionFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link RemoveMemberAction} object.
  */
 export const RemoveMemberAction:{
 	/**

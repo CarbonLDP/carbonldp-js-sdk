@@ -100,7 +100,7 @@ export type HTTPRepositoryTraitFactory =
 	;
 
 /**
- * Constant that implements {@link HTTPRepositoryTraitFactory}-
+ * Constant with the factory, decorator and/or utils for a {@link HTTPRepositoryTrait} object.
  */
 export const HTTPRepositoryTrait:{
 	/**

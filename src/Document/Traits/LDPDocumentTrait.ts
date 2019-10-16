@@ -241,7 +241,7 @@ export type LDPDocumentTraitFactory =
 	;
 
 /**
- * Constant that implements {@link LDPDocumentTraitFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link LDPDocumentTrait} object.
  */
 export const LDPDocumentTrait:{
 	/**

@@ -41,7 +41,7 @@ export interface TransientDirectContainerFactory extends ModelFactory<TransientD
 }
 
 /**
- * Constant that implements {@link TransientDirectContainerFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link TransientDirectContainer} object.
  */
 export const TransientDirectContainer:{
 	/**

@@ -25,7 +25,7 @@ export interface RDFListFactory {
 }
 
 /**
- * Constant that implements {@link RDFListFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link RDFList} object.
  */
 export const RDFList:{
 	/**

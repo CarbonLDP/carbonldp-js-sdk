@@ -151,7 +151,7 @@ export type FragmentFactory =
 	;
 
 /**
- * Constant that implements {@link FragmentFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link Fragment} object.
  */
 export const Fragment:{
 	/**

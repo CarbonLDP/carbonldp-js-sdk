@@ -33,7 +33,7 @@ export interface BiModelDecorator<MODEL extends object, $MODEL extends Pointer, 
 }
 
 /**
- * Constant that implements {@link ModelDecoratorFactory} extending to support {@link Pointer} based models.
+ * Constant with the factory, decorator and/or utils for a {@link ModelDecorator} object.extending to support {@link Pointer} based models.
  */
 export const BiModelDecorator:ModelDecoratorFactory = {
 	hasPropertiesFrom( prototype:object, object:object ):boolean {

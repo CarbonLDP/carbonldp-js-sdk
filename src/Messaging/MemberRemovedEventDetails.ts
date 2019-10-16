@@ -24,7 +24,7 @@ export interface MemberRemovedEventDetailsFactory {
 const SCHEMA:ObjectSchema = MemberEventDetails.SCHEMA;
 
 /**
- * Constant that implements {@link MemberRemovedEventDetailsFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link MemberRemovedEventDetails} object.
  */
 export const MemberRemovedEventDetails:{
 	/**

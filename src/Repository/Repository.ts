@@ -126,7 +126,7 @@ export type RepositoryFactory =
 	;
 
 /**
- * Constant that implements {@link RepositoryFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link Repository} object.
  */
 export const Repository:{
 	/**

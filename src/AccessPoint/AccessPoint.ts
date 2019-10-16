@@ -57,7 +57,7 @@ export interface AccessPointFactory {
 }
 
 /**
- * Constant that implements the {@link AccessPointFactory} interface.
+ * Constant with the factory, decorator and/or utils for an {@link AccessPoint } object.
  */
 export const AccessPoint: {
 

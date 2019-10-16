@@ -377,7 +377,7 @@ export type QueryableDocumentsRepositoryTraitFactory =
 	;
 
 /**
- * Constant that implements {@link QueryableDocumentsRepositoryTraitFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link QueryableDocumentsRepositoryTrait} object.
  */
 export const QueryableDocumentsRepositoryTrait:{
 	/**

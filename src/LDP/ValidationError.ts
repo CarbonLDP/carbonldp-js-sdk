@@ -38,7 +38,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ValidationErrorFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link ValidationError} object.
  */
 export const ValidationError:{
 	/**

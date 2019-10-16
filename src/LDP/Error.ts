@@ -53,7 +53,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ErrorFactory}.
+ * Constant with the factory, decorator and/or utils for an {@link Error} object.
  */
 export const Error:{
 	/**

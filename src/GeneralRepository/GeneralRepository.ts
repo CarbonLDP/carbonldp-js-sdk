@@ -35,7 +35,7 @@ export type GeneralRepositoryFactory =
 	;
 
 /**
- * Constant that implements {@link GeneralRepositoryFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link GeneralRepository} object.
  */
 export const GeneralRepository:{
 	/**

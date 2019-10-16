@@ -103,7 +103,7 @@ export type ResourceFactory =
 	;
 
 /**
- * Constant that implements {@link ResourceFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link Resource} object.
  */
 export const Resource:{
 	/**

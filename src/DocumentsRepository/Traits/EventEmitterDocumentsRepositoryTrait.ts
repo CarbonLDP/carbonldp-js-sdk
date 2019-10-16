@@ -228,7 +228,7 @@ export type EventEmitterDocumentsRepositoryTraitFactory =
 	;
 
 /**
- * Constant that implements {@link EventEmitterDocumentsRepositoryTraitFactory}.
+ * Constant with the factory, decorator and/or utils for an {@link EventEmitterDocumentsRepositoryTrait} object.
  */
 export const EventEmitterDocumentsRepositoryTrait:{
 	/**

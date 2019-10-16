@@ -49,7 +49,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link DocumentMetadataFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link DocumentMetadata} object.
  */
 export const DocumentMetadata:{
 	/**

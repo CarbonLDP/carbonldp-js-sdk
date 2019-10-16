@@ -60,7 +60,7 @@ export interface TransientAccessPointFactory extends ModelFactory<TransientAcces
 }
 
 /**
- * Constant that implements the {@link TransientAccessPointFactory} interface.
+ * Constant with the factory, decorator and/or utils for a {@link TransientAccessPoint } object.
  */
 export const TransientAccessPoint:{
 

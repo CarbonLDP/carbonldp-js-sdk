@@ -252,7 +252,7 @@ export type DocumentFactory =
 	;
 
 /**
- * Constant that implements {@link DocumentFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link Document} object.
  */
 export const Document:{
 

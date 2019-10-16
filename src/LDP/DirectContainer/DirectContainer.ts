@@ -25,7 +25,7 @@ export interface DirectContainerFactory {
 }
 
 /**
- * Constant that implements {@link DirectContainerFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link DirectContainer} object.
  */
 export const DirectContainer:{
 	/**

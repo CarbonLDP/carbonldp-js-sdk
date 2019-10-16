@@ -114,7 +114,7 @@ export type SPARQLDocumentTraitFactory =
 	;
 
 /**
- * Constant that implements {@link SPARQLDocumentTraitFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link SPARQLDocumentTrait} object.
  */
 export const SPARQLDocumentTrait:{
 	/**

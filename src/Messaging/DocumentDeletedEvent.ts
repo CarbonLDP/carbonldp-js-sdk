@@ -24,7 +24,7 @@ export interface DocumentDeletedEventFactory {
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
 /**
- * Constant that implements {@link DocumentDeletedEventFactory}
+ * Constant with the factory, decorator and/or utils for an {@link DocumentDeletedEvent} object.
  */
 export const DocumentDeletedEvent:{
 	/**

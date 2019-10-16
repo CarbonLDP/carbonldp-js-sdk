@@ -36,7 +36,7 @@ export interface ModelDecoratorFactory {
 }
 
 /**
- * Constant that implements {@link ModelDecoratorFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link ModelDecorator} object.
  */
 export const ModelDecorator:{
 	/**

@@ -53,7 +53,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ValidationReport}.
+ * Constant with the factory, decorator and/or utils for an {@link ValidationReport} object.
  */
 export const ValidationReport:{
 	/**

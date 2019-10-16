@@ -339,7 +339,7 @@ export type RegistryFactory =
 	;
 
 /**
- * Constant that implements for {@link RegistryFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link Registry} object.
  */
 export const Registry:{
 	/**

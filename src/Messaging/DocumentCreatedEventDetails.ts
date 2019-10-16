@@ -36,7 +36,7 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link DocumentCreatedEventDetailsFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link DocumentCreatedEventDetails} object.
  */
 export const DocumentCreatedEventDetails:{
 	/**
