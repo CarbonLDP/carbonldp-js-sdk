@@ -211,7 +211,7 @@ export const ResolvablePointer:{
 	 * Defines the ResolvablePointer's prototype properties and methods to the ResolvablePointer object.
 	 */
 	decorate<T extends object>( object:T &  BaseResolvablePointer ):T & ResolvablePointer;
-} = {
+} = <ResolvablePointerFactory> {
 	PROTOTYPE: {
 		get $repository():Repository | $Repository {
 			throw new IllegalArgumentError( `Property "$repository" is required.` );

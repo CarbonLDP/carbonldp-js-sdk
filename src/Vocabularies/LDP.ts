@@ -68,7 +68,7 @@ export const LDP:{
 	pageSortCollation:"http://www.w3.org/ns/ldp#pageSortCollation";
 	pageSortCriteria:"http://www.w3.org/ns/ldp#pageSortCriteria";
 	pageSortOrder:"http://www.w3.org/ns/ldp#pageSortOrder";
-} = {
+} = <LDP> {
 	namespace: "http://www.w3.org/ns/ldp#",
 
 	Ascending: "http://www.w3.org/ns/ldp#Ascending",

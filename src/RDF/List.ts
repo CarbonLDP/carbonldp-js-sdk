@@ -32,7 +32,7 @@ export const RDFList:{
 	 * Returns true when the value provided is considered to be a {@link RDFList}.
 	 */
 	is( value:any ):value is RDFList;
-} = {
+} = <RDFListFactory> {
 	is( value:any ):value is RDFList {
 		return Utils.hasPropertyDefined( value, "@list" );
 	},

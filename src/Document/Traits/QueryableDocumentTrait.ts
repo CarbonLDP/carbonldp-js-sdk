@@ -208,7 +208,7 @@ export const QueryableDocumentTrait:{
 	 * Defines the QueryableDocumentTrait's prototype properties and methods to the QueryableDocumentTrait object.
 	 */
 	decorate<T extends BaseQueryableDocumentTrait>( object:T ):T & QueryableDocumentTrait
-} = {
+} = <QueryableDocumentTraitFactory> {
 	PROTOTYPE: {
 		$get( this:QueryableDocumentTrait, uris:any | string[], ...args:any[] ):Promise<any> {
 			if( !Array.isArray( uris ) )

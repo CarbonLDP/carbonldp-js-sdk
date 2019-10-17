@@ -6,6 +6,7 @@ import { Resource } from "../Resource/Resource";
 
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
+import { ModelSchema } from "../Model";
 
 
 /**
@@ -48,14 +49,11 @@ export interface ValidationResult extends Resource {
 }
 
 
-// TODO: Change to type-alias.
 /**
  * Factory and utils for {@link ValidationResult}.
  */
-export interface ValidationResultFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type ValidationResultFactory =
+	& ModelSchema<SHACL["ValidationResult"]>;
 
 const SCHEMA:ObjectSchema = {
 	"focusNode": {
@@ -104,7 +102,7 @@ export const ValidationResult:{
 	 * Schema for the {@link ValidationResult}.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <ValidationResultFactory> {
 	TYPE: SHACL.ValidationResult,
 	SCHEMA,
 };

@@ -50,7 +50,7 @@ export const VolatileResource:{
 	 * Creates a {@link VolatileResource} from the provided object.
 	 */
 	createFrom<T extends object>( object:T ):T & VolatileResource;
-} = {
+} = <VolatileResourceFactory> {
 	TYPE: C.VolatileResource,
 
 	is( value:any ):value is VolatileResource {

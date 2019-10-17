@@ -65,7 +65,7 @@ export const RegisteredPointer:{
 	 * Creates a {@link RegisteredPointer} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseRegisteredPointer ):T & RegisteredPointer;
-} = {
+} = <RegisteredPointerFactory> {
 	PROTOTYPE: {
 		get $registry():Registry {
 			throw new IllegalArgumentError( `Property "$registry" is required.` );

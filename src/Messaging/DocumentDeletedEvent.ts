@@ -3,6 +3,7 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { C } from "../Vocabularies/C";
 
 import { EventMessage } from "./EventMessage";
+import { ModelSchema } from '../Model';
 
 
 /**
@@ -12,14 +13,11 @@ export interface DocumentDeletedEvent extends EventMessage {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory, decorator and utils for {@link DocumentDeletedEvent}.
  */
-export interface DocumentDeletedEventFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type DocumentDeletedEventFactory =
+	& ModelSchema<C["DocumentDeletedEvent"]>;
 
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
@@ -36,7 +34,7 @@ export const DocumentDeletedEvent:{
 	 * Schema for the {@link DocumentDeletedEvent}.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <DocumentDeletedEventFactory> {
 	TYPE: C.DocumentDeletedEvent,
 	SCHEMA,
 };

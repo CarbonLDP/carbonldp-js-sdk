@@ -4,6 +4,7 @@ import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 
 import { ValidationResult } from "./ValidationResult";
+import { ModelSchema } from "../Model";
 
 
 /**
@@ -27,14 +28,11 @@ export interface ValidationReport {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory and utils for {@link ValidationReport}.
  */
-export interface ValidationReportFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type ValidationReportFactory =
+	& ModelSchema<SHACL["ValidationReport"]>;
 
 const SCHEMA:ObjectSchema = {
 	"conforms": {
@@ -65,7 +63,7 @@ export const ValidationReport:{
 	 * Schema for the {@link ValidationReport}.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <ValidationReportFactory> {
 	TYPE: SHACL.ValidationReport,
 	SCHEMA,
 };

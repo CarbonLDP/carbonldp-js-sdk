@@ -57,7 +57,7 @@ export const ResponseMetadata:{
 	 */
 	is( object:object ): object is ResponseMetadata;
 
-} = {
+} = <ResponseMetadataFactory> {
 	TYPE: C.ResponseMetadata,
 	SCHEMA,
 

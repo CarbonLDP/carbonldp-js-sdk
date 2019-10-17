@@ -5,6 +5,7 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { Resource } from "../Resource/Resource";
 
 import { C } from "../Vocabularies/C";
+import { ModelSchema } from "../Model";
 
 
 /**
@@ -18,14 +19,11 @@ export interface DocumentCreatedEventDetails extends Resource {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory, decorators and utils for {@link DocumentCreatedEventDetails}.
  */
-export interface DocumentCreatedEventDetailsFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type DocumentCreatedEventDetailsFactory =
+	& ModelSchema<C["DocumentCreatedEventDetails"]>;
 
 const SCHEMA:ObjectSchema = {
 	"createdDocuments": {
@@ -48,7 +46,7 @@ export const DocumentCreatedEventDetails:{
 	 * Schema for the {@link DocumentCreatedEventDetails}.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <DocumentCreatedEventDetailsFactory> {
 	TYPE: C.DocumentCreatedEventDetails,
 	SCHEMA,
 };

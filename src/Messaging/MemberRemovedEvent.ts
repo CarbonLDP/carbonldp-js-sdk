@@ -4,6 +4,7 @@ import { C } from "../Vocabularies/C";
 
 import { EventMessage } from "./EventMessage";
 import { MemberRemovedEventDetails } from "./MemberRemovedEventDetails";
+import { ModelSchema } from "../Model";
 
 
 /**
@@ -17,14 +18,11 @@ export interface MemberRemovedEvent extends EventMessage {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory, decorator and utils form {@link MemberRemovedEvent}.
  */
-export interface MemberRemovedEventFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type MemberRemovedEventFactory =
+	& ModelSchema<C["MemberRemovedEvent"]>;
 
 const SCHEMA:ObjectSchema = {
 	...EventMessage.SCHEMA,
@@ -47,7 +45,7 @@ export const MemberRemovedEvent:{
 	 * Schema for the {@link MemberRemovedEvent}.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <MemberRemovedEventFactory> {
 	TYPE: C.MemberRemovedEvent,
 	SCHEMA,
 };

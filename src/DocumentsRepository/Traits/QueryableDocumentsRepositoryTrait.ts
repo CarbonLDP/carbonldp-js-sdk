@@ -394,7 +394,7 @@ export const QueryableDocumentsRepositoryTrait:{
 	 * Defines the QueryableDocumentsRepositoryTrait's prototype properties and methods to the QueryableDocumentsRepositoryTrait object.
 	 */
 	decorate<T extends BaseDocumentsRepository>( object:T ):T & QueryableDocumentsRepositoryTrait;
-} = {
+} = <QueryableDocumentsRepositoryTraitFactory> {
 	PROTOTYPE: {
 		get<T extends object>( this:QueryableDocumentsRepositoryTrait, uriOrURIs:string | string[], requestOptionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn | QueryDocsBuilderFn, queryBuilderFn?:QueryBuilderFn | QueryDocsBuilderFn ):Promise<(T & Document) | (T & Document)[]> {
 			const requestOptions:GETOptions = typeof requestOptionsOrQueryBuilderFn === "object" ?

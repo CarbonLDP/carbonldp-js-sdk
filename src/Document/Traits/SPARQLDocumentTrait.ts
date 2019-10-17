@@ -131,7 +131,7 @@ export const SPARQLDocumentTrait:{
 	 * Defines the SPARQLDocumentTrait's prototype properties and methods to the SPARQLDocumentTrait object.
 	 */
 	decorate<T extends BaseSPARQLDocumentTrait>( object:T ):T & SPARQLDocumentTrait;
-} = {
+} = <SPARQLDocumentTraitFactory> {
 	PROTOTYPE: {
 		$executeASKQuery( this:SPARQLDocumentTrait, uriOrQuery:string, queryOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<boolean> {
 			const { uri, query, options } = __parseParams( this, uriOrQuery, queryOrOptions, requestOptions );

@@ -57,7 +57,7 @@ export const QueryablePointer:{
 	 * Defines the QueryablePointer's prototype properties and methods to the QueryablePointer object.
 	 */
 	decorate<T extends BaseResolvablePointer>( object:T ):T & QueryablePointer;
-} = {
+} = <QueryablePointerFactory> {
 	PROTOTYPE: {
 		$_queryableMetadata: void 0,
 

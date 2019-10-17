@@ -58,7 +58,7 @@ export const Map:{
 	 * Returns true when the value provided is considered to be a {@link Map}.
 	 */
 	is( object:object ): object is Map<any, any>;
-} = {
+} = <MapFactory> {
 	TYPE: C.Map,
 	SCHEMA,
 

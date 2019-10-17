@@ -289,13 +289,13 @@ export const Document:{
 		/**
 		 * Creates a {@link Document} with the provided data.
 		 */
-		create<T extends object>( data?:T & BaseDocument ): T & TransientDocument;
+		create<T extends object>( data:T & BaseDocument ): T & TransientDocument;
 
 		/**
 		 * Creates a {@link Document} from the provided object.
 		 */
 		createFrom<T extends object>( object:T & BaseDocument ):T & TransientDocument;
-} = {
+} = <DocumentFactory> {
 	TYPE: C.Document,
 	SCHEMA: {
 		"contains": {

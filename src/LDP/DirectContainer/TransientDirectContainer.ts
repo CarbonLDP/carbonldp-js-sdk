@@ -63,7 +63,7 @@ export const TransientDirectContainer:{
 	 * Creates a {@link TransientDirectContainer} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseDirectContainer ):T & TransientDirectContainer;
-} = {
+} = <TransientDirectContainerFactory> {
 	TYPE: LDP.DirectContainer,
 
 	is( value:any ):value is TransientDirectContainer {

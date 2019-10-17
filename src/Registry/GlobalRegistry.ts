@@ -51,7 +51,7 @@ export const GlobalRegistry:{
 	 * Creates a {@link GlobalRegistry} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseGlobalRegistry ):T & GlobalRegistry;
-} = {
+} = <GlobalRegistryFactory> {
 	create<T extends object>( data:T & BaseGlobalRegistry ):T & GlobalRegistry {
 		// FIXME: TS 3.0
 		return GlobalRegistry.createFrom( { ...data as any } );

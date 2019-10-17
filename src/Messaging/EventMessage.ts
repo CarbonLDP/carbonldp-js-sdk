@@ -48,7 +48,7 @@ export const EventMessage:{
 	 * Returns true when the value provided is considered to be a {@link Document}.
 	 */
 	is( value:any ):value is EventMessage;
-} = {
+} = <EventMessageFactory> {
 	SCHEMA,
 
 	is( value:any ):value is EventMessage {

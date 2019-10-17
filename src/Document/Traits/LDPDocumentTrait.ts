@@ -258,7 +258,7 @@ export const LDPDocumentTrait:{
 	 * Defines the LDPDocumentTrait's prototype properties and methods to the LDPDocumentTrait object.
 	 */
 	decorate<T extends BaseLDPDocumentTrait>( object:T ):T & LDPDocumentTrait
-} = {
+} = <LDPDocumentTraitFactory> {
 	PROTOTYPE: {
 		$create<T extends object>( this:LDPDocumentTrait, uriOrChildren:string | T | T[], childrenOrSlugsOrRequestOptions?:T | T[] | string | string[] | RequestOptions, slugsOrRequestOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
 			const { _uri, _args } = _parseURIParams( this, uriOrChildren, arguments );

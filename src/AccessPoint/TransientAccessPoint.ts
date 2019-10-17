@@ -83,7 +83,7 @@ export const TransientAccessPoint:{
 	 * Creates a {@link TransientAccessPoint} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseAccessPoint ):T & TransientAccessPoint;
-} = {
+} = <TransientAccessPointFactory> {
 	TYPE: C.AccessPoint,
 
 	is( value:any ):value is TransientAccessPoint {

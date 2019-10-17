@@ -110,7 +110,7 @@ export const RDFLiteral:{
 	 * @param type
 	 */
 	hasType( value:RDFLiteral, type:string ):boolean;
-} = {
+} = <RDFLiteralFactory> {
 	from( value:any ):RDFLiteral {
 		if( Utils.isNull( value ) )
 			throw new IllegalArgumentError( "Null cannot be converted into a Literal" );

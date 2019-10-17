@@ -95,7 +95,7 @@ export const SPARQLDocumentsRepositoryTrait:{
 	 * Defines the SPARQLDocumentsRepositoryTrait's prototype properties and methods to the SPARQLDocumentsRepositoryTrait object.
 	 */
 	decorate<T extends BaseDocumentsRepository>( object:T ):T & SPARQLDocumentsRepositoryTrait;
-} = {
+} = <SPARQLDocumentsRepositoryTraitFactory> {
 	PROTOTYPE: {
 		executeASKQuery( this:SPARQLDocumentsRepositoryTrait, uri:string, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean> {
 			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );

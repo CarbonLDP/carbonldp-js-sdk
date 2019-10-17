@@ -41,6 +41,6 @@ export const MemberEventDetails:{
 	 * Schema for the {@link MemberEventDetails}.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <MemberEventDetailsFactory> {
 	SCHEMA,
 };

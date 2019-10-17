@@ -542,7 +542,7 @@ export const LDPDocumentsRepositoryTrait:{
 	 * Defines the LDPDocumentsRepositoryTrait's prototype properties and methods to the LDPDocumentsRepositoryTrait object.
 	 */
 	decorate<T extends BaseDocumentsRepository>( object:T ):T & LDPDocumentsRepositoryTrait;
-} = {
+} = <LDPDocumentsRepositoryTraitFactory> {
 	PROTOTYPE: {
 		get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );

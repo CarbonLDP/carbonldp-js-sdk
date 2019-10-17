@@ -118,7 +118,7 @@ export const HTTPRepositoryTrait:{
 	 */
 	decorate<T extends BaseGeneralRepository>( object:T ):T & HTTPRepositoryTrait;
 
-} = {
+} = <HTTPRepositoryTraitFactory> {
 	PROTOTYPE: {
 		get<T extends object>( this:HTTPRepositoryTrait, uri:string, requestOptions?:GETOptions ):Promise<T & ResolvablePointer> {
 			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );

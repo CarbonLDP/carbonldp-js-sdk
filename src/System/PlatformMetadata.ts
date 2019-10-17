@@ -5,6 +5,7 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { C } from "../Vocabularies/C";
 
 import { PlatformInstance } from "./PlatformInstance";
+import { ModelSchema } from "../Model";
 
 
 /**
@@ -19,14 +20,11 @@ export interface PlatformMetadata extends Document {
 }
 
 
-// TODO: Change to type-alias.
 /**
  * Factory and utils for {@link PlatformInstance}.
  */
-export interface PlatformMetadataFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type PlatformMetadataFactory =
+	& ModelSchema<C["Platform"]>;
 
 const SCHEMA:ObjectSchema = {
 	"instance": {
@@ -48,7 +46,7 @@ export const PlatformMetadata:{
 	 * Schema for the {@link PlatformMetadata}.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <PlatformMetadataFactory> {
 	TYPE: C.Platform,
 	SCHEMA,
 };

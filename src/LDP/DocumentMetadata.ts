@@ -61,7 +61,7 @@ export const DocumentMetadata:{
 	 * Schema for the {@link DocumentMetadata}.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <DocumentMetadataFactory> {
 	TYPE: C.DocumentMetadata,
 	SCHEMA,
 };

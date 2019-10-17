@@ -3,6 +3,7 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { C } from "../Vocabularies/C";
 
 import { MemberEventDetails } from "./MemberEventDetails";
+import { ModelSchema } from "../Model";
 
 
 /**
@@ -12,14 +13,11 @@ export interface MemberAddedEventDetails extends MemberEventDetails {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory, decorator and utils for {@link MemberAddedEventDetails}.
  */
-export interface MemberAddedEventDetailsFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type MemberAddedEventDetailsFactory =
+	& ModelSchema<C["MemberAddedEventDetails"]>;
 
 const SCHEMA:ObjectSchema = MemberEventDetails.SCHEMA;
 
@@ -36,7 +34,7 @@ export const MemberAddedEventDetails:{
 	 * Schema for the {@link MemberAddedEventDetails}.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <MemberAddedEventDetailsFactory> {
 	TYPE: C.MemberAddedEventDetails,
 	SCHEMA,
 };

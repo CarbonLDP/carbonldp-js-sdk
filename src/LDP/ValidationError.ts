@@ -4,7 +4,7 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { Resource } from "../Resource/Resource";
 
-import { ValidationReport } from "../SHACL/ValidationReport";
+import { ValidationReport, ValidationReportFactory } from "../SHACL/ValidationReport";
 
 import { C } from "../Vocabularies/C";
 
@@ -50,8 +50,8 @@ export const ValidationError:{
 	 * Schema for the {@link ValidationError}.
 	 */
 	SCHEMA: ObjectSchema;
-	
-} = {
+
+} = <ValidationErrorFactory> {
 	TYPE: C.ValidationError,
 	SCHEMA,
 };

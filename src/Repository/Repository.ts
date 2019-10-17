@@ -143,7 +143,7 @@ export const Repository:{
 	 */
 	decorate<T extends BaseRepository>( object:T ):T & any;
 
-} = {
+} = <RepositoryFactory> {
 	PROTOTYPE: {
 		get: __throwNotImplemented,
 		resolve: __throwNotImplemented,

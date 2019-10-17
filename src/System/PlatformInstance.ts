@@ -6,6 +6,7 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 
 import { PlatformMetadata } from "./PlatformMetadata";
+import { ModelSchema } from "../Model";
 
 
 /**
@@ -24,14 +25,11 @@ export interface PlatformInstance extends VolatileResource {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory and utils for {@link PlatformInstance}.
  */
-export interface PlatformInstanceFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type PlatformInstanceFactory =
+	& ModelSchema<C["PlatformInstance"]>;
 
 const SCHEMA:ObjectSchema = {
 	"buildDate": {
@@ -57,7 +55,7 @@ export const PlatformInstance:{
 	 * Schema for the {@link PlatformInstance}.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <PlatformInstanceFactory> {
 	TYPE: C.PlatformInstance,
 	SCHEMA,
 };

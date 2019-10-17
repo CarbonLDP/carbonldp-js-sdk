@@ -115,7 +115,7 @@ export const FreeResources:{
 	 * @param freeNodes List of RDFNodes to parse.
 	 */
 	parseFreeNodes( this:void, registry:GeneralRegistry<any>, freeNodes:RDFNode[] ):FreeResources;
-} = {
+} = <FreeResourcesFactory> {
 	PROTOTYPE: {
 		_getLocalID( this:FreeResources, id:string ):string {
 			if( isAbsolute( id ) && ! URI.hasProtocol( id ) ) return id;

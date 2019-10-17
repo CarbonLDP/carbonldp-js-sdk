@@ -84,7 +84,7 @@ export const ErrorResponse:{
 	 *  Gets the errors from the Error Response.
 	 */
 	getMessage( errorResponse:ErrorResponse ):string;
-} = {
+} = <ErrorResponseFactory> {
 	TYPE: C.ErrorResponse,
 	SCHEMA,
 

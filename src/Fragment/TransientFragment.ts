@@ -78,7 +78,7 @@ export const TransientFragment:{
 	 * Creates a {@link TransientFragment} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseTransientFragment ):T & TransientFragment;
-} = {
+} = <TransientFragmentFactory> {
 	PROTOTYPE: {
 		get $registry():TransientDocument {
 			throw new IllegalArgumentError( `Property "$registry" is required.` );

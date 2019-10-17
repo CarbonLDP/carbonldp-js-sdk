@@ -85,7 +85,7 @@ export const AddMemberAction:{
 	 * Creates a {@link AddMemberAction} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseAddMemberAction ):T & AddMemberAction;
-} = {
+} = <AddMemberActionFactory> {
 	TYPE: C.AddMemberAction,
 	SCHEMA,
 

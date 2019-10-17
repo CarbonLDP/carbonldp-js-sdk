@@ -246,7 +246,7 @@ export const EventEmitterDocumentsRepositoryTrait:{
 	 */
 	decorate<T extends object>( object:T &  BaseDocumentsRepository ):T & EventEmitterDocumentsRepositoryTrait;
 
-} = {
+} = <EventEmitterDocumentsRepositoryTraitFactory> {
 	PROTOTYPE: {
 		on( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<any>, onError?:OnError ):void {
 			try {

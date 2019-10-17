@@ -356,7 +356,7 @@ export const Registry:{
 	 * Defines the Registry's prototype properties and methods to the Registry object.
 	 */
 	decorate<T extends object>( object:T ):T & any;
-} = {
+} = <RegistryFactory> {
 	PROTOTYPE: {
 		registry: void 0,
 

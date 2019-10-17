@@ -6,6 +6,7 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 
 import { Map } from "./Map";
+import { ModelSchema } from "../Model";
 
 
 /**
@@ -31,11 +32,9 @@ export interface Error extends Resource {
 /**
  * Factory, decorator and utils for {@link Error}.
  */
-// TODO: Change to type-alias
-export interface ErrorFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type ErrorFactory =
+	& ModelSchema<C[ "Error" ]>;
+
 
 const SCHEMA:ObjectSchema = {
 	"errorCode": {
@@ -65,7 +64,7 @@ export const Error:{
 	 * Schema for the error.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <ErrorFactory> {
 	TYPE: C.Error,
 	SCHEMA,
 };

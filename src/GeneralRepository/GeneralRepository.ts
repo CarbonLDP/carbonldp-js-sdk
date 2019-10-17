@@ -62,7 +62,7 @@ export const GeneralRepository:{
 	 * Creates a {@link GeneralRepository} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseGeneralRepository ):T & GeneralRepository;
-} = {
+} = <GeneralRepositoryFactory> {
 	PROTOTYPE: {
 		get context():Context<ResolvablePointer & RegisteredPointer, ResolvablePointer> {
 			throw new IllegalArgumentError( `Property "context" is required.` );

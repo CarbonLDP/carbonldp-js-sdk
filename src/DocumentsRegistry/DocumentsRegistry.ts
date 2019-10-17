@@ -71,7 +71,7 @@ export const DocumentsRegistry:{
 	 * Creates a {@link DocumentsRegistry} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseDocumentsRegistry ):T & DocumentsRegistry
-} = {
+} = <DocumentsRegistryFactory> {
 	PROTOTYPE: {
 		register( this:DocumentsRegistry, id:string ):Document {
 			return this.getPointer( id, true );

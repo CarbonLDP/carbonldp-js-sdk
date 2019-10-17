@@ -111,7 +111,7 @@ export const GeneralRegistry:{
 	 * Creates a {@link GeneralRegistry} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseGeneralRegistry ):T & GeneralRegistry<any>
-} = {
+} = <GeneralRegistryFactory> {
 	PROTOTYPE: {
 		get context():Context {
 			throw new IllegalArgumentError( "Property context is required." );

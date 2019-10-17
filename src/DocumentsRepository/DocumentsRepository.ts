@@ -102,7 +102,7 @@ export const DocumentsRepository:{
 	 */
 	is( object:object ): object is DocumentsRepository;
 
-} = {
+} = <DocumentsRepositoryFactory> {
 	create<T extends object>( data:T & BaseDocumentsRepository ):T & DocumentsRepository {
 		return DocumentsRepository.createFrom( { ...data as any } );
 	},

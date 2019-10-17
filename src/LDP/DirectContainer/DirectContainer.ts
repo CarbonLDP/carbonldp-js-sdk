@@ -47,7 +47,7 @@ export const DirectContainer:{
 	 * Creates a {@link DirectContainer} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseDirectContainer ):T & TransientDirectContainer;
-} = {
+} = <DirectContainerFactory> {
 	TYPE: TransientDirectContainer.TYPE,
 
 	is: ( value ):value is DirectContainer =>

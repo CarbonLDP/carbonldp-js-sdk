@@ -6,6 +6,7 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 import { C } from "../Vocabularies/C";
 
 import { QueryablePointer } from "./QueryablePointer";
+import { ModelTypeGuard } from "../Model";
 
 
 /**
@@ -23,12 +24,9 @@ export interface QueryMetadata extends VolatileResource {
 /**
  * Factory, decorator and utils for {@link QueryMetadata}.
  */
-export interface QueryMetadataFactory extends ModelSchema {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-
-	is( value:any ):value is QueryMetadata;
-}
+export type QueryMetadataFactory =
+	& ModelSchema<C[ "QueryMetadata" ]>
+	& ModelTypeGuard<QueryMetadata>;
 
 const SCHEMA:ObjectSchema = {
 	"targets": {
@@ -56,7 +54,7 @@ export const QueryMetadata:{
 	 * Returns true when the value provided is considered to be a {@link QueryMetadata}.
 	 */
 	is( object:object ): object is QueryMetadata;
-} = {
+} = <QueryMetadataFactory> {
 	TYPE: C.QueryMetadata,
 	SCHEMA,
 

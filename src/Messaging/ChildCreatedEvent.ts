@@ -4,6 +4,7 @@ import { C } from "../Vocabularies/C";
 
 import { DocumentCreatedEventDetails } from "./DocumentCreatedEventDetails";
 import { EventMessage } from "./EventMessage";
+import { ModelSchema } from "../Model";
 
 
 /**
@@ -16,14 +17,11 @@ export interface ChildCreatedEvent extends EventMessage {
 	details:DocumentCreatedEventDetails;
 }
 
-// TODO: Change to type-alias
 /**
  * Factory, decorator and utils for {@link ChildCreatedEvent}.
  */
-export interface ChildCreatedEventFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type ChildCreatedEventFactory =
+	& ModelSchema<C["ChildCreatedEvent"]>;
 
 const SCHEMA:ObjectSchema = {
 	...EventMessage.SCHEMA,
@@ -46,7 +44,7 @@ export const ChildCreatedEvent:{
 	 * Schema for the {@link ChildCreatedEvent}.
 	 */
 	SCHEMA: ObjectSchema;
-} = {
+} = <ChildCreatedEventFactory> {
 	TYPE: C.ChildCreatedEvent,
 	SCHEMA,
 };

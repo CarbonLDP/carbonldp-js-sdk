@@ -209,7 +209,7 @@ export const TransientDocument:{
 	 * Creates a {@link TransientDocument} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseDocument ):T & TransientDocument;
-} = {
+} = <TransientDocumentFactory> {
 	PROTOTYPE: {
 		$registry: void 0,
 

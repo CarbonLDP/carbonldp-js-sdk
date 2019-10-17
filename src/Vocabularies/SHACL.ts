@@ -40,7 +40,7 @@ export const SHACL:{
 	sourceConstraintComponent:"http://www.w3.org/ns/shacl#sourceConstraintComponent";
 	sourceShape:"http://www.w3.org/ns/shacl#sourceShape";
 	value:"http://www.w3.org/ns/shacl#value";
-} = {
+} = <SHACL> {
 	namespace: "http://www.w3.org/ns/shacl#",
 
 	ValidationReport: "http://www.w3.org/ns/shacl#ValidationReport",

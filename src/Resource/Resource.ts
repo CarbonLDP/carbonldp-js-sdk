@@ -135,7 +135,7 @@ export const Resource:{
 	 * Creates a {@link Resource} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseResource ):T & Resource;
-} = {
+} = <ResourceFactory> {
 	PROTOTYPE: {
 		get types():string[] { return []; },
 

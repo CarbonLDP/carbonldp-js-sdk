@@ -178,7 +178,7 @@ export const Fragment:{
 	 * Creates a {@link Fragment} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseTransientFragment ):T & BaseTransientFragment;
-} = {
+} = <FragmentFactory> {
 	PROTOTYPE: {
 		get $repository( this:Fragment ):Document {
 			return this.$registry;

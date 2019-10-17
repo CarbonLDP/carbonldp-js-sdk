@@ -68,7 +68,7 @@ export const XSD:{
 	unsignedInt:"http://www.w3.org/2001/XMLSchema#unsignedInt";
 	unsignedLong:"http://www.w3.org/2001/XMLSchema#unsignedLong";
 	unsignedShort:"http://www.w3.org/2001/XMLSchema#unsignedShort";
-} = {
+} = <XSD> {
 	namespace: "http://www.w3.org/2001/XMLSchema#",
 
 	boolean: "http://www.w3.org/2001/XMLSchema#boolean",

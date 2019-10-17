@@ -84,7 +84,7 @@ export const RemoveMemberAction:{
 	 * Creates a {@link RemoveMemberAction} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseRemoveMemberAction ):T & RemoveMemberAction;
-} = {
+} = <RemoveMemberActionFactory> {
 	TYPE: C.RemoveMemberAction,
 	SCHEMA,
 

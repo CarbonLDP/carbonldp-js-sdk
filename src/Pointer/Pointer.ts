@@ -108,7 +108,7 @@ export const Pointer:{
 		 * @param pointerOrIRI Pointer to extract its ID, or the URI that will be immediately returned.
 		 */
 		getID( pointerOrIRI:Pointer | string ):string;
-} = {
+} = <PointerFactory> {
 	PROTOTYPE: {
 		get $id():string { return ""; },
 	},

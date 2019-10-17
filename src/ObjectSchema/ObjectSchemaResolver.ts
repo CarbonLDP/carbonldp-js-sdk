@@ -96,7 +96,7 @@ export const ObjectSchemaResolver:{
 	 * Defines the ObjectSchemaResolver's prototype properties and methods to the ObjectSchemaResolver object.
 	 */
 	decorate<T extends object>( object:T ):T & ObjectSchemaResolver;
-} = {
+} = <ObjectSchemaResolverFactory> {
 	PROTOTYPE: {
 		context: undefined,
 

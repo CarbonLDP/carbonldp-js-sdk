@@ -435,7 +435,7 @@ export const EventEmitterDocumentTrait:{
 	 */
 	decorate<T extends BaseEventEmitterDocumentTrait>( object:T ):T & EventEmitterDocumentTrait
 
-} = {
+} = <EventEmitterDocumentTraitFactory> {
 	PROTOTYPE: {
 		$on( this:EventEmitterDocumentTrait, event:Event | string, uriPatternOROnEvent:string | OnEvent<any>, onEventOrOnError:OnEvent<any> | OnError, onError?:OnError ):void {
 			const { uriPattern, onEvent, onError: $onError } = __parseParams( this, uriPatternOROnEvent, onEventOrOnError, onError );

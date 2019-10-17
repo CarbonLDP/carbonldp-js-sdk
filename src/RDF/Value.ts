@@ -54,7 +54,7 @@ export const RDFValue:{
 	 * @param value The RDF value to parse.
 	 */
 	parse( pointerLibrary:PointerLibrary | $PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string, ):any;
-} = {
+} = <RDFValueFactory> {
 
 	parse( pointerLibrary:PointerLibrary | $PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string ):any {
 		if( isString( value ) ) return value;
