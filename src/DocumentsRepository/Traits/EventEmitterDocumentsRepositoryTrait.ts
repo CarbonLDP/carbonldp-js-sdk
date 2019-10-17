@@ -237,12 +237,12 @@ export const EventEmitterDocumentsRepositoryTrait:{
 	PROTOTYPE: EventEmitterDocumentsRepositoryTraitFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the EventEmitterDocumentsRepositoryTrait has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link EventEmitterDocumentsRepositoryTrait}.
 	 */
 	isDecorated( object:object ):object is EventEmitterDocumentsRepositoryTrait
 
 	/**
-	 * Defines the EventEmitterDocumentsRepositoryTrait's prototype properties and methods to the EventEmitterDocumentsRepositoryTrait object.
+	 * Decorates the object with the properties and methods from the {@link EventEmitterDocumentsRepositoryTrait} prototype.
 	 */
 	decorate<T extends object>( object:T &  BaseDocumentsRepository ):T & EventEmitterDocumentsRepositoryTrait;
 

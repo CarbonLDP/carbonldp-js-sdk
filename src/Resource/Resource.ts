@@ -112,7 +112,7 @@ export const Resource:{
 	PROTOTYPE: ResourceFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the Resource has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link Resource}.
 	 */
 	isDecorated( object:object ):object is Resource;
 
@@ -122,7 +122,7 @@ export const Resource:{
 	is( value:any ):value is Resource;
 
 	/**
-	 * Defines the Resource's prototype properties and methods to the Resource object.
+	 * Decorates the object with the properties and methods from the {@link Resource} prototype.
 	 */
 	decorate<T extends object>( object:T &  BaseResource ):T & Resource;
 

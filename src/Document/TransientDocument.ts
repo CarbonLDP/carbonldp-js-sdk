@@ -186,7 +186,7 @@ export const TransientDocument:{
 	PROTOTYPE: TransientDocumentFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the TransientDocument has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link TransientDocument}.
 	 */
 	isDecorated( object:object): object is TransientDocument;
 
@@ -196,7 +196,7 @@ export const TransientDocument:{
 	is( value:any ): value is TransientDocument;
 
 	/**
-	 * Defines the document's prototype properties and methods to the TransientDocument object.
+	 * Decorates the object with the properties and methods from the {@link TransientDocument} prototype.
 	 */
 	decorate<T extends BaseDocument>( object:T):T & TransientDocument;
 

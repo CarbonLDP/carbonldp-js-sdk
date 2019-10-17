@@ -87,12 +87,12 @@ export const SPARQLDocumentsRepositoryTrait:{
 	PROTOTYPE: SPARQLDocumentsRepositoryTraitFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the SPARQLDocumentsRepositoryTrait has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link SPARQLDocumentsRepositoryTrait}.
 	 */
 	isDecorated( object:object ):object is SPARQLDocumentsRepositoryTrait
 
 	/**
-	 * Defines the SPARQLDocumentsRepositoryTrait's prototype properties and methods to the SPARQLDocumentsRepositoryTrait object.
+	 * Decorates the object with the properties and methods from the {@link SPARQLDocumentsRepositoryTrait} prototype.
 	 */
 	decorate<T extends BaseDocumentsRepository>( object:T ):T & SPARQLDocumentsRepositoryTrait;
 } = <SPARQLDocumentsRepositoryTraitFactory> {

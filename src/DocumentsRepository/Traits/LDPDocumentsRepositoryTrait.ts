@@ -534,12 +534,12 @@ export const LDPDocumentsRepositoryTrait:{
 	PROTOTYPE: LDPDocumentsRepositoryTraitFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the LDPDocumentsRepositoryTrait has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link LDPDocumentsRepositoryTrait}.
 	 */
 	isDecorated( object:object ):object is LDPDocumentsRepositoryTrait
 
 	/**
-	 * Defines the LDPDocumentsRepositoryTrait's prototype properties and methods to the LDPDocumentsRepositoryTrait object.
+	 * Decorates the object with the properties and methods from the {@link LDPDocumentsRepositoryTrait} prototype.
 	 */
 	decorate<T extends BaseDocumentsRepository>( object:T ):T & LDPDocumentsRepositoryTrait;
 } = <LDPDocumentsRepositoryTraitFactory> {

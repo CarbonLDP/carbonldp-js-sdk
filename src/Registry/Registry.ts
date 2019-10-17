@@ -93,6 +93,7 @@ export interface Registry<MODEL extends RegisteredPointer = RegisteredPointer> e
 	 * Returns true if the resource could be removed, false otherwise.
 	 * @param idOrPointer ID or Pointer to be removed.
 	 */
+	// TODO: Fix link syntax
 	removePointer( idOrPointer:string | RegisteredPointer ):boolean;
 	/**
 	 * Removes the resource identified by the provided string ID or {@link Pointer#$id `Pointer.$id`}, from the first occurrence in the registry hierarchy.
@@ -100,6 +101,7 @@ export interface Registry<MODEL extends RegisteredPointer = RegisteredPointer> e
 	 * @param idOrPointer ID or Pointer to be removed.
 	 * @param local Flag to ignore hierarchy and only remove from the current registry.
 	 */
+	// TODO: Fix link syntax
 	removePointer( idOrPointer:string | RegisteredPointer, local:true ):boolean;
 
 
@@ -196,6 +198,7 @@ export interface $Registry<MODEL extends RegisteredPointer = RegisteredPointer> 
 	 * Returns true if the resource could be removed, false otherwise.
 	 * @param idOrPointer ID or Pointer to be removed.
 	 */
+	// TODO: Fix link syntax
 	$removePointer( idOrPointer:string | RegisteredPointer ):boolean;
 	/**
 	 * Removes the resource identified by the provided string ID or {@link Pointer#$id `Pointer.$id`}, from the first occurrence in the registry hierarchy.
@@ -203,6 +206,7 @@ export interface $Registry<MODEL extends RegisteredPointer = RegisteredPointer> 
 	 * @param idOrPointer ID or Pointer to be removed.
 	 * @param local Flag to ignore hierarchy and only remove from the current registry.
 	 */
+	// TODO: Fix link syntax
 	$removePointer( idOrPointer:string | RegisteredPointer, local:true ):boolean;
 
 
@@ -348,12 +352,12 @@ export const Registry:{
 	PROTOTYPE: RegistryFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the Registry has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link Registry}.
 	 */
 	isDecorated<T extends object>( object:object ):object is any;
 
 	/**
-	 * Defines the Registry's prototype properties and methods to the Registry object.
+	 * Decorates the object with the properties and methods from the {@link Registry} prototype.
 	 */
 	decorate<T extends object>( object:T ):T & any;
 } = <RegistryFactory> {

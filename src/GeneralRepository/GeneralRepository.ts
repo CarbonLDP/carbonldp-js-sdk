@@ -44,12 +44,12 @@ export const GeneralRepository:{
 	PROTOTYPE: GeneralRepositoryFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the GeneralRepository has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link GeneralRepository}.
 	 */
 	isDecorated( object:object): object is GeneralRepository;
 
 	/**
-	 * Defines the GeneralRepository's prototype properties and methods to the GeneralRepository object.
+	 * Decorates the object with the properties and methods from the {@link GeneralRepository} prototype.
 	 */
 	decorate<T extends object>( object:T &  BaseGeneralRepository ):T & GeneralRepository<any>;
 

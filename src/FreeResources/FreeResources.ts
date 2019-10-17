@@ -85,7 +85,7 @@ export const FreeResources:{
 	PROTOTYPE: FreeResourcesFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the FreeResources has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link FreeResources}.
 	 */
 	isDecorated( object:object): object is FreeResources;
 
@@ -95,7 +95,7 @@ export const FreeResources:{
 	is( object:object ): object is FreeResources;
 
 	/**
-	 * Defines the FreeResources's prototype properties and methods to the FreeResources object.
+	 * Decorates the object with the properties and methods from the {@link FreeResources} prototype.
 	 */
 	decorate<T extends BaseFreeResources>( object:T ):T & FreeResources
 

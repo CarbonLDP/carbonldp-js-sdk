@@ -5,7 +5,6 @@ import URL from "url";
 import { hasProperty, hasPropertyDefined, isNumber, isString } from "../Utils";
 
 import { HTTPError } from "./Errors/HTTPError";
-import { statusCodeMap } from "./Errors/index";
 import { BadResponseError } from "./Errors/ServerErrors/BadResponseError";
 import { UnknownError } from "./Errors/UnknownError";
 import * as Errors from "./Errors";
@@ -52,6 +51,7 @@ export interface GETOptions extends RequestOptions {
  * Object used by {@link RequestUtils#setRetrievalPreferences `RequestUtils.setRetrievalPreferences()`}
  * which specifies the behaviour of a request when using an `ldp:Container` interaction model.
  */
+// TODO: Fix link syntax
 export interface RetrievalPreferences {
 	/**
 	 * Prefer URIs that indicates some specific information should be returned in the request's response.
@@ -66,25 +66,28 @@ export interface RetrievalPreferences {
 type ResolveCallback = ( response:Response ) => void;
 type RejectCallback = ( error:HTTPError ) => void;
 
-function __addErrors<T extends {}>( o:T ):void {
-	Object
-	.keys( o )
-	.map( k => o[ k ] )
-	.filter( e => {
-		if (e.statusCode === null || e instanceof Map) return false;
-		statusCodeMap.set( e.statusCode, e );
-	} );
-}
-__addErrors( Errors );
+/**
+ * Map where all the HTTP Status Codes used in the SDK are assigned to their specific error class.
+ */
+export const __statusCodeMap:Map<number, typeof HTTPError> = new Map<number, typeof HTTPError>();
+
+Object
+.keys( Errors )
+.map( k => Errors[ k ] )
+.forEach( e => {
+	if (e.statusCode === null || e instanceof Map) return false;
+	__statusCodeMap.set( e.statusCode, e );
+} );
+
 
 function __onResolve( resolve:ResolveCallback, reject:RejectCallback, response:Response ):void {
 	if( response.status >= 200 && response.status <= 299 ) {
 		resolve( response );
 	} else {
-		if( ! statusCodeMap.has( response.status ) )
+		if( ! __statusCodeMap.has( response.status ) )
 			return reject( new UnknownError( response.data, response ) );
 
-		reject( new (statusCodeMap.get( response.status )!)( response.data, response ) );
+		reject( new (__statusCodeMap.get( response.status )!)( response.data, response ) );
 	}
 }
 

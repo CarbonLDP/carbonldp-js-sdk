@@ -135,11 +135,11 @@ export const Repository:{
 	PROTOTYPE: RepositoryFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the Repository has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link Repository}.
 	 */
 	isDecorated( object:object ):object is any;
 	/**
-	 * Defines the Repository's prototype properties and methods to the Repository object.
+	 * Decorates the object with the properties and methods from the {@link Repository} prototype.
 	 */
 	decorate<T extends BaseRepository>( object:T ):T & any;
 

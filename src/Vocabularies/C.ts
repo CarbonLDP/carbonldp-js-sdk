@@ -136,7 +136,7 @@ export const C:{
 	target:"https://carbonldp.com/ns/v1/platform#target";
 	targetMember:"https://carbonldp.com/ns/v1/platform#targetMember";
 	version:"https://carbonldp.com/ns/v1/platform#version";
-} = {
+} = <C> {
 	namespace: "https://carbonldp.com/ns/v1/platform#",
 
 	AccessPoint: "https://carbonldp.com/ns/v1/platform#AccessPoint",

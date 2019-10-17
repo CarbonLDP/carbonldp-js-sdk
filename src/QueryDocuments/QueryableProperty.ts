@@ -16,6 +16,7 @@ import { _getBestType } from "./Utils";
  *
  * It is used in {@link QueryablePointer#$_queryableMetadata `QueryablePointer.$_queryableMetadata`}.
  */
+// TODO: Fix link syntax
 export class QueryableProperty {
 	readonly definition:DigestedObjectSchemaProperty;
 	readonly pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;

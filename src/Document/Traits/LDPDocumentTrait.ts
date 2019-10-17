@@ -250,12 +250,12 @@ export const LDPDocumentTrait:{
 	PROTOTYPE:LDPDocumentTraitFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the LDPDocumentTrait has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link LDPDocumentTrait}.
 	 */
 	isDecorated( object:object ):object is LDPDocumentTrait;
 
 	/**
-	 * Defines the LDPDocumentTrait's prototype properties and methods to the LDPDocumentTrait object.
+	 * Decorates the object with the properties and methods from the {@link LDPDocumentTrait} prototype.
 	 */
 	decorate<T extends BaseLDPDocumentTrait>( object:T ):T & LDPDocumentTrait
 } = <LDPDocumentTraitFactory> {

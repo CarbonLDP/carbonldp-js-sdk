@@ -109,12 +109,12 @@ export const HTTPRepositoryTrait:{
 	PROTOTYPE: HTTPRepositoryTraitFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the HTTPRepositoryTrait has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link HTTPRepositoryTrait}.
 	 */
 	isDecorated( object:object ):object is HTTPRepositoryTrait
 
 	/**
-	 * Defines the HTTPRepositoryTrait's prototype properties and methods to the HTTPRepositoryTrait object.
+	 * Decorates the object with the properties and methods from the {@link HTTPRepositoryTrait} prototype.
 	 */
 	decorate<T extends BaseGeneralRepository>( object:T ):T & HTTPRepositoryTrait;
 

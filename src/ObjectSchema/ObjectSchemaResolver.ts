@@ -88,12 +88,12 @@ export const ObjectSchemaResolver:{
 	PROTOTYPE: ObjectSchemaResolverFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the ObjectSchemaResolver has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link ObjectSchemaResolver}.
 	 */
 	isDecorated( object:object): object is ObjectSchemaResolver;
 
 	/**
-	 * Defines the ObjectSchemaResolver's prototype properties and methods to the ObjectSchemaResolver object.
+	 * Decorates the object with the properties and methods from the {@link ObjectSchemaResolver} prototype.
 	 */
 	decorate<T extends object>( object:T ):T & ObjectSchemaResolver;
 } = <ObjectSchemaResolverFactory> {

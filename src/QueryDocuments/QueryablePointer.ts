@@ -44,7 +44,7 @@ export const QueryablePointer:{
 	PROTOTYPE: QueryablePointerFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the QueryablePointer has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link QueryablePointer}.
 	 */
 	isDecorated( object:object ):object is QueryablePointer;
 
@@ -54,7 +54,7 @@ export const QueryablePointer:{
 	is( value:any ):value is QueryablePointer;
 
 	/**
-	 * Defines the QueryablePointer's prototype properties and methods to the QueryablePointer object.
+	 * Decorates the object with the properties and methods from the {@link QueryablePointer} prototype.
 	 */
 	decorate<T extends BaseResolvablePointer>( object:T ):T & QueryablePointer;
 } = <QueryablePointerFactory> {

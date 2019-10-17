@@ -123,12 +123,12 @@ export const SPARQLDocumentTrait:{
 	PROTOTYPE:SPARQLDocumentTraitFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the SPARQLDocumentTrait has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link SPARQLDocumentTrait}.
 	 */
 	isDecorated( object:object ):object is SPARQLDocumentTrait;
 
 	/**
-	 * Defines the SPARQLDocumentTrait's prototype properties and methods to the SPARQLDocumentTrait object.
+	 * Decorates the object with the properties and methods from the {@link SPARQLDocumentTrait} prototype.
 	 */
 	decorate<T extends BaseSPARQLDocumentTrait>( object:T ):T & SPARQLDocumentTrait;
 } = <SPARQLDocumentTraitFactory> {

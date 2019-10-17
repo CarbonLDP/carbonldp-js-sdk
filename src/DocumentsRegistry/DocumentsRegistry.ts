@@ -53,12 +53,12 @@ export const DocumentsRegistry:{
 	PROTOTYPE: DocumentsRegistryFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the DocumentsRegistry has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link DocumentsRegistry}.
 	 */
 	isDecorated( object:object ):object is DocumentsRegistry;
 
 	/**
-	 * Defines the DocumentsRegistry's prototype properties and methods to the DocumentsRegistry object.
+	 * Decorates the object with the properties and methods from the {@link DocumentsRegistry} prototype.
 	 */
 	decorate<T extends object>( object:T &  BaseDocumentsRegistry ):T & DocumentsRegistry;
 

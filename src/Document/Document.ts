@@ -272,7 +272,7 @@ export const Document:{
 		PROTOTYPE: DocumentFactory["PROTOTYPE"];
 
 		/**
-		 * Checks if the document has the decorated properties and methods from its prototype.
+		 * Returns true if the object is decorated with the specific properties and methods of a {@link Document}.
 		 */
 		isDecorated( object:object): object is Document;
 
@@ -282,7 +282,7 @@ export const Document:{
 		is( object:object ): object is Document;
 
 		/**
-		 * Defines the document's prototype properties and methods to the document object.
+		 * Decorates the object with the properties and methods from the {@link Document} prototype.
 		 */
 		decorate<T extends object>( object:T &  BaseResolvableDocument ):T & Document;
 

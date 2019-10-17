@@ -93,12 +93,12 @@ export const GeneralRegistry:{
 	PROTOTYPE: GeneralRegistryFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the GeneralRegistry has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link GeneralRegistry}.
 	 */
 	isDecorated( object:object): object is GeneralRegistry;
 
 	/**
-	 * Defines the GeneralRegistry's prototype properties and methods to the GeneralRegistry object.
+	 * Decorates the object with the properties and methods from the {@link GeneralRegistry} prototype.
 	 */
 	decorate<T extends object>( object:T &  BaseGeneralRegistry ):T & GeneralRegistry<any>;
 

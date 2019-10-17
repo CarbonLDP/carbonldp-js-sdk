@@ -42,7 +42,7 @@ export const RegisteredPointer:{
 	PROTOTYPE: RegisteredPointerFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the RegisteredPointer has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link RegisteredPointer}.
 	 */
 	isDecorated( object:object ):object is RegisteredPointer;
 
@@ -52,7 +52,7 @@ export const RegisteredPointer:{
 	is( value:any ):value is RegisteredPointer;
 
 	/**
-	 * Defines the RegisteredPointer's prototype properties and methods to the RegisteredPointer object.
+	 * Decorates the object with the properties and methods from the {@link RegisteredPointer} prototype.
 	 */
 	decorate<T extends object>( object:T & BaseRegisteredPointer ):T & RegisteredPointer;
 

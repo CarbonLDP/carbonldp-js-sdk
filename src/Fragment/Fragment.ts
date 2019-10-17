@@ -38,42 +38,50 @@ export interface Fragment extends TransientFragment, QueryablePointer {
 	 * Accessor to the {@link Document#$get `Document.$get()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$get `Document.$get()`}
 	 */
+	// TODO: Fix link syntax
 	$get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	/**
 	 * Accessor to the {@link Document#$get `Document.$get()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$get `Document.$get()`}
 	 */
+	// TODO: Fix link syntax
 	$get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	/**
 	 * Accessor to the {@link Document#$get `Document.$get()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$get `Document.$get()`}
 	 */
+	// TODO: Fix link syntax
 	$get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	/**
 	 * Accessor to the {@link Document#$get `Document.$get()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$get `Document.$get()`}
 	 */
+	// TODO: Fix link syntax
 	$get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 	/**
 	 * Accessor to the {@link Document#$resolve `Document.$resolve()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$resolve `Document.$resolve()`}
 	 */
+	// TODO: Fix link syntax
 	$resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
 	/**
 	 * Accessor to the {@link Document#$resolve `Document.$resolve()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$resolve `Document.$resolve()`}
 	 */
+	// TODO: Fix link syntax
 	$resolve<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
 	/**
 	 * Accessor to the {@link Document#$resolve `Document.$resolve()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$resolve `Document.$resolve()`}
 	 */
+	// TODO: Fix link syntax
 	$resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	/**
 	 * Accessor to the {@link Document#$resolve `Document.$resolve()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$resolve `Document.$resolve()`}
 	 */
+	// TODO: Fix link syntax
 	$resolve<T extends object>( document:Document, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 
@@ -81,11 +89,13 @@ export interface Fragment extends TransientFragment, QueryablePointer {
 	 * Accessor to the {@link Document#$exists `Document.$exists()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$exists `Document.$exists()`}
 	 */
+	// TODO: Fix link syntax
 	$exists( requestOptions?:RequestOptions ):Promise<boolean>;
 	/**
 	 * Accessor to the {@link Document#$exists `Document.$exists()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$exists `Document.$exists()`}
 	 */
+	// TODO: Fix link syntax
 	$exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
 
@@ -93,33 +103,39 @@ export interface Fragment extends TransientFragment, QueryablePointer {
 	 * Accessor to the {@link Document#$refresh `Document.$refresh()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$refresh `Document.$refresh()`}
 	 */
+	// TODO: Fix link syntax
 	$refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
 	/**
 	 * Accessor to the {@link Document#$refresh `Document.$refresh()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$refresh `Document.$refresh()`}
 	 */
+	// TODO: Fix link syntax
 	$refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 	/**
 	 * Accessor to the {@link Document#$save `Document.$save()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$save `Document.$save()`}
 	 */
+	// TODO: Fix link syntax
 	$save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
 	/**
 	 * Accessor to the {@link Document#$save `Document.$save()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$save `Document.$save()`}
 	 */
+	// TODO: Fix link syntax
 	$save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 	/**
 	 * Accessor to the {@link Document#$saveAndRefresh `Document.$saveAndRefresh()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$saveAndRefresh `Document.$saveAndRefresh()`}
 	 */
+	// TODO: Fix link syntax
 	$saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
 	/**
 	 * Accessor to the {@link Document#$saveAndRefresh `Document.$saveAndRefresh()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$saveAndRefresh `Document.$saveAndRefresh()`}
 	 */
+	// TODO: Fix link syntax
 	$saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
@@ -127,11 +143,13 @@ export interface Fragment extends TransientFragment, QueryablePointer {
 	 * Accessor to the {@link Document#$delete `Document.$delete()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$delete `Document.$delete()`}
 	 */
+	// TODO: Fix link syntax
 	$delete( requestOptions?:RequestOptions ):Promise<void>;
 	/**
 	 * Accessor to the {@link Document#$delete `Document.$delete()`} method of the document where the fragment belongs to.
 	 * @see {@link Document#$delete `Document.$delete()`}
 	 */
+	// TODO: Fix link syntax
 	$delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 }
 
@@ -160,12 +178,12 @@ export const Fragment:{
 	PROTOTYPE: FragmentFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the Fragment has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link Fragment}.
 	 */
 	isDecorated( object:object): object is Fragment;
 
 	/**
-	 * Defines the Fragment's prototype properties and methods to the document Fragment.
+	 * Decorates the object with the properties and methods from the {@link Fragment} prototype.
 	 */
 	decorate<T extends object>( object:T &  BaseResolvableFragment ):T & Fragment;
 

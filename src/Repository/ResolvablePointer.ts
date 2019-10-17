@@ -198,7 +198,7 @@ export const ResolvablePointer:{
 	PROTOTYPE: ResolvablePointerFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the ResolvablePointer has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link ResolvablePointer}.
 	 */
 	isDecorated( object:object ):object is ResolvablePointer;
 
@@ -208,7 +208,7 @@ export const ResolvablePointer:{
 	is( value:any ):value is ResolvablePointer;
 
 	/**
-	 * Defines the ResolvablePointer's prototype properties and methods to the ResolvablePointer object.
+	 * Decorates the object with the properties and methods from the {@link ResolvablePointer} prototype.
 	 */
 	decorate<T extends object>( object:T &  BaseResolvablePointer ):T & ResolvablePointer;
 } = <ResolvablePointerFactory> {

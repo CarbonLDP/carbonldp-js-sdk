@@ -200,12 +200,12 @@ export const QueryableDocumentTrait:{
 	PROTOTYPE:QueryableDocumentTraitFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the QueryableDocumentTrait has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link QueryableDocumentTrait}.
 	 */
 	isDecorated( object:object ):object is QueryableDocumentTrait;
 
 	/**
-	 * Defines the QueryableDocumentTrait's prototype properties and methods to the QueryableDocumentTrait object.
+	 * Decorates the object with the properties and methods from the {@link QueryableDocumentTrait} prototype.
 	 */
 	decorate<T extends BaseQueryableDocumentTrait>( object:T ):T & QueryableDocumentTrait
 } = <QueryableDocumentTraitFactory> {

@@ -55,7 +55,7 @@ export const TransientFragment:{
 	PROTOTYPE: TransientFragmentFactory["PROTOTYPE"];
 
 	/**
-	 * Checks if the TransientFragment has the decorated properties and methods from its prototype.
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link TransientFragment}.
 	 */
 	isDecorated( object:object): object is TransientFragment;
 
@@ -65,7 +65,7 @@ export const TransientFragment:{
 	is( value:any ):value is TransientFragment;
 
 	/**
-	 * Defines the TransientFragment's prototype properties and methods to the document TransientFragment.
+	 * Decorates the object with the properties and methods from the {@link TransientFragment} prototype.
 	 */
 	decorate<T extends object>( object:T &  BaseTransientFragment ):T & TransientFragment;
 

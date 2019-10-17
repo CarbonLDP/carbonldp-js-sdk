@@ -25,9 +25,3 @@ export * from "./ServerErrors/ServiceUnavailableError";
 
 export * from "./HTTPError";
 export * from "./UnknownError";
-
-/**
- * Map where all the HTTP Status Codes used in the SDK are assigned to their specific error class.
- */
-export const statusCodeMap:Map<number, typeof HTTPError> = new Map<number, typeof HTTPError>();
-

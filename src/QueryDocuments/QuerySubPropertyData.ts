@@ -10,6 +10,7 @@ import { QueryPropertyType } from "./QueryPropertyType";
 /**
  * Base data for create a sub-property with {@link QueryProperty#_addSubProperty `QueryProperty._addSubProperty()`}.
  */
+// TODO: Fix link syntax
 export interface QuerySubPropertyData {
 	queryContainer?:QueryContainer;
 	parent?:QueryProperty;
