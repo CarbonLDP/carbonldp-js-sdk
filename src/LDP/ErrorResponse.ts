@@ -66,17 +66,17 @@ const SCHEMA:ObjectSchema = {
 // TODO: Change to type-alias
 export const ErrorResponse:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#ErrorResponse'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ErrorResponse`.
 	 */
 	TYPE: C["ErrorResponse"];
 
 	/**
-	 * Defines the basic schema for the {@link ErrorResponse}.
+	 * Schema for the {@link ErrorResponse}.
 	 */
 	SCHEMA: ObjectSchema;
 
 	/**
-	 * Returns true when the value provided is considered to be a {@link ErrorResponse}.
+	 * Returns true when the value provided is considered to be an {@link ErrorResponse}.
 	 */
 	is( value:any ):value is ErrorResponse;
 

@@ -39,7 +39,7 @@ export type GeneralRepositoryFactory =
  */
 export const GeneralRepository:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link GeneralRepository}
+	 * The object with the properties/methods to use in the decoration of a {@link GeneralRepository}.
 	 */
 	PROTOTYPE: GeneralRepositoryFactory["PROTOTYPE"];
 

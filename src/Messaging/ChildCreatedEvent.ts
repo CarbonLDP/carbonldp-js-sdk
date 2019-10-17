@@ -38,12 +38,12 @@ const SCHEMA:ObjectSchema = {
  */
 export const ChildCreatedEvent:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#ChildCreatedEvent'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ChildCreatedEvent`.
 	 */
 	TYPE: C["ChildCreatedEvent"];
 
 	/**
-	 * Defines the basic schema for the {@link ChildCreatedEvent}.
+	 * Schema for the {@link ChildCreatedEvent}.
 	 */
 	SCHEMA: ObjectSchema;
 } = {

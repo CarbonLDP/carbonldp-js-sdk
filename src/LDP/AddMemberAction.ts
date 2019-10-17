@@ -62,17 +62,17 @@ const SCHEMA:ObjectSchema = {
  */
 export const AddMemberAction:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#AddMemberAction'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AddMemberAction`.
 	 */
 	TYPE: C["AddMemberAction"];
 
 	/**
-	 * Defines the basic schema for the object.
+	 * Schema for the object.
 	 */
 	SCHEMA: ObjectSchema;
 
 	/**
-	 * Returns true when the value provided is considered to be a {@link AddMemberAction}.
+	 * Returns true when the value provided is considered to be an {@link AddMemberAction}.
 	 */
 	is( value:any ): value is AddMemberAction;
 

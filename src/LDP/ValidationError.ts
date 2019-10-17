@@ -42,12 +42,12 @@ const SCHEMA:ObjectSchema = {
  */
 export const ValidationError:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#ValidationError'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ValidationError`.
 	 */
 	TYPE: C["ValidationError"];
 
 	/**
-	 * Defines the basic schema for the {@link ValidationError}.
+	 * Schema for the {@link ValidationError}.
 	 */
 	SCHEMA: ObjectSchema;
 	

@@ -43,12 +43,12 @@ const SCHEMA:ObjectSchema = {
  */
 export const ResponseMetadata:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#ResponseMetadata'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ResponseMetadata`.
 	 */
 	TYPE: C["ResponseMetadata"];
 
 	/**
-	 * Defines the basic schema for the {@link ResponseMetadata}.
+	 * Schema for the {@link ResponseMetadata}.
 	 */
 	SCHEMA: ObjectSchema;
 

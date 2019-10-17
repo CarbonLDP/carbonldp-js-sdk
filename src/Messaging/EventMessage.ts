@@ -40,7 +40,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const EventMessage:{
 	/**
-	 * Defines the basic schema for the {@link EventMessage}.
+	 * Schema for the {@link EventMessage}.
 	 */
 	SCHEMA: ObjectSchema;
 

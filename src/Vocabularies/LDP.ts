@@ -1,5 +1,5 @@
 /**
- * Interface that describes the used vocabulary defined for the W3C Linked Data Platform (LDP)
+ * Interface that describes the used vocabulary defined for the W3C Linked Data Platform (LDP).
  */
 export interface LDP {
 	namespace:"http://www.w3.org/ns/ldp#";
@@ -35,7 +35,7 @@ export interface LDP {
 }
 
 /**
- * Constant that implements the used vocabulary defined for the W3C Linked Data Platform (LDP)
+ * Constant that implements the used vocabulary defined for the W3C Linked Data Platform (LDP).
  */
 export const LDP:{
 	namespace:"http://www.w3.org/ns/ldp#";

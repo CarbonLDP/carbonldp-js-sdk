@@ -38,7 +38,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const MemberEventDetails:{
 	/**
-	 * Defines the basic schema for the {@link MemberEventDetails}.
+	 * Schema for the {@link MemberEventDetails}.
 	 */
 	SCHEMA: ObjectSchema;
 } = {

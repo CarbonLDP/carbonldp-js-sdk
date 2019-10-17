@@ -155,7 +155,7 @@ export type FragmentFactory =
  */
 export const Fragment:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link Fragment}
+	 * The object with the properties/methods to use in the decoration of a {@link Fragment}.
 	 */
 	PROTOTYPE: FragmentFactory["PROTOTYPE"];
 

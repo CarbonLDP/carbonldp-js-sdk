@@ -88,12 +88,12 @@ export type DocumentsRepositoryFactory =
 export const DocumentsRepository:{
 
 	/**
-	 * Creates a {@link Document} with the provided data.
+	 * Creates a {@link DocumentsRepository} with the provided data.
 	 */
 	create<T extends object>( data:T & BaseDocumentsRepository ):T & DocumentsRepository;
 
 	/**
-	 * Creates a {@link Document} from the provided Document.
+	 * Creates a {@link DocumentsRepository} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseDocumentsRepository ):T & DocumentsRepository;
 

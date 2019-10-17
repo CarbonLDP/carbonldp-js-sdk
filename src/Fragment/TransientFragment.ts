@@ -50,7 +50,7 @@ export type TransientFragmentFactory =
  */
 export const TransientFragment:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link TransientFragment}
+	 * The object with the properties/methods to use in the decoration of a {@link TransientFragment}.
 	 */
 	PROTOTYPE: TransientFragmentFactory["PROTOTYPE"];
 

@@ -20,7 +20,7 @@ import { TransientDocument } from "../TransientDocument";
 
 
 /**
- * Properties for creating a {@link SPARQLDocumentTrait}
+ * Properties for creating a {@link SPARQLDocumentTrait}.
  */
 export interface BaseSPARQLDocumentTrait {
 	/**

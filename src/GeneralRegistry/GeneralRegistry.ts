@@ -88,7 +88,7 @@ export type GeneralRegistryFactory =
  */
 export const GeneralRegistry:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link GeneralRegistry}
+	 * The object with the properties/methods to use in the decoration of a {@link GeneralRegistry}.
 	 */
 	PROTOTYPE: GeneralRegistryFactory["PROTOTYPE"];
 

@@ -39,7 +39,7 @@ export type QueryablePointerFactory =
  */
 export const QueryablePointer:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link QueryablePointer}
+	 * The object with the properties/methods to use in the decoration of a {@link QueryablePointer}.
 	 */
 	PROTOTYPE: QueryablePointerFactory["PROTOTYPE"];
 

@@ -80,7 +80,7 @@ export type FreeResourcesFactory =
  */
 export const FreeResources:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link FreeResources}
+	 * The object with the properties/methods to use in the decoration of a {@link FreeResources}.
 	 */
 	PROTOTYPE: FreeResourcesFactory["PROTOTYPE"];
 
@@ -110,10 +110,9 @@ export const FreeResources:{
 	createFrom<T extends object>( object:T & BaseFreeResources ):T & FreeResources
 
 	/**
-	 * Function that parses free RDFNodes.
-	 * @param this {@link FreeResources}
-	 * @param registry Base registry used in the context
-	 * @param freeNodes List of RDFNodes to parse
+	 * Function that parses free {@link RDFNode}s into a {@link FreeResources} object.
+	 * @param registry Base registry used in the context.
+	 * @param freeNodes List of RDFNodes to parse.
 	 */
 	parseFreeNodes( this:void, registry:GeneralRegistry<any>, freeNodes:RDFNode[] ):FreeResources;
 } = {

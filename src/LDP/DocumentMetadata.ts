@@ -53,12 +53,12 @@ const SCHEMA:ObjectSchema = {
  */
 export const DocumentMetadata:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#DocumentMetadata'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentMetadata`.
 	 */
 	TYPE: C["DocumentMetadata"];
 
 	/**
-	 * Defines the basic schema for the {@link DocumentMetadata}.
+	 * Schema for the {@link DocumentMetadata}.
 	 */
 	SCHEMA: ObjectSchema;
 } = {

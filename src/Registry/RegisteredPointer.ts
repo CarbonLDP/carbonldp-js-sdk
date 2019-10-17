@@ -37,7 +37,7 @@ export type RegisteredPointerFactory =
  */
 export const RegisteredPointer:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link RegisteredPointer}
+	 * The object with the properties/methods to use in the decoration of a {@link RegisteredPointer}.
 	 */
 	PROTOTYPE: RegisteredPointerFactory["PROTOTYPE"];
 
@@ -62,7 +62,7 @@ export const RegisteredPointer:{
 	create<T extends object>( data:T & BaseRegisteredPointer ):T & RegisteredPointer;
 
 	/**
-	 * Creates a {@link RegisteredPointer} from the provided RegisteredPointer.
+	 * Creates a {@link RegisteredPointer} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseRegisteredPointer ):T & RegisteredPointer;
 } = {

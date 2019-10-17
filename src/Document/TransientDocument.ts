@@ -181,7 +181,7 @@ export type TransientDocumentFactory =
  */
 export const TransientDocument:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link TransientDocument}
+	 * The object with the properties/methods to use in the decoration of a {@link TransientDocument}.
 	 */
 	PROTOTYPE: TransientDocumentFactory["PROTOTYPE"];
 
@@ -206,7 +206,7 @@ export const TransientDocument:{
 	create<T extends object>( data?:T & BaseDocument ): T & TransientDocument;
 
 	/**
-	 * Creates a {@link TransientDocument} from the provided Document.
+	 * Creates a {@link TransientDocument} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseDocument ):T & TransientDocument;
 } = {

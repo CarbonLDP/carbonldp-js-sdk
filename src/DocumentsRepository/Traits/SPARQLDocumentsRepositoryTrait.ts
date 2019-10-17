@@ -82,7 +82,7 @@ export type SPARQLDocumentsRepositoryTraitFactory =
  */
 export const SPARQLDocumentsRepositoryTrait:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link SPARQLDocumentsRepositoryTrait}
+	 * The object with the properties/methods to use in the decoration of a {@link SPARQLDocumentsRepositoryTrait}.
 	 */
 	PROTOTYPE: SPARQLDocumentsRepositoryTraitFactory["PROTOTYPE"];
 

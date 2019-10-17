@@ -18,7 +18,7 @@ import { TransientDocument } from "../TransientDocument";
 
 
 /**
- * Properties for creating a {@link LDPDocumentTrait}
+ * Properties for creating a {@link LDPDocumentTrait}.
  */
 export interface BaseLDPDocumentTrait {
 	/**

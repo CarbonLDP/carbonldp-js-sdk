@@ -83,7 +83,7 @@ export type ObjectSchemaResolverFactory =
 
 export const ObjectSchemaResolver:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link ObjectSchemaResolver}
+	 * The object with the properties/methods to use in the decoration of a {@link ObjectSchemaResolver}.
 	 */
 	PROTOTYPE: ObjectSchemaResolverFactory["PROTOTYPE"];
 

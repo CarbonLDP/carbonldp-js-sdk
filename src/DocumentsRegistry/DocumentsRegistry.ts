@@ -48,7 +48,7 @@ export type DocumentsRegistryFactory =
  */
 export const DocumentsRegistry:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link DocumentsRegistry}
+	 * The object with the properties/methods to use in the decoration of a {@link DocumentsRegistry}.
 	 */
 	PROTOTYPE: DocumentsRegistryFactory["PROTOTYPE"];
 

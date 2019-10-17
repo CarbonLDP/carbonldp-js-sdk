@@ -343,7 +343,7 @@ export type RegistryFactory =
  */
 export const Registry:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link Registry}
+	 * The object with the properties/methods to use in the decoration of a {@link Registry}.
 	 */
 	PROTOTYPE: RegistryFactory["PROTOTYPE"];
 

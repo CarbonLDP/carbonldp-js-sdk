@@ -28,12 +28,12 @@ const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
  */
 export const DocumentModifiedEvent:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent`.
 	 */
 	TYPE: C["DocumentModifiedEvent"];
 
 	/**
-	 * Defines the basic schema for the {@link DocumentModifiedEvent}.
+	 * Schema for the {@link DocumentModifiedEvent}.
 	 */
 	SCHEMA: ObjectSchema;
 } = {

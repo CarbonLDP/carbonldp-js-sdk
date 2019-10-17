@@ -43,12 +43,12 @@ const SCHEMA:ObjectSchema = {
  */
 export const QueryMetadata:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#QueryMetadata'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#QueryMetadata`.
 	 */
 	TYPE: C["QueryMetadata"];
 
 	/**
-	 * Defines the basic schema for the {@link QueryMetadata}.
+	 * Schema for the {@link QueryMetadata}.
 	 */
 	SCHEMA: ObjectSchema;
 

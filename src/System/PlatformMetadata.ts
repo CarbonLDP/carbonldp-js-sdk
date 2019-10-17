@@ -40,12 +40,12 @@ const SCHEMA:ObjectSchema = {
  */
 export const PlatformMetadata:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#PlatformMetadata'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#PlatformMetadata`.
 	 */
 	TYPE: C["Platform"];
 
 	/**
-	 * Defines the basic schema for the {@link PlatformMetadata}.
+	 * Schema for the {@link PlatformMetadata}.
 	 */
 	SCHEMA: ObjectSchema;
 } = {

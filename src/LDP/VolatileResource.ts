@@ -32,7 +32,7 @@ export interface VolatileResourceFactory extends ModelFactory<VolatileResource> 
  */
 export const VolatileResource:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#VolatileResource'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#VolatileResource`.
 	 */
 	TYPE: C["VolatileResource"];
 
@@ -47,7 +47,7 @@ export const VolatileResource:{
 	create<T extends object>( data?:T ): T & VolatileResource;
 
 	/**
-	 * Creates a {@link VolatileResource} from the provided VolatileResource.
+	 * Creates a {@link VolatileResource} from the provided object.
 	 */
 	createFrom<T extends object>( object:T ):T & VolatileResource;
 } = {

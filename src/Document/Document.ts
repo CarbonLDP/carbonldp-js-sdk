@@ -257,17 +257,17 @@ export type DocumentFactory =
 export const Document:{
 
 		/**
-		 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#Document'
+		 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#Document`.
 		 */
 		TYPE: C["Document"];
 
 		/**
-		 * Defines the basic schema for the {@link Document}.
+		 * Schema for the {@link Document}.
 		 */
 		SCHEMA: ObjectSchema;
 
 		/**
-		 * The object with the properties/methods to use in the decoration of a {@link Document}
+		 * The object with the properties/methods to use in the decoration of a {@link Document}.
 		 */
 		PROTOTYPE: DocumentFactory["PROTOTYPE"];
 
@@ -292,7 +292,7 @@ export const Document:{
 		create<T extends object>( data?:T & BaseDocument ): T & TransientDocument;
 
 		/**
-		 * Creates a {@link Document} from the provided Document.
+		 * Creates a {@link Document} from the provided object.
 		 */
 		createFrom<T extends object>( object:T & BaseDocument ):T & TransientDocument;
 } = {

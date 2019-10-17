@@ -45,7 +45,7 @@ export interface TransientDirectContainerFactory extends ModelFactory<TransientD
  */
 export const TransientDirectContainer:{
 	/**
-	 * Specifies the type of the  object, in this case  'http://www.w3.org/ns/ldp#DirectContainer'
+	 * Specifies the type of the model, in this case: `http://www.w3.org/ns/ldp#DirectContainer`.
 	 */
 	TYPE: LDP["DirectContainer"];
 

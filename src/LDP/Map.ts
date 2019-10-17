@@ -45,12 +45,12 @@ const SCHEMA:ObjectSchema = {
  */
 export const Map:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#Map'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#Map`.
 	 */
 	TYPE: C["Map"];
 
 	/**
-	 * Defines the basic schema for the map.
+	 * Schema for the map.
 	 */
 	SCHEMA: ObjectSchema;
 

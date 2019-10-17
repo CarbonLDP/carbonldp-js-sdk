@@ -60,7 +60,7 @@ export interface PointerFactory extends ModelPrototype<Pointer>
  */
 export const Pointer:{
 		/**
-		 * The object with the properties/methods to use in the decoration of a {@link Pointer}
+		 * The object with the properties/methods to use in the decoration of a {@link Pointer}.
 		 */
 		PROTOTYPE: PointerFactory["PROTOTYPE"];
 
@@ -86,7 +86,7 @@ export const Pointer:{
 		create<T extends object>( data?:T & BasePointer ):T & Pointer;
 
 		/**
-		 * Creates a {@link Pointer} from the provided Pointer.
+		 * Creates a {@link Pointer} from the provided object.
 		 */
 		createFrom<T extends object>( object:T & BasePointer ):T & Pointer;
 

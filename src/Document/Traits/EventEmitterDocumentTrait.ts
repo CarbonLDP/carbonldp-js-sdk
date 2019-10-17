@@ -421,7 +421,7 @@ export type EventEmitterDocumentTraitFactory =
 export const EventEmitterDocumentTrait:{
 
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link EventEmitterDocumentTrait}
+	 * The object with the properties/methods to use in the decoration of a {@link EventEmitterDocumentTrait}.
 	 */
 	PROTOTYPE:EventEmitterDocumentTraitFactory["PROTOTYPE"];
 

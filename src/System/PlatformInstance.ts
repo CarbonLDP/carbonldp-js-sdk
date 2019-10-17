@@ -49,12 +49,12 @@ const SCHEMA:ObjectSchema = {
  */
 export const PlatformInstance:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#PlatformInstance'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#PlatformInstance`.
 	 */
 	TYPE: C["PlatformInstance"];
 
 	/**
-	 * Defines the basic schema for the {@link PlatformInstance}.
+	 * Schema for the {@link PlatformInstance}.
 	 */
 	SCHEMA: ObjectSchema;
 } = {

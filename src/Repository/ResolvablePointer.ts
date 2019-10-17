@@ -193,7 +193,7 @@ export type ResolvablePointerFactory =
  */
 export const ResolvablePointer:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link ResolvablePointer}
+	 * The object with the properties/methods to use in the decoration of a {@link ResolvablePointer}.
 	 */
 	PROTOTYPE: ResolvablePointerFactory["PROTOTYPE"];
 

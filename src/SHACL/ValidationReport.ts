@@ -57,12 +57,12 @@ const SCHEMA:ObjectSchema = {
  */
 export const ValidationReport:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#ValidationReport'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ValidationReport`.
 	 */
 	TYPE: SHACL["ValidationReport"];
 
 	/**
-	 * Defines the basic schema for the {@link ValidationReport}.
+	 * Schema for the {@link ValidationReport}.
 	 */
 	SCHEMA: ObjectSchema;
 } = {

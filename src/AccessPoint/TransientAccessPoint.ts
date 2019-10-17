@@ -65,14 +65,14 @@ export interface TransientAccessPointFactory extends ModelFactory<TransientAcces
 export const TransientAccessPoint:{
 
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#AccessPoint'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AccessPoint`.
 	 */
 	TYPE: C["AccessPoint"];
 
 	/**
 	 * Returns true when the value provided is considered to be a {@link TransientAccessPoint}.
 	 */
-	is(value:any):value is TransientAccessPoint;
+	is( value:any ):value is TransientAccessPoint;
 
 	/**
 	 * Creates a {@link TransientAccessPoint} with the provided data.
@@ -80,7 +80,7 @@ export const TransientAccessPoint:{
 	create<T extends object>( data:T & BaseAccessPoint ): T & TransientAccessPoint;
 
 	/**
-	 * Creates a {@link TransientAccessPoint} from the provided Document.
+	 * Creates a {@link TransientAccessPoint} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseAccessPoint ):T & TransientAccessPoint;
 } = {

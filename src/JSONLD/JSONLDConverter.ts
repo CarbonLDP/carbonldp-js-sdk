@@ -142,7 +142,7 @@ export class JSONLDConverter {
 	 * Compacts and updates the data of the expanded JSON-LD object into the target object.
 	 * i.e. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.
 	 * @param target Object to be updated from the expanded one.
-	 * @param node The expanded object to be compacted and updated into the target
+	 * @param node The expanded object to be compacted and updated into the target.
 	 * @param digestedSchema The schema that describes how compact the expanded object.
 	 * @param pointerLibrary An object from where one can obtain the pointers of resources.
 	 * @param strict Flag to ignore the compaction of properties that are not defined in the schema.

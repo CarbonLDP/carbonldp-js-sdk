@@ -62,14 +62,14 @@ export interface AccessPointFactory {
 export const AccessPoint: {
 
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#AccessPoint'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AccessPoint`.
 	 */
 	TYPE: C["AccessPoint"];
 
 	/**
-	 * Returns true when the value provided is considered to be a {@link AccessPoint}.
+	 * Returns true when the value provided is considered to be an {@link AccessPoint}.
 	 */
-	is(value:any):value is AccessPoint;
+	is( value:any ):value is AccessPoint;
 
 	/**
 	 * Creates a {@link AccessPoint} with the provided data.
@@ -77,10 +77,10 @@ export const AccessPoint: {
 	create<T extends object>( data:T & BaseAccessPoint ): T & TransientAccessPoint;
 
 	/**
-	 * Creates a {@link AccessPoint} from the provided Document.
+	 * Creates a {@link AccessPoint} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseAccessPoint ):T & TransientAccessPoint;
-} = {
+} = <AccessPointFactory> {
 	TYPE: TransientAccessPoint.TYPE,
 
 	is: ( value ):value is AccessPoint =>

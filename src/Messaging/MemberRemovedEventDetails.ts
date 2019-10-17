@@ -28,12 +28,12 @@ const SCHEMA:ObjectSchema = MemberEventDetails.SCHEMA;
  */
 export const MemberRemovedEventDetails:{
 	/**
-	 * Specifies the type of the  object, in this case  'https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails'
+	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails`.
 	 */
 	TYPE: C["MemberRemovedEventDetails"];
 
 	/**
-	 * Defines the basic schema for the {@link MemberRemovedEventDetails}.
+	 * Schema for the {@link MemberRemovedEventDetails}.
 	 */
 	SCHEMA: ObjectSchema;
 } = {

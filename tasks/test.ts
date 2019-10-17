@@ -44,7 +44,7 @@ export const testNode:gulp.TaskFunction = () => {
 		.pipe( sourcemaps.init() )
 		.pipe( tsProject() )
 		.js
-		// .pipe( sourcemaps.mapSources( ( sourcePath ) => path.resolve( "./", sourcePath ) ) )
+		.pipe( sourcemaps.mapSources( ( sourcePath ) => path.resolve( "./", sourcePath ) ) )
 		.pipe( sourcemaps.write( ".", {
 			includeContent: false,
 		} ) )

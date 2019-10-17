@@ -529,7 +529,7 @@ export type LDPDocumentsRepositoryTraitFactory =
  */
 export const LDPDocumentsRepositoryTrait:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link LDPDocumentsRepositoryTrait}
+	 * The object with the properties/methods to use in the decoration of a {@link LDPDocumentsRepositoryTrait}.
 	 */
 	PROTOTYPE: LDPDocumentsRepositoryTraitFactory["PROTOTYPE"];
 

@@ -107,7 +107,7 @@ export type ResourceFactory =
  */
 export const Resource:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link Resource}
+	 * The object with the properties/methods to use in the decoration of a {@link Resource}.
 	 */
 	PROTOTYPE: ResourceFactory["PROTOTYPE"];
 
@@ -132,7 +132,7 @@ export const Resource:{
 	create<T extends object>( data?:T & BaseResource ):T & Resource
 
 	/**
-	 * Creates a {@link Resource} from the provided Resource.
+	 * Creates a {@link Resource} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseResource ):T & Resource;
 } = {

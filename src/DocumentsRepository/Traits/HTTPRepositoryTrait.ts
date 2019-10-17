@@ -104,7 +104,7 @@ export type HTTPRepositoryTraitFactory =
  */
 export const HTTPRepositoryTrait:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link HTTPRepositoryTrait}
+	 * The object with the properties/methods to use in the decoration of a {@link HTTPRepositoryTrait}.
 	 */
 	PROTOTYPE: HTTPRepositoryTraitFactory["PROTOTYPE"];
 

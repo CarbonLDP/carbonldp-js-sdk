@@ -423,7 +423,7 @@ export class UUIDUtils {
 	private static regExp:RegExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 	/**
-	 * Returns true if the string provided is a UUID (version 1 to 5).
+	 * Returns true if the string provided is an UUID (version 1 to 5).
 	 * @param uuid
 	 */
 	public static is( uuid:string ):boolean {

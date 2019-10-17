@@ -40,7 +40,7 @@ export interface MapEntryFactory {
  */
 export const MapEntry:{
 	/**
-	 * Defines the basic schema for the {@link MapEntry}.
+	 * Schema for the {@link MapEntry}.
 	 */
 	SCHEMA: ObjectSchema
 } = {

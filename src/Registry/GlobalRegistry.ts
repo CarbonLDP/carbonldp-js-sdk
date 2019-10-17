@@ -48,7 +48,7 @@ export const GlobalRegistry:{
 	create<T extends object>( data:T & BaseGlobalRegistry ):T & GlobalRegistry;
 
 	/**
-	 * Creates a {@link GlobalRegistry} from the provided GlobalRegistry.
+	 * Creates a {@link GlobalRegistry} from the provided object.
 	 */
 	createFrom<T extends object>( object:T & BaseGlobalRegistry ):T & GlobalRegistry;
 } = {

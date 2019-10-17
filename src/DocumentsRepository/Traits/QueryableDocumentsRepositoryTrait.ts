@@ -144,7 +144,7 @@ export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositor
 	listChildren<T extends object>( uri:string, requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 
 	/**
-	 * Retrieves the shallow members of the document of the specified URI
+	 * Retrieves the shallow members of the document of the specified URI.
 	 * @param uri URI of the document to retrieve its shallow members.
 	 * @param requestOptions Customizable options for the request.
 	 */
@@ -381,7 +381,7 @@ export type QueryableDocumentsRepositoryTraitFactory =
  */
 export const QueryableDocumentsRepositoryTrait:{
 	/**
-	 * The object with the properties/methods to use in the decoration of a {@link QueryableDocumentsRepositoryTrait}
+	 * The object with the properties/methods to use in the decoration of a {@link QueryableDocumentsRepositoryTrait}.
 	 */
 	PROTOTYPE: QueryableDocumentsRepositoryTraitFactory["PROTOTYPE"];
 
