@@ -62,7 +62,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const AddMemberAction:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AddMemberAction`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AddMemberAction`.
 	 */
 	TYPE: C["AddMemberAction"];
 

@@ -4,7 +4,7 @@ import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { Resource } from "../Resource/Resource";
 
-import { ValidationReport, ValidationReportFactory } from "../SHACL/ValidationReport";
+import { ValidationReport } from "../SHACL/ValidationReport";
 
 import { C } from "../Vocabularies/C";
 
@@ -42,7 +42,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const ValidationError:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ValidationError`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ValidationError`.
 	 */
 	TYPE: C["ValidationError"];
 

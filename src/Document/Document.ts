@@ -257,7 +257,7 @@ export type DocumentFactory =
 export const Document:{
 
 		/**
-		 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#Document`.
+		 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#Document`.
 		 */
 		TYPE: C["Document"];
 

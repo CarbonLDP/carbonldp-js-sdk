@@ -61,7 +61,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const RemoveMemberAction:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#RemoveMemberAction`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#RemoveMemberAction`.
 	 */
 	TYPE: C["RemoveMemberAction"];
 

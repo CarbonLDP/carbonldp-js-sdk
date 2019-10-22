@@ -75,7 +75,7 @@ Object
 .keys( Errors )
 .map( k => Errors[ k ] )
 .forEach( e => {
-	if (e.statusCode === null || e instanceof Map) return false;
+	if (e.statusCode === null) return;
 	__statusCodeMap.set( e.statusCode, e );
 } );
 

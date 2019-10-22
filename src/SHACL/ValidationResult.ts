@@ -94,7 +94,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const ValidationResult:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ValidationResult`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ValidationResult`.
 	 */
 	TYPE: SHACL["ValidationResult"];
 

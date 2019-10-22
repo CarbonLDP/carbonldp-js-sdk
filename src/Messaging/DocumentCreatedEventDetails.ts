@@ -38,7 +38,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const DocumentCreatedEventDetails:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails`.
 	 */
 	TYPE: C["DocumentCreatedEventDetails"];
 

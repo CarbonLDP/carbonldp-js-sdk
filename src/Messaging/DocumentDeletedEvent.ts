@@ -26,7 +26,7 @@ const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
  */
 export const DocumentDeletedEvent:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent`.
 	 */
 	TYPE: C["DocumentDeletedEvent"];
 

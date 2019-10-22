@@ -66,7 +66,7 @@ const SCHEMA:ObjectSchema = {
 // TODO: Change to type-alias
 export const ErrorResponse:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ErrorResponse`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ErrorResponse`.
 	 */
 	TYPE: C["ErrorResponse"];
 

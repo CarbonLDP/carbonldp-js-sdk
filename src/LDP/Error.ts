@@ -56,7 +56,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const Error:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#Error`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#Error`.
 	 */
 	TYPE: C["Error"];
 

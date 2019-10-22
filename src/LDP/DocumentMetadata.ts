@@ -53,7 +53,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const DocumentMetadata:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentMetadata`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentMetadata`.
 	 */
 	TYPE: C["DocumentMetadata"];
 

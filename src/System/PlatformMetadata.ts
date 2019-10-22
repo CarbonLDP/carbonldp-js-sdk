@@ -38,7 +38,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const PlatformMetadata:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#PlatformMetadata`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#PlatformMetadata`.
 	 */
 	TYPE: C["Platform"];
 

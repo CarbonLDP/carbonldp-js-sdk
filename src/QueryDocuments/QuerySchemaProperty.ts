@@ -26,9 +26,9 @@ export interface QuerySchemaProperty {
 	"@language"?:string;
 	/**
 	 * The container type the property will be interpreted to have.
-	 * - `@set`: An unordered array of element.
-	 * - `@list`: An ordered array of elements.
-	 * - `@language`: An object map with the language as key and the string content as the value.
+	 * - `@set`: An unordered array of element
+	 * - `@list`: An ordered array of elements
+	 * - `@language`: An object map with the language as key and the string content as the value
 	 */
 	"@container"?:"@set" | "@list" | "@language";
 	/**

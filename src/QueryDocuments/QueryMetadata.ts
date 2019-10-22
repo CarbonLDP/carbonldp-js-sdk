@@ -20,7 +20,6 @@ export interface QueryMetadata extends VolatileResource {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory, decorator and utils for {@link QueryMetadata}.
  */
@@ -41,7 +40,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const QueryMetadata:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#QueryMetadata`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#QueryMetadata`.
 	 */
 	TYPE: C["QueryMetadata"];
 

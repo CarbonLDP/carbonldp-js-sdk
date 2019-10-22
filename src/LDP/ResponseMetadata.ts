@@ -43,7 +43,7 @@ const SCHEMA:ObjectSchema = {
  */
 export const ResponseMetadata:{
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ResponseMetadata`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ResponseMetadata`.
 	 */
 	TYPE: C["ResponseMetadata"];
 

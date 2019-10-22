@@ -57,12 +57,12 @@ export interface AccessPointFactory {
 }
 
 /**
- * Constant with the factory, decorator and/or utils for an {@link AccessPoint } object.
+ * Constant with the factory, decorator and/or utils for an {@link AccessPoint} object.
  */
 export const AccessPoint: {
 
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AccessPoint`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AccessPoint`.
 	 */
 	TYPE: C["AccessPoint"];
 

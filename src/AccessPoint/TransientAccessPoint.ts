@@ -60,12 +60,12 @@ export interface TransientAccessPointFactory extends ModelFactory<TransientAcces
 }
 
 /**
- * Constant with the factory, decorator and/or utils for a {@link TransientAccessPoint } object.
+ * Constant with the factory, decorator and/or utils for a {@link TransientAccessPoint} object.
  */
 export const TransientAccessPoint:{
 
 	/**
-	 * Specifies the type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AccessPoint`.
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AccessPoint`.
 	 */
 	TYPE: C["AccessPoint"];
 
