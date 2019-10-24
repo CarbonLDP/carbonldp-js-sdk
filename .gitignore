@@ -22,9 +22,6 @@ tasks/**/*.map
 gulpfile.js
 gulpfile.js.map
 
-# Dgeni
-build/docs/docs-generator/**/*.js
-build/docs/docs-generator/**/*.map
 
 # Rollup Typescript cache
 .rpt2_cache

@@ -5,7 +5,8 @@
   "homepage": "https://github.com/CarbonLDP/carbonldp-js-sdk",
   "contributors": [
     "Miguel Aragon <miguel.aragon@base22.com>",
-    "Rodolfo Aguirre <rodolfo.aguirre@base22.com>"
+    "Rodolfo Aguirre <rodolfo.aguirre@base22.com>",
+    "Iñaki Janeiro <inaki.janeiro@base22.com>"
   ],
   "license": "BSD-3-Clause",
   "repository": {
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "@types/node": ">=6",
+    "carbonldp-ts-docs-engine": "file:../../../carbonldp-ts-docs-engine/carbonldp-ts-docs-engine-0.1.0.tgz",
     "sockjs-client": "^1.1.0",
     "sparqler": "~0.6.0",
     "tslib": "^1.9.3",
@@ -41,7 +43,6 @@
     "del": "^3.0.0",
     "gulp": "^4.0.0",
     "gulp-filter": "^5.0.0",
-    "gulp-htmlmin": "^5.0.1",
     "gulp-jasmine": "^4.0.0",
     "gulp-json-editor": "^2.2.1",
     "gulp-sourcemaps": "^2.6.1",
@@ -77,8 +78,8 @@
   },
   "scripts": {
     "start": "gulp build",
-    "lint": "./node_modules/.bin/gulp lint",
-    "test": "./node_modules/.bin/gulp test"
+    "lint": "gulp lint",
+    "test": "gulp test"
   },
   "private": true
 }

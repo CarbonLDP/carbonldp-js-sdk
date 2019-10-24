@@ -33,7 +33,7 @@ export interface ObjectSchema {
 	 * This index can be interpreted in two forms: prefix or property.
 	 *
 	 * ### Prefix
-	 * - When the value is as stringå
+	 * - When the value is as string
 	 * The key is taken the prefix name and the string value must be an absolute URI.
 	 *
 	 * ### Property
