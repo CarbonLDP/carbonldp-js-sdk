@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@types/node": ">=6",
-    "carbonldp-ts-docs-engine": "file:../../../carbonldp-ts-docs-engine/carbonldp-ts-docs-engine-0.1.0.tgz",
     "sockjs-client": "^1.1.0",
     "sparqler": "~0.6.0",
     "tslib": "^1.9.3",
@@ -38,6 +37,7 @@
     "@types/jasmine-ajax": "^3.1.36",
     "@types/nock": "^8.2.1",
     "@types/sockjs-client": "^1.1.0",
+    "carbonldp-ts-docs-engine": "^1.0.0",
     "codecov": "^3.2.0",
     "core-js-bundle": "^3.0.0",
     "del": "^3.0.0",
