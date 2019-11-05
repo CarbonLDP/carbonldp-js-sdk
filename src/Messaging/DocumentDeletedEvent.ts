@@ -1,9 +1,10 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
 
 import { EventMessage } from "./EventMessage";
-import { ModelSchema } from '../Model';
 
 
 /**
@@ -28,12 +29,12 @@ export const DocumentDeletedEvent:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent`.
 	 */
-	TYPE: C["DocumentDeletedEvent"];
+	TYPE:C["DocumentDeletedEvent"];
 
 	/**
 	 * Schema for the {@link DocumentDeletedEvent}.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 } = <DocumentDeletedEventFactory> {
 	TYPE: C.DocumentDeletedEvent,
 	SCHEMA,

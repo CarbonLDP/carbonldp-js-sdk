@@ -42,7 +42,7 @@ export const MapEntry:{
 	/**
 	 * Schema for the {@link MapEntry}.
 	 */
-	SCHEMA: ObjectSchema
+	SCHEMA:ObjectSchema
 } = <MapEntryFactory> {
 	SCHEMA,
 };

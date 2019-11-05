@@ -1,9 +1,10 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
 
 import { EventMessage } from "./EventMessage";
-import { ModelSchema } from "../Model";
 
 
 /**
@@ -17,7 +18,7 @@ export interface DocumentModifiedEvent extends EventMessage {
  * Factory, decorator and utils for {@link DocumentModifiedEvent}.
  */
 export type DocumentModifiedEventFactory =
-	& ModelSchema <C["DocumentModifiedEvent"]>;
+	& ModelSchema<C["DocumentModifiedEvent"]>;
 
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
@@ -28,13 +29,13 @@ export const DocumentModifiedEvent:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent`.
 	 */
-	TYPE: C["DocumentModifiedEvent"];
+	TYPE:C["DocumentModifiedEvent"];
 
 	/**
 	 * Schema for the {@link DocumentModifiedEvent}.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 } = <DocumentModifiedEventFactory> {
-	TYPE:C.DocumentModifiedEvent,
+	TYPE: C.DocumentModifiedEvent,
 	SCHEMA,
 };

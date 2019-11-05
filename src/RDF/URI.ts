@@ -155,7 +155,7 @@ export const URI:URIFactory = {
 	},
 
 	isRelative( uri:string ):boolean {
-		return ! URI.isAbsolute( uri );
+		return !URI.isAbsolute( uri );
 	},
 
 	isBNodeID( uri:string ):boolean {
@@ -167,11 +167,11 @@ export const URI:URIFactory = {
 	},
 
 	isPrefixed( uri:string ):boolean {
-		return ! URI.isAbsolute( uri ) && ! URI.isBNodeID( uri ) && StringUtils.contains( uri, ":" );
+		return !URI.isAbsolute( uri ) && !URI.isBNodeID( uri ) && StringUtils.contains( uri, ":" );
 	},
 
 	isFragmentOf( fragmentURI:string, uri:string ):boolean {
-		if( ! URI.hasFragment( fragmentURI ) ) return false;
+		if( !URI.hasFragment( fragmentURI ) ) return false;
 
 		const documentURI:string = URI.getDocumentURI( fragmentURI );
 		return documentURI === "" || documentURI === uri;
@@ -180,7 +180,7 @@ export const URI:URIFactory = {
 	isBaseOf( baseURI:string, uri:string ):boolean {
 		if( baseURI === uri ) return true;
 		if( baseURI === "" ) return true;
-		if( URI.isRelative( uri ) && ! URI.isPrefixed( uri ) ) return true;
+		if( URI.isRelative( uri ) && !URI.isPrefixed( uri ) ) return true;
 
 		if( uri.startsWith( baseURI ) ) {
 			if( StringUtils.endsWith( baseURI, "/" ) || StringUtils.endsWith( baseURI, "#" ) ) return true;
@@ -193,7 +193,7 @@ export const URI:URIFactory = {
 	},
 
 	getRelativeURI( absoluteURI:string, base:string ):string {
-		if( ! absoluteURI.startsWith( base ) )
+		if( !absoluteURI.startsWith( base ) )
 			return absoluteURI;
 		return absoluteURI.substring( base.length );
 	},
@@ -234,7 +234,7 @@ export const URI:URIFactory = {
 	getParameters( uri:string ):Map<string, string | string[]> {
 		const parameters:Map<string, string | string[]> = new Map();
 
-		if( ! URI.hasQuery( uri ) ) return parameters;
+		if( !URI.hasQuery( uri ) ) return parameters;
 
 		uri.replace( /^.*\?/, "" ).split( "&" ).forEach( ( param:string ) => {
 			const parts:string[] = param
@@ -244,7 +244,7 @@ export const URI:URIFactory = {
 			const key:string = parts.shift()!;
 			const val:string = parts.length > 0 ? parts.join( "=" ) : "";
 
-			if( ! parameters.has( key ) ) {
+			if( !parameters.has( key ) ) {
 				parameters.set( key, val );
 			} else {
 				parameters.set( key, new Array<string>().concat( parameters.get( key )!, val ) );
@@ -255,7 +255,7 @@ export const URI:URIFactory = {
 	},
 
 	resolve( parentURI:string, childURI:string ):string {
-		if( ! parentURI || URI.isAbsolute( childURI ) || URI.isBNodeID( childURI ) || URI.isPrefixed( childURI ) )
+		if( !parentURI || URI.isAbsolute( childURI ) || URI.isBNodeID( childURI ) || URI.isPrefixed( childURI ) )
 			return childURI;
 
 		let protocol:string = parentURI.substr( 0, parentURI.indexOf( "://" ) + 3 );
@@ -264,10 +264,10 @@ export const URI:URIFactory = {
 
 		if( StringUtils.startsWith( childURI, "?" ) || StringUtils.startsWith( childURI, "#" ) ) {
 			if( URI.hasQuery( path ) ) path = path.substr( 0, path.indexOf( "?" ) );
-			if( URI.hasFragment( path ) && (! StringUtils.startsWith( childURI, "?" ) || StringUtils.endsWith( path, "#" )) ) path = URI.getDocumentURI( path );
+			if( URI.hasFragment( path ) && (!StringUtils.startsWith( childURI, "?" ) || StringUtils.endsWith( path, "#" )) ) path = URI.getDocumentURI( path );
 		} else {
 			path = path.substr( 0, path.lastIndexOf( "/" ) + 1 );
-			if( ! StringUtils.endsWith( path, "?" ) && ! StringUtils.endsWith( path, "#" ) && ! StringUtils.endsWith( path, "/" ) ) path += "/";
+			if( !StringUtils.endsWith( path, "?" ) && !StringUtils.endsWith( path, "#" ) && !StringUtils.endsWith( path, "/" ) ) path += "/";
 		}
 
 		if( StringUtils.startsWith( childURI, "/" ) ) {
@@ -278,16 +278,16 @@ export const URI:URIFactory = {
 	},
 
 	removeProtocol( uri:string ):string {
-		if( ! URI.hasProtocol( uri ) ) return uri;
+		if( !URI.hasProtocol( uri ) ) return uri;
 		return uri.substring( uri.indexOf( "://" ) + 3 );
 	},
 
 	prefix( uri:string, prefixOrObjectSchema:string | DigestedObjectSchema, prefixURI?:string ):string {
-		if( ! isString( prefixOrObjectSchema ) ) return prefixWithObjectSchema( uri, prefixOrObjectSchema );
+		if( !isString( prefixOrObjectSchema ) ) return prefixWithObjectSchema( uri, prefixOrObjectSchema );
 
 		const prefix:string = prefixOrObjectSchema;
 
-		if( URI.isPrefixed( uri ) || ! uri.startsWith( prefixURI! ) ) return uri;
+		if( URI.isPrefixed( uri ) || !uri.startsWith( prefixURI! ) ) return uri;
 
 		return `${ prefix }:${ uri.substring( prefixURI!.length ) }`;
 	},
@@ -300,8 +300,8 @@ function prefixWithObjectSchema( uri:string, objectSchema:DigestedObjectSchema )
 		if( result.done ) return uri;
 
 		let [ prefix, prefixURI ]:[ string, string ] = result.value;
-		if( ! URI.isAbsolute( prefixURI ) ) continue;
-		if( ! uri.startsWith( prefixURI ) ) continue;
+		if( !URI.isAbsolute( prefixURI ) ) continue;
+		if( !uri.startsWith( prefixURI ) ) continue;
 
 		return URI.prefix( uri, prefix, prefixURI );
 	}

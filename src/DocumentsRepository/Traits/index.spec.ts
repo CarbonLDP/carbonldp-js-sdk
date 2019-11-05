@@ -1,6 +1,6 @@
-import * as Module from "./index";
 import { EventEmitterDocumentsRepositoryTrait } from "./EventEmitterDocumentsRepositoryTrait";
 import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
+import * as Module from "./index";
 import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
 import { QueryableDocumentsRepositoryTrait } from "./QueryableDocumentsRepositoryTrait";
 import { SPARQLDocumentsRepositoryTrait } from "./SPARQLDocumentsRepositoryTrait";

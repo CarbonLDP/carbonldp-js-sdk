@@ -1,6 +1,6 @@
 import { DocumentsContext } from "../Context/DocumentsContext";
 
-import { Document, BaseResolvableDocument } from "../Document/Document";
+import { Document } from "../Document/Document";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
@@ -50,7 +50,7 @@ export const DocumentsRegistry:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link DocumentsRegistry}.
 	 */
-	PROTOTYPE: DocumentsRegistryFactory["PROTOTYPE"];
+	PROTOTYPE:DocumentsRegistryFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link DocumentsRegistry}.
@@ -60,7 +60,7 @@ export const DocumentsRegistry:{
 	/**
 	 * Decorates the object with the properties and methods from the {@link DocumentsRegistry} prototype.
 	 */
-	decorate<T extends object>( object:T &  BaseDocumentsRegistry ):T & DocumentsRegistry;
+	decorate<T extends object>( object:T & BaseDocumentsRegistry ):T & DocumentsRegistry;
 
 	/**
 	 * Creates a {@link DocumentsRegistry} with the provided data.
@@ -78,7 +78,7 @@ export const DocumentsRegistry:{
 		},
 
 		_getLocalID( this:DocumentsRegistry, id:string ):string {
-			if( URI.hasFragment( id ) ) throw new IllegalArgumentError( `"${id}" is out of scope.` );
+			if( URI.hasFragment( id ) ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 			return GeneralRegistry.PROTOTYPE._getLocalID.call( this, id );
 		},
 	},

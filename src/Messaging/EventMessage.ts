@@ -42,7 +42,7 @@ export const EventMessage:{
 	/**
 	 * Schema for the {@link EventMessage}.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 
 	/**
 	 * Returns true when the value provided is considered to be a {@link EventMessage}.

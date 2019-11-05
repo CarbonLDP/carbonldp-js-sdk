@@ -47,17 +47,17 @@ export const Map:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#Map`.
 	 */
-	TYPE: C["Map"];
+	TYPE:C["Map"];
 
 	/**
 	 * Schema for the map.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 
 	/**
 	 * Returns true when the value provided is considered to be a {@link Map}.
 	 */
-	is( object:object ): object is Map<any, any>;
+	is( object:object ):object is Map<any, any>;
 } = <MapFactory> {
 	TYPE: C.Map,
 	SCHEMA,

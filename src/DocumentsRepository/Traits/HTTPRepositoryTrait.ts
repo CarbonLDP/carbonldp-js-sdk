@@ -106,7 +106,7 @@ export const HTTPRepositoryTrait:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link HTTPRepositoryTrait}.
 	 */
-	PROTOTYPE: HTTPRepositoryTraitFactory["PROTOTYPE"];
+	PROTOTYPE:HTTPRepositoryTraitFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link HTTPRepositoryTrait}.
@@ -121,12 +121,12 @@ export const HTTPRepositoryTrait:{
 } = <HTTPRepositoryTraitFactory> {
 	PROTOTYPE: {
 		get<T extends object>( this:HTTPRepositoryTrait, uri:string, requestOptions?:GETOptions ):Promise<T & ResolvablePointer> {
-			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
+			if( !this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			if( this.context.registry.hasPointer( url, true ) ) {
 				const resource:ResolvablePointer = this.context.registry.getPointer( url, true );
-				if( resource.$isResolved() && ! (requestOptions && requestOptions.ensureLatest) )
+				if( resource.$isResolved() && !(requestOptions && requestOptions.ensureLatest) )
 					return Promise.resolve( resource as T & ResolvablePointer );
 			}
 
@@ -142,7 +142,7 @@ export const HTTPRepositoryTrait:{
 		},
 
 		exists( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<boolean> {
-			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
+			if( !this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			return RequestService
@@ -156,9 +156,9 @@ export const HTTPRepositoryTrait:{
 
 
 		refresh<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
-			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
+			if( !ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
 
-			if( ! this.context.registry.inScope( resource.$id, true ) ) return Promise.reject( new IllegalArgumentError( `"${resource.$id}" is out of scope.` ) );
+			if( !this.context.registry.inScope( resource.$id, true ) ) return Promise.reject( new IllegalArgumentError( `"${ resource.$id }" is out of scope.` ) );
 			const url:string = this.context.getObjectSchema().resolveURI( resource.$id, { base: true } );
 
 			return RequestService
@@ -174,12 +174,12 @@ export const HTTPRepositoryTrait:{
 		},
 
 		save<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
-			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
+			if( !ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
 
-			if( ! this.context.registry.inScope( resource.$id, true ) ) return Promise.reject( new IllegalArgumentError( `"${resource.$id}" is out of scope.` ) );
+			if( !this.context.registry.inScope( resource.$id, true ) ) return Promise.reject( new IllegalArgumentError( `"${ resource.$id }" is out of scope.` ) );
 			const url:string = this.context.getObjectSchema().resolveURI( resource.$id, { base: true } );
 
-			if( ! resource.$isDirty() ) return Promise.resolve( resource as T & ResolvablePointer );
+			if( !resource.$isDirty() ) return Promise.resolve( resource as T & ResolvablePointer );
 
 			const body:string = JSON.stringify( resource );
 			return RequestService
@@ -196,7 +196,7 @@ export const HTTPRepositoryTrait:{
 
 
 		delete( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<void> {
-			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
+			if( !this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			return RequestService

@@ -39,7 +39,7 @@ export const RegisteredPointer:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link RegisteredPointer}.
 	 */
-	PROTOTYPE: RegisteredPointerFactory["PROTOTYPE"];
+	PROTOTYPE:RegisteredPointerFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link RegisteredPointer}.

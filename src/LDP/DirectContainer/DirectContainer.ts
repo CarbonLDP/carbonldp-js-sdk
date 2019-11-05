@@ -1,8 +1,9 @@
 import { Document } from "../../Document/Document";
 
+import { LDP } from "../../Vocabularies";
+
+import { BaseDirectContainer } from "./BaseDirectContainer";
 import { TransientDirectContainer, TransientDirectContainerFactory } from "./TransientDirectContainer";
-import { LDP } from '../../Vocabularies';
-import { BaseDirectContainer } from './BaseDirectContainer';
 
 
 /**
@@ -31,12 +32,12 @@ export const DirectContainer:{
 	/**
 	 * Type of the model, in this case: `http://www.w3.org/ns/ldp#DirectContainer`.
 	 */
-	TYPE: LDP["DirectContainer"];
+	TYPE:LDP["DirectContainer"];
 
 	/**
 	 * Returns true when the value provided is considered to be a {@link DirectContainer}.
 	 */
-	is( object:object ): object is DirectContainer;
+	is( object:object ):object is DirectContainer;
 
 	/**
 	 * Creates a {@link DirectContainer} with the provided data.

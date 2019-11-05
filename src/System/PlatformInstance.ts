@@ -1,12 +1,11 @@
 import { VolatileResource } from "../LDP/VolatileResource";
 
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
-
-import { PlatformMetadata } from "./PlatformMetadata";
-import { ModelSchema } from "../Model";
 
 
 /**
@@ -49,12 +48,12 @@ export const PlatformInstance:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#PlatformInstance`.
 	 */
-	TYPE: C["PlatformInstance"];
+	TYPE:C["PlatformInstance"];
 
 	/**
 	 * Schema for the {@link PlatformInstance}.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 } = <PlatformInstanceFactory> {
 	TYPE: C.PlatformInstance,
 	SCHEMA,

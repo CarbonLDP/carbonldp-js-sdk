@@ -252,7 +252,7 @@ function __addPointer( this:void, registry:AnyRegistry, pointer:Pointer ):Regist
 
 
 function __inScope( this:AnyRegistry | undefined, idOrPointer:string | Pointer, local?:true ):boolean {
-	if( ! this ) return false;
+	if( !this ) return false;
 
 	try {
 		const id:string = Pointer.getID( idOrPointer );
@@ -268,7 +268,7 @@ function __inScope( this:AnyRegistry | undefined, idOrPointer:string | Pointer, 
 }
 
 function __hasPointer( this:AnyRegistry | undefined, id:string, local?:true ):boolean {
-	if( ! this ) return false;
+	if( !this ) return false;
 
 	if( __inScope.call( this, id, true ) ) {
 		const localID:string = __getLocalID( this, id );
@@ -286,8 +286,8 @@ function __hasPointer( this:AnyRegistry | undefined, id:string, local?:true ):bo
 function __getPointer( this:AnyRegistry, id:string, local?:true ):RegisteredPointer {
 	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
 
-	if( ! __inScope.call( this, id, true ) ) {
-		if( local === true || ! parentRegistry ) throw new IllegalArgumentError( `"${id}" is out of scope.` );
+	if( !__inScope.call( this, id, true ) ) {
+		if( local === true || !parentRegistry ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		return __getPointer.call( parentRegistry, id );
 	}
 
@@ -308,7 +308,7 @@ function __getPointers( this:AnyRegistry, local?:true ):RegisteredPointer[] {
 	const pointers:RegisteredPointer[] = Array.from( resourcesMap.values() );
 
 	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
-	if( local === true || ! parentRegistry ) return pointers;
+	if( local === true || !parentRegistry ) return pointers;
 
 	return [
 		...__getPointers.call( parentRegistry ),
@@ -317,7 +317,7 @@ function __getPointers( this:AnyRegistry, local?:true ):RegisteredPointer[] {
 }
 
 function __removePointer( this:AnyRegistry | undefined, idOrPointer:string | RegisteredPointer, local?:true ):boolean {
-	if( ! this ) return false;
+	if( !this ) return false;
 
 	const id:string = Pointer.getID( idOrPointer );
 	if( __inScope.call( this, id, true ) ) {
@@ -349,7 +349,7 @@ export const Registry:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link Registry}.
 	 */
-	PROTOTYPE: RegistryFactory["PROTOTYPE"];
+	PROTOTYPE:RegistryFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link Registry}.
@@ -384,12 +384,12 @@ export const Registry:{
 
 
 		_addPointer<T extends object>( this:AnyRegistry, pointer:T & Pointer ):T & RegisteredPointer {
-			if( ! pointer.$id ) throw new IllegalArgumentError( "The pointer $id cannot be empty." );
+			if( !pointer.$id ) throw new IllegalArgumentError( "The pointer $id cannot be empty." );
 
 			const localID:string = __getLocalID( this, pointer.$id );
 
 			const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
-			if( resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${pointer.$id}" is already being used.` );
+			if( resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being used.` );
 
 			const resource:T & RegisteredPointer = __getDecorator( this )
 				.decorate( Object.assign<T, BaseRegisteredPointer>( pointer, {

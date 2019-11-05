@@ -100,7 +100,7 @@ export const DocumentsRepository:{
 	/**
 	 * Returns true when the value provided is considered to be a {@link DocumentsRepository}.
 	 */
-	is( object:object ): object is DocumentsRepository;
+	is( object:object ):object is DocumentsRepository;
 
 } = <DocumentsRepositoryFactory> {
 	create<T extends object>( data:T & BaseDocumentsRepository ):T & DocumentsRepository {

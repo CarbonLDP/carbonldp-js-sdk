@@ -1,10 +1,11 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 
 import { ValidationResult } from "./ValidationResult";
-import { ModelSchema } from "../Model";
 
 
 /**
@@ -57,12 +58,12 @@ export const ValidationReport:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ValidationReport`.
 	 */
-	TYPE: SHACL["ValidationReport"];
+	TYPE:SHACL["ValidationReport"];
 
 	/**
 	 * Schema for the {@link ValidationReport}.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 } = <ValidationReportFactory> {
 	TYPE: SHACL.ValidationReport,
 	SCHEMA,

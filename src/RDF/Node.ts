@@ -143,12 +143,12 @@ export const RDFNode:RDFNodeFactory = {
 	},
 
 	getTypes( node:RDFNode ):string[] {
-		if( ! ("@type" in node) ) return [];
+		if( !("@type" in node) ) return [];
 		return node[ "@type" ]!;
 	},
 
 	getList( propertyValues:RDFNodePropertyValue[] ):RDFList | undefined {
-		if( ! Array.isArray( propertyValues ) ) return;
+		if( !Array.isArray( propertyValues ) ) return;
 
 		return propertyValues
 			.find( RDFList.is )
@@ -156,7 +156,7 @@ export const RDFNode:RDFNodeFactory = {
 	},
 
 	getPropertyLiterals( propertyValues:RDFNodePropertyValue[], literalType:string ):any[] | undefined {
-		if( ! Array.isArray( propertyValues ) ) return;
+		if( !Array.isArray( propertyValues ) ) return;
 
 		return propertyValues
 			.filter( RDFLiteral.is )
@@ -166,15 +166,15 @@ export const RDFNode:RDFNodeFactory = {
 	},
 
 	getPropertyLanguageMap( propertyValues:RDFNodePropertyValue[] ):object | undefined {
-		if( ! Array.isArray( propertyValues ) ) return;
+		if( !Array.isArray( propertyValues ) ) return;
 
 		const propertyLanguageMap:object = {};
 		for( const propertyValue of propertyValues ) {
-			if( ! RDFLiteral.is( propertyValue ) ) continue;
-			if( ! RDFLiteral.hasType( propertyValue, XSD.string ) ) continue;
+			if( !RDFLiteral.is( propertyValue ) ) continue;
+			if( !RDFLiteral.hasType( propertyValue, XSD.string ) ) continue;
 
 			const languageTag:string | undefined = propertyValue[ "@language" ];
-			if( ! languageTag ) continue;
+			if( !languageTag ) continue;
 
 			propertyLanguageMap[ languageTag ] = RDFLiteral.parse( propertyValue );
 		}

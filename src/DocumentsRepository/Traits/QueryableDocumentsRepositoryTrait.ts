@@ -42,7 +42,6 @@ import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 import { _getErrorResponseParserFn } from "../Utils";
 
 import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
-import { QueryableDocumentTraitFactory } from '../../Document/Traits';
 
 
 /**
@@ -383,7 +382,7 @@ export const QueryableDocumentsRepositoryTrait:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link QueryableDocumentsRepositoryTrait}.
 	 */
-	PROTOTYPE: QueryableDocumentsRepositoryTraitFactory["PROTOTYPE"];
+	PROTOTYPE:QueryableDocumentsRepositoryTraitFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link QueryableDocumentsRepositoryTrait}.

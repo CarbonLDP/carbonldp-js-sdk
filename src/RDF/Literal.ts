@@ -114,7 +114,7 @@ export const RDFLiteral:{
 	from( value:any ):RDFLiteral {
 		if( Utils.isNull( value ) )
 			throw new IllegalArgumentError( "Null cannot be converted into a Literal" );
-		if( ! Utils.isDefined( value ) )
+		if( !Utils.isDefined( value ) )
 			throw new IllegalArgumentError( "The value is undefined" );
 
 		let type:any;
@@ -156,8 +156,8 @@ export const RDFLiteral:{
 			literalValue = valueOrLiteral;
 		} else {
 			let literal:RDFLiteral = valueOrLiteral;
-			if( ! literal ) return null;
-			if( ! Utils.hasProperty( literal, "@value" ) ) return null;
+			if( !literal ) return null;
+			if( !Utils.hasProperty( literal, "@value" ) ) return null;
 
 			type = "@type" in literal ? literal[ "@type" ] : null;
 			literalValue = literal[ "@value" ];
@@ -172,7 +172,7 @@ export const RDFLiteral:{
 				break;
 			case XSD.time:
 				const parts:string[] | null = literalValue.match( /(\d+):(\d+):(\d+)\.(\d+)Z/ );
-				if( ! parts ) throw new IllegalArgumentError( `Invalid value for type ${ XSD.time }.` );
+				if( !parts ) throw new IllegalArgumentError( `Invalid value for type ${ XSD.time }.` );
 				value = new Date();
 				value.setUTCHours( parseFloat( parts[ 1 ] ), parseFloat( parts[ 2 ] ), parseFloat( parts[ 3 ] ), parseFloat( parts[ 4 ] ) );
 				break;
@@ -230,7 +230,7 @@ export const RDFLiteral:{
 	},
 
 	hasType( value:RDFLiteral, type:string ):boolean {
-		if( ! value[ "@type" ] && type === XSD.string ) return true;
+		if( !value[ "@type" ] && type === XSD.string ) return true;
 		return value[ "@type" ] === type;
 	},
 };

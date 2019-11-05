@@ -1,14 +1,15 @@
 import { C } from "../Vocabularies/C";
 import { LDP } from "../Vocabularies/LDP";
 
+import * as Errors from "./Errors";
 import { HTTPError } from "./Errors/HTTPError";
 import { InternalServerErrorError } from "./Errors/ServerErrors/InternalServerErrorError";
 
 import { Header } from "./Header";
 import { JSONParser } from "./JSONParser";
-import { RequestOptions, RequestService, RequestUtils, __statusCodeMap } from "./Request";
+import { __statusCodeMap, RequestOptions, RequestService, RequestUtils } from "./Request";
 import { Response } from "./Response";
-import * as Errors from "./Errors";
+
 
 describe( "Request", () => {
 
@@ -823,7 +824,7 @@ describe( "Request", () => {
 
 	} );
 
-		describe( "statusCodeMap", () => {
+	describe( "statusCodeMap", () => {
 
 		it( "should exist", () => {
 			expect( __statusCodeMap ).toBeDefined();

@@ -49,7 +49,7 @@ export class Response {
 			this.status = response && response.statusCode || 0;
 
 			this.headers = new Map<string, Header>();
-			if( ! response ) return;
+			if( !response ) return;
 
 			for( const name in response.headers ) {
 				const header:Header = new Header( response.headers[ name ] );
@@ -76,7 +76,7 @@ export class Response {
 		const eTagHeader:Header | null = this.getHeader( "ETag" );
 
 		// TODO: Warn multiple ETags
-		if( ! eTagHeader || ! eTagHeader.values.length )
+		if( !eTagHeader || !eTagHeader.values.length )
 			throw new BadResponseError( "The response doesn't contain an ETag", this );
 
 		return eTagHeader.values[ 0 ];

@@ -132,7 +132,7 @@ export const Repository:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link Repository}.
 	 */
-	PROTOTYPE: RepositoryFactory["PROTOTYPE"];
+	PROTOTYPE:RepositoryFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link Repository}.

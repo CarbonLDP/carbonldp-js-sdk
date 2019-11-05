@@ -14,7 +14,7 @@ import CONFIG from "./config";
 const cleaner:( folder:keyof typeof CONFIG["dist"], extension:string ) => Promise<string[]> = ( folder, extension ) => {
 	const ignoreFolders:string[] = Object
 		.keys( CONFIG.dist )
-		.filter( _ => ! (_ !== folder) )
+		.filter( _ => !(_ !== folder) )
 		.map( _ => `!${ CONFIG.dist[ _ ] } ` )
 	;
 

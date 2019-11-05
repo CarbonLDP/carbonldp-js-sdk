@@ -44,12 +44,12 @@ export const ValidationError:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ValidationError`.
 	 */
-	TYPE: C["ValidationError"];
+	TYPE:C["ValidationError"];
 
 	/**
 	 * Schema for the {@link ValidationError}.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 
 } = <ValidationErrorFactory> {
 	TYPE: C.ValidationError,

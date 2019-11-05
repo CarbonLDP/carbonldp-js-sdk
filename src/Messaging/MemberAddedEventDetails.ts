@@ -1,9 +1,10 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
 
 import { MemberEventDetails } from "./MemberEventDetails";
-import { ModelSchema } from "../Model";
 
 
 /**
@@ -28,12 +29,12 @@ export const MemberAddedEventDetails:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails`.
 	 */
-	TYPE: C["MemberAddedEventDetails"];
+	TYPE:C["MemberAddedEventDetails"];
 
 	/**
 	 * Schema for the {@link MemberAddedEventDetails}.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 } = <MemberAddedEventDetailsFactory> {
 	TYPE: C.MemberAddedEventDetails,
 	SCHEMA,

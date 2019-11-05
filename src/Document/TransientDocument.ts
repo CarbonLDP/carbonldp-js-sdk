@@ -116,7 +116,7 @@ export interface TransientDocument extends Resource, $Registry<TransientFragment
 
 
 function __getLabelFrom( slug:string ):string {
-	if( ! isRelative( slug ) || slug.startsWith( "#" ) ) return slug;
+	if( !isRelative( slug ) || slug.startsWith( "#" ) ) return slug;
 	return "#" + slug;
 }
 
@@ -138,14 +138,14 @@ function __convertNested( resource:TransientDocument, target:object, tracker:Set
 				return __convertNested( resource, next, tracker );
 
 
-			if( ! isPlainObject( next ) ) return;
+			if( !isPlainObject( next ) ) return;
 			if( TransientDocument.is( next ) ) return;
 			if( next._registry && next._registry !== resource ) return;
 
 
 			const idOrSlug:string = __getObjectId( next );
 			if( tracker.has( idOrSlug ) ) return;
-			if( ! resource.$inScope( idOrSlug, true ) ) return;
+			if( !resource.$inScope( idOrSlug, true ) ) return;
 
 
 			const fragment:TransientFragment = resource.$hasPointer( idOrSlug, true ) ?
@@ -183,27 +183,27 @@ export const TransientDocument:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link TransientDocument}.
 	 */
-	PROTOTYPE: TransientDocumentFactory["PROTOTYPE"];
+	PROTOTYPE:TransientDocumentFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link TransientDocument}.
 	 */
-	isDecorated( object:object): object is TransientDocument;
+	isDecorated( object:object ):object is TransientDocument;
 
 	/**
 	 * Returns true when the value provided is considered to be a {@link TransientDocument}.
 	 */
-	is( value:any ): value is TransientDocument;
+	is( value:any ):value is TransientDocument;
 
 	/**
 	 * Decorates the object with the properties and methods from the {@link TransientDocument} prototype.
 	 */
-	decorate<T extends BaseDocument>( object:T):T & TransientDocument;
+	decorate<T extends BaseDocument>( object:T ):T & TransientDocument;
 
 	/**
 	 * Creates a {@link TransientDocument} with the provided data.
 	 */
-	create<T extends object>( data?:T & BaseDocument ): T & TransientDocument;
+	create<T extends object>( data?:T & BaseDocument ):T & TransientDocument;
 
 	/**
 	 * Creates a {@link TransientDocument} from the provided object.
@@ -220,7 +220,7 @@ export const TransientDocument:{
 			this.$getPointers( true )
 				.map( Pointer.getID )
 				.filter( URI.isBNodeID )
-				.filter( id => ! usedFragments.has( id ) )
+				.filter( id => !usedFragments.has( id ) )
 				.forEach( this.$removePointer, this )
 			;
 		},
@@ -231,7 +231,7 @@ export const TransientDocument:{
 
 			if( URI.isFragmentOf( id, this.$id ) ) return URI.getFragment( id );
 
-			throw new IllegalArgumentError( `"${id}" is out of scope.` );
+			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		},
 
 		$getPointer( this:TransientDocument, id:string, local?:true ):TransientFragment {
@@ -242,7 +242,7 @@ export const TransientDocument:{
 
 		$hasFragment( this:TransientDocument, id:string ):boolean {
 			id = __getLabelFrom( id );
-			if( ! this.$inScope( id, true ) ) return false;
+			if( !this.$inScope( id, true ) ) return false;
 
 			const localID:string = this.$_getLocalID( id );
 			return this.$__resourcesMap.has( localID );
@@ -253,7 +253,7 @@ export const TransientDocument:{
 			const localID:string = this.$_getLocalID( id );
 
 			const resource:TransientFragment | undefined = this.$__resourcesMap.get( localID );
-			if( ! resource ) return null;
+			if( !resource ) return null;
 
 			return resource as T & TransientFragment;
 		},
@@ -277,7 +277,7 @@ export const TransientDocument:{
 
 		$removeFragment( this:TransientDocument, fragmentOrSlug:string | TransientFragment ):boolean {
 			const id:string = __getLabelFrom( Pointer.getID( fragmentOrSlug ) );
-			if( ! this.$inScope( id, true ) ) return false;
+			if( !this.$inScope( id, true ) ) return false;
 
 			return this.$removePointer( id );
 		},

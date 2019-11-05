@@ -33,7 +33,7 @@ export class JSONLDProcessor {
 	 */
 	static expand( input:object ):Promise<object[]> {
 		// Find and resolve context URLs
-		return JSONLDProcessor.__retrieveContexts( input, <{ [ index:string ]:boolean }>Object.create( null ), "" ).then( () => {
+		return JSONLDProcessor.__retrieveContexts( input, <{ [ index:string ]:boolean }> Object.create( null ), "" ).then( () => {
 			// Expand the document
 			let expanded:any = JSONLDProcessor.__process( new DigestedObjectSchema(), input );
 
@@ -45,7 +45,7 @@ export class JSONLDProcessor {
 			}
 
 			// Normalize to an array
-			if( ! Utils.isArray( expanded ) ) expanded = [ expanded ];
+			if( !Utils.isArray( expanded ) ) expanded = [ expanded ];
 
 			return expanded;
 		} );
@@ -55,7 +55,7 @@ export class JSONLDProcessor {
 		let rLinkHeader:RegExp = /\s*<([^>]*?)>\s*(?:;\s*(.*))?/;
 		for( let value of header.values ) {
 			let match:string[] | null = value.toString().match( rLinkHeader );
-			if( ! match ) continue;
+			if( !match ) continue;
 
 			let target:string = match[ 1 ];
 			let params:string = match[ 2 ];
@@ -64,7 +64,7 @@ export class JSONLDProcessor {
 			let result:{ [ key:string ]:string } = {};
 			while( true ) {
 				match = rParams.exec( params );
-				if( ! match ) break;
+				if( !match ) break;
 
 				result[ match[ 1 ] ] = (match[ 2 ] === undefined) ? match[ 3 ] : match[ 2 ];
 			}
@@ -76,7 +76,7 @@ export class JSONLDProcessor {
 		let previousContexts:number = Object.keys( contexts ).length;
 
 		if( Utils.isArray( input ) ) {
-			for( let element of (<Array<Object>>input) ) {
+			for( let element of (<Array<Object>> input) ) {
 				JSONLDProcessor.__findContextURLs( element, contexts, base );
 			}
 		} else if( Utils.isPlainObject( input ) ) {
@@ -91,28 +91,28 @@ export class JSONLDProcessor {
 					let contextArray:Array<string | object> = urlOrArrayOrContext;
 					for( let index:number = 0, length:number = contextArray.length; index < length; ++ index ) {
 						let urlOrContext:string | object | null = contextArray[ index ];
-						if( ! Utils.isString( urlOrContext ) ) continue;
+						if( !Utils.isString( urlOrContext ) ) continue;
 
-						let url:string = <string>urlOrContext;
+						let url:string = <string> urlOrContext;
 						url = URI.resolve( base, url );
 						if( replace ) {
 							if( Utils.isArray( contexts[ url ] ) ) {
 								contextArray.splice( index, 1, ...[].concat( contexts[ url ] ) );
-								index += (<Array<any>>contexts[ url ]).length - 1;
+								index += (<Array<any>> contexts[ url ]).length - 1;
 								length = contextArray.length;
 							} else {
 								contextArray[ index ] = contexts[ url ];
 							}
-						} else if( ! (url in contexts) ) {
+						} else if( !(url in contexts) ) {
 							contexts[ url ] = true;
 						}
 					}
 				} else if( Utils.isString( urlOrArrayOrContext ) ) {
-					let url:string = <string>urlOrArrayOrContext;
+					let url:string = <string> urlOrArrayOrContext;
 					url = URI.resolve( base, url );
 					if( replace ) {
 						input[ key ] = contexts[ url ];
-					} else if( ! (url in contexts) ) {
+					} else if( !(url in contexts) ) {
 						contexts[ url ] = null;
 					}
 				}
@@ -126,7 +126,7 @@ export class JSONLDProcessor {
 		if( Object.keys( contextsRequested ).length > MAX_CONTEXT_URLS ) return Promise.reject<void>( new InvalidJSONLDSyntaxError( "Maximum number of @context URLs exceeded." ) );
 
 		let contextToResolved:{ [ index:string ]:Object } = Object.create( null );
-		if( ! JSONLDProcessor.__findContextURLs( input, contextToResolved, base ) ) return Promise.resolve();
+		if( !JSONLDProcessor.__findContextURLs( input, contextToResolved, base ) ) return Promise.resolve();
 
 		function resolved( url:string, promise:Promise<[ any, Response ]> ):Promise<void> {
 			return promise.then( ( [ object, response ]:[ any, Response ] ) => {
@@ -136,7 +136,7 @@ export class JSONLDProcessor {
 				let contextWrapper:Object = { "@context": {} };
 
 				let header:Header | null = response.getHeader( "Content-Type" );
-				if( ! header || ! header.toString().includes( "application/ld+json" ) ) {
+				if( !header || !header.toString().includes( "application/ld+json" ) ) {
 					let link:string | undefined;
 
 					header = response.getHeader( "Link" );
@@ -174,7 +174,7 @@ export class JSONLDProcessor {
 	}
 
 	private static __isKeyword( value?:string | null ):boolean {
-		if( ! Utils.isString( value ) ) return false;
+		if( !Utils.isString( value ) ) return false;
 
 		switch( value ) {
 			case "@base":
@@ -206,10 +206,10 @@ export class JSONLDProcessor {
 	private static __isValidType( value:any ):boolean {
 		if( Utils.isString( value ) ) return true;
 
-		if( ! Utils.isArray( value ) ) return false;
+		if( !Utils.isArray( value ) ) return false;
 
-		for( let element of (<Array<any>>value) ) {
-			if( ! Utils.isString( element ) ) return false;
+		for( let element of (<Array<any>> value) ) {
+			if( !Utils.isString( element ) ) return false;
 		}
 
 		return true;
@@ -226,11 +226,11 @@ export class JSONLDProcessor {
 		let keys:string[] = Object.keys( languageMap ).sort();
 		for( let key of keys ) {
 			let values:Array<any> = languageMap[ key ];
-			if( ! Utils.isArray( values ) ) values = [ values ];
+			if( !Utils.isArray( values ) ) values = [ values ];
 
 			for( let item of values ) {
 				if( item === null ) continue;
-				if( ! Utils.isString( item ) ) throw new InvalidJSONLDSyntaxError( "Language map values must be strings." );
+				if( !Utils.isString( item ) ) throw new InvalidJSONLDSyntaxError( "Language map values must be strings." );
 
 				expandedLanguage.push( {
 					"@value": item,
@@ -242,14 +242,14 @@ export class JSONLDProcessor {
 	}
 
 	private static __getContainer( context:DigestedObjectSchema, property?:string | null ):ContainerType | null {
-		if( ! property || ! context.properties.has( property ) )
+		if( !property || !context.properties.has( property ) )
 			return null;
 
 		return context.properties.get( property )!.containerType;
 	}
 
 	private static __expandValue( context:DigestedObjectSchema, value:any | null, propertyName?:string | null ):any {
-		if( value === null || ! Utils.isDefined( value ) ) return null;
+		if( value === null || !Utils.isDefined( value ) ) return null;
 
 		if( propertyName === "@id" ) {
 			return JSONLDProcessor.__expandURI( context, value, { base: true } );
@@ -286,11 +286,11 @@ export class JSONLDProcessor {
 	}
 
 	private static __process( context:DigestedObjectSchema, element:object | null, activeProperty?:string | null, insideList?:boolean ):object | null {
-		if( element === null || ! Utils.isDefined( element ) ) return null;
+		if( element === null || !Utils.isDefined( element ) ) return null;
 
 		// Expand an element according to the context
-		if( ! Utils.isArray( element ) && ! Utils.isObject( element ) ) {
-			if( ! insideList && (activeProperty === null || activeProperty === "@graph") ) return null;
+		if( !Utils.isArray( element ) && !Utils.isObject( element ) ) {
+			if( !insideList && (activeProperty === null || activeProperty === "@graph") ) return null;
 			return JSONLDProcessor.__expandValue( context, element, activeProperty );
 		}
 
@@ -306,7 +306,7 @@ export class JSONLDProcessor {
 
 				if( insideList && (Utils.isArray( expandedItem ) || RDFList.is( expandedItem )) ) throw new InvalidJSONLDSyntaxError( "Lists of lists are not permitted." );
 
-				if( ! Utils.isArray( expandedItem ) ) expandedItem = [ expandedItem ];
+				if( !Utils.isArray( expandedItem ) ) expandedItem = [ expandedItem ];
 				expanded.push( ...expandedItem );
 			}
 			return expanded;
@@ -328,24 +328,24 @@ export class JSONLDProcessor {
 			if( key === "@context" ) continue;
 
 			let uri:string = JSONLDProcessor.__expandURI( context, key, { vocab: true } );
-			if( ! uri || ! (URI.isAbsolute( uri ) || URI.isBNodeID( uri ) || JSONLDProcessor.__isKeyword( uri )) ) continue;
+			if( !uri || !(URI.isAbsolute( uri ) || URI.isBNodeID( uri ) || JSONLDProcessor.__isKeyword( uri )) ) continue;
 
 			let value:any = element[ key ];
 
 			// Validate value
 			if( JSONLDProcessor.__isKeyword( uri ) ) {
-				if( uri === "@id" && ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@id" value must a string.` );
-				if( uri === "@type" && ! JSONLDProcessor.__isValidType( value ) ) throw new InvalidJSONLDSyntaxError( `"@type" value must a string, an array of strings.` );
-				if( uri === "@graph" && ! (Utils.isObject( value ) || Utils.isArray( value )) ) throw new InvalidJSONLDSyntaxError( `"@graph" value must not be an object or an array.` );
+				if( uri === "@id" && !Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@id" value must a string.` );
+				if( uri === "@type" && !JSONLDProcessor.__isValidType( value ) ) throw new InvalidJSONLDSyntaxError( `"@type" value must a string, an array of strings.` );
+				if( uri === "@graph" && !(Utils.isObject( value ) || Utils.isArray( value )) ) throw new InvalidJSONLDSyntaxError( `"@graph" value must not be an object or an array.` );
 				if( uri === "@value" && (Utils.isObject( value ) || Utils.isArray( value )) ) throw new InvalidJSONLDSyntaxError( `"@value" value must not be an object or an array.` );
 				if( uri === "@language" ) {
 					if( value === null ) continue;
-					if( ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@language" value must be a string.` );
-					value = (<string>value).toLowerCase();
+					if( !Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@language" value must be a string.` );
+					value = (<string> value).toLowerCase();
 				}
 
-				if( uri === "@index" && ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@index" value must be a string.` );
-				if( uri === "@reverse" && ! Utils.isObject( value ) ) throw new InvalidJSONLDSyntaxError( `"@reverse" value must be an object.` );
+				if( uri === "@index" && !Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@index" value must be a string.` );
+				if( uri === "@reverse" && !Utils.isObject( value ) ) throw new InvalidJSONLDSyntaxError( `"@reverse" value must be an object.` );
 				// TODO: Not supported
 				if( uri === "@index" || uri === "@reverse" ) throw new NotImplementedError( `The SDK does not support "@index" and "@reverse" tags.` );
 			}
@@ -369,8 +369,8 @@ export class JSONLDProcessor {
 			// Drop null values if is not a "@value" property
 			if( expandedValue === null && uri !== "@value" ) continue;
 
-			if( uri !== "@list" && ! RDFList.is( expandedValue ) && container === ContainerType.LIST ) {
-				if( ! Utils.isArray( expandedValue ) ) expandedValue = [ expandedValue ];
+			if( uri !== "@list" && !RDFList.is( expandedValue ) && container === ContainerType.LIST ) {
+				if( !Utils.isArray( expandedValue ) ) expandedValue = [ expandedValue ];
 				expandedValue = { "@list": expandedValue };
 			}
 
@@ -381,7 +381,7 @@ export class JSONLDProcessor {
 		if( "@value" in expandedElement ) {
 			if( expandedElement[ "@value" ] === null ) expandedElement = null;
 		} else if( "@type" in expandedElement ) {
-			if( ! Utils.isArray( expandedElement[ "@type" ] ) ) expandedElement[ "@type" ] = [ expandedElement[ "@type" ] ];
+			if( !Utils.isArray( expandedElement[ "@type" ] ) ) expandedElement[ "@type" ] = [ expandedElement[ "@type" ] ];
 		} else if( "@set" in expandedElement ) {
 			expandedElement = expandedElement[ "@set" ];
 		}
@@ -392,15 +392,15 @@ export class JSONLDProcessor {
 	private static __addValue( element:Object, propertyName:string, value:any, options:{ propertyIsArray:boolean } ):void {
 		if( Utils.isArray( value ) ) {
 			let values:Array<any> = value;
-			if( values.length === 0 && options.propertyIsArray && ! Utils.hasProperty( element, propertyName ) ) element[ propertyName ] = [];
+			if( values.length === 0 && options.propertyIsArray && !Utils.hasProperty( element, propertyName ) ) element[ propertyName ] = [];
 			for( let item of values ) {
 				JSONLDProcessor.__addValue( element, propertyName, item, options );
 			}
 
 		} else if( propertyName in element ) {
-			if( ! JSONLDProcessor.__hasValue( element, propertyName, value ) ) {
+			if( !JSONLDProcessor.__hasValue( element, propertyName, value ) ) {
 				let items:Array<any> = element[ propertyName ];
-				if( ! Utils.isArray( items ) ) items = element[ propertyName ] = [ items ];
+				if( !Utils.isArray( items ) ) items = element[ propertyName ] = [ items ];
 				items.push( value );
 			}
 		} else {
@@ -411,7 +411,7 @@ export class JSONLDProcessor {
 	private static __hasProperty( element:Object, propertyName:string ):boolean {
 		if( propertyName in element ) {
 			let item:any = element[ propertyName ];
-			return ! Utils.isArray( item ) || (<Array<any>>item).length > 0;
+			return !Utils.isArray( item ) || (<Array<any>> item).length > 0;
 		}
 		return false;
 	}
@@ -447,7 +447,7 @@ export class JSONLDProcessor {
 				for( let entry of items ) {
 					if( JSONLDProcessor.__compareValues( entry, value ) ) return true;
 				}
-			} else if( ! Utils.isArray( value ) ) {
+			} else if( !Utils.isArray( value ) ) {
 				return JSONLDProcessor.__compareValues( item, value );
 			}
 		}

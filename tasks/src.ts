@@ -78,13 +78,13 @@ export const cleanSRC:gulp.TaskFunction = ( done ) => {
 		return hasSrcFilePromise
 			.then( ( _hasSrcFile ) => {
 				hasSrcFile = _hasSrcFile;
-				if( ! hasSrcFile ) {
+				if( !hasSrcFile ) {
 					console.log( `File '${ file }' doesn't have a src file. Deleting it...` );
 					return promisify( fs.unlink )( file );
 				}
 			} )
 			.then( () => {
-				return ! hasSrcFile;
+				return !hasSrcFile;
 			} );
 	}
 

@@ -86,7 +86,7 @@ describe( "GeneralRegistry", () => {
 
 				const decorator:TypedModelDecorator = {
 					TYPE: "a-type",
-					isDecorated: ( object ):object is any => ! ! object,
+					isDecorated: ( object ):object is any => !!object,
 					decorate: object => object,
 				};
 
@@ -106,7 +106,7 @@ describe( "GeneralRegistry", () => {
 
 				const decorator:TypedModelDecorator = {
 					TYPE: "a-type",
-					isDecorated: ( object ):object is any => ! ! object,
+					isDecorated: ( object ):object is any => !!object,
 					decorate: object => object,
 				};
 
@@ -122,7 +122,7 @@ describe( "GeneralRegistry", () => {
 
 				const decorator:TypedModelDecorator = {
 					TYPE: "a-type",
-					isDecorated: ( object ):object is any => ! ! object,
+					isDecorated: ( object ):object is any => !!object,
 					decorate: object => object,
 				};
 
@@ -404,7 +404,7 @@ describe( "GeneralRegistry", () => {
 			it( "should add add decorators from parent registry", () => {
 				const decorator:TypedModelDecorator = {
 					TYPE: "a-type",
-					isDecorated: ( object ):object is any => ! ! object,
+					isDecorated: ( object ):object is any => !!object,
 					decorate: object => object,
 				};
 				context.registry.addDecorator( decorator );

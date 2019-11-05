@@ -45,17 +45,17 @@ export const ResponseMetadata:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ResponseMetadata`.
 	 */
-	TYPE: C["ResponseMetadata"];
+	TYPE:C["ResponseMetadata"];
 
 	/**
 	 * Schema for the {@link ResponseMetadata}.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 
 	/**
 	 * Returns true when the value provided is considered to be a {@link ResponseMetadata}.
 	 */
-	is( object:object ): object is ResponseMetadata;
+	is( object:object ):object is ResponseMetadata;
 
 } = <ResponseMetadataFactory> {
 	TYPE: C.ResponseMetadata,

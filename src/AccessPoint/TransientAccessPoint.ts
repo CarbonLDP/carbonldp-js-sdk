@@ -67,7 +67,7 @@ export const TransientAccessPoint:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AccessPoint`.
 	 */
-	TYPE: C["AccessPoint"];
+	TYPE:C["AccessPoint"];
 
 	/**
 	 * Returns true when the value provided is considered to be a {@link TransientAccessPoint}.
@@ -77,7 +77,7 @@ export const TransientAccessPoint:{
 	/**
 	 * Creates a {@link TransientAccessPoint} with the provided data.
 	 */
-	create<T extends object>( data:T & BaseAccessPoint ): T & TransientAccessPoint;
+	create<T extends object>( data:T & BaseAccessPoint ):T & TransientAccessPoint;
 
 	/**
 	 * Creates a {@link TransientAccessPoint} from the provided object.

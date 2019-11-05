@@ -1,6 +1,7 @@
 import * as Module from "./index";
-import { PlatformMetadata } from "./PlatformMetadata";
+
 import { PlatformInstance } from "./PlatformInstance";
+import { PlatformMetadata } from "./PlatformMetadata";
 
 describe( "System/index", () => {
 

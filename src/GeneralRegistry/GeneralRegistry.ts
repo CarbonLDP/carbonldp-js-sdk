@@ -90,17 +90,17 @@ export const GeneralRegistry:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link GeneralRegistry}.
 	 */
-	PROTOTYPE: GeneralRegistryFactory["PROTOTYPE"];
+	PROTOTYPE:GeneralRegistryFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link GeneralRegistry}.
 	 */
-	isDecorated( object:object): object is GeneralRegistry;
+	isDecorated( object:object ):object is GeneralRegistry;
 
 	/**
 	 * Decorates the object with the properties and methods from the {@link GeneralRegistry} prototype.
 	 */
-	decorate<T extends object>( object:T &  BaseGeneralRegistry ):T & GeneralRegistry<any>;
+	decorate<T extends object>( object:T & BaseGeneralRegistry ):T & GeneralRegistry<any>;
 
 	/**
 	 * Creates a {@link GeneralRegistry} with the provided data.
@@ -118,7 +118,7 @@ export const GeneralRegistry:{
 		},
 
 		get registry( this:GeneralRegistry ):GeneralRegistry<any> | undefined {
-			if( ! this.context || ! this.context.parentContext ) return;
+			if( !this.context || !this.context.parentContext ) return;
 			return this.context.parentContext.registry;
 		},
 		set registry( value:GeneralRegistry<any> | undefined ) {},
@@ -128,14 +128,14 @@ export const GeneralRegistry:{
 
 
 		addDecorator( this:GeneralRegistry, decorator:TypedModelDecorator ):GeneralRegistry {
-			if( ! decorator.TYPE ) throw new IllegalArgumentError( "No TYPE specified in the model decorator." );
+			if( !decorator.TYPE ) throw new IllegalArgumentError( "No TYPE specified in the model decorator." );
 
 			this.__modelDecorators.set( decorator.TYPE, decorator );
 			return this;
 		},
 
 		decorate( this:GeneralRegistry, object:{ types?:string[] } ):void {
-			if( ! object.types ) return;
+			if( !object.types ) return;
 
 			object.types
 				.filter( type => this.__modelDecorators.has( type ) )
@@ -159,8 +159,8 @@ export const GeneralRegistry:{
 		_getLocalID( this:GeneralRegistry, id:string ):string {
 			const uri:string = this.context.getObjectSchema().resolveURI( id, { base: true } );
 
-			if( ! URI.isAbsolute( uri ) || ! URI.isBaseOf( this.context.baseURI, uri ) )
-				throw new IllegalArgumentError( `"${uri}" is out of scope.` );
+			if( !URI.isAbsolute( uri ) || !URI.isBaseOf( this.context.baseURI, uri ) )
+				throw new IllegalArgumentError( `"${ uri }" is out of scope.` );
 
 			return URI.getRelativeURI( uri, this.context.baseURI );
 		},
@@ -179,7 +179,7 @@ export const GeneralRegistry:{
 		const target:T & Registry & ObjectSchemaResolver = ModelDecorator
 			.decorateMultiple( object, Registry, ObjectSchemaResolver );
 
-		if( ! target.context ) delete target.context;
+		if( !target.context ) delete target.context;
 
 		return ModelDecorator
 			.definePropertiesFrom( GeneralRegistry.PROTOTYPE, target );

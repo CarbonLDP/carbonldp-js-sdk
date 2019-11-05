@@ -70,9 +70,9 @@ export class QueryableProperty {
 	 * @param data The optional data of the property to create.
 	 */
 	getProperty( propertyName:string, data?:QueryablePropertyData ):QueryableProperty {
-		if( ! this.subProperties.has( propertyName ) ) {
-			if( ! data )
-				throw new Error( `Property "${propertyName}" doesn't exists.` );
+		if( !this.subProperties.has( propertyName ) ) {
+			if( !data )
+				throw new Error( `Property "${ propertyName }" doesn't exists.` );
 
 			const property:QueryableProperty = new QueryableProperty( data );
 
@@ -112,7 +112,7 @@ export class QueryableProperty {
 				this.definition[ key ] = newValue;
 
 			if( newValue !== oldValue ) {
-				throw new IllegalArgumentError( `Property "${propertyName}" has different "${key}": "${oldValue}", "${newValue}".` );
+				throw new IllegalArgumentError( `Property "${ propertyName }" has different "${ key }": "${ oldValue }", "${ newValue }".` );
 			}
 		}
 	}

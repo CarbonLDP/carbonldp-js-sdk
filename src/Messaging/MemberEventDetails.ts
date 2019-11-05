@@ -40,7 +40,7 @@ export const MemberEventDetails:{
 	/**
 	 * Schema for the {@link MemberEventDetails}.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 } = <MemberEventDetailsFactory> {
 	SCHEMA,
 };

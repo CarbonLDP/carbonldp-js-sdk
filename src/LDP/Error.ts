@@ -1,3 +1,5 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { Resource } from "../Resource/Resource";
@@ -6,7 +8,6 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 
 import { Map } from "./Map";
-import { ModelSchema } from "../Model";
 
 
 /**
@@ -15,7 +16,7 @@ import { ModelSchema } from "../Model";
  */
 export interface Error extends Resource {
 	/**
-	 * Code that indicates the type of error ocurred.
+	 * Code that indicates the type of error occurred.
 	 */
 	errorCode:string;
 	/**
@@ -58,12 +59,12 @@ export const Error:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#Error`.
 	 */
-	TYPE: C["Error"];
+	TYPE:C["Error"];
 
 	/**
 	 * Schema for the error.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 } = <ErrorFactory> {
 	TYPE: C.Error,
 	SCHEMA,

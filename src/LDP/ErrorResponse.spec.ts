@@ -80,7 +80,7 @@ describe( "ErrorResponse", () => {
 
 
 			it( "should return message from one error", () => {
-				const errorResponse:ErrorResponse = <any>{
+				const errorResponse:ErrorResponse = <any> {
 					statusCode: 1234567890,
 					errors: [
 						{
@@ -95,7 +95,7 @@ describe( "ErrorResponse", () => {
 			} );
 
 			it( "should return message from multiple errors", () => {
-				const errorResponse:ErrorResponse = <any>{
+				const errorResponse:ErrorResponse = <any> {
 					statusCode: 1234567890,
 					errors: [
 						{

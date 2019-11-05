@@ -47,12 +47,12 @@ export const TransientDirectContainer:{
 	/**
 	 * Type of the model, in this case: `http://www.w3.org/ns/ldp#DirectContainer`.
 	 */
-	TYPE: LDP["DirectContainer"];
+	TYPE:LDP["DirectContainer"];
 
 	/**
 	 * Returns true when the value provided is considered to be a {@link TransientDirectContainer}.
 	 */
-	is( object:object ): object is TransientDirectContainer;
+	is( object:object ):object is TransientDirectContainer;
 
 	/**
 	 * Creates a {@link TransientDirectContainer} with the provided data.
@@ -81,7 +81,7 @@ export const TransientDirectContainer:{
 	createFrom<T extends object>( object:T & BaseDirectContainer ):T & TransientDirectContainer {
 		if( TransientDirectContainer.is( object ) ) throw new IllegalArgumentError( "The base object is already a DirectContainer." );
 
-		if( ! object.hasMemberRelation ) throw new IllegalArgumentError( "The property hasMemberRelation is required." );
+		if( !object.hasMemberRelation ) throw new IllegalArgumentError( "The property hasMemberRelation is required." );
 
 		const container:T & TransientDirectContainer = TransientDocument.is( object ) ?
 			object : TransientDocument.createFrom( object );

@@ -64,22 +64,22 @@ export const AddMemberAction:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AddMemberAction`.
 	 */
-	TYPE: C["AddMemberAction"];
+	TYPE:C["AddMemberAction"];
 
 	/**
 	 * Schema for the object.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 
 	/**
 	 * Returns true when the value provided is considered to be an {@link AddMemberAction}.
 	 */
-	is( value:any ): value is AddMemberAction;
+	is( value:any ):value is AddMemberAction;
 
 	/**
 	 * Creates a {@link AddMemberAction} with the provided data.
 	 */
-	create<T extends object>( data:T & BaseAddMemberAction ): T & AddMemberAction;
+	create<T extends object>( data:T & BaseAddMemberAction ):T & AddMemberAction;
 
 	/**
 	 * Creates a {@link AddMemberAction} from the provided object.

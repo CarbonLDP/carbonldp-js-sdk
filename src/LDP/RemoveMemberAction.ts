@@ -63,22 +63,22 @@ export const RemoveMemberAction:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#RemoveMemberAction`.
 	 */
-	TYPE: C["RemoveMemberAction"];
+	TYPE:C["RemoveMemberAction"];
 
 	/**
 	 * Schema for the object.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 
 	/**
 	 * Returns true when the value provided is considered to be a {@link RemoveMemberAction}.
 	 */
-	is( value:any ): value is RemoveMemberAction;
+	is( value:any ):value is RemoveMemberAction;
 
 	/**
 	 * Creates a {@link RemoveMemberAction} with the provided data.
 	 */
-	create<T extends object>( data:T & BaseRemoveMemberAction ): T & RemoveMemberAction;
+	create<T extends object>( data:T & BaseRemoveMemberAction ):T & RemoveMemberAction;
 
 	/**
 	 * Creates a {@link RemoveMemberAction} from the provided object.

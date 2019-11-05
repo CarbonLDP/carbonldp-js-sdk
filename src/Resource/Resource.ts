@@ -75,7 +75,7 @@ export interface Resource extends RegisteredPointer {
 
 
 function __getContext( registry:$Registry<any> | Registry<any> | GeneralRegistry<any> | undefined ):Context | undefined {
-	if( ! registry ) return;
+	if( !registry ) return;
 	if( "context" in registry && registry.context ) return registry.context;
 
 	return __getContext( "$id" in registry ? registry.$registry : registry.registry );
@@ -85,7 +85,7 @@ function __resolveURI( resource:Resource, uri:string ):string {
 	if( URI.isAbsolute( uri ) ) return uri;
 
 	const context:Context | undefined = __getContext( resource.$registry );
-	if( ! context ) return uri;
+	if( !context ) return uri;
 
 	return context
 		.getObjectSchema()
@@ -109,7 +109,7 @@ export const Resource:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link Resource}.
 	 */
-	PROTOTYPE: ResourceFactory["PROTOTYPE"];
+	PROTOTYPE:ResourceFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link Resource}.
@@ -124,7 +124,7 @@ export const Resource:{
 	/**
 	 * Decorates the object with the properties and methods from the {@link Resource} prototype.
 	 */
-	decorate<T extends object>( object:T &  BaseResource ):T & Resource;
+	decorate<T extends object>( object:T & BaseResource ):T & Resource;
 
 	/**
 	 * Creates a {@link Resource} with the provided data.
@@ -207,7 +207,7 @@ export const Resource:{
 	decorate<T extends BaseResource>( object:T ):T & Resource {
 		if( Resource.isDecorated( object ) ) return object;
 
-		if( ! object.hasOwnProperty( "$registry" ) ) object.$registry = void 0;
+		if( !object.hasOwnProperty( "$registry" ) ) object.$registry = void 0;
 
 		const resource:T & RegisteredPointer = ModelDecorator
 			.decorateMultiple( object as T & { $registry:undefined }, RegisteredPointer );

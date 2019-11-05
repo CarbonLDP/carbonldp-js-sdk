@@ -64,7 +64,7 @@ export const ModelDecorator:{
 			.keys( prototype );
 
 		const shouldAddDollar:boolean = "$id" in object
-			&& ! prototypeKeys.some( key => key.startsWith( "$" ) );
+			&& !prototypeKeys.some( key => key.startsWith( "$" ) );
 
 		return prototypeKeys
 			.every( key => {
@@ -75,19 +75,19 @@ export const ModelDecorator:{
 				const definition:PropertyDescriptor | undefined = Object
 					.getOwnPropertyDescriptor( prototype, key );
 
-				if( ! definition ) return false;
+				if( !definition ) return false;
 
 
 				const targetDefinition:PropertyDescriptor | undefined = Object
 					.getOwnPropertyDescriptor( object, targetKey );
 
-				if( ! targetDefinition ) return false;
+				if( !targetDefinition ) return false;
 
 
 				if( isFunction( definition.value ) )
 					return isFunction( targetDefinition.value );
 
-				return ! targetDefinition.enumerable;
+				return !targetDefinition.enumerable;
 			} )
 			;
 	},
@@ -97,7 +97,7 @@ export const ModelDecorator:{
 			.keys( prototype );
 
 		const shouldAddDollar:boolean = "$id" in object
-			&& ! prototypeKeys.some( key => key.startsWith( "$" ) );
+			&& !prototypeKeys.some( key => key.startsWith( "$" ) );
 
 		prototypeKeys
 			.forEach( key => {
@@ -117,7 +117,7 @@ export const ModelDecorator:{
 					descriptor.writable = false;
 					descriptor.value = definition.value;
 
-				} else if( ! definition.set ) {
+				} else if( !definition.set ) {
 					descriptor.writable = true;
 					descriptor.value = object.hasOwnProperty( targetKey ) ?
 						object[ targetKey ] : definition.get ?

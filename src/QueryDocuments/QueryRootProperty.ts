@@ -13,7 +13,6 @@ import {
 } from "sparqler/tokens";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
-import { IllegalStateError } from "../Errors/IllegalStateError";
 
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 

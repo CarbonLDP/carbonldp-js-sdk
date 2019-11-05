@@ -158,7 +158,7 @@ export interface ResolvablePointer extends Pointer, $Repository {
 
 
 function __internalRevert( target:any, source:any ):void {
-	if( ! isObject( target ) || ! isObject( source ) ) return;
+	if( !isObject( target ) || !isObject( source ) ) return;
 
 	new Set<string>( [
 		...Object.keys( target ),
@@ -195,7 +195,7 @@ export const ResolvablePointer:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link ResolvablePointer}.
 	 */
-	PROTOTYPE: ResolvablePointerFactory["PROTOTYPE"];
+	PROTOTYPE:ResolvablePointerFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link ResolvablePointer}.
@@ -210,7 +210,7 @@ export const ResolvablePointer:{
 	/**
 	 * Decorates the object with the properties and methods from the {@link ResolvablePointer} prototype.
 	 */
-	decorate<T extends object>( object:T &  BaseResolvablePointer ):T & ResolvablePointer;
+	decorate<T extends object>( object:T & BaseResolvablePointer ):T & ResolvablePointer;
 } = <ResolvablePointerFactory> {
 	PROTOTYPE: {
 		get $repository():Repository | $Repository {
@@ -237,13 +237,13 @@ export const ResolvablePointer:{
 		},
 
 		$isDirty( this:ResolvablePointer ):boolean {
-			return ! ObjectUtils
+			return !ObjectUtils
 				.areEqual( this, this.$_snapshot, { arrays: true } );
 		},
 
 		$revert( this:{ types?:string[] } & ResolvablePointer ):void {
 			__internalRevert( this, this.$_snapshot );
-			if( ! this.types ) this.types = [];
+			if( !this.types ) this.types = [];
 		},
 
 

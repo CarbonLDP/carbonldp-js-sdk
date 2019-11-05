@@ -1,5 +1,3 @@
-import { HTTPError } from "./HTTPError";
-
 export * from "./ClientErrors/BadRequestError";
 export * from "./ClientErrors/ConflictError";
 export * from "./ClientErrors/ForbiddenError";

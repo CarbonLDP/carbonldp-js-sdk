@@ -41,7 +41,7 @@ export const QueryablePointer:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link QueryablePointer}.
 	 */
-	PROTOTYPE: QueryablePointerFactory["PROTOTYPE"];
+	PROTOTYPE:QueryablePointerFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link QueryablePointer}.
@@ -62,7 +62,7 @@ export const QueryablePointer:{
 		$_queryableMetadata: void 0,
 
 		$isQueried( this:QueryablePointer ):boolean {
-			return ! ! this.$_queryableMetadata;
+			return !!this.$_queryableMetadata;
 		},
 	},
 

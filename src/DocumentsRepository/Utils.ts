@@ -32,7 +32,7 @@ export function _parseURIParams<T>( this:void, resource:ResolvablePointer, uri?:
 	const _uri:string = isString( uri ) ?
 		URI.resolve( resource.$id, uri ) : resource.$id;
 
-	const _args:any[] = ! isString( uri ) ?
+	const _args:any[] = !isString( uri ) ?
 		Array.from( args! ) :
 		Array.prototype.slice.call( args, 1 );
 
@@ -51,7 +51,7 @@ export function _parseResourceParams<T>( this:void, resource:ResolvablePointer, 
 	const _resource:ResolvablePointer = Pointer.is( $resource ) ?
 		$resource : resource;
 
-	const _args:any[] = ! Pointer.is( $resource ) ?
+	const _args:any[] = !Pointer.is( $resource ) ?
 		Array.from( args! ) :
 		Array.prototype.slice.call( args, 1 );
 
@@ -66,8 +66,8 @@ export function _parseResourceParams<T>( this:void, resource:ResolvablePointer, 
 // TODO: Fix link syntax
 export function _getErrorResponseParserFn( this:void, registry:DocumentsRegistry ):( error:HTTPError | Error ) => Promise<never> {
 	return ( error:HTTPError | Error ) => {
-		if( ! ("response" in error) ) return Promise.reject( error );
-		if( ! error.response.data ) return Promise.reject( error );
+		if( !("response" in error) ) return Promise.reject( error );
+		if( !error.response.data ) return Promise.reject( error );
 
 		return new JSONLDParser()
 			.parse( error.response.data )

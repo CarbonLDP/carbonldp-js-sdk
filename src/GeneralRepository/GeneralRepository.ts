@@ -41,17 +41,17 @@ export const GeneralRepository:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link GeneralRepository}.
 	 */
-	PROTOTYPE: GeneralRepositoryFactory["PROTOTYPE"];
+	PROTOTYPE:GeneralRepositoryFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link GeneralRepository}.
 	 */
-	isDecorated( object:object): object is GeneralRepository;
+	isDecorated( object:object ):object is GeneralRepository;
 
 	/**
 	 * Decorates the object with the properties and methods from the {@link GeneralRepository} prototype.
 	 */
-	decorate<T extends object>( object:T &  BaseGeneralRepository ):T & GeneralRepository<any>;
+	decorate<T extends object>( object:T & BaseGeneralRepository ):T & GeneralRepository<any>;
 
 	/**
 	 * Creates a {@link GeneralRepository} with the provided data.

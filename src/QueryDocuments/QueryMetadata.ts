@@ -1,12 +1,13 @@
 import { VolatileResource } from "../LDP/VolatileResource";
+
 import { ModelSchema } from "../Model/ModelSchema";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
 
 import { QueryablePointer } from "./QueryablePointer";
-import { ModelTypeGuard } from "../Model";
 
 
 /**
@@ -42,17 +43,17 @@ export const QueryMetadata:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#QueryMetadata`.
 	 */
-	TYPE: C["QueryMetadata"];
+	TYPE:C["QueryMetadata"];
 
 	/**
 	 * Schema for the {@link QueryMetadata}.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 
 	/**
 	 * Returns true when the value provided is considered to be a {@link QueryMetadata}.
 	 */
-	is( object:object ): object is QueryMetadata;
+	is( object:object ):object is QueryMetadata;
 } = <QueryMetadataFactory> {
 	TYPE: C.QueryMetadata,
 	SCHEMA,

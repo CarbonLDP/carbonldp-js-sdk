@@ -13,7 +13,7 @@ export function hasFunction( object:Object, functionName:string ):boolean {
  * @param property
  */
 export function hasProperty( object:Object, property:string ):boolean {
-	if( ! object ) return false;
+	if( !object ) return false;
 	return isDefined( object[ property ] );
 }
 
@@ -23,8 +23,8 @@ export function hasProperty( object:Object, property:string ):boolean {
  * @param property
  */
 export function hasPropertyDefined( object:Object, property:string ):boolean {
-	if( ! object ) return false;
-	return ! ! Object.getOwnPropertyDescriptor( object, property );
+	if( !object ) return false;
+	return !!Object.getOwnPropertyDescriptor( object, property );
 }
 
 /**
@@ -80,7 +80,7 @@ export function isNumber( value:any ):value is number {
  * @param value
  */
 export function isInteger( value:any ):boolean {
-	if( ! isNumber( value ) ) return false;
+	if( !isNumber( value ) ) return false;
 	return value % 1 === 0;
 }
 
@@ -89,7 +89,7 @@ export function isInteger( value:any ):boolean {
  * @param value
  */
 export function isDouble( value:any ):boolean {
-	if( ! isNumber( value ) ) return false;
+	if( !isNumber( value ) ) return false;
 	return value % 1 !== 0;
 }
 
@@ -106,16 +106,16 @@ export function isDate( date:any ):date is Date {
  * @param object
  */
 export function isObject( object:any ):object is object {
-	return typeof object === "object" && (! ! object);
+	return typeof object === "object" && (!!object);
 }
 
 export function isPlainObject( object:Object ):boolean {
 	return isObject( object )
-		&& ! isArray( object )
-		&& ! isDate( object )
-		&& ! isMap( object )
-		&& ! (typeof Blob !== "undefined" && object instanceof Blob)
-		&& ! (Object.prototype.toString.call( object ) === "[object Set]");
+		&& !isArray( object )
+		&& !isDate( object )
+		&& !isMap( object )
+		&& !(typeof Blob !== "undefined" && object instanceof Blob)
+		&& !(Object.prototype.toString.call( object ) === "[object Set]");
 }
 
 /**
@@ -154,7 +154,7 @@ export function isMap( value:any ):boolean {
  * @param value
  */
 export function parseBoolean( value:string ):boolean {
-	if( ! isString( value ) ) return false;
+	if( !isString( value ) ) return false;
 
 	/* tslint:disable: no-switch-case-fall-through */
 	switch( value.toLowerCase() ) {
@@ -188,7 +188,7 @@ export class ArrayUtils {
 	static from<T>( iterator:Iterator<T> ):Array<T> {
 		let array:Array<T> = [];
 		let next:IteratorResult<T> = iterator.next();
-		while( ! next.done ) {
+		while( !next.done ) {
 			array.push( next.value );
 			next = iterator.next();
 		}
@@ -225,9 +225,9 @@ export class ObjectUtils {
 	 * @returns The extended object provided.
 	 */
 	static extend<T extends object, W extends object>( target:T, source:W, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):T & W | undefined {
-		if( ! isArray( source ) && ! isPlainObject( source ) || ! isArray( target ) && ! isPlainObject( target ) ) return;
+		if( !isArray( source ) && !isPlainObject( source ) || !isArray( target ) && !isPlainObject( target ) ) return;
 
-		(<any>source).__CarbonSDK_circularReferenceFlag = target;
+		(<any> source).__CarbonSDK_circularReferenceFlag = target;
 
 		for( const key of Object.keys( source ) ) {
 			if( isFunction( source[ key ] ) || key === "__CarbonSDK_circularReferenceFlag" ) continue;
@@ -237,7 +237,7 @@ export class ObjectUtils {
 				if( "__CarbonSDK_circularReferenceFlag" in property ) {
 					property = property.__CarbonSDK_circularReferenceFlag;
 				} else {
-					property = ! (key in target) || target[ key ].constructor !== property.constructor ?
+					property = !(key in target) || target[ key ].constructor !== property.constructor ?
 						ObjectUtils.clone( property, config ) :
 						ObjectUtils.extend( target[ key ], property, config );
 				}
@@ -251,7 +251,7 @@ export class ObjectUtils {
 			target[ key ] = property;
 		}
 
-		delete (<any>source).__CarbonSDK_circularReferenceFlag;
+		delete (<any> source).__CarbonSDK_circularReferenceFlag;
 		return target as T & W;
 	}
 
@@ -263,9 +263,9 @@ export class ObjectUtils {
 	 */
 	static clone<T extends object>( object:T, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):T | undefined {
 		let isAnArray:boolean = isArray( object );
-		if( ! isAnArray && ! isPlainObject( object ) ) return;
+		if( !isAnArray && !isPlainObject( object ) ) return;
 
-		let clone:T = <T>(isAnArray ? [] : Object.create( Object.getPrototypeOf( object ) ));
+		let clone:T = <T> (isAnArray ? [] : Object.create( Object.getPrototypeOf( object ) ));
 		return ObjectUtils.extend<T, T>( clone, object, config );
 	}
 
@@ -287,21 +287,21 @@ export class ObjectUtils {
 	 */
 	static areShallowlyEqual( object1:Object, object2:Object ):boolean {
 		if( object1 === object2 ) return true;
-		if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
+		if( !isObject( object1 ) || !isObject( object2 ) ) return false;
 
 		let properties:string[] = [];
 		for( let propertyName in object1 ) {
-			if( ! object1.hasOwnProperty( propertyName ) ) continue;
+			if( !object1.hasOwnProperty( propertyName ) ) continue;
 			if( isFunction( object1[ propertyName ] ) ) continue;
-			if( ! (propertyName in object2) ) return false;
+			if( !(propertyName in object2) ) return false;
 			if( object1[ propertyName ] !== object2[ propertyName ] ) return false;
 			properties.push( propertyName );
 		}
 
 		for( let propertyName in object2 ) {
-			if( ! object2.hasOwnProperty( propertyName ) ) continue;
+			if( !object2.hasOwnProperty( propertyName ) ) continue;
 			if( isFunction( object2[ propertyName ] ) ) continue;
-			if( ! (propertyName in object1) ) return false;
+			if( !(propertyName in object1) ) return false;
 			if( properties.indexOf( propertyName ) === - 1 ) return false;
 		}
 
@@ -311,15 +311,15 @@ export class ObjectUtils {
 
 function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean }, stack1:any[], stack2:any[], ignore:{ [ key:string ]:boolean } = {} ):boolean {
 	if( object1 === object2 ) return true;
-	if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
+	if( !isObject( object1 ) || !isObject( object2 ) ) return false;
 
-	if( isDate( object1 ) ) return (<Date>object1).getTime() === (<Date>object2).getTime();
+	if( isDate( object1 ) ) return (<Date> object1).getTime() === (<Date> object2).getTime();
 
 	let keys:string[] = ArrayUtils.joinWithoutDuplicates( Object.keys( object1 ), Object.keys( object2 ) );
 	for( let key of keys ) {
 		if( key in ignore ) continue;
 
-		if( ! (key in object1) || ! (key in object2) ) return false;
+		if( !(key in object1) || !(key in object2) ) return false;
 		if( typeof object1[ key ] !== typeof object2[ key ] ) return false;
 
 		if( isFunction( object1[ key ] ) ) continue;
@@ -339,7 +339,7 @@ function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:bool
 				stack2.push( object2[ key ] );
 			}
 
-			if( ! internalAreEqual( object1[ key ], object2[ key ], config, stack1, stack2 ) ) return false;
+			if( !internalAreEqual( object1[ key ], object2[ key ], config, stack1, stack2 ) ) return false;
 
 			if( firstIsPlainObject ) {
 				stack1.pop();
@@ -409,7 +409,7 @@ export class MapUtils {
 	 */
 	static extend<K, V>( toExtend:Map<K, V>, ...extenders:Map<K, V>[] ):Map<K, V> {
 		for( const extender of extenders ) {
-			if( ! extender ) continue;
+			if( !extender ) continue;
 			extender.forEach( ( value, key ) => toExtend.set( key, value ) );
 		}
 		return toExtend;

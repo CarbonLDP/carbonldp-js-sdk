@@ -13,6 +13,8 @@ import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelSchema } from "../Model/ModelSchema";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
+import { ObjectSchema } from "../ObjectSchema";
+
 import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
 import { QueryDocumentsBuilder } from "../QueryDocuments/QueryDocumentsBuilder";
 
@@ -33,7 +35,6 @@ import { QueryableDocumentTrait } from "./Traits/QueryableDocumentTrait";
 import { SPARQLDocumentTrait } from "./Traits/SPARQLDocumentTrait";
 
 import { TransientDocument } from "./TransientDocument";
-import { ObjectSchema } from "../ObjectSchema";
 
 
 /**
@@ -256,45 +257,45 @@ export type DocumentFactory =
  */
 export const Document:{
 
-		/**
-		 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#Document`.
-		 */
-		TYPE: C["Document"];
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#Document`.
+	 */
+	TYPE:C["Document"];
 
-		/**
-		 * Schema for the {@link Document}.
-		 */
-		SCHEMA: ObjectSchema;
+	/**
+	 * Schema for the {@link Document}.
+	 */
+	SCHEMA:ObjectSchema;
 
-		/**
-		 * The object with the properties/methods to use in the decoration of a {@link Document}.
-		 */
-		PROTOTYPE: DocumentFactory["PROTOTYPE"];
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link Document}.
+	 */
+	PROTOTYPE:DocumentFactory["PROTOTYPE"];
 
-		/**
-		 * Returns true if the object is decorated with the specific properties and methods of a {@link Document}.
-		 */
-		isDecorated( object:object): object is Document;
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link Document}.
+	 */
+	isDecorated( object:object ):object is Document;
 
-		/**
-		 * Returns true when the value provided is considered to be a {@link Document}.
-		 */
-		is( object:object ): object is Document;
+	/**
+	 * Returns true when the value provided is considered to be a {@link Document}.
+	 */
+	is( object:object ):object is Document;
 
-		/**
-		 * Decorates the object with the properties and methods from the {@link Document} prototype.
-		 */
-		decorate<T extends object>( object:T &  BaseResolvableDocument ):T & Document;
+	/**
+	 * Decorates the object with the properties and methods from the {@link Document} prototype.
+	 */
+	decorate<T extends object>( object:T & BaseResolvableDocument ):T & Document;
 
-		/**
-		 * Creates a {@link Document} with the provided data.
-		 */
-		create<T extends object>( data:T & BaseDocument ): T & TransientDocument;
+	/**
+	 * Creates a {@link Document} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseDocument ):T & TransientDocument;
 
-		/**
-		 * Creates a {@link Document} from the provided object.
-		 */
-		createFrom<T extends object>( object:T & BaseDocument ):T & TransientDocument;
+	/**
+	 * Creates a {@link Document} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseDocument ):T & TransientDocument;
 } = <DocumentFactory> {
 	TYPE: C.Document,
 	SCHEMA: {
@@ -366,7 +367,7 @@ export const Document:{
 
 			const hasRemovedFragments:boolean = this
 				.$__savedFragments
-				.some( fragment => ! this.$hasFragment( fragment.$id ) );
+				.some( fragment => !this.$hasFragment( fragment.$id ) );
 			if( hasRemovedFragments ) return true;
 
 			const hasNewFragments:boolean = this

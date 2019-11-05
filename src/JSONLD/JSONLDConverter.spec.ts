@@ -27,7 +27,7 @@ describe( "JSONLDConverter", () => {
 
 		it( "should accept custom serializers", () => {
 			const customSerializers:Map<string, Serializer> = new Map();
-			customSerializers.set( "http://example.com/ns#my-custom-type", <any>{} );
+			customSerializers.set( "http://example.com/ns#my-custom-type", <any> {} );
 
 			const jsonldConverter:JSONLDConverter = new JSONLDConverter( customSerializers );
 			expect( jsonldConverter ).toEqual( jasmine.any( JSONLDConverter ) );
@@ -62,7 +62,7 @@ describe( "JSONLDConverter", () => {
 		it( "should compact expanded object", () => {
 			const pointerLibrary:PointerLibrary = {
 				hasPointer: ( id:string ):boolean => {
-					return ! ! id;
+					return !!id;
 				},
 				getPointer: ( id:string ):Pointer => {
 					return Pointer.createFrom( { $id: id } );

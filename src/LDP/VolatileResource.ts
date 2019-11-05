@@ -34,7 +34,7 @@ export const VolatileResource:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#VolatileResource`.
 	 */
-	TYPE: C["VolatileResource"];
+	TYPE:C["VolatileResource"];
 
 	/**
 	 * Returns true when the value provided is considered to be a {@link VolatileResource}.
@@ -44,7 +44,7 @@ export const VolatileResource:{
 	/**
 	 * Creates a {@link VolatileResource} with the provided data.
 	 */
-	create<T extends object>( data?:T ): T & VolatileResource;
+	create<T extends object>( data?:T ):T & VolatileResource;
 
 	/**
 	 * Creates a {@link VolatileResource} from the provided object.

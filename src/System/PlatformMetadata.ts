@@ -1,11 +1,12 @@
 import { Document } from "../Document/Document";
 
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
 
 import { PlatformInstance } from "./PlatformInstance";
-import { ModelSchema } from "../Model";
 
 
 /**
@@ -40,12 +41,12 @@ export const PlatformMetadata:{
 	/**
 	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#PlatformMetadata`.
 	 */
-	TYPE: C["Platform"];
+	TYPE:C["Platform"];
 
 	/**
 	 * Schema for the {@link PlatformMetadata}.
 	 */
-	SCHEMA: ObjectSchema;
+	SCHEMA:ObjectSchema;
 } = <PlatformMetadataFactory> {
 	TYPE: C.Platform,
 	SCHEMA,

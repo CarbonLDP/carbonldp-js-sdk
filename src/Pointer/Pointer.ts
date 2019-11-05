@@ -59,55 +59,55 @@ export interface PointerFactory extends ModelPrototype<Pointer>
  * Constant with the factory, decorator and/or utils for a {@link Pointer} object.
  */
 export const Pointer:{
-		/**
-		 * The object with the properties/methods to use in the decoration of a {@link Pointer}.
-		 */
-		PROTOTYPE: PointerFactory["PROTOTYPE"];
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link Pointer}.
+	 */
+	PROTOTYPE:PointerFactory["PROTOTYPE"];
 
-		/**
-		 * Returns true if the object is decorated with the specific properties and methods of a {@link Pointer}.
-		 */
-		isDecorated( object:object ):object is Pointer;
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link Pointer}.
+	 */
+	isDecorated( object:object ):object is Pointer;
 
-		/**
-		 * Returns true when the value provided is considered to be a {@link Pointer}.
-		 */
-		is( value:any ):value is Pointer;
+	/**
+	 * Returns true when the value provided is considered to be a {@link Pointer}.
+	 */
+	is( value:any ):value is Pointer;
 
-		/**
-		 * Decorates the object with the properties and methods from the {@link Pointer} prototype.
-		 */
-		decorate<T extends object>( object:T ):T & Pointer;
+	/**
+	 * Decorates the object with the properties and methods from the {@link Pointer} prototype.
+	 */
+	decorate<T extends object>( object:T ):T & Pointer;
 
-		/**
-		 * Creates a pointer object with the ID provided.
-		 * @param data The optional data to use in the pointer creation.
-		 */
-		create<T extends object>( data?:T & BasePointer ):T & Pointer;
+	/**
+	 * Creates a pointer object with the ID provided.
+	 * @param data The optional data to use in the pointer creation.
+	 */
+	create<T extends object>( data?:T & BasePointer ):T & Pointer;
 
-		/**
-		 * Creates a {@link Pointer} from the provided object.
-		 */
-		createFrom<T extends object>( object:T & BasePointer ):T & Pointer;
+	/**
+	 * Creates a {@link Pointer} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BasePointer ):T & Pointer;
 
-		/**
-		 * Checks if the objects refer to the same resource by its ID.
-		 * @param pointer1
-		 * @param pointer2
-		 */
-		areEqual( pointer1:Pointer, pointer2:Pointer ):boolean;
+	/**
+	 * Checks if the objects refer to the same resource by its ID.
+	 * @param pointer1
+	 * @param pointer2
+	 */
+	areEqual( pointer1:Pointer, pointer2:Pointer ):boolean;
 
-		/**
-		 * Extracts the IDs of all the pointers provided.
-		 * @param pointers The array of pointers to obtain their IDs.
-		 */
-		getIDs( pointers:Pointer[] ):string[];
+	/**
+	 * Extracts the IDs of all the pointers provided.
+	 * @param pointers The array of pointers to obtain their IDs.
+	 */
+	getIDs( pointers:Pointer[] ):string[];
 
-		/**
-		 * Extract the ID of the pointer provided.
-		 * @param pointerOrIRI Pointer to extract its ID, or the URI that will be immediately returned.
-		 */
-		getID( pointerOrIRI:Pointer | string ):string;
+	/**
+	 * Extract the ID of the pointer provided.
+	 * @param pointerOrIRI Pointer to extract its ID, or the URI that will be immediately returned.
+	 */
+	getID( pointerOrIRI:Pointer | string ):string;
 } = <PointerFactory> {
 	PROTOTYPE: {
 		get $id():string { return ""; },

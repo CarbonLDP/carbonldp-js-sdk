@@ -59,7 +59,7 @@ export class QueryResultCompacter {
 	 * @param targetDocuments The main resources that will be set as the roots of the compaction.
 	 */
 	compactDocuments<T extends object>( rdfDocuments:RDFDocument[], targetDocuments?:string[] ):(T & Document)[] {
-		if( ! targetDocuments )
+		if( !targetDocuments )
 			targetDocuments = rdfDocuments.map( x => x[ "@id" ] );
 
 		// Map that stores all the resources provided to be compacted
@@ -69,7 +69,7 @@ export class QueryResultCompacter {
 			const document:Document = this.registry.getPointer( rdfDocument[ "@id" ], true );
 
 			// Temporally set as a partial document
-			if( ! document.$_queryableMetadata ) {
+			if( !document.$_queryableMetadata ) {
 				document.$_queryableMetadata = new QueryableRootProperty( {
 					uri: document.$id,
 					propertyType: QueryPropertyType.PARTIAL,
@@ -111,7 +111,7 @@ export class QueryResultCompacter {
 		// Compact starting form the target documents
 		targetDocuments.forEach( documentID => {
 			const compactionNode:CompactionNode | undefined = compactionMap.get( documentID );
-			if( ! compactionNode ) throw new IllegalArgumentError( `Invalid data provided.` );
+			if( !compactionNode ) throw new IllegalArgumentError( `Invalid data provided.` );
 
 			const queryProperty:QueryProperty = this.queryContainer._queryProperty;
 			const metadataProperty:QueryableProperty = compactionNode.resource.$_queryableMetadata!;
@@ -121,7 +121,7 @@ export class QueryResultCompacter {
 
 		compactionMap.forEach( ( { node, resource, document, isCompacted } ) => {
 			// Compact missing resources
-			if( ! isCompacted ) {
+			if( !isCompacted ) {
 				const targetNode:RDFNode = {
 					...node,
 					// Avoid compaction of c:document
@@ -153,12 +153,12 @@ export class QueryResultCompacter {
 				// Extract checksum to eTag
 
 				const rawValues:RDFNode[ any ] | undefined = node[ C.checksum ];
-				if( ! rawValues || typeof rawValues === "string" ) return;
+				if( !rawValues || typeof rawValues === "string" ) return;
 
 				const [ eTag ] = RDFNode.getPropertyLiterals( rawValues, XSD.string )!;
-				if( ! eTag ) return;
+				if( !eTag ) return;
 
-				resource.$eTag = `"${eTag}"`;
+				resource.$eTag = `"${ eTag }"`;
 				resource.$_resolved = true;
 			} )
 		;
@@ -187,9 +187,9 @@ export class QueryResultCompacter {
 		};
 
 		this.jsonldConverter
-			.update( resource, targetNode, targetSchema, pointerLibrary, ! queryProperty._isComplete() );
+			.update( resource, targetNode, targetSchema, pointerLibrary, !queryProperty._isComplete() );
 
-		if( ! queryProperty._isPartial() ) {
+		if( !queryProperty._isPartial() ) {
 			resource.$_queryableMetadata = void 0;
 			return;
 		}
@@ -207,7 +207,7 @@ export class QueryResultCompacter {
 			const subMetadataProperty:QueryableProperty = metadataProperty
 				.getProperty( propertyName, subQueryProperty );
 
-			if( ! resource.hasOwnProperty( propertyName ) ) return;
+			if( !resource.hasOwnProperty( propertyName ) ) return;
 			if( subQueryProperty.propertyType === void 0 ) return;
 
 			const values:any[] = Array.isArray( resource[ propertyName ] )
@@ -215,10 +215,10 @@ export class QueryResultCompacter {
 				: [ resource[ propertyName ] ];
 
 			values.forEach( value => {
-				if( ! Pointer.is( value ) ) return;
+				if( !Pointer.is( value ) ) return;
 
 				const subCompactionNode:CompactionNode | undefined = compactionMap.get( value.$id );
-				if( ! subCompactionNode ) throw new IllegalArgumentError( `Invalid data provided.` );
+				if( !subCompactionNode ) throw new IllegalArgumentError( `Invalid data provided.` );
 
 
 				if( subCompactionNode.resource.$_queryableMetadata ) {
@@ -226,7 +226,7 @@ export class QueryResultCompacter {
 					subCompactionNode.resource.$_queryableMetadata
 						.mergeData( propertyName, subMetadataProperty );
 
-					if( subCompactionNode.document === document && ! subCompactionNode.isCompacted ) {
+					if( subCompactionNode.document === document && !subCompactionNode.isCompacted ) {
 						// May be floating, so add to parent
 						metadataProperty
 							.setProperty( propertyName, subCompactionNode.resource.$_queryableMetadata );

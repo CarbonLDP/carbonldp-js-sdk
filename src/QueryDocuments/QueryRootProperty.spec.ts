@@ -1,10 +1,10 @@
 import { IRIRefToken } from "sparqler/tokens";
 
-import { createMockContext, createMockDigestedSchemaProperty } from "../../test/helpers/mocks";
+import { createMockContext } from "../../test/helpers/mocks";
 
 import { AbstractContext } from "../Context/AbstractContext";
+
 import { IllegalActionError } from "../Errors/IllegalActionError";
-import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 
 import { QueryContainer } from "./QueryContainer";
 import { QueryPropertyType } from "./QueryPropertyType";

@@ -175,17 +175,17 @@ export const Fragment:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link Fragment}.
 	 */
-	PROTOTYPE: FragmentFactory["PROTOTYPE"];
+	PROTOTYPE:FragmentFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link Fragment}.
 	 */
-	isDecorated( object:object): object is Fragment;
+	isDecorated( object:object ):object is Fragment;
 
 	/**
 	 * Decorates the object with the properties and methods from the {@link Fragment} prototype.
 	 */
-	decorate<T extends object>( object:T &  BaseResolvableFragment ):T & Fragment;
+	decorate<T extends object>( object:T & BaseResolvableFragment ):T & Fragment;
 
 	/**
 	 * Creates a {@link Fragment} with the provided data.

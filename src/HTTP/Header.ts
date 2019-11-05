@@ -17,7 +17,7 @@ export class Header {
 		const headers:Map<string, Header> = new Map<string, Header>();
 
 		headersString.split( /\r?\n/ ).forEach( strHeader => {
-			if( ! strHeader.trim() ) return;
+			if( !strHeader.trim() ) return;
 
 			const parts:string[] = strHeader.split( ":" );
 			if( parts.length < 2 ) throw new IllegalArgumentError( "The header couldn't be parsed." );
@@ -36,7 +36,7 @@ export class Header {
 	}
 
 	private static __parseValues( strValues:string | undefined ):string[] {
-		if( ! strValues ) return [];
+		if( !strValues ) return [];
 
 		return strValues
 			.split( "," )

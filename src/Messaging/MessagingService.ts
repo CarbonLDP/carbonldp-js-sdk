@@ -93,9 +93,9 @@ export class MessagingService {
 	 * @param onError Callback to be invoked when a error has occurred in the connection or server. If none is provided, the errors will be broadcasted to every connected subscription.
 	 */
 	reconnect( onConnect?:() => void, onError:( error:Error ) => void = this.__broadcastError.bind( this ) ):void {
-		if( ! this._client ) this._attempts = 0;
+		if( !this._client ) this._attempts = 0;
 		else if( this._client.connected ) this._client.disconnect();
-		if( ! this._subscriptionsMap ) this._subscriptionsMap = new Map();
+		if( !this._subscriptionsMap ) this._subscriptionsMap = new Map();
 
 		const sock:WebSocket = new SockJS( this.context.resolve( "/broker" ) );
 		this._client = webstomp.over( sock, {
@@ -122,7 +122,7 @@ export class MessagingService {
 				this._subscriptionsQueue.length = 0;
 				errorMessage = `CloseEventError: ${ errorFrameOrEvent.reason }`;
 			} else if( "body" in errorFrameOrEvent ) {
-				if( ! this._client || ! this._client.connected && canReconnect ) return;
+				if( !this._client || !this._client.connected && canReconnect ) return;
 				errorMessage = `${ errorFrameOrEvent.headers[ "message" ] }: ${ errorFrameOrEvent.body.trim() }`;
 			} else {
 				errorMessage = `Unknown error: ${ errorFrameOrEvent }`;
@@ -138,8 +138,8 @@ export class MessagingService {
 	 * @param onError Callback to be invoked when a error has occurred in the subscription.
 	 */
 	subscribe( destination:string, onEvent:( data:EventMessage ) => void, onError?:( error:Error ) => void ):void {
-		if( ! this._client ) this.connect();
-		if( ! this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
+		if( !this._client ) this.connect();
+		if( !this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
 		const callbacksMap:Map<( data:EventMessage ) => void, Subscription> = this._subscriptionsMap.get( destination )!;
 
 		if( callbacksMap.has( onEvent ) ) return;
@@ -160,10 +160,10 @@ export class MessagingService {
 	 * @param onEvent Callback used in the subscription to remove.
 	 */
 	unsubscribe( destination:string, onEvent:( data:EventMessage ) => void ):void {
-		if( ! this._client || ! this._subscriptionsMap || ! this._subscriptionsMap.has( destination ) ) return;
+		if( !this._client || !this._subscriptionsMap || !this._subscriptionsMap.has( destination ) ) return;
 
 		const callbackMap:Map<( data:EventMessage ) => void, Subscription> = this._subscriptionsMap.get( destination )!;
-		if( ! callbackMap.has( onEvent ) ) return;
+		if( !callbackMap.has( onEvent ) ) return;
 
 		const subscriptionID:string = callbackMap.get( onEvent )!.id;
 		callbackMap.delete( onEvent );
@@ -174,13 +174,13 @@ export class MessagingService {
 	}
 
 	private __broadcastError( error:Error ):void {
-		if( ! this._subscriptionsMap ) return;
+		if( !this._subscriptionsMap ) return;
 
 		this._subscriptionsMap
 			.forEach( callbacksMap => callbacksMap
 				.forEach( subscription => {
 					// TODO: Warn error not been broadcasted
-					if( ! subscription.errorCallback ) return;
+					if( !subscription.errorCallback ) return;
 
 					subscription.errorCallback( error );
 				} )
@@ -202,7 +202,7 @@ export class MessagingService {
 						.find( EventMessage.is );
 
 					// TODO: Implement specific error
-					if( ! eventMessage )
+					if( !eventMessage )
 						throw new Error( "No message was returned by the notification." );
 
 					return eventMessage;
@@ -213,7 +213,7 @@ export class MessagingService {
 	}
 
 	private __saveSubscriptions():void {
-		if( this._subscriptionsQueue.length || ! this._subscriptionsMap ) return;
+		if( this._subscriptionsQueue.length || !this._subscriptionsMap ) return;
 		this._subscriptionsMap.forEach( ( callbackMap, destination ) => callbackMap.forEach( ( subscription, eventCallback ) => {
 			const subscribeTo:() => void = this.__makeSubscription( subscription.id, destination, eventCallback, subscription.errorCallback );
 			this._subscriptionsQueue.push( subscribeTo );

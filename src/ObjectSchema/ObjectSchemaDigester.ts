@@ -32,7 +32,7 @@ export class ObjectSchemaDigester {
 	 */
 	static digestSchema( schemas:ObjectSchema[] ):DigestedObjectSchema;
 	static digestSchema( schemas:ObjectSchema | ObjectSchema[] ):DigestedObjectSchema {
-		if( ! Array.isArray( schemas ) ) return ObjectSchemaDigester._digestSchema( schemas );
+		if( !Array.isArray( schemas ) ) return ObjectSchemaDigester._digestSchema( schemas );
 
 		const digestedSchemas:DigestedObjectSchema[] = schemas
 			.map( schema => ObjectSchemaDigester._digestSchema( schema ) );
@@ -53,7 +53,7 @@ export class ObjectSchemaDigester {
 			const uri:any = definition[ "@id" ];
 
 			if( URI.isPrefixed( name ) ) throw new IllegalArgumentError( "A prefixed property cannot have assigned another URI." );
-			if( ! Utils.isString( uri ) ) throw new IllegalArgumentError( "@id needs to point to a string" );
+			if( !Utils.isString( uri ) ) throw new IllegalArgumentError( "@id needs to point to a string" );
 
 			digestedDefinition.uri = uri;
 		} else {
@@ -62,7 +62,7 @@ export class ObjectSchemaDigester {
 
 		if( "@type" in definition ) {
 			let type:any = definition[ "@type" ];
-			if( ! Utils.isString( type ) ) throw new IllegalArgumentError( "@type needs to point to a string" );
+			if( !Utils.isString( type ) ) throw new IllegalArgumentError( "@type needs to point to a string" );
 
 			if( type === "@id" || type === "@vocab" ) {
 				digestedDefinition.literal = false;
@@ -78,7 +78,7 @@ export class ObjectSchemaDigester {
 
 		if( "@language" in definition ) {
 			const language:string | undefined | null = definition[ "@language" ];
-			if( language !== null && ! Utils.isString( language ) ) throw new IllegalArgumentError( "@language needs to point to a string or null." );
+			if( language !== null && !Utils.isString( language ) ) throw new IllegalArgumentError( "@language needs to point to a string or null." );
 
 			digestedDefinition.literal = true;
 			digestedDefinition.language = language;
@@ -128,11 +128,11 @@ export class ObjectSchemaDigester {
 		const digestedSchema:DigestedObjectSchema = new DigestedObjectSchema();
 
 		for( const propertyName of [ "@base", "@vocab" ] as [ "@base", "@vocab" ] ) {
-			if( ! (propertyName in schema) ) continue;
+			if( !(propertyName in schema) ) continue;
 			const value:string | undefined | null = schema[ propertyName ];
 
-			if( value !== null && ! Utils.isString( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
-			if( (propertyName === "@vocab" && value === "") || (value && ! URI.isAbsolute( value ) && ! URI.isBNodeID( value )) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
+			if( value !== null && !Utils.isString( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
+			if( (propertyName === "@vocab" && value === "") || (value && !URI.isAbsolute( value ) && !URI.isBNodeID( value )) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
 
 			digestedSchema[ propertyName.substr( 1 ) ] = value;
 		}
@@ -140,12 +140,12 @@ export class ObjectSchemaDigester {
 
 		if( "@language" in schema ) {
 			const value:string | undefined | null = schema[ "@language" ];
-			if( value !== null && ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `The value of '@language' must be a string or null.` );
+			if( value !== null && !Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `The value of '@language' must be a string or null.` );
 			digestedSchema.language = value;
 		}
 
 		for( const propertyName in schema ) {
-			if( ! schema.hasOwnProperty( propertyName ) ) continue;
+			if( !schema.hasOwnProperty( propertyName ) ) continue;
 
 			if( propertyName === "@reverse" ) continue;
 			if( propertyName === "@index" ) continue;
@@ -159,7 +159,7 @@ export class ObjectSchemaDigester {
 				if( URI.isPrefixed( propertyName ) ) throw new IllegalArgumentError( "A prefixed property cannot be equal to another URI." );
 				digestedSchema.prefixes.set( propertyName, propertyValue );
 
-			} else if( ! ! propertyValue && Utils.isObject( propertyValue ) ) {
+			} else if( !!propertyValue && Utils.isObject( propertyValue ) ) {
 				const definition:DigestedObjectSchemaProperty = ObjectSchemaDigester.digestProperty( propertyName, propertyValue );
 				digestedSchema.properties.set( propertyName, definition );
 

@@ -234,7 +234,7 @@ export const EventEmitterDocumentsRepositoryTrait:{
 	/**
 	 * The object with the properties/methods to use in the decoration of a {@link EventEmitterDocumentsRepositoryTrait}.
 	 */
-	PROTOTYPE: EventEmitterDocumentsRepositoryTraitFactory["PROTOTYPE"];
+	PROTOTYPE:EventEmitterDocumentsRepositoryTraitFactory["PROTOTYPE"];
 
 	/**
 	 * Returns true if the object is decorated with the specific properties and methods of a {@link EventEmitterDocumentsRepositoryTrait}.
@@ -244,7 +244,7 @@ export const EventEmitterDocumentsRepositoryTrait:{
 	/**
 	 * Decorates the object with the properties and methods from the {@link EventEmitterDocumentsRepositoryTrait} prototype.
 	 */
-	decorate<T extends object>( object:T &  BaseDocumentsRepository ):T & EventEmitterDocumentsRepositoryTrait;
+	decorate<T extends object>( object:T & BaseDocumentsRepository ):T & EventEmitterDocumentsRepositoryTrait;
 
 } = <EventEmitterDocumentsRepositoryTraitFactory> {
 	PROTOTYPE: {
@@ -254,7 +254,7 @@ export const EventEmitterDocumentsRepositoryTrait:{
 				this.context.messaging.subscribe( destination, onEvent, onError );
 
 			} catch( error ) {
-				if( ! onError ) throw error;
+				if( !onError ) throw error;
 				onError( error );
 			}
 		},
@@ -265,7 +265,7 @@ export const EventEmitterDocumentsRepositoryTrait:{
 				this.context.messaging.unsubscribe( destination, onEvent );
 
 			} catch( error ) {
-				if( ! onError ) throw error;
+				if( !onError ) throw error;
 				onError( error );
 			}
 		},
@@ -282,7 +282,7 @@ export const EventEmitterDocumentsRepositoryTrait:{
 				this.context.messaging.subscribe( destination, onEventWrapper, onError );
 
 			} catch( error ) {
-				if( ! onError ) throw error;
+				if( !onError ) throw error;
 				onError( error );
 			}
 		},

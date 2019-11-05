@@ -26,7 +26,7 @@ describe( "QueryProperty", () => {
 	let queryContainer:QueryContainer;
 	beforeEach( () => {
 		context = createMockContext( { settings: { vocabulary: "https://example.com/vocab#" } } );
-		context.extendObjectSchema(  "Type", {
+		context.extendObjectSchema( "Type", {
 			"property": {
 				"@id": "https://example.com/ns#property",
 			},

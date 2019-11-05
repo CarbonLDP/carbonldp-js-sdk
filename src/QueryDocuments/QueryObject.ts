@@ -31,6 +31,6 @@ export class QueryObject {
 	 * Returns the SPARQL string representation of the object.
 	 */
 	toString():string {
-		return `${this._resource}`;
+		return `${ this._resource }`;
 	}
 }
