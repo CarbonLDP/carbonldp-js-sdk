@@ -238,7 +238,7 @@ export const ResolvablePointer:{
 
 		$isDirty( this:ResolvablePointer ):boolean {
 			return !ObjectUtils
-				.areEqual( this, this.$_snapshot, { arrays: true } );
+				.areEqual( this, this.$_snapshot, { arrays: true, equalities: { nullable: true, wrapped: true } } );
 		},
 
 		$revert( this:{ types?:string[] } & ResolvablePointer ):void {

@@ -955,6 +955,72 @@ describe( "ObjectUtils", ():void => {
 			expect( result ).toBe( false );
 		} );
 
+
+		it( "should return true when equality nullable with property undefined", () => {
+			const firstObject:object = {};
+			const secondObject:object = { property: undefined };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { equalities: { nullable: true } } );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return true when equality nullable with property null", () => {
+			const firstObject:object = {};
+			const secondObject:object = { property: null };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { equalities: { nullable: true } } );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return true when equality nullable with property empty array", () => {
+			const firstObject:object = {};
+			const secondObject:object = { property: [] };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { equalities: { nullable: true } } );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return true when equality nullable with property undefined and null", () => {
+			const firstObject:object = { property: undefined };
+			const secondObject:object = { property: null };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { equalities: { nullable: true } } );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return true when equality nullable with property undefined and empty array", () => {
+			const firstObject:object = { property: undefined };
+			const secondObject:object = { property: [] };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { equalities: { nullable: true } } );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return true when equality nullable with property null and empty array", () => {
+			const firstObject:object = { property: null };
+			const secondObject:object = { property: [] };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { equalities: { nullable: true } } );
+			expect( result ).toBe( true );
+		} );
+
+
+		it( "should return true when equality nullable with single property and wrapped property", () => {
+			const firstObject:object = { property: "foo" };
+			const secondObject:object = { property: [ "foo" ] };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { equalities: { wrapped: true } } );
+			expect( result ).toBe( true );
+		} );
+
+		it( "should return true when equality nullable with wrapped property and single property", () => {
+			const firstObject:object = { property: [ "foo" ] };
+			const secondObject:object = { property: "foo" };
+
+			const result:boolean = ObjectUtils.areEqual( firstObject, secondObject, { equalities: { wrapped: true } } );
+			expect( result ).toBe( true );
+		} );
+
 	} );
 
 	describe( "ObjectUtils.areShallowlyEqual", ():void => {

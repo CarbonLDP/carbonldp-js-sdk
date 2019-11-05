@@ -276,7 +276,7 @@ export class ObjectUtils {
 	 * @param config Object that indicates if the arrays or the objects must have a deep comparison or not. By default the comparison is shallow.
 	 * @param ignore Object that indicates there is any property to ignore.
 	 */
-	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):boolean {
+	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean, equalities?:{ nullable?:boolean, wrapped?:boolean } } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):boolean {
 		return internalAreEqual( object1, object2, config, [ object1 ], [ object2 ], ignore );
 	}
 
@@ -309,7 +309,7 @@ export class ObjectUtils {
 	}
 }
 
-function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean }, stack1:any[], stack2:any[], ignore:{ [ key:string ]:boolean } = {} ):boolean {
+function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean, equalities?:{ nullable?:boolean, wrapped?:boolean } }, stack1:any[], stack2:any[], ignore:{ [ key:string ]:boolean } = {} ):boolean {
 	if( object1 === object2 ) return true;
 	if( !isObject( object1 ) || !isObject( object2 ) ) return false;
 
@@ -319,7 +319,17 @@ function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:bool
 	for( let key of keys ) {
 		if( key in ignore ) continue;
 
+		if( config.equalities && config.equalities.nullable ) {
+			if( _isNothing( object1[ key ] ) && _isNothing( object2[ key ] ) ) continue;
+		}
+
 		if( !(key in object1) || !(key in object2) ) return false;
+
+		if( config.equalities && config.equalities.wrapped ) {
+			const unwrapped1:unknown = _unwrapSingle( object1[ key ] );
+			const unwrapped2:unknown = _unwrapSingle( object2[ key ] );
+			if( unwrapped1 === unwrapped2 ) continue;
+		}
 		if( typeof object1[ key ] !== typeof object2[ key ] ) return false;
 
 		if( isFunction( object1[ key ] ) ) continue;
@@ -351,6 +361,19 @@ function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:bool
 	}
 
 	return true;
+}
+
+function _isNothing( value:unknown ):boolean {
+	return !_isExistingValue( value )
+		|| (Array.isArray( value ) && value.length === 0)
+		;
+}
+
+function _unwrapSingle( value:unknown ):unknown {
+	if( Array.isArray( value ) && value.length === 1 )
+		return value[ 0 ];
+
+	return value;
 }
 
 /**
