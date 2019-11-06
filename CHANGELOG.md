@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 - [#378](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/378) - Allow pagination and ordering of multiple `$get()` documents
 	- The pagination sub-select (that may repeat the entire query) will now only be added when pagination (`limit()`, `offset()`) and/or sorting (`orderBy()`) are used.
 	  This also applies to the `$getChildren()` and `$getMembers()` methods
+- [#397](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/397) - Update to sparqler@0.7
 	  
 ### Fixed
 
