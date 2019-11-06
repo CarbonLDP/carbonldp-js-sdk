@@ -1,4 +1,5 @@
-import { isAbsolute } from "sparqler/iri";
+import { isAbsolute } from "sparqler/core";
+
 import { Context } from "../Context/Context";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 

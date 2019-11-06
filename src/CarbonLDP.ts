@@ -1,4 +1,4 @@
-import { hasProtocol } from "sparqler/iri";
+import { hasProtocol } from "sparqler/core";
 
 import { AccessPoint } from "./AccessPoint/AccessPoint";
 import { TransientAccessPoint } from "./AccessPoint/TransientAccessPoint";

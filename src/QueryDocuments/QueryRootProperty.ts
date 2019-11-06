@@ -1,4 +1,6 @@
 import {
+	BracketedExpressionToken,
+	ExplicitOrderConditionToken,
 	IRIToken,
 	LimitToken,
 	LiteralToken,
@@ -81,7 +83,7 @@ export class QueryRootProperty extends QueryProperty {
 
 	protected __createSelfPattern():PatternToken {
 		const subSelect:SubSelectToken = new SubSelectToken( "DISTINCT" )
-			.addVariable( this.variable )
+			.addProjection( this.variable )
 			.addPattern( ...this.__createRootPatterns() );
 
 		// Add non-optional properties that may affect pagination
@@ -121,7 +123,7 @@ export class QueryRootProperty extends QueryProperty {
 		const hasMemberRelation:VariableToken = this.queryContainer.getVariable( "hasMemberRelation" );
 
 		const memberRelations:PatternToken = new SubSelectToken()
-			.addVariable( membershipResource, hasMemberRelation )
+			.addProjection( membershipResource, hasMemberRelation )
 			.addPattern( new SubjectToken( this.containerIRI! )
 				.addProperty( new PropertyToken( this.queryContainer.compactIRI( LDP.membershipResource ) )
 					.addObject( membershipResource )
@@ -172,12 +174,12 @@ export class QueryRootProperty extends QueryProperty {
 		if( !targetProperty ) throw new IllegalArgumentError( `Property "${ this.order.path }" hasn't been defined.` );
 
 		const identifier:VariableToken | IRIToken | LiteralToken = targetProperty.identifier;
-		const constraint:VariableToken | string = identifier.token === "variable"
-			? identifier
-			: `( ${ identifier } )`;
+		const constraint:OrderToken["conditions"][any] = this.order.flow
+			? new ExplicitOrderConditionToken( this.order.flow, new BracketedExpressionToken( identifier ) )
+			: identifier.token === "variable" ? identifier : new BracketedExpressionToken( identifier );
 
 		// Add modifier
-		subSelect.addModifier( new OrderToken( constraint, this.order.flow ) );
+		subSelect.addModifier( new OrderToken( [ constraint ] ) );
 
 		const orderPatterns:PatternToken[] = this.__createSubPatternsFrom( targetProperty );
 		// Add patterns to the sub-select that do not exists

@@ -1,4 +1,4 @@
-import { isBNodeLabel } from "sparqler/iri";
+import { isBNodeLabel } from "sparqler/core";
 import {
 	BlankNodeToken,
 	CollectionToken,

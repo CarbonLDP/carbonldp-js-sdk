@@ -44,6 +44,7 @@ import { PointerType } from "../../ObjectSchema/PointerType";
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
 import { QueryDocumentBuilder } from "../../QueryDocuments/QueryDocumentBuilder";
 import { QueryPropertyType } from "../../QueryDocuments/QueryPropertyType";
+import { _getRawExpression } from "../../QueryDocuments/Utils";
 
 import { BaseResource } from "../../Resource/BaseResource";
 
@@ -6970,7 +6971,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						)
 
 						.addPattern( new SubSelectToken( "DISTINCT" )
-							.addVariable( variableHelper( "child" ) )
+							.addProjection( variableHelper( "child" ) )
 							.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
 								.addProperty( new PropertyToken( new IRIRefToken( LDP.contains ) )
 									.addObject( variableHelper( "child" ) )
@@ -6989,7 +6990,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 									.addObject( new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) )
 								)
 							)
-							.addModifier( new OrderToken( variableHelper( "child__property2" ) ) )
+							.addModifier( new OrderToken( [ variableHelper( "child__property2" ) ] ) )
 							.addModifier( new LimitToken( 10 ) )
 							.addModifier( new OffsetToken( 5 ) )
 						)
@@ -7009,7 +7010,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 										)
 									)
 								)
-								.addPattern( new FilterToken( "datatype( ?child__property1 ) = xsd:string" ) )
+								.addPattern( new FilterToken( _getRawExpression( "datatype( ?child__property1 ) = xsd:string" ) ) )
 						)
 						.addPattern( new GraphToken( variableHelper( "child___graph" ) )
 							.addPattern( new SubjectToken( variableHelper( "child" ) )
@@ -7042,9 +7043,9 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 									)
 								)
 							)
-							.addPattern( new FilterToken( "datatype( ?child__property2__property3 ) = xsd:string" ) )
+							.addPattern( new FilterToken( _getRawExpression( "datatype( ?child__property2__property3 ) = xsd:string" ) ) )
 						)
-						.addPattern( new FilterToken( `${ new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) } = "12345"^^xsd:integer` ) )
+						.addPattern( new FilterToken( _getRawExpression( `${ new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) } = "12345"^^xsd:integer` ) ) )
 					)
 
 						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )
@@ -8793,9 +8794,9 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 						)
 
 						.addPattern( new SubSelectToken( "DISTINCT" )
-							.addVariable( variableHelper( "member" ) )
+							.addProjection( variableHelper( "member" ) )
 							.addPattern( new SubSelectToken()
-								.addVariable( variableHelper( "membershipResource" ), variableHelper( "hasMemberRelation" ) )
+								.addProjection( variableHelper( "membershipResource" ), variableHelper( "hasMemberRelation" ) )
 								.addPattern( new SubjectToken( new IRIRefToken( "https://example.com/" ) )
 									.addProperty( new PropertyToken( new IRIRefToken( LDP.membershipResource ) )
 										.addObject( variableHelper( "membershipResource" ) )
@@ -8823,7 +8824,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 									.addObject( new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) )
 								)
 							)
-							.addModifier( new OrderToken( variableHelper( "member__property2" ) ) )
+							.addModifier( new OrderToken( [ variableHelper( "member__property2" ) ] ) )
 							.addModifier( new LimitToken( 10 ) )
 							.addModifier( new OffsetToken( 5 ) )
 						)
@@ -8843,7 +8844,7 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 										)
 									)
 								)
-								.addPattern( new FilterToken( "datatype( ?member__property1 ) = xsd:string" ) )
+								.addPattern( new FilterToken( _getRawExpression( "datatype( ?member__property1 ) = xsd:string" ) ) )
 						)
 						.addPattern( new GraphToken( variableHelper( "member___graph" ) )
 							.addPattern( new SubjectToken( variableHelper( "member" ) )
@@ -8876,9 +8877,9 @@ describe( "QueryableDocumentsRepositoryTrait", () => {
 									)
 								)
 							)
-							.addPattern( new FilterToken( "datatype( ?member__property2__property3 ) = xsd:string" ) )
+							.addPattern( new FilterToken( _getRawExpression( "datatype( ?member__property2__property3 ) = xsd:string" ) ) )
 						)
-						.addPattern( new FilterToken( `${ new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) } = "12345"^^xsd:integer` ) )
+						.addPattern( new FilterToken( _getRawExpression( `${ new RDFLiteralToken( "12345", new PrefixedNameToken( "xsd:integer" ) ) } = "12345"^^xsd:integer` ) ) )
 					)
 
 						.addPrologues( new PrefixToken( "schema", new IRIRefToken( "https://schema.org/" ) ) )

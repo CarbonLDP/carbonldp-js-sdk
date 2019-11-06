@@ -1,4 +1,4 @@
-import { isBNodeLabel } from "sparqler/iri";
+import { isBNodeLabel } from "sparqler/core";
 import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
 
 import { QueryContainer } from "./QueryContainer";

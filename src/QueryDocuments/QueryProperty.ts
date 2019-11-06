@@ -27,7 +27,7 @@ import { QueryPropertyData } from "./QueryPropertyData";
 import { QueryPropertyType } from "./QueryPropertyType";
 import { QuerySubPropertyData } from "./QuerySubPropertyData";
 import { SubQueryPropertyDefinition } from "./SubQueryPropertyDefinition";
-import { _getBestType, _getMatchingDefinition, _getRootPath } from "./Utils";
+import { _getBestType, _getMatchingDefinition, _getRawExpression, _getRootPath } from "./Utils";
 
 
 /**
@@ -399,7 +399,7 @@ export class QueryProperty implements QueryablePropertyData {
 		if( !this._filters.length ) return [];
 
 		return this._filters
-			.map( constraint => new FilterToken( constraint ) );
+			.map( constraint => new FilterToken( _getRawExpression( constraint ) ) );
 	}
 
 	protected __createValuesPattern():ValuesToken | undefined {
@@ -422,11 +422,11 @@ export class QueryProperty implements QueryablePropertyData {
 				.compactIRI( this.definition.literalType! );
 
 			if( identifier.token === "variable" )
-				return new FilterToken( `datatype( ${ identifier } ) = ${ literalToken }` );
+				return new FilterToken( _getRawExpression( `datatype( ${ identifier } ) = ${ literalToken }` ) );
 		}
 
 		if( this.definition.pointerType !== null && identifier.token === "variable" )
-			return new FilterToken( `! isLiteral( ${ identifier } )` );
+			return new FilterToken( _getRawExpression( `! isLiteral( ${ identifier } )` ) );
 	}
 
 	protected __createPartialSearchPatterns():PatternToken[] {
