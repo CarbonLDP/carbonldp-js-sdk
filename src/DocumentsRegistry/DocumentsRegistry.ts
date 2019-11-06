@@ -44,16 +44,41 @@ export type DocumentsRegistryFactory =
 	;
 
 /**
- * Constant that implements {@link DocumentsRegistryFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link DocumentsRegistry} object.
  */
-export const DocumentsRegistry:DocumentsRegistryFactory = {
+export const DocumentsRegistry:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link DocumentsRegistry}.
+	 */
+	PROTOTYPE:DocumentsRegistryFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link DocumentsRegistry}.
+	 */
+	isDecorated( object:object ):object is DocumentsRegistry;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link DocumentsRegistry} prototype.
+	 */
+	decorate<T extends object>( object:T & BaseDocumentsRegistry ):T & DocumentsRegistry;
+
+	/**
+	 * Creates a {@link DocumentsRegistry} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseDocumentsRegistry ):T & DocumentsRegistry;
+
+	/**
+	 * Creates a {@link DocumentsRegistry} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseDocumentsRegistry ):T & DocumentsRegistry
+} = <DocumentsRegistryFactory> {
 	PROTOTYPE: {
 		register( this:DocumentsRegistry, id:string ):Document {
 			return this.getPointer( id, true );
 		},
 
 		_getLocalID( this:DocumentsRegistry, id:string ):string {
-			if( URI.hasFragment( id ) ) throw new IllegalArgumentError( `"${id}" is out of scope.` );
+			if( URI.hasFragment( id ) ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 			return GeneralRegistry.PROTOTYPE._getLocalID.call( this, id );
 		},
 	},

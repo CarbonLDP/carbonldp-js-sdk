@@ -20,7 +20,7 @@ import { LDPDocumentTrait } from "./LDPDocumentTrait";
 
 
 /**
- * Properties for creating a {@link QueryableDocumentTrait}
+ * Properties for creating a {@link QueryableDocumentTrait}.
  */
 export interface BaseQueryableDocumentTrait {
 	/**
@@ -172,7 +172,7 @@ export interface QueryableDocumentTrait extends LDPDocumentTrait, QueryablePoint
 	 */
 	$listMembers<T extends object>( requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 	/**
-	 * Retrieves the shallow members of the document of the specified URI
+	 * Retrieves the shallow members of the document of the specified URI.
 	 * @param uri URI of the document to retrieve its shallow members.
 	 * @param requestOptions Customizable options for the request.
 	 */
@@ -191,9 +191,24 @@ export type QueryableDocumentTraitFactory =
 	;
 
 /**
- * Constant that implements {@link QueryableDocumentTraitFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link QueryableDocumentTrait} object.
  */
-export const QueryableDocumentTrait:QueryableDocumentTraitFactory = {
+export const QueryableDocumentTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link QueryableDocumentTrait}.
+	 */
+	PROTOTYPE:QueryableDocumentTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link QueryableDocumentTrait}.
+	 */
+	isDecorated( object:object ):object is QueryableDocumentTrait;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link QueryableDocumentTrait} prototype.
+	 */
+	decorate<T extends BaseQueryableDocumentTrait>( object:T ):T & QueryableDocumentTrait
+} = <QueryableDocumentTraitFactory> {
 	PROTOTYPE: {
 		$get( this:QueryableDocumentTrait, uris:any | string[], ...args:any[] ):Promise<any> {
 			if( !Array.isArray( uris ) )

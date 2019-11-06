@@ -46,9 +46,39 @@ export type TransientFragmentFactory =
 	;
 
 /**
- * Constant that implements {@link TransientFragmentFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link TransientFragment} object.
  */
-export const TransientFragment:TransientFragmentFactory = {
+export const TransientFragment:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link TransientFragment}.
+	 */
+	PROTOTYPE:TransientFragmentFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link TransientFragment}.
+	 */
+	isDecorated( object:object ):object is TransientFragment;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link TransientFragment}.
+	 */
+	is( value:any ):value is TransientFragment;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link TransientFragment} prototype.
+	 */
+	decorate<T extends object>( object:T & BaseTransientFragment ):T & TransientFragment;
+
+	/**
+	 * Creates a {@link TransientFragment} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseTransientFragment ):T & TransientFragment;
+
+	/**
+	 * Creates a {@link TransientFragment} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseTransientFragment ):T & TransientFragment;
+} = <TransientFragmentFactory> {
 	PROTOTYPE: {
 		get $registry():TransientDocument {
 			throw new IllegalArgumentError( `Property "$registry" is required.` );
@@ -89,8 +119,8 @@ export const TransientFragment:TransientFragmentFactory = {
 		const target:T & Resource = ModelDecorator
 			.decorateMultiple( object, Resource );
 
-		if( ! target.$registry ) delete target.$registry;
-		if( ! target.$slug ) delete target.$slug;
+		if( !target.$registry ) delete target.$registry;
+		if( !target.$slug ) delete target.$slug;
 
 		return ModelDecorator
 			.definePropertiesFrom( TransientFragment.PROTOTYPE, target );

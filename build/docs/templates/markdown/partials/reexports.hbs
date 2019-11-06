@@ -1,9 +1,0 @@
-{{~new-line~}}
-{{#if reexports~}}
-	#### <a name="{{sanitize path}}-Reexports" />Reexports {{new-line~}}
-	| Export name | Original Location | {{new-line~}}
-	| --- | --- |
-	{{#each reexports~}}
-		| {{name}} | [{{originalLocation}}](#Module-{{sanitize originalLocation}}) |
-	{{/each}}
-{{/if}}

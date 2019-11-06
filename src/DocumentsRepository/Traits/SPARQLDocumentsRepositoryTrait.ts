@@ -78,12 +78,27 @@ export type SPARQLDocumentsRepositoryTraitFactory =
 	;
 
 /**
- * Constant that implements {@link SPARQLDocumentsRepositoryTraitFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link SPARQLDocumentsRepositoryTrait} object.
  */
-export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactory = {
+export const SPARQLDocumentsRepositoryTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link SPARQLDocumentsRepositoryTrait}.
+	 */
+	PROTOTYPE:SPARQLDocumentsRepositoryTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link SPARQLDocumentsRepositoryTrait}.
+	 */
+	isDecorated( object:object ):object is SPARQLDocumentsRepositoryTrait
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link SPARQLDocumentsRepositoryTrait} prototype.
+	 */
+	decorate<T extends BaseDocumentsRepository>( object:T ):T & SPARQLDocumentsRepositoryTrait;
+} = <SPARQLDocumentsRepositoryTraitFactory> {
 	PROTOTYPE: {
 		executeASKQuery( this:SPARQLDocumentsRepositoryTrait, uri:string, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean> {
-			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
+			if( !this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			requestOptions = requestOptions ? requestOptions : {};
@@ -98,7 +113,7 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 		},
 
 		executeSELECTQuery<T extends object>( this:SPARQLDocumentsRepositoryTrait, uri:string, selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLSelectResults<T>> {
-			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
+			if( !this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			requestOptions = requestOptions ? requestOptions : {};
@@ -113,7 +128,7 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 		},
 
 		executeUPDATE( this:SPARQLDocumentsRepositoryTrait, uri:string, update:string, requestOptions?:RequestOptions ):Promise<void> {
-			if( ! this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${uri}" is out of scope.` ) );
+			if( !this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			return SPARQLService
@@ -124,7 +139,7 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 
 
 		sparql( this:SPARQLDocumentsRepositoryTrait, uri:string ):QueryClause<FinishSPARQLSelect, FinishSPARQLAsk> {
-			if( ! this.context.registry.inScope( uri, true ) ) throw new IllegalArgumentError( `"${uri}" is out of scope.` );
+			if( !this.context.registry.inScope( uri, true ) ) throw new IllegalArgumentError( `"${ uri }" is out of scope.` );
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 			const schema:DigestedObjectSchema = this.context.registry.getGeneralSchema();

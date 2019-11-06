@@ -1,5 +1,7 @@
 import { Document } from "../Document/Document";
 
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
@@ -19,14 +21,11 @@ export interface PlatformMetadata extends Document {
 }
 
 
-// TODO: Change to type-alias.
 /**
  * Factory and utils for {@link PlatformInstance}.
  */
-export interface PlatformMetadataFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type PlatformMetadataFactory =
+	& ModelSchema<C["Platform"]>;
 
 const SCHEMA:ObjectSchema = {
 	"instance": {
@@ -36,9 +35,19 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link PlatformMetadata}.
+ * Constant with the factory, decorator and/or utils for an {@link PlatformMetadata} object.
  */
-export const PlatformMetadata:PlatformMetadataFactory = {
+export const PlatformMetadata:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#PlatformMetadata`.
+	 */
+	TYPE:C["Platform"];
+
+	/**
+	 * Schema for the {@link PlatformMetadata}.
+	 */
+	SCHEMA:ObjectSchema;
+} = <PlatformMetadataFactory> {
 	TYPE: C.Platform,
 	SCHEMA,
 };

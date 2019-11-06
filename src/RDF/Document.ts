@@ -45,7 +45,7 @@ export interface RDFDocumentFactory {
 }
 
 /**
- * Constant that implements {@link RDFDocumentFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link RDFDocument} object.
  */
 export const RDFDocument:RDFDocumentFactory = {
 	is( value:any ):value is RDFDocument {
@@ -71,10 +71,10 @@ export const RDFDocument:RDFDocumentFactory = {
 	},
 
 	getFreeNodes( objects:object | object[] ):RDFNode[] {
-		if( ! Array.isArray( objects ) ) return [];
+		if( !Array.isArray( objects ) ) return [];
 
 		return objects
-			.filter( element => ! RDFDocument.is( element ) )
+			.filter( element => !RDFDocument.is( element ) )
 			.filter( RDFNode.is );
 	},
 
@@ -94,7 +94,7 @@ export const RDFDocument:RDFDocumentFactory = {
 	getDocumentResources( document:RDFDocument | RDFNode[] ):RDFNode[] {
 		return RDFDocument
 			.getResources( document )
-			.filter( node => ! RDFNode.isFragment( node ) )
+			.filter( node => !RDFNode.isFragment( node ) )
 			;
 	},
 
@@ -108,9 +108,9 @@ export const RDFDocument:RDFDocumentFactory = {
 			.filter( node => {
 				const id:string = RDFNode.getID( node );
 
-				if( ! URI.hasFragment( id ) ) return;
+				if( !URI.hasFragment( id ) ) return;
 
-				if( ! uriToMatch ) return true;
+				if( !uriToMatch ) return true;
 				return URI.getDocumentURI( id ) === uriToMatch;
 			} )
 			;

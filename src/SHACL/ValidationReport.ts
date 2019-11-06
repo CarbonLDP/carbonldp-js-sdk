@@ -1,3 +1,5 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { SHACL } from "../Vocabularies/SHACL";
@@ -27,14 +29,11 @@ export interface ValidationReport {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory and utils for {@link ValidationReport}.
  */
-export interface ValidationReportFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type ValidationReportFactory =
+	& ModelSchema<SHACL["ValidationReport"]>;
 
 const SCHEMA:ObjectSchema = {
 	"conforms": {
@@ -53,9 +52,19 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ValidationReport}.
+ * Constant with the factory, decorator and/or utils for an {@link ValidationReport} object.
  */
-export const ValidationReport:ValidationReportFactory = {
+export const ValidationReport:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ValidationReport`.
+	 */
+	TYPE:SHACL["ValidationReport"];
+
+	/**
+	 * Schema for the {@link ValidationReport}.
+	 */
+	SCHEMA:ObjectSchema;
+} = <ValidationReportFactory> {
 	TYPE: SHACL.ValidationReport,
 	SCHEMA,
 };

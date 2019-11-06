@@ -80,11 +80,12 @@ export interface Context<REGISTRY extends RegisteredPointer | undefined = Regist
 	/**
 	 * Extends the schema of the type specified.
 	 *
-	 * The signature behaves as the previous one but uses {@link ModelSchema.TYPE}
-	 * as the type and {@link ModelSchema.SCHEMA} as the schema data extender.
+	 * The signature behaves as the previous one but uses {@link ModelSchema#TYPE `ModelSchema.TYPE`}
+	 * as the type and {@link ModelSchema#SCHEMA `ModelSchema.SCHEMA`} as the schema data extender.
 	 *
 	 * @param modelSchema The object with the type and the schema to extend.
 	 */
+	// TODO: Fix link syntax
 	extendObjectSchema( modelSchema:ModelSchema ):this;
 	/**
 	 * Extends a multiple of typed schemas using the interface {@link ModelSchema}

@@ -1,12 +1,13 @@
 import { C } from "../Vocabularies/C";
 import { LDP } from "../Vocabularies/LDP";
 
+import * as Errors from "./Errors";
 import { HTTPError } from "./Errors/HTTPError";
 import { InternalServerErrorError } from "./Errors/ServerErrors/InternalServerErrorError";
 
 import { Header } from "./Header";
 import { JSONParser } from "./JSONParser";
-import { RequestOptions, RequestService, RequestUtils } from "./Request";
+import { __statusCodeMap, RequestOptions, RequestService, RequestUtils } from "./Request";
 import { Response } from "./Response";
 
 
@@ -819,6 +820,41 @@ describe( "Request", () => {
 				expect( RequestUtils.isOptions( undefined ) ).toBe( false );
 			} );
 
+		} );
+
+	} );
+
+	describe( "statusCodeMap", () => {
+
+		it( "should exist", () => {
+			expect( __statusCodeMap ).toBeDefined();
+			expect( __statusCodeMap ).toEqual( jasmine.any( Map ) );
+		} );
+
+		it( "should have all the error classes", () => {
+			expect( __statusCodeMap.size ).toBe( 21 );
+
+			expect( __statusCodeMap.get( Errors.BadRequestError.statusCode ) ).toBe( Errors.BadRequestError );
+			expect( __statusCodeMap.get( Errors.ConflictError.statusCode ) ).toBe( Errors.ConflictError );
+			expect( __statusCodeMap.get( Errors.ForbiddenError.statusCode ) ).toBe( Errors.ForbiddenError );
+			expect( __statusCodeMap.get( Errors.MethodNotAllowedError.statusCode ) ).toBe( Errors.MethodNotAllowedError );
+			expect( __statusCodeMap.get( Errors.NotAcceptableError.statusCode ) ).toBe( Errors.NotAcceptableError );
+			expect( __statusCodeMap.get( Errors.NotFoundError.statusCode ) ).toBe( Errors.NotFoundError );
+			expect( __statusCodeMap.get( Errors.PreconditionFailedError.statusCode ) ).toBe( Errors.PreconditionFailedError );
+			expect( __statusCodeMap.get( Errors.PreconditionRequiredError.statusCode ) ).toBe( Errors.PreconditionRequiredError );
+			expect( __statusCodeMap.get( Errors.RequestEntityTooLargeError.statusCode ) ).toBe( Errors.RequestEntityTooLargeError );
+			expect( __statusCodeMap.get( Errors.RequestHeaderFieldsTooLargeError.statusCode ) ).toBe( Errors.RequestHeaderFieldsTooLargeError );
+			expect( __statusCodeMap.get( Errors.RequestURITooLongError.statusCode ) ).toBe( Errors.RequestURITooLongError );
+			expect( __statusCodeMap.get( Errors.TooManyRequestsError.statusCode ) ).toBe( Errors.TooManyRequestsError );
+			expect( __statusCodeMap.get( Errors.UnauthorizedError.statusCode ) ).toBe( Errors.UnauthorizedError );
+			expect( __statusCodeMap.get( Errors.UnsupportedMediaTypeError.statusCode ) ).toBe( Errors.UnsupportedMediaTypeError );
+			expect( __statusCodeMap.get( Errors.BadResponseError.statusCode ) ).toBe( Errors.BadResponseError );
+			expect( __statusCodeMap.get( Errors.BadGatewayError.statusCode ) ).toBe( Errors.BadGatewayError );
+			expect( __statusCodeMap.get( Errors.GatewayTimeoutError.statusCode ) ).toBe( Errors.GatewayTimeoutError );
+			expect( __statusCodeMap.get( Errors.HTTPVersionNotSupportedError.statusCode ) ).toBe( Errors.HTTPVersionNotSupportedError );
+			expect( __statusCodeMap.get( InternalServerErrorError.statusCode ) ).toBe( InternalServerErrorError );
+			expect( __statusCodeMap.get( Errors.NotImplementedError.statusCode ) ).toBe( Errors.NotImplementedError );
+			expect( __statusCodeMap.get( Errors.ServiceUnavailableError.statusCode ) ).toBe( Errors.ServiceUnavailableError );
 		} );
 
 	} );

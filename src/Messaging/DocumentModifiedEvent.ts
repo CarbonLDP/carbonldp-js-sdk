@@ -1,3 +1,5 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
@@ -12,22 +14,28 @@ export interface DocumentModifiedEvent extends EventMessage {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory, decorator and utils for {@link DocumentModifiedEvent}.
  */
-export interface DocumentModifiedEventFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type DocumentModifiedEventFactory =
+	& ModelSchema<C["DocumentModifiedEvent"]>;
 
-const TYPE:string = C.DocumentModifiedEvent;
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
 /**
- * Constant that implements {@link DocumentModifiedEventFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link DocumentModifiedEvent} object.
  */
-export const DocumentModifiedEvent:DocumentModifiedEventFactory = {
-	TYPE,
+export const DocumentModifiedEvent:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent`.
+	 */
+	TYPE:C["DocumentModifiedEvent"];
+
+	/**
+	 * Schema for the {@link DocumentModifiedEvent}.
+	 */
+	SCHEMA:ObjectSchema;
+} = <DocumentModifiedEventFactory> {
+	TYPE: C.DocumentModifiedEvent,
 	SCHEMA,
 };

@@ -41,7 +41,7 @@ describe( "Response", () => {
 				request.onerror = fail;
 
 				request.onload = () => {
-					let response:Response = new Response( <XMLHttpRequest>request );
+					let response:Response = new Response( <XMLHttpRequest> request );
 					resolve( [ response, request ] );
 				};
 
@@ -62,7 +62,7 @@ describe( "Response", () => {
 						data = chunk;
 					} );
 					res.on( "end", () => {
-						let response:Response = new Response( <ClientRequest>request, data, res );
+						let response:Response = new Response( <ClientRequest> request, data, res );
 						resolve( [ response, request ] );
 					} );
 				} );

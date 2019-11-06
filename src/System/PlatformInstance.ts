@@ -1,11 +1,11 @@
 import { VolatileResource } from "../LDP/VolatileResource";
 
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
-
-import { PlatformMetadata } from "./PlatformMetadata";
 
 
 /**
@@ -24,14 +24,11 @@ export interface PlatformInstance extends VolatileResource {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory and utils for {@link PlatformInstance}.
  */
-export interface PlatformInstanceFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type PlatformInstanceFactory =
+	& ModelSchema<C["PlatformInstance"]>;
 
 const SCHEMA:ObjectSchema = {
 	"buildDate": {
@@ -45,9 +42,19 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link PlatformInstanceFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link PlatformInstance} object.
  */
-export const PlatformInstance:PlatformInstanceFactory = {
+export const PlatformInstance:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#PlatformInstance`.
+	 */
+	TYPE:C["PlatformInstance"];
+
+	/**
+	 * Schema for the {@link PlatformInstance}.
+	 */
+	SCHEMA:ObjectSchema;
+} = <PlatformInstanceFactory> {
 	TYPE: C.PlatformInstance,
 	SCHEMA,
 };

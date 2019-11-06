@@ -10,7 +10,11 @@ export interface RDF {
 /**
  * Constant that implements the used vocabulary defined in the RDF Syntax Specification.
  */
-export const RDF:RDF = {
+export const RDF:{
+	namespace:"http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+
+	type:"http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+} = <RDF> {
 	namespace: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
 
 	type: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",

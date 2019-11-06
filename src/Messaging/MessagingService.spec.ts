@@ -221,7 +221,7 @@ describe( "MessagingService", () => {
 
 		it( "should be able to reconnect automatically", ( done:DoneFn ) => {
 			function connectServer():void {
-				if( ! mockServer ) mockServer = new Server( `wss://example.com/broker` );
+				if( !mockServer ) mockServer = new Server( `wss://example.com/broker` );
 				mockServer.on( "connection", server => {
 					server.send( Frame.marshall( "CONNECTED", {
 						"server": "MockSocket-Server/**",
@@ -265,7 +265,7 @@ describe( "MessagingService", () => {
 			} );
 
 			function connectServer():void {
-				if( ! mockServer ) mockServer = new Server( `wss://example.com/broker` );
+				if( !mockServer ) mockServer = new Server( `wss://example.com/broker` );
 				mockServer.on( "connection", server => {
 					server.send( Frame.marshall( "CONNECTED", {
 						"server": "MockSocket-Server/**",

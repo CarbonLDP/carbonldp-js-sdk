@@ -34,8 +34,13 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link MemberEventDetailsFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link MemberEventDetails} object.
  */
-export const MemberEventDetails:MemberEventDetailsFactory = {
+export const MemberEventDetails:{
+	/**
+	 * Schema for the {@link MemberEventDetails}.
+	 */
+	SCHEMA:ObjectSchema;
+} = <MemberEventDetailsFactory> {
 	SCHEMA,
 };

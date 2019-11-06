@@ -72,13 +72,49 @@ export interface RDFLiteralFactory {
 }
 
 /**
- * Constant that implements {@link RDFLiteralFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link RDFLiteral} object.
  */
-export const RDFLiteral:RDFLiteralFactory = {
+export const RDFLiteral:{
+	/**
+	 * Convert the value provided to a {@link RDFLiteral} object.
+	 * @param value
+	 */
+	from( value:any ):RDFLiteral;
+
+
+	/**
+	 * Parses the value string into the respective type specified.
+	 * If no type provided, the same string will be returned.
+	 * @param value
+	 * @param type
+	 */
+	parse( value:string, type?:string ):any;
+	/**
+	 * Parses the {@link RDFLiteral} object to the respective JavaScript type.
+	 * Returns `null` if the Literal can't be parsed.
+	 * @param literal
+	 */
+	parse( literal:RDFLiteral ):any;
+
+
+	/**
+	 * Returns true if the object provided is considered a {@link RDFLiteral} object.
+	 * @param value
+	 */
+	is( value:any ):value is RDFLiteral;
+
+
+	/**
+	 * Returns true if the {@link RDFLiteral} has the type specified.
+	 * @param value
+	 * @param type
+	 */
+	hasType( value:RDFLiteral, type:string ):boolean;
+} = <RDFLiteralFactory> {
 	from( value:any ):RDFLiteral {
 		if( Utils.isNull( value ) )
 			throw new IllegalArgumentError( "Null cannot be converted into a Literal" );
-		if( ! Utils.isDefined( value ) )
+		if( !Utils.isDefined( value ) )
 			throw new IllegalArgumentError( "The value is undefined" );
 
 		let type:any;
@@ -120,8 +156,8 @@ export const RDFLiteral:RDFLiteralFactory = {
 			literalValue = valueOrLiteral;
 		} else {
 			let literal:RDFLiteral = valueOrLiteral;
-			if( ! literal ) return null;
-			if( ! Utils.hasProperty( literal, "@value" ) ) return null;
+			if( !literal ) return null;
+			if( !Utils.hasProperty( literal, "@value" ) ) return null;
 
 			type = "@type" in literal ? literal[ "@type" ] : null;
 			literalValue = literal[ "@value" ];
@@ -136,7 +172,7 @@ export const RDFLiteral:RDFLiteralFactory = {
 				break;
 			case XSD.time:
 				const parts:string[] | null = literalValue.match( /(\d+):(\d+):(\d+)\.(\d+)Z/ );
-				if( ! parts ) throw new IllegalArgumentError( `Invalid value for type ${ XSD.time }.` );
+				if( !parts ) throw new IllegalArgumentError( `Invalid value for type ${ XSD.time }.` );
 				value = new Date();
 				value.setUTCHours( parseFloat( parts[ 1 ] ), parseFloat( parts[ 2 ] ), parseFloat( parts[ 3 ] ), parseFloat( parts[ 4 ] ) );
 				break;
@@ -194,7 +230,7 @@ export const RDFLiteral:RDFLiteralFactory = {
 	},
 
 	hasType( value:RDFLiteral, type:string ):boolean {
-		if( ! value[ "@type" ] && type === XSD.string ) return true;
+		if( !value[ "@type" ] && type === XSD.string ) return true;
 		return value[ "@type" ] === type;
 	},
 };

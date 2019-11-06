@@ -75,7 +75,7 @@ export interface Resource extends RegisteredPointer {
 
 
 function __getContext( registry:$Registry<any> | Registry<any> | GeneralRegistry<any> | undefined ):Context | undefined {
-	if( ! registry ) return;
+	if( !registry ) return;
 	if( "context" in registry && registry.context ) return registry.context;
 
 	return __getContext( "$id" in registry ? registry.$registry : registry.registry );
@@ -85,7 +85,7 @@ function __resolveURI( resource:Resource, uri:string ):string {
 	if( URI.isAbsolute( uri ) ) return uri;
 
 	const context:Context | undefined = __getContext( resource.$registry );
-	if( ! context ) return uri;
+	if( !context ) return uri;
 
 	return context
 		.getObjectSchema()
@@ -103,9 +103,39 @@ export type ResourceFactory =
 	;
 
 /**
- * Constant that implements {@link ResourceFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link Resource} object.
  */
-export const Resource:ResourceFactory = {
+export const Resource:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link Resource}.
+	 */
+	PROTOTYPE:ResourceFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link Resource}.
+	 */
+	isDecorated( object:object ):object is Resource;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link Resource}.
+	 */
+	is( value:any ):value is Resource;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link Resource} prototype.
+	 */
+	decorate<T extends object>( object:T & BaseResource ):T & Resource;
+
+	/**
+	 * Creates a {@link Resource} with the provided data.
+	 */
+	create<T extends object>( data?:T & BaseResource ):T & Resource
+
+	/**
+	 * Creates a {@link Resource} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseResource ):T & Resource;
+} = <ResourceFactory> {
 	PROTOTYPE: {
 		get types():string[] { return []; },
 
@@ -177,7 +207,7 @@ export const Resource:ResourceFactory = {
 	decorate<T extends BaseResource>( object:T ):T & Resource {
 		if( Resource.isDecorated( object ) ) return object;
 
-		if( ! object.hasOwnProperty( "$registry" ) ) object.$registry = void 0;
+		if( !object.hasOwnProperty( "$registry" ) ) object.$registry = void 0;
 
 		const resource:T & RegisteredPointer = ModelDecorator
 			.decorateMultiple( object as T & { $registry:undefined }, RegisteredPointer );

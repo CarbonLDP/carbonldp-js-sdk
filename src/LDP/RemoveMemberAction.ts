@@ -57,9 +57,34 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link RemoveMemberActionFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link RemoveMemberAction} object.
  */
-export const RemoveMemberAction:RemoveMemberActionFactory = {
+export const RemoveMemberAction:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#RemoveMemberAction`.
+	 */
+	TYPE:C["RemoveMemberAction"];
+
+	/**
+	 * Schema for the object.
+	 */
+	SCHEMA:ObjectSchema;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link RemoveMemberAction}.
+	 */
+	is( value:any ):value is RemoveMemberAction;
+
+	/**
+	 * Creates a {@link RemoveMemberAction} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseRemoveMemberAction ):T & RemoveMemberAction;
+
+	/**
+	 * Creates a {@link RemoveMemberAction} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseRemoveMemberAction ):T & RemoveMemberAction;
+} = <RemoveMemberActionFactory> {
 	TYPE: C.RemoveMemberAction,
 	SCHEMA,
 

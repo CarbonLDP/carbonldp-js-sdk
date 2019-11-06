@@ -194,7 +194,7 @@ describe( "DocumentsRegistry", () => {
 			it( "should add add decorators from parent registry", () => {
 				const decorator:TypedModelDecorator = {
 					TYPE: "a-type",
-					isDecorated: ( object ):object is any => ! ! object,
+					isDecorated: ( object ):object is any => !!object,
 					decorate: object => object,
 				};
 				context.parentContext.registry.addDecorator( decorator );

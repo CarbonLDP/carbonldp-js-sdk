@@ -121,7 +121,7 @@ describe( "RDFLiteral", () => {
 
 
 			it( "should return null when empty object", () => {
-				const literal:RDFLiteral = <RDFLiteral>{};
+				const literal:RDFLiteral = <RDFLiteral> {};
 				expect( RDFLiteral.parse( literal ) ).toBeNull();
 			} );
 

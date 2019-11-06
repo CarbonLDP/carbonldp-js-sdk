@@ -416,9 +416,26 @@ export type EventEmitterDocumentTraitFactory =
 	;
 
 /**
- * Constant that implements {@link EventEmitterDocumentTraitFactory}
+ * Constant with the factory, decorator and/or utils for an {@link EventEmitterDocumentTrait} object.
  */
-export const EventEmitterDocumentTrait:EventEmitterDocumentTraitFactory = {
+export const EventEmitterDocumentTrait:{
+
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link EventEmitterDocumentTrait}.
+	 */
+	PROTOTYPE:EventEmitterDocumentTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link EventEmitterDocumentTrait}.
+	 */
+	isDecorated( object:object ):object is EventEmitterDocumentTrait;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link EventEmitterDocumentTrait} prototype.
+	 */
+	decorate<T extends BaseEventEmitterDocumentTrait>( object:T ):T & EventEmitterDocumentTrait
+
+} = <EventEmitterDocumentTraitFactory> {
 	PROTOTYPE: {
 		$on( this:EventEmitterDocumentTrait, event:Event | string, uriPatternOROnEvent:string | OnEvent<any>, onEventOrOnError:OnEvent<any> | OnError, onError?:OnError ):void {
 			const { uriPattern, onEvent, onError: $onError } = __parseParams( this, uriPatternOROnEvent, onEventOrOnError, onError );

@@ -58,9 +58,9 @@ function __getSchemaForResource( this:void, $context:Context | undefined, resour
 }
 
 function __getSchema( this:void, $context:Context | undefined, objectTypes:string[], objectID?:string ):DigestedObjectSchema {
-	if( ! $context ) return new DigestedObjectSchema();
+	if( !$context ) return new DigestedObjectSchema();
 
-	if( objectID !== void 0 && ! URI.hasFragment( objectID ) && ! URI.isBNodeID( objectID ) && objectTypes.indexOf( C.Document ) === - 1 )
+	if( objectID !== void 0 && !URI.hasFragment( objectID ) && !URI.isBNodeID( objectID ) && objectTypes.indexOf( C.Document ) === - 1 )
 		objectTypes = objectTypes.concat( C.Document );
 
 	const objectSchemas:DigestedObjectSchema[] = objectTypes
@@ -81,18 +81,33 @@ export type ObjectSchemaResolverFactory =
 	& ModelDecorator<ObjectSchemaResolver>
 	;
 
-export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
+export const ObjectSchemaResolver:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link ObjectSchemaResolver}.
+	 */
+	PROTOTYPE:ObjectSchemaResolverFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link ObjectSchemaResolver}.
+	 */
+	isDecorated( object:object ):object is ObjectSchemaResolver;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link ObjectSchemaResolver} prototype.
+	 */
+	decorate<T extends object>( object:T ):T & ObjectSchemaResolver;
+} = <ObjectSchemaResolverFactory> {
 	PROTOTYPE: {
 		context: undefined,
 
 		getGeneralSchema( this:ObjectSchemaResolver ):DigestedObjectSchema {
-			if( ! this.context ) return new DigestedObjectSchema();
+			if( !this.context ) return new DigestedObjectSchema();
 			return this.context.getObjectSchema();
 		},
 
 
 		hasSchemaFor( this:ObjectSchemaResolver, object:object, path?:string ):boolean {
-			return ! path;
+			return !path;
 		},
 
 		getSchemaFor( this:ObjectSchemaResolver, object:object | QueryablePointer ):DigestedObjectSchema {

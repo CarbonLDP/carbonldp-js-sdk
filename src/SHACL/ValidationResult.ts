@@ -1,3 +1,5 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { Pointer } from "../Pointer/Pointer";
@@ -48,14 +50,11 @@ export interface ValidationResult extends Resource {
 }
 
 
-// TODO: Change to type-alias.
 /**
  * Factory and utils for {@link ValidationResult}.
  */
-export interface ValidationResultFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type ValidationResultFactory =
+	& ModelSchema<SHACL["ValidationResult"]>;
 
 const SCHEMA:ObjectSchema = {
 	"focusNode": {
@@ -92,9 +91,19 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ValidationResultFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link ValidationResult} object.
  */
-export const ValidationResult:ValidationResultFactory = {
+export const ValidationResult:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ValidationResult`.
+	 */
+	TYPE:SHACL["ValidationResult"];
+
+	/**
+	 * Schema for the {@link ValidationResult}.
+	 */
+	SCHEMA:ObjectSchema;
+} = <ValidationResultFactory> {
 	TYPE: SHACL.ValidationResult,
 	SCHEMA,
 };

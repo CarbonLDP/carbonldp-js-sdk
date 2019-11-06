@@ -49,9 +49,19 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link DocumentMetadataFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link DocumentMetadata} object.
  */
-export const DocumentMetadata:DocumentMetadataFactory = {
+export const DocumentMetadata:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentMetadata`.
+	 */
+	TYPE:C["DocumentMetadata"];
+
+	/**
+	 * Schema for the {@link DocumentMetadata}.
+	 */
+	SCHEMA:ObjectSchema;
+} = <DocumentMetadataFactory> {
 	TYPE: C.DocumentMetadata,
 	SCHEMA,
 };

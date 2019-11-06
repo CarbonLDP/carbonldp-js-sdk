@@ -14,8 +14,9 @@ import { _getBestType } from "./Utils";
 /**
  * Metadata of a resource that has been queried.
  *
- * It is used in {@link QueryablePointer.$_queryableMetadata}.
+ * It is used in {@link QueryablePointer#$_queryableMetadata `QueryablePointer.$_queryableMetadata`}.
  */
+// TODO: Fix link syntax
 export class QueryableProperty {
 	readonly definition:DigestedObjectSchemaProperty;
 	readonly pathBuilderFn?:( pathBuilder:PathBuilder ) => Path;
@@ -69,9 +70,9 @@ export class QueryableProperty {
 	 * @param data The optional data of the property to create.
 	 */
 	getProperty( propertyName:string, data?:QueryablePropertyData ):QueryableProperty {
-		if( ! this.subProperties.has( propertyName ) ) {
-			if( ! data )
-				throw new Error( `Property "${propertyName}" doesn't exists.` );
+		if( !this.subProperties.has( propertyName ) ) {
+			if( !data )
+				throw new Error( `Property "${ propertyName }" doesn't exists.` );
 
 			const property:QueryableProperty = new QueryableProperty( data );
 
@@ -111,7 +112,7 @@ export class QueryableProperty {
 				this.definition[ key ] = newValue;
 
 			if( newValue !== oldValue ) {
-				throw new IllegalArgumentError( `Property "${propertyName}" has different "${key}": "${oldValue}", "${newValue}".` );
+				throw new IllegalArgumentError( `Property "${ propertyName }" has different "${ key }": "${ oldValue }", "${ newValue }".` );
 			}
 		}
 	}

@@ -228,9 +228,25 @@ export type EventEmitterDocumentsRepositoryTraitFactory =
 	;
 
 /**
- * Constant that implements {@link EventEmitterDocumentsRepositoryTraitFactory}.
+ * Constant with the factory, decorator and/or utils for an {@link EventEmitterDocumentsRepositoryTrait} object.
  */
-export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositoryTraitFactory = {
+export const EventEmitterDocumentsRepositoryTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link EventEmitterDocumentsRepositoryTrait}.
+	 */
+	PROTOTYPE:EventEmitterDocumentsRepositoryTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link EventEmitterDocumentsRepositoryTrait}.
+	 */
+	isDecorated( object:object ):object is EventEmitterDocumentsRepositoryTrait
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link EventEmitterDocumentsRepositoryTrait} prototype.
+	 */
+	decorate<T extends object>( object:T & BaseDocumentsRepository ):T & EventEmitterDocumentsRepositoryTrait;
+
+} = <EventEmitterDocumentsRepositoryTraitFactory> {
 	PROTOTYPE: {
 		on( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<any>, onError?:OnError ):void {
 			try {
@@ -238,7 +254,7 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 				this.context.messaging.subscribe( destination, onEvent, onError );
 
 			} catch( error ) {
-				if( ! onError ) throw error;
+				if( !onError ) throw error;
 				onError( error );
 			}
 		},
@@ -249,7 +265,7 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 				this.context.messaging.unsubscribe( destination, onEvent );
 
 			} catch( error ) {
-				if( ! onError ) throw error;
+				if( !onError ) throw error;
 				onError( error );
 			}
 		},
@@ -266,7 +282,7 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 				this.context.messaging.subscribe( destination, onEventWrapper, onError );
 
 			} catch( error ) {
-				if( ! onError ) throw error;
+				if( !onError ) throw error;
 				onError( error );
 			}
 		},

@@ -39,9 +39,8 @@ export {
 } from "./tasks/test";
 
 export {
-	compileDocumentation,
-	compileDgeni,
-	documentationMinify,
+	docsBuildDev,
+	docsBuildProd,
 } from "./tasks/documentation";
 
 export {

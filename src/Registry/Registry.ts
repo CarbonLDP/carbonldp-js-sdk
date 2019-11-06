@@ -89,17 +89,19 @@ export interface Registry<MODEL extends RegisteredPointer = RegisteredPointer> e
 	getPointers( local:true ):MODEL[];
 
 	/**
-	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Removes the resource identified by the provided string ID or {@link Pointer#$id `Pointer.$id`}, from the first occurrence in the registry hierarchy.
 	 * Returns true if the resource could be removed, false otherwise.
 	 * @param idOrPointer ID or Pointer to be removed.
 	 */
+	// TODO: Fix link syntax
 	removePointer( idOrPointer:string | RegisteredPointer ):boolean;
 	/**
-	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Removes the resource identified by the provided string ID or {@link Pointer#$id `Pointer.$id`}, from the first occurrence in the registry hierarchy.
 	 * Returns true if the resource could be removed, false otherwise.
 	 * @param idOrPointer ID or Pointer to be removed.
 	 * @param local Flag to ignore hierarchy and only remove from the current registry.
 	 */
+	// TODO: Fix link syntax
 	removePointer( idOrPointer:string | RegisteredPointer, local:true ):boolean;
 
 
@@ -192,17 +194,19 @@ export interface $Registry<MODEL extends RegisteredPointer = RegisteredPointer> 
 	$getPointers( local:true ):MODEL[];
 
 	/**
-	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Removes the resource identified by the provided string ID or {@link Pointer#$id `Pointer.$id`}, from the first occurrence in the registry hierarchy.
 	 * Returns true if the resource could be removed, false otherwise.
 	 * @param idOrPointer ID or Pointer to be removed.
 	 */
+	// TODO: Fix link syntax
 	$removePointer( idOrPointer:string | RegisteredPointer ):boolean;
 	/**
-	 * Removes the resource identified by the provided string ID or {@link Pointer.$id}, from the first occurrence in the registry hierarchy.
+	 * Removes the resource identified by the provided string ID or {@link Pointer#$id `Pointer.$id`}, from the first occurrence in the registry hierarchy.
 	 * Returns true if the resource could be removed, false otherwise.
 	 * @param idOrPointer ID or Pointer to be removed.
 	 * @param local Flag to ignore hierarchy and only remove from the current registry.
 	 */
+	// TODO: Fix link syntax
 	$removePointer( idOrPointer:string | RegisteredPointer, local:true ):boolean;
 
 
@@ -248,7 +252,7 @@ function __addPointer( this:void, registry:AnyRegistry, pointer:Pointer ):Regist
 
 
 function __inScope( this:AnyRegistry | undefined, idOrPointer:string | Pointer, local?:true ):boolean {
-	if( ! this ) return false;
+	if( !this ) return false;
 
 	try {
 		const id:string = Pointer.getID( idOrPointer );
@@ -264,7 +268,7 @@ function __inScope( this:AnyRegistry | undefined, idOrPointer:string | Pointer, 
 }
 
 function __hasPointer( this:AnyRegistry | undefined, id:string, local?:true ):boolean {
-	if( ! this ) return false;
+	if( !this ) return false;
 
 	if( __inScope.call( this, id, true ) ) {
 		const localID:string = __getLocalID( this, id );
@@ -282,8 +286,8 @@ function __hasPointer( this:AnyRegistry | undefined, id:string, local?:true ):bo
 function __getPointer( this:AnyRegistry, id:string, local?:true ):RegisteredPointer {
 	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
 
-	if( ! __inScope.call( this, id, true ) ) {
-		if( local === true || ! parentRegistry ) throw new IllegalArgumentError( `"${id}" is out of scope.` );
+	if( !__inScope.call( this, id, true ) ) {
+		if( local === true || !parentRegistry ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		return __getPointer.call( parentRegistry, id );
 	}
 
@@ -304,7 +308,7 @@ function __getPointers( this:AnyRegistry, local?:true ):RegisteredPointer[] {
 	const pointers:RegisteredPointer[] = Array.from( resourcesMap.values() );
 
 	const parentRegistry:AnyRegistry | undefined = __getParentResource( this );
-	if( local === true || ! parentRegistry ) return pointers;
+	if( local === true || !parentRegistry ) return pointers;
 
 	return [
 		...__getPointers.call( parentRegistry ),
@@ -313,7 +317,7 @@ function __getPointers( this:AnyRegistry, local?:true ):RegisteredPointer[] {
 }
 
 function __removePointer( this:AnyRegistry | undefined, idOrPointer:string | RegisteredPointer, local?:true ):boolean {
-	if( ! this ) return false;
+	if( !this ) return false;
 
 	const id:string = Pointer.getID( idOrPointer );
 	if( __inScope.call( this, id, true ) ) {
@@ -339,9 +343,24 @@ export type RegistryFactory =
 	;
 
 /**
- * Constant that implements for {@link RegistryFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link Registry} object.
  */
-export const Registry:RegistryFactory = {
+export const Registry:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link Registry}.
+	 */
+	PROTOTYPE:RegistryFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link Registry}.
+	 */
+	isDecorated<T extends object>( object:object ):object is any;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link Registry} prototype.
+	 */
+	decorate<T extends object>( object:T ):T & any;
+} = <RegistryFactory> {
 	PROTOTYPE: {
 		registry: void 0,
 
@@ -365,12 +384,12 @@ export const Registry:RegistryFactory = {
 
 
 		_addPointer<T extends object>( this:AnyRegistry, pointer:T & Pointer ):T & RegisteredPointer {
-			if( ! pointer.$id ) throw new IllegalArgumentError( "The pointer $id cannot be empty." );
+			if( !pointer.$id ) throw new IllegalArgumentError( "The pointer $id cannot be empty." );
 
 			const localID:string = __getLocalID( this, pointer.$id );
 
 			const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
-			if( resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${pointer.$id}" is already being used.` );
+			if( resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being used.` );
 
 			const resource:T & RegisteredPointer = __getDecorator( this )
 				.decorate( Object.assign<T, BaseRegisteredPointer>( pointer, {

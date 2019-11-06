@@ -5,7 +5,7 @@ export function createNonEnumerable<T extends object>( object:T ):T {
 			const descriptor:PropertyDescriptor | undefined = Object
 				.getOwnPropertyDescriptor( object, key );
 
-			if( ! descriptor ) return;
+			if( !descriptor ) return;
 
 			descriptor.enumerable = false;
 			Object.defineProperty( object, key, descriptor );

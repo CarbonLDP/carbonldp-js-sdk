@@ -101,17 +101,17 @@ export class JSONLDConverter {
 	 */
 	compact( expandedObject:object, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary ):object;
 	compact( expandedObjectOrObjects:any, targetObjectOrObjectsOrDigestedContext:any, digestedSchemaOrPointerLibrary:any, pointerLibrary?:PointerLibrary | $PointerLibrary, strict?:boolean ):any {
-		let targetObjectOrObjects:any = ! pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
-		let digestedSchema:any = ! pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
-		pointerLibrary = ! pointerLibrary ? digestedSchemaOrPointerLibrary : pointerLibrary;
+		let targetObjectOrObjects:any = !pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
+		let digestedSchema:any = !pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
+		pointerLibrary = !pointerLibrary ? digestedSchemaOrPointerLibrary : pointerLibrary;
 
-		if( ! Array.isArray( expandedObjectOrObjects ) ) return this.__compactSingle( expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary!, strict );
+		if( !Array.isArray( expandedObjectOrObjects ) ) return this.__compactSingle( expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary!, strict );
 
 		let expandedObjects:Object[] = expandedObjectOrObjects;
-		let targetObjects:Object[] = ! ! targetObjectOrObjects ? targetObjectOrObjects : [];
+		let targetObjects:Object[] = !!targetObjectOrObjects ? targetObjectOrObjects : [];
 		for( let i:number = 0, length:number = expandedObjects.length; i < length; i ++ ) {
 			let expandedObject:Object = expandedObjects[ i ];
-			let targetObject:Object = targetObjects[ i ] = ! ! targetObjects[ i ] ? targetObjects[ i ] : {};
+			let targetObject:Object = targetObjects[ i ] = !!targetObjects[ i ] ? targetObjects[ i ] : {};
 
 			this.__compactSingle( expandedObject, targetObject, digestedSchema, pointerLibrary!, strict );
 		}
@@ -134,7 +134,7 @@ export class JSONLDConverter {
 	 */
 	expand( compactedObject:object, generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):RDFNode;
 	expand( compactedObjectOrObjects:object[], generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):any {
-		if( ! Array.isArray( compactedObjectOrObjects ) ) return this.__expandSingle( compactedObjectOrObjects, generalSchema, digestedSchema );
+		if( !Array.isArray( compactedObjectOrObjects ) ) return this.__expandSingle( compactedObjectOrObjects, generalSchema, digestedSchema );
 	}
 
 
@@ -142,7 +142,7 @@ export class JSONLDConverter {
 	 * Compacts and updates the data of the expanded JSON-LD object into the target object.
 	 * i.e. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.
 	 * @param target Object to be updated from the expanded one.
-	 * @param node The expanded object to be compacted and updated into the target
+	 * @param node The expanded object to be compacted and updated into the target.
 	 * @param digestedSchema The schema that describes how compact the expanded object.
 	 * @param pointerLibrary An object from where one can obtain the pointers of resources.
 	 * @param strict Flag to ignore the compaction of properties that are not defined in the schema.
@@ -157,12 +157,12 @@ export class JSONLDConverter {
 			if( key.startsWith( "$" ) ) return;
 			if( isFunction( target[ key ] ) ) return;
 
-			if( ! compactedData.hasOwnProperty( key ) ) {
-				if( ! strict || digestedSchema.properties.has( key ) ) delete target[ key ];
+			if( !compactedData.hasOwnProperty( key ) ) {
+				if( !strict || digestedSchema.properties.has( key ) ) delete target[ key ];
 				return;
 			}
 
-			if( ! Array.isArray( target[ key ] ) ) {
+			if( !Array.isArray( target[ key ] ) ) {
 				target[ key ] = compactedData[ key ];
 				return;
 			}
@@ -177,7 +177,7 @@ export class JSONLDConverter {
 	private __expandSingle( compactedObject:Object, generalSchema:DigestedObjectSchema, digestedSchema:DigestedObjectSchema ):RDFNode {
 		let expandedObject:any = {};
 
-		expandedObject[ "@id" ] = ! ! compactedObject[ "$id" ] ? compactedObject[ "$id" ] : "";
+		expandedObject[ "@id" ] = !!compactedObject[ "$id" ] ? compactedObject[ "$id" ] : "";
 
 		if( compactedObject[ "types" ] ) {
 			const types:string[] = Array.isArray( compactedObject[ "types" ] ) ?
@@ -222,7 +222,7 @@ export class JSONLDConverter {
 		;
 
 		const filteredValues:any[] = expandedValues.filter( value => value !== null );
-		if( ! filteredValues.length ) return null;
+		if( !filteredValues.length ) return null;
 
 		if( propertyContainer === ContainerType.LIST ) return [
 			{ "@list": filteredValues },
@@ -249,7 +249,7 @@ export class JSONLDConverter {
 	}
 
 	private __expandPropertyLanguageMap( propertyValue:any ):any {
-		if( ! isObject( propertyValue ) ) {
+		if( !isObject( propertyValue ) ) {
 			// TODO: Warn of data loss
 			return null;
 		}
@@ -274,7 +274,7 @@ export class JSONLDConverter {
 				null;
 
 		// TODO: Warn of data loss
-		if( ! id ) return null;
+		if( !id ) return null;
 
 		const resolved:string = generalSchema.resolveURI( id, { vocab: isStringID } );
 		return { "@id": resolved };
@@ -294,7 +294,7 @@ export class JSONLDConverter {
 		if( literalType === null ) return null;
 
 		// TODO: Warn of data loss
-		if( ! this.literalSerializers.has( literalType ) ) return null;
+		if( !this.literalSerializers.has( literalType ) ) return null;
 
 		const serializedValue:string = this.literalSerializers
 			.get( literalType )!
@@ -304,10 +304,10 @@ export class JSONLDConverter {
 
 
 	private __compactSingle( expandedObject:any, targetObject:any, digestedSchema:DigestedObjectSchema, pointerLibrary:PointerLibrary | $PointerLibrary, strict?:boolean ):void {
-		if( ! expandedObject[ "@id" ] ) throw new IllegalArgumentError( "The expandedObject doesn't have an @id defined." );
+		if( !expandedObject[ "@id" ] ) throw new IllegalArgumentError( "The expandedObject doesn't have an @id defined." );
 
 		targetObject[ "$id" ] = expandedObject[ "@id" ];
-		targetObject[ "types" ] = ! ! expandedObject[ "@type" ] ? expandedObject[ "@type" ] : [];
+		targetObject[ "types" ] = !!expandedObject[ "@type" ] ? expandedObject[ "@type" ] : [];
 
 		const propertyURINameMap:Map<string, string> = this.__getPropertyURINameMap( digestedSchema );
 		for( const propertyURI of Object.keys( expandedObject ) ) {
@@ -315,9 +315,9 @@ export class JSONLDConverter {
 			if( propertyURI === "@type" ) continue;
 
 			const propertyValues:any[] = expandedObject[ propertyURI ];
-			if( ! _isExistingValue( propertyValues ) ) continue;
+			if( !_isExistingValue( propertyValues ) ) continue;
 
-			if( ! propertyURINameMap.has( propertyURI ) && strict ) continue;
+			if( !propertyURINameMap.has( propertyURI ) && strict ) continue;
 
 			const propertyName:string = propertyURINameMap.has( propertyURI ) ?
 				propertyURINameMap.get( propertyURI )! :
@@ -358,7 +358,7 @@ export class JSONLDConverter {
 		if( propertyContainer === ContainerType.LIST ) {
 			const list:RDFList | undefined = RDFNode.getList( propertyValues );
 
-			if( ! list ) return null;
+			if( !list ) return null;
 			propertyValues = list[ "@list" ];
 		}
 
@@ -376,10 +376,10 @@ export class JSONLDConverter {
 				this.__getPropertyPointers( propertyValues, pointerLibrary ) :
 				this.__getProperties( propertyValues, pointerLibrary )
 		;
-		if( ! compactedValues ) return null;
+		if( !compactedValues ) return null;
 
 		const filteredValues:any[] = compactedValues.filter( value => value !== null );
-		if( ! filteredValues.length ) return null;
+		if( !filteredValues.length ) return null;
 
 		if( propertyContainer === null ) return filteredValues[ 0 ];
 		return filteredValues;
@@ -402,22 +402,22 @@ export class JSONLDConverter {
 	}
 
 	private __getProperties( propertyValues:any[], pointerLibrary:PointerLibrary | $PointerLibrary ):any[] | undefined {
-		if( ! Array.isArray( propertyValues ) ) return;
+		if( !Array.isArray( propertyValues ) ) return;
 
 		return propertyValues
 			.map( RDFValue.parse.bind( null, pointerLibrary ) )
-			.filter( value => ! isNull( value ) )
+			.filter( value => !isNull( value ) )
 			;
 	}
 
 	private __getPropertyPointers( propertyValues:any[], pointerLibrary:PointerLibrary | $PointerLibrary ):any[] | undefined {
-		if( ! Array.isArray( propertyValues ) ) return;
+		if( !Array.isArray( propertyValues ) ) return;
 
 		return propertyValues
 			.filter( RDFNode.is )
 			.map( RDFNode.getID )
 			.map( _getPointer.bind( null, pointerLibrary ) )
-			.filter( pointer => ! isNull( pointer ) )
+			.filter( pointer => !isNull( pointer ) )
 			;
 	}
 

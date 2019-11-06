@@ -59,7 +59,7 @@ export class QueryDocumentBuilder {
 			parent = parent.parent;
 		}
 
-		throw new IllegalArgumentError( `The property "${name}" was not declared.` );
+		throw new IllegalArgumentError( `The property "${ name }" was not declared.` );
 	}
 
 	/**
@@ -120,7 +120,7 @@ export class QueryDocumentBuilder {
 				.addProperty( propertyName, querySchemaProperty );
 
 			const subQuery:QuerySchemaProperty[ "query" ] | undefined = querySchemaProperty.query;
-			if( ! subQuery ) continue;
+			if( !subQuery ) continue;
 
 			const builder:SubQueryDocumentsBuilder = new SubQueryDocumentsBuilder( this._queryContainer, property );
 			if( builder !== subQuery.call( void 0, builder ) )
@@ -158,16 +158,16 @@ export class SubQueryDocumentsBuilder extends QueryDocumentBuilder {
 		const tokens:(LiteralToken | IRIToken)[] = values
 			.map( value => {
 				const token:TermToken = value.getToken();
-				if( token.token === "blankNode" ) throw new IllegalArgumentError( `Cannot assign blank nodes ("${token.label}").` );
+				if( token.token === "blankNode" ) throw new IllegalArgumentError( `Cannot assign blank nodes ("${ token.label }").` );
 
 				if( this._queryProperty.definition.literal ) {
 					if( token.token !== "literal" )
-						throw new IllegalArgumentError( `"${token}" is not a literal value.` );
+						throw new IllegalArgumentError( `"${ token }" is not a literal value.` );
 				}
 
 				if( this._queryProperty.definition.pointerType !== null ) {
 					if( token.token === "literal" )
-						throw new IllegalArgumentError( `"${token}" is not a resource value.` );
+						throw new IllegalArgumentError( `"${ token }" is not a resource value.` );
 				}
 
 				return token;

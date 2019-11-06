@@ -18,7 +18,7 @@ import { TransientDocument } from "../TransientDocument";
 
 
 /**
- * Properties for creating a {@link LDPDocumentTrait}
+ * Properties for creating a {@link LDPDocumentTrait}.
  */
 export interface BaseLDPDocumentTrait {
 	/**
@@ -241,9 +241,24 @@ export type LDPDocumentTraitFactory =
 	;
 
 /**
- * Constant that implements {@link LDPDocumentTraitFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link LDPDocumentTrait} object.
  */
-export const LDPDocumentTrait:LDPDocumentTraitFactory = {
+export const LDPDocumentTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link LDPDocumentTrait}.
+	 */
+	PROTOTYPE:LDPDocumentTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link LDPDocumentTrait}.
+	 */
+	isDecorated( object:object ):object is LDPDocumentTrait;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link LDPDocumentTrait} prototype.
+	 */
+	decorate<T extends BaseLDPDocumentTrait>( object:T ):T & LDPDocumentTrait
+} = <LDPDocumentTraitFactory> {
 	PROTOTYPE: {
 		$create<T extends object>( this:LDPDocumentTrait, uriOrChildren:string | T | T[], childrenOrSlugsOrRequestOptions?:T | T[] | string | string[] | RequestOptions, slugsOrRequestOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
 			const { _uri, _args } = _parseURIParams( this, uriOrChildren, arguments );

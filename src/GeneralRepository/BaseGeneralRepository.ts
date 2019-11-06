@@ -7,7 +7,7 @@ import { ResolvablePointer } from "../Repository/ResolvablePointer";
 
 
 /**
- * Properties for create a {@link GeneralRepository}
+ * Properties for create a {@link GeneralRepository}.
  */
 export interface BaseGeneralRepository<MODEL extends ResolvablePointer = ResolvablePointer> extends BaseRepository {
 	/**

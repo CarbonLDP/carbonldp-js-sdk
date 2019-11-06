@@ -126,9 +126,24 @@ export type RepositoryFactory =
 	;
 
 /**
- * Constant that implements {@link RepositoryFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link Repository} object.
  */
-export const Repository:RepositoryFactory = {
+export const Repository:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link Repository}.
+	 */
+	PROTOTYPE:RepositoryFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link Repository}.
+	 */
+	isDecorated( object:object ):object is any;
+	/**
+	 * Decorates the object with the properties and methods from the {@link Repository} prototype.
+	 */
+	decorate<T extends BaseRepository>( object:T ):T & any;
+
+} = <RepositoryFactory> {
 	PROTOTYPE: {
 		get: __throwNotImplemented,
 		resolve: __throwNotImplemented,

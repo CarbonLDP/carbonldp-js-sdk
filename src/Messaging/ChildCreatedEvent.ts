@@ -1,3 +1,5 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
@@ -16,16 +18,12 @@ export interface ChildCreatedEvent extends EventMessage {
 	details:DocumentCreatedEventDetails;
 }
 
-// TODO: Change to type-alias
 /**
  * Factory, decorator and utils for {@link ChildCreatedEvent}.
  */
-export interface ChildCreatedEventFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type ChildCreatedEventFactory =
+	& ModelSchema<C["ChildCreatedEvent"]>;
 
-const TYPE:string = C.ChildCreatedEvent;
 const SCHEMA:ObjectSchema = {
 	...EventMessage.SCHEMA,
 	"details": {
@@ -35,9 +33,19 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ChildCreatedEventFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link ChildCreatedEvent} object.
  */
-export const ChildCreatedEvent:ChildCreatedEventFactory = {
-	TYPE,
+export const ChildCreatedEvent:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ChildCreatedEvent`.
+	 */
+	TYPE:C["ChildCreatedEvent"];
+
+	/**
+	 * Schema for the {@link ChildCreatedEvent}.
+	 */
+	SCHEMA:ObjectSchema;
+} = <ChildCreatedEventFactory> {
+	TYPE: C.ChildCreatedEvent,
 	SCHEMA,
 };

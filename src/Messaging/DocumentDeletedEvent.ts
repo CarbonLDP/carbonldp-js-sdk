@@ -1,3 +1,5 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
@@ -12,22 +14,28 @@ export interface DocumentDeletedEvent extends EventMessage {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory, decorator and utils for {@link DocumentDeletedEvent}.
  */
-export interface DocumentDeletedEventFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type DocumentDeletedEventFactory =
+	& ModelSchema<C["DocumentDeletedEvent"]>;
 
-const TYPE:string = C.DocumentDeletedEvent;
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
 /**
- * Constant that implements {@link DocumentDeletedEventFactory}
+ * Constant with the factory, decorator and/or utils for an {@link DocumentDeletedEvent} object.
  */
-export const DocumentDeletedEvent:DocumentDeletedEventFactory = {
-	TYPE,
+export const DocumentDeletedEvent:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent`.
+	 */
+	TYPE:C["DocumentDeletedEvent"];
+
+	/**
+	 * Schema for the {@link DocumentDeletedEvent}.
+	 */
+	SCHEMA:ObjectSchema;
+} = <DocumentDeletedEventFactory> {
+	TYPE: C.DocumentDeletedEvent,
 	SCHEMA,
 };

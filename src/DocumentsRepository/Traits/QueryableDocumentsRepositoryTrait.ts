@@ -143,7 +143,7 @@ export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositor
 	listChildren<T extends object>( uri:string, requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 
 	/**
-	 * Retrieves the shallow members of the document of the specified URI
+	 * Retrieves the shallow members of the document of the specified URI.
 	 * @param uri URI of the document to retrieve its shallow members.
 	 * @param requestOptions Customizable options for the request.
 	 */
@@ -376,9 +376,24 @@ export type QueryableDocumentsRepositoryTraitFactory =
 	;
 
 /**
- * Constant that implements {@link QueryableDocumentsRepositoryTraitFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link QueryableDocumentsRepositoryTrait} object.
  */
-export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTraitFactory = {
+export const QueryableDocumentsRepositoryTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link QueryableDocumentsRepositoryTrait}.
+	 */
+	PROTOTYPE:QueryableDocumentsRepositoryTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link QueryableDocumentsRepositoryTrait}.
+	 */
+	isDecorated( object:object ):object is QueryableDocumentsRepositoryTrait;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link QueryableDocumentsRepositoryTrait} prototype.
+	 */
+	decorate<T extends BaseDocumentsRepository>( object:T ):T & QueryableDocumentsRepositoryTrait;
+} = <QueryableDocumentsRepositoryTraitFactory> {
 	PROTOTYPE: {
 		get<T extends object>( this:QueryableDocumentsRepositoryTrait, uriOrURIs:string | string[], requestOptionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn | QueryDocsBuilderFn, queryBuilderFn?:QueryBuilderFn | QueryDocsBuilderFn ):Promise<(T & Document) | (T & Document)[]> {
 			const requestOptions:GETOptions = typeof requestOptionsOrQueryBuilderFn === "object" ?

@@ -20,7 +20,7 @@ import { TransientDocument } from "../TransientDocument";
 
 
 /**
- * Properties for creating a {@link SPARQLDocumentTrait}
+ * Properties for creating a {@link SPARQLDocumentTrait}.
  */
 export interface BaseSPARQLDocumentTrait {
 	/**
@@ -114,9 +114,24 @@ export type SPARQLDocumentTraitFactory =
 	;
 
 /**
- * Constant that implements {@link SPARQLDocumentTraitFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link SPARQLDocumentTrait} object.
  */
-export const SPARQLDocumentTrait:SPARQLDocumentTraitFactory = {
+export const SPARQLDocumentTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link SPARQLDocumentTrait}.
+	 */
+	PROTOTYPE:SPARQLDocumentTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link SPARQLDocumentTrait}.
+	 */
+	isDecorated( object:object ):object is SPARQLDocumentTrait;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link SPARQLDocumentTrait} prototype.
+	 */
+	decorate<T extends BaseSPARQLDocumentTrait>( object:T ):T & SPARQLDocumentTrait;
+} = <SPARQLDocumentTraitFactory> {
 	PROTOTYPE: {
 		$executeASKQuery( this:SPARQLDocumentTrait, uriOrQuery:string, queryOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<boolean> {
 			const { uri, query, options } = __parseParams( this, uriOrQuery, queryOrOptions, requestOptions );

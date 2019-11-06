@@ -45,70 +45,70 @@ describe( "SPARQLDocumentsRepositoryTrait", () => {
 				responseText: `
 							[ {
 								"@id": "_:1",
-								"@type": [ "${C.ErrorResponse}" ],
-								"${C.error}": [ {
+								"@type": [ "${ C.ErrorResponse }" ],
+								"${ C.error }": [ {
 									"@id": "_:2"
 								}, {
 									"@id": "_:3"
 								} ],
-								"${C.httpStatusCode}": [ {
-									"@type": "${XSD.int}",
+								"${ C.httpStatusCode }": [ {
+									"@type": "${ XSD.int }",
 									"@value": "500"
 								} ]
 							}, {
 								"@id": "_:2",
-								"@type": [ "${C.Error}" ],
-								"${C.errorCode}": [ {
+								"@type": [ "${ C.Error }" ],
+								"${ C.errorCode }": [ {
 									"@language": "en",
 									"@value": "code-01"
 								} ],
-								"${C.errorMessage}": [ {
+								"${ C.errorMessage }": [ {
 									"@language": "en",
 									"@value": "Message 01"
 								} ],
-								"${C.errorParameters}": [ {
+								"${ C.errorParameters }": [ {
 									"@id": "_:4"
 								} ]
 							}, {
 								"@id": "_:3",
-								"@type": [ "${C.Error}" ],
-								"${C.errorCode}": [ {
+								"@type": [ "${ C.Error }" ],
+								"${ C.errorCode }": [ {
 									"@language": "en",
 									"@value": "code-02"
 								} ],
-								"${C.errorMessage}": [ {
+								"${ C.errorMessage }": [ {
 									"@language": "en",
 									"@value": "Message 02"
 								} ],
-								"${C.errorParameters}": [ {
+								"${ C.errorParameters }": [ {
 									"@id": "_:6"
 								} ]
 							}, {
 								"@id": "_:4",
-								"@type": [ "${C.Map}" ],
-								"${C.entry}": [ {
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [ {
 									"@id": "_:5"
 								} ]
 							}, {
 								"@id": "_:5",
-								"${C.entryKey}": [ {
+								"${ C.entryKey }": [ {
 									"@value": "document"
 								} ],
-								"${C.entryValue}": [ {
+								"${ C.entryValue }": [ {
 									"@id": "https://example.com/target-document/"
 								} ]
 							}, {
 								"@id": "_:6",
-								"@type": [ "${C.Map}" ],
-								"${C.entry}": [ {
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [ {
 									"@id": "_:7"
 								} ]
 							}, {
 								"@id": "_:7",
-								"${C.entryKey}": [ {
+								"${ C.entryKey }": [ {
 									"@value": "document"
 								} ],
-								"${C.entryValue}": [ {
+								"${ C.entryValue }": [ {
 									"@id": "https://example.com/target-document/"
 								} ]
 							} ]`,

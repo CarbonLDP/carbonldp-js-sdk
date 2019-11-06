@@ -1,3 +1,5 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { Resource } from "../Resource/Resource";
@@ -14,7 +16,7 @@ import { Map } from "./Map";
  */
 export interface Error extends Resource {
 	/**
-	 * Code that indicates the type of error ocurred.
+	 * Code that indicates the type of error occurred.
 	 */
 	errorCode:string;
 	/**
@@ -31,11 +33,9 @@ export interface Error extends Resource {
 /**
  * Factory, decorator and utils for {@link Error}.
  */
-// TODO: Change to type-alias
-export interface ErrorFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type ErrorFactory =
+	& ModelSchema<C[ "Error" ]>;
+
 
 const SCHEMA:ObjectSchema = {
 	"errorCode": {
@@ -53,9 +53,19 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ErrorFactory}.
+ * Constant with the factory, decorator and/or utils for an {@link Error} object.
  */
-export const Error:ErrorFactory = {
+export const Error:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#Error`.
+	 */
+	TYPE:C["Error"];
+
+	/**
+	 * Schema for the error.
+	 */
+	SCHEMA:ObjectSchema;
+} = <ErrorFactory> {
 	TYPE: C.Error,
 	SCHEMA,
 };

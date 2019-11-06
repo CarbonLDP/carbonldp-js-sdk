@@ -76,17 +76,54 @@ export type FreeResourcesFactory =
 	;
 
 /**
- * Constant that implements {@link FreeResourcesFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link FreeResources} object.
  */
-export const FreeResources:FreeResourcesFactory = {
+export const FreeResources:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link FreeResources}.
+	 */
+	PROTOTYPE:FreeResourcesFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link FreeResources}.
+	 */
+	isDecorated( object:object ):object is FreeResources;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link FreeResources}.
+	 */
+	is( object:object ):object is FreeResources;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link FreeResources} prototype.
+	 */
+	decorate<T extends BaseFreeResources>( object:T ):T & FreeResources
+
+	/**
+	 * Creates a {@link FreeResources} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseFreeResources ):T & FreeResources
+
+	/**
+	 * Creates a {@link FreeResources} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseFreeResources ):T & FreeResources
+
+	/**
+	 * Function that parses free {@link RDFNode}s into a {@link FreeResources} object.
+	 * @param registry Base registry used in the context.
+	 * @param freeNodes List of RDFNodes to parse.
+	 */
+	parseFreeNodes( this:void, registry:GeneralRegistry<any>, freeNodes:RDFNode[] ):FreeResources;
+} = <FreeResourcesFactory> {
 	PROTOTYPE: {
 		_getLocalID( this:FreeResources, id:string ):string {
-			if( isAbsolute( id ) && ! URI.hasProtocol( id ) ) return id;
-			throw new IllegalArgumentError( `"${id}" is out of scope.` );
+			if( isAbsolute( id ) && !URI.hasProtocol( id ) ) return id;
+			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		},
 
 		_addPointer<T extends object>( this:FreeResources, base:T & Partial<Pointer> ):T & Resource {
-			if( ! base.$id ) base.$id = URI.generateBNodeID();
+			if( !base.$id ) base.$id = URI.generateBNodeID();
 			type FilledID = typeof base & { $id:string };
 			return Registry.PROTOTYPE._addPointer.call( this, base as FilledID );
 		},

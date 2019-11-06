@@ -1,3 +1,5 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
@@ -17,16 +19,12 @@ export interface MemberRemovedEvent extends EventMessage {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory, decorator and utils form {@link MemberRemovedEvent}.
  */
-export interface MemberRemovedEventFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type MemberRemovedEventFactory =
+	& ModelSchema<C["MemberRemovedEvent"]>;
 
-const TYPE:string = C.MemberRemovedEvent;
 const SCHEMA:ObjectSchema = {
 	...EventMessage.SCHEMA,
 	"details": {
@@ -36,9 +34,19 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link MemberRemovedEventFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link MemberRemovedEvent} object.
  */
-export const MemberRemovedEvent:MemberRemovedEventFactory = {
-	TYPE,
+export const MemberRemovedEvent:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#MemberRemovedEvent`.
+	 */
+	TYPE:C["MemberRemovedEvent"];
+
+	/**
+	 * Schema for the {@link MemberRemovedEvent}.
+	 */
+	SCHEMA:ObjectSchema;
+} = <MemberRemovedEventFactory> {
+	TYPE: C.MemberRemovedEvent,
 	SCHEMA,
 };

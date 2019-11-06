@@ -20,7 +20,7 @@ export class ObjectSchemaUtils {
 		const resolvedType:string | null = schema.resolveURI( type, { vocab: true, base: true } );
 
 		if( resolvedURI !== uri || resolvedType !== type ) {
-			if( ! inSame ) {
+			if( !inSame ) {
 				definition = Object
 					.assign( new DigestedObjectSchemaProperty(), definition );
 			}

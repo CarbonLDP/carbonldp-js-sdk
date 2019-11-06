@@ -5,7 +5,7 @@ import replace from "gulp-token-replace";
 import { bundleSFX } from "./bundle";
 import { compileCJS5, compileESM2015, compileESM5, compileTypes } from "./compile";
 import config, { DIST } from "./config";
-import { compileDocumentation } from "./documentation";
+import { docsBuildProd } from "./documentation";
 import { preparePackage } from "./package";
 
 export const version:gulp.TaskFunction = () => {
@@ -37,7 +37,7 @@ export const build:gulp.TaskFunction = gulp.series(
 			version
 		),
 		bundleSFX,
-		compileDocumentation
+		docsBuildProd
 	),
 	preparePackage
 );

@@ -1,7 +1,7 @@
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
-import { SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
 import { QueryContainer } from "./QueryContainer";
+import { SubQueryDocumentsBuilder } from "./QueryDocumentBuilder";
 import { QueryRootProperty } from "./QueryRootProperty";
 
 

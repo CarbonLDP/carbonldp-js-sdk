@@ -88,7 +88,7 @@ export class DigestedObjectSchema {
 	 * @param name Property name to return its definition.
 	 */
 	getProperty( name:string ):DigestedObjectSchemaProperty | undefined {
-		if( ! this.properties.has( name ) ) return void 0;
+		if( !this.properties.has( name ) ) return void 0;
 		return ObjectSchemaUtils._resolveProperty( this, this.properties.get( name )! );
 	}
 

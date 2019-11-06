@@ -29,7 +29,7 @@ export function createSubMockQueryableMetadata( data:QueryablePropertyData & { $
 
 
 function __addProperties( schema:ObjectSchema | undefined, parentProperty:QueryableProperty ):void {
-	if( ! schema ) return;
+	if( !schema ) return;
 
 	const digestedSchema:DigestedObjectSchema = ObjectSchemaDigester
 		.digestSchema( schema );

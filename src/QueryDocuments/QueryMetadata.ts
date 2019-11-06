@@ -1,5 +1,7 @@
 import { VolatileResource } from "../LDP/VolatileResource";
+
 import { ModelSchema } from "../Model/ModelSchema";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
@@ -19,16 +21,12 @@ export interface QueryMetadata extends VolatileResource {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory, decorator and utils for {@link QueryMetadata}.
  */
-export interface QueryMetadataFactory extends ModelSchema {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-
-	is( value:any ):value is QueryMetadata;
-}
+export type QueryMetadataFactory =
+	& ModelSchema<C[ "QueryMetadata" ]>
+	& ModelTypeGuard<QueryMetadata>;
 
 const SCHEMA:ObjectSchema = {
 	"targets": {
@@ -39,9 +37,24 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link QueryMetadataFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link QueryMetadata} object.
  */
-export const QueryMetadata:QueryMetadataFactory = {
+export const QueryMetadata:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#QueryMetadata`.
+	 */
+	TYPE:C["QueryMetadata"];
+
+	/**
+	 * Schema for the {@link QueryMetadata}.
+	 */
+	SCHEMA:ObjectSchema;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link QueryMetadata}.
+	 */
+	is( object:object ):object is QueryMetadata;
+} = <QueryMetadataFactory> {
 	TYPE: C.QueryMetadata,
 	SCHEMA,
 

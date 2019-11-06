@@ -36,9 +36,19 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link EventMessageFactory}.
+ * Constant with the factory, decorator and/or utils for an {@link EventMessage} object.
  */
-export const EventMessage:EventMessageFactory = {
+export const EventMessage:{
+	/**
+	 * Schema for the {@link EventMessage}.
+	 */
+	SCHEMA:ObjectSchema;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link EventMessage}.
+	 */
+	is( value:any ):value is EventMessage;
+} = <EventMessageFactory> {
 	SCHEMA,
 
 	is( value:any ):value is EventMessage {

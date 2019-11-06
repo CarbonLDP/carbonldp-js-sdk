@@ -1,4 +1,4 @@
-import { BaseDirectContainer } from "../LDP/DirectContainer";
+import { BaseDirectContainer } from "../LDP/DirectContainer/BaseDirectContainer";
 
 import { Pointer } from "../Pointer/Pointer";
 

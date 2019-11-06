@@ -158,7 +158,7 @@ export interface ResolvablePointer extends Pointer, $Repository {
 
 
 function __internalRevert( target:any, source:any ):void {
-	if( ! isObject( target ) || ! isObject( source ) ) return;
+	if( !isObject( target ) || !isObject( source ) ) return;
 
 	new Set<string>( [
 		...Object.keys( target ),
@@ -189,9 +189,29 @@ export type ResolvablePointerFactory =
 	;
 
 /**
- * Constant that implements {@link ResolvablePointerFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link ResolvablePointer} object.
  */
-export const ResolvablePointer:ResolvablePointerFactory = {
+export const ResolvablePointer:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link ResolvablePointer}.
+	 */
+	PROTOTYPE:ResolvablePointerFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link ResolvablePointer}.
+	 */
+	isDecorated( object:object ):object is ResolvablePointer;
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link ResolvablePointer}.
+	 */
+	is( value:any ):value is ResolvablePointer;
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link ResolvablePointer} prototype.
+	 */
+	decorate<T extends object>( object:T & BaseResolvablePointer ):T & ResolvablePointer;
+} = <ResolvablePointerFactory> {
 	PROTOTYPE: {
 		get $repository():Repository | $Repository {
 			throw new IllegalArgumentError( `Property "$repository" is required.` );
@@ -217,13 +237,13 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 		},
 
 		$isDirty( this:ResolvablePointer ):boolean {
-			return ! ObjectUtils
+			return !ObjectUtils
 				.areEqual( this, this.$_snapshot, { arrays: true, equalities: { nullable: true, wrapped: true } } );
 		},
 
 		$revert( this:{ types?:string[] } & ResolvablePointer ):void {
 			__internalRevert( this, this.$_snapshot );
-			if( ! this.types ) this.types = [];
+			if( !this.types ) this.types = [];
 		},
 
 

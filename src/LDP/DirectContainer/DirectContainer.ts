@@ -1,5 +1,8 @@
 import { Document } from "../../Document/Document";
 
+import { LDP } from "../../Vocabularies";
+
+import { BaseDirectContainer } from "./BaseDirectContainer";
 import { TransientDirectContainer, TransientDirectContainerFactory } from "./TransientDirectContainer";
 
 
@@ -23,9 +26,29 @@ export interface DirectContainerFactory {
 }
 
 /**
- * Constant that implements {@link DirectContainerFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link DirectContainer} object.
  */
-export const DirectContainer:DirectContainerFactory = {
+export const DirectContainer:{
+	/**
+	 * Type of the model, in this case: `http://www.w3.org/ns/ldp#DirectContainer`.
+	 */
+	TYPE:LDP["DirectContainer"];
+
+	/**
+	 * Returns true when the value provided is considered to be a {@link DirectContainer}.
+	 */
+	is( object:object ):object is DirectContainer;
+
+	/**
+	 * Creates a {@link DirectContainer} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseDirectContainer ):T & TransientDirectContainer;
+
+	/**
+	 * Creates a {@link DirectContainer} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseDirectContainer ):T & TransientDirectContainer;
+} = <DirectContainerFactory> {
 	TYPE: TransientDirectContainer.TYPE,
 
 	is: ( value ):value is DirectContainer =>

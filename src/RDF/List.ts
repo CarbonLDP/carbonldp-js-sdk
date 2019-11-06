@@ -25,9 +25,14 @@ export interface RDFListFactory {
 }
 
 /**
- * Constant that implements {@link RDFListFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link RDFList} object.
  */
-export const RDFList:RDFListFactory = {
+export const RDFList:{
+	/**
+	 * Returns true when the value provided is considered to be a {@link RDFList}.
+	 */
+	is( value:any ):value is RDFList;
+} = <RDFListFactory> {
 	is( value:any ):value is RDFList {
 		return Utils.hasPropertyDefined( value, "@list" );
 	},

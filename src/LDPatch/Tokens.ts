@@ -6,8 +6,9 @@ import { isNumber } from "../Utils";
 /**
  * The tokens that states a change in the data.
  *
- * Used in the {@link LDPatchToken.statements}.
+ * Used in the {@link LDPatchToken#statements `LDPatchToken.statements`}.
  */
+// TODO: Fix link syntax
 export type StatementToken = AddToken | DeleteToken | UpdateListToken;
 
 /**
@@ -49,7 +50,7 @@ export class PrefixToken implements TokenNode {
 	}
 
 	toString():string {
-		return `@prefix ${this.namespace}: ${this.iri}.`;
+		return `@prefix ${ this.namespace }: ${ this.iri }.`;
 	}
 }
 
@@ -68,7 +69,7 @@ export class AddToken implements TokenNode {
 	}
 
 	toString():string {
-		return `Add { ${this.triples.join( ". " )}. }.`;
+		return `Add { ${ this.triples.join( ". " ) }. }.`;
 	}
 }
 
@@ -87,7 +88,7 @@ export class DeleteToken implements TokenNode {
 	}
 
 	toString():string {
-		return `Delete { ${this.triples.join( ". " )}. }.`;
+		return `Delete { ${ this.triples.join( ". " ) }. }.`;
 	}
 }
 
@@ -114,7 +115,7 @@ export class UpdateListToken implements TokenNode {
 	}
 
 	toString():string {
-		return `UpdateList ${this.subject} ${this.predicate} ${this.slice} ${this.collection}.`;
+		return `UpdateList ${ this.subject } ${ this.predicate } ${ this.slice } ${ this.collection }.`;
 	}
 }
 

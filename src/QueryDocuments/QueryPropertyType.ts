@@ -15,7 +15,7 @@ export enum QueryPropertyType {
 	 */
 	ALL,
 	/**
-	 * The property is expected to point to a fulled resolved document
+	 * The property is expected to point to a fulled resolved document.
 	 */
 	FULL,
 }

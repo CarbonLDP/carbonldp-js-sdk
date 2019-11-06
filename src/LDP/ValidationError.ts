@@ -38,9 +38,20 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ValidationErrorFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link ValidationError} object.
  */
-export const ValidationError:ValidationErrorFactory = {
+export const ValidationError:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ValidationError`.
+	 */
+	TYPE:C["ValidationError"];
+
+	/**
+	 * Schema for the {@link ValidationError}.
+	 */
+	SCHEMA:ObjectSchema;
+
+} = <ValidationErrorFactory> {
 	TYPE: C.ValidationError,
 	SCHEMA,
 };

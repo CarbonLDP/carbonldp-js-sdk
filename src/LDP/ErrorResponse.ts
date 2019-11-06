@@ -33,6 +33,7 @@ export interface ErrorResponse extends Resource {
 /**
  * Factory, decorator and utils for {@link ErrorResponse}.
  */
+// TODO: Change to type-alias
 export interface ErrorResponseFactory extends ModelSchema {
 	TYPE:C[ "ErrorResponse" ];
 	SCHEMA:ObjectSchema;
@@ -61,10 +62,29 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link ErrorResponseFactory}.
+ * Constant with the factory, decorator and/or utils for an {@link ErrorResponse} object.
  */
-// TODO: Change to type-alias
-export const ErrorResponse:ErrorResponseFactory = {
+export const ErrorResponse:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#ErrorResponse`.
+	 */
+	TYPE:C["ErrorResponse"];
+
+	/**
+	 * Schema for the {@link ErrorResponse}.
+	 */
+	SCHEMA:ObjectSchema;
+
+	/**
+	 * Returns true when the value provided is considered to be an {@link ErrorResponse}.
+	 */
+	is( value:any ):value is ErrorResponse;
+
+	/**
+	 *  Gets the errors from the Error Response.
+	 */
+	getMessage( errorResponse:ErrorResponse ):string;
+} = <ErrorResponseFactory> {
 	TYPE: C.ErrorResponse,
 	SCHEMA,
 

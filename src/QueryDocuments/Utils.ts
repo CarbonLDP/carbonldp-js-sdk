@@ -24,7 +24,7 @@ export function _getRootPath( path:string ):string {
  * @param path The path in the element to the desired property.
  */
 export function _getPathProperty( element:any, path:string ):any {
-	if( element === void 0 || ! path ) return element;
+	if( element === void 0 || !path ) return element;
 
 	const [ propName, ...restParts ] = path.split( "." );
 
@@ -70,7 +70,7 @@ export function _getBestType( type1:QueryPropertyType, type2:QueryPropertyType )
  * @param propertyURI The optional URI that the property has to have for have a true matching.
  */
 export function _getMatchingDefinition( generalSchema:DigestedObjectSchema, targetSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty | undefined {
-	if( ! targetSchema.properties.has( propertyName ) ) return;
+	if( !targetSchema.properties.has( propertyName ) ) return;
 
 	const definition:DigestedObjectSchemaProperty = ObjectSchemaUtils
 		._resolveProperty( generalSchema, targetSchema.properties.get( propertyName )! );

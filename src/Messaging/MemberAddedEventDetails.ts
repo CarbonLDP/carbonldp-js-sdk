@@ -1,3 +1,5 @@
+import { ModelSchema } from "../Model/ModelSchema";
+
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
@@ -12,22 +14,28 @@ export interface MemberAddedEventDetails extends MemberEventDetails {
 }
 
 
-// TODO: Change to type-alias
 /**
  * Factory, decorator and utils for {@link MemberAddedEventDetails}.
  */
-export interface MemberAddedEventDetailsFactory {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
-}
+export type MemberAddedEventDetailsFactory =
+	& ModelSchema<C["MemberAddedEventDetails"]>;
 
-const TYPE:string = C.MemberAddedEventDetails;
 const SCHEMA:ObjectSchema = MemberEventDetails.SCHEMA;
 
 /**
- * Constant that implements {@link MemberAddedEventDetailsFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link MemberAddedEventDetails} object.
  */
-export const MemberAddedEventDetails:MemberAddedEventDetailsFactory = {
-	TYPE,
+export const MemberAddedEventDetails:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails`.
+	 */
+	TYPE:C["MemberAddedEventDetails"];
+
+	/**
+	 * Schema for the {@link MemberAddedEventDetails}.
+	 */
+	SCHEMA:ObjectSchema;
+} = <MemberAddedEventDetailsFactory> {
+	TYPE: C.MemberAddedEventDetails,
 	SCHEMA,
 };

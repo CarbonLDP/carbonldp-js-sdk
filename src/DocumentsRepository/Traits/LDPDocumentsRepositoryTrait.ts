@@ -224,12 +224,12 @@ function __setDefaultRequestOptions( requestOptions:RequestOptions, interactionM
 
 function __getTargetID( id:string, response:Response ):string {
 	const locationHeader:Header | null = response.getHeader( "Content-Location" );
-	if( ! locationHeader ) return id;
+	if( !locationHeader ) return id;
 
 	if( locationHeader.values.length !== 1 ) throw new BadResponseError( "The response must contain one Content-Location header.", response );
 	const locationString:string = "" + locationHeader;
 
-	if( ! locationString ) throw new BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
+	if( !locationString ) throw new BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
 	return locationString;
 }
 
@@ -254,7 +254,7 @@ function __changeNodesID( resource:$Registry, map:Map<Pointer, Pointer> ):void {
 }
 
 function __applyResponseMetadata( repository:LDPDocumentsRepositoryTrait, freeNodes:RDFNode[] ):void {
-	if( ! freeNodes.length ) return;
+	if( !freeNodes.length ) return;
 	const freeResources:FreeResources = FreeResources.parseFreeNodes( repository.context.registry, freeNodes );
 
 	const responseMetadata:ResponseMetadata | undefined = freeResources
@@ -262,7 +262,7 @@ function __applyResponseMetadata( repository:LDPDocumentsRepositoryTrait, freeNo
 		.find( ResponseMetadata.is )
 	;
 
-	if( ! responseMetadata ) return;
+	if( !responseMetadata ) return;
 
 	responseMetadata
 		.documentsMetadata!
@@ -271,7 +271,7 @@ function __applyResponseMetadata( repository:LDPDocumentsRepositoryTrait, freeNo
 }
 
 function __applyResponseRepresentation<T extends object>( repository:LDPDocumentsRepositoryTrait, resource:Document, response:Response ):(T & Document) | Promise<T & Document> {
-	if( response.status === 204 || ! response.data ) return resource as T & Document;
+	if( response.status === 204 || !response.data ) return resource as T & Document;
 
 	return __JSONLD_PARSER
 		.parse( response.data )
@@ -280,7 +280,7 @@ function __applyResponseRepresentation<T extends object>( repository:LDPDocument
 			__applyResponseMetadata( repository, freeNodes );
 
 			const preferenceHeader:Header | null = response.getHeader( "Preference-Applied" );
-			if( preferenceHeader === null || ! preferenceHeader.hasValue( "return=representation" ) ) return resource as T & Document;
+			if( preferenceHeader === null || !preferenceHeader.hasValue( "return=representation" ) ) return resource as T & Document;
 
 			return repository._parseResponseData<T>( response, resource.$id );
 		} )
@@ -307,7 +307,7 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 	transient.$registry = repository.context.registry;
 	const body:string = JSON.stringify( transient );
 
-	if( ! ! slug ) RequestUtils.setSlug( slug, requestOptions );
+	if( !!slug ) RequestUtils.setSlug( slug, requestOptions );
 
 	Object.defineProperty( transient, "__CarbonLDP_persisting__", { configurable: true, value: true } );
 	return RequestService
@@ -334,7 +334,7 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 }
 
 function __createChildren<T extends object>( this:void, retrievalType:"minimal" | "representation", repository:LDPDocumentsRepositoryTrait, uri:string, children:T | T[], slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
-	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	if( !repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	requestOptions = RequestUtils.isOptions( slugsOrOptions ) ?
@@ -351,7 +351,7 @@ function __createChildren<T extends object>( this:void, retrievalType:"minimal" 
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
 
-	if( ! Array.isArray( children ) ) {
+	if( !Array.isArray( children ) ) {
 		if( __isInvalidChild( children ) ) return Promise.reject( new IllegalArgumentError( `The object is already a resolvable pointer.` ) );
 		if( __isPersistingChild( children ) ) return Promise.reject( new IllegalArgumentError( `The object is already being persisted.` ) );
 
@@ -378,12 +378,12 @@ function __createChildren<T extends object>( this:void, retrievalType:"minimal" 
 
 
 function __sendPatch<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions ):Promise<T & Document> {
-	if( ! ResolvablePointer.is( document ) ) return Promise.reject( new IllegalArgumentError( "The document isn't a resolvable pointer." ) );
+	if( !ResolvablePointer.is( document ) ) return Promise.reject( new IllegalArgumentError( "The document isn't a resolvable pointer." ) );
 
-	if( ! repository.context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( `"${ document.$id }" is out of scope.` ) );
+	if( !repository.context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( `"${ document.$id }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( document.$id, { base: true } );
 
-	if( ! document.$isDirty() ) return Promise.resolve( document as T & Document );
+	if( !document.$isDirty() ) return Promise.resolve( document as T & Document );
 
 	document.$_normalize();
 
@@ -407,7 +407,7 @@ function __sendPatch<T extends object>( this:void, repository:LDPDocumentsReposi
 
 	// Deleted fragments
 	document.$__savedFragments
-		.filter( pointer => ! document.$hasPointer( pointer.$id ) )
+		.filter( pointer => !document.$hasPointer( pointer.$id ) )
 		.forEach( pointer => {
 			deltaCreator.addResource( pointer.$id, pointer.$_snapshot, {} );
 		} )
@@ -432,12 +432,12 @@ function __parseMembers( registry:Registry, pointers:(string | Pointer)[] ):Poin
 			if( isString( pointer ) ) return registry.getPointer( pointer );
 			if( Pointer.is( pointer ) ) return pointer;
 		} )
-		.filter( ( pointer ):pointer is Pointer => ! ! pointer )
+		.filter( ( pointer ):pointer is Pointer => !!pointer )
 		;
 }
 
 function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
-	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	if( !repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
@@ -458,7 +458,7 @@ function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri
 }
 
 function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
-	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	if( !repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
@@ -483,7 +483,7 @@ function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, 
 }
 
 function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<void> {
-	if( ! repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	if( !repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, LDP.Container );
@@ -525,9 +525,24 @@ export type LDPDocumentsRepositoryTraitFactory =
 	;
 
 /**
- * Constant that implements {@link LDPDocumentsRepositoryTraitFactory}.
+ * Constant with the factory, decorator and/or utils for a {@link LDPDocumentsRepositoryTrait} object.
  */
-export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
+export const LDPDocumentsRepositoryTrait:{
+	/**
+	 * The object with the properties/methods to use in the decoration of a {@link LDPDocumentsRepositoryTrait}.
+	 */
+	PROTOTYPE:LDPDocumentsRepositoryTraitFactory["PROTOTYPE"];
+
+	/**
+	 * Returns true if the object is decorated with the specific properties and methods of a {@link LDPDocumentsRepositoryTrait}.
+	 */
+	isDecorated( object:object ):object is LDPDocumentsRepositoryTrait
+
+	/**
+	 * Decorates the object with the properties and methods from the {@link LDPDocumentsRepositoryTrait} prototype.
+	 */
+	decorate<T extends BaseDocumentsRepository>( object:T ):T & LDPDocumentsRepositoryTrait;
+} = <LDPDocumentsRepositoryTraitFactory> {
 	PROTOTYPE: {
 		get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
@@ -615,7 +630,7 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 					id = __getTargetID( id, response );
 					const rdfDocument:RDFDocument | undefined = rdfDocuments.find( doc => doc[ "@id" ] === id );
 
-					if( ! rdfDocument ) throw new BadResponseError( `No document "${ id }" was returned.`, response );
+					if( !rdfDocument ) throw new BadResponseError( `No document "${ id }" was returned.`, response );
 					const document:T & Document = this.context.registry.register( id ) as T & Document;
 
 					const previousFragments:Set<string> = new Set();

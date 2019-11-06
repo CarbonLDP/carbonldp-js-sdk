@@ -94,7 +94,7 @@ export class DeltaCreator {
 		if( this.addToken.triples.length ) patch.statements.push( this.addToken );
 		if( this.deleteToken.triples.length ) patch.statements.push( this.deleteToken );
 
-		return `${patch}`;
+		return `${ patch }`;
 	}
 
 	/**
@@ -132,7 +132,7 @@ export class DeltaCreator {
 			if( definition && definition.containerType === ContainerType.LIST && _isExistingValue( oldValue ) ) {
 				const listUpdates:UpdateDelta[] = [];
 
-				if( ! _isExistingValue( newValue ) ) {
+				if( !_isExistingValue( newValue ) ) {
 					deleteTriples.addProperty( new PropertyToken( predicateURI ).addObject( new CollectionToken() ) );
 					listUpdates.push( { slice: [ 0, void 0 ], objects: [] } );
 
@@ -145,7 +145,7 @@ export class DeltaCreator {
 					) );
 				}
 
-				if( ! listUpdates.length ) return;
+				if( !listUpdates.length ) return;
 
 				this.__addPrefixFrom( predicateURI, schema );
 				listUpdates.forEach( updateDelta => {
@@ -173,7 +173,7 @@ export class DeltaCreator {
 				const setDelta:ArrayDelta = __getArrayDelta( oldObjects, newObjects );
 
 				const addValues:( objects:ObjectToken[], triple:SubjectToken ) => void = ( objects, triple ) => {
-					if( ! objects.length ) return;
+					if( !objects.length ) return;
 
 					const property:PropertyToken = new PropertyToken( predicateURI );
 					objects.forEach( object => {
@@ -215,7 +215,7 @@ export class DeltaCreator {
 			.getSchemaFor( mergedResource );
 
 		const queryableProperty:QueryableProperty | undefined = previousResource.$_queryableMetadata || previousResource.$_queryableMetadata;
-		if( ! queryableProperty ) return baseSchema;
+		if( !queryableProperty ) return baseSchema;
 
 		return ObjectSchemaDigester._combineSchemas( [
 			baseSchema,
@@ -234,12 +234,12 @@ export class DeltaCreator {
 
 	private __getObjects( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
 		const values:any[] = (Array.isArray( value ) ?
-				! definition || definition.containerType !== null ? value : value.slice( 0, 1 ) :
+				!definition || definition.containerType !== null ? value : value.slice( 0, 1 ) :
 				[ value ]
 		).filter( _isExistingValue );
 
 		if( definition && definition.containerType === ContainerType.LIST ) {
-			if( ! _isExistingValue( value ) ) return [];
+			if( !_isExistingValue( value ) ) return [];
 
 			const collection:CollectionToken = new CollectionToken();
 			collection.objects.push( ...this.__expandValues( values, schema, definition ) );
@@ -259,7 +259,7 @@ export class DeltaCreator {
 
 		return values
 			.map( value => {
-				const isLiteral:boolean = areDefinedLiteral !== null ? areDefinedLiteral : ! Pointer.is( value );
+				const isLiteral:boolean = areDefinedLiteral !== null ? areDefinedLiteral : !Pointer.is( value );
 
 				if( isLiteral ) return this.__expandLiteral( value, schema, definition );
 				return this.__expandPointer( value, schema );
@@ -268,7 +268,7 @@ export class DeltaCreator {
 	}
 
 	private __expandLanguageMap( values:any[], schema:DigestedObjectSchema ):ObjectToken[] {
-		if( ! values.length ) return [];
+		if( !values.length ) return [];
 		const languageMap:object = values[ 0 ];
 
 		return Object
@@ -287,7 +287,7 @@ export class DeltaCreator {
 
 	private __expandPointer( value:any, schema:DigestedObjectSchema ):IRIToken | BlankNodeToken | null {
 		const id:string = Pointer.is( value ) ? value.$id : value;
-		if( ! isString( id ) ) return null;
+		if( !isString( id ) ) return null;
 
 		return isBNodeLabel( id ) ?
 			new BlankNodeToken( id ) :
@@ -299,7 +299,7 @@ export class DeltaCreator {
 			definition.literalType :
 			_guessXSDType( value );
 
-		if( type === null || ! this.context.jsonldConverter.literalSerializers.has( type ) ) return null;
+		if( type === null || !this.context.jsonldConverter.literalSerializers.has( type ) ) return null;
 
 		value = this.context.jsonldConverter.literalSerializers.get( type )!.serialize( value );
 		if( type !== XSD.string )
@@ -317,7 +317,7 @@ export class DeltaCreator {
 		const matchPrefix:[ string, string ] | undefined = Array.from( schema.prefixes.entries() )
 			.find( ( [ , prefixURI ] ) => iri.startsWith( prefixURI ) );
 
-		if( ! matchPrefix ) return new IRIRefToken( iri );
+		if( !matchPrefix ) return new IRIRefToken( iri );
 
 		return new PrefixedNameToken( matchPrefix[ 0 ], iri.substr( matchPrefix[ 1 ].length ) );
 	}
@@ -345,12 +345,12 @@ export class DeltaCreator {
 }
 
 function __getArrayDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):ArrayDelta {
-	const objectMapper:( object:ObjectToken ) => [ string, ObjectToken ] = object => [ `${object}`, object ];
+	const objectMapper:( object:ObjectToken ) => [ string, ObjectToken ] = object => [ `${ object }`, object ];
 	const toAdd:Map<string, ObjectToken> = new Map( newValues.map( objectMapper ) );
 	const toDelete:Map<string, ObjectToken> = new Map( oldValues.map( objectMapper ) );
 
 	toAdd.forEach( ( value, identifier ) => {
-		if( ! toDelete.has( identifier ) ) return;
+		if( !toDelete.has( identifier ) ) return;
 
 		toDelete.delete( identifier );
 		toAdd.delete( identifier );
@@ -370,7 +370,7 @@ function __getListDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):Upda
 	}
 
 	const nodeMapper:( object:ObjectToken, index:number ) => Node = ( object, index ) => ({
-		identifier: `${object}`,
+		identifier: `${ object }`,
 		object,
 		index,
 	});

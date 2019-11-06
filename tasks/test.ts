@@ -1,12 +1,12 @@
-import gulp from "gulp";
-import karma from "karma";
-import path from "path";
 import del from "del";
-import moduleAlias from "module-alias";
-import ts from "gulp-typescript";
-import sourcemaps from "gulp-sourcemaps";
+import gulp from "gulp";
 import filter from "gulp-filter";
 import jasmine from "gulp-jasmine";
+import sourcemaps from "gulp-sourcemaps";
+import ts from "gulp-typescript";
+import karma from "karma";
+import moduleAlias from "module-alias";
+import path from "path";
 
 
 export const testBrowser:gulp.TaskFunction = ( done ) => {

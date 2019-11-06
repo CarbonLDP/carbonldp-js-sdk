@@ -58,9 +58,34 @@ const SCHEMA:ObjectSchema = {
 };
 
 /**
- * Constant that implements {@link AddMemberActionFactory}.
+ * Constant with the factory, decorator and/or utils for an {@link AddMemberAction} object.
  */
-export const AddMemberAction:AddMemberActionFactory = {
+export const AddMemberAction:{
+	/**
+	 * Type of the model, in this case: `https://carbonldp.com/ns/v1/platform#AddMemberAction`.
+	 */
+	TYPE:C["AddMemberAction"];
+
+	/**
+	 * Schema for the object.
+	 */
+	SCHEMA:ObjectSchema;
+
+	/**
+	 * Returns true when the value provided is considered to be an {@link AddMemberAction}.
+	 */
+	is( value:any ):value is AddMemberAction;
+
+	/**
+	 * Creates a {@link AddMemberAction} with the provided data.
+	 */
+	create<T extends object>( data:T & BaseAddMemberAction ):T & AddMemberAction;
+
+	/**
+	 * Creates a {@link AddMemberAction} from the provided object.
+	 */
+	createFrom<T extends object>( object:T & BaseAddMemberAction ):T & AddMemberAction;
+} = <AddMemberActionFactory> {
 	TYPE: C.AddMemberAction,
 	SCHEMA,
 
