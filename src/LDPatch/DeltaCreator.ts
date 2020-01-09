@@ -83,7 +83,7 @@ export class DeltaCreator {
 	}
 
 	/**
-	 * Returns the LD Patch string of the resources set in {@link DeltaCreator.addResource()}.
+	 * Returns the LD Patch string of the resources set in {@link DeltaCreator#addResource}.
 	 */
 	getPatch():string {
 		const patch:LDPatchToken = new LDPatchToken();

@@ -7,10 +7,9 @@ import { JSONLDProcessor } from "./JSONLDProcessor";
  */
 export class JSONLDParser extends JSONParser implements Parser<object[]> {
 	/**
-	 * Parse the string provided using the {@link JSONLDProcessor#expand `JSONLDProcessor.expand()`}` method.
+	 * Parse the string provided using the {@link JSONLDProcessor.expand} method.
 	 * @param input The JSON-LD string to parse.
 	 */
-	// TODO: Fix link syntax
 	parse( input:string ):Promise<object[]> {
 		return super.parse( input ).then( JSONLDProcessor.expand );
 	}
