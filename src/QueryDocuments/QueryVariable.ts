@@ -28,4 +28,3 @@ export class QueryVariable extends VariableToken {
 			return super.toString();
 	}
 }
-q

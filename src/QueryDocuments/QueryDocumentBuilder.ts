@@ -152,7 +152,7 @@ export class SubQueryDocumentsBuilder extends QueryDocumentBuilder {
 	/**
 	 * Adds a filter to the specific values of the property where the query is been applied.
 	 * NOTE: Using this function makes all the properties in the path of the one's applied, will be obligatory to exists.
-	 * @param values Values the property must have so that the document would be returned.
+	 * @param ...values Values the property must have so that the document would be returned.
 	 */
 	values( ...values:(QueryValue | QueryObject)[] ):this {
 		const tokens:(LiteralToken | IRIToken)[] = values
