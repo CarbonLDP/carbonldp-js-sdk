@@ -1,7 +1,14 @@
-import { IRIResolver } from "sparqler/data";
-import { isPrefixed } from "sparqler/iri";
+import { Container, IRIResolver, isPrefixed } from "sparqler/core";
 import { DeniableFluentPath, FluentPath, FluentPathContainer } from "sparqler/patterns";
-import { IRIRefToken, IRIToken, PrefixToken } from "sparqler/tokens";
+import {
+	IRIRefToken,
+	IRIToken,
+	PathAlternativeToken,
+	PathInNegatedToken,
+	PathToken,
+	PrefixToken,
+	SubPathInNegatedToken
+} from "sparqler/tokens";
 
 import { AbstractContext } from "../Context/AbstractContext";
 
@@ -21,9 +28,12 @@ import { QueryVariable } from "./QueryVariable";
 /**
  * Container of the query data specialized with elements for the custom querying of documents.
  */
-export class QueryContainer extends FluentPathContainer<undefined> {
+export class QueryContainer extends Container<undefined> implements FluentPathContainer<undefined> {
 	readonly context:AbstractContext<RegisteredPointer, any, any>;
 	readonly _queryProperty:QueryRootProperty;
+
+	readonly deniableFluentPathFactory:<W extends PathInNegatedToken | SubPathInNegatedToken | PathAlternativeToken<PathInNegatedToken>, O extends object>( container:FluentPathContainer<W>, object:O ) => (O & DeniableFluentPath<W>);
+	readonly fluentPathFactory:<W extends PathToken, O extends object>( container:FluentPathContainer<W>, object:O ) => (O & FluentPath<W>);
 
 	private readonly _generalSchema:DigestedObjectSchema;
 	private readonly _prefixesTuples:[ string, string ][];
@@ -37,9 +47,10 @@ export class QueryContainer extends FluentPathContainer<undefined> {
 		super( {
 			iriResolver: __createIRIResolver( schema ),
 			targetToken: void 0,
-			fluentPathFactory: FluentPath.createFrom,
-			deniableFluentPathFactory: DeniableFluentPath.createFrom,
 		} );
+
+		this.fluentPathFactory = FluentPath.createFrom,
+		this.deniableFluentPathFactory = DeniableFluentPath.createFrom;
 
 		this.context = context;
 

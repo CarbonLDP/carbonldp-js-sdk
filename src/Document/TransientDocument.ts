@@ -1,4 +1,4 @@
-import { isRelative } from "sparqler/iri";
+import { isRelative } from "sparqler/core";
 
 import { Context } from "../Context/Context";
 

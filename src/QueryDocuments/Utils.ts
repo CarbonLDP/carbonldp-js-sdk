@@ -1,3 +1,5 @@
+import { BracketedExpressionToken } from "sparqler/tokens";
+
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "../ObjectSchema/DigestedObjectSchemaProperty";
 import { ObjectSchemaUtils } from "../ObjectSchema/ObjectSchemaUtils";
@@ -77,4 +79,19 @@ export function _getMatchingDefinition( generalSchema:DigestedObjectSchema, targ
 
 	if( propertyURI === void 0 || propertyURI === definition.uri )
 		return definition;
+}
+
+
+export function _getRawExpression( expression:string ):BracketedExpressionToken {
+	return new RawExpressionToken( expression );
+}
+
+class RawExpressionToken extends BracketedExpressionToken {
+	constructor( rawExpression:string ) {
+		super( rawExpression as any );
+	}
+
+	toString():string {
+		return super.toString( 0 );
+	}
 }
