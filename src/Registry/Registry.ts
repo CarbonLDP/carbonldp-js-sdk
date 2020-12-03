@@ -389,14 +389,15 @@ export const Registry:{
 			const localID:string = __getLocalID( this, pointer.$id );
 
 			const resourcesMap:Map<string, RegisteredPointer> = __getResourcesMaps( this );
-			if( resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being used.` );
 
 			const resource:T & RegisteredPointer = __getDecorator( this )
 				.decorate( Object.assign<T, BaseRegisteredPointer>( pointer, {
 					$registry: this,
 				} ) );
 
-			resourcesMap.set( localID, resource );
+			if( !resourcesMap.has( localID ) ) {
+				resourcesMap.set( localID, resource );
+			}
 
 			return resource;
 		},

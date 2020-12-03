@@ -68,6 +68,7 @@ export function _getErrorResponseParserFn( this:void, registry:DocumentsRegistry
 	return ( error:HTTPError | Error ) => {
 		if( !("response" in error) ) return Promise.reject( error );
 		if( !error.response.data ) return Promise.reject( error );
+		if( error.response.status >= 400 && error.response.status <= 499 ) return Promise.reject( error );
 
 		return new JSONLDParser()
 			.parse( error.response.data )
