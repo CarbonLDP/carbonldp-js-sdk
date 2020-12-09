@@ -14,6 +14,7 @@ export interface C {
 	DocumentModifiedEvent:"https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent";
 	ErrorResponse:"https://carbonldp.com/ns/v1/platform#ErrorResponse";
 	Error:"https://carbonldp.com/ns/v1/platform#Error";
+	ExecutableQueryDocument:"https://carbonldp.com/ns/v1/platform#ExecutableQueryDocument";
 	Instance:"https://carbonldp.com/ns/v1/platform#Instance";
 	Map:"https://carbonldp.com/ns/v1/platform#Map";
 	MemberAddedEvent:"https://carbonldp.com/ns/v1/platform#MemberAddedEvent";
@@ -63,6 +64,7 @@ export interface C {
 	requestID:"https://carbonldp.com/ns/v1/platform#requestID";
 	relatedDocument:"https://carbonldp.com/ns/v1/platform#relatedDocument";
 	size:"https://carbonldp.com/ns/v1/platform#size";
+	storedQuery: "https://carbonldp.com/ns/v1/platform#storedQuery";
 	target:"https://carbonldp.com/ns/v1/platform#target";
 	targetMember:"https://carbonldp.com/ns/v1/platform#targetMember";
 	version:"https://carbonldp.com/ns/v1/platform#version";
@@ -84,6 +86,7 @@ export const C:{
 	DocumentModifiedEvent:"https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent";
 	ErrorResponse:"https://carbonldp.com/ns/v1/platform#ErrorResponse";
 	Error:"https://carbonldp.com/ns/v1/platform#Error";
+	ExecutableQueryDocument:"https://carbonldp.com/ns/v1/platform#ExecutableQueryDocument";
 	Instance:"https://carbonldp.com/ns/v1/platform#Instance";
 	Map:"https://carbonldp.com/ns/v1/platform#Map";
 	MemberAddedEvent:"https://carbonldp.com/ns/v1/platform#MemberAddedEvent";
@@ -133,6 +136,7 @@ export const C:{
 	requestID:"https://carbonldp.com/ns/v1/platform#requestID";
 	relatedDocument:"https://carbonldp.com/ns/v1/platform#relatedDocument";
 	size:"https://carbonldp.com/ns/v1/platform#size";
+	storedQuery: "https://carbonldp.com/ns/v1/platform#storedQuery";
 	target:"https://carbonldp.com/ns/v1/platform#target";
 	targetMember:"https://carbonldp.com/ns/v1/platform#targetMember";
 	version:"https://carbonldp.com/ns/v1/platform#version";
@@ -149,6 +153,7 @@ export const C:{
 	DocumentModifiedEvent: "https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent",
 	ErrorResponse: "https://carbonldp.com/ns/v1/platform#ErrorResponse",
 	Error: "https://carbonldp.com/ns/v1/platform#Error",
+	ExecutableQueryDocument:"https://carbonldp.com/ns/v1/platform#ExecutableQueryDocument",
 	Instance: "https://carbonldp.com/ns/v1/platform#Instance",
 	Map: "https://carbonldp.com/ns/v1/platform#Map",
 	MemberAddedEvent: "https://carbonldp.com/ns/v1/platform#MemberAddedEvent",
@@ -198,6 +203,7 @@ export const C:{
 	requestID: "https://carbonldp.com/ns/v1/platform#requestID",
 	relatedDocument: "https://carbonldp.com/ns/v1/platform#relatedDocument",
 	size: "https://carbonldp.com/ns/v1/platform#size",
+	storedQuery: "https://carbonldp.com/ns/v1/platform#storedQuery",
 	target: "https://carbonldp.com/ns/v1/platform#target",
 	targetMember: "https://carbonldp.com/ns/v1/platform#targetMember",
 	version: "https://carbonldp.com/ns/v1/platform#version",
