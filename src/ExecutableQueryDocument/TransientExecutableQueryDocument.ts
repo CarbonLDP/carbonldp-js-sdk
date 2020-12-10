@@ -1,26 +1,22 @@
-/**
- * In-memory model that represents a `c:ExecutableQueryDocument`.
- */
 import { isRelative } from "sparqler/core";
-import { Context } from "../Context/Context";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { TransientFragment } from "../Fragment/TransientFragment";
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
 import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
-import { Pointer } from "../Pointer/Pointer";
-import { RDFDocument } from "../RDF/Document";
-import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 import { $BaseRegistry } from "../Registry/BaseRegistry";
 import { $Registry, Registry } from "../Registry/Registry";
 import { Resource } from "../Resource/Resource";
-import { isObject, isPlainObject, isString } from "../Utils";
+import { isPlainObject, isString } from "../Utils";
 import { C } from "../Vocabularies/C";
 import { BaseExecutableQueryDocument } from "./BaseExecutableQueryDocument";
 import { OverriddenMembers, TransientDocument } from "../Document/TransientDocument";
 
+/**
+ * In-memory model that represents a `c:ExecutableQueryDocument`.
+ */
 export interface TransientExecutableQueryDocument extends TransientDocument {
 	/**
 	 * The stored SPARQL Query to execute on GET request with `ldp:ExecutableQuery` interaction model.
@@ -119,16 +115,23 @@ export const TransientExecutableQueryDocument:{
 } = <TransientExecutableQueryDocumentFactory> {
 
 	...TransientDocument,
+
+	create: <T extends BaseExecutableQueryDocument>( data?:T & BaseExecutableQueryDocument ) => {
+		const copy:T = Object.assign( {}, data );
+		return TransientExecutableQueryDocument.createFrom( copy );
+	},
+
 	createFrom: <T extends object>( object:T & BaseExecutableQueryDocument ) => {
 		if( TransientExecutableQueryDocument.is( object ) ) throw new IllegalArgumentError( "The object provided is already an ExecutableQueryDocument." );
 
-		if (!object.storedQuery) throw new IllegalArgumentError( "The new ExecutableQueryDocument must contain a storedQuery propery" );
+		if (!object.storedQuery) throw new IllegalArgumentError( "The new ExecutableQueryDocument must contain a storedQuery property" );
+
+		if ( !isString( object.storedQuery ) ) throw new IllegalArgumentError( "The storedQuery property must be of type string" );
 
 		const document:T & TransientExecutableQueryDocument = TransientExecutableQueryDocument.decorate<T & BaseExecutableQueryDocument>( object );
-
-
-
 		__convertNested( document, document );
+
+		document.$addType( C.ExecutableQueryDocument );
 		return document;
 	},
 

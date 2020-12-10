@@ -1,24 +1,17 @@
-import { exec } from "child_process";
-import { BaseDocument } from "../Document/BaseDocument";
-import { BaseResolvableDocument, Document, DocumentFactory } from "../Document/Document";
+import { BaseResolvableDocument, Document, OverriddenMembers, ForcedMembers } from "../Document/Document";
 import { EventEmitterDocumentTrait } from "../Document/Traits/EventEmitterDocumentTrait";
 import { QueryableDocumentTrait } from "../Document/Traits/QueryableDocumentTrait";
 import { SPARQLDocumentTrait } from "../Document/Traits/SPARQLDocumentTrait";
-import { OverriddenMembers, TransientDocument } from "../Document/TransientDocument";
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository";
 import { Fragment } from "../Fragment/Fragment";
-import { TransientFragment } from "../Fragment/TransientFragment";
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
-import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
 import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelSchema } from "../Model/ModelSchema";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
-import { $Registry } from "../Registry/Registry";
-import { ResolvablePointer } from "../Repository/ResolvablePointer";
-import { Resource } from "../Resource/Resource";
+import { isObject } from "../Utils";
 
 
 import { C } from "../Vocabularies/C";
@@ -28,7 +21,7 @@ import { TransientExecutableQueryDocument } from "./TransientExecutableQueryDocu
 /**
  * Required properties for creating a {@link Document} object.
  */
-export interface BaseResolvableExecutanleQueryDocument extends BaseExecutableQueryDocument {
+export interface BaseResolvableExecutableQueryDocument extends BaseExecutableQueryDocument {
 	/**
 	 * Registry where the created {@link Document} will exist.
 	 */
@@ -59,8 +52,8 @@ export interface ExecutableQueryDocument extends Document {
  */
 export type ExecutableQueryDocumentFactory =
 	& ModelSchema<C[ "ExecutableQueryDocument" ]>
-	& DocumentFactory
-	& ModelDecorator<ExecutableQueryDocument, BaseResolvableExecutanleQueryDocument>
+	& ModelPrototype<ExecutableQueryDocument, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, OverriddenMembers>
+	& ModelDecorator<ExecutableQueryDocument, BaseResolvableExecutableQueryDocument>
 	& ModelTypeGuard<ExecutableQueryDocument>
 	& ModelFactory<TransientExecutableQueryDocument, BaseExecutableQueryDocument>
 	;
@@ -112,7 +105,36 @@ export const ExecutableQueryDocument:{
 	createFrom<T extends object>( object:T & BaseExecutableQueryDocument ):T & TransientExecutableQueryDocument;
 } = <ExecutableQueryDocumentFactory> {
 	...Document,
-	TYPE: C.ExecutableQueryDocument,
+	decorate<T extends BaseResolvableDocument>( object:T ):T & ExecutableQueryDocument {
+		if( ExecutableQueryDocument.isDecorated( object ) ) return object;
+
+		type ForcedT = T & ForcedMembers & Pick<ExecutableQueryDocument, "$__modelDecorator">;
+		const base:ForcedT = Object.assign( object as T & ForcedMembers, {
+			$__modelDecorator: Fragment,
+		} );
+
+		const target:ForcedT & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait = ModelDecorator
+			.decorateMultiple( base, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait );
+
+		return ModelDecorator
+			.definePropertiesFrom( ExecutableQueryDocument.PROTOTYPE, target );
+	},
+	isDecorated( object:object ):object is ExecutableQueryDocument {
+		return isObject( object )
+			&& ModelDecorator
+				.hasPropertiesFrom( ExecutableQueryDocument.PROTOTYPE, object )
+			;
+	},
+
+	is( object:object ):object is ExecutableQueryDocument {
+		return TransientExecutableQueryDocument.is( object )
+			&& SPARQLDocumentTrait.isDecorated( object )
+			&& EventEmitterDocumentTrait.isDecorated( object )
+			&& QueryableDocumentTrait.isDecorated( object )
+			&& ExecutableQueryDocument.isDecorated( object )
+			;
+	},
 	create: TransientExecutableQueryDocument.create,
 	createFrom: TransientExecutableQueryDocument.createFrom,
+	TYPE: C.ExecutableQueryDocument,
 };

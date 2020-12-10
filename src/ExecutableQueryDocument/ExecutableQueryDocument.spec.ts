@@ -11,8 +11,9 @@ import { ExecutableQueryDocument } from "./ExecutableQueryDocument";
 import { EventEmitterDocumentTrait } from "../Document/Traits/EventEmitterDocumentTrait";
 import { QueryableDocumentTrait } from "../Document/Traits/QueryableDocumentTrait";
 import { SPARQLDocumentTrait } from "../Document/Traits/SPARQLDocumentTrait";
-import { TransientDocument } from "../Document/TransientDocument";
+import { TransientExecutableQueryDocument } from "./TransientExecutableQueryDocument";
 
+const defaultStoredQuery:string = "SELECT ?s WHERE { ?s ?o ?p }";
 
 describe( "ExecutableQueryDocument", () => {
 
@@ -211,6 +212,7 @@ describe( "ExecutableQueryDocument", () => {
 					modified: undefined,
 					accessPoints: undefined,
 					contains: undefined,
+					storedQuery: defaultStoredQuery,
 
 					$__savedFragments: [],
 					$_syncSavedFragments: ():any => {},
@@ -297,8 +299,12 @@ describe( "ExecutableQueryDocument", () => {
 			let isSPARQLDocumentTrait:jasmine.Spy;
 			let isEventEmitterDocumentTrait:jasmine.Spy;
 			let isSelfDecorated:jasmine.Spy;
+			const document:object = {
+				the: "document",
+				storedQuery: defaultStoredQuery,
+			};
 			beforeEach( () => {
-				isTransientDocument = spyOn( TransientDocument, "is" )
+				isTransientDocument = spyOn( TransientExecutableQueryDocument, "is" )
 					.and.returnValue( true );
 				isQueryableDocumentTrait = spyOn( QueryableDocumentTrait, "isDecorated" )
 					.and.returnValue( true );
@@ -312,68 +318,68 @@ describe( "ExecutableQueryDocument", () => {
 			} );
 
 			it( "should assert that is a TransientDocument", () => {
-				ExecutableQueryDocument.is( { the: "document" } );
-				expect( isTransientDocument ).toHaveBeenCalledWith( { the: "document" } );
+				ExecutableQueryDocument.is( document );
+				expect( isTransientDocument ).toHaveBeenCalledWith( document );
 			} );
 
 			it( "should assert that is a QueryableDocumentTrait", () => {
-				ExecutableQueryDocument.is( { the: "document" } );
-				expect( isQueryableDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
+				ExecutableQueryDocument.is( document );
+				expect( isQueryableDocumentTrait ).toHaveBeenCalledWith( document );
 			} );
 
 			it( "should assert that is a SPARQLDocumentTrait", () => {
-				ExecutableQueryDocument.is( { the: "document" } );
-				expect( isSPARQLDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
+				ExecutableQueryDocument.is( document );
+				expect( isSPARQLDocumentTrait ).toHaveBeenCalledWith( document );
 			} );
 
 			it( "should assert that is a EventEmitterDocumentTrait", () => {
-				ExecutableQueryDocument.is( { the: "document" } );
-				expect( isEventEmitterDocumentTrait ).toHaveBeenCalledWith( { the: "document" } );
+				ExecutableQueryDocument.is( document );
+				expect( isEventEmitterDocumentTrait ).toHaveBeenCalledWith( document );
 			} );
 
 			it( "should assert is decorated", () => {
-				ExecutableQueryDocument.is( { the: "document" } );
-				expect( isSelfDecorated ).toHaveBeenCalledWith( { the: "document" } );
+				ExecutableQueryDocument.is( document );
+				expect( isSelfDecorated ).toHaveBeenCalledWith( document );
 			} );
 
 
 			it( "should return true when all assertions", () => {
-				const returned:boolean = ExecutableQueryDocument.is( { the: "document" } );
+				const returned:boolean = ExecutableQueryDocument.is( document );
 				expect( returned ).toBe( true );
 			} );
 
 			it( "should return false if not a TransientDocument", () => {
 				isTransientDocument.and.returnValue( false );
 
-				const returned:boolean = ExecutableQueryDocument.is( { the: "document" } );
+				const returned:boolean = ExecutableQueryDocument.is( document );
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false if not a QueryableDocumentTrait", () => {
 				isQueryableDocumentTrait.and.returnValue( false );
 
-				const returned:boolean = ExecutableQueryDocument.is( { the: "document" } );
+				const returned:boolean = ExecutableQueryDocument.is( document );
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false if not a SPARQLDocumentTrait", () => {
 				isSPARQLDocumentTrait.and.returnValue( false );
 
-				const returned:boolean = ExecutableQueryDocument.is( { the: "document" } );
+				const returned:boolean = ExecutableQueryDocument.is( document );
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false if not a EventEmitterDocumentTrait", () => {
 				isEventEmitterDocumentTrait.and.returnValue( false );
 
-				const returned:boolean = ExecutableQueryDocument.is( { the: "document" } );
+				const returned:boolean = ExecutableQueryDocument.is( document );
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false if not decorated", () => {
 				isSelfDecorated.and.returnValue( false );
 
-				const returned:boolean = ExecutableQueryDocument.is( { the: "document" } );
+				const returned:boolean = ExecutableQueryDocument.is( document );
 				expect( returned ).toBe( false );
 			} );
 

@@ -225,7 +225,7 @@ export interface Document extends $Registry<Fragment>, QueryableDocumentTrait, S
 }
 
 
-type ForcedMembers = Pick<Document,
+export type ForcedMembers = Pick<Document,
 	| "$__resourcesMap"
 	| "$getPointer"
 	| "$getPointers"
@@ -341,6 +341,10 @@ export const Document:{
 			"@id": C.accessPoint,
 			"@type": "@id",
 			"@container": "@set",
+		},
+		"storedQuery": {
+			"@id": C.storedQuery,
+			"type": XSD.string,
 		},
 	},
 

@@ -21,7 +21,6 @@ import { URI } from "../RDF/URI";
 import { $Registry, Registry } from "../Registry/Registry";
 
 import { Resource } from "../Resource/Resource";
-import { C } from "../Vocabularies/C";
 
 import { XSD } from "../Vocabularies/XSD";
 
@@ -764,6 +763,8 @@ describe( "TransientExecutableQueryDocument", () => {
 					"@graph": [
 						{
 							"@id": "https://example.com/document/",
+							"@type": [ "https://carbonldp.com/ns/v1/platform#ExecutableQueryDocument" ],
+
 						},
 						{
 							"@id": "_:1",
@@ -801,6 +802,8 @@ describe( "TransientExecutableQueryDocument", () => {
 								"@value": defaultStoredQuery,
 								"@type": XSD.string,
 							} ],
+							"@type": [ "https://carbonldp.com/ns/v1/platform#ExecutableQueryDocument" ],
+
 						},
 						{
 							"@id": "_:1",
@@ -856,6 +859,8 @@ describe( "TransientExecutableQueryDocument", () => {
 								"@value": defaultStoredQuery,
 								"@type": XSD.string,
 							} ],
+							"@type": [ "https://carbonldp.com/ns/v1/platform#ExecutableQueryDocument" ],
+
 						},
 						{
 							"@id": "_:1",
@@ -1077,11 +1082,24 @@ describe( "TransientExecutableQueryDocument", () => {
 			} );
 
 
-			it( "should return a `Document`", () => {
-				const target:TransientExecutableQueryDocument = TransientExecutableQueryDocument.create();
-				expect( TransientExecutableQueryDocument.is( target ) ).toBe( true );
+			it( "should throw error when no storedQuery is passed", () => {
+				expect( () => TransientExecutableQueryDocument.create() )
+					.toThrow( new IllegalArgumentError( "The new ExecutableQueryDocument must contain a storedQuery property" ) );
 			} );
 
+			it( "should throw error when the storedQuery is not a string", () => {
+				expect( () => TransientExecutableQueryDocument.create({
+					storedQuery: 123,
+				} as any) )
+					.toThrow( new IllegalArgumentError( "The storedQuery property must be of type string" ) );
+			} );
+
+			it( "should return an `ExecutableQueryDocument`", () => {
+				const target:TransientExecutableQueryDocument = TransientExecutableQueryDocument.create({
+					storedQuery: defaultStoredQuery,
+				});
+				expect( TransientExecutableQueryDocument.is( target ) ).toBe( true );
+			} );
 		} );
 
 		describe( "TransientExecutableQueryDocument.createFrom", () => {

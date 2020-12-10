@@ -14,6 +14,7 @@ import { Document } from "./Document/Document";
 
 import * as Errors from "./Errors";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
+import { ExecutableQueryDocument } from "./ExecutableQueryDocument/ExecutableQueryDocument";
 
 import { Fragment } from "./Fragment/Fragment";
 import { TransientFragment } from "./Fragment/TransientFragment";
@@ -74,6 +75,7 @@ export class CarbonLDP extends DocumentsContext {
 	static ContainerType:typeof ContainerType = ContainerType;
 	static DigestedObjectSchema:typeof DigestedObjectSchema = DigestedObjectSchema;
 	static Document:typeof Document = Document;
+	static ExecutableQueryDocument:typeof ExecutableQueryDocument = ExecutableQueryDocument;
 	static Fragment:typeof Fragment = Fragment;
 	static TransientFragment:typeof TransientFragment = TransientFragment;
 	static Pointer:typeof Pointer = Pointer;
