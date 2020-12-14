@@ -5,6 +5,7 @@ import { Context } from "../Context/Context";
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+import { IDAlreadyInUseError } from "../Errors/IDAlreadyInUseError";
 
 import { TransientFragment } from "../Fragment/TransientFragment";
 
@@ -267,6 +268,11 @@ export const TransientDocument:{
 			if( isString( isOrObject ) ) id = isOrObject;
 
 			const $id:string = id ? __getLabelFrom( id ) : __getObjectId( object );
+
+			if( this.$hasPointer( $id, true )) {
+				throw new IDAlreadyInUseError( `"${ $id }" is already being used.` );
+			}
+
 			const fragment:T & TransientFragment = this.$_addPointer( Object
 				.assign<T, Pointer>( object, { $id } )
 			);

@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 	  
 ### Fixed
 
+- [#360](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/360) - Fix `$IDAlreadyInUseError` error when executing `onChildCreated` using real-time capabilities and when requesting a `$get` of a non-existent resource
 - [#391](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/391) - Adding properties with `undefined`, `null` and/or `[]` (empty array) triggers a patch request on save, even though this doesn't represent RDF changes
 - [#392](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/392) - Assigning a property that only wraps its previous value into an array triggers a patch request on save, even though this doesn't represent RDF changes
 
