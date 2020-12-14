@@ -75,14 +75,14 @@ describe( "Registry", () => {
 				} ).toThrowError( IllegalArgumentError, `"id" is out of scope.` );
 			} );
 
-			it( "should return resource", () => {
+			it( "should return the given resource even though the ID is already in use", () => {
 				const registry:Registry<RegisteredPointer> = createMock( {} );
 
 				registry.__resourcesMap.set( "id", RegisteredPointer.create( { $registry: registry } ) );
 
-				expect( () => {
-					registry._addPointer( { $id: "id" } );
-				} ).toEqual( jasmine.any( Function ) );
+				expect(
+					registry._addPointer( { $id: "id" } )
+				).toEqual( registry.__resourcesMap.get("id")! );
 			} );
 
 			it( "should return the same object reference", () => {
@@ -1062,13 +1062,13 @@ describe( "$Registry", () => {
 				} ).toThrowError( IllegalArgumentError, `"id" is out of scope.` );
 			} );
 
-			it( "should throw error when ID already taken", () => {
+			it( "should return the given resource even though the ID is already in use", () => {
 				const registry:$Registry<RegisteredPointer> = create$Mock( {} );
 				registry.$__resourcesMap.set( "id", RegisteredPointer.create( { $registry: registry } ) );
 
-				expect( () => {
-					registry.$_addPointer( { $id: "id" } );
-				} ).toEqual( jasmine.any( Function ) );
+				expect(
+					registry.$_addPointer( { $id: "id" } )
+				).toEqual( registry.$__resourcesMap.get( "id" )! );
 			} );
 
 			it( "should return the same object reference", () => {

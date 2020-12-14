@@ -1,4 +1,3 @@
-import { IDAlreadyInUseError } from "../Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { BiModelDecorator } from "../Model/BiModelDecorator";
