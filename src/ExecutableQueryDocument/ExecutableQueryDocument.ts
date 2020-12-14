@@ -16,6 +16,7 @@ import { isObject } from "../Utils";
 
 import { C } from "../Vocabularies/C";
 import { BaseExecutableQueryDocument } from "./BaseExecutableQueryDocument";
+import { ExecutableQueryDocumentTrait } from "./Traits/ExecutableQueryDocumentTrait";
 import { TransientExecutableQueryDocument } from "./TransientExecutableQueryDocument";
 
 /**
@@ -45,6 +46,11 @@ export interface ExecutableQueryDocument extends Document {
 	 * created, it has no `c:successfullyExecuted` property set.
 	 */
 	successfullyExecuted?: Date;
+	/**
+	 * Executes the stored query directly
+	 */
+	$execute(  ):Promise<JSON>;
+
 }
 
 /**
@@ -52,7 +58,7 @@ export interface ExecutableQueryDocument extends Document {
  */
 export type ExecutableQueryDocumentFactory =
 	& ModelSchema<C[ "ExecutableQueryDocument" ]>
-	& ModelPrototype<ExecutableQueryDocument, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, OverriddenMembers>
+	& ModelPrototype<ExecutableQueryDocument, SPARQLDocumentTrait & EventEmitterDocumentTrait & ExecutableQueryDocumentTrait, OverriddenMembers>
 	& ModelDecorator<ExecutableQueryDocument, BaseResolvableExecutableQueryDocument>
 	& ModelTypeGuard<ExecutableQueryDocument>
 	& ModelFactory<TransientExecutableQueryDocument, BaseExecutableQueryDocument>
@@ -113,8 +119,8 @@ export const ExecutableQueryDocument:{
 			$__modelDecorator: Fragment,
 		} );
 
-		const target:ForcedT & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait = ModelDecorator
-			.decorateMultiple( base, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait );
+		const target:ForcedT & SPARQLDocumentTrait & EventEmitterDocumentTrait & ExecutableQueryDocumentTrait = ModelDecorator
+			.decorateMultiple( base, SPARQLDocumentTrait, EventEmitterDocumentTrait, ExecutableQueryDocumentTrait );
 
 		return ModelDecorator
 			.definePropertiesFrom( ExecutableQueryDocument.PROTOTYPE, target );
@@ -130,11 +136,14 @@ export const ExecutableQueryDocument:{
 		return TransientExecutableQueryDocument.is( object )
 			&& SPARQLDocumentTrait.isDecorated( object )
 			&& EventEmitterDocumentTrait.isDecorated( object )
-			&& QueryableDocumentTrait.isDecorated( object )
+			&& ExecutableQueryDocumentTrait.isDecorated( object )
 			&& ExecutableQueryDocument.isDecorated( object )
 			;
 	},
 	create: TransientExecutableQueryDocument.create,
 	createFrom: TransientExecutableQueryDocument.createFrom,
 	TYPE: C.ExecutableQueryDocument,
+	PROTOTYPE: {
+		...Document.PROTOTYPE,
+	},
 };

@@ -45,6 +45,13 @@ export interface HTTPRepositoryTrait<MODEL extends ResolvablePointer = Resolvabl
 	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
 	/**
+	 * Executes the stored query of a {@link ExecutableQueryDocument}
+	 * @param uri The URI of the resource to query.
+	 * @param requestOptions Customizable options for the request.
+	 */
+	execute( uri:string, requestOptions?:RequestOptions ):Promise<JSON>;
+
+	/**
 	 * Refreshes with the latest data of the specified resource.
 	 * @param resource The resource to be refreshed.
 	 * @param requestOptions Customizable options for the request.
@@ -153,6 +160,21 @@ export const HTTPRepositoryTrait:{
 					return Promise.reject( error );
 				} );
 		},
+
+		execute( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<JSON> {
+			if( !this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
+
+			return RequestService
+				.get( url, requestOptions )
+				.then( ( response:Response ) => {
+					return JSON.parse(response.data);
+				} )
+				.catch<JSON>( ( error:HTTPError | Error ) => {
+					return Promise.reject( error );
+				} );
+		},
+
 
 
 		refresh<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {

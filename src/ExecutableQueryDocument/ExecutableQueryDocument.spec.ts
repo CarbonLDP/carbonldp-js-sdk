@@ -9,8 +9,8 @@ import { BaseResolvableDocument } from "../Document/Document";
 import { ExecutableQueryDocument } from "./ExecutableQueryDocument";
 
 import { EventEmitterDocumentTrait } from "../Document/Traits/EventEmitterDocumentTrait";
-import { QueryableDocumentTrait } from "../Document/Traits/QueryableDocumentTrait";
 import { SPARQLDocumentTrait } from "../Document/Traits/SPARQLDocumentTrait";
+import { ExecutableQueryDocumentTrait } from "./Traits/ExecutableQueryDocumentTrait";
 import { TransientExecutableQueryDocument } from "./TransientExecutableQueryDocument";
 
 const defaultStoredQuery:string = "SELECT ?s WHERE { ?s ?o ?p }";
@@ -295,7 +295,7 @@ describe( "ExecutableQueryDocument", () => {
 
 
 			let isTransientDocument:jasmine.Spy;
-			let isQueryableDocumentTrait:jasmine.Spy;
+			let isExecutableQueryDocumentTrait:jasmine.Spy;
 			let isSPARQLDocumentTrait:jasmine.Spy;
 			let isEventEmitterDocumentTrait:jasmine.Spy;
 			let isSelfDecorated:jasmine.Spy;
@@ -306,7 +306,7 @@ describe( "ExecutableQueryDocument", () => {
 			beforeEach( () => {
 				isTransientDocument = spyOn( TransientExecutableQueryDocument, "is" )
 					.and.returnValue( true );
-				isQueryableDocumentTrait = spyOn( QueryableDocumentTrait, "isDecorated" )
+				isExecutableQueryDocumentTrait = spyOn( ExecutableQueryDocumentTrait, "isDecorated" )
 					.and.returnValue( true );
 				isSPARQLDocumentTrait = spyOn( SPARQLDocumentTrait, "isDecorated" )
 					.and.returnValue( true );
@@ -322,9 +322,9 @@ describe( "ExecutableQueryDocument", () => {
 				expect( isTransientDocument ).toHaveBeenCalledWith( document );
 			} );
 
-			it( "should assert that is a QueryableDocumentTrait", () => {
+			it( "should assert that is a ExecutableQueryDocumentTrait", () => {
 				ExecutableQueryDocument.is( document );
-				expect( isQueryableDocumentTrait ).toHaveBeenCalledWith( document );
+				expect( isExecutableQueryDocumentTrait ).toHaveBeenCalledWith( document );
 			} );
 
 			it( "should assert that is a SPARQLDocumentTrait", () => {
@@ -355,8 +355,8 @@ describe( "ExecutableQueryDocument", () => {
 				expect( returned ).toBe( false );
 			} );
 
-			it( "should return false if not a QueryableDocumentTrait", () => {
-				isQueryableDocumentTrait.and.returnValue( false );
+			it( "should return false if not a ExecutableQueryDocumentTrait", () => {
+				isExecutableQueryDocumentTrait.and.returnValue( false );
 
 				const returned:boolean = ExecutableQueryDocument.is( document );
 				expect( returned ).toBe( false );
@@ -421,8 +421,8 @@ describe( "ExecutableQueryDocument", () => {
 			} );
 
 
-			it( "should decorate with QueryableDocumentTrait", () => {
-				const spy:jasmine.Spy = spyOn( QueryableDocumentTrait, "decorate" )
+			it( "should decorate with ExecutableQueryDocumentTrait", () => {
+				const spy:jasmine.Spy = spyOn( ExecutableQueryDocumentTrait, "decorate" )
 					.and.callThrough();
 
 				ExecutableQueryDocument.decorate( {

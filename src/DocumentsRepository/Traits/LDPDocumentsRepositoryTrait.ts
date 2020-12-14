@@ -510,6 +510,7 @@ export type OverriddenMembers =
 	| "get"
 	| "refresh"
 	| "exists"
+	| "execute"
 	| "save"
 	| "saveAndRefresh"
 	| "delete"
@@ -557,6 +558,14 @@ export const LDPDocumentsRepositoryTrait:{
 
 			return HTTPRepositoryTrait.PROTOTYPE
 				.exists.call( this, uri, requestOptions )
+				.catch( __getErrorResponseParserFnFrom( this ) );
+		},
+
+		execute( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<JSON> {
+			__setDefaultRequestOptions( requestOptions, LDP.ExecutableQuery );
+
+			return HTTPRepositoryTrait.PROTOTYPE
+				.execute.call( this, uri, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
