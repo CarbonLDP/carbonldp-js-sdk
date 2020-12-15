@@ -25,6 +25,12 @@ export interface ExecutableQueryDocumentTrait extends QueryableDocumentTrait {
 	 * Executes the stored query directly
 	 */
 	$execute(  ):Promise<JSON>;
+
+
+	/**
+	 * Modifies the document's stored query
+	 */
+	$modifyStoredQuery( newStoredQuery:string ):Promise<void>;
 }
 
 export type ExecutableQueryDocumentTraitFactory =
@@ -51,10 +57,11 @@ export const ExecutableQueryDocumentTrait:{
 } = <ExecutableQueryDocumentTraitFactory> {
 	PROTOTYPE: {
 		...QueryableDocumentTrait.PROTOTYPE,
-		$execute<T extends object>():any {
-			return {
-				"yes":"si",
-			};
+		$execute<T extends object>(this:ExecutableQueryDocumentTrait):any {
+			return this.$repository.execute( this.$id );
+		},
+		$modifyStoredQuery( this:ExecutableQueryDocumentTrait, newStoredQuery:string ):Promise<void> {
+			return this.$repository.modifyStoredQuery( this.$id, newStoredQuery);
 		},
 	},
 	isDecorated( object:object ):object is ExecutableQueryDocumentTrait {
@@ -65,7 +72,7 @@ export const ExecutableQueryDocumentTrait:{
 	decorate<T extends BaseExecutableQueryDocumentTrait>( object:T ):T & ExecutableQueryDocumentTrait {
 		if( ExecutableQueryDocumentTrait.isDecorated( object ) ) return object;
 
-		type ForcedT = T & Pick<ExecutableQueryDocumentTrait, "$get" | "$resolve" | "$execute">;
+		type ForcedT = T & Pick<ExecutableQueryDocumentTrait, "$get" | "$resolve">;
 		const forced:ForcedT = object as ForcedT;
 
 		const target:ForcedT & LDPDocumentTrait & QueryablePointer = ModelDecorator

@@ -35,6 +35,7 @@ export interface C {
 	QueryMetadata:"https://carbonldp.com/ns/v1/platform#QueryMetadata";
 	RemoveMemberAction:"https://carbonldp.com/ns/v1/platform#RemoveMemberAction";
 	ResponseMetadata:"https://carbonldp.com/ns/v1/platform#ResponseMetadata";
+	SetStoredQueryAction: "https://carbonldp.com/ns/v1/platform#SetStoredQueryAction";
 	ValidationError:"https://carbonldp.com/ns/v1/platform#ValidationError";
 	VolatileResource:"https://carbonldp.com/ns/v1/platform#VolatileResource";
 
@@ -107,6 +108,7 @@ export const C:{
 	QueryMetadata:"https://carbonldp.com/ns/v1/platform#QueryMetadata";
 	RemoveMemberAction:"https://carbonldp.com/ns/v1/platform#RemoveMemberAction";
 	ResponseMetadata:"https://carbonldp.com/ns/v1/platform#ResponseMetadata";
+	SetStoredQueryAction: "https://carbonldp.com/ns/v1/platform#SetStoredQueryAction";
 	ValidationError:"https://carbonldp.com/ns/v1/platform#ValidationError";
 	VolatileResource:"https://carbonldp.com/ns/v1/platform#VolatileResource";
 
@@ -174,6 +176,7 @@ export const C:{
 	QueryMetadata: "https://carbonldp.com/ns/v1/platform#QueryMetadata",
 	RemoveMemberAction: "https://carbonldp.com/ns/v1/platform#RemoveMemberAction",
 	ResponseMetadata: "https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+	SetStoredQueryAction: "https://carbonldp.com/ns/v1/platform#SetStoredQueryAction",
 	ValidationError: "https://carbonldp.com/ns/v1/platform#ValidationError",
 	VolatileResource: "https://carbonldp.com/ns/v1/platform#VolatileResource",
 

@@ -4,6 +4,7 @@ import { QueryableDocumentTrait } from "../Document/Traits/QueryableDocumentTrai
 import { SPARQLDocumentTrait } from "../Document/Traits/SPARQLDocumentTrait";
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository";
+import { ExecutableQueryDocumentsRepository } from "../DocumentsRepository/ExecutableQueryDocumentsRepository";
 import { Fragment } from "../Fragment/Fragment";
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
@@ -30,7 +31,7 @@ export interface BaseResolvableExecutableQueryDocument extends BaseExecutableQue
 	/**
 	 * Repository where the created {@link Document} can manage its data.
 	 */
-	$repository:DocumentsRepository;
+	$repository:ExecutableQueryDocumentsRepository;
 }
 
 /**
@@ -40,7 +41,8 @@ export interface ExecutableQueryDocument extends Document {
 	/**
 	 * The stored SPARQL Query to execute on GET request with `ldp:ExecutableQuery` interaction model.
 	 */
-	storedQuery: string;
+	readonly storedQuery: string;
+	// TODO: Fix JSON Property in responses
 	/**
 	 * The last time the storedQuery was successfully executed and returned. When a new `c:ExecutableQueryDocument` is
 	 * created, it has no `c:successfullyExecuted` property set.
@@ -50,6 +52,12 @@ export interface ExecutableQueryDocument extends Document {
 	 * Executes the stored query directly
 	 */
 	$execute(  ):Promise<JSON>;
+
+
+	/**
+	 * Modifies the document's stored query
+	 */
+	$modifyStoredQuery( newStoredQuery:string ):Promise<void>;
 
 }
 
@@ -143,7 +151,4 @@ export const ExecutableQueryDocument:{
 	create: TransientExecutableQueryDocument.create,
 	createFrom: TransientExecutableQueryDocument.createFrom,
 	TYPE: C.ExecutableQueryDocument,
-	PROTOTYPE: {
-		...Document.PROTOTYPE,
-	},
 };

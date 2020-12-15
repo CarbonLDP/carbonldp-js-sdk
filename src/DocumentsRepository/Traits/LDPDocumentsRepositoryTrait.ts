@@ -2,8 +2,13 @@ import { DocumentsContext } from "../../Context/DocumentsContext";
 
 import { Document } from "../../Document/Document";
 import { TransientDocument } from "../../Document/TransientDocument";
+import { DocumentsRegistry } from "../../DocumentsRegistry/DocumentsRegistry";
+import { ExecutableQueryDocumentsRegistry } from "../../DocumentsRegistry/ExecutableQueryDocumentsRegistry";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import { BaseExecutableQueryDocument } from "../../ExecutableQueryDocument/BaseExecutableQueryDocument";
+import { ExecutableQueryDocument } from "../../ExecutableQueryDocument/ExecutableQueryDocument";
+import { TransientExecutableQueryDocument } from "../../ExecutableQueryDocument/TransientExecutableQueryDocument";
 
 import { Fragment } from "../../Fragment/Fragment";
 
@@ -22,6 +27,7 @@ import { AddMemberAction } from "../../LDP/AddMemberAction";
 import { Map } from "../../LDP/Map";
 import { RemoveMemberAction } from "../../LDP/RemoveMemberAction";
 import { ResponseMetadata } from "../../LDP/ResponseMetadata";
+import { SetStoredQueryAction } from "../../LDP/SetStoredQueryAction";
 
 import { DeltaCreator } from "../../LDPatch/DeltaCreator";
 
@@ -44,6 +50,7 @@ import { C } from "../../Vocabularies/C";
 import { LDP } from "../../Vocabularies/LDP";
 
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
+import { DocumentsRepository } from "../DocumentsRepository";
 import { _getErrorResponseParserFn } from "../Utils";
 
 import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
@@ -206,6 +213,13 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 	 */
 	removeMembers( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 
+	/**
+	 * Modifies the `c:storedQuery` of a given `c:ExecutableQueryDocument`.
+	 * @param uri URI of the `c:ExecutableQueryDocument` to modify it's `c:storedQuery`.
+	 * @param newStoredQuery The new stored query to use.
+	 * @param requestOptions Customizable options for the request.
+	 */
+	modifyStoredQuery( uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<void>;
 
 	/**
 	 * Override method to parse the data that is a JSON-LD Document into the {@link Document} model.
@@ -319,8 +333,17 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new BadResponseError( "The response contains more than one Location header.", response );
 			transient.$id = locationHeader.values[ 0 ].toString();
-
-			const document:T & Document = repository.context.registry._addPointer( transient );
+			let document:(T & Document) | (T & ExecutableQueryDocument);
+			if (transient.$hasType(C.ExecutableQueryDocument) && TransientExecutableQueryDocument.is(transient)) {
+				let newRegistry:ExecutableQueryDocumentsRegistry = ExecutableQueryDocumentsRegistry.createFrom( { context: repository.context } );
+				document = newRegistry._addPointer(transient);
+				document
+					.$getFragments()
+					.forEach( document.$__modelDecorator.decorate );
+				return document;
+			} else {
+				document = repository.context.registry._addPointer( transient );
+			}
 			document
 				.$getFragments()
 				.forEach( document.$__modelDecorator.decorate );
@@ -506,6 +529,30 @@ function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri
 		;
 }
 
+function __sendSetStoredQueryAction(this:void, repository:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions:RequestOptions = {} ):Promise<void>  {
+	if( !repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
+
+	__setDefaultRequestOptions( requestOptions, LDP.ExecutableQuery );
+	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
+
+	const targetMembers:Pointer[] = __parseMembers( repository.context.registry, [newStoredQuery] );
+
+	const freeResources:FreeResources = FreeResources.createFrom( { registry: repository.context.registry } );
+
+	freeResources._addPointer( SetStoredQueryAction.createFrom( {
+		storedQuery: newStoredQuery,
+	} ) );
+
+	const body:string = JSON.stringify( freeResources );
+
+	return RequestService
+		.put( url, body, requestOptions )
+		.then( () => {} )
+		.catch( __getErrorResponseParserFnFrom( repository ) )
+		;
+}
+
 export type OverriddenMembers =
 	| "get"
 	| "refresh"
@@ -562,7 +609,8 @@ export const LDPDocumentsRepositoryTrait:{
 		},
 
 		execute( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<JSON> {
-			__setDefaultRequestOptions( requestOptions, LDP.ExecutableQuery );
+			RequestUtils.setPreferredInteractionModel( LDP.ExecutableQuery, requestOptions );
+			RequestUtils.setAcceptHeader( "application/json, application/trig", requestOptions );
 
 			return HTTPRepositoryTrait.PROTOTYPE
 				.execute.call( this, uri, requestOptions )
@@ -616,6 +664,10 @@ export const LDPDocumentsRepositoryTrait:{
 
 		addMembers( this:LDPDocumentsRepositoryTrait, uri:string, members:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void> {
 			return __sendAddAction( this, uri, members, requestOptions );
+		},
+
+		modifyStoredQuery( this:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<void> {
+			return __sendSetStoredQueryAction( this, uri, newStoredQuery, requestOptions);
 		},
 
 

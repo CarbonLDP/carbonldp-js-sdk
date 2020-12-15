@@ -1,13 +1,12 @@
-import { Document } from "../../Document/Document";
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
-import { QueryDocumentBuilder } from "../../QueryDocuments/QueryDocumentBuilder";
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
 import { OverriddenMembers, QueryableDocumentsRepositoryTrait } from "./QueryableDocumentsRepositoryTrait";
 
 export interface ExecutableQueryDocumentsRepositoryTrait extends QueryableDocumentsRepositoryTrait {
 	execute( uri:string ):Promise<JSON>;
+	modifyStoredQuery( uri:string, newStoredQuery:string ):Promise<void>;
 }
 
 
@@ -43,6 +42,9 @@ export const ExecutableQueryDocumentsRepositoryTrait:{
 		...QueryableDocumentsRepositoryTrait.PROTOTYPE,
 		execute( uri:string ):Promise<JSON> {
 			return LDPDocumentsRepositoryTrait.PROTOTYPE.execute(uri);
+		},
+		modifyStoredQuery( uri:string, newStoredQuery:string ):Promise<void> {
+			return LDPDocumentsRepositoryTrait.PROTOTYPE.modifyStoredQuery(uri, newStoredQuery);
 		},
 	},
 	isDecorated( object:object ):object is ExecutableQueryDocumentsRepositoryTrait {

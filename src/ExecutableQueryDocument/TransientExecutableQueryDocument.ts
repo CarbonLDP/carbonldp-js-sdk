@@ -21,7 +21,7 @@ export interface TransientExecutableQueryDocument extends TransientDocument {
 	/**
 	 * The stored SPARQL Query to execute on GET request with `ldp:ExecutableQuery` interaction model.
 	 */
-	storedQuery: string;
+	readonly storedQuery: string;
 }
 
 function __getLabelFrom( slug:string ):string {

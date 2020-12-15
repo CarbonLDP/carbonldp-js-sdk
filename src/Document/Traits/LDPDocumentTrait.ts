@@ -301,6 +301,10 @@ export const LDPDocumentTrait:{
 			const { _uri, _args } = _parseURIParams( this, uriOrMembersOrOptions, arguments );
 			return this.$repository.removeMembers( _uri, ..._args );
 		},
+
+		$modifyStoredQuery( this:LDPDocumentTrait, uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<void> {
+			return this.$repository.modifyStoredQuery( uri, newStoredQuery, requestOptions);
+		},
 	},
 
 	isDecorated( object:object ):object is LDPDocumentTrait {

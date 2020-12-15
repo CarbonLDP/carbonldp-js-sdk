@@ -10,6 +10,7 @@ import { Map } from "../LDP/Map";
 import { MapEntry } from "../LDP/MapEntry";
 import { RemoveMemberAction } from "../LDP/RemoveMemberAction";
 import { ResponseMetadata } from "../LDP/ResponseMetadata";
+import { SetStoredQueryAction } from "../LDP/SetStoredQueryAction";
 import { ValidationError } from "../LDP/ValidationError";
 
 import { ChildCreatedEvent } from "../Messaging/ChildCreatedEvent";
@@ -79,6 +80,7 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined,
 
 			.extendObjectSchema( AddMemberAction )
 			.extendObjectSchema( RemoveMemberAction )
+			.extendObjectSchema( SetStoredQueryAction )
 
 			.extendObjectSchema( Error )
 			.extendObjectSchema( Map )
