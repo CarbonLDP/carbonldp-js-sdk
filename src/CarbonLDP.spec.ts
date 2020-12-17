@@ -13,6 +13,7 @@ import { GlobalContext } from "./Context/GlobalContext";
 import { Document } from "./Document/Document";
 
 import * as Errors from "./Errors";
+import { ExecutableQueryDocument } from "./ExecutableQueryDocument/ExecutableQueryDocument";
 
 import { Fragment } from "./Fragment/Fragment";
 import { TransientFragment } from "./Fragment/TransientFragment";
@@ -149,6 +150,11 @@ describe( "CarbonLDP", ():void => {
 	it( "CarbonLDP.Document", ():void => {
 		expect( CarbonLDP.Document ).toBeDefined();
 		expect( CarbonLDP.Document ).toBe( Document );
+	} );
+
+	it( "CarbonLDP.ExecutableQueryDocument", ():void => {
+		expect( CarbonLDP.ExecutableQueryDocument ).toBeDefined();
+		expect( CarbonLDP.ExecutableQueryDocument ).toBe( ExecutableQueryDocument );
 	} );
 
 	it( "CarbonLDP.Fragment", ():void => {

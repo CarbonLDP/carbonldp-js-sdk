@@ -8,6 +8,8 @@ import { LDPDocumentTrait } from "../../Document/Traits/LDPDocumentTrait";
 import { DocumentsRegistry } from "../../DocumentsRegistry/DocumentsRegistry";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import { ExecutableQueryDocument } from "../../ExecutableQueryDocument/ExecutableQueryDocument";
+import { TransientExecutableQueryDocument } from "../../ExecutableQueryDocument/TransientExecutableQueryDocument";
 
 import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 
@@ -27,6 +29,8 @@ import { LDP } from "../../Vocabularies/LDP";
 import { XSD } from "../../Vocabularies/XSD";
 
 import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
+
+const defaultStoredQuery:string = "SELECT * WHERE { ?s ?o ?p }";
 
 
 describe( "LDPDocumentsRepositoryTrait", () => {

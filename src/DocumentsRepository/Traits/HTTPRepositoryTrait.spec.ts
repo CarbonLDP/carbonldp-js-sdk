@@ -14,6 +14,7 @@ describe( "HTTPRepositoryTrait", () => {
 		// TODO: Test .get
 		// TODO: Test .resolve
 		// TODO: Test .exists
+		// TODO: Test .execute
 
 		// TODO: Test .refresh
 		// TODO: Test .save

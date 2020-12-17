@@ -74,7 +74,7 @@ describe( "DocumentsRepository", () => {
 			} );
 
 
-			it( "should create with QueryableDocumentsRepositoryTrait", () => {
+			it( "should create with ExecutableQueryDocumentsRepositoryTrait", () => {
 				const spy:jasmine.Spy = spyOn( ExecutableQueryDocumentsRepositoryTrait, "decorate" )
 					.and.callThrough();
 
