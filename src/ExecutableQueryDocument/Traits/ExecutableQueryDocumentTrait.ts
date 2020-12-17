@@ -65,8 +65,10 @@ export const ExecutableQueryDocumentTrait:{
 		},
 	},
 	isDecorated( object:object ):object is ExecutableQueryDocumentTrait {
-		return ModelDecorator
-			.hasPropertiesFrom( ExecutableQueryDocumentTrait.PROTOTYPE, object );
+		return object.hasOwnProperty("$execute")
+			&& object.hasOwnProperty("$modifyStoredQuery")
+			&& ModelDecorator
+				.hasPropertiesFrom( ExecutableQueryDocumentTrait.PROTOTYPE, object );
 	},
 
 	decorate<T extends BaseExecutableQueryDocumentTrait>( object:T ):T & ExecutableQueryDocumentTrait {

@@ -66,6 +66,7 @@ export interface C {
 	relatedDocument:"https://carbonldp.com/ns/v1/platform#relatedDocument";
 	size:"https://carbonldp.com/ns/v1/platform#size";
 	storedQuery: "https://carbonldp.com/ns/v1/platform#storedQuery";
+	successfullyExecuted: "https://carbonldp.com/ns/v1/platform#successfullyExecuted";
 	target:"https://carbonldp.com/ns/v1/platform#target";
 	targetMember:"https://carbonldp.com/ns/v1/platform#targetMember";
 	version:"https://carbonldp.com/ns/v1/platform#version";
@@ -139,6 +140,7 @@ export const C:{
 	relatedDocument:"https://carbonldp.com/ns/v1/platform#relatedDocument";
 	size:"https://carbonldp.com/ns/v1/platform#size";
 	storedQuery: "https://carbonldp.com/ns/v1/platform#storedQuery";
+	successfullyExecuted: "https://carbonldp.com/ns/v1/platform#successfullyExecuted";
 	target:"https://carbonldp.com/ns/v1/platform#target";
 	targetMember:"https://carbonldp.com/ns/v1/platform#targetMember";
 	version:"https://carbonldp.com/ns/v1/platform#version";
@@ -207,6 +209,7 @@ export const C:{
 	relatedDocument: "https://carbonldp.com/ns/v1/platform#relatedDocument",
 	size: "https://carbonldp.com/ns/v1/platform#size",
 	storedQuery: "https://carbonldp.com/ns/v1/platform#storedQuery",
+	successfullyExecuted: "https://carbonldp.com/ns/v1/platform#successfullyExecuted",
 	target: "https://carbonldp.com/ns/v1/platform#target",
 	targetMember: "https://carbonldp.com/ns/v1/platform#targetMember",
 	version: "https://carbonldp.com/ns/v1/platform#version",

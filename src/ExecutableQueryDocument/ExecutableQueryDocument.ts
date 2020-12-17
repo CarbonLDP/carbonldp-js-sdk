@@ -135,6 +135,7 @@ export const ExecutableQueryDocument:{
 	},
 	isDecorated( object:object ):object is ExecutableQueryDocument {
 		return isObject( object )
+			&& object.hasOwnProperty("storedQuery")
 			&& ModelDecorator
 				.hasPropertiesFrom( ExecutableQueryDocument.PROTOTYPE, object )
 			;

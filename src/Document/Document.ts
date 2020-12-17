@@ -346,6 +346,10 @@ export const Document:{
 			"@id": C.storedQuery,
 			"type": XSD.string,
 		},
+		"successfullyExecuted": {
+			"@id": C.successfullyExecuted,
+			"type": XSD.date,
+		},
 	},
 
 	PROTOTYPE: {

@@ -1,9 +1,15 @@
 import { ConstructToken, IRIRefToken, PropertyToken, QueryToken, SubjectToken } from "sparqler/tokens";
 
 import { Document } from "../../Document/Document";
+import { EventEmitterDocumentTrait } from "../../Document/Traits/EventEmitterDocumentTrait";
+import { SPARQLDocumentTrait } from "../../Document/Traits/SPARQLDocumentTrait";
+import { ExecutableQueryDocumentsRegistry } from "../../DocumentsRegistry/ExecutableQueryDocumentsRegistry";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../../Errors/IllegalStateError";
+import { ExecutableQueryDocument } from "../../ExecutableQueryDocument/ExecutableQueryDocument";
+import { ExecutableQueryDocumentTrait } from "../../ExecutableQueryDocument/Traits/ExecutableQueryDocumentTrait";
+import { TransientExecutableQueryDocument } from "../../ExecutableQueryDocument/TransientExecutableQueryDocument";
 
 import { FreeResources } from "../../FreeResources/FreeResources";
 
@@ -428,6 +434,10 @@ export const QueryableDocumentsRepositoryTrait:{
 			return LDPDocumentsRepositoryTrait.PROTOTYPE
 				.get.call<LDPDocumentsRepositoryTrait, [ string, RequestOptions?], Promise<T & Document>>( this, uri, requestOptions )
 				.then<T & Document>( document => {
+
+					if (TransientExecutableQueryDocument.is(document) && document.$hasType(C.ExecutableQueryDocument))
+						ExecutableQueryDocumentTrait.decorate( document );
+
 					if( !document.$_queryableMetadata )
 						return document;
 

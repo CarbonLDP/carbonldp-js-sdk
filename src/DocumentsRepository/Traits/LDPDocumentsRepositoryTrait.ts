@@ -2,11 +2,10 @@ import { DocumentsContext } from "../../Context/DocumentsContext";
 
 import { Document } from "../../Document/Document";
 import { TransientDocument } from "../../Document/TransientDocument";
-import { DocumentsRegistry } from "../../DocumentsRegistry/DocumentsRegistry";
 import { ExecutableQueryDocumentsRegistry } from "../../DocumentsRegistry/ExecutableQueryDocumentsRegistry";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
-import { BaseExecutableQueryDocument } from "../../ExecutableQueryDocument/BaseExecutableQueryDocument";
+import { NotImplementedError } from "../../Errors/NotImplementedError";
 import { ExecutableQueryDocument } from "../../ExecutableQueryDocument/ExecutableQueryDocument";
 import { TransientExecutableQueryDocument } from "../../ExecutableQueryDocument/TransientExecutableQueryDocument";
 
@@ -310,7 +309,7 @@ function __isPersistingChild( object:object ):boolean {
 	return object[ "__CarbonLDP_persisting__" ];
 }
 
-function __createChild<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, parentURI:string, requestOptions:RequestOptions, child:T, slug?:string ):Promise<T & Document> {
+function __createChild<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, parentURI:string, requestOptions:RequestOptions, child:T, slug?:string ):Promise<T & Document> | Promise<T & ExecutableQueryDocument> {
 	if( ResolvablePointer.is( child ) ) throw new IllegalArgumentError( "Cannot persist an already resolvable pointer." );
 
 	const transient:T & TransientDocument = TransientDocument.is( child ) ?
@@ -340,7 +339,7 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 				document
 					.$getFragments()
 					.forEach( document.$__modelDecorator.decorate );
-				return document;
+				return document as T & ExecutableQueryDocument;
 			} else {
 				document = repository.context.registry._addPointer( transient );
 			}
@@ -553,6 +552,12 @@ function __sendSetStoredQueryAction(this:void, repository:LDPDocumentsRepository
 		;
 }
 
+function __throwNotImplemented():Promise<never> {
+	return Promise.reject(
+		new NotImplementedError( "Executable Query Documents do not support $save and $saveAndRefresh. Use $modifyStoredQuery" )
+	);
+}
+
 export type OverriddenMembers =
 	| "get"
 	| "refresh"
@@ -592,11 +597,11 @@ export const LDPDocumentsRepositoryTrait:{
 	decorate<T extends BaseDocumentsRepository>( object:T ):T & LDPDocumentsRepositoryTrait;
 } = <LDPDocumentsRepositoryTraitFactory> {
 	PROTOTYPE: {
-		get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+		get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> | Promise<T & ExecutableQueryDocument> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.get.call<HTTPRepositoryTrait, [ string, RequestOptions?], Promise<T & Document>>( this, uri, requestOptions )
+				.get.call<HTTPRepositoryTrait, [ string, RequestOptions?], Promise<T & Document> | Promise<T & ExecutableQueryDocument>>( this, uri, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
@@ -638,11 +643,19 @@ export const LDPDocumentsRepositoryTrait:{
 		},
 
 		save<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+
+			if (document.$hasType( C.ExecutableQueryDocument ) && ExecutableQueryDocument.is(document)) {
+				return __throwNotImplemented();
+			}
+
 			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
 			return __sendPatch<T>( this, document, requestOptions );
 		},
 
 		saveAndRefresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+			if (document.$hasType( C.ExecutableQueryDocument ) && ExecutableQueryDocument.is(document)) {
+				return __throwNotImplemented();
+			}
 			RequestUtils.setPreferredRetrieval( "representation", requestOptions );
 			return __sendPatch<T>( this, document, requestOptions );
 		},
