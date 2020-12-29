@@ -2,8 +2,6 @@ import { ModelFactory } from "../Model/ModelFactory";
 
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
-import { Pointer } from "../Pointer/Pointer";
-
 import { BaseResource } from "../Resource/BaseResource";
 import { Resource } from "../Resource/Resource";
 

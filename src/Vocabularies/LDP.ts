@@ -9,7 +9,6 @@ export interface LDP {
 	Container:"http://www.w3.org/ns/ldp#Container";
 	Descending:"http://www.w3.org/ns/ldp#Descending";
 	DirectContainer:"http://www.w3.org/ns/ldp#DirectContainer";
-	ExecutableQuery: "http://www.w3.org/ns/ldp#ExecutableQuery";
 	IndirectContainer:"http://www.w3.org/ns/ldp#IndirectContainer";
 	RDFSource:"http://www.w3.org/ns/ldp#RDFSource";
 	Resource:"http://www.w3.org/ns/ldp#Resource";
@@ -46,7 +45,6 @@ export const LDP:{
 	Container:"http://www.w3.org/ns/ldp#Container";
 	Descending:"http://www.w3.org/ns/ldp#Descending";
 	DirectContainer:"http://www.w3.org/ns/ldp#DirectContainer";
-	ExecutableQuery: "http://www.w3.org/ns/ldp#ExecutableQuery";
 	IndirectContainer:"http://www.w3.org/ns/ldp#IndirectContainer";
 	RDFSource:"http://www.w3.org/ns/ldp#RDFSource";
 	Resource:"http://www.w3.org/ns/ldp#Resource";
@@ -78,7 +76,6 @@ export const LDP:{
 	Container: "http://www.w3.org/ns/ldp#Container",
 	Descending: "http://www.w3.org/ns/ldp#Descending",
 	DirectContainer: "http://www.w3.org/ns/ldp#DirectContainer",
-	ExecutableQuery: "http://www.w3.org/ns/ldp#ExecutableQuery",
 	IndirectContainer: "http://www.w3.org/ns/ldp#IndirectContainer",
 	RDFSource: "http://www.w3.org/ns/ldp#RDFSource",
 	Resource: "http://www.w3.org/ns/ldp#Resource",

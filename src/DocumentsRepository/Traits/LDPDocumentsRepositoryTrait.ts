@@ -532,7 +532,7 @@ function __sendSetStoredQueryAction(this:void, repository:LDPDocumentsRepository
 	if( !repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
-	__setDefaultRequestOptions( requestOptions, LDP.ExecutableQuery );
+	__setDefaultRequestOptions( requestOptions, C.ExecutableQuery );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
 	const targetMembers:Pointer[] = __parseMembers( repository.context.registry, [newStoredQuery] );
@@ -614,7 +614,7 @@ export const LDPDocumentsRepositoryTrait:{
 		},
 
 		execute( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<JSON> {
-			RequestUtils.setPreferredInteractionModel( LDP.ExecutableQuery, requestOptions );
+			RequestUtils.setPreferredInteractionModel( C.ExecutableQuery, requestOptions );
 			RequestUtils.setAcceptHeader( "application/json, application/trig", requestOptions );
 
 			return HTTPRepositoryTrait.PROTOTYPE

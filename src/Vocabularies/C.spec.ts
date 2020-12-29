@@ -8,7 +8,7 @@ describe( "C", ():void => {
 	} );
 
 	it( "should test all exported IRIs", ():void => {
-		expect( Object.keys( C ).length ).toBe( 66 );
+		expect( Object.keys( C ).length ).toBe( 67 );
 	} );
 
 

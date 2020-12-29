@@ -8,7 +8,7 @@ describe( "LDP", ():void => {
 	} );
 
 	it( "should test all exported IRIs", ():void => {
-		expect( Object.keys( LDP ).length ).toBe( 29 );
+		expect( Object.keys( LDP ).length ).toBe( 28 );
 	} );
 
 	it( "LDP.namespace", ():void => {
