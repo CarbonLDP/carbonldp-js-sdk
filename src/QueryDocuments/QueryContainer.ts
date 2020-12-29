@@ -50,7 +50,7 @@ export class QueryContainer extends Container<undefined> implements FluentPathCo
 		} );
 
 		this.fluentPathFactory = FluentPath.createFrom,
-		this.deniableFluentPathFactory = DeniableFluentPath.createFrom;
+			this.deniableFluentPathFactory = DeniableFluentPath.createFrom;
 
 		this.context = context;
 

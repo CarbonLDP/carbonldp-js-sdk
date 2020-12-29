@@ -333,9 +333,9 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 			if( locationHeader.values.length !== 1 ) throw new BadResponseError( "The response contains more than one Location header.", response );
 			transient.$id = locationHeader.values[ 0 ].toString();
 			let document:(T & Document) | (T & ExecutableQueryDocument);
-			if (transient.$hasType(C.ExecutableQueryDocument) && TransientExecutableQueryDocument.is(transient)) {
+			if( transient.$hasType( C.ExecutableQueryDocument ) && TransientExecutableQueryDocument.is( transient ) ) {
 				let newRegistry:ExecutableQueryDocumentsRegistry = ExecutableQueryDocumentsRegistry.createFrom( { context: repository.context } );
-				document = newRegistry._addPointer(transient);
+				document = newRegistry._addPointer( transient );
 				document
 					.$getFragments()
 					.forEach( document.$__modelDecorator.decorate );
@@ -528,14 +528,14 @@ function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri
 		;
 }
 
-function __sendSetStoredQueryAction(this:void, repository:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions:RequestOptions = {} ):Promise<void>  {
+function __sendSetStoredQueryAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions:RequestOptions = {} ):Promise<void> {
 	if( !repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, C.ExecutableQuery );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
-	const targetMembers:Pointer[] = __parseMembers( repository.context.registry, [newStoredQuery] );
+	const targetMembers:Pointer[] = __parseMembers( repository.context.registry, [ newStoredQuery ] );
 
 	const freeResources:FreeResources = FreeResources.createFrom( { registry: repository.context.registry } );
 
@@ -644,7 +644,7 @@ export const LDPDocumentsRepositoryTrait:{
 
 		save<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 
-			if (document.$hasType( C.ExecutableQueryDocument ) && ExecutableQueryDocument.is(document)) {
+			if( document.$hasType( C.ExecutableQueryDocument ) && ExecutableQueryDocument.is( document ) ) {
 				return __throwNotImplemented();
 			}
 
@@ -653,7 +653,7 @@ export const LDPDocumentsRepositoryTrait:{
 		},
 
 		saveAndRefresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
-			if (document.$hasType( C.ExecutableQueryDocument ) && ExecutableQueryDocument.is(document)) {
+			if( document.$hasType( C.ExecutableQueryDocument ) && ExecutableQueryDocument.is( document ) ) {
 				return __throwNotImplemented();
 			}
 			RequestUtils.setPreferredRetrieval( "representation", requestOptions );
@@ -680,7 +680,7 @@ export const LDPDocumentsRepositoryTrait:{
 		},
 
 		modifyStoredQuery( this:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<void> {
-			return __sendSetStoredQueryAction( this, uri, newStoredQuery, requestOptions);
+			return __sendSetStoredQueryAction( this, uri, newStoredQuery, requestOptions );
 		},
 
 

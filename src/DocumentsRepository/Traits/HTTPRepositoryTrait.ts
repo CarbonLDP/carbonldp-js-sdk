@@ -168,13 +168,12 @@ export const HTTPRepositoryTrait:{
 			return RequestService
 				.get( url, requestOptions )
 				.then( ( response:Response ) => {
-					return JSON.parse(response.data);
+					return JSON.parse( response.data );
 				} )
 				.catch<JSON>( ( error:HTTPError | Error ) => {
 					return Promise.reject( error );
 				} );
 		},
-
 
 
 		refresh<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {

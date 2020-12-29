@@ -24,7 +24,10 @@ import { Resource } from "../Resource/Resource";
 
 import { XSD } from "../Vocabularies/XSD";
 
-import { TransientExecutableQueryDocument, TransientExecutableQueryDocumentFactory } from "./TransientExecutableQueryDocument";
+import {
+	TransientExecutableQueryDocument,
+	TransientExecutableQueryDocumentFactory
+} from "./TransientExecutableQueryDocument";
 
 const defaultStoredQuery:string = `
 	SELECT ?s
@@ -1088,16 +1091,16 @@ describe( "TransientExecutableQueryDocument", () => {
 			} );
 
 			it( "should throw error when the storedQuery is not a string", () => {
-				expect( () => TransientExecutableQueryDocument.create({
+				expect( () => TransientExecutableQueryDocument.create( {
 					storedQuery: 123,
-				} as any) )
+				} as any ) )
 					.toThrow( new IllegalArgumentError( "The storedQuery property must be of type string" ) );
 			} );
 
 			it( "should return an `ExecutableQueryDocument`", () => {
-				const target:TransientExecutableQueryDocument = TransientExecutableQueryDocument.create({
+				const target:TransientExecutableQueryDocument = TransientExecutableQueryDocument.create( {
 					storedQuery: defaultStoredQuery,
-				});
+				} );
 				expect( TransientExecutableQueryDocument.is( target ) ).toBe( true );
 			} );
 		} );

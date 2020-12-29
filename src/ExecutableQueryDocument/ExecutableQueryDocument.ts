@@ -1,9 +1,7 @@
-import { BaseResolvableDocument, Document, OverriddenMembers, ForcedMembers } from "../Document/Document";
+import { BaseResolvableDocument, Document, ForcedMembers, OverriddenMembers } from "../Document/Document";
 import { EventEmitterDocumentTrait } from "../Document/Traits/EventEmitterDocumentTrait";
-import { QueryableDocumentTrait } from "../Document/Traits/QueryableDocumentTrait";
 import { SPARQLDocumentTrait } from "../Document/Traits/SPARQLDocumentTrait";
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
-import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository";
 import { ExecutableQueryDocumentsRepository } from "../DocumentsRepository/ExecutableQueryDocumentsRepository";
 import { Fragment } from "../Fragment/Fragment";
 import { ModelDecorator } from "../Model/ModelDecorator";
@@ -41,17 +39,17 @@ export interface ExecutableQueryDocument extends Document {
 	/**
 	 * The stored SPARQL Query to execute on GET request with `ldp:ExecutableQuery` interaction model.
 	 */
-	readonly storedQuery: string;
+	readonly storedQuery:string;
 	// TODO: Fix JSON Property in responses
 	/**
 	 * The last time the storedQuery was successfully executed and returned. When a new `c:ExecutableQueryDocument` is
 	 * created, it has no `c:successfullyExecuted` property set.
 	 */
-	successfullyExecuted?: Date;
+	successfullyExecuted?:Date;
 	/**
 	 * Executes the stored query directly
 	 */
-	$execute(  ):Promise<JSON>;
+	$execute():Promise<JSON>;
 
 
 	/**
@@ -135,7 +133,7 @@ export const ExecutableQueryDocument:{
 	},
 	isDecorated( object:object ):object is ExecutableQueryDocument {
 		return isObject( object )
-			&& object.hasOwnProperty("storedQuery")
+			&& object.hasOwnProperty( "storedQuery" )
 			&& ModelDecorator
 				.hasPropertiesFrom( ExecutableQueryDocument.PROTOTYPE, object )
 			;

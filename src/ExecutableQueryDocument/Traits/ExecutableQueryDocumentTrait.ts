@@ -24,7 +24,7 @@ export interface ExecutableQueryDocumentTrait extends QueryableDocumentTrait {
 	/**
 	 * Executes the stored query directly
 	 */
-	$execute(  ):Promise<JSON>;
+	$execute():Promise<JSON>;
 
 
 	/**
@@ -57,16 +57,16 @@ export const ExecutableQueryDocumentTrait:{
 } = <ExecutableQueryDocumentTraitFactory> {
 	PROTOTYPE: {
 		...QueryableDocumentTrait.PROTOTYPE,
-		$execute<T extends object>(this:ExecutableQueryDocumentTrait):any {
+		$execute<T extends object>( this:ExecutableQueryDocumentTrait ):any {
 			return this.$repository.execute( this.$id );
 		},
 		$modifyStoredQuery( this:ExecutableQueryDocumentTrait, newStoredQuery:string ):Promise<void> {
-			return this.$repository.modifyStoredQuery( this.$id, newStoredQuery);
+			return this.$repository.modifyStoredQuery( this.$id, newStoredQuery );
 		},
 	},
 	isDecorated( object:object ):object is ExecutableQueryDocumentTrait {
-		return object.hasOwnProperty("$execute")
-			&& object.hasOwnProperty("$modifyStoredQuery")
+		return object.hasOwnProperty( "$execute" )
+			&& object.hasOwnProperty( "$modifyStoredQuery" )
 			&& ModelDecorator
 				.hasPropertiesFrom( ExecutableQueryDocumentTrait.PROTOTYPE, object );
 	},

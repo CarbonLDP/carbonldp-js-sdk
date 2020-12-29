@@ -1,4 +1,5 @@
 import { isRelative } from "sparqler/core";
+import { OverriddenMembers, TransientDocument } from "../Document/TransientDocument";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { TransientFragment } from "../Fragment/TransientFragment";
 import { ModelDecorator } from "../Model/ModelDecorator";
@@ -12,7 +13,6 @@ import { Resource } from "../Resource/Resource";
 import { isPlainObject, isString } from "../Utils";
 import { C } from "../Vocabularies/C";
 import { BaseExecutableQueryDocument } from "./BaseExecutableQueryDocument";
-import { OverriddenMembers, TransientDocument } from "../Document/TransientDocument";
 
 /**
  * In-memory model that represents a `c:ExecutableQueryDocument`.
@@ -21,7 +21,7 @@ export interface TransientExecutableQueryDocument extends TransientDocument {
 	/**
 	 * The stored SPARQL Query to execute on GET request with `ldp:ExecutableQuery` interaction model.
 	 */
-	readonly storedQuery: string;
+	readonly storedQuery:string;
 }
 
 function __getLabelFrom( slug:string ):string {
@@ -78,7 +78,6 @@ export type TransientExecutableQueryDocumentFactory =
 	;
 
 
-
 /**
  * Constant with the factory, decorator and/or utils for a {@link TransientExecutableQueryDocument} object.
  */
@@ -124,9 +123,9 @@ export const TransientExecutableQueryDocument:{
 	createFrom: <T extends object>( object:T & BaseExecutableQueryDocument ) => {
 		if( TransientExecutableQueryDocument.is( object ) ) throw new IllegalArgumentError( "The object provided is already an ExecutableQueryDocument." );
 
-		if (!object.storedQuery) throw new IllegalArgumentError( "The new ExecutableQueryDocument must contain a storedQuery property" );
+		if( !object.storedQuery ) throw new IllegalArgumentError( "The new ExecutableQueryDocument must contain a storedQuery property" );
 
-		if ( !isString( object.storedQuery ) ) throw new IllegalArgumentError( "The storedQuery property must be of type string" );
+		if( !isString( object.storedQuery ) ) throw new IllegalArgumentError( "The storedQuery property must be of type string" );
 
 		const document:T & TransientExecutableQueryDocument = TransientExecutableQueryDocument.decorate<T & BaseExecutableQueryDocument>( object );
 		__convertNested( document, document );

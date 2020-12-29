@@ -1,5 +1,5 @@
-import { ExecutableQueryDocument, TransientExecutableQueryDocument } from "./index";
 import * as Module from "./index";
+import { ExecutableQueryDocument, TransientExecutableQueryDocument } from "./index";
 
 
 describe( "ExecutableQueryDocument/index", () => {

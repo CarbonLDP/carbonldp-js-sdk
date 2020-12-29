@@ -104,10 +104,10 @@ export const ExecutableQueryDocumentsRepositoryTrait:{
 	PROTOTYPE: {
 		...QueryableDocumentsRepositoryTrait.PROTOTYPE,
 		execute( uri:string ):Promise<JSON> {
-			return LDPDocumentsRepositoryTrait.PROTOTYPE.execute(uri);
+			return LDPDocumentsRepositoryTrait.PROTOTYPE.execute( uri );
 		},
 		modifyStoredQuery( uri:string, newStoredQuery:string ):Promise<void> {
-			return LDPDocumentsRepositoryTrait.PROTOTYPE.modifyStoredQuery(uri, newStoredQuery);
+			return LDPDocumentsRepositoryTrait.PROTOTYPE.modifyStoredQuery( uri, newStoredQuery );
 		},
 	},
 	isDecorated( object:object ):object is ExecutableQueryDocumentsRepositoryTrait {

@@ -1,15 +1,15 @@
 import { createNonEnumerable } from "../../test/helpers/miscellaneous";
 
 import { DocumentsContext } from "../Context/DocumentsContext";
+import { BaseResolvableDocument } from "../Document/Document";
+
+import { EventEmitterDocumentTrait } from "../Document/Traits/EventEmitterDocumentTrait";
+import { SPARQLDocumentTrait } from "../Document/Traits/SPARQLDocumentTrait";
 
 import { Fragment } from "../Fragment/Fragment";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
-import { BaseResolvableDocument } from "../Document/Document";
 import { ExecutableQueryDocument } from "./ExecutableQueryDocument";
-
-import { EventEmitterDocumentTrait } from "../Document/Traits/EventEmitterDocumentTrait";
-import { SPARQLDocumentTrait } from "../Document/Traits/SPARQLDocumentTrait";
 import { ExecutableQueryDocumentTrait } from "./Traits/ExecutableQueryDocumentTrait";
 import { TransientExecutableQueryDocument } from "./TransientExecutableQueryDocument";
 

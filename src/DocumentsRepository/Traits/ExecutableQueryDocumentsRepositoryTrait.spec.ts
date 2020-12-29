@@ -54,9 +54,9 @@ import { UUIDUtils } from "../../Utils";
 import { C } from "../../Vocabularies/C";
 import { LDP } from "../../Vocabularies/LDP";
 import { XSD } from "../../Vocabularies/XSD";
+import { ExecutableQueryDocumentsRepositoryTrait } from "./ExecutableQueryDocumentsRepositoryTrait";
 
 import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
-import { ExecutableQueryDocumentsRepositoryTrait } from "./ExecutableQueryDocumentsRepositoryTrait";
 
 
 describe( "ExecutableQueryDocumentsRepositoryTrait", () => {
@@ -1915,7 +1915,7 @@ describe( "ExecutableQueryDocumentsRepositoryTrait", () => {
 									"@type": [
 										LDP.RDFSource,
 										LDP.BasicContainer,
-										C.Document ,
+										C.Document,
 										C.ExecutableQueryDocument,
 										"https://example.com/ns#Resource",
 									],

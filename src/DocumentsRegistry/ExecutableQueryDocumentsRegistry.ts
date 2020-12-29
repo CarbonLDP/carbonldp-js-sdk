@@ -1,9 +1,9 @@
 import { DocumentsContext } from "../Context/DocumentsContext";
+import { Document } from "../Document/Document";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { ExecutableQueryDocument } from "../ExecutableQueryDocument/ExecutableQueryDocument";
 import { BaseGeneralRegistry } from "../GeneralRegistry/BaseGeneralRegistry";
 import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
-import { Document } from "../Document/Document";
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
