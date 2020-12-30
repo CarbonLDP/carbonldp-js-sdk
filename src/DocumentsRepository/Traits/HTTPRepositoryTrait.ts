@@ -14,6 +14,8 @@ import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { RegisteredPointer } from "../../Registry/RegisteredPointer";
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
+import { SPARQLRawResults } from "../../SPARQL/RawResults";
+import { SPARQLRawResultsParser } from "../../SPARQL/RawResultsParser";
 
 
 /**
@@ -50,6 +52,14 @@ export interface HTTPRepositoryTrait<MODEL extends ResolvablePointer = Resolvabl
 	 * @param requestOptions Customizable options for the request.
 	 */
 	execute( uri:string, requestOptions?:RequestOptions ):Promise<JSON>;
+
+	/**
+	 * Executes the stored query of a {@link ExecutableQueryDocument}.
+	 * Returns the result as a decorated {@link SPARQLRawResults}.
+	 * @param uri The URI of the resource to query.
+	 * @param requestOptions Customizable options for the request.
+	 */
+	executeAsRAWSPARQLQuery( uri:string, requestOptions?:RequestOptions ):Promise<[ SPARQLRawResults, Response ]>;
 
 	/**
 	 * Refreshes with the latest data of the specified resource.
@@ -173,6 +183,14 @@ export const HTTPRepositoryTrait:{
 				.catch<JSON>( ( error:HTTPError | Error ) => {
 					return Promise.reject( error );
 				} );
+		},
+
+		executeAsRAWSPARQLQuery( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<[ SPARQLRawResults, Response ]> {
+			if( !this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
+
+			return RequestService.get( url, requestOptions, new SPARQLRawResultsParser() );
+
 		},
 
 

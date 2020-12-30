@@ -4,12 +4,14 @@ import { SPARQLDocumentTrait } from "../Document/Traits/SPARQLDocumentTrait";
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { ExecutableQueryDocumentsRepository } from "../DocumentsRepository/ExecutableQueryDocumentsRepository";
 import { Fragment } from "../Fragment/Fragment";
+import { Response } from "../HTTP/Response";
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelSchema } from "../Model/ModelSchema";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
+import { SPARQLRawResults } from "../SPARQL/RawResults";
 import { isObject } from "../Utils";
 
 
@@ -40,17 +42,21 @@ export interface ExecutableQueryDocument extends Document {
 	 * The stored SPARQL Query to execute on GET request with `ldp:ExecutableQuery` interaction model.
 	 */
 	readonly storedQuery:string;
-	// TODO: Fix JSON Property in responses
 	/**
 	 * The last time the storedQuery was successfully executed and returned. When a new `c:ExecutableQueryDocument` is
 	 * created, it has no `c:successfullyExecuted` property set.
 	 */
 	successfullyExecuted?:Date;
+
 	/**
-	 * Executes the stored query directly
+	 * Executes the stored query directly. Returns result in plain JSON Format.
 	 */
 	$execute():Promise<JSON>;
 
+	/**
+	 * Executes the stored query and returns the result in {@link SPARQLRawResults} format.
+	 */
+	$executeAsRAWSPARQLQuery():Promise<[ SPARQLRawResults, Response ]>;
 
 	/**
 	 * Modifies the document's stored query

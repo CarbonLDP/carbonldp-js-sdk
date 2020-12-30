@@ -1,10 +1,12 @@
 import { ExecutableQueryDocument } from "../ExecutableQueryDocument/ExecutableQueryDocument";
 import { GETOptions, RequestOptions } from "../HTTP/Request";
+import { Response } from "../HTTP/Response";
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
 import { QueryDocumentsBuilder } from "../QueryDocuments/QueryDocumentsBuilder";
+import { SPARQLRawResults } from "../SPARQL/RawResults";
 import { isObject } from "../Utils";
 import { BaseDocumentsRepository } from "./BaseDocumentsRepository";
 import { DocumentsRepository } from "./DocumentsRepository";
@@ -13,7 +15,16 @@ import { ExecutableQueryDocumentsRepositoryTrait } from "./Traits/ExecutableQuer
 import { SPARQLDocumentsRepositoryTrait } from "./Traits/SPARQLDocumentsRepositoryTrait";
 
 export interface ExecutableQueryDocumentsRepository extends DocumentsRepository, ExecutableQueryDocumentsRepositoryTrait {
+	/**
+	 * Executes the stored query directly. Returns result in plain JSON Format.
+	 */
 	execute( uri:string ):Promise<JSON>;
+
+	/**
+	 * Executes the stored query and returns the result in {@link SPARQLRawResults} format.
+	 */
+	executeAsRAWSPARQLQuery( uri:string ):Promise<[ SPARQLRawResults, Response ]>;
+
 	/**
 	 * @see {@link QueryableDocumentsRepositoryTrait.get}
 	 */

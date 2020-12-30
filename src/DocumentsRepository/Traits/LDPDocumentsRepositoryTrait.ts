@@ -42,6 +42,7 @@ import { RDFNode } from "../../RDF/Node";
 
 import { $Registry, Registry } from "../../Registry/Registry";
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
+import { SPARQLRawResults } from "../../SPARQL/RawResults";
 
 import { isString } from "../../Utils";
 
@@ -563,6 +564,7 @@ export type OverriddenMembers =
 	| "refresh"
 	| "exists"
 	| "execute"
+	| "executeAsRAWSPARQLQuery"
 	| "save"
 	| "saveAndRefresh"
 	| "delete"
@@ -622,6 +624,14 @@ export const LDPDocumentsRepositoryTrait:{
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
+		executeAsRAWSPARQLQuery( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQLRawResults, Response ]> {
+			RequestUtils.setPreferredInteractionModel( C.ExecutableQuery, requestOptions );
+			RequestUtils.setAcceptHeader( "application/json, application/trig", requestOptions );
+
+			return HTTPRepositoryTrait.PROTOTYPE
+				.executeAsRAWSPARQLQuery.call( this, uri, requestOptions )
+				.catch( __getErrorResponseParserFnFrom( this ) );
+		},
 
 		create<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, children:T | T[], slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
 			return __createChildren<T>( "minimal", this, uri, children, slugsOrOptions, requestOptions );

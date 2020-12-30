@@ -1,15 +1,30 @@
 import { ExecutableQueryDocument } from "../../ExecutableQueryDocument/ExecutableQueryDocument";
 import { GETOptions, RequestOptions } from "../../HTTP/Request";
+import { Response } from "../../HTTP/Response";
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 import { QueryDocumentBuilder } from "../../QueryDocuments/QueryDocumentBuilder";
 import { QueryDocumentsBuilder } from "../../QueryDocuments/QueryDocumentsBuilder";
+import { SPARQLRawResults } from "../../SPARQL/RawResults";
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
 import { OverriddenMembers, QueryableDocumentsRepositoryTrait } from "./QueryableDocumentsRepositoryTrait";
 
 export interface ExecutableQueryDocumentsRepositoryTrait extends QueryableDocumentsRepositoryTrait {
+
+	/**
+	 * Executes the stored query directly. Returns result in plain JSON Format.
+	 */
 	execute( uri:string ):Promise<JSON>;
+
+	/**
+	 * Executes the stored query and returns the result in a decorated {@link SPARQLRawResults} format.
+	 */
+	executeAsRAWSPARQLQuery( uri:string ):Promise<[ SPARQLRawResults, Response ]>;
+
+	/**
+	 * Modifies the document's stored query
+	 */
 	modifyStoredQuery( uri:string, newStoredQuery:string ):Promise<void>;
 
 	/**
@@ -105,6 +120,9 @@ export const ExecutableQueryDocumentsRepositoryTrait:{
 		...QueryableDocumentsRepositoryTrait.PROTOTYPE,
 		execute( uri:string ):Promise<JSON> {
 			return LDPDocumentsRepositoryTrait.PROTOTYPE.execute( uri );
+		},
+		executeAsRAWSPARQLQuery( uri:string ):Promise<[ SPARQLRawResults, Response ]> {
+			return LDPDocumentsRepositoryTrait.PROTOTYPE.executeAsRAWSPARQLQuery( uri );
 		},
 		modifyStoredQuery( uri:string, newStoredQuery:string ):Promise<void> {
 			return LDPDocumentsRepositoryTrait.PROTOTYPE.modifyStoredQuery( uri, newStoredQuery );

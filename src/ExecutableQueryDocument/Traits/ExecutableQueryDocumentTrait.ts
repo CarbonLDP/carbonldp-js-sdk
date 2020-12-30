@@ -1,9 +1,11 @@
 import { LDPDocumentTrait } from "../../Document/Traits/LDPDocumentTrait";
 import { QueryableDocumentTrait } from "../../Document/Traits/QueryableDocumentTrait";
 import { ExecutableQueryDocumentsRepositoryTrait } from "../../DocumentsRepository/Traits/ExecutableQueryDocumentsRepositoryTrait";
+import { Response } from "../../HTTP/Response";
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
+import { SPARQLRawResults } from "../../SPARQL/RawResults";
 
 /**
  * Properties for creating a {@link QueryableDocumentTrait}.
@@ -22,9 +24,14 @@ export interface ExecutableQueryDocumentTrait extends QueryableDocumentTrait {
 	$repository:ExecutableQueryDocumentsRepositoryTrait;
 
 	/**
-	 * Executes the stored query directly
+	 * Executes the stored query directly. Returns the result in plain JSON Format.
 	 */
 	$execute():Promise<JSON>;
+
+	/**
+	 * Executes the stored query and returns the result in a decorated {@link SPARQLRawResults} format.
+	 */
+	$executeAsRAWSPARQLQuery():Promise<[ SPARQLRawResults, Response ]>;
 
 
 	/**
@@ -57,8 +64,11 @@ export const ExecutableQueryDocumentTrait:{
 } = <ExecutableQueryDocumentTraitFactory> {
 	PROTOTYPE: {
 		...QueryableDocumentTrait.PROTOTYPE,
-		$execute<T extends object>( this:ExecutableQueryDocumentTrait ):any {
+		$execute( this:ExecutableQueryDocumentTrait ):Promise<JSON> {
 			return this.$repository.execute( this.$id );
+		},
+		$executeAsRAWSPARQLQuery( this:ExecutableQueryDocumentTrait ):Promise<[ SPARQLRawResults, Response ]> {
+			return this.$repository.executeAsRAWSPARQLQuery( this.$id );
 		},
 		$modifyStoredQuery( this:ExecutableQueryDocumentTrait, newStoredQuery:string ):Promise<void> {
 			return this.$repository.modifyStoredQuery( this.$id, newStoredQuery );
