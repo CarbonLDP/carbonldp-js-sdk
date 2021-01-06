@@ -2,6 +2,7 @@ import { DocumentsContext } from "../../Context/DocumentsContext";
 
 import { Document } from "../../Document/Document";
 import { TransientDocument } from "../../Document/TransientDocument";
+import { DocumentsRegistry } from "../../DocumentsRegistry/DocumentsRegistry";
 import { ExecutableQueryDocumentsRegistry } from "../../DocumentsRegistry/ExecutableQueryDocumentsRegistry";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
@@ -337,10 +338,6 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 			if( transient.$hasType( C.ExecutableQueryDocument ) && TransientExecutableQueryDocument.is( transient ) ) {
 				let newRegistry:ExecutableQueryDocumentsRegistry = ExecutableQueryDocumentsRegistry.createFrom( { context: repository.context } );
 				document = newRegistry._addPointer( transient );
-				document
-					.$getFragments()
-					.forEach( document.$__modelDecorator.decorate );
-				return document as T & ExecutableQueryDocument;
 			} else {
 				document = repository.context.registry._addPointer( transient );
 			}
@@ -553,12 +550,6 @@ function __sendSetStoredQueryAction( this:void, repository:LDPDocumentsRepositor
 		;
 }
 
-function __throwNotImplemented():Promise<never> {
-	return Promise.reject(
-		new NotImplementedError( "Executable Query Documents do not support $save and $saveAndRefresh. Use $modifyStoredQuery" )
-	);
-}
-
 export type OverriddenMembers =
 	| "get"
 	| "refresh"
@@ -653,19 +644,11 @@ export const LDPDocumentsRepositoryTrait:{
 		},
 
 		save<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
-
-			if( document.$hasType( C.ExecutableQueryDocument ) && ExecutableQueryDocument.is( document ) ) {
-				return __throwNotImplemented();
-			}
-
 			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
 			return __sendPatch<T>( this, document, requestOptions );
 		},
 
 		saveAndRefresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
-			if( document.$hasType( C.ExecutableQueryDocument ) && ExecutableQueryDocument.is( document ) ) {
-				return __throwNotImplemented();
-			}
 			RequestUtils.setPreferredRetrieval( "representation", requestOptions );
 			return __sendPatch<T>( this, document, requestOptions );
 		},
@@ -704,7 +687,7 @@ export const LDPDocumentsRepositoryTrait:{
 		},
 
 
-		_parseResponseData<T extends object>( this:LDPDocumentsRepositoryTrait, response:Response, id:string ):Promise<T & Document> {
+		_parseResponseData<T extends object>( this:LDPDocumentsRepositoryTrait, response:Response, id:string ):Promise<T & Document> | Promise<T & ExecutableQueryDocument> {
 			return __JSONLD_PARSER
 				.parse( response.data )
 				.then( ( rdfNodes:object[] ) => {
@@ -715,7 +698,15 @@ export const LDPDocumentsRepositoryTrait:{
 					const rdfDocument:RDFDocument | undefined = rdfDocuments.find( doc => doc[ "@id" ] === id );
 
 					if( !rdfDocument ) throw new BadResponseError( `No document "${ id }" was returned.`, response );
-					const document:T & Document = this.context.registry.register( id ) as T & Document;
+
+					let document:T & Document | T & ExecutableQueryDocument = this.context.registry.register( id ) as T & Document;
+
+					rdfDocument["@graph"].forEach( node => {
+						if (node["@type"] && node["@type"].indexOf( C.ExecutableQueryDocument ) >= 0 ) {
+								let newRegistry:ExecutableQueryDocumentsRegistry = ExecutableQueryDocumentsRegistry.createFrom( { context: this.context } );
+								document = newRegistry.register( id ) as T & ExecutableQueryDocument;
+						}
+					})
 
 					const previousFragments:Set<string> = new Set();
 					document
