@@ -77,22 +77,7 @@ export class SPARQLService {
 		return SPARQLService
 			.executeRawSELECTQuery( url, selectQuery, options )
 			.then<[ SPARQLSelectResults<T>, Response ]>( ( [ rawResults, response ]:[ SPARQLRawResults, Response ] ) => {
-				let rawBindings:SPARQLRawBindingObject[] = rawResults.results!.bindings;
-				let bindings:T[] = [];
-
-				for( let bindingColumn of rawBindings ) {
-					let binding:T = {} as T;
-					for( let bindingRow in bindingColumn ) {
-						let bindingCell:SPARQLRawBindingProperty = bindingColumn[ bindingRow ];
-						binding[ bindingRow ] = SPARQLService.__parseRawBindingProperty( bindingCell, pointerLibrary );
-					}
-					bindings.push( binding );
-				}
-
-				const results:SPARQLSelectResults<T> = {
-					vars: rawResults.head.vars!,
-					bindings: bindings,
-				};
+				const results:SPARQLSelectResults<T> = SPARQLService._parseSELECTResults( rawResults, pointerLibrary );
 				return [ results, response ];
 			} );
 	}
@@ -140,6 +125,27 @@ export class SPARQLService {
 		RequestUtils.setContentTypeHeader( "application/sparql-update", options );
 
 		return RequestService.post( url, updateQuery, options );
+	}
+
+	static _parseSELECTResults<T>( rawResults: SPARQLRawResults, pointerLibrary: PointerLibrary ): SPARQLSelectResults<T> {
+		let rawBindings:SPARQLRawBindingObject[] = rawResults.results!.bindings;
+		let bindings:T[] = [];
+
+		for( let bindingColumn of rawBindings ) {
+			let binding:T = {} as T;
+			for( let bindingRow in bindingColumn ) {
+				let bindingCell:SPARQLRawBindingProperty = bindingColumn[ bindingRow ];
+				binding[ bindingRow ] = SPARQLService.__parseRawBindingProperty( bindingCell, pointerLibrary );
+			}
+			bindings.push( binding );
+		}
+
+		const results:SPARQLSelectResults<T> = {
+			vars: rawResults.head.vars!,
+			bindings: bindings,
+		};
+
+		return results;
 	}
 
 	private static __parseRawBindingProperty( rawBindingProperty:SPARQLRawBindingProperty, pointerLibrary:PointerLibrary | $PointerLibrary ):any {

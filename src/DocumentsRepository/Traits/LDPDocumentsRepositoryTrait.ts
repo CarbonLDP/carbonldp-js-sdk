@@ -2,12 +2,11 @@ import { DocumentsContext } from "../../Context/DocumentsContext";
 
 import { Document } from "../../Document/Document";
 import { TransientDocument } from "../../Document/TransientDocument";
-import { DocumentsRegistry } from "../../DocumentsRegistry/DocumentsRegistry";
 import { ExecutableQueryDocumentsRegistry } from "../../DocumentsRegistry/ExecutableQueryDocumentsRegistry";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
-import { NotImplementedError } from "../../Errors/NotImplementedError";
 import { ExecutableQueryDocument } from "../../ExecutableQueryDocument/ExecutableQueryDocument";
+import { ExecutableQuerySPARQLResults } from "../../ExecutableQueryDocument/ExecutableQuerySPARQLResults";
 import { TransientExecutableQueryDocument } from "../../ExecutableQueryDocument/TransientExecutableQueryDocument";
 
 import { Fragment } from "../../Fragment/Fragment";
@@ -37,6 +36,7 @@ import { ModelPrototype } from "../../Model/ModelPrototype";
 import { DigestedObjectSchema } from "../../ObjectSchema/DigestedObjectSchema";
 
 import { Pointer } from "../../Pointer/Pointer";
+import { PointerLibrary } from "../../Pointer/PointerLibrary";
 
 import { RDFDocument } from "../../RDF/Document";
 import { RDFNode } from "../../RDF/Node";
@@ -44,6 +44,8 @@ import { RDFNode } from "../../RDF/Node";
 import { $Registry, Registry } from "../../Registry/Registry";
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 import { SPARQLRawResults } from "../../SPARQL/RawResults";
+import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
+import { SPARQLService } from "../../SPARQL/SPARQLService";
 
 import { isString } from "../../Utils";
 
@@ -526,14 +528,12 @@ function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri
 		;
 }
 
-function __sendSetStoredQueryAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions:RequestOptions = {} ):Promise<void> {
+function __sendSetStoredQueryAction<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions:RequestOptions = {} ):Promise<T & ExecutableQueryDocument> {
 	if( !repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
 
 	__setDefaultRequestOptions( requestOptions, C.ExecutableQuery );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
-
-	const targetMembers:Pointer[] = __parseMembers( repository.context.registry, [ newStoredQuery ] );
 
 	const freeResources:FreeResources = FreeResources.createFrom( { registry: repository.context.registry } );
 
@@ -543,9 +543,24 @@ function __sendSetStoredQueryAction( this:void, repository:LDPDocumentsRepositor
 
 	const body:string = JSON.stringify( freeResources );
 
+	// TODO: This is not returning document properties
 	return RequestService
 		.put( url, body, requestOptions )
-		.then( () => {} )
+		.then( ( response: Response ) => {
+			const executableQueryDocumentsRegistry:PointerLibrary = ExecutableQueryDocumentsRegistry.createFrom( {
+				context: repository.context,
+			} );
+
+			let executableQueryDocument:T & ExecutableQueryDocument = executableQueryDocumentsRegistry.getPointer(uri) as T & ExecutableQueryDocument;
+
+			executableQueryDocument
+				.$getFragments()
+				.forEach( executableQueryDocument.$__modelDecorator.decorate );
+
+			executableQueryDocument.$refresh();
+
+			return __applyResponseRepresentation<T>( repository, executableQueryDocument, response ) as Promise<T & ExecutableQueryDocument>;
+		} )
 		.catch( __getErrorResponseParserFnFrom( repository ) )
 		;
 }
@@ -606,12 +621,20 @@ export const LDPDocumentsRepositoryTrait:{
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
-		execute( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<JSON> {
+		execute( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<ExecutableQuerySPARQLResults> {
 			RequestUtils.setPreferredInteractionModel( C.ExecutableQuery, requestOptions );
 			RequestUtils.setAcceptHeader( "application/json, application/trig", requestOptions );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.execute.call( this, uri, requestOptions )
+				.executeAsRAWSPARQLQuery.call( this, uri, requestOptions )
+				.then<ExecutableQuerySPARQLResults>( ( [ rawResults, _ ]:[ SPARQLRawResults, Response ] ) => {
+
+					if ( rawResults.results && rawResults.results.bindings ) {
+						return SPARQLService._parseSELECTResults( rawResults, this.context.registry );
+					}
+					return rawResults.boolean!;
+
+				})
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
@@ -672,8 +695,8 @@ export const LDPDocumentsRepositoryTrait:{
 			return __sendAddAction( this, uri, members, requestOptions );
 		},
 
-		modifyStoredQuery( this:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<void> {
-			return __sendSetStoredQueryAction( this, uri, newStoredQuery, requestOptions );
+		modifyStoredQuery<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>  {
+			return __sendSetStoredQueryAction<T>( this, uri, newStoredQuery, requestOptions );
 		},
 
 
@@ -706,7 +729,7 @@ export const LDPDocumentsRepositoryTrait:{
 								let newRegistry:ExecutableQueryDocumentsRegistry = ExecutableQueryDocumentsRegistry.createFrom( { context: this.context } );
 								document = newRegistry.register( id ) as T & ExecutableQueryDocument;
 						}
-					})
+					});
 
 					const previousFragments:Set<string> = new Set();
 					document

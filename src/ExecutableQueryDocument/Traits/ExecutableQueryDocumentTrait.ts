@@ -6,6 +6,7 @@ import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
 import { SPARQLRawResults } from "../../SPARQL/RawResults";
+import { ExecutableQuerySPARQLResults } from "../ExecutableQuerySPARQLResults";
 
 /**
  * Properties for creating a {@link QueryableDocumentTrait}.
@@ -26,7 +27,7 @@ export interface ExecutableQueryDocumentTrait extends QueryableDocumentTrait {
 	/**
 	 * Executes the stored query directly. Returns the result in plain JSON Format.
 	 */
-	$execute():Promise<JSON>;
+	$execute():Promise<ExecutableQuerySPARQLResults>;
 
 	/**
 	 * Executes the stored query and returns the result in a decorated {@link SPARQLRawResults} format.
@@ -64,7 +65,7 @@ export const ExecutableQueryDocumentTrait:{
 } = <ExecutableQueryDocumentTraitFactory> {
 	PROTOTYPE: {
 		...QueryableDocumentTrait.PROTOTYPE,
-		$execute( this:ExecutableQueryDocumentTrait ):Promise<JSON> {
+		$execute( this:ExecutableQueryDocumentTrait ):Promise<ExecutableQuerySPARQLResults> {
 			return this.$repository.execute( this.$id );
 		},
 		$executeAsRAWSPARQLQuery( this:ExecutableQueryDocumentTrait ):Promise<[ SPARQLRawResults, Response ]> {

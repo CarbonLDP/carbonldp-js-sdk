@@ -1,4 +1,5 @@
 import { ExecutableQueryDocument } from "../ExecutableQueryDocument/ExecutableQueryDocument";
+import { ExecutableQuerySPARQLResults } from "../ExecutableQueryDocument/ExecutableQuerySPARQLResults";
 import { GETOptions, RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { ModelDecorator } from "../Model/ModelDecorator";
@@ -18,7 +19,7 @@ export interface ExecutableQueryDocumentsRepository extends DocumentsRepository,
 	/**
 	 * Executes the stored query directly. Returns result in plain JSON Format.
 	 */
-	execute( uri:string ):Promise<JSON>;
+	execute( uri:string ):Promise<ExecutableQuerySPARQLResults>;
 
 	/**
 	 * Executes the stored query and returns the result in {@link SPARQLRawResults} format.

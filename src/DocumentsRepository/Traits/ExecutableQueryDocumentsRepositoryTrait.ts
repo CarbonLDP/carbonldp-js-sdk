@@ -1,4 +1,5 @@
 import { ExecutableQueryDocument } from "../../ExecutableQueryDocument/ExecutableQueryDocument";
+import { ExecutableQuerySPARQLResults } from "../../ExecutableQueryDocument/ExecutableQuerySPARQLResults";
 import { GETOptions, RequestOptions } from "../../HTTP/Request";
 import { Response } from "../../HTTP/Response";
 import { ModelDecorator } from "../../Model/ModelDecorator";
@@ -15,7 +16,7 @@ export interface ExecutableQueryDocumentsRepositoryTrait extends QueryableDocume
 	/**
 	 * Executes the stored query directly. Returns result in plain JSON Format.
 	 */
-	execute( uri:string ):Promise<JSON>;
+	execute( uri:string ):Promise<ExecutableQuerySPARQLResults>;
 
 	/**
 	 * Executes the stored query and returns the result in a decorated {@link SPARQLRawResults} format.
@@ -118,7 +119,7 @@ export const ExecutableQueryDocumentsRepositoryTrait:{
 	...QueryableDocumentsRepositoryTrait,
 	PROTOTYPE: {
 		...QueryableDocumentsRepositoryTrait.PROTOTYPE,
-		execute( uri:string ):Promise<JSON> {
+		execute( uri:string ):Promise<ExecutableQuerySPARQLResults> {
 			return LDPDocumentsRepositoryTrait.PROTOTYPE.execute( uri );
 		},
 		executeAsRAWSPARQLQuery( uri:string ):Promise<[ SPARQLRawResults, Response ]> {

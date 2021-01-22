@@ -1,6 +1,7 @@
 import { Context } from "../../Context/Context";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import { ExecutableQuerySPARQLResults } from "../../ExecutableQueryDocument/ExecutableQuerySPARQLResults";
 
 import { BaseGeneralRepository } from "../../GeneralRepository/BaseGeneralRepository";
 import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
@@ -51,7 +52,7 @@ export interface HTTPRepositoryTrait<MODEL extends ResolvablePointer = Resolvabl
 	 * @param uri The URI of the resource to query.
 	 * @param requestOptions Customizable options for the request.
 	 */
-	execute( uri:string, requestOptions?:RequestOptions ):Promise<JSON>;
+	execute( uri:string, requestOptions?:RequestOptions ):Promise<ExecutableQuerySPARQLResults>;
 
 	/**
 	 * Executes the stored query of a {@link ExecutableQueryDocument}.
@@ -171,7 +172,7 @@ export const HTTPRepositoryTrait:{
 				} );
 		},
 
-		execute( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<JSON> {
+		execute( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<ExecutableQuerySPARQLResults> {
 			if( !this.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.context.getObjectSchema().resolveURI( uri, { base: true } );
 

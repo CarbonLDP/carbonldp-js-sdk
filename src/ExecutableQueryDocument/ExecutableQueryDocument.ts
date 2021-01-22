@@ -17,6 +17,7 @@ import { isObject } from "../Utils";
 
 import { C } from "../Vocabularies/C";
 import { BaseExecutableQueryDocument } from "./BaseExecutableQueryDocument";
+import { ExecutableQuerySPARQLResults } from "./ExecutableQuerySPARQLResults";
 import { ExecutableQueryDocumentTrait } from "./Traits/ExecutableQueryDocumentTrait";
 import { TransientExecutableQueryDocument } from "./TransientExecutableQueryDocument";
 
@@ -51,7 +52,7 @@ export interface ExecutableQueryDocument extends Document {
 	/**
 	 * Executes the stored query directly. Returns result in plain JSON Format.
 	 */
-	$execute():Promise<JSON>;
+	$execute():Promise<ExecutableQuerySPARQLResults>;
 
 	/**
 	 * Executes the stored query and returns the result in {@link SPARQLRawResults} format.
