@@ -26,7 +26,7 @@ export interface ExecutableQueryDocumentsRepositoryTrait extends QueryableDocume
 	/**
 	 * Modifies the document's stored query
 	 */
-	modifyStoredQuery( uri:string, newStoredQuery:string ):Promise<void>;
+	modifyStoredQuery<T extends object>( uri:string, newStoredQuery:string ):Promise<T & ExecutableQueryDocument>;
 
 	/**
 	 * Retrieves the properties of the document of the URI specified set by the query function.
@@ -125,7 +125,7 @@ export const ExecutableQueryDocumentsRepositoryTrait:{
 		executeAsRAWSPARQLQuery( uri:string ):Promise<[ SPARQLRawResults, Response ]> {
 			return LDPDocumentsRepositoryTrait.PROTOTYPE.executeAsRAWSPARQLQuery( uri );
 		},
-		modifyStoredQuery( uri:string, newStoredQuery:string ):Promise<void> {
+		modifyStoredQuery<T extends object>( uri:string, newStoredQuery:string ):Promise<T & ExecutableQueryDocument> {
 			return LDPDocumentsRepositoryTrait.PROTOTYPE.modifyStoredQuery( uri, newStoredQuery );
 		},
 	},

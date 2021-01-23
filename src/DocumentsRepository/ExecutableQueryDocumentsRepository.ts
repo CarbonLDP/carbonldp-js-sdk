@@ -75,7 +75,7 @@ export interface ExecutableQueryDocumentsRepository extends DocumentsRepository,
 	 * @param newStoredQuery The new stored query to use.
 	 * @param requestOptions Customizable options for the request.
 	 */
-	modifyStoredQuery( uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<void>;
+	modifyStoredQuery<T extends object>( uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 
 
 }

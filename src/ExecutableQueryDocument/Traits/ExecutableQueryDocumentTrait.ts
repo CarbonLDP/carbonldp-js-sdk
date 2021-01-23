@@ -6,6 +6,7 @@ import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
 import { SPARQLRawResults } from "../../SPARQL/RawResults";
+import { ExecutableQueryDocument } from "../ExecutableQueryDocument";
 import { ExecutableQuerySPARQLResults } from "../ExecutableQuerySPARQLResults";
 
 /**
@@ -38,7 +39,7 @@ export interface ExecutableQueryDocumentTrait extends QueryableDocumentTrait {
 	/**
 	 * Modifies the document's stored query
 	 */
-	$modifyStoredQuery( newStoredQuery:string ):Promise<void>;
+	$modifyStoredQuery<T extends object>( newStoredQuery:string ):Promise<T & ExecutableQueryDocument>;
 }
 
 export type ExecutableQueryDocumentTraitFactory =
@@ -71,7 +72,7 @@ export const ExecutableQueryDocumentTrait:{
 		$executeAsRAWSPARQLQuery( this:ExecutableQueryDocumentTrait ):Promise<[ SPARQLRawResults, Response ]> {
 			return this.$repository.executeAsRAWSPARQLQuery( this.$id );
 		},
-		$modifyStoredQuery( this:ExecutableQueryDocumentTrait, newStoredQuery:string ):Promise<void> {
+		$modifyStoredQuery<T extends object>( this:ExecutableQueryDocumentTrait, newStoredQuery:string ):Promise<T & ExecutableQueryDocument> {
 			return this.$repository.modifyStoredQuery( this.$id, newStoredQuery );
 		},
 	},

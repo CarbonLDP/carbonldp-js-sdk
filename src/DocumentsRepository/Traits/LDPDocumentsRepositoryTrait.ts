@@ -222,7 +222,7 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 	 * @param newStoredQuery The new stored query to use.
 	 * @param requestOptions Customizable options for the request.
 	 */
-	modifyStoredQuery( uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<void>;
+	modifyStoredQuery<T extends object>( uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 
 	/**
 	 * Override method to parse the data that is a JSON-LD Document into the {@link Document} model.
@@ -338,8 +338,7 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 			transient.$id = locationHeader.values[ 0 ].toString();
 			let document:(T & Document) | (T & ExecutableQueryDocument);
 			if( transient.$hasType( C.ExecutableQueryDocument ) && TransientExecutableQueryDocument.is( transient ) ) {
-				let newRegistry:ExecutableQueryDocumentsRegistry = ExecutableQueryDocumentsRegistry.createFrom( { context: repository.context } );
-				document = newRegistry._addPointer( transient );
+				document = repository.context.executableQueryDocumentsRegistry._addPointer( transient );
 			} else {
 				document = repository.context.registry._addPointer( transient );
 			}
@@ -547,17 +546,12 @@ function __sendSetStoredQueryAction<T extends object>( this:void, repository:LDP
 	return RequestService
 		.put( url, body, requestOptions )
 		.then( ( response: Response ) => {
-			const executableQueryDocumentsRegistry:PointerLibrary = ExecutableQueryDocumentsRegistry.createFrom( {
-				context: repository.context,
-			} );
 
-			let executableQueryDocument:T & ExecutableQueryDocument = executableQueryDocumentsRegistry.getPointer(uri) as T & ExecutableQueryDocument;
+			let executableQueryDocument:T & ExecutableQueryDocument = repository.context.executableQueryDocumentsRegistry.getPointer(uri) as T & ExecutableQueryDocument;
 
 			executableQueryDocument
 				.$getFragments()
 				.forEach( executableQueryDocument.$__modelDecorator.decorate );
-
-			executableQueryDocument.$refresh();
 
 			return __applyResponseRepresentation<T>( repository, executableQueryDocument, response ) as Promise<T & ExecutableQueryDocument>;
 		} )
@@ -726,8 +720,7 @@ export const LDPDocumentsRepositoryTrait:{
 
 					rdfDocument["@graph"].forEach( node => {
 						if (node["@type"] && node["@type"].indexOf( C.ExecutableQueryDocument ) >= 0 ) {
-								let newRegistry:ExecutableQueryDocumentsRegistry = ExecutableQueryDocumentsRegistry.createFrom( { context: this.context } );
-								document = newRegistry.register( id ) as T & ExecutableQueryDocument;
+								document = this.context.executableQueryDocumentsRegistry.register( id ) as T & ExecutableQueryDocument;
 						}
 					});
 

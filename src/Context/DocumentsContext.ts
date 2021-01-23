@@ -1,6 +1,7 @@
 import { Document } from "../Document/Document";
 
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
+import { ExecutableQueryDocumentsRegistry } from "../DocumentsRegistry/ExecutableQueryDocumentsRegistry";
 import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository";
 
 import { IllegalStateError } from "../Errors/IllegalStateError";
@@ -24,9 +25,14 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	protected _baseURI:string;
 
 	/**
-	 * Registry that can only stores {@link Document}'s.
+	 * Registry that can only store {@link Document}'s.
 	 */
 	readonly registry:DocumentsRegistry;
+
+	/**
+	 *  Registry that can only store {@link ExecutableQueryDocument}'s.
+	 */
+	readonly executableQueryDocumentsRegistry:ExecutableQueryDocumentsRegistry;
 	/**
 	 * Repository to fetch the {@link Document}'s data.
 	 */
@@ -93,6 +99,7 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 
 		this.registry = DocumentsRegistry.createFrom( { context: this } );
 		this.repository = DocumentsRepository.createFrom( { context: this } );
+		this.executableQueryDocumentsRegistry = ExecutableQueryDocumentsRegistry.createFrom( { context: this } );
 
 		this.messaging = new MessagingService( this );
 	}
