@@ -2,6 +2,7 @@ import { AccessPoint } from "../AccessPoint/AccessPoint";
 
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository";
+import { ExecutableQueryDocument } from "../ExecutableQueryDocument/ExecutableQueryDocument";
 
 import { Fragment } from "../Fragment/Fragment";
 
@@ -154,7 +155,9 @@ export interface Document extends $Registry<Fragment>, QueryableDocumentTrait, S
 	 */
 	$resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
 	$resolve<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	$resolve<T extends object>( document:ExecutableQueryDocument, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & ExecutableQueryDocument>;
 	$resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	$resolve<T extends object>( document:ExecutableQueryDocument, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & ExecutableQueryDocument>;
 	$resolve<T extends object>( document:Document, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 	/**
@@ -182,6 +185,7 @@ export interface Document extends $Registry<Fragment>, QueryableDocumentTrait, S
 	 * @param document The document to be refreshed.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$refresh<T extends object>( document:ExecutableQueryDocument, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	$refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 	/**
@@ -194,6 +198,7 @@ export interface Document extends $Registry<Fragment>, QueryableDocumentTrait, S
 	 * @param document The document to be saved.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$save<T extends object>( document:ExecutableQueryDocument, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	$save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 	/**
@@ -208,6 +213,7 @@ export interface Document extends $Registry<Fragment>, QueryableDocumentTrait, S
 	 * @param document The resource to saved and refreshed.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$saveAndRefresh<T extends object>( document:ExecutableQueryDocument, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	$saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 

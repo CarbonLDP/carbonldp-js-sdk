@@ -1,5 +1,7 @@
 import { LDPDocumentsRepositoryTrait } from "../../DocumentsRepository/Traits/LDPDocumentsRepositoryTrait";
 import { _parseURIParams } from "../../DocumentsRepository/Utils";
+import { ExecutableQueryDocument } from "../../ExecutableQueryDocument/ExecutableQueryDocument";
+import { TransientExecutableQueryDocument } from "../../ExecutableQueryDocument/TransientExecutableQueryDocument";
 
 import { RequestOptions } from "../../HTTP/Request";
 import { ModelDecorator } from "../../Model/ModelDecorator";
@@ -41,6 +43,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param children Objects to be persisted.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$create<T extends object>( children:(T & TransientExecutableQueryDocument)[], requestOptions?:RequestOptions ):Promise<(T & ExecutableQueryDocument)[]>;
 	$create<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 	/**
 	 * Persists multiple objects as children of the current document.
@@ -48,12 +51,14 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param slugs Suggested slugs for every child URI of the {@param children} provided. The slug will be assigned in the order they are provided.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$create<T extends object>( children:(T & TransientExecutableQueryDocument)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & ExecutableQueryDocument)[]>;
 	$create<T extends object>( children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 	/**
 	 * Persists the object as a child of the current document.
 	 * @param child Object to be persisted.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$create<T extends object>( child:T & TransientExecutableQueryDocument, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	$create<T extends object>( child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
 	/**
 	 * Persists the object as a child of the current document.
@@ -61,6 +66,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param slug Suggested slug for the child URI.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$create<T extends object>( child:T & TransientExecutableQueryDocument, slug?:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	$create<T extends object>( child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 	/**
 	 * Persists multiple objects as children of the document of the specified URI.
@@ -68,6 +74,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param children Objects to be persisted.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$create<T extends object>( uri:string, children:(T & TransientExecutableQueryDocument)[], requestOptions?:RequestOptions ):Promise<(T & ExecutableQueryDocument)[]>;
 	$create<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 	/**
 	 * Persists multiple objects as children of the document of the specified URI.
@@ -76,6 +83,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param slugs Suggested slugs for every child URI of the {@param children} provided. The slug will be assigned in the order they are provided.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$create<T extends object>( uri:string, children:(T & TransientExecutableQueryDocument)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & ExecutableQueryDocument)[]>;
 	$create<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 	/**
 	 * Persists the object as a child of the document of the specified URI.
@@ -83,6 +91,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param child Object to be persisted.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$create<T extends object>( uri:string, child:T & TransientExecutableQueryDocument, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	$create<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
 	/**
 	 * Persists the object as a child of the document of the specified URI.
@@ -91,6 +100,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param slug Suggested slug for the child URI.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$create<T extends object>( uri:string, child:T & TransientExecutableQueryDocument, slug?:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	$create<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 	/**
@@ -98,6 +108,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param children Objects to be persisted.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$createAndRetrieve<T extends object>( children:(T & TransientExecutableQueryDocument)[], requestOptions?:RequestOptions ):Promise<(T & ExecutableQueryDocument)[]>;
 	$createAndRetrieve<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 	/**
 	 * Persists multiple objects as children of the current document and retrieves the updated data from the server.
@@ -105,12 +116,14 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param slugs Suggested slugs for every child URI of the {@param children} provided. The slug will be assigned in the order they are provided.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$createAndRetrieve<T extends object>( children:(T & TransientExecutableQueryDocument)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & ExecutableQueryDocument)[]>;
 	$createAndRetrieve<T extends object>( children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 	/**
 	 * Persists the object as a child of the current document and retrieves the updated data from the server.
 	 * @param child Object to be persisted.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$createAndRetrieve<T extends object>( child:T & TransientExecutableQueryDocument, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	$createAndRetrieve<T extends object>( child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
 	/**
 	 * Persists the object as a child of the current document and retrieves the updated data from the server.
@@ -118,6 +131,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param slug Suggested slug for the child URI.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$createAndRetrieve<T extends object>( child:T & TransientExecutableQueryDocument, slug?:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	$createAndRetrieve<T extends object>( child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 	/**
 	 * Persists multiple objects as children of the document of the specified URI and retrieves the updated data from the server.
@@ -125,6 +139,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param children Objects to be persisted.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$createAndRetrieve<T extends object>( uri:string, children:(T & TransientExecutableQueryDocument)[], requestOptions?:RequestOptions ):Promise<(T & ExecutableQueryDocument)[]>;
 	$createAndRetrieve<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 	/**
 	 * Persists multiple objects as children of the document of the specified URI and retrieves the updated data from the server.
@@ -133,6 +148,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param slugs Suggested slugs for every child URI of the {@param children} provided. The slug will be assigned in the order they are provided.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$createAndRetrieve<T extends object>( uri:string, children:(T & TransientExecutableQueryDocument)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & ExecutableQueryDocument)[]>;
 	$createAndRetrieve<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 	/**
 	 * Persists the object as a child of the document of the specified URI and retrieves the updated data from the server.
@@ -140,6 +156,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param child Object to be persisted.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$createAndRetrieve<T extends object>( uri:string, child:T & TransientExecutableQueryDocument, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	$createAndRetrieve<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
 	/**
 	 * Persists the object as a child of the document of the specified URI and retrieves the updated data from the server.
@@ -148,6 +165,7 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	 * @param slug Suggested slug for the child URI.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	$createAndRetrieve<T extends object>( uri:string, child:T & TransientExecutableQueryDocument, slug?:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	$createAndRetrieve<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
