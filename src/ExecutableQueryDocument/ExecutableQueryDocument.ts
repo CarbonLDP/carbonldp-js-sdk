@@ -64,6 +64,11 @@ export interface ExecutableQueryDocument extends Document {
 	 */
 	$modifyStoredQuery<T extends object>( newStoredQuery:string ):Promise<T & ExecutableQueryDocument>;
 
+	/**
+	 * Modifies the document's stored query and returns the updated document
+	 */
+	$modifyStoredQueryAndRefresh<T extends object>( newStoredQuery:string ):Promise<T & ExecutableQueryDocument>;
+
 }
 
 /**

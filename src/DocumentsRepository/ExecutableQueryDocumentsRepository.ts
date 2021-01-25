@@ -77,6 +77,14 @@ export interface ExecutableQueryDocumentsRepository extends DocumentsRepository,
 	 */
 	modifyStoredQuery<T extends object>( uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 
+	/**
+	 * Modifies the `c:storedQuery` of a given `c:ExecutableQueryDocument` and returns the updated document.
+	 * @param uri URI of the `c:ExecutableQueryDocument` to modify it's `c:storedQuery`.
+	 * @param newStoredQuery The new stored query to use.
+	 * @param requestOptions Customizable options for the request.
+	 */
+	modifyStoredQueryAndRefresh<T extends object>( uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
+
 
 }
 

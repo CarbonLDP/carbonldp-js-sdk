@@ -151,6 +151,7 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 	 * @param document The document to be refreshed.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	refresh<T extends object>( document:T & ExecutableQueryDocument, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 	/**
@@ -223,6 +224,14 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 	 * @param requestOptions Customizable options for the request.
 	 */
 	modifyStoredQuery<T extends object>( uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
+
+	/**
+	 * Modifies the `c:storedQuery` of a given `c:ExecutableQueryDocument` and returns the updated document.
+	 * @param uri URI of the `c:ExecutableQueryDocument` to modify it's `c:storedQuery`.
+	 * @param newStoredQuery The new stored query to use.
+	 * @param requestOptions Customizable options for the request.
+	 */
+	modifyStoredQueryAndRefresh<T extends object>( uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 
 	/**
 	 * Override method to parse the data that is a JSON-LD Document into the {@link Document} model.
@@ -650,7 +659,7 @@ export const LDPDocumentsRepositoryTrait:{
 		},
 
 
-		refresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+		refresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):( Promise<T & Document> ) | ( Promise<T & ExecutableQueryDocument> ) {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 			RequestUtils.setIfNoneMatchHeader( document.$eTag!, requestOptions );
 
@@ -691,6 +700,13 @@ export const LDPDocumentsRepositoryTrait:{
 
 		modifyStoredQuery<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>  {
 			return __sendSetStoredQueryAction<T>( this, uri, newStoredQuery, requestOptions );
+		},
+
+		modifyStoredQueryAndRefresh<T extends object>( this: LDPDocumentsRepositoryTrait, uri: string, newStoredQuery: string, requestOptions?: RequestOptions ): Promise<T & ExecutableQueryDocument> {
+			return this
+				.modifyStoredQuery<T>( uri, newStoredQuery, requestOptions )
+				.then( executableQueryDocument => this.refresh<T>( executableQueryDocument, requestOptions ) )
+				;
 		},
 
 

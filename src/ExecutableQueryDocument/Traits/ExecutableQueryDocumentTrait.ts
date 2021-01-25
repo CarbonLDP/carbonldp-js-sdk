@@ -40,6 +40,11 @@ export interface ExecutableQueryDocumentTrait extends QueryableDocumentTrait {
 	 * Modifies the document's stored query
 	 */
 	$modifyStoredQuery<T extends object>( newStoredQuery:string ):Promise<T & ExecutableQueryDocument>;
+
+	/**
+	 * Modifies the document's stored query and returns the updated document
+	 */
+	$modifyStoredQueryAndRefresh<T extends object>( newStoredQuery:string ):Promise<T & ExecutableQueryDocument>;
 }
 
 export type ExecutableQueryDocumentTraitFactory =
@@ -75,10 +80,14 @@ export const ExecutableQueryDocumentTrait:{
 		$modifyStoredQuery<T extends object>( this:ExecutableQueryDocumentTrait, newStoredQuery:string ):Promise<T & ExecutableQueryDocument> {
 			return this.$repository.modifyStoredQuery( this.$id, newStoredQuery );
 		},
+		$modifyStoredQueryAndRefresh<T extends object>( this:ExecutableQueryDocumentTrait, newStoredQuery:string ):Promise<T & ExecutableQueryDocument> {
+			return this.$repository.modifyStoredQueryAndRefresh( this.$id, newStoredQuery );
+		},
 	},
 	isDecorated( object:object ):object is ExecutableQueryDocumentTrait {
 		return object.hasOwnProperty( "$execute" )
 			&& object.hasOwnProperty( "$modifyStoredQuery" )
+			&& object.hasOwnProperty( "$modifyStoredQueryAndRefresh" )
 			&& ModelDecorator
 				.hasPropertiesFrom( ExecutableQueryDocumentTrait.PROTOTYPE, object );
 	},

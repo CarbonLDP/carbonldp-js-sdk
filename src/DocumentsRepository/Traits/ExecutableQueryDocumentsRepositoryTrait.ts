@@ -29,6 +29,11 @@ export interface ExecutableQueryDocumentsRepositoryTrait extends QueryableDocume
 	modifyStoredQuery<T extends object>( uri:string, newStoredQuery:string ):Promise<T & ExecutableQueryDocument>;
 
 	/**
+	 * Modifies the document's stored query and returns the updated document.
+	 */
+	modifyStoredQueryAndRefresh<T extends object>( uri:string, newStoredQuery:string ):Promise<T & ExecutableQueryDocument>;
+
+	/**
 	 * Retrieves the properties of the document of the URI specified set by the query function.
 	 * @param uri URI of the document to be retrieved.
 	 * @param queryBuilderFn Function that specify the structure of the document to be retrieved.
@@ -127,6 +132,9 @@ export const ExecutableQueryDocumentsRepositoryTrait:{
 		},
 		modifyStoredQuery<T extends object>( uri:string, newStoredQuery:string ):Promise<T & ExecutableQueryDocument> {
 			return LDPDocumentsRepositoryTrait.PROTOTYPE.modifyStoredQuery( uri, newStoredQuery );
+		},
+		modifyStoredQueryAndRefresh<T extends object>( uri:string, newStoredQuery:string ):Promise<T & ExecutableQueryDocument> {
+			return LDPDocumentsRepositoryTrait.PROTOTYPE.modifyStoredQueryAndRefresh( uri, newStoredQuery );
 		},
 	},
 	isDecorated( object:object ):object is ExecutableQueryDocumentsRepositoryTrait {
