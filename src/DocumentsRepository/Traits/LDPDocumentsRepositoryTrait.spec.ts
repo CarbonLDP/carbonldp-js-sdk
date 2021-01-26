@@ -28,6 +28,8 @@ import { XSD } from "../../Vocabularies/XSD";
 
 import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
 
+const defaultStoredQuery:string = "SELECT * WHERE { ?s ?o ?p }";
+
 
 describe( "LDPDocumentsRepositoryTrait", () => {
 

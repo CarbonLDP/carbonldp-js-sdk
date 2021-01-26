@@ -42,6 +42,7 @@ export const ModelDecorator:{
 	/**
 	 * Checks if the object has the  properties from its prototype.
 	 */
+	// TODO: If there are missing properties in the object, it still returns true because it only checks whether properties belong to the prototype. Should we change this behaviour?
 	hasPropertiesFrom<P extends object, O extends object>( prototype:P, object:O ):boolean;
 
 	/**

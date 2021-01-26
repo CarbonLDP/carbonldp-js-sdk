@@ -4,6 +4,9 @@ import { Document } from "../../Document/Document";
 import { TransientDocument } from "../../Document/TransientDocument";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import { ExecutableQueryDocument } from "../../ExecutableQueryDocument/ExecutableQueryDocument";
+import { ExecutableQuerySPARQLResults } from "../../ExecutableQueryDocument/ExecutableQuerySPARQLResults";
+import { TransientExecutableQueryDocument } from "../../ExecutableQueryDocument/TransientExecutableQueryDocument";
 
 import { Fragment } from "../../Fragment/Fragment";
 
@@ -22,6 +25,7 @@ import { AddMemberAction } from "../../LDP/AddMemberAction";
 import { Map } from "../../LDP/Map";
 import { RemoveMemberAction } from "../../LDP/RemoveMemberAction";
 import { ResponseMetadata } from "../../LDP/ResponseMetadata";
+import { SetStoredQueryAction } from "../../LDP/SetStoredQueryAction";
 
 import { DeltaCreator } from "../../LDPatch/DeltaCreator";
 
@@ -37,6 +41,8 @@ import { RDFNode } from "../../RDF/Node";
 
 import { $Registry, Registry } from "../../Registry/Registry";
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
+import { SPARQLRawResults } from "../../SPARQL/RawResults";
+import { SPARQLService } from "../../SPARQL/SPARQLService";
 
 import { isString } from "../../Utils";
 
@@ -44,6 +50,7 @@ import { C } from "../../Vocabularies/C";
 import { LDP } from "../../Vocabularies/LDP";
 
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
+import { DocumentsRepository } from "../DocumentsRepository";
 import { _getErrorResponseParserFn } from "../Utils";
 
 import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
@@ -141,6 +148,7 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 	 * @param document The document to be refreshed.
 	 * @param requestOptions Customizable options for the request.
 	 */
+	refresh<T extends object>( document:T & ExecutableQueryDocument, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 	/**
@@ -206,6 +214,21 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 	 */
 	removeMembers( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 
+	/**
+	 * Modifies the `c:storedQuery` of a given `c:ExecutableQueryDocument`.
+	 * @param uri URI of the `c:ExecutableQueryDocument` to modify it's `c:storedQuery`.
+	 * @param newStoredQuery The new stored query to use.
+	 * @param requestOptions Customizable options for the request.
+	 */
+	modifyStoredQuery<T extends object>( uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
+
+	/**
+	 * Modifies the `c:storedQuery` of a given `c:ExecutableQueryDocument` and returns the updated document.
+	 * @param uri URI of the `c:ExecutableQueryDocument` to modify it's `c:storedQuery`.
+	 * @param newStoredQuery The new stored query to use.
+	 * @param requestOptions Customizable options for the request.
+	 */
+	modifyStoredQueryAndRefresh<T extends object>( uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>;
 
 	/**
 	 * Override method to parse the data that is a JSON-LD Document into the {@link Document} model.
@@ -296,7 +319,7 @@ function __isPersistingChild( object:object ):boolean {
 	return object[ "__CarbonLDP_persisting__" ];
 }
 
-function __createChild<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, parentURI:string, requestOptions:RequestOptions, child:T, slug?:string ):Promise<T & Document> {
+function __createChild<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, parentURI:string, requestOptions:RequestOptions, child:T, slug?:string ):Promise<T & Document> | Promise<T & ExecutableQueryDocument> {
 	if( ResolvablePointer.is( child ) ) throw new IllegalArgumentError( "Cannot persist an already resolvable pointer." );
 
 	const transient:T & TransientDocument = TransientDocument.is( child ) ?
@@ -319,8 +342,12 @@ function __createChild<T extends object>( this:void, repository:LDPDocumentsRepo
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new BadResponseError( "The response contains more than one Location header.", response );
 			transient.$id = locationHeader.values[ 0 ].toString();
-
-			const document:T & Document = repository.context.registry._addPointer( transient );
+			let document:(T & Document) | (T & ExecutableQueryDocument);
+			if( transient.$hasType( C.ExecutableQueryDocument ) && TransientExecutableQueryDocument.is( transient ) ) {
+				document = repository.context.executableQueryDocumentsRegistry._addPointer( transient );
+			} else {
+				document = repository.context.registry._addPointer( transient );
+			}
 			document
 				.$getFragments()
 				.forEach( document.$__modelDecorator.decorate );
@@ -506,10 +533,43 @@ function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri
 		;
 }
 
+function __sendSetStoredQueryAction<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions:RequestOptions = {} ):Promise<T & ExecutableQueryDocument> {
+	if( !repository.context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
+	const url:string = repository.context.getObjectSchema().resolveURI( uri, { base: true } );
+
+	__setDefaultRequestOptions( requestOptions, C.ExecutableQuery );
+	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
+
+	const freeResources:FreeResources = FreeResources.createFrom( { registry: repository.context.registry } );
+
+	freeResources._addPointer( SetStoredQueryAction.createFrom( {
+		storedQuery: newStoredQuery,
+	} ) );
+
+	const body:string = JSON.stringify( freeResources );
+
+	return RequestService
+		.put( url, body, requestOptions )
+		.then( ( response: Response ) => {
+
+			let executableQueryDocument:T & ExecutableQueryDocument = repository.context.executableQueryDocumentsRegistry.getPointer(uri) as T & ExecutableQueryDocument;
+
+			executableQueryDocument
+				.$getFragments()
+				.forEach( executableQueryDocument.$__modelDecorator.decorate );
+
+			return __applyResponseRepresentation<T>( repository, executableQueryDocument, response ) as Promise<T & ExecutableQueryDocument>;
+		} )
+		.catch( __getErrorResponseParserFnFrom( repository ) )
+		;
+}
+
 export type OverriddenMembers =
 	| "get"
 	| "refresh"
 	| "exists"
+	| "execute"
+	| "executeAsRAWSPARQLQuery"
 	| "save"
 	| "saveAndRefresh"
 	| "delete"
@@ -544,11 +604,11 @@ export const LDPDocumentsRepositoryTrait:{
 	decorate<T extends BaseDocumentsRepository>( object:T ):T & LDPDocumentsRepositoryTrait;
 } = <LDPDocumentsRepositoryTraitFactory> {
 	PROTOTYPE: {
-		get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+		get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> | Promise<T & ExecutableQueryDocument> {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.get.call<HTTPRepositoryTrait, [ string, RequestOptions?], Promise<T & Document>>( this, uri, requestOptions )
+				.get.call<HTTPRepositoryTrait, [ string, RequestOptions?], Promise<T & Document> | Promise<T & ExecutableQueryDocument>>( this, uri, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
@@ -560,6 +620,31 @@ export const LDPDocumentsRepositoryTrait:{
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
+		execute( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<ExecutableQuerySPARQLResults> {
+			RequestUtils.setPreferredInteractionModel( C.ExecutableQuery, requestOptions );
+			RequestUtils.setAcceptHeader( "application/json, application/trig", requestOptions );
+
+			return HTTPRepositoryTrait.PROTOTYPE
+				.executeAsRAWSPARQLQuery.call( this, uri, requestOptions )
+				.then<ExecutableQuerySPARQLResults>( ( [ rawResults, _ ]:[ SPARQLRawResults, Response ] ) => {
+
+					if ( rawResults.results && rawResults.results.bindings ) {
+						return SPARQLService._parseSELECTResults( rawResults, this.context.registry );
+					}
+					return rawResults.boolean!;
+
+				})
+				.catch( __getErrorResponseParserFnFrom( this ) );
+		},
+
+		executeAsRAWSPARQLQuery( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQLRawResults, Response ]> {
+			RequestUtils.setPreferredInteractionModel( C.ExecutableQuery, requestOptions );
+			RequestUtils.setAcceptHeader( "application/json, application/trig", requestOptions );
+
+			return HTTPRepositoryTrait.PROTOTYPE
+				.executeAsRAWSPARQLQuery.call( this, uri, requestOptions )
+				.catch( __getErrorResponseParserFnFrom( this ) );
+		},
 
 		create<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, children:T | T[], slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
 			return __createChildren<T>( "minimal", this, uri, children, slugsOrOptions, requestOptions );
@@ -570,7 +655,7 @@ export const LDPDocumentsRepositoryTrait:{
 		},
 
 
-		refresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+		refresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):( Promise<T & Document> ) | ( Promise<T & ExecutableQueryDocument> ) {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 			RequestUtils.setIfNoneMatchHeader( document.$eTag!, requestOptions );
 
@@ -609,6 +694,17 @@ export const LDPDocumentsRepositoryTrait:{
 			return __sendAddAction( this, uri, members, requestOptions );
 		},
 
+		modifyStoredQuery<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>  {
+			return __sendSetStoredQueryAction<T>( this, uri, newStoredQuery, requestOptions );
+		},
+
+		modifyStoredQueryAndRefresh<T extends object>( this: LDPDocumentsRepositoryTrait, uri: string, newStoredQuery: string, requestOptions?: RequestOptions ): Promise<T & ExecutableQueryDocument> {
+			return this
+				.modifyStoredQuery<T>( uri, newStoredQuery, requestOptions )
+				.then( executableQueryDocument => this.refresh<T>( executableQueryDocument, requestOptions ) )
+				;
+		},
+
 
 		removeMember( this:LDPDocumentsRepositoryTrait, uri:string, member:string | Pointer, requestOptions?:RequestOptions ):Promise<void> {
 			return __sendRemoveAction( this, uri, [ member ], requestOptions );
@@ -620,7 +716,7 @@ export const LDPDocumentsRepositoryTrait:{
 		},
 
 
-		_parseResponseData<T extends object>( this:LDPDocumentsRepositoryTrait, response:Response, id:string ):Promise<T & Document> {
+		_parseResponseData<T extends object>( this:LDPDocumentsRepositoryTrait, response:Response, id:string ):Promise<T & Document> | Promise<T & ExecutableQueryDocument> {
 			return __JSONLD_PARSER
 				.parse( response.data )
 				.then( ( rdfNodes:object[] ) => {
@@ -631,7 +727,14 @@ export const LDPDocumentsRepositoryTrait:{
 					const rdfDocument:RDFDocument | undefined = rdfDocuments.find( doc => doc[ "@id" ] === id );
 
 					if( !rdfDocument ) throw new BadResponseError( `No document "${ id }" was returned.`, response );
-					const document:T & Document = this.context.registry.register( id ) as T & Document;
+
+					let document:T & Document | T & ExecutableQueryDocument = this.context.registry.register( id ) as T & Document;
+
+					rdfDocument["@graph"].forEach( node => {
+						if (node["@type"] && node["@type"].indexOf( C.ExecutableQueryDocument ) >= 0 ) {
+								document = this.context.executableQueryDocumentsRegistry.register( id ) as T & ExecutableQueryDocument;
+						}
+					});
 
 					const previousFragments:Set<string> = new Set();
 					document
