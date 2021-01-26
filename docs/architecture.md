@@ -8,7 +8,7 @@ The following diagram exposes the base elements that form the structure of the S
 Central point of access to the functionality inside the SDK.
 The main elements of every context are:
   - `baseURI`. The domain of the resources the context can manage.
-  - `respository`. Manages the request methods of the context's domain. See [Repositories](#repositories)
+  - `repository`. Manages the request methods of the context's domain. See [Repositories](#repositories)
   - `registry`. Manages the resources inside the context's domain. See [Registries](#registries)
   - `JSONLDConverter`. Has the capabilities to convert JSON-LD into simple JS objects.
   - ObjectSchema methods. Methods that manage the schemas that have the information for a better JSON-LD conversion.
@@ -29,7 +29,7 @@ The different repositories inside the SDK are:
   - `GeneralRepository`. Similar to the previous one, but it exists to separate a repository that is specialized to work directly for a context.
   - `DocumentsRepository`. The repository that the `DocumentsContext` and the `CarbonLDP` class contain, it has all the multiple services the Carbon LDP platform offers.
 
-Since the `DocumentRespository` has a lot of methods, these are grouped and separated in different traits to have a better scalability:
+Since the `DocumentRepository` has a lot of methods, these are grouped and separated in different traits to have a better scalability:
   - `EventEmitterDocumentsRepositoryTrait`. Methods for the real-time subscriptions.
   - `SPARQLDocumentsRepositoryTrait`. Methods for making SPARQL queries.
   - `LDPDocumentsRepositoryTrait`. Methods for the CRUD and LDP action requests.
@@ -60,10 +60,10 @@ Similar to the repositories, there is the `$Registry` interface declaring the `$
 that manage resources inside resources.
 
 The main registries inside the SDK are:
-  - `Registry`/`$Reistry`. As explained before, the base methods of any registry.
-  - `GeneralRegistry`. Specialized registry to work directly for a context.
+  - `Registry`/`$Registry`. As explained before, the base methods of any registry.
+  - `GeneralRegistry`. A specialized registry to work directly for a context.
   - `DocumentsRegistry`. The registry that the `DocumentsContext` and the `CarbonLDP` class contain, it manages the `Document` resources.
-  - `Document`. Also a registry that stores sub-resources called `Fragments` (Named Fragments/Blank Nodes).
+  - `Document`. Also, a registry that stores sub-resources called `Fragments` (Named Fragments/Blank Nodes).
 
 ## Models
 
