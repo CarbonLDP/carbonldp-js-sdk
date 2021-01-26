@@ -2,7 +2,6 @@ import { DocumentsContext } from "../../Context/DocumentsContext";
 
 import { Document } from "../../Document/Document";
 import { TransientDocument } from "../../Document/TransientDocument";
-import { ExecutableQueryDocumentsRegistry } from "../../DocumentsRegistry/ExecutableQueryDocumentsRegistry";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import { ExecutableQueryDocument } from "../../ExecutableQueryDocument/ExecutableQueryDocument";
@@ -36,7 +35,6 @@ import { ModelPrototype } from "../../Model/ModelPrototype";
 import { DigestedObjectSchema } from "../../ObjectSchema/DigestedObjectSchema";
 
 import { Pointer } from "../../Pointer/Pointer";
-import { PointerLibrary } from "../../Pointer/PointerLibrary";
 
 import { RDFDocument } from "../../RDF/Document";
 import { RDFNode } from "../../RDF/Node";
@@ -44,7 +42,6 @@ import { RDFNode } from "../../RDF/Node";
 import { $Registry, Registry } from "../../Registry/Registry";
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 import { SPARQLRawResults } from "../../SPARQL/RawResults";
-import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
 import { SPARQLService } from "../../SPARQL/SPARQLService";
 
 import { isString } from "../../Utils";
@@ -551,7 +548,6 @@ function __sendSetStoredQueryAction<T extends object>( this:void, repository:LDP
 
 	const body:string = JSON.stringify( freeResources );
 
-	// TODO: This is not returning document properties
 	return RequestService
 		.put( url, body, requestOptions )
 		.then( ( response: Response ) => {
