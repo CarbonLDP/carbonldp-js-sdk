@@ -1,6 +1,7 @@
 import HTTP from "http";
 import HTTPS from "https";
 import URL from "url";
+import { CarbonLDPSettings } from "../CarbonLDPSettings";
 
 import { hasProperty, hasPropertyDefined, isNumber, isString } from "../Utils";
 
@@ -243,6 +244,8 @@ export class RequestService {
 			options = bodyOrOptions ? bodyOrOptions : options;
 		}
 
+		url = translateURL(url);
+
 		options = Object.assign( {}, RequestService.defaultOptions, options );
 
 		if( isNumber( method ) ) method = HTTPMethod[ method ];
@@ -441,6 +444,14 @@ export class RequestService {
 	private static __setFalseETag( requestOptions:RequestOptions ):void {
 		requestOptions.headers!.set( "if-none-match", new Header() );
 	}
+
+	// TODO: Implement changing the domain
+	private static translateURL( url:string ):string {
+
+		if (!CarbonLDPSettings.getInstance().virtualHost) return url;
+
+	}
+
 }
 
 /**

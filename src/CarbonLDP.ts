@@ -45,6 +45,7 @@ import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
+import set = Reflect.set;
 
 
 /**
@@ -186,6 +187,8 @@ function __getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
 	const protocol:string = settings.ssl === false ? "http://" : "https://";
 	const host:string = settings.host.endsWith( "/" ) ? settings.host.slice( 0, - 1 ) : settings.host;
 	const url:string = `${ protocol }${ host }/`;
+
+	CarbonLDPSettings.getInstance().setSettings!( settings );
 
 	if( !Utils.isNumber( settings.port ) ) return url;
 	return url.slice( 0, - 1 ) + `:${ settings.port }/`;
