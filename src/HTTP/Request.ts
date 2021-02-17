@@ -1,19 +1,19 @@
-import HTTP from 'http';
-import HTTPS from 'https';
-import URL from 'url';
-import { CarbonLDPSettings } from '../CarbonLDPSettings';
+import HTTP from "http";
+import HTTPS from "https";
+import URL from "url";
+import { CarbonLDPSettings } from "../CarbonLDPSettings";
 
-import { hasProperty, hasPropertyDefined, isNumber, isString } from '../Utils';
+import { hasProperty, hasPropertyDefined, isNumber, isString } from "../Utils";
 
-import * as Errors from './Errors';
-import { HTTPError } from './Errors/HTTPError';
-import { BadResponseError } from './Errors/ServerErrors/BadResponseError';
-import { UnknownError } from './Errors/UnknownError';
+import * as Errors from "./Errors";
+import { HTTPError } from "./Errors/HTTPError";
+import { BadResponseError } from "./Errors/ServerErrors/BadResponseError";
+import { UnknownError } from "./Errors/UnknownError";
 
-import { Header } from './Header';
-import { HTTPMethod } from './HTTPMethod';
-import { Parser } from './Parser';
-import { Response } from './Response';
+import { Header } from "./Header";
+import { HTTPMethod } from "./HTTPMethod";
+import { Parser } from "./Parser";
+import { Response } from "./Response";
 
 /**
  * Customizable options that can change the behaviour of a request.
@@ -133,12 +133,12 @@ function __sendWithNode(
 			let rawData:Buffer[] = [];
 
 			res
-				.on( 'data', ( chunk:string | Buffer ):void => {
-					if( typeof chunk === 'string' ) chunk = Buffer.from( <any> chunk, 'utf-8' );
+				.on( "data", ( chunk:string | Buffer ):void => {
+					if( typeof chunk === "string" ) chunk = Buffer.from( <any> chunk, "utf-8" );
 					rawData.push( chunk );
 				} )
-				.on( 'end', () => {
-					let data:string = Buffer.concat( rawData ).toString( 'utf8' );
+				.on( "end", () => {
+					let data:string = Buffer.concat( rawData ).toString( "utf8" );
 					let response:Response = new Response( request, data, res );
 
 					__onResolve( resolve, reject, response );
@@ -149,7 +149,7 @@ function __sendWithNode(
 
 		function sendRequestWithRedirect( _url:string ):void {
 			let parsedURL:URL.Url = URL.parse( _url );
-			let Adapter:any = parsedURL.protocol === 'http:' ? HTTP : HTTPS;
+			let Adapter:any = parsedURL.protocol === "http:" ? HTTP : HTTPS;
 
 			let requestOptions:HTTP.RequestOptions = {
 				protocol: parsedURL.protocol,
@@ -167,8 +167,8 @@ function __sendWithNode(
 
 			let request:HTTP.ClientRequest = Adapter.request( requestOptions );
 			if( options.timeout ) request.setTimeout( options.timeout );
-			request.on( 'response', ( res:HTTP.IncomingMessage ) => {
-				if( res.statusCode! >= 300 && res.statusCode! <= 399 && 'location' in res.headers ) {
+			request.on( "response", ( res:HTTP.IncomingMessage ) => {
+				if( res.statusCode! >= 300 && res.statusCode! <= 399 && "location" in res.headers ) {
 					if( ++ numberOfRedirects < 10 )
 						return sendRequestWithRedirect( URL.resolve( _url, res.headers!.location! ) );
 				}
@@ -176,14 +176,14 @@ function __sendWithNode(
 				returnResponse( request, res );
 			} );
 
-			request.on( 'error', ( error ) => {
+			request.on( "error", ( error ) => {
 				let response:Response = new Response( request, error.message );
 				__onResolve( resolve, reject, response );
 			} );
 
 			if( body ) {
 				// Force to send body in `DELETE` (`RemoveMemberAction`)
-				if( method === 'DELETE' ) request.useChunkedEncodingByDefault = true;
+				if( method === "DELETE" ) request.useChunkedEncodingByDefault = true;
 				request.write( body );
 			}
 
@@ -200,7 +200,7 @@ function __sendRequest(
 	body:string | Blob | Buffer | undefined,
 	options:RequestOptions
 ):Promise<Response> {
-	return typeof XMLHttpRequest !== 'undefined'
+	return typeof XMLHttpRequest !== "undefined"
 		? __sendWithBrowser( method, url, <string | Blob> body, options )
 		: __sendWithNode( method, url, <string | Buffer> body, options );
 }
@@ -208,8 +208,8 @@ function __sendRequest(
 function __isBody( data:string | Blob | Buffer ):boolean {
 	return (
 		isString( data ) ||
-		(typeof Blob !== 'undefined' && data instanceof Blob) ||
-		(typeof Buffer !== 'undefined' && data instanceof Buffer)
+		(typeof Blob !== "undefined" && data instanceof Blob) ||
+		(typeof Buffer !== "undefined" && data instanceof Buffer)
 	);
 }
 
@@ -281,10 +281,10 @@ export class RequestService {
 		parser?:Parser<T>
 	):any {
 		let body:string | Blob | Buffer | undefined = undefined;
-		let options:RequestOptions = hasProperty( optionsOrParser, 'parse' )
+		let options:RequestOptions = hasProperty( optionsOrParser, "parse" )
 			? bodyOrOptions
 			: optionsOrParser;
-		parser = hasProperty( optionsOrParser, 'parse' ) ? optionsOrParser : parser;
+		parser = hasProperty( optionsOrParser, "parse" ) ? optionsOrParser : parser;
 
 		if( !bodyOrOptions || __isBody( bodyOrOptions ) ) {
 			body = bodyOrOptions;
@@ -300,7 +300,7 @@ export class RequestService {
 
 		const requestPromise:Promise<Response> = __sendRequest( method, url, body, options ).then(
 			( response ) => {
-				if( method === 'GET' && options.headers )
+				if( method === "GET" && options.headers )
 					return this.__handleGETResponse( url, options, response );
 				else return response;
 			}
@@ -512,10 +512,10 @@ export class RequestService {
 
 			if( !this.__isChromiumAgent() ) this.__setFalseETag( requestOptions );
 
-			return __sendRequest( 'GET', url, undefined, requestOptions ).then( ( noCachedResponse ) => {
+			return __sendRequest( "GET", url, undefined, requestOptions ).then( ( noCachedResponse ) => {
 				if( !this.__contentTypeIsAccepted( requestOptions, response ) ) {
 					throw new BadResponseError(
-						'The server responded with an unacceptable Content-Type',
+						"The server responded with an unacceptable Content-Type",
 						response
 					);
 				}
@@ -531,32 +531,32 @@ export class RequestService {
 	):boolean {
 		if( !requestOptions.headers ) return true;
 
-		const accepts:string[] = requestOptions.headers.has( 'accept' )
-			? requestOptions.headers.get( 'accept' )!.values
+		const accepts:string[] = requestOptions.headers.has( "accept" )
+			? requestOptions.headers.get( "accept" )!.values
 			: [];
-		const contentType:Header | undefined = response.headers.has( 'content-type' )
-			? response.headers.get( 'content-type' )
+		const contentType:Header | undefined = response.headers.has( "content-type" )
+			? response.headers.get( "content-type" )
 			: undefined;
 		return !contentType || accepts.some( contentType.hasValue, contentType );
 	}
 
 	private static __setNoCacheHeaders( requestOptions:RequestOptions ):void {
 		requestOptions
-			.headers!.set( 'pragma', new Header( 'no-cache' ) )
-			.set( 'cache-control', new Header( 'no-cache, max-age=0' ) );
+			.headers!.set( "pragma", new Header( "no-cache" ) )
+			.set( "cache-control", new Header( "no-cache, max-age=0" ) );
 	}
 
 	private static __isChromiumAgent():boolean {
-		return typeof window !== 'undefined' && !!window[ 'chrome' ];
+		return typeof window !== "undefined" && !!window[ "chrome" ];
 	}
 
 	private static __setFalseETag( requestOptions:RequestOptions ):void {
-		requestOptions.headers!.set( 'if-none-match', new Header() );
+		requestOptions.headers!.set( "if-none-match", new Header() );
 	}
 
 	private static translateURL( url:string ):string {
-		const settingsObject = CarbonLDPSettings.getInstance();
-		if( hasProperty( settingsObject, 'exposedHost' ) )
+		const settingsObject:CarbonLDPSettings = CarbonLDPSettings.getInstance();
+		if( hasProperty( settingsObject, "exposedHost" ) )
 			return url.replace( settingsObject.regularUrl!, settingsObject.exposedUrl! );
 		return url;
 	}
@@ -604,7 +604,7 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setAcceptHeader( accept:string, requestOptions:RequestOptions ):RequestOptions {
-		RequestUtils.__addHeaderValue( 'accept', accept, requestOptions );
+		RequestUtils.__addHeaderValue( "accept", accept, requestOptions );
 
 		return requestOptions;
 	}
@@ -615,7 +615,7 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setContentTypeHeader( contentType:string, requestOptions:RequestOptions ):RequestOptions {
-		RequestUtils.__addHeaderValue( 'content-type', contentType, requestOptions );
+		RequestUtils.__addHeaderValue( "content-type", contentType, requestOptions );
 
 		return requestOptions;
 	}
@@ -628,7 +628,7 @@ export class RequestUtils {
 	static setIfMatchHeader( eTag:string, requestOptions:RequestOptions ):RequestOptions {
 		if( !eTag ) return requestOptions;
 
-		RequestUtils.__addHeaderValue( 'if-match', eTag, requestOptions );
+		RequestUtils.__addHeaderValue( "if-match", eTag, requestOptions );
 
 		return requestOptions;
 	}
@@ -641,7 +641,7 @@ export class RequestUtils {
 	static setIfNoneMatchHeader( eTag:string, requestOptions:RequestOptions ):RequestOptions {
 		if( !eTag ) return requestOptions;
 
-		RequestUtils.__addHeaderValue( 'if-none-match', eTag, requestOptions );
+		RequestUtils.__addHeaderValue( "if-none-match", eTag, requestOptions );
 
 		return requestOptions;
 	}
@@ -656,7 +656,7 @@ export class RequestUtils {
 		requestOptions:RequestOptions
 	):RequestOptions {
 		const headerValue:string = `${ interactionModelURI }; rel=interaction-model`;
-		RequestUtils.__addHeaderValue( 'prefer', headerValue, requestOptions );
+		RequestUtils.__addHeaderValue( "prefer", headerValue, requestOptions );
 
 		return requestOptions;
 	}
@@ -667,11 +667,11 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setPreferredRetrieval(
-		retrievalType:'representation' | 'minimal',
+		retrievalType:"representation" | "minimal",
 		requestOptions:RequestOptions
 	):RequestOptions {
 		const headerValue:string = `return=${ retrievalType }`;
-		RequestUtils.__addHeaderValue( 'prefer', headerValue, requestOptions );
+		RequestUtils.__addHeaderValue( "prefer", headerValue, requestOptions );
 
 		return requestOptions;
 	}
@@ -685,14 +685,14 @@ export class RequestUtils {
 		preferences:RetrievalPreferences,
 		requestOptions:RequestOptions
 	):RequestOptions {
-		const prefer:Header = RequestUtils.getHeader( 'prefer', requestOptions, true )!;
+		const prefer:Header = RequestUtils.getHeader( "prefer", requestOptions, true )!;
 
-		const keys:string[] = [ 'include', 'omit' ];
+		const keys:string[] = [ "include", "omit" ];
 		for( const key of keys ) {
 			if( !(key in preferences) ) continue;
 			if( preferences[ key ].length <= 0 ) continue;
 
-			const strPreferences:string = preferences[ key ].join( ' ' );
+			const strPreferences:string = preferences[ key ].join( " " );
 			prefer.values.push( `${ key }="${ strPreferences }"` );
 		}
 
@@ -705,7 +705,7 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setSlug( slug:string, requestOptions:RequestOptions ):RequestOptions {
-		RequestUtils.__addHeaderValue( 'slug', slug, requestOptions );
+		RequestUtils.__addHeaderValue( "slug", slug, requestOptions );
 
 		return requestOptions;
 	}
@@ -716,10 +716,10 @@ export class RequestUtils {
 	 */
 	static isOptions( value:any ):value is RequestOptions {
 		return (
-			hasPropertyDefined( value, 'headers' ) ||
-			hasPropertyDefined( value, 'sendCredentialsOnCORS' ) ||
-			hasPropertyDefined( value, 'timeout' ) ||
-			hasPropertyDefined( value, 'request' )
+			hasPropertyDefined( value, "headers" ) ||
+			hasPropertyDefined( value, "sendCredentialsOnCORS" ) ||
+			hasPropertyDefined( value, "timeout" ) ||
+			hasPropertyDefined( value, "request" )
 		);
 	}
 

@@ -1,5 +1,5 @@
-import * as Utils from './Utils';
-import { DocumentsContextSettings } from './Context/DocumentsContextSettings';
+import * as Utils from "./Utils";
+import { DocumentsContextSettings } from "./Context/DocumentsContextSettings";
 
 /**
  * Interface of the possible settings used by the Carbon class.

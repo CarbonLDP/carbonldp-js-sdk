@@ -1,50 +1,50 @@
-import { hasProtocol } from 'sparqler/core';
+import { hasProtocol } from "sparqler/core";
 
-import { AccessPoint } from './AccessPoint/AccessPoint';
-import { TransientAccessPoint } from './AccessPoint/TransientAccessPoint';
+import { AccessPoint } from "./AccessPoint/AccessPoint";
+import { TransientAccessPoint } from "./AccessPoint/TransientAccessPoint";
 
-import { CarbonLDPSettings } from './CarbonLDPSettings';
+import { CarbonLDPSettings } from "./CarbonLDPSettings";
 
-import { AbstractContext } from './Context/AbstractContext';
-import { DocumentsContext } from './Context/DocumentsContext';
-import { DocumentsContextSettings } from './Context/DocumentsContextSettings';
-import { GlobalContext } from './Context/GlobalContext';
+import { AbstractContext } from "./Context/AbstractContext";
+import { DocumentsContext } from "./Context/DocumentsContext";
+import { DocumentsContextSettings } from "./Context/DocumentsContextSettings";
+import { GlobalContext } from "./Context/GlobalContext";
 
-import { Document } from './Document/Document';
+import { Document } from "./Document/Document";
 
-import * as Errors from './Errors';
-import { IllegalArgumentError } from './Errors/IllegalArgumentError';
-import { ExecutableQueryDocument } from './ExecutableQueryDocument/ExecutableQueryDocument';
+import * as Errors from "./Errors";
+import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
+import { ExecutableQueryDocument } from "./ExecutableQueryDocument/ExecutableQueryDocument";
 
-import { Fragment } from './Fragment/Fragment';
-import { TransientFragment } from './Fragment/TransientFragment';
+import { Fragment } from "./Fragment/Fragment";
+import { TransientFragment } from "./Fragment/TransientFragment";
 
-import { FreeResources } from './FreeResources/FreeResources';
+import { FreeResources } from "./FreeResources/FreeResources";
 
-import * as HTTP from './HTTP';
-import * as JSONLD from './JSONLD';
-import * as LDP from './LDP';
-import * as LDPatch from './LDPatch';
-import * as Messaging from './Messaging';
+import * as HTTP from "./HTTP";
+import * as JSONLD from "./JSONLD";
+import * as LDP from "./LDP";
+import * as LDPatch from "./LDPatch";
+import * as Messaging from "./Messaging";
 
-import { ContainerType } from './ObjectSchema/ContainerType';
-import { DigestedObjectSchema } from './ObjectSchema/DigestedObjectSchema';
-import { DigestedObjectSchemaProperty } from './ObjectSchema/DigestedObjectSchemaProperty';
-import { ObjectSchemaDigester } from './ObjectSchema/ObjectSchemaDigester';
-import { ObjectSchemaUtils } from './ObjectSchema/ObjectSchemaUtils';
-import { PointerType } from './ObjectSchema/PointerType';
+import { ContainerType } from "./ObjectSchema/ContainerType";
+import { DigestedObjectSchema } from "./ObjectSchema/DigestedObjectSchema";
+import { DigestedObjectSchemaProperty } from "./ObjectSchema/DigestedObjectSchemaProperty";
+import { ObjectSchemaDigester } from "./ObjectSchema/ObjectSchemaDigester";
+import { ObjectSchemaUtils } from "./ObjectSchema/ObjectSchemaUtils";
+import { PointerType } from "./ObjectSchema/PointerType";
 
-import { Pointer } from './Pointer/Pointer';
+import { Pointer } from "./Pointer/Pointer";
 
-import * as RDF from './RDF';
+import * as RDF from "./RDF";
 
-import { Resource } from './Resource/Resource';
+import { Resource } from "./Resource/Resource";
 
-import * as SHACL from './SHACL';
-import * as SPARQL from './SPARQL';
-import * as System from './System';
-import * as Utils from './Utils';
-import * as Vocabularies from './Vocabularies';
+import * as SHACL from "./SHACL";
+import * as SPARQL from "./SPARQL";
+import * as System from "./System";
+import * as Utils from "./Utils";
+import * as Vocabularies from "./Vocabularies";
 import set = Reflect.set;
 
 /**
@@ -90,7 +90,7 @@ export class CarbonLDP extends DocumentsContext {
 	 * Version of the SDK.
 	 */
 	static get version(): string {
-		return '{{VERSION}}';
+		return "{{VERSION}}";
 	}
 
 	/**
@@ -123,20 +123,20 @@ export class CarbonLDP extends DocumentsContext {
 		super(__getURLFrom(urlOrSettings));
 
 		this._settings = {
-			vocabulary: 'vocabularies/main/#',
+			vocabulary: "vocabularies/main/#",
 			paths: {
 				system: {
-					slug: '.system/',
+					slug: ".system/",
 					paths: {
-						platform: 'platform/',
-						credentials: 'credentials/',
-						roles: 'roles/',
+						platform: "platform/",
+						credentials: "credentials/",
+						roles: "roles/",
 					},
 				},
 				users: {
-					slug: 'users/',
+					slug: "users/",
 					paths: {
-						me: 'me/',
+						me: "me/",
 					},
 				},
 			},
@@ -152,7 +152,7 @@ export class CarbonLDP extends DocumentsContext {
 	 */
 	getPlatformMetadata(): Promise<System.PlatformMetadata> {
 		return Utils.promiseMethod(() => {
-			const uri: string = this._resolvePath('system.platform');
+			const uri: string = this._resolvePath("system.platform");
 			return this.documents.$get<System.PlatformMetadata>(uri);
 		});
 	}
@@ -168,17 +168,16 @@ function __getURLFromString(this: void, url: string): string {
 	if (!RDF.URI.hasProtocol(url))
 		throw new IllegalArgumentError(`The URL must contain a valid protocol: "http://", "https://".`);
 
-	if (url.endsWith('/')) return url;
-	return url + '/';
+	if (url.endsWith("/")) return url;
+	return url + "/";
 }
 
 function __getURLFromSettings(this: void, settings: CarbonLDPSettings): string {
-	// settings.regularUrl = url;
-	const regularUrl = __buildRegularUrl(settings);
+	const regularUrl:string = __buildRegularUrl(settings);
 	settings.regularUrl = regularUrl;
 
-	if (Utils.hasProperty(settings, 'exposedHost')) {
-		settings = __setexposedUrl(settings);
+	if (Utils.hasProperty(settings, "exposedHost")) {
+		settings = __setExposedUrl(settings);
 	}
 
 	CarbonLDPSettings.getInstance().setSettings!(settings);
@@ -193,11 +192,11 @@ function __buildRegularUrl(settings: CarbonLDPSettings): string {
 	if (hasProtocol(settings.host))
 		throw new IllegalArgumentError(`The host must not contain a protocol.`);
 
-	if (settings.host.includes(':'))
+	if (settings.host.includes(":"))
 		throw new IllegalArgumentError(`The host must not contain a port.`);
 
-	const protocol: string = settings.ssl === false ? 'http://' : 'https://';
-	const host: string = settings.host.endsWith('/') ? settings.host.slice(0, -1) : settings.host;
+	const protocol: string = settings.ssl === false ? "http://" : "https://";
+	const host: string = settings.host.endsWith("/") ? settings.host.slice(0, -1) : settings.host;
 	const url: string = `${protocol}${host}/`;
 
 	if (!Utils.isNumber(settings.port)) return url;
@@ -205,22 +204,22 @@ function __buildRegularUrl(settings: CarbonLDPSettings): string {
 }
 
 /**
- * Sets virtual url as property of CarbonLDPSettings
+ * Sets exposed url as property of CarbonLDPSettings
  * @param settings: CarbonLDPSettings
  * @return CarbonLDPSettings
  */
-function __setexposedUrl(settings: CarbonLDPSettings): CarbonLDPSettings {
+function __setExposedUrl(settings: CarbonLDPSettings): CarbonLDPSettings {
 	if (!Utils.isString(settings.exposedHost))
 		throw new IllegalArgumentError(`The settings object must contains a valid host string.`);
 
 	if (hasProtocol(settings.exposedHost))
 		throw new IllegalArgumentError(`The host must not contain a protocol.`);
 
-	if (settings.exposedHost.includes(':'))
+	if (settings.exposedHost.includes(":"))
 		throw new IllegalArgumentError(`The host must not contain a port.`);
 
-	const virtualProtocol: string = settings.exposedSsl === false ? 'http://' : 'https://';
-	const exposedHost: string = settings.exposedHost.endsWith('/')
+	const virtualProtocol: string = settings.exposedSsl === false ? "http://" : "https://";
+	const exposedHost: string = settings.exposedHost.endsWith("/")
 		? settings.exposedHost.slice(0, -1)
 		: settings.exposedHost;
 	settings.exposedUrl = `${virtualProtocol}${exposedHost}/`;
