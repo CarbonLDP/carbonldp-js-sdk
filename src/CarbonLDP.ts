@@ -177,8 +177,8 @@ function __getURLFromSettings(this: void, settings: CarbonLDPSettings): string {
 	const regularUrl = __buildRegularUrl(settings);
 	settings.regularUrl = regularUrl;
 
-	if (Utils.hasProperty(settings, 'virtualHost')) {
-		settings = __setVirtualUrl(settings);
+	if (Utils.hasProperty(settings, 'exposedHost')) {
+		settings = __setexposedUrl(settings);
 	}
 
 	CarbonLDPSettings.getInstance().setSettings!(settings);
@@ -209,23 +209,23 @@ function __buildRegularUrl(settings: CarbonLDPSettings): string {
  * @param settings: CarbonLDPSettings
  * @return CarbonLDPSettings
  */
-function __setVirtualUrl(settings: CarbonLDPSettings): CarbonLDPSettings {
-	if (!Utils.isString(settings.virtualHost))
+function __setexposedUrl(settings: CarbonLDPSettings): CarbonLDPSettings {
+	if (!Utils.isString(settings.exposedHost))
 		throw new IllegalArgumentError(`The settings object must contains a valid host string.`);
 
-	if (hasProtocol(settings.virtualHost))
+	if (hasProtocol(settings.exposedHost))
 		throw new IllegalArgumentError(`The host must not contain a protocol.`);
 
-	if (settings.virtualHost.includes(':'))
+	if (settings.exposedHost.includes(':'))
 		throw new IllegalArgumentError(`The host must not contain a port.`);
 
-	const virtualProtocol: string = settings.virtualSsl === false ? 'http://' : 'https://';
-	const virtualHost: string = settings.virtualHost.endsWith('/')
-		? settings.virtualHost.slice(0, -1)
-		: settings.virtualHost;
-	settings.virtualUrl = `${virtualProtocol}${virtualHost}/`;
-	if (!Utils.isNumber(settings.virtualPort)) return settings;
-	settings.virtualUrl = settings.virtualUrl.slice(0, -1) + `:${settings.virtualPort}/`;
+	const virtualProtocol: string = settings.exposedSsl === false ? 'http://' : 'https://';
+	const exposedHost: string = settings.exposedHost.endsWith('/')
+		? settings.exposedHost.slice(0, -1)
+		: settings.exposedHost;
+	settings.exposedUrl = `${virtualProtocol}${exposedHost}/`;
+	if (!Utils.isNumber(settings.exposedPort)) return settings;
+	settings.exposedUrl = settings.exposedUrl.slice(0, -1) + `:${settings.exposedPort}/`;
 	return settings;
 }
 

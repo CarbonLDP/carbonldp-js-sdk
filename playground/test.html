@@ -1,23 +1,20 @@
 <html lang="en">
-<head>
-	<link href="../node_modules/jasmine-core/lib/jasmine-core/jasmine.css" rel="stylesheet">
-	<title>Playground tests</title>
-</head>
-<body>
+	<head>
+		<link href="../node_modules/jasmine-core/lib/jasmine-core/jasmine.css" rel="stylesheet" />
+		<title>Playground tests</title>
+	</head>
+	<body>
+		<!-- Polyfills for IE -->
+		<script src="../node_modules/core-js-bundle/index.js"></script>
+		<script src="../node_modules/proxy-polyfill/proxy.min.js"></script>
 
-	<!-- Polyfills for IE -->
-	<script src="../node_modules/core-js-bundle/index.js"></script>
-	<script src="../node_modules/proxy-polyfill/proxy.min.js"></script>
+		<script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
+		<script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
+		<script src="../node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
+		<script src="../node_modules/jasmine-ajax/lib/mock-ajax.js"></script>
 
-	<script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
-	<script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
-	<script src="../node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
-	<script src="../node_modules/jasmine-ajax/lib/mock-ajax.js"></script>
-
-	<script src="../dist/bundles/CarbonLDP.sfx.js"></script>
-	<script>
-
-	</script>
-	<script src="example.js"></script>
-</body>
+		<script src="../dist/bundles/CarbonLDP.sfx.js"></script>
+		<script></script>
+		<script src="example1.js"></script>
+	</body>
 </html>

@@ -22,19 +22,19 @@ export interface RequestOptions {
 	/**
 	 * Map that contains the headers to include in the request.
 	 */
-	headers?: Map<string, Header>;
+	headers?:Map<string, Header>;
 	/**
 	 * Flag that enables Cross-Origin Resource Sharing (CORS).
 	 */
-	sendCredentialsOnCORS?: boolean;
+	sendCredentialsOnCORS?:boolean;
 	/**
 	 * Timeout of the request.
 	 */
-	timeout?: number;
+	timeout?:number;
 	/**
 	 * Specific XMLHttpRequest to be used for the request.
 	 */
-	request?: XMLHttpRequest;
+	request?:XMLHttpRequest;
 }
 
 /**
@@ -44,7 +44,7 @@ export interface GETOptions extends RequestOptions {
 	/**
 	 * Flag that ignores the cache of the SDK and ensures to make a request.
 	 */
-	ensureLatest?: boolean;
+	ensureLatest?:boolean;
 }
 
 /**
@@ -56,102 +56,102 @@ export interface RetrievalPreferences {
 	/**
 	 * Prefer URIs that indicates some specific information should be returned in the request's response.
 	 */
-	include?: string[];
+	include?:string[];
 	/**
 	 * Prefer URIs that indicates some specific information should NOT be included in the request's response.
 	 */
-	omit?: string[];
+	omit?:string[];
 }
 
-type ResolveCallback = (response: Response) => void;
-type RejectCallback = (error: HTTPError) => void;
+type ResolveCallback = ( response:Response ) => void;
+type RejectCallback = ( error:HTTPError ) => void;
 
 /**
  * Map where all the HTTP Status Codes used in the SDK are assigned to their specific error class.
  */
 // FIXME: In migration to ESLint (#396)
 // tslint:disable-next-line:variable-name
-export const __statusCodeMap: Map<number, typeof HTTPError> = new Map<number, typeof HTTPError>();
+export const __statusCodeMap:Map<number, typeof HTTPError> = new Map<number, typeof HTTPError>();
 
-Object.keys(Errors)
-	.map((k) => Errors[k])
-	.forEach((e) => {
-		if (e.statusCode === null) return;
-		__statusCodeMap.set(e.statusCode, e);
-	});
+Object.keys( Errors )
+	.map( ( k ) => Errors[ k ] )
+	.forEach( ( e ) => {
+		if( e.statusCode === null ) return;
+		__statusCodeMap.set( e.statusCode, e );
+	} );
 
-function __onResolve(resolve: ResolveCallback, reject: RejectCallback, response: Response): void {
-	if (response.status >= 200 && response.status <= 299) {
-		resolve(response);
+function __onResolve( resolve:ResolveCallback, reject:RejectCallback, response:Response ):void {
+	if( response.status >= 200 && response.status <= 299 ) {
+		resolve( response );
 	} else {
-		if (!__statusCodeMap.has(response.status))
-			return reject(new UnknownError(response.data, response));
+		if( !__statusCodeMap.has( response.status ) )
+			return reject( new UnknownError( response.data, response ) );
 
-		reject(new (__statusCodeMap.get(response.status)!)(response.data, response));
+		reject( new (__statusCodeMap.get( response.status )!)( response.data, response ) );
 	}
 }
 
 function __sendWithBrowser(
-	method: string,
-	url: string,
-	body: string | Blob,
-	options: RequestOptions
-): Promise<Response> {
-	return new Promise<Response>((resolve: ResolveCallback, reject: RejectCallback): void => {
-		let request: XMLHttpRequest = options.request ? options.request : new XMLHttpRequest();
-		request.open(method, url, true);
+	method:string,
+	url:string,
+	body:string | Blob,
+	options:RequestOptions
+):Promise<Response> {
+	return new Promise<Response>( ( resolve:ResolveCallback, reject:RejectCallback ):void => {
+		let request:XMLHttpRequest = options.request ? options.request : new XMLHttpRequest();
+		request.open( method, url, true );
 
-		if (options.headers)
-			options.headers.forEach((header: Header, name: string) =>
-				request.setRequestHeader(name, header.toString())
+		if( options.headers )
+			options.headers.forEach( ( header:Header, name:string ) =>
+				request.setRequestHeader( name, header.toString() )
 			);
 
 		request.withCredentials = !!options.sendCredentialsOnCORS;
-		if (options.timeout) request.timeout = options.timeout;
+		if( options.timeout ) request.timeout = options.timeout;
 
 		request.onload = request.onerror = () => {
-			let response: Response = new Response(request);
-			__onResolve(resolve, reject, response);
+			let response:Response = new Response( request );
+			__onResolve( resolve, reject, response );
 		};
 
-		if (body) {
-			request.send(body);
+		if( body ) {
+			request.send( body );
 		} else {
 			request.send();
 		}
-	});
+	} );
 }
 
 function __sendWithNode(
-	method: string,
-	url: string,
-	body: string | Buffer,
-	options: RequestOptions
-): Promise<Response> {
-	return new Promise<Response>((resolve: ResolveCallback, reject: RejectCallback): void => {
-		function returnResponse(request: HTTP.ClientRequest, res: HTTP.IncomingMessage): void {
-			let rawData: Buffer[] = [];
+	method:string,
+	url:string,
+	body:string | Buffer,
+	options:RequestOptions
+):Promise<Response> {
+	return new Promise<Response>( ( resolve:ResolveCallback, reject:RejectCallback ):void => {
+		function returnResponse( request:HTTP.ClientRequest, res:HTTP.IncomingMessage ):void {
+			let rawData:Buffer[] = [];
 
 			res
-				.on('data', (chunk: string | Buffer): void => {
-					if (typeof chunk === 'string') chunk = Buffer.from(<any>chunk, 'utf-8');
-					rawData.push(chunk);
-				})
-				.on('end', () => {
-					let data: string = Buffer.concat(rawData).toString('utf8');
-					let response: Response = new Response(request, data, res);
+				.on( 'data', ( chunk:string | Buffer ):void => {
+					if( typeof chunk === 'string' ) chunk = Buffer.from( <any> chunk, 'utf-8' );
+					rawData.push( chunk );
+				} )
+				.on( 'end', () => {
+					let data:string = Buffer.concat( rawData ).toString( 'utf8' );
+					let response:Response = new Response( request, data, res );
 
-					__onResolve(resolve, reject, response);
-				});
+					__onResolve( resolve, reject, response );
+				} );
 		}
 
-		let numberOfRedirects: number = 0;
+		let numberOfRedirects:number = 0;
 
-		function sendRequestWithRedirect(_url: string): void {
-			let parsedURL: URL.Url = URL.parse(_url);
-			let Adapter: any = parsedURL.protocol === 'http:' ? HTTP : HTTPS;
+		function sendRequestWithRedirect( _url:string ):void {
+			let parsedURL:URL.Url = URL.parse( _url );
+			let Adapter:any = parsedURL.protocol === 'http:' ? HTTP : HTTPS;
 
-			let requestOptions: HTTP.RequestOptions = {
+			let requestOptions:HTTP.RequestOptions = {
 				protocol: parsedURL.protocol,
 				hostname: parsedURL.hostname,
 				port: parsedURL.port,
@@ -160,54 +160,54 @@ function __sendWithNode(
 				headers: {},
 			};
 
-			if (options.headers)
+			if( options.headers )
 				options.headers.forEach(
-					(header: Header, name: string) => (requestOptions.headers![name] = header.toString())
+					( header:Header, name:string ) => (requestOptions.headers![ name ] = header.toString())
 				);
 
-			let request: HTTP.ClientRequest = Adapter.request(requestOptions);
-			if (options.timeout) request.setTimeout(options.timeout);
-			request.on('response', (res: HTTP.IncomingMessage) => {
-				if (res.statusCode! >= 300 && res.statusCode! <= 399 && 'location' in res.headers) {
-					if (++numberOfRedirects < 10)
-						return sendRequestWithRedirect(URL.resolve(_url, res.headers!.location!));
+			let request:HTTP.ClientRequest = Adapter.request( requestOptions );
+			if( options.timeout ) request.setTimeout( options.timeout );
+			request.on( 'response', ( res:HTTP.IncomingMessage ) => {
+				if( res.statusCode! >= 300 && res.statusCode! <= 399 && 'location' in res.headers ) {
+					if( ++ numberOfRedirects < 10 )
+						return sendRequestWithRedirect( URL.resolve( _url, res.headers!.location! ) );
 				}
 
-				returnResponse(request, res);
-			});
+				returnResponse( request, res );
+			} );
 
-			request.on('error', (error) => {
-				let response: Response = new Response(request, error.message);
-				__onResolve(resolve, reject, response);
-			});
+			request.on( 'error', ( error ) => {
+				let response:Response = new Response( request, error.message );
+				__onResolve( resolve, reject, response );
+			} );
 
-			if (body) {
+			if( body ) {
 				// Force to send body in `DELETE` (`RemoveMemberAction`)
-				if (method === 'DELETE') request.useChunkedEncodingByDefault = true;
-				request.write(body);
+				if( method === 'DELETE' ) request.useChunkedEncodingByDefault = true;
+				request.write( body );
 			}
 
 			request.end();
 		}
 
-		sendRequestWithRedirect(url);
-	});
+		sendRequestWithRedirect( url );
+	} );
 }
 
 function __sendRequest(
-	method: string,
-	url: string,
-	body: string | Blob | Buffer | undefined,
-	options: RequestOptions
-): Promise<Response> {
+	method:string,
+	url:string,
+	body:string | Blob | Buffer | undefined,
+	options:RequestOptions
+):Promise<Response> {
 	return typeof XMLHttpRequest !== 'undefined'
-		? __sendWithBrowser(method, url, <string | Blob>body, options)
-		: __sendWithNode(method, url, <string | Buffer>body, options);
+		? __sendWithBrowser( method, url, <string | Blob> body, options )
+		: __sendWithNode( method, url, <string | Buffer> body, options );
 }
 
-function __isBody(data: string | Blob | Buffer): boolean {
+function __isBody( data:string | Blob | Buffer ):boolean {
 	return (
-		isString(data) ||
+		isString( data ) ||
 		(typeof Blob !== 'undefined' && data instanceof Blob) ||
 		(typeof Buffer !== 'undefined' && data instanceof Buffer)
 	);
@@ -217,7 +217,7 @@ function __isBody(data: string | Blob | Buffer): boolean {
  * Service with static methods to send HTTP request.
  */
 export class RequestService {
-	private static defaultOptions: RequestOptions = {
+	private static defaultOptions:RequestOptions = {
 		sendCredentialsOnCORS: true,
 	};
 
@@ -228,10 +228,10 @@ export class RequestService {
 	 * @param options Customizable options for the request.
 	 */
 	static send(
-		method: HTTPMethod | string,
-		url: string,
-		options?: RequestOptions
-	): Promise<Response>;
+		method:HTTPMethod | string,
+		url:string,
+		options?:RequestOptions
+	):Promise<Response>;
 	/**
 	 * Generic send method, to be used by the others methods in the class.
 	 * @param method The method of the request to be sent.
@@ -240,11 +240,11 @@ export class RequestService {
 	 * @param options Customizable options for the request.
 	 */
 	static send(
-		method: HTTPMethod | string,
-		url: string,
-		body: string | Blob | Buffer,
-		options?: RequestOptions
-	): Promise<Response>;
+		method:HTTPMethod | string,
+		url:string,
+		body:string | Blob | Buffer,
+		options?:RequestOptions
+	):Promise<Response>;
 	/**
 	 * Generic send method, to be used by the others methods in the class.
 	 * @param method The method of the request to be sent.
@@ -253,11 +253,11 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static send<T>(
-		method: HTTPMethod | string,
-		url: string,
-		options?: RequestOptions,
-		parser?: Parser<T>
-	): Promise<[T, Response]>;
+		method:HTTPMethod | string,
+		url:string,
+		options?:RequestOptions,
+		parser?:Parser<T>
+	):Promise<[ T, Response ]>;
 	/**
 	 * Generic send method, to be used by the others methods in the class.
 	 * @param method The method of the request to be sent.
@@ -267,51 +267,51 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static send<T>(
-		method: HTTPMethod | string,
-		url: string,
-		body?: string | Blob | Buffer,
-		options?: RequestOptions,
-		parser?: Parser<T>
-	): Promise<[T, Response]>;
+		method:HTTPMethod | string,
+		url:string,
+		body?:string | Blob | Buffer,
+		options?:RequestOptions,
+		parser?:Parser<T>
+	):Promise<[ T, Response ]>;
 	static send<T>(
-		method: any,
-		url: string,
-		bodyOrOptions?: any,
-		optionsOrParser?: any,
-		parser?: Parser<T>
-	): any {
-		let body: string | Blob | Buffer | undefined = undefined;
-		let options: RequestOptions = hasProperty(optionsOrParser, 'parse')
+		method:any,
+		url:string,
+		bodyOrOptions?:any,
+		optionsOrParser?:any,
+		parser?:Parser<T>
+	):any {
+		let body:string | Blob | Buffer | undefined = undefined;
+		let options:RequestOptions = hasProperty( optionsOrParser, 'parse' )
 			? bodyOrOptions
 			: optionsOrParser;
-		parser = hasProperty(optionsOrParser, 'parse') ? optionsOrParser : parser;
+		parser = hasProperty( optionsOrParser, 'parse' ) ? optionsOrParser : parser;
 
-		if (!bodyOrOptions || __isBody(bodyOrOptions)) {
+		if( !bodyOrOptions || __isBody( bodyOrOptions ) ) {
 			body = bodyOrOptions;
 		} else {
 			options = bodyOrOptions ? bodyOrOptions : options;
 		}
 
-		url = this.translateURL(url);
+		url = this.translateURL( url );
 
-		options = Object.assign({}, RequestService.defaultOptions, options);
+		options = Object.assign( {}, RequestService.defaultOptions, options );
 
-		if (isNumber(method)) method = HTTPMethod[method];
+		if( isNumber( method ) ) method = HTTPMethod[ method ];
 
-		const requestPromise: Promise<Response> = __sendRequest(method, url, body, options).then(
-			(response) => {
-				if (method === 'GET' && options.headers)
-					return this.__handleGETResponse(url, options, response);
+		const requestPromise:Promise<Response> = __sendRequest( method, url, body, options ).then(
+			( response ) => {
+				if( method === 'GET' && options.headers )
+					return this.__handleGETResponse( url, options, response );
 				else return response;
 			}
 		);
-		if (!parser) return requestPromise;
+		if( !parser ) return requestPromise;
 
-		return requestPromise.then((response: Response) => {
-			return parser!.parse(response.data).then((parsedBody: T) => {
-				return [parsedBody, response];
-			});
-		});
+		return requestPromise.then( ( response:Response ) => {
+			return parser!.parse( response.data ).then( ( parsedBody:T ) => {
+				return [ parsedBody, response ];
+			} );
+		} );
 	}
 
 	/**
@@ -320,10 +320,10 @@ export class RequestService {
 	 * @param options Customizable options for the request.
 	 */
 	static options(
-		url: string,
-		options: RequestOptions = RequestService.defaultOptions
-	): Promise<Response> {
-		return RequestService.send(HTTPMethod.OPTIONS, url, options);
+		url:string,
+		options:RequestOptions = RequestService.defaultOptions
+	):Promise<Response> {
+		return RequestService.send( HTTPMethod.OPTIONS, url, options );
 	}
 
 	/**
@@ -332,10 +332,10 @@ export class RequestService {
 	 * @param options Customizable options for the request.
 	 */
 	static head(
-		url: string,
-		options: RequestOptions = RequestService.defaultOptions
-	): Promise<Response> {
-		return RequestService.send(HTTPMethod.HEAD, url, options);
+		url:string,
+		options:RequestOptions = RequestService.defaultOptions
+	):Promise<Response> {
+		return RequestService.send( HTTPMethod.HEAD, url, options );
 	}
 
 	/**
@@ -343,20 +343,20 @@ export class RequestService {
 	 * @param url URL of the request to be sent.
 	 * @param options Customizable options for the request.
 	 */
-	static get(url: string, options?: RequestOptions): Promise<Response>;
+	static get( url:string, options?:RequestOptions ):Promise<Response>;
 	/**
 	 * Sends an `GET` request and parses its response data.
 	 * @param url URL of the request to be sent.
 	 * @param options Customizable options for the request.
 	 * @param parser Parser to be used in the response body of the request.
 	 */
-	static get<T>(url: string, options?: RequestOptions, parser?: Parser<T>): Promise<[T, Response]>;
+	static get<T>( url:string, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static get<T>(
-		url: string,
-		options: RequestOptions = RequestService.defaultOptions,
-		parser?: Parser<T>
-	): any {
-		return RequestService.send(HTTPMethod.GET, url, undefined, options, parser);
+		url:string,
+		options:RequestOptions = RequestService.defaultOptions,
+		parser?:Parser<T>
+	):any {
+		return RequestService.send( HTTPMethod.GET, url, undefined, options, parser );
 	}
 
 	/**
@@ -366,10 +366,10 @@ export class RequestService {
 	 * @param options Customizable options for the request.
 	 */
 	static post(
-		url: string,
-		body: string | Blob | Buffer,
-		options?: RequestOptions
-	): Promise<Response>;
+		url:string,
+		body:string | Blob | Buffer,
+		options?:RequestOptions
+	):Promise<Response>;
 	/**
 	 * Sends an `POST` request and parses its response data.
 	 * @param url URL of the request to be sent.
@@ -378,18 +378,18 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static post<T>(
-		url: string,
-		body: string | Blob | Buffer,
-		options?: RequestOptions,
-		parser?: Parser<T>
-	): Promise<[T, Response]>;
+		url:string,
+		body:string | Blob | Buffer,
+		options?:RequestOptions,
+		parser?:Parser<T>
+	):Promise<[ T, Response ]>;
 	static post<T>(
-		url: string,
-		bodyOrOptions: any = RequestService.defaultOptions,
-		options: RequestOptions = RequestService.defaultOptions,
-		parser?: Parser<T>
-	): any {
-		return RequestService.send(HTTPMethod.POST, url, bodyOrOptions, options, parser);
+		url:string,
+		bodyOrOptions:any = RequestService.defaultOptions,
+		options:RequestOptions = RequestService.defaultOptions,
+		parser?:Parser<T>
+	):any {
+		return RequestService.send( HTTPMethod.POST, url, bodyOrOptions, options, parser );
 	}
 
 	/**
@@ -398,7 +398,7 @@ export class RequestService {
 	 * @param body Body to be sent int he request.
 	 * @param options Customizable options for the request.
 	 */
-	static put(url: string, body: string, options?: RequestOptions): Promise<Response>;
+	static put( url:string, body:string, options?:RequestOptions ):Promise<Response>;
 	/**
 	 * Sends an `PUT` request and parses its response data.
 	 * @param url URL of the request to be sent.
@@ -407,18 +407,18 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static put<T>(
-		url: string,
-		body: string,
-		options?: RequestOptions,
-		parser?: Parser<T>
-	): Promise<[T, Response]>;
+		url:string,
+		body:string,
+		options?:RequestOptions,
+		parser?:Parser<T>
+	):Promise<[ T, Response ]>;
 	static put<T>(
-		url: string,
-		bodyOrOptions: any = RequestService.defaultOptions,
-		options: RequestOptions = RequestService.defaultOptions,
-		parser?: Parser<T>
-	): any {
-		return RequestService.send(HTTPMethod.PUT, url, bodyOrOptions, options, parser);
+		url:string,
+		bodyOrOptions:any = RequestService.defaultOptions,
+		options:RequestOptions = RequestService.defaultOptions,
+		parser?:Parser<T>
+	):any {
+		return RequestService.send( HTTPMethod.PUT, url, bodyOrOptions, options, parser );
 	}
 
 	/**
@@ -427,7 +427,7 @@ export class RequestService {
 	 * @param body Body to be sent int he request.
 	 * @param options Customizable options for the request.
 	 */
-	static patch(url: string, body: string, options?: RequestOptions): Promise<Response>;
+	static patch( url:string, body:string, options?:RequestOptions ):Promise<Response>;
 	/**
 	 * Sends an `PATCH` request and parses its response data.
 	 * @param url URL of the request to be sent.
@@ -436,18 +436,18 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static patch<T>(
-		url: string,
-		body: string,
-		options?: RequestOptions,
-		parser?: Parser<T>
-	): Promise<[T, Response]>;
+		url:string,
+		body:string,
+		options?:RequestOptions,
+		parser?:Parser<T>
+	):Promise<[ T, Response ]>;
 	static patch<T>(
-		url: string,
-		bodyOrOptions: any = RequestService.defaultOptions,
-		options: RequestOptions = RequestService.defaultOptions,
-		parser?: Parser<T>
-	): any {
-		return RequestService.send(HTTPMethod.PATCH, url, bodyOrOptions, options, parser);
+		url:string,
+		bodyOrOptions:any = RequestService.defaultOptions,
+		options:RequestOptions = RequestService.defaultOptions,
+		parser?:Parser<T>
+	):any {
+		return RequestService.send( HTTPMethod.PATCH, url, bodyOrOptions, options, parser );
 	}
 
 	/**
@@ -455,14 +455,14 @@ export class RequestService {
 	 * @param url URL of the request to be sent.
 	 * @param options Customizable options for the request.
 	 */
-	static delete(url: string, options?: RequestOptions): Promise<Response>;
+	static delete( url:string, options?:RequestOptions ):Promise<Response>;
 	/**
 	 * Sends an `DELETE` request.
 	 * @param url URL of the request to be sent.
 	 * @param body Body to be sent int he request.
 	 * @param options Customizable options for the request.
 	 */
-	static delete(url: string, body: string, options?: RequestOptions): Promise<Response>;
+	static delete( url:string, body:string, options?:RequestOptions ):Promise<Response>;
 	/**
 	 * Sends an `DELETE` request and parses its response data.
 	 * @param url URL of the request to be sent.
@@ -470,10 +470,10 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static delete<T>(
-		url: string,
-		options?: RequestOptions,
-		parser?: Parser<T>
-	): Promise<[T, Response]>;
+		url:string,
+		options?:RequestOptions,
+		parser?:Parser<T>
+	):Promise<[ T, Response ]>;
 	/**
 	 * Sends an `DELETE` request and parses its response data.
 	 * @param url URL of the request to be sent.
@@ -482,18 +482,18 @@ export class RequestService {
 	 * @param parser Parser to be used in the response body of the request.
 	 */
 	static delete<T>(
-		url: string,
-		body: string,
-		options?: RequestOptions,
-		parser?: Parser<T>
-	): Promise<[T, Response]>;
+		url:string,
+		body:string,
+		options?:RequestOptions,
+		parser?:Parser<T>
+	):Promise<[ T, Response ]>;
 	static delete<T>(
-		url: string,
-		bodyOrOptions: any = RequestService.defaultOptions,
-		optionsOrParser: any = RequestService.defaultOptions,
-		parser?: Parser<T>
-	): any {
-		return RequestService.send(HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser);
+		url:string,
+		bodyOrOptions:any = RequestService.defaultOptions,
+		optionsOrParser:any = RequestService.defaultOptions,
+		parser?:Parser<T>
+	):any {
+		return RequestService.send( HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser );
 	}
 
 	/**
@@ -501,19 +501,19 @@ export class RequestService {
 	 * This method identifies that and retries the request with headers that force browsers to ignore cache.
 	 */
 	private static __handleGETResponse(
-		url: string,
-		requestOptions: RequestOptions,
-		response: Response
-	): Promise<Response> {
-		return Promise.resolve().then(() => {
-			if (this.__contentTypeIsAccepted(requestOptions, response)) return response;
+		url:string,
+		requestOptions:RequestOptions,
+		response:Response
+	):Promise<Response> {
+		return Promise.resolve().then( () => {
+			if( this.__contentTypeIsAccepted( requestOptions, response ) ) return response;
 
-			this.__setNoCacheHeaders(requestOptions);
+			this.__setNoCacheHeaders( requestOptions );
 
-			if (!this.__isChromiumAgent()) this.__setFalseETag(requestOptions);
+			if( !this.__isChromiumAgent() ) this.__setFalseETag( requestOptions );
 
-			return __sendRequest('GET', url, undefined, requestOptions).then((noCachedResponse) => {
-				if (!this.__contentTypeIsAccepted(requestOptions, response)) {
+			return __sendRequest( 'GET', url, undefined, requestOptions ).then( ( noCachedResponse ) => {
+				if( !this.__contentTypeIsAccepted( requestOptions, response ) ) {
 					throw new BadResponseError(
 						'The server responded with an unacceptable Content-Type',
 						response
@@ -521,44 +521,43 @@ export class RequestService {
 				}
 
 				return noCachedResponse;
-			});
-		});
+			} );
+		} );
 	}
 
 	private static __contentTypeIsAccepted(
-		requestOptions: RequestOptions,
-		response: Response
-	): boolean {
-		if (!requestOptions.headers) return true;
+		requestOptions:RequestOptions,
+		response:Response
+	):boolean {
+		if( !requestOptions.headers ) return true;
 
-		const accepts: string[] = requestOptions.headers.has('accept')
-			? requestOptions.headers.get('accept')!.values
+		const accepts:string[] = requestOptions.headers.has( 'accept' )
+			? requestOptions.headers.get( 'accept' )!.values
 			: [];
-		const contentType: Header | undefined = response.headers.has('content-type')
-			? response.headers.get('content-type')
+		const contentType:Header | undefined = response.headers.has( 'content-type' )
+			? response.headers.get( 'content-type' )
 			: undefined;
-		return !contentType || accepts.some(contentType.hasValue, contentType);
+		return !contentType || accepts.some( contentType.hasValue, contentType );
 	}
 
-	private static __setNoCacheHeaders(requestOptions: RequestOptions): void {
+	private static __setNoCacheHeaders( requestOptions:RequestOptions ):void {
 		requestOptions
-			.headers!.set('pragma', new Header('no-cache'))
-			.set('cache-control', new Header('no-cache, max-age=0'));
+			.headers!.set( 'pragma', new Header( 'no-cache' ) )
+			.set( 'cache-control', new Header( 'no-cache, max-age=0' ) );
 	}
 
-	private static __isChromiumAgent(): boolean {
-		return typeof window !== 'undefined' && !!window['chrome'];
+	private static __isChromiumAgent():boolean {
+		return typeof window !== 'undefined' && !!window[ 'chrome' ];
 	}
 
-	private static __setFalseETag(requestOptions: RequestOptions): void {
-		requestOptions.headers!.set('if-none-match', new Header());
+	private static __setFalseETag( requestOptions:RequestOptions ):void {
+		requestOptions.headers!.set( 'if-none-match', new Header() );
 	}
 
-	// TODO: Implement changing the domain
-	private static translateURL(url: string): string {
+	private static translateURL( url:string ):string {
 		const settingsObject = CarbonLDPSettings.getInstance();
-		if (hasProperty(settingsObject, 'virtualHost'))
-			return url.replace(settingsObject.regularUrl!, settingsObject.virtualUrl!);
+		if( hasProperty( settingsObject, 'exposedHost' ) )
+			return url.replace( settingsObject.regularUrl!, settingsObject.exposedUrl! );
 		return url;
 	}
 }
@@ -576,24 +575,24 @@ export class RequestUtils {
 	 * @param initialize Flag to create the header of not exists.
 	 */
 	static getHeader(
-		headerName: string,
-		requestOptions: RequestOptions,
-		initialize?: true
-	): Header | undefined {
-		if (!requestOptions.headers) {
-			if (!initialize) return undefined;
+		headerName:string,
+		requestOptions:RequestOptions,
+		initialize?:true
+	):Header | undefined {
+		if( !requestOptions.headers ) {
+			if( !initialize ) return undefined;
 
 			requestOptions.headers = new Map();
 		}
 
 		headerName = headerName.toLowerCase();
-		let header: Header | undefined = requestOptions.headers!.get(headerName);
+		let header:Header | undefined = requestOptions.headers!.get( headerName );
 
-		if (!header) {
-			if (!initialize) return undefined;
+		if( !header ) {
+			if( !initialize ) return undefined;
 
 			header = new Header();
-			requestOptions.headers!.set(headerName, header);
+			requestOptions.headers!.set( headerName, header );
 		}
 
 		return header;
@@ -604,8 +603,8 @@ export class RequestUtils {
 	 * @param accept The `accept` header value to be set.
 	 * @param requestOptions The options where to set the header.
 	 */
-	static setAcceptHeader(accept: string, requestOptions: RequestOptions): RequestOptions {
-		RequestUtils.__addHeaderValue('accept', accept, requestOptions);
+	static setAcceptHeader( accept:string, requestOptions:RequestOptions ):RequestOptions {
+		RequestUtils.__addHeaderValue( 'accept', accept, requestOptions );
 
 		return requestOptions;
 	}
@@ -615,8 +614,8 @@ export class RequestUtils {
 	 * @param contentType The `content-type` header value to be set.
 	 * @param requestOptions The options where to set the header.
 	 */
-	static setContentTypeHeader(contentType: string, requestOptions: RequestOptions): RequestOptions {
-		RequestUtils.__addHeaderValue('content-type', contentType, requestOptions);
+	static setContentTypeHeader( contentType:string, requestOptions:RequestOptions ):RequestOptions {
+		RequestUtils.__addHeaderValue( 'content-type', contentType, requestOptions );
 
 		return requestOptions;
 	}
@@ -626,10 +625,10 @@ export class RequestUtils {
 	 * @param eTag The `if-match` header value to be set.
 	 * @param requestOptions The options where to set the header.
 	 */
-	static setIfMatchHeader(eTag: string, requestOptions: RequestOptions): RequestOptions {
-		if (!eTag) return requestOptions;
+	static setIfMatchHeader( eTag:string, requestOptions:RequestOptions ):RequestOptions {
+		if( !eTag ) return requestOptions;
 
-		RequestUtils.__addHeaderValue('if-match', eTag, requestOptions);
+		RequestUtils.__addHeaderValue( 'if-match', eTag, requestOptions );
 
 		return requestOptions;
 	}
@@ -639,10 +638,10 @@ export class RequestUtils {
 	 * @param eTag The `if-none` header value to be set.
 	 * @param requestOptions The options where to set the header.
 	 */
-	static setIfNoneMatchHeader(eTag: string, requestOptions: RequestOptions): RequestOptions {
-		if (!eTag) return requestOptions;
+	static setIfNoneMatchHeader( eTag:string, requestOptions:RequestOptions ):RequestOptions {
+		if( !eTag ) return requestOptions;
 
-		RequestUtils.__addHeaderValue('if-none-match', eTag, requestOptions);
+		RequestUtils.__addHeaderValue( 'if-none-match', eTag, requestOptions );
 
 		return requestOptions;
 	}
@@ -653,11 +652,11 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setPreferredInteractionModel(
-		interactionModelURI: string,
-		requestOptions: RequestOptions
-	): RequestOptions {
-		const headerValue: string = `${interactionModelURI}; rel=interaction-model`;
-		RequestUtils.__addHeaderValue('prefer', headerValue, requestOptions);
+		interactionModelURI:string,
+		requestOptions:RequestOptions
+	):RequestOptions {
+		const headerValue:string = `${ interactionModelURI }; rel=interaction-model`;
+		RequestUtils.__addHeaderValue( 'prefer', headerValue, requestOptions );
 
 		return requestOptions;
 	}
@@ -668,11 +667,11 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setPreferredRetrieval(
-		retrievalType: 'representation' | 'minimal',
-		requestOptions: RequestOptions
-	): RequestOptions {
-		const headerValue: string = `return=${retrievalType}`;
-		RequestUtils.__addHeaderValue('prefer', headerValue, requestOptions);
+		retrievalType:'representation' | 'minimal',
+		requestOptions:RequestOptions
+	):RequestOptions {
+		const headerValue:string = `return=${ retrievalType }`;
+		RequestUtils.__addHeaderValue( 'prefer', headerValue, requestOptions );
 
 		return requestOptions;
 	}
@@ -683,18 +682,18 @@ export class RequestUtils {
 	 * @param requestOptions The options where to set the header.
 	 */
 	static setRetrievalPreferences(
-		preferences: RetrievalPreferences,
-		requestOptions: RequestOptions
-	): RequestOptions {
-		const prefer: Header = RequestUtils.getHeader('prefer', requestOptions, true)!;
+		preferences:RetrievalPreferences,
+		requestOptions:RequestOptions
+	):RequestOptions {
+		const prefer:Header = RequestUtils.getHeader( 'prefer', requestOptions, true )!;
 
-		const keys: string[] = ['include', 'omit'];
-		for (const key of keys) {
-			if (!(key in preferences)) continue;
-			if (preferences[key].length <= 0) continue;
+		const keys:string[] = [ 'include', 'omit' ];
+		for( const key of keys ) {
+			if( !(key in preferences) ) continue;
+			if( preferences[ key ].length <= 0 ) continue;
 
-			const strPreferences: string = preferences[key].join(' ');
-			prefer.values.push(`${key}="${strPreferences}"`);
+			const strPreferences:string = preferences[ key ].join( ' ' );
+			prefer.values.push( `${ key }="${ strPreferences }"` );
 		}
 
 		return requestOptions;
@@ -705,8 +704,8 @@ export class RequestUtils {
 	 * @param slug The `slug` header value to be set.
 	 * @param requestOptions The options where to set the header.
 	 */
-	static setSlug(slug: string, requestOptions: RequestOptions): RequestOptions {
-		RequestUtils.__addHeaderValue('slug', slug, requestOptions);
+	static setSlug( slug:string, requestOptions:RequestOptions ):RequestOptions {
+		RequestUtils.__addHeaderValue( 'slug', slug, requestOptions );
 
 		return requestOptions;
 	}
@@ -715,12 +714,12 @@ export class RequestUtils {
 	 * Checks if the value provided can be considered a {@link RequestOptions}.
 	 * @param value The value to be checked.
 	 */
-	static isOptions(value: any): value is RequestOptions {
+	static isOptions( value:any ):value is RequestOptions {
 		return (
-			hasPropertyDefined(value, 'headers') ||
-			hasPropertyDefined(value, 'sendCredentialsOnCORS') ||
-			hasPropertyDefined(value, 'timeout') ||
-			hasPropertyDefined(value, 'request')
+			hasPropertyDefined( value, 'headers' ) ||
+			hasPropertyDefined( value, 'sendCredentialsOnCORS' ) ||
+			hasPropertyDefined( value, 'timeout' ) ||
+			hasPropertyDefined( value, 'request' )
 		);
 	}
 
@@ -728,26 +727,26 @@ export class RequestUtils {
 	 * Clones the options into a new object including coping the headers map into a different map.
 	 * @param options The options to be clones.
 	 */
-	static cloneOptions(options: RequestOptions): RequestOptions {
-		const clone: RequestOptions = {
+	static cloneOptions( options:RequestOptions ):RequestOptions {
+		const clone:RequestOptions = {
 			...options,
 			headers: new Map(),
 		};
 
-		if (options.headers)
-			options.headers.forEach((value, key) =>
-				clone.headers!.set(key, new Header(value.values.slice()))
+		if( options.headers )
+			options.headers.forEach( ( value, key ) =>
+				clone.headers!.set( key, new Header( value.values.slice() ) )
 			);
 
 		return clone;
 	}
 
 	private static __addHeaderValue(
-		headerName: string,
-		headerValue: string,
-		requestOptions: RequestOptions
-	): void {
-		const header: Header = RequestUtils.getHeader(headerName, requestOptions, true)!;
-		header.addValue(headerValue);
+		headerName:string,
+		headerValue:string,
+		requestOptions:RequestOptions
+	):void {
+		const header:Header = RequestUtils.getHeader( headerName, requestOptions, true )!;
+		header.addValue( headerValue );
 	}
 }

@@ -3,10 +3,10 @@
 async function init() {
 	try {
 		let platform = new CarbonLDP({
-			virtualHost: 'dev.carbonldp.com',
+			exposedHost: 'dev.carbonldp.com',
 			ssl: false,
 			host: 'platform-domain.carbonldp.com',
-			virtualSsl: false,
+			exposedSsl: false,
 		});
 		// let platform = new CarbonLDP('http://dev.carbonldp.com/');
 		let root = await platform.documents.$get('/');

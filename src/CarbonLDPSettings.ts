@@ -19,10 +19,10 @@ export interface CarbonLDPSettings extends DocumentsContextSettings {
 	 */
 	ssl?: boolean;
 	regularUrl?: string;
-	virtualHost?: string;
-	virtualPort?: number;
-	virtualSsl?: boolean;
-	virtualUrl?: string;
+	exposedHost?: string;
+	exposedPort?: number;
+	exposedSsl?: boolean;
+	exposedUrl?: string;
 
 	setSettings?(settings: CarbonLDPSettings): void;
 }
@@ -39,12 +39,10 @@ export class CarbonLDPSettings implements CarbonLDPSettings {
 		this.ssl = settings.ssl;
 
 		this.regularUrl = settings.regularUrl;
-
-		this.virtualHost = settings.virtualHost;
-		this.virtualPort = settings.virtualPort;
-		this.virtualSsl = settings.virtualSsl;
-
-		this.virtualUrl = settings.virtualUrl;
+		this.exposedHost = settings.exposedHost;
+		this.exposedPort = settings.exposedPort;
+		this.exposedSsl = settings.exposedSsl;
+		this.exposedUrl = settings.exposedUrl;
 	}
 	private constructor() {
 		if (CarbonLDPSettings._instance) {
