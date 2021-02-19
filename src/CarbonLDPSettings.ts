@@ -6,7 +6,8 @@ import { DocumentsContextSettings } from "./Context/DocumentsContextSettings";
  */
 export interface CarbonLDPSettings extends DocumentsContextSettings {
 	/**
-	 * The host of the platform to connect to.
+	 * If no exposedHost is defined, host represents data and the host of the platform connection.
+	 * Otherwise, only represents the host for the data (document URI)
 	 */
 	host: string;
 	/**
@@ -19,6 +20,9 @@ export interface CarbonLDPSettings extends DocumentsContextSettings {
 	 */
 	ssl?: boolean;
 	regularUrl?: string;
+	/**
+	 * The host of the platform connection.
+	 */
 	exposedHost?: string;
 	exposedPort?: number;
 	exposedSsl?: boolean;
