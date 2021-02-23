@@ -45,7 +45,7 @@ import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
-
+import set = Reflect.set;
 
 /**
  * The main class of the SDK.
@@ -56,7 +56,6 @@ import * as Vocabularies from "./Vocabularies";
  * reexported submodules in the SDK.
  */
 export class CarbonLDP extends DocumentsContext {
-
 	static AbstractContext:typeof AbstractContext = AbstractContext;
 	static AccessPoint:typeof AccessPoint = AccessPoint;
 	static TransientAccessPoint:typeof TransientAccessPoint = TransientAccessPoint;
@@ -87,16 +86,19 @@ export class CarbonLDP extends DocumentsContext {
 	static System:typeof System = System;
 	static Utils:typeof Utils = Utils;
 
-
 	/**
 	 * Version of the SDK.
 	 */
-	static get version():string { return "{{VERSION}}"; }
+	static get version():string {
+		return "{{VERSION}}";
+	}
 
 	/**
 	 * @see {@link CarbonLDP.version}
 	 */
-	get version():string { return CarbonLDP.version; }
+	get version():string {
+		return CarbonLDP.version;
+	}
 
 	/**
 	 * The root document of the platform.
@@ -154,15 +156,12 @@ export class CarbonLDP extends DocumentsContext {
 			return this.documents.$get<System.PlatformMetadata>( uri );
 		} );
 	}
-
 }
 
-
 function __getURLFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):string {
-	return Utils.isString( urlOrSettings ) ?
-		__getURLFromString( urlOrSettings ) :
-		__getURLFromSettings( urlOrSettings )
-		;
+	return Utils.isString( urlOrSettings )
+		? __getURLFromString( urlOrSettings )
+		: __getURLFromSettings( urlOrSettings );
 }
 
 function __getURLFromString( this:void, url:string ):string {
@@ -174,6 +173,19 @@ function __getURLFromString( this:void, url:string ):string {
 }
 
 function __getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
+	const regularUrl:string = __buildRegularUrl( settings );
+	settings.regularUrl = regularUrl;
+
+	if( Utils.hasProperty( settings, "exposedHost" ) ) {
+		settings = __setExposedUrl( settings );
+	}
+
+	CarbonLDPSettings.getInstance().setSettings!( settings );
+
+	return regularUrl;
+}
+
+function __buildRegularUrl( settings:CarbonLDPSettings ):string {
 	if( !Utils.isString( settings.host ) )
 		throw new IllegalArgumentError( `The settings object must contains a valid host string.` );
 
@@ -191,8 +203,35 @@ function __getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
 	return url.slice( 0, - 1 ) + `:${ settings.port }/`;
 }
 
+/**
+ * Sets exposed url as property of CarbonLDPSettings
+ * @param settings: CarbonLDPSettings
+ * @return CarbonLDPSettings
+ */
+function __setExposedUrl( settings:CarbonLDPSettings ):CarbonLDPSettings {
+	if( !Utils.isString( settings.exposedHost ) )
+		throw new IllegalArgumentError( `The settings object must contains a valid host string.` );
 
-function __getSettingsFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):DocumentsContextSettings {
+	if( hasProtocol( settings.exposedHost ) )
+		throw new IllegalArgumentError( `The host must not contain a protocol.` );
+
+	if( settings.exposedHost.includes( ":" ) )
+		throw new IllegalArgumentError( `The host must not contain a port.` );
+
+	const virtualProtocol:string = settings.exposedSsl === false ? "http://" : "https://";
+	const exposedHost:string = settings.exposedHost.endsWith( "/" )
+		? settings.exposedHost.slice( 0, - 1 )
+		: settings.exposedHost;
+	settings.exposedUrl = `${ virtualProtocol }${ exposedHost }/`;
+	if( !Utils.isNumber( settings.exposedPort ) ) return settings;
+	settings.exposedUrl = settings.exposedUrl.slice( 0, - 1 ) + `:${ settings.exposedPort }/`;
+	return settings;
+}
+
+function __getSettingsFrom(
+	this:void,
+	urlOrSettings:string | CarbonLDPSettings
+):DocumentsContextSettings {
 	if( Utils.isString( urlOrSettings ) ) return {};
-	return Object.assign( {}, urlOrSettings, { ssl: null, host: null, port: null } );
+	return Object.assign( {}, urlOrSettings, { ssl: null, host: null, port: null, regularUrl: null } );
 }

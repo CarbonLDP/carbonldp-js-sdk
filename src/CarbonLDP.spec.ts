@@ -45,14 +45,11 @@ import * as System from "./System";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
 
-
 describe( "CarbonLDP", ():void => {
-
 	it( "should exist", ():void => {
 		expect( CarbonLDP ).toBeDefined();
 		expect( CarbonLDP ).toEqual( jasmine.any( Function ) );
 	} );
-
 
 	it( "should have the version", ():void => {
 		expect( CarbonLDP.version ).toBeDefined();
@@ -60,7 +57,6 @@ describe( "CarbonLDP", ():void => {
 
 		expect( CarbonLDP.version ).toEqual( "{{VERSION}}" );
 	} );
-
 
 	it( "CarbonLDP.AbstractContext", ():void => {
 		expect( CarbonLDP.AbstractContext ).toBeDefined();
@@ -207,9 +203,7 @@ describe( "CarbonLDP", ():void => {
 		expect( CarbonLDP.Utils ).toBe( Utils );
 	} );
 
-
 	describe( "CarbonLDP.constructor", ():void => {
-
 		it( "should exist", ():void => {
 			expect( CarbonLDP.constructor ).toBeDefined();
 			expect( CarbonLDP.constructor ).toEqual( jasmine.any( Function ) );
@@ -227,7 +221,6 @@ describe( "CarbonLDP", ():void => {
 			expect( carbon ).toEqual( jasmine.any( DocumentsContext ) );
 		} );
 
-
 		it( "should initialize documents root document", () => {
 			const context:CarbonLDP = new CarbonLDP( "https://example.com/" );
 
@@ -235,24 +228,38 @@ describe( "CarbonLDP", ():void => {
 			expect( context.documents.$id ).toEqual( "https://example.com/" );
 		} );
 
-
 		it( "should throw error when URL has not protocol", ():void => {
-			const helper:( url:string ) => () => void = url => () => {
+			const helper:( url:string ) => () => void = ( url ) => () => {
 				new CarbonLDP( url );
 			};
 
-			expect( helper( "example.com/" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
-			expect( helper( "localhost" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
-			expect( helper( "127.0.0.1" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
+			expect( helper( "example.com/" ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				`The URL must contain a valid protocol: "http://", "https://".`
+			);
+			expect( helper( "localhost" ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				`The URL must contain a valid protocol: "http://", "https://".`
+			);
+			expect( helper( "127.0.0.1" ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				`The URL must contain a valid protocol: "http://", "https://".`
+			);
 		} );
 
 		it( "should throw error when URL has invalid protocol", ():void => {
-			const helper:( url:string ) => () => void = url => () => {
+			const helper:( url:string ) => () => void = ( url ) => () => {
 				new CarbonLDP( url );
 			};
 
-			expect( helper( "ftp://example.com/" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
-			expect( helper( "://127.0.0.1" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
+			expect( helper( "ftp://example.com/" ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				`The URL must contain a valid protocol: "http://", "https://".`
+			);
+			expect( helper( "://127.0.0.1" ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				`The URL must contain a valid protocol: "http://", "https://".`
+			);
 		} );
 
 		it( "should assign the URL as the base URI with slash at the end", ():void => {
@@ -268,34 +275,57 @@ describe( "CarbonLDP", ():void => {
 			helper( "https://localhost:8083", "https://localhost:8083/" );
 		} );
 
-
 		it( "should throw error when invalid host property", ():void => {
-			const helper:( settings:{} ) => void = settings => () => {
+			const helper:( settings:{} ) => void = ( settings ) => () => {
 				new CarbonLDP( settings as CarbonLDPSettings );
 			};
 
-			expect( helper( { host: null } ) ).toThrowError( Errors.IllegalArgumentError, "The settings object must contains a valid host string." );
-			expect( helper( { host: void 0 } ) ).toThrowError( Errors.IllegalArgumentError, "The settings object must contains a valid host string." );
-			expect( helper( { host: {} } as any ) ).toThrowError( Errors.IllegalArgumentError, "The settings object must contains a valid host string." );
+			expect( helper( { host: null } ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				"The settings object must contains a valid host string."
+			);
+			expect( helper( { host: void 0 } ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				"The settings object must contains a valid host string."
+			);
+			expect( helper( { host: {} } as any ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				"The settings object must contains a valid host string."
+			);
 		} );
 
 		it( "should throw error when invalid host with protocol", ():void => {
-			const helper:( settings:CarbonLDPSettings ) => void = settings => () => {
+			const helper:( settings:CarbonLDPSettings ) => void = ( settings ) => () => {
 				new CarbonLDP( settings );
 			};
 
-			expect( helper( { host: "http://example.com" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a protocol." );
-			expect( helper( { host: "https://example.com" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a protocol." );
-			expect( helper( { host: "ftps://example.com" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a protocol." );
+			expect( helper( { host: "http://example.com" } ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				"The host must not contain a protocol."
+			);
+			expect( helper( { host: "https://example.com" } ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				"The host must not contain a protocol."
+			);
+			expect( helper( { host: "ftps://example.com" } ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				"The host must not contain a protocol."
+			);
 		} );
 
 		it( "should throw error when invalid host with port", ():void => {
-			const helper:( settings:CarbonLDPSettings ) => void = settings => () => {
+			const helper:( settings:CarbonLDPSettings ) => void = ( settings ) => () => {
 				new CarbonLDP( settings );
 			};
 
-			expect( helper( { host: "example.com:80" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a port." );
-			expect( helper( { host: "example.com:8083" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a port." );
+			expect( helper( { host: "example.com:80" } ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				"The host must not contain a port."
+			);
+			expect( helper( { host: "example.com:8083" } ) ).toThrowError(
+				Errors.IllegalArgumentError,
+				"The host must not contain a port."
+			);
 		} );
 
 		it( "should create base URI with settings host", ():void => {
@@ -308,6 +338,16 @@ describe( "CarbonLDP", ():void => {
 			helper( { host: "example.com/" }, "https://example.com/" );
 		} );
 
+		it( "should create base URI with settings exposedHost", ():void => {
+			const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
+				const carbon:CarbonLDP = new CarbonLDP( settings );
+				expect( carbon.baseURI ).toBe( uri );
+			};
+
+			helper( { host: "example1.com", exposedHost: "example.com" }, "https://example1.com/" );
+			helper( { host: "example1.com/", exposedHost: "example.com/" }, "https://example1.com/" );
+		} );
+
 		it( "should create base URI with settings host and ssl", ():void => {
 			const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 				const carbon:CarbonLDP = new CarbonLDP( settings );
@@ -316,6 +356,27 @@ describe( "CarbonLDP", ():void => {
 
 			helper( { host: "example.com", ssl: false }, "http://example.com/" );
 			helper( { host: "example.com/", ssl: true }, "https://example.com/" );
+		} );
+
+		it( "should create exposedUrl with settings exposedHost and exposedSsl", ():void => {
+			const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
+				const carbon:CarbonLDP = new CarbonLDP( settings );
+				expect( settings.exposedUrl ).toBe( uri );
+			};
+
+			helper(
+				{ host: "example.com", ssl: false, exposedHost: "example1.com", exposedSsl: false },
+				"http://example1.com/"
+			);
+			helper(
+				{ host: "example.com", ssl: false, exposedHost: "example1.com", exposedSsl: true },
+				"https://example1.com/"
+			);
+			helper(
+				{ host: "example.com", exposedHost: "example1.com", exposedPort: 8083 },
+				"https://example1.com:8083/"
+			);
+			helper( { host: "example.com/", exposedHost: "example1.com", exposedPort: 80 }, "https://example1.com:80/" );
 		} );
 
 		it( "should create base URI with settings host and port", ():void => {
@@ -347,7 +408,6 @@ describe( "CarbonLDP", ():void => {
 			helper( { host: "example.com", ssl: false, port: 8083 }, "http://example.com:8083/" );
 			helper( { host: "example.com/", ssl: true, port: 80 }, "https://example.com:80/" );
 		} );
-
 
 		it( "should have the default settings when url provided", ():void => {
 			const carbon:CarbonLDP = new CarbonLDP( "https://example.com/" );
@@ -409,43 +469,42 @@ describe( "CarbonLDP", ():void => {
 			} );
 		} );
 
-
 		it( "should retrieve the version form the class", ():void => {
 			const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 			expect( carbon.version ).toEqual( jasmine.any( String ) );
 			expect( carbon.version ).toBe( CarbonLDP.version );
 		} );
-
 	} );
 
-
 	describe( "CarbonLDP.resolve", ():void => {
-
 		it( "should exist", ():void => {
 			expect( CarbonLDP.prototype.resolve ).toBeDefined();
 			expect( CarbonLDP.prototype.resolve ).toEqual( jasmine.any( Function ) );
 		} );
 
-
 		it( "should resolve relative URIs", ():void => {
 			const carbon:CarbonLDP = new CarbonLDP( "https://example.com/" );
 
 			expect( carbon.resolve( "my-resource/" ) ).toBe( "https://example.com/my-resource/" );
-			expect( carbon.resolve( "a-parent/my-resource/" ) ).toBe( "https://example.com/a-parent/my-resource/" );
+			expect( carbon.resolve( "a-parent/my-resource/" ) ).toBe(
+				"https://example.com/a-parent/my-resource/"
+			);
 		} );
 
 		it( "should not resolve absolute URIs", ():void => {
 			const carbon:CarbonLDP = new CarbonLDP( "https://example.com/" );
 
-			expect( carbon.resolve( "https://example.com/my-resource/" ) ).toBe( "https://example.com/my-resource/" );
-			expect( carbon.resolve( "http://another-carbon.example.com/my-resource/" ) ).toBe( "http://another-carbon.example.com/my-resource/" );
+			expect( carbon.resolve( "https://example.com/my-resource/" ) ).toBe(
+				"https://example.com/my-resource/"
+			);
+			expect( carbon.resolve( "http://another-carbon.example.com/my-resource/" ) ).toBe(
+				"http://another-carbon.example.com/my-resource/"
+			);
 		} );
-
 	} );
 
 	describe( "CarbonLDP.getPlatformMetadata", ():void => {
-
 		beforeEach( ():void => {
 			jasmine.Ajax.install();
 		} );
@@ -459,17 +518,17 @@ describe( "CarbonLDP", ():void => {
 			expect( CarbonLDP.prototype.getPlatformMetadata ).toEqual( jasmine.any( Function ) );
 		} );
 
-
 		it( "should ask for `system.platform` path", ( done:DoneFn ):void => {
 			const carbon:CarbonLDP = new CarbonLDP( "https://example.com/" );
 
-			const spy:jasmine.Spy = spyOn( carbon, "_resolvePath" )
-				.and.callFake( () => { throw new Error( "Should not resolve" ); } );
+			const spy:jasmine.Spy = spyOn( carbon, "_resolvePath" ).and.callFake( () => {
+				throw new Error( "Should not resolve" );
+			} );
 
 			carbon
 				.getPlatformMetadata()
 				.then( () => done.fail( "Should not resolve" ) )
-				.catch( error => {
+				.catch( ( error ) => {
 					if( error.message !== "Should not resolve" ) done.fail( error );
 
 					expect( spy ).toHaveBeenCalledWith( "system.platform" );
@@ -479,13 +538,14 @@ describe( "CarbonLDP", ():void => {
 		} );
 
 		it( "should retrieve a PlatformMetadata object", ( done:DoneFn ):void => {
-			jasmine.Ajax.stubRequest( "https://example.com/.system/platform/", undefined, "GET" ).andReturn( {
-				status: 200,
-				responseHeaders: {
-					"ETag": '"123456789"',
-					"Content-Location": "https://example.com/.system/platform/",
-				},
-				responseText: `[ {
+			jasmine.Ajax.stubRequest( "https://example.com/.system/platform/", undefined, "GET" ).andReturn(
+				{
+					status: 200,
+					responseHeaders: {
+						ETag: "\"123456789\"",
+						"Content-Location": "https://example.com/.system/platform/",
+					},
+					responseText: `[ {
 					"@graph": [ {
 						"@id": "https://example.com/.system/platform/",
 						"@type": [ "${ Vocabularies.C.Document }", "${ Vocabularies.C.Platform }" ],
@@ -513,7 +573,8 @@ describe( "CarbonLDP", ():void => {
 					} ],
 					"@id": "https://example.com/.system/platform/"
 				} ]`,
-			} );
+				}
+			);
 
 			const carbon:CarbonLDP = new CarbonLDP( "https://example.com/" );
 			spyOn( carbon, "_resolvePath" ).and.returnValue( "https://example.com/.system/platform/" );
@@ -537,7 +598,5 @@ describe( "CarbonLDP", ():void => {
 				} )
 				.catch( done.fail );
 		} );
-
 	} );
-
 } );
