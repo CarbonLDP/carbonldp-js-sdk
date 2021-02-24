@@ -46,6 +46,7 @@ import * as System from "./System";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
 
+
 /**
  * The main class of the SDK.
  * Create an instance with the information of the platform to
@@ -55,6 +56,7 @@ import * as Vocabularies from "./Vocabularies";
  * reexported submodules in the SDK.
  */
 export class CarbonLDP extends DocumentsContext {
+
 	static AbstractContext:typeof AbstractContext = AbstractContext;
 	static AccessPoint:typeof AccessPoint = AccessPoint;
 	static TransientAccessPoint:typeof TransientAccessPoint = TransientAccessPoint;
@@ -162,7 +164,7 @@ function __getURLFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):str
 
 function __getURLFromString( this:void, url:string ):string {
 	if( !RDF.URI.hasProtocol( url ) )
-		throw new IllegalArgumentError( `The URL must contÒin a valid protocol: "http://", "https://".` );
+		throw new IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
 
 	if( url.endsWith( "/" ) ) return url;
 	return url + "/";
@@ -225,10 +227,7 @@ function __setExposedUrl( settings:CarbonLDPSettings ):CarbonLDPSettings {
 }
 
 
-function __getSettingsFrom(
-	this:void,
-	urlOrSettings:string | CarbonLDPSettings
-):DocumentsContextSettings {
+function __getSettingsFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):DocumentsContextSettings {
 	if( Utils.isString( urlOrSettings ) ) return {};
 	return Object.assign( {}, urlOrSettings, { ssl: null, host: null, port: null, regularUrl: null } );
 }

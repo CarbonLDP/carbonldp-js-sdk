@@ -80,6 +80,7 @@ describe( "Request", () => {
 
 		// TODO: Test `RequestService.send`
 		describe( "RequestService.send", () => {
+
 			it( "should exist", () => {
 				expect( RequestService.send ).toBeDefined();
 				expect( RequestService.send ).toEqual( jasmine.any( Function ) );
