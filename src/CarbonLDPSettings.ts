@@ -33,6 +33,15 @@ export interface CarbonLDPSettings extends DocumentsContextSettings {
 export class CarbonLDPSettings implements CarbonLDPSettings {
 	private static _instance:CarbonLDPSettings;
 
+	private constructor() {
+		if( CarbonLDPSettings._instance ) {
+			throw new Error(
+				'Error: Instantiation failed: Use CarbonLDPSettings.getInstance() instead of "new CarbonLDPSettings".'
+			);
+		}
+		CarbonLDPSettings._instance = this;
+	}
+
 	public static getInstance():CarbonLDPSettings {
 		CarbonLDPSettings._instance = CarbonLDPSettings._instance || new CarbonLDPSettings();
 		return CarbonLDPSettings._instance;
@@ -49,14 +58,5 @@ export class CarbonLDPSettings implements CarbonLDPSettings {
 		this.exposedPort = settings.exposedPort;
 		this.exposedSsl = settings.exposedSsl;
 		this.exposedUrl = settings.exposedUrl;
-	}
-
-	private constructor() {
-		if( CarbonLDPSettings._instance ) {
-			throw new Error(
-				'Error: Instantiation failed: Use CarbonLDPSettings.getInstance() instead of "new CarbonLDPSettings".'
-			);
-		}
-		CarbonLDPSettings._instance = this;
 	}
 }

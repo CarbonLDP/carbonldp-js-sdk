@@ -45,7 +45,6 @@ import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
-import set = Reflect.set;
 
 /**
  * The main class of the SDK.
@@ -85,21 +84,6 @@ export class CarbonLDP extends DocumentsContext {
 	static SPARQL:typeof SPARQL = SPARQL;
 	static System:typeof System = System;
 	static Utils:typeof Utils = Utils;
-
-	/**
-	 * Version of the SDK.
-	 */
-	static get version():string {
-		return "{{VERSION}}";
-	}
-
-	/**
-	 * @see {@link CarbonLDP.version}
-	 */
-	get version():string {
-		return CarbonLDP.version;
-	}
-
 	/**
 	 * The root document of the platform.
 	 */
@@ -112,6 +96,7 @@ export class CarbonLDP extends DocumentsContext {
 	 * @param url The URL of the of the platform.
 	 */
 	constructor( url:string );
+
 	/**
 	 * Creates the instance of the SDK with all the configurable
 	 * settings of the SDK.
@@ -119,6 +104,7 @@ export class CarbonLDP extends DocumentsContext {
 	 * @param settings Object to fully configure the instance.
 	 */
 	constructor( settings:CarbonLDPSettings );
+
 	constructor( urlOrSettings:string | CarbonLDPSettings ) {
 		super( __getURLFrom( urlOrSettings ) );
 
@@ -148,6 +134,16 @@ export class CarbonLDP extends DocumentsContext {
 	}
 
 	/**
+	 * Version of the SDK.
+	 */
+	static get version():string { return "{{VERSION}}"; }
+
+	/**
+	 * @see {@link CarbonLDP.version}
+	 */
+	get version():string { return CarbonLDP.version; }
+
+	/**
 	 * Retrieves the metadata document of the platform.
 	 */
 	getPlatformMetadata():Promise<System.PlatformMetadata> {
@@ -159,14 +155,14 @@ export class CarbonLDP extends DocumentsContext {
 }
 
 function __getURLFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):string {
-	return Utils.isString( urlOrSettings )
-		? __getURLFromString( urlOrSettings )
-		: __getURLFromSettings( urlOrSettings );
+	return Utils.isString( urlOrSettings ) ?
+		__getURLFromString( urlOrSettings ) :
+		__getURLFromSettings( urlOrSettings );
 }
 
 function __getURLFromString( this:void, url:string ):string {
 	if( !RDF.URI.hasProtocol( url ) )
-		throw new IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
+		throw new IllegalArgumentError( `The URL must contÒin a valid protocol: "http://", "https://".` );
 
 	if( url.endsWith( "/" ) ) return url;
 	return url + "/";
