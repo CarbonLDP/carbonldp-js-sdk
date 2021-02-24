@@ -174,6 +174,18 @@ function __getURLFromString( this:void, url:string ):string {
 }
 
 function __getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
+	const regularUrl:string = __buildRegularUrl( settings );
+	if( Utils.hasProperty( settings, "exposedHost" ) ) {
+		settings.regularUrl = regularUrl;
+		settings = __setExposedUrl( settings );
+	}
+
+	CarbonLDPSettings.getInstance().setSettings!( settings );
+
+	return regularUrl;
+}
+
+function __buildRegularUrl( settings:CarbonLDPSettings ):string {
 	if( !Utils.isString( settings.host ) )
 		throw new IllegalArgumentError( `The settings object must contains a valid host string.` );
 
@@ -189,6 +201,31 @@ function __getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
 
 	if( !Utils.isNumber( settings.port ) ) return url;
 	return url.slice( 0, - 1 ) + `:${ settings.port }/`;
+}
+
+/**
+ * Sets exposed url as property of CarbonLDPSettings
+ * @param settings: CarbonLDPSettings
+ * @return CarbonLDPSettings
+ */
+function __setExposedUrl( settings:CarbonLDPSettings ):CarbonLDPSettings {
+	if( !Utils.isString( settings.exposedHost ) )
+		throw new IllegalArgumentError( `The settings object must contains a valid host string.` );
+
+	if( hasProtocol( settings.exposedHost ) )
+		throw new IllegalArgumentError( `The host must not contain a protocol.` );
+
+	if( settings.exposedHost.includes( ":" ) )
+		throw new IllegalArgumentError( `The host must not contain a port.` );
+
+	const exposedProtocol:string = settings.exposedSsl === false ? "http://" : "https://";
+	const exposedHost:string = settings.exposedHost.endsWith( "/" )
+		? settings.exposedHost.slice( 0, - 1 )
+		: settings.exposedHost;
+	settings.exposedUrl = `${ exposedProtocol }${ exposedHost }/`;
+	if( !Utils.isNumber( settings.exposedPort ) ) return settings;
+	settings.exposedUrl = settings.exposedUrl.slice( 0, - 1 ) + `:${ settings.exposedPort }/`;
+	return settings;
 }
 
 
