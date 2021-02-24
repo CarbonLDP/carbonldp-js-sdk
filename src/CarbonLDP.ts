@@ -45,7 +45,7 @@ import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
-
+import set = Reflect.set;
 
 /**
  * The main class of the SDK.
@@ -56,7 +56,6 @@ import * as Vocabularies from "./Vocabularies";
  * reexported submodules in the SDK.
  */
 export class CarbonLDP extends DocumentsContext {
-
 	static AbstractContext:typeof AbstractContext = AbstractContext;
 	static AccessPoint:typeof AccessPoint = AccessPoint;
 	static TransientAccessPoint:typeof TransientAccessPoint = TransientAccessPoint;
@@ -87,16 +86,19 @@ export class CarbonLDP extends DocumentsContext {
 	static System:typeof System = System;
 	static Utils:typeof Utils = Utils;
 
-
 	/**
 	 * Version of the SDK.
 	 */
-	static get version():string { return "{{VERSION}}"; }
+	static get version():string {
+		return "{{VERSION}}";
+	}
 
 	/**
 	 * @see {@link CarbonLDP.version}
 	 */
-	get version():string { return CarbonLDP.version; }
+	get version():string {
+		return CarbonLDP.version;
+	}
 
 	/**
 	 * The root document of the platform.
@@ -154,15 +156,12 @@ export class CarbonLDP extends DocumentsContext {
 			return this.documents.$get<System.PlatformMetadata>( uri );
 		} );
 	}
-
 }
 
-
 function __getURLFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):string {
-	return Utils.isString( urlOrSettings ) ?
-		__getURLFromString( urlOrSettings ) :
-		__getURLFromSettings( urlOrSettings )
-		;
+	return Utils.isString( urlOrSettings )
+		? __getURLFromString( urlOrSettings )
+		: __getURLFromSettings( urlOrSettings );
 }
 
 function __getURLFromString( this:void, url:string ):string {
@@ -223,13 +222,17 @@ function __setExposedUrl( settings:CarbonLDPSettings ):CarbonLDPSettings {
 		? settings.exposedHost.slice( 0, - 1 )
 		: settings.exposedHost;
 	settings.exposedUrl = `${ exposedProtocol }${ exposedHost }/`;
+
 	if( !Utils.isNumber( settings.exposedPort ) ) return settings;
 	settings.exposedUrl = settings.exposedUrl.slice( 0, - 1 ) + `:${ settings.exposedPort }/`;
 	return settings;
 }
 
 
-function __getSettingsFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):DocumentsContextSettings {
+function __getSettingsFrom(
+	this:void,
+	urlOrSettings:string | CarbonLDPSettings
+):DocumentsContextSettings {
 	if( Utils.isString( urlOrSettings ) ) return {};
-	return Object.assign( {}, urlOrSettings, { ssl: null, host: null, port: null } );
+	return Object.assign( {}, urlOrSettings, { ssl: null, host: null, port: null, regularUrl: null } );
 }

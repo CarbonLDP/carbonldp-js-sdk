@@ -1,6 +1,5 @@
 import { DocumentsContextSettings } from "./Context/DocumentsContextSettings";
 
-
 /**
  * Interface of the possible settings used by the Carbon class.
  */
