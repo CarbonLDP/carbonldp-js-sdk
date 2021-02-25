@@ -612,13 +612,13 @@ describe( "Request", () => {
 
 
 			it( "should add header with empty options", () => {
-				options = RequestUtils.setIfMatchHeader( 'W/"123456789"', options );
-				expect( RequestUtils.getHeader( "If-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
+				options = RequestUtils.setIfMatchHeader( "W/\"123456789\"", options );
+				expect( RequestUtils.getHeader( "If-Match", options ) ).toEqual( new Header( "W/\"123456789\"" ) );
 			} );
 
 			it( "should add header with options with headers", () => {
-				optionsWithHeaders = RequestUtils.setIfMatchHeader( 'W/"123456789"', optionsWithHeaders );
-				expect( RequestUtils.getHeader( "If-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
+				optionsWithHeaders = RequestUtils.setIfMatchHeader( "W/\"123456789\"", optionsWithHeaders );
+				expect( RequestUtils.getHeader( "If-Match", optionsWithHeaders ) ).toEqual( new Header( "W/\"123456789\"" ) );
 				expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 			} );
 
@@ -633,13 +633,13 @@ describe( "Request", () => {
 
 
 			it( "should add header with empty options", () => {
-				options = RequestUtils.setIfNoneMatchHeader( 'W/"123456789"', options );
-				expect( RequestUtils.getHeader( "If-None-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
+				options = RequestUtils.setIfNoneMatchHeader( "W/\"123456789\"", options );
+				expect( RequestUtils.getHeader( "If-None-Match", options ) ).toEqual( new Header( "W/\"123456789\"" ) );
 			} );
 
 			it( "should add header with options with headers", () => {
-				optionsWithHeaders = RequestUtils.setIfNoneMatchHeader( 'W/"123456789"', optionsWithHeaders );
-				expect( RequestUtils.getHeader( "If-None-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
+				optionsWithHeaders = RequestUtils.setIfNoneMatchHeader( "W/\"123456789\"", optionsWithHeaders );
+				expect( RequestUtils.getHeader( "If-None-Match", optionsWithHeaders ) ).toEqual( new Header( "W/\"123456789\"" ) );
 				expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 			} );
 

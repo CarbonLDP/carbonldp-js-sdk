@@ -82,7 +82,7 @@ describe( "Registry", () => {
 
 				expect(
 					registry._addPointer( { $id: "id" } )
-				).toEqual( registry.__resourcesMap.get("id")! );
+				).toEqual( registry.__resourcesMap.get( "id" )! );
 			} );
 
 			it( "should return the same object reference", () => {

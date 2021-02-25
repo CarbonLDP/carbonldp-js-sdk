@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ### Added
 
+- [#425](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/425) - Extend CarbonLDPSettings object to configure an exposed domain different from the data domain.
 - [#423](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/423) - Add support for new `c:ExecutableQueryDocuments` and `c:ExecutableQuery` interaction model to act as executable queries (stored procedures).
 - [#376](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/376) - Add doc comments to the types files
 - [#378](https://github.com/CarbonLDP/carbonldp-js-sdk/issues/378) - Allow pagination and ordering of multiple `$get()` documents
