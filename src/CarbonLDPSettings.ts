@@ -36,7 +36,7 @@ export class CarbonLDPSettings implements CarbonLDPSettings {
 	private constructor() {
 		if( CarbonLDPSettings._instance ) {
 			throw new Error(
-				'Error: Instantiation failed: Use CarbonLDPSettings.getInstance() instead of "new CarbonLDPSettings".'
+				"Error: Instantiation failed: Use CarbonLDPSettings.getInstance() instead of \"new CarbonLDPSettings\"."
 			);
 		}
 		CarbonLDPSettings._instance = this;

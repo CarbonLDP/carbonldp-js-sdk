@@ -550,9 +550,9 @@ function __sendSetStoredQueryAction<T extends object>( this:void, repository:LDP
 
 	return RequestService
 		.put( url, body, requestOptions )
-		.then( ( response: Response ) => {
+		.then( ( response:Response ) => {
 
-			let executableQueryDocument:T & ExecutableQueryDocument = repository.context.executableQueryDocumentsRegistry.getPointer(uri) as T & ExecutableQueryDocument;
+			let executableQueryDocument:T & ExecutableQueryDocument = repository.context.executableQueryDocumentsRegistry.getPointer( uri ) as T & ExecutableQueryDocument;
 
 			executableQueryDocument
 				.$getFragments()
@@ -608,7 +608,7 @@ export const LDPDocumentsRepositoryTrait:{
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.get.call<HTTPRepositoryTrait, [ string, RequestOptions?], Promise<T & Document> | Promise<T & ExecutableQueryDocument>>( this, uri, requestOptions )
+				.get.call<HTTPRepositoryTrait, [ string, RequestOptions? ], Promise<T & Document> | Promise<T & ExecutableQueryDocument>>( this, uri, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
@@ -628,12 +628,12 @@ export const LDPDocumentsRepositoryTrait:{
 				.executeAsRAWSPARQLQuery.call( this, uri, requestOptions )
 				.then<ExecutableQuerySPARQLResults>( ( [ rawResults, _ ]:[ SPARQLRawResults, Response ] ) => {
 
-					if ( rawResults.results && rawResults.results.bindings ) {
+					if( rawResults.results && rawResults.results.bindings ) {
 						return SPARQLService._parseSELECTResults( rawResults, this.context.registry );
 					}
 					return rawResults.boolean!;
 
-				})
+				} )
 				.catch( __getErrorResponseParserFnFrom( this ) );
 		},
 
@@ -655,12 +655,12 @@ export const LDPDocumentsRepositoryTrait:{
 		},
 
 
-		refresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):( Promise<T & Document> ) | ( Promise<T & ExecutableQueryDocument> ) {
+		refresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):(Promise<T & Document>) | (Promise<T & ExecutableQueryDocument>) {
 			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 			RequestUtils.setIfNoneMatchHeader( document.$eTag!, requestOptions );
 
 			return HTTPRepositoryTrait.PROTOTYPE
-				.refresh.call<HTTPRepositoryTrait, [ Document, RequestOptions?], Promise<T & Document>>( this, document, requestOptions )
+				.refresh.call<HTTPRepositoryTrait, [ Document, RequestOptions? ], Promise<T & Document>>( this, document, requestOptions )
 				.catch( __getErrorResponseParserFnFrom( this ) )
 				;
 		},
@@ -694,11 +694,11 @@ export const LDPDocumentsRepositoryTrait:{
 			return __sendAddAction( this, uri, members, requestOptions );
 		},
 
-		modifyStoredQuery<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument>  {
+		modifyStoredQuery<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument> {
 			return __sendSetStoredQueryAction<T>( this, uri, newStoredQuery, requestOptions );
 		},
 
-		modifyStoredQueryAndRefresh<T extends object>( this: LDPDocumentsRepositoryTrait, uri: string, newStoredQuery: string, requestOptions?: RequestOptions ): Promise<T & ExecutableQueryDocument> {
+		modifyStoredQueryAndRefresh<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, newStoredQuery:string, requestOptions?:RequestOptions ):Promise<T & ExecutableQueryDocument> {
 			return this
 				.modifyStoredQuery<T>( uri, newStoredQuery, requestOptions )
 				.then( executableQueryDocument => this.refresh<T>( executableQueryDocument, requestOptions ) )
@@ -730,11 +730,11 @@ export const LDPDocumentsRepositoryTrait:{
 
 					let document:T & Document | T & ExecutableQueryDocument = this.context.registry.register( id ) as T & Document;
 
-					rdfDocument["@graph"].forEach( node => {
-						if (node["@type"] && node["@type"].indexOf( C.ExecutableQueryDocument ) >= 0 ) {
-								document = this.context.executableQueryDocumentsRegistry.register( id ) as T & ExecutableQueryDocument;
+					rdfDocument[ "@graph" ].forEach( node => {
+						if( node[ "@type" ] && node[ "@type" ].indexOf( C.ExecutableQueryDocument ) >= 0 ) {
+							document = this.context.executableQueryDocumentsRegistry.register( id ) as T & ExecutableQueryDocument;
 						}
-					});
+					} );
 
 					const previousFragments:Set<string> = new Set();
 					document

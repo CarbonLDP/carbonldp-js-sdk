@@ -269,7 +269,7 @@ export const TransientDocument:{
 
 			const $id:string = id ? __getLabelFrom( id ) : __getObjectId( object );
 
-			if( this.$hasPointer( $id, true )) {
+			if( this.$hasPointer( $id, true ) ) {
 				throw new IDAlreadyInUseError( `"${ $id }" is already being used.` );
 			}
 

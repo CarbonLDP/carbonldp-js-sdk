@@ -504,7 +504,7 @@ describe( "CarbonLDP", ():void => {
 			jasmine.Ajax.stubRequest( "https://example.com/.system/platform/", undefined, "GET" ).andReturn( {
 				status: 200,
 				responseHeaders: {
-					"ETag": '"123456789"',
+					"ETag": "\"123456789\"",
 					"Content-Location": "https://example.com/.system/platform/",
 				},
 				responseText: `[ {
