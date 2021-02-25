@@ -428,7 +428,7 @@ export const QueryableDocumentsRepositoryTrait:{
 
 			if( target && target.$isQueried() ) requestOptions.ensureLatest = true;
 			return LDPDocumentsRepositoryTrait.PROTOTYPE
-				.get.call<LDPDocumentsRepositoryTrait, [ string, RequestOptions?], Promise<T & Document>>( this, uri, requestOptions )
+				.get.call<LDPDocumentsRepositoryTrait, [ string, RequestOptions? ], Promise<T & Document>>( this, uri, requestOptions )
 				.then<T & Document>( document => {
 
 					if( TransientExecutableQueryDocument.is( document ) && document.$hasType( C.ExecutableQueryDocument ) )
@@ -457,14 +457,14 @@ export const QueryableDocumentsRepositoryTrait:{
 
 		refresh<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
 			if( !document.$isQueried() ) return LDPDocumentsRepositoryTrait.PROTOTYPE
-				.refresh.call<LDPDocumentsRepositoryTrait, [ Document, RequestOptions?], Promise<T & Document>>( this, document, requestOptions );
+				.refresh.call<LDPDocumentsRepositoryTrait, [ Document, RequestOptions? ], Promise<T & Document>>( this, document, requestOptions );
 
 			return __refreshQueryable<T>( this, document, requestOptions );
 		},
 
 		saveAndRefresh<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
 			if( !document.$_queryableMetadata ) return LDPDocumentsRepositoryTrait.PROTOTYPE
-				.saveAndRefresh.call<LDPDocumentsRepositoryTrait, [ Document, RequestOptions?], Promise<T & Document>>( this, document, requestOptions );
+				.saveAndRefresh.call<LDPDocumentsRepositoryTrait, [ Document, RequestOptions? ], Promise<T & Document>>( this, document, requestOptions );
 
 			if( document.$eTag === null ) return Promise.reject( new IllegalStateError( `The document "${ document.$id }" is locally outdated and cannot be saved.` ) );
 

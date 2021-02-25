@@ -127,7 +127,7 @@ export class SPARQLService {
 		return RequestService.post( url, updateQuery, options );
 	}
 
-	static _parseSELECTResults<T>( rawResults: SPARQLRawResults, pointerLibrary: PointerLibrary ): SPARQLSelectResults<T> {
+	static _parseSELECTResults<T>( rawResults:SPARQLRawResults, pointerLibrary:PointerLibrary ):SPARQLSelectResults<T> {
 		let rawBindings:SPARQLRawBindingObject[] = rawResults.results!.bindings;
 		let bindings:T[] = [];
 

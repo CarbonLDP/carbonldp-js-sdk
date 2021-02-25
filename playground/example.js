@@ -40,8 +40,15 @@
 		"schema": "https://schema.org/"
 	};
 
-	const platformURL = "http://local.example.com:8083";
-	const carbonldp = new CarbonLDP( platformURL );
+	const carbonldpSettings = {
+		host: "local.example.com",
+		ssl: false,
+		port: 8083,
+		// exposedHost: "dev.example.com",
+		// exposedSsl: false,
+	};
+
+	const carbonldp = new CarbonLDP( carbonldpSettings );
 	carbonldp.extendObjectSchema( prefixes );
 
 	describe( "Tests >", function() {
@@ -102,8 +109,8 @@
 			let children;
 			let carbonldp;
 			beforeEach( function() {
-				const carbonldp1 = new CarbonLDP( platformURL );
-				const carbonldp2 = new CarbonLDP( platformURL );
+				const carbonldp1 = new CarbonLDP( carbonldpSettings );
+				const carbonldp2 = new CarbonLDP( carbonldpSettings );
 
 				extendObjectSchemas( carbonldp1 );
 				extendObjectSchemas( carbonldp2 );
@@ -693,7 +700,7 @@
 					.$create( { nested: nested } )
 					.then( function( doc ) {
 						// Use another instance to update
-						const carbonldp2 = new CarbonLDP( platformURL );
+						const carbonldp2 = new CarbonLDP( carbonldpSettings );
 						return carbonldp2.documents
 							.$get( doc.$id )
 							.then( function( sameDoc ) {

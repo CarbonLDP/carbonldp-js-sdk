@@ -1,6 +1,7 @@
 import HTTP from "http";
 import HTTPS from "https";
 import URL from "url";
+import { CarbonLDPSettings } from "../CarbonLDPSettings";
 
 import { hasProperty, hasPropertyDefined, isNumber, isString } from "../Utils";
 
@@ -243,6 +244,7 @@ export class RequestService {
 			options = bodyOrOptions ? bodyOrOptions : options;
 		}
 
+		url = this.__translateURL( url );
 		options = Object.assign( {}, RequestService.defaultOptions, options );
 
 		if( isNumber( method ) ) method = HTTPMethod[ method ];
@@ -440,6 +442,13 @@ export class RequestService {
 
 	private static __setFalseETag( requestOptions:RequestOptions ):void {
 		requestOptions.headers!.set( "if-none-match", new Header() );
+	}
+
+	private static __translateURL( url:string ):string {
+		const settingsObject:CarbonLDPSettings = CarbonLDPSettings.getInstance();
+		if( hasProperty( settingsObject, "exposedHost" ) )
+			return url.replace( settingsObject.regularUrl!, settingsObject.exposedUrl! );
+		return url;
 	}
 }
 

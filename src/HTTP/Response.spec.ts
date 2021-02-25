@@ -13,7 +13,7 @@ describe( "Response", () => {
 		responseHeaders: {
 			"Content-Type": "text/plain",
 			"Server": "Apache/2.4.1 (Unix)",
-			"ETag": 'W/"123456789"',
+			"ETag": "W/\"123456789\"",
 		},
 	};
 	beforeAll( () => {

@@ -328,6 +328,37 @@ describe( "CarbonLDP", ():void => {
 			helper( { host: "example.com/", port: 80 }, "https://example.com:80/" );
 		} );
 
+		it( "should create base URI with settings exposedHost", ():void => {
+			const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
+				const carbon:CarbonLDP = new CarbonLDP( settings );
+				expect( carbon.baseURI ).toBe( uri );
+			};
+
+			helper( { host: "example1.com", exposedHost: "example.com" }, "https://example1.com/" );
+			helper( { host: "example1.com/", exposedHost: "example.com/" }, "https://example1.com/" );
+		} );
+
+		it( "should create exposedUrl with settings exposedHost and exposedSsl", ():void => {
+			const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
+				const carbon:CarbonLDP = new CarbonLDP( settings );
+				expect( settings.exposedUrl ).toBe( uri );
+			};
+
+			helper( { host: "example.com", ssl: false, exposedHost: "example1.com", exposedSsl: false }, "http://example1.com/" );
+			helper( { host: "example.com", ssl: false, exposedHost: "example1.com", exposedSsl: true }, "https://example1.com/" );
+			helper( { host: "example.com", exposedHost: "example1.com", exposedPort: 8083 }, "https://example1.com:8083/" );
+			helper( { host: "example.com/", exposedHost: "example1.com", exposedPort: 80 }, "https://example1.com:80/" );
+		} );
+
+		it( "should create regularUrl with settings host, exposedHost", ():void => {
+			const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
+				const carbon:CarbonLDP = new CarbonLDP( settings );
+				expect( settings.regularUrl ).toBe( uri );
+			};
+
+			helper( { host: "example.com", exposedHost: "example1.com" }, "https://example.com/" );
+		} );
+
 		it( "should create base URI with settings host, ssl and port", ():void => {
 			const helper:( settings:CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 				const carbon:CarbonLDP = new CarbonLDP( settings );
@@ -346,6 +377,22 @@ describe( "CarbonLDP", ():void => {
 
 			helper( { host: "example.com", ssl: false, port: 8083 }, "http://example.com:8083/" );
 			helper( { host: "example.com/", ssl: true, port: 80 }, "https://example.com:80/" );
+		} );
+
+		it ( "should throw error if instantiating settings outside of Carbon instance creation", ():void => {
+			const settings:CarbonLDPSettings = { host: "example.com" };
+			const carbon:CarbonLDP = new CarbonLDP( settings );
+
+			expect( () => {
+				// @ts-ignore
+				new CarbonLDPSettings(settings);
+			} ).toThrow(new Error( 'Error: Instantiation failed: Use CarbonLDPSettings.getInstance() instead of "new CarbonLDPSettings".' ));
+		} );
+
+		it ( "should return instance of CarbonLDPSettings" , ():void => {
+			const settings:CarbonLDPSettings = { host: "example.com" };
+			const carbon:CarbonLDP = new CarbonLDP( settings );
+			expect( CarbonLDPSettings.getInstance() ).toEqual( jasmine.any(CarbonLDPSettings) );
 		} );
 
 
@@ -482,7 +529,7 @@ describe( "CarbonLDP", ():void => {
 			jasmine.Ajax.stubRequest( "https://example.com/.system/platform/", undefined, "GET" ).andReturn( {
 				status: 200,
 				responseHeaders: {
-					"ETag": '"123456789"',
+					"ETag": "\"123456789\"",
 					"Content-Location": "https://example.com/.system/platform/",
 				},
 				responseText: `[ {

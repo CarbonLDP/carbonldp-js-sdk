@@ -86,18 +86,6 @@ export class CarbonLDP extends DocumentsContext {
 	static SPARQL:typeof SPARQL = SPARQL;
 	static System:typeof System = System;
 	static Utils:typeof Utils = Utils;
-
-
-	/**
-	 * Version of the SDK.
-	 */
-	static get version():string { return "{{VERSION}}"; }
-
-	/**
-	 * @see {@link CarbonLDP.version}
-	 */
-	get version():string { return CarbonLDP.version; }
-
 	/**
 	 * The root document of the platform.
 	 */
@@ -110,6 +98,7 @@ export class CarbonLDP extends DocumentsContext {
 	 * @param url The URL of the of the platform.
 	 */
 	constructor( url:string );
+
 	/**
 	 * Creates the instance of the SDK with all the configurable
 	 * settings of the SDK.
@@ -117,6 +106,7 @@ export class CarbonLDP extends DocumentsContext {
 	 * @param settings Object to fully configure the instance.
 	 */
 	constructor( settings:CarbonLDPSettings );
+
 	constructor( urlOrSettings:string | CarbonLDPSettings ) {
 		super( __getURLFrom( urlOrSettings ) );
 
@@ -146,6 +136,16 @@ export class CarbonLDP extends DocumentsContext {
 	}
 
 	/**
+	 * Version of the SDK.
+	 */
+	static get version():string { return "{{VERSION}}"; }
+
+	/**
+	 * @see {@link CarbonLDP.version}
+	 */
+	get version():string { return CarbonLDP.version; }
+
+	/**
 	 * Retrieves the metadata document of the platform.
 	 */
 	getPlatformMetadata():Promise<System.PlatformMetadata> {
@@ -154,15 +154,12 @@ export class CarbonLDP extends DocumentsContext {
 			return this.documents.$get<System.PlatformMetadata>( uri );
 		} );
 	}
-
 }
-
 
 function __getURLFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):string {
 	return Utils.isString( urlOrSettings ) ?
 		__getURLFromString( urlOrSettings ) :
-		__getURLFromSettings( urlOrSettings )
-		;
+		__getURLFromSettings( urlOrSettings );
 }
 
 function __getURLFromString( this:void, url:string ):string {
@@ -174,6 +171,18 @@ function __getURLFromString( this:void, url:string ):string {
 }
 
 function __getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
+	const regularUrl:string = __buildRegularUrl( settings );
+	if( Utils.hasProperty( settings, "exposedHost" ) ) {
+		settings.regularUrl = regularUrl;
+		settings = __setExposedUrl( settings );
+	}
+
+	CarbonLDPSettings.getInstance().setSettings!( settings );
+
+	return regularUrl;
+}
+
+function __buildRegularUrl( settings:CarbonLDPSettings ):string {
 	if( !Utils.isString( settings.host ) )
 		throw new IllegalArgumentError( `The settings object must contains a valid host string.` );
 
@@ -191,8 +200,34 @@ function __getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
 	return url.slice( 0, - 1 ) + `:${ settings.port }/`;
 }
 
+/**
+ * Sets exposed url as property of CarbonLDPSettings
+ * @param settings: CarbonLDPSettings
+ * @return CarbonLDPSettings
+ */
+function __setExposedUrl( settings:CarbonLDPSettings ):CarbonLDPSettings {
+	if( !Utils.isString( settings.exposedHost ) )
+		throw new IllegalArgumentError( `The settings object must contains a valid host string.` );
+
+	if( hasProtocol( settings.exposedHost ) )
+		throw new IllegalArgumentError( `The host must not contain a protocol.` );
+
+	if( settings.exposedHost.includes( ":" ) )
+		throw new IllegalArgumentError( `The host must not contain a port.` );
+
+	const exposedProtocol:string = settings.exposedSsl === false ? "http://" : "https://";
+	const exposedHost:string = settings.exposedHost.endsWith( "/" )
+		? settings.exposedHost.slice( 0, - 1 )
+		: settings.exposedHost;
+	settings.exposedUrl = `${ exposedProtocol }${ exposedHost }/`;
+
+	if( !Utils.isNumber( settings.exposedPort ) ) return settings;
+	settings.exposedUrl = settings.exposedUrl.slice( 0, - 1 ) + `:${ settings.exposedPort }/`;
+	return settings;
+}
+
 
 function __getSettingsFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):DocumentsContextSettings {
 	if( Utils.isString( urlOrSettings ) ) return {};
-	return Object.assign( {}, urlOrSettings, { ssl: null, host: null, port: null } );
+	return Object.assign( {}, urlOrSettings, { ssl: null, host: null, port: null, regularUrl: null } );
 }
