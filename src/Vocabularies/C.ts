@@ -9,6 +9,7 @@ export interface C {
 	ChildCreatedEvent:"https://carbonldp.com/ns/v1/platform#ChildCreatedEvent";
 	Document:"https://carbonldp.com/ns/v1/platform#Document";
 	DocumentCreatedEventDetails:"https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails";
+	DocumentModifiedEventDetails:"https://carbonldp.com/ns/v1/platform#DocumentModifiedEventDetails";
 	DocumentDeletedEvent:"https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent";
 	DocumentMetadata:"https://carbonldp.com/ns/v1/platform#DocumentMetadata";
 	DocumentModifiedEvent:"https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent";
@@ -41,11 +42,13 @@ export interface C {
 	VolatileResource:"https://carbonldp.com/ns/v1/platform#VolatileResource";
 
 	accessPoint:"https://carbonldp.com/ns/v1/platform#accessPoint";
+	added:"https://carbonldp.com/ns/v1/platform#added";
 	bNodesMap:"https://carbonldp.com/ns/v1/platform#bNodesMap";
 	buildDate:"https://carbonldp.com/ns/v1/platform#buildDate";
 	checksum:"https://carbonldp.com/ns/v1/platform#checksum";
 	created:"https://carbonldp.com/ns/v1/platform#created";
 	createdDocument:"https://carbonldp.com/ns/v1/platform#createdDocument";
+	deleted:"https://carbonldp.com/ns/v1/platform#deleted";
 	details:"https://carbonldp.com/ns/v1/platform#details";
 	defaultInteractionModel:"https://carbonldp.com/ns/v1/platform#defaultInteractionModel";
 	document:"https://carbonldp.com/ns/v1/platform#document";
@@ -84,6 +87,7 @@ export const C:{
 	ChildCreatedEvent:"https://carbonldp.com/ns/v1/platform#ChildCreatedEvent";
 	Document:"https://carbonldp.com/ns/v1/platform#Document";
 	DocumentCreatedEventDetails:"https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails";
+	DocumentModifiedEventDetails:"https://carbonldp.com/ns/v1/platform#DocumentModifiedEventDetails";
 	DocumentDeletedEvent:"https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent";
 	DocumentMetadata:"https://carbonldp.com/ns/v1/platform#DocumentMetadata";
 	DocumentModifiedEvent:"https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent";
@@ -115,12 +119,14 @@ export const C:{
 	ValidationError:"https://carbonldp.com/ns/v1/platform#ValidationError";
 	VolatileResource:"https://carbonldp.com/ns/v1/platform#VolatileResource";
 
+	added:"https://carbonldp.com/ns/v1/platform#added";
 	accessPoint:"https://carbonldp.com/ns/v1/platform#accessPoint";
 	bNodesMap:"https://carbonldp.com/ns/v1/platform#bNodesMap";
 	buildDate:"https://carbonldp.com/ns/v1/platform#buildDate";
 	checksum:"https://carbonldp.com/ns/v1/platform#checksum";
 	created:"https://carbonldp.com/ns/v1/platform#created";
 	createdDocument:"https://carbonldp.com/ns/v1/platform#createdDocument";
+	deleted:"https://carbonldp.com/ns/v1/platform#deleted";
 	details:"https://carbonldp.com/ns/v1/platform#details";
 	defaultInteractionModel:"https://carbonldp.com/ns/v1/platform#defaultInteractionModel";
 	document:"https://carbonldp.com/ns/v1/platform#document";
@@ -154,6 +160,7 @@ export const C:{
 	ChildCreatedEvent: "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent",
 	Document: "https://carbonldp.com/ns/v1/platform#Document",
 	DocumentCreatedEventDetails: "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails",
+	DocumentModifiedEventDetails:"https://carbonldp.com/ns/v1/platform#DocumentModifiedEventDetails",
 	DocumentDeletedEvent: "https://carbonldp.com/ns/v1/platform#DocumentDeletedEvent",
 	DocumentMetadata: "https://carbonldp.com/ns/v1/platform#DocumentMetadata",
 	DocumentModifiedEvent: "https://carbonldp.com/ns/v1/platform#DocumentModifiedEvent",
@@ -185,12 +192,14 @@ export const C:{
 	ValidationError: "https://carbonldp.com/ns/v1/platform#ValidationError",
 	VolatileResource: "https://carbonldp.com/ns/v1/platform#VolatileResource",
 
+	added: "https://carbonldp.com/ns/v1/platform#added",
 	accessPoint: "https://carbonldp.com/ns/v1/platform#accessPoint",
 	bNodesMap: "https://carbonldp.com/ns/v1/platform#bNodesMap",
 	buildDate: "https://carbonldp.com/ns/v1/platform#buildDate",
 	checksum: "https://carbonldp.com/ns/v1/platform#checksum",
 	created: "https://carbonldp.com/ns/v1/platform#created",
 	createdDocument: "https://carbonldp.com/ns/v1/platform#createdDocument",
+	deleted: "https://carbonldp.com/ns/v1/platform#deleted",
 	details: "https://carbonldp.com/ns/v1/platform#details",
 	defaultInteractionModel: "https://carbonldp.com/ns/v1/platform#defaultInteractionModel",
 	document: "https://carbonldp.com/ns/v1/platform#document",

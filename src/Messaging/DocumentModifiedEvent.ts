@@ -3,6 +3,7 @@ import { ModelSchema } from "../Model/ModelSchema";
 import { ObjectSchema } from "../ObjectSchema/ObjectSchema";
 
 import { C } from "../Vocabularies/C";
+import { DocumentModifiedEventDetails } from "./DocumentModifiedEventDetails";
 
 import { EventMessage } from "./EventMessage";
 
@@ -11,6 +12,10 @@ import { EventMessage } from "./EventMessage";
  * Model that represents a `c:DocumentModifiedEvent`.
  */
 export interface DocumentModifiedEvent extends EventMessage {
+	/**
+	 * Object with the deltas that were modified.
+	 */
+	details:DocumentModifiedEventDetails;
 }
 
 
@@ -20,7 +25,13 @@ export interface DocumentModifiedEvent extends EventMessage {
 export type DocumentModifiedEventFactory =
 	& ModelSchema<C["DocumentModifiedEvent"]>;
 
-const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
+const SCHEMA:ObjectSchema = {
+	...EventMessage.SCHEMA,
+	"details": {
+		"@id": C.details,
+		"@type": "@id",
+	},
+};
 
 /**
  * Constant with the factory, decorator and/or utils for a {@link DocumentModifiedEvent} object.
