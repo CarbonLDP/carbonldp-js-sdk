@@ -49,10 +49,9 @@ export interface GETOptions extends RequestOptions {
 }
 
 /**
- * Object used by {@link RequestUtils#setRetrievalPreferences `RequestUtils.setRetrievalPreferences()`}
+ * Object used by {@link RequestUtils.setRetrievalPreferences}
  * which specifies the behaviour of a request when using an `ldp:Container` interaction model.
  */
-// TODO: Fix link syntax
 export interface RetrievalPreferences {
 	/**
 	 * Prefer URIs that indicates some specific information should be returned in the request's response.

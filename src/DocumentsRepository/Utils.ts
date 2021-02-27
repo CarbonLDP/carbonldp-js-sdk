@@ -61,9 +61,8 @@ export function _parseResourceParams<T>( this:void, resource:ResolvablePointer, 
 
 /**
  * Returns a function that can parse a {@link HTTPError} into a {@link ErrorResponse} inside a rejected Promise.
- * @param registry The registry from where to get the information to convert the {@link HTTPError#response `HTTPError.response`}'s data.
+ * @param registry The registry from where to get the information to convert the {@link HTTPError#response}'s data.
  */
-// TODO: Fix link syntax
 export function _getErrorResponseParserFn( this:void, registry:DocumentsRegistry ):( error:HTTPError | Error ) => Promise<never> {
 	return ( error:HTTPError | Error ) => {
 		if( !("response" in error) ) return Promise.reject( error );

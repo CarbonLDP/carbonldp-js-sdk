@@ -197,7 +197,7 @@ export class ArrayUtils {
 
 	/**
 	 * Takes two or more arrays and joins them while removing duplicates.
-	 * @param arrays Every array to merge.
+	 * @param ...arrays Every array to merge.
 	 */
 	static joinWithoutDuplicates<T>( ...arrays:Array<Array<T>> ):Array<T> {
 		let result:Array<T> = arrays[ 0 ].slice();
@@ -428,7 +428,7 @@ export class MapUtils {
 	 * Adds to a target Map all the entries of the subsequents Maps provided.
 	 * If entries with the same key exists between Maps, the entry's value of the last Map is set to the target Map.
 	 * @param toExtend Target Map to extend.
-	 * @param extenders Every other Map parameter, from which the entries to be added to the target Map will be taken.
+	 * @param ...extenders Every other Map parameter, from which the entries to be added to the target Map will be taken.
 	 */
 	static extend<K, V>( toExtend:Map<K, V>, ...extenders:Map<K, V>[] ):Map<K, V> {
 		for( const extender of extenders ) {
