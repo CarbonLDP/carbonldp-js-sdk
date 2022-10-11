@@ -52,7 +52,7 @@
     "jasmine-ajax": "^3.3.1",
     "jasmine-ajax-node": "^1.0.0-alpha.2",
     "jasmine-core": "^3.3.0",
-    "jsonld": "^0.4.12",
+    "jsonld": "^8.1.0",
     "karma": "^4.0.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^2.0.1",
